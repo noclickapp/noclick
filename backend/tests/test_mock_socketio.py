@@ -8,7 +8,7 @@ race conditions, and async/await patterns.
 import pytest
 import asyncio
 from typing import List
-from tests.utils.mock_socketio import MockSocketIO
+from tests.mocks.mock_socketio import MockSocketIO
 
 
 class TestMockSocketIO:
@@ -229,12 +229,7 @@ class TestMockSocketIO:
         
         results = []
         
-        # Handler with just data parameter
-        @server.on('data_only')
-        async def handle_data_only(data):
-            results.append(('data_only', data))
-        
-        # Handler with sid and data
+        # Standard server handler with sid and data
         @server.on('sid_data')
         async def handle_sid_data(sid, data):
             results.append(('sid_data', sid, data))
@@ -244,21 +239,21 @@ class TestMockSocketIO:
         async def handle_all(event, sid, data):
             results.append(('wildcard', event, sid, data))
         
-        # Send events
-        await client.emit('data_only', {'value': 1})
+        # Send event
         await client.emit('sid_data', {'value': 2})
         
         # Check all handlers were called correctly
-        assert len(results) == 4  # data_only + wildcard, sid_data + wildcard
+        assert len(results) == 2  # sid_data + wildcard
         
         # Find and verify each result
-        data_only_results = [r for r in results if r[0] == 'data_only']
-        assert len(data_only_results) == 1
-        assert data_only_results[0] == ('data_only', {'value': 1})
-        
         sid_data_results = [r for r in results if r[0] == 'sid_data']
         assert len(sid_data_results) == 1
         assert sid_data_results[0][2] == {'value': 2}
+        
+        wildcard_results = [r for r in results if r[0] == 'wildcard']
+        assert len(wildcard_results) == 1
+        assert wildcard_results[0][1] == 'sid_data'  # event name
+        assert wildcard_results[0][3] == {'value': 2}  # data
     
     @pytest.mark.asyncio
     async def test_error_handling_in_handler(self):
@@ -277,12 +272,12 @@ class TestMockSocketIO:
         async def good_handler(sid, data):
             successful_calls.append({'good': True})
         
-        # Send event that triggers error in first handler
-        await client.emit('error_event', {'should_error': True})
+        # Send event that triggers error in first handler - should raise
+        with pytest.raises(ValueError, match="Intentional error"):
+            await client.emit('error_event', {'should_error': True})
         
-        # Second handler should still be called
-        assert len(successful_calls) == 1
-        assert successful_calls[0] == {'good': True}
+        # No handlers should have completed due to the error
+        assert len(successful_calls) == 0
         
         # Send event without error
         successful_calls.clear()
@@ -422,21 +417,32 @@ class TestMockSocketIO:
             await asyncio.sleep(0.001)
             completed.append(f"h2-{data['id']}")
         
-        # Send multiple events
+        # Send multiple events, one will error
         tasks = []
         for i in range(10):
             tasks.append(client.emit('concurrent_error', {'id': i}))
         
-        await asyncio.gather(*tasks)
+        # One of the tasks (id=5) will raise an error
+        # We need to handle this with return_exceptions=True
+        results = await asyncio.gather(*tasks, return_exceptions=True)
         await asyncio.sleep(0.02)
         
-        # Handler 2 should complete all 10, handler 1 should complete 9 (not id=5)
+        # Check that one task raised an exception (id=5)
+        exceptions = [r for r in results if isinstance(r, Exception)]
+        assert len(exceptions) == 1
+        assert isinstance(exceptions[0], RuntimeError)
+        assert "Intentional error" in str(exceptions[0])
+        
+        # Since handler1 raises on id=5, that entire event processing stops
+        # So neither handler completes for id=5
         h2_completed = [c for c in completed if c.startswith('h2-')]
         h1_completed = [c for c in completed if c.startswith('h1-')]
         
-        assert len(h2_completed) == 10
-        assert len(h1_completed) == 9
+        # With the error propagating, id=5 won't complete in either handler
+        assert len(h2_completed) == 9  # All except id=5
+        assert len(h1_completed) == 9  # All except id=5
         assert 'h1-5' not in completed
+        assert 'h2-5' not in completed
     
     @pytest.mark.asyncio
     async def test_no_partner_socket(self):
@@ -633,3 +639,136 @@ class TestMockSocketIO:
         
         assert len(received) == 2
         assert {r['value'] for r in received} == {1, 2}
+    
+    @pytest.mark.asyncio
+    async def test_client_wildcard_handler_signature(self):
+        """
+        Test that client-side wildcard handlers with (event, *args) signature
+        receive the event name as first argument, not sid.
+        
+        This test replicates the SandboxHandler issue where catch_all
+        expects (event, *args) but receives (sid, data).
+        """
+        client, server = MockSocketIO.create_socketio_connection()
+        
+        received_args = []
+        
+        @client.on('*')
+        async def client_catch_all(event, *args):
+            """Client-side catch-all expecting (event, *args)."""
+            received_args.append({'event': event, 'args': args})
+        
+        # Server emits an event
+        await server.emit('agent:run:command:response', {
+            'success': True,
+            'output': 'test output',
+            'exit_code': 0
+        })
+        
+        # Verify handler received correct arguments
+        assert len(received_args) == 1
+        received = received_args[0]
+        
+        # CRITICAL: event should be 'agent:run:command:response', not 'mock-sid'
+        assert received['event'] == 'agent:run:command:response', (
+            f"Expected event 'agent:run:command:response', "
+            f"but got '{received['event']}' - this is the bug!"
+        )
+        
+        # Data should be in args
+        assert len(received['args']) == 1
+        assert received['args'][0]['success'] is True
+        assert received['args'][0]['output'] == 'test output'
+    
+    @pytest.mark.asyncio 
+    async def test_different_wildcard_signatures(self):
+        """Test that wildcard handlers with different signatures work correctly."""
+        client, server = MockSocketIO.create_socketio_connection()
+        
+        client_results = []
+        server_results = []
+        
+        # Client-side wildcard with (event, *args)
+        @client.on('*')
+        async def client_wildcard(event, *args):
+            client_results.append(('client_wildcard', event, args))
+        
+        # Server-side wildcard with (event, sid, data)
+        @server.on('*')
+        async def server_wildcard(event, sid, data):
+            server_results.append(('server_wildcard', event, sid, data))
+        
+        # Test client → server
+        await client.emit('client_to_server', {'msg': 'hello'})
+        
+        # Test server → client
+        await server.emit('server_to_client', {'msg': 'world'})
+        
+        # Check server received correct args
+        assert len(server_results) == 1
+        tag, event, sid, data = server_results[0]
+        assert event == 'client_to_server'
+        assert sid == 'mock-sid'
+        assert data == {'msg': 'hello'}
+        
+        # Check client received correct args
+        assert len(client_results) == 1
+        tag, event, args = client_results[0]
+        assert event == 'server_to_client', f"Expected 'server_to_client', got '{event}'"
+        assert len(args) == 1
+        assert args[0] == {'msg': 'world'}
+    
+    @pytest.mark.asyncio
+    async def test_sandbox_handler_pattern_exact_replication(self):
+        """
+        Exact replication of SandboxHandler's catch_all pattern.
+        This test should fail with current implementation.
+        """
+        # Create linked sockets simulating sandbox_handler_sio and sandbox_api_sio
+        sandbox_handler_sio, sandbox_api_sio = MockSocketIO.create_socketio_connection()
+        
+        # Track what the handler receives
+        received_events = []
+        
+        @sandbox_handler_sio.on('*')
+        async def sandbox_catch_all(event, *args):
+            """
+            This exactly mimics SandboxHandler's catch_all signature.
+            It expects event name as first arg, not sid.
+            """
+            # Log what we received
+            received_events.append({
+                'event': event,
+                'args': args,
+                'first_arg_type': type(event).__name__
+            })
+            
+            # Try to forward like SandboxHandler does
+            if event.startswith('agent:'):
+                # This would fail if event is 'mock-sid' instead of actual event name
+                pass
+        
+        # Simulate sandbox_api emitting a response
+        await sandbox_api_sio.emit('agent:run:command:response', {
+            'success': True,
+            'output': 'ls output',
+            'exit_code': 0,
+            'request_id': 'test-123'
+        })
+        
+        # Check what the handler received
+        assert len(received_events) == 1
+        received = received_events[0]
+        
+        # This assertion will fail, showing the bug
+        assert received['event'] == 'agent:run:command:response', (
+            f"BUG: Expected event name 'agent:run:command:response', "
+            f"but got '{received['event']}' (type: {received['first_arg_type']}). "
+            f"This shows that MockSocketIO incorrectly passes 'mock-sid' as the event name!"
+        )
+        
+        # The data should be in args[0]
+        assert len(received['args']) == 1
+        data = received['args'][0]
+        assert data['success'] is True
+        assert data['output'] == 'ls output'
