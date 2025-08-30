@@ -91,14 +91,59 @@ def configure_mock_ports(taken_ports: List[int] = None, all_taken: bool = False)
     logger.debug(f"Mock ports configured: {len(_mock_taken_ports)} ports marked as taken")
 
 
+# Global subprocess response configuration
+_subprocess_responses: Dict[str, Dict[str, Any]] = {}
+_subprocess_call_history: List[tuple] = []
+
+
+def configure_subprocess_responses(command_responses: Dict[str, Dict[str, Any]] = None):
+    """
+    Configure subprocess and file operation responses for testing.
+    
+    Args:
+        command_responses: Dict mapping command/operation patterns to response config.
+                         Keys can be:
+                         - Subprocess command: "pnpm", "pnpm install", "rsync *"
+                         - File operation: "shutil.copytree", "shutil.rmtree"
+                         Values are dicts with:
+                         - For subprocess: stdout, stderr, returncode
+                         - For file ops: should_fail (bool), error (str)
+                         
+    Example:
+        configure_subprocess_responses({
+            "pnpm install": {"stdout": "installed", "returncode": 0},
+            "rsync *": {"stderr": "Permission denied", "returncode": 1},
+            "shutil.copytree": {"should_fail": True, "error": "Permission denied"}
+        })
+    """
+    global _subprocess_responses
+    _subprocess_responses = command_responses or {}
+    logger.debug(f"Configured subprocess/file operation responses: {list(_subprocess_responses.keys())}")
+
+
+def get_subprocess_call_history():
+    """Get history of subprocess calls for verification."""
+    return _subprocess_call_history.copy()
+
+
+def clear_subprocess_history():
+    """Clear subprocess call history."""
+    global _subprocess_call_history
+    _subprocess_call_history.clear()
+
+
 def patch_subprocess_operations(command_responses: Dict[str, Dict[str, Any]] = None):
     """
     Patch subprocess operations with configurable responses.
     
     Args:
-        command_responses: Dict mapping command names to response config
-                         e.g., {"pnpm": {"stdout": "success", "returncode": 0}}
+        command_responses: Initial responses (can be updated via configure_subprocess_responses)
     """
+    # Set initial responses
+    if command_responses:
+        configure_subprocess_responses(command_responses)
+    
+    # Default responses for common commands
     default_responses = {
         "pnpm": {"stdout": "Dependencies installed successfully", "returncode": 0},
         "npx": {"stdout": "Local: http://localhost:5174/", "returncode": 0},
@@ -107,14 +152,39 @@ def patch_subprocess_operations(command_responses: Dict[str, Dict[str, Any]] = N
         "which": {"stdout": "/usr/local/bin/pnpm", "returncode": 0},
     }
     
-    # Merge with custom responses if provided
-    responses = {**default_responses, **(command_responses or {})}
-    
     async def mock_subprocess_exec(*args, **kwargs):
+        # Record the call
+        _subprocess_call_history.append((args, kwargs))
+        
+        # Build full command string for matching
+        full_command = " ".join(str(arg) for arg in args)
         command = args[0] if args else "unknown"
         
         # Find matching response config
-        config = responses.get(command, {"stdout": "Command executed", "returncode": 0})
+        config = None
+        
+        # First check exact matches on full command
+        for pattern, response in _subprocess_responses.items():
+            if "*" in pattern:
+                # Wildcard pattern matching
+                pattern_parts = pattern.split("*")
+                if all(part in full_command for part in pattern_parts):
+                    config = response
+                    break
+            elif pattern in full_command:
+                # Substring match
+                config = response
+                break
+        
+        # Fall back to command-only match
+        if config is None:
+            config = _subprocess_responses.get(command)
+        
+        # Fall back to defaults
+        if config is None:
+            config = default_responses.get(command, {"stdout": "Command executed", "returncode": 0})
+        
+        logger.debug(f"Mock subprocess: {command} -> returncode={config.get('returncode', 0)}")
         
         # Create mock process with configured response
         mock_proc = MockProcess(
@@ -243,11 +313,54 @@ def restore_system_patches():
     logger.debug("System patches restored")
 
 
+def patch_file_operations():
+    """Patch file operations to allow failure simulation via configure_subprocess_responses."""
+    import shutil
+    
+    # Store original methods  
+    global _original_socket_methods
+    _original_socket_methods['shutil_copytree'] = shutil.copytree
+    _original_socket_methods['shutil_rmtree'] = shutil.rmtree
+    
+    def mock_copytree(src, dst, **kwargs):
+        """Mock copytree that can be configured to fail via _subprocess_responses."""
+        # Check if shutil.copytree should fail
+        config = _subprocess_responses.get("shutil.copytree")
+        if config and config.get("should_fail", False):
+            error_msg = config.get("error", "Mock file operation failure")
+            raise OSError(error_msg)
+        
+        # Success case - create basic directory structure for testing
+        import os
+        os.makedirs(dst, exist_ok=True)
+        # Create package.json so file checks pass
+        with open(os.path.join(dst, "package.json"), "w") as f:
+            f.write('{"name": "test-app"}')
+        logger.debug(f"Mock copytree: {src} -> {dst}")
+    
+    def mock_rmtree(path, **kwargs):
+        """Mock rmtree that can be configured to fail via _subprocess_responses."""
+        # Check if shutil.rmtree should fail
+        config = _subprocess_responses.get("shutil.rmtree")
+        if config and config.get("should_fail", False):
+            error_msg = config.get("error", "Mock file removal failure")
+            raise OSError(error_msg)
+        
+        logger.debug(f"Mock rmtree: {path}")
+        # Success case - just log the operation, don't actually remove anything
+    
+    # Apply patches
+    shutil.copytree = mock_copytree
+    shutil.rmtree = mock_rmtree
+
+
 def patch_all_system_operations(
     taken_ports: List[int] = None,
     all_ports_taken: bool = False,
     command_responses: Dict[str, Dict[str, Any]] = None,
-    patch_network: bool = False
+    patch_network: bool = False,
+    patch_files: bool = True,
+    patch_processes: bool = True
 ):
     """
     Convenience function to apply common system patches.
@@ -255,15 +368,23 @@ def patch_all_system_operations(
     Args:
         taken_ports: List of ports to mark as taken
         all_ports_taken: Mark all ports as taken (for error testing)
-        command_responses: Custom subprocess command responses
+        command_responses: Custom subprocess and file operation responses
         patch_network: Whether to patch network operations (only for port testing)
+        patch_files: Whether to patch file operations (may interfere with some tests)
+        patch_processes: Whether to patch process management (may interfere with bash sessions)
     """
     if patch_network:
         configure_mock_ports(taken_ports, all_ports_taken)
         patch_network_operations()
     
     patch_subprocess_operations(command_responses)
-    patch_process_management()
+    
+    if patch_files:
+        patch_file_operations()
+    
+    if patch_processes:
+        patch_process_management()
+    
     patch_file_watching()
     
     logger.debug("System operations patched for testing")
@@ -278,3 +399,16 @@ def get_mock_taken_ports() -> Set[int]:
 def is_port_mocked_as_taken(port: int) -> bool:
     """Check if a specific port is mocked as taken (for test verification)."""
     return port in _mock_taken_ports
+
+
+def reset_subprocess_mocks():
+    """
+    Reset all subprocess and file operation mocks to clean state.
+    
+    Call this in test teardown to ensure clean state between tests.
+    """
+    global _subprocess_responses, _subprocess_call_history, _mock_taken_ports
+    _subprocess_responses = {}
+    _subprocess_call_history.clear()
+    _mock_taken_ports.clear()
+    logger.debug("Subprocess and file operation mocks reset")
