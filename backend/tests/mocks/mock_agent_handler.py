@@ -5,8 +5,15 @@ This mock handler extends the real AgentHandler but patches litellm
 to avoid actual LLM API calls while keeping all other logic intact.
 """
 
-from wss.handlers.agent_handler import AgentHandler
+# Import mocks BEFORE importing modules that use them
+from .mock_stripe import mock_stripe  # Prevents Stripe API calls
+
+# Apply litellm patch BEFORE importing AgentHandler
+# This ensures litellm is mocked before any module can import it
 from .mock_litellm import patch_litellm_components
+patch_litellm_components()
+
+from wss.handlers.agent_handler import AgentHandler
 import logging
 
 logger = logging.getLogger(__name__)
@@ -22,10 +29,6 @@ class MockAgentHandler(AgentHandler):
     """
     
     def __init__(self, sio, rclone_handler=None, proxy=None):
-        """Initialize with litellm patching."""
+        """Initialize MockAgentHandler."""
         super().__init__(sio, rclone_handler, proxy)
-        self._setup_patches()
-    
-    def _setup_patches(self):
-        """Start patching litellm completion."""
-        patch_litellm_components()
+        logger.debug("MockAgentHandler initialized with pre-patched litellm")
