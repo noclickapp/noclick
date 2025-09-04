@@ -12,6 +12,7 @@ export interface InlineDrawingTagProps {
     screenshot: string;
     isUpdating?: boolean;
     onRemove?: (id: string) => void;
+    onClick?: () => void;
     className?: string;
 }
 
@@ -20,6 +21,7 @@ export function InlineDrawingTag({
     screenshot, 
     isUpdating = false, 
     onRemove,
+    onClick,
     className 
 }: InlineDrawingTagProps) {
     const [isHoveringTag, setIsHoveringTag] = useState(false);
@@ -30,6 +32,14 @@ export function InlineDrawingTag({
         e.preventDefault();
         e.stopPropagation();
         onRemove?.(id);
+    };
+
+    const handleClick = (e: React.MouseEvent) => {
+        if (onClick) {
+            e.preventDefault();
+            e.stopPropagation();
+            onClick();
+        }
     };
 
     return (
@@ -58,24 +68,28 @@ export function InlineDrawingTag({
                 ref={spanRef}
                 onMouseEnter={() => setIsHoveringTag(true)}
                 onMouseLeave={() => setIsHoveringTag(false)}
+                onClick={handleClick}
                 contentEditable={false}
                 className={cn(
-                    "inline-flex items-center mx-1 relative group cursor-default",
-                    "bg-purple-700/50 rounded-md p-0.5 border border-purple-500/30",
+                    "inline-flex items-center mx-1 relative group",
+                    "bg-white/80 rounded-md p-0.5 border border-white/70",
                     "transition-colors duration-150",
+                    onClick ? "cursor-pointer hover:bg-white/90 hover:border-white/80" : "cursor-default",
                     getSelectionHighlightClass(isSelected),
                     className
                 )}
                 style={{ 
-                    verticalAlign: 'middle'
+                    verticalAlign: 'middle',
+                    cursor: onClick ? 'pointer' : 'default'
                 }}
                 data-drawing-id={id}
                 data-drawing-type="screenshot"
                 data-drawing-screenshot={screenshot}
+                title={onClick ? "Click to toggle drawing mode" : undefined}
             >
                 <div className="relative flex items-center gap-1">
                     {/* Pen icon to indicate drawing content */}
-                    <Pen className="w-3 h-3 text-purple-300" />
+                    <Pen className="w-3 h-3 text-zinc-800" />
                     
                     <img 
                         src={screenshot} 
@@ -86,13 +100,13 @@ export function InlineDrawingTag({
                         )}
                     />
                     
-                    <span className="text-xs text-purple-200 font-mono">
+                    <span className="text-xs text-zinc-800 font-mono">
                         Drawing
                     </span>
                     
                     {isUpdating && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-purple-900/30 rounded">
-                            <Loader2 className="w-3 h-3 text-purple-200 animate-spin" />
+                        <div className="absolute inset-0 flex items-center justify-center bg-white/30 rounded">
+                            <Loader2 className="w-3 h-3 text-zinc-800 animate-spin" />
                         </div>
                     )}
                 </div>
@@ -101,9 +115,9 @@ export function InlineDrawingTag({
                     onClick={handleRemove}
                     className={cn(
                         "absolute opacity-0 group-hover:opacity-100",
-                        "bg-purple-800 rounded-full p-0.5",
-                        "hover:bg-purple-900 transition-all duration-200",
-                        "border border-purple-600",
+                        "bg-white/80 rounded-full p-0.5",
+                        "hover:bg-white/90 transition-all duration-200",
+                        "border border-white/70",
                         "z-[10000]"  // Higher than tooltips (z-[9999]) to ensure always clickable
                     )}
                     style={{
@@ -114,7 +128,7 @@ export function InlineDrawingTag({
                     }}
                     aria-label="Remove drawing screenshot"
                 >
-                    <X className="w-2.5 h-2.5 text-purple-200" />
+                    <X className="w-2.5 h-2.5 text-zinc-800" />
                 </button>
             </span>
         </>

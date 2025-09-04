@@ -8,7 +8,7 @@ import { useEffect, useState, RefObject } from 'react';
  * @param elementRef - Reference to the element to track
  * @returns boolean indicating if element is within selection
  */
-export function useSelectionHighlight(elementRef: RefObject<HTMLElement>): boolean {
+export function useSelectionHighlight(elementRef: RefObject<HTMLElement | null>): boolean {
     const [isSelected, setIsSelected] = useState(false);
 
     useEffect(() => {
@@ -81,7 +81,7 @@ export function useSelectionHighlight(elementRef: RefObject<HTMLElement>): boole
 export function getSelectionHighlightClass(isSelected: boolean): string {
     if (!isSelected) return '';
     
-    // Match the browser's default selection color in dark mode
-    // This creates a consistent visual experience
-    return 'bg-blue-600/40 ring-1 ring-blue-500/50';
+    // Show only a blue border when selected, no background change
+    // This creates a clean visual indication without changing the element's appearance
+    return 'ring-2 ring-blue-500';
 }

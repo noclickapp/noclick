@@ -8,8 +8,22 @@ export function useDrawer() {
     const context = useContext(DrawerContext);
     
     if (!context) {
-        throw new Error('useDrawer must be used within a ChatDrawerProvider');
+        // Return no-op functions when outside provider context
+        // This allows components to work even when not wrapped in ChatDrawerProvider
+        console.log('[useDrawer] No drawer context - returning no-op functions');
+        return {
+            isOpen: false,
+            content: null,
+            visibleDrawerId: null,
+            visibleDrawer: null,
+            registerDrawer: () => {},
+            unregisterDrawer: () => {},
+            updateDrawer: () => {},
+            hasContext: false,
+        };
     }
+    
+    console.log('[useDrawer] Context found, isOpen:', context.isOpen, 'visibleDrawerId:', context.visibleDrawerId);
     
     return {
         isOpen: context.isOpen,
@@ -19,5 +33,6 @@ export function useDrawer() {
         registerDrawer: context.registerDrawer,
         unregisterDrawer: context.unregisterDrawer,
         updateDrawer: context.updateDrawer,
+        hasContext: true,
     };
 }
