@@ -6,7 +6,7 @@ import asyncio
 import os
 import pytest
 from typing import List
-from backend.utils.async_env import async_env, patch_environ
+from utils.async_env import async_env, patch_environ
 
 
 class TestAsyncEnv:

@@ -10,13 +10,17 @@ For sync/thread contexts, it uses thread-local storage.
 
 Created because OpenHands creates new threads that break async_env(). We can
 probably deprecate async_env.py now.
+
+UPDATE: Because of OpenHands' queue thread pattern where there's a worker queue processor,
+we can't use this either inside agent_handler. The robust fix is to use it in TrackingLLM.
 """
 
 import os
 import threading
+import functools
 from contextlib import contextmanager, asynccontextmanager
 from contextvars import ContextVar
-from typing import Dict, Optional, Any, Iterator, Tuple, Union, List
+from typing import Dict, Optional, Any, Iterator, Tuple, Union, List, Callable
 
 # Store original environ
 _original_environ = dict(os.environ)
@@ -365,5 +369,117 @@ async def async_override_env(**env_vars: str):
         _async_context.reset(token)
 
 
+def _capture_current_context() -> Tuple[Optional[List[Dict[str, str]]], Optional[Dict[str, str]]]:
+    """
+    Capture the current thread's environment context.
+    
+    Returns:
+        Tuple of (thread_stack_copy, async_context_copy)
+    """
+    # Capture thread stack
+    stack = _get_thread_stack()
+    thread_stack_copy = list(stack) if stack else None
+    
+    # Capture async context
+    async_ctx = _async_context.get()
+    async_context_copy = dict(async_ctx) if async_ctx else None
+    
+    return thread_stack_copy, async_context_copy
+
+
+def _restore_context_in_thread(thread_stack: Optional[List[Dict[str, str]]], 
+                               async_ctx: Optional[Dict[str, str]]) -> None:
+    """
+    Restore captured context in the current thread.
+    
+    Args:
+        thread_stack: The thread stack to restore
+        async_ctx: The async context to restore
+    """
+    # Restore thread stack
+    if thread_stack is not None:
+        if not hasattr(_thread_local, 'env_stack'):
+            _thread_local.env_stack = []
+        _thread_local.env_stack.clear()
+        _thread_local.env_stack.extend(thread_stack)
+    
+    # Restore async context
+    if async_ctx is not None:
+        _async_context.set(async_ctx)
+
+
+def _context_preserving_wrapper(fn: Callable, 
+                               thread_stack: Optional[List[Dict[str, str]]],
+                               async_ctx: Optional[Dict[str, str]],
+                               *args, **kwargs) -> Any:
+    """
+    Wrapper that restores context before executing a function.
+    
+    This is used to wrap functions submitted to ThreadPoolExecutor.
+    """
+    # Restore the captured context in this worker thread
+    _restore_context_in_thread(thread_stack, async_ctx)
+    
+    try:
+        # Execute the original function
+        return fn(*args, **kwargs)
+    finally:
+        # Clean up the thread-local context to avoid leaks
+        if hasattr(_thread_local, 'env_stack'):
+            _thread_local.env_stack.clear()
+
+
+# Store original ThreadPoolExecutor submit method before patching
+from concurrent.futures import ThreadPoolExecutor
+_original_threadpool_submit = ThreadPoolExecutor.submit
+
+
+def _patched_threadpool_submit(self, fn: Callable, *args, **kwargs) -> Any:
+    """
+    Patched submit method for ThreadPoolExecutor that preserves context.
+    
+    This captures the current context and ensures it's restored in the worker thread.
+    """
+    # Capture current context
+    thread_stack, async_ctx = _capture_current_context()
+    
+    # If there's any context to preserve, wrap the function
+    if thread_stack or async_ctx:
+        fn_with_context = functools.partial(
+            _context_preserving_wrapper,
+            fn,
+            thread_stack,
+            async_ctx
+        )
+        # Submit the wrapped function
+        return _original_threadpool_submit(self, fn_with_context, *args, **kwargs)
+    else:
+        # No context to preserve, use original submit
+        return _original_threadpool_submit(self, fn, *args, **kwargs)
+
+
+def enable_context_propagation() -> None:
+    """
+    Enable automatic context propagation for ThreadPoolExecutor.
+    
+    This patches ThreadPoolExecutor.submit to automatically capture and restore
+    context when submitting tasks to thread pools. This makes override_env work
+    transparently with code that uses ThreadPoolExecutor (like OpenHands).
+    """
+    ThreadPoolExecutor.submit = _patched_threadpool_submit
+
+
+def disable_context_propagation() -> None:
+    """
+    Disable automatic context propagation for ThreadPoolExecutor.
+    
+    This restores the original ThreadPoolExecutor.submit method.
+    """
+    ThreadPoolExecutor.submit = _original_threadpool_submit
+
+
 # Auto-patch on import
 patch_environ()
+
+# Enable context propagation for ThreadPoolExecutor by default
+enable_context_propagation()

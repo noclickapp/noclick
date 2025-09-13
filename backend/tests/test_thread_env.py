@@ -10,30 +10,8 @@ import pytest
 import threading
 import time
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from typing import List, Dict, Any, Optional
-from contextlib import asynccontextmanager
-
-# Import will be from backend.utils.thread_env once implemented
-# For now, we'll define the expected interface
-try:
-    from backend.utils.thread_env import override_env, async_override_env, patch_environ
-except ImportError:
-    # Define mock interface for TDD
-    from contextlib import contextmanager
-    
-    @contextmanager
-    def override_env(**env_vars):
-        """Mock sync context manager for testing."""
-        yield
-    
-    @asynccontextmanager
-    async def async_override_env(**env_vars):
-        """Mock async context manager for testing."""
-        yield
-    
-    def patch_environ():
-        """Mock patch function."""
-        pass
+from typing import Dict, Optional
+from utils.thread_env import override_env, async_override_env, patch_environ
 
 
 class TestThreadEnv:
@@ -458,9 +436,10 @@ class TestThreadEnv:
         assert results[1]['async_var'] == 'async_value'
         assert results[1]['thread_var'] == 'thread_value'
         
-        # Thread 2 didn't have any environment set (contextvars don't cross threads)
-        assert results[2]['async_var'] is None
-        assert results[2]['thread_var'] is None
+        # Thread 2 with context propagation enabled should see async context
+        # (This changed with ThreadPoolExecutor patching - async context now propagates!)
+        assert results[2]['async_var'] == 'async_value'  # Context propagation works!
+        assert results[2]['thread_var'] is None  # But thread-local context doesn't propagate
     
     def test_exception_handling_in_threads(self):
         """Test that contexts are properly cleaned up on exceptions in threads."""
