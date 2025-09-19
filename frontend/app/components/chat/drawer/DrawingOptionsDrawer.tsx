@@ -11,10 +11,8 @@ interface DrawingOptionsDrawerProps {
     isDrawing: boolean;
     currentTool?: 'pen' | 'eraser' | 'text';
     currentColor?: string;
-    currentFontSize?: number;
     onToolChange: (tool: 'pen' | 'eraser' | 'text') => void;
     onColorChange: (color: string) => void;
-    onFontSizeChange?: (size: number) => void;
     onClear: () => void;
     onClose: () => void;
 }
@@ -35,20 +33,16 @@ const PRESET_COLORS = [
 // Persistent state that survives drawer open/close cycles
 let persistentState = {
     tool: 'pen' as 'pen' | 'eraser' | 'text',
-    color: '#ef4444',
-    fontSize: 20
+    color: '#ef4444'
 };
 
-const FONT_SIZES = [12, 16, 20, 24, 32, 48];
 
 // Separate component for drawer content to avoid re-registration issues
-export function DrawingOptionsContent({ 
+export function DrawingOptionsContent({
     currentTool: externalTool,
     currentColor: externalColor,
-    currentFontSize: externalFontSize,
-    onToolChange, 
+    onToolChange,
     onColorChange,
-    onFontSizeChange,
     onClear,
     onClose
 }: Omit<DrawingOptionsDrawerProps, 'isDrawing'>) {
@@ -58,9 +52,6 @@ export function DrawingOptionsContent({
     });
     const [currentColor, setCurrentColor] = useState(() => {
         return externalColor || persistentState.color;
-    });
-    const [currentFontSize, setCurrentFontSize] = useState(() => {
-        return externalFontSize || persistentState.fontSize;
     });
     
     // Sync with external state when it changes
@@ -88,11 +79,6 @@ export function DrawingOptionsContent({
         onToolChange(tool);
     }, [onToolChange]);
     
-    const handleFontSizeChange = useCallback((size: number) => {
-        setCurrentFontSize(size);
-        persistentState.fontSize = size;
-        onFontSizeChange?.(size);
-    }, [onFontSizeChange]);
     
     const handleColorChange = useCallback((color: string) => {
         setCurrentColor(color);
@@ -156,25 +142,7 @@ export function DrawingOptionsContent({
                     <Type className="h-3.5 w-3.5" />
                 </Button>
             </div>
-            
-            {/* Font Size Selector - Only visible when text tool is active */}
-            {currentTool === 'text' && (
-                <div className="flex items-center gap-2 px-2">
-                    <span className="text-xs text-zinc-400">Font Size:</span>
-                    <select
-                        value={currentFontSize}
-                        onChange={(e) => handleFontSizeChange(Number(e.target.value))}
-                        className="h-7 px-2 text-xs bg-zinc-800/80 border border-zinc-700 rounded text-zinc-200 hover:bg-zinc-700 focus:outline-none focus:border-zinc-500"
-                    >
-                        {FONT_SIZES.map(size => (
-                            <option key={size} value={size}>
-                                {size}px
-                            </option>
-                        ))}
-                    </select>
-                </div>
-            )}
-            
+
             {/* Color Grid */}
             <div className="space-y-1">
                 <div className="flex gap-1 px-2">
@@ -242,19 +210,17 @@ export function DrawingOptionsContent({
     );
 }
 
-export function DrawingOptionsDrawer({ 
+export function DrawingOptionsDrawer({
     isDrawing,
     currentTool,
     currentColor,
-    currentFontSize,
-    onToolChange, 
+    onToolChange,
     onColorChange,
-    onFontSizeChange,
     onClear,
     onClose
 }: DrawingOptionsDrawerProps) {
     const { registerDrawer, unregisterDrawer } = useDrawer();
-    
+
     // Reset persistent state to match iframe defaults when drawing is enabled
     useEffect(() => {
         if (isDrawing) {
@@ -263,19 +229,17 @@ export function DrawingOptionsDrawer({
             console.log('[DrawingOptionsDrawer] Reset persistent state to pen mode to match iframe');
         }
     }, [isDrawing]);
-    
+
     useEffect(() => {
         if (isDrawing) {
             console.log('[DrawingOptionsDrawer] Registering drawer');
             // Register with a stable component reference
-            registerDrawer('drawing-options', 
-                <DrawingOptionsContent 
+            registerDrawer('drawing-options',
+                <DrawingOptionsContent
                     currentTool={currentTool}
                     currentColor={currentColor}
-                    currentFontSize={currentFontSize}
                     onToolChange={onToolChange}
                     onColorChange={onColorChange}
-                    onFontSizeChange={onFontSizeChange}
                     onClear={onClear}
                     onClose={onClose}
                 />
@@ -284,11 +248,11 @@ export function DrawingOptionsDrawer({
             console.log('[DrawingOptionsDrawer] Unregistering drawer');
             unregisterDrawer('drawing-options');
         }
-        
+
         return () => {
             unregisterDrawer('drawing-options');
         };
-    }, [isDrawing, currentTool, currentColor, currentFontSize, onToolChange, onColorChange, onFontSizeChange, onClear, onClose, registerDrawer, unregisterDrawer]);
+    }, [isDrawing, currentTool, currentColor, onToolChange, onColorChange, onClear, onClose, registerDrawer, unregisterDrawer]);
     
     return null; // This component manages drawer state only
 }
