@@ -3,16 +3,18 @@
 // Replaces the hover-based toolbar that was previously shown in the iframe
 
 import { useState, useEffect, useCallback } from 'react';
-import { Pen, Eraser, Trash2, Check } from 'lucide-react';
+import { Pen, Eraser, Trash2, Check, Type } from 'lucide-react';
 import { useDrawer } from '~/hooks/useDrawer';
 import { Button } from '~/components/ui/button';
 
 interface DrawingOptionsDrawerProps {
     isDrawing: boolean;
-    currentTool?: 'pen' | 'eraser';
+    currentTool?: 'pen' | 'eraser' | 'text';
     currentColor?: string;
-    onToolChange: (tool: 'pen' | 'eraser') => void;
+    currentFontSize?: number;
+    onToolChange: (tool: 'pen' | 'eraser' | 'text') => void;
     onColorChange: (color: string) => void;
+    onFontSizeChange?: (size: number) => void;
     onClear: () => void;
     onClose: () => void;
 }
@@ -32,25 +34,33 @@ const PRESET_COLORS = [
 
 // Persistent state that survives drawer open/close cycles
 let persistentState = {
-    tool: 'pen' as 'pen' | 'eraser',
-    color: '#ef4444'
+    tool: 'pen' as 'pen' | 'eraser' | 'text',
+    color: '#ef4444',
+    fontSize: 20
 };
+
+const FONT_SIZES = [12, 16, 20, 24, 32, 48];
 
 // Separate component for drawer content to avoid re-registration issues
 export function DrawingOptionsContent({ 
     currentTool: externalTool,
     currentColor: externalColor,
+    currentFontSize: externalFontSize,
     onToolChange, 
-    onColorChange, 
+    onColorChange,
+    onFontSizeChange,
     onClear,
     onClose
 }: Omit<DrawingOptionsDrawerProps, 'isDrawing'>) {
     // Initialize with external props, persistent state, or defaults in that order
-    const [currentTool, setCurrentTool] = useState<'pen' | 'eraser'>(() => {
+    const [currentTool, setCurrentTool] = useState<'pen' | 'eraser' | 'text'>(() => {
         return externalTool || persistentState.tool;
     });
     const [currentColor, setCurrentColor] = useState(() => {
         return externalColor || persistentState.color;
+    });
+    const [currentFontSize, setCurrentFontSize] = useState(() => {
+        return externalFontSize || persistentState.fontSize;
     });
     
     // Sync with external state when it changes
@@ -67,8 +77,8 @@ export function DrawingOptionsContent({
             persistentState.color = externalColor;
         }
     }, [externalColor]);
-    
-    const handleToolChange = useCallback((tool: 'pen' | 'eraser', event?: React.MouseEvent) => {
+
+    const handleToolChange = useCallback((tool: 'pen' | 'eraser' | 'text', event?: React.MouseEvent) => {
         // Prevent event from bubbling up and potentially closing the drawer
         event?.stopPropagation();
         event?.preventDefault();
@@ -78,11 +88,17 @@ export function DrawingOptionsContent({
         onToolChange(tool);
     }, [onToolChange]);
     
+    const handleFontSizeChange = useCallback((size: number) => {
+        setCurrentFontSize(size);
+        persistentState.fontSize = size;
+        onFontSizeChange?.(size);
+    }, [onFontSizeChange]);
+    
     const handleColorChange = useCallback((color: string) => {
         setCurrentColor(color);
         persistentState.color = color;
         onColorChange(color);
-        // When selecting a color, automatically switch to pen
+        // When selecting a color, automatically switch to pen or text (not eraser)
         if (currentTool === 'eraser') {
             handleToolChange('pen');
         }
@@ -124,7 +140,40 @@ export function DrawingOptionsContent({
                 >
                     <Eraser className="h-3.5 w-3.5" />
                 </Button>
+                <Button
+                    size="sm"
+                    onClick={(e) => handleToolChange('text', e)}
+                    className={`h-8 w-8 p-0 transition-all rounded-lg bg-zinc-800/80 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200 ${
+                        currentTool === 'text' 
+                            ? 'border-2 text-zinc-200' 
+                            : 'border border-zinc-700'
+                    }`}
+                    style={{
+                        borderColor: currentTool === 'text' ? currentColor : undefined
+                    }}
+                    title="Text Tool"
+                >
+                    <Type className="h-3.5 w-3.5" />
+                </Button>
             </div>
+            
+            {/* Font Size Selector - Only visible when text tool is active */}
+            {currentTool === 'text' && (
+                <div className="flex items-center gap-2 px-2">
+                    <span className="text-xs text-zinc-400">Font Size:</span>
+                    <select
+                        value={currentFontSize}
+                        onChange={(e) => handleFontSizeChange(Number(e.target.value))}
+                        className="h-7 px-2 text-xs bg-zinc-800/80 border border-zinc-700 rounded text-zinc-200 hover:bg-zinc-700 focus:outline-none focus:border-zinc-500"
+                    >
+                        {FONT_SIZES.map(size => (
+                            <option key={size} value={size}>
+                                {size}px
+                            </option>
+                        ))}
+                    </select>
+                </div>
+            )}
             
             {/* Color Grid */}
             <div className="space-y-1">
@@ -134,7 +183,7 @@ export function DrawingOptionsContent({
                             key={color}
                             onClick={() => handleColorChange(color)}
                             className={`flex-1 h-6 rounded-sm border transition-all hover:scale-105 relative ${
-                                currentColor === color && currentTool === 'pen'
+                                currentColor === color && (currentTool === 'pen' || currentTool === 'text')
                                     ? 'border-white shadow-md scale-105 ring-2 ring-white/30'
                                     : 'border-zinc-600 hover:border-zinc-400'
                             } ${currentTool === 'eraser' ? 'opacity-30 cursor-not-allowed' : ''} ${
@@ -153,7 +202,7 @@ export function DrawingOptionsContent({
                             key={color}
                             onClick={() => handleColorChange(color)}
                             className={`flex-1 h-6 rounded-sm border transition-all hover:scale-105 relative ${
-                                currentColor === color && currentTool === 'pen'
+                                currentColor === color && (currentTool === 'pen' || currentTool === 'text')
                                     ? 'border-white shadow-md scale-105 ring-2 ring-white/30'
                                     : 'border-zinc-600 hover:border-zinc-400'
                             } ${currentTool === 'eraser' ? 'opacity-30 cursor-not-allowed' : ''} ${
@@ -197,8 +246,10 @@ export function DrawingOptionsDrawer({
     isDrawing,
     currentTool,
     currentColor,
+    currentFontSize,
     onToolChange, 
-    onColorChange, 
+    onColorChange,
+    onFontSizeChange,
     onClear,
     onClose
 }: DrawingOptionsDrawerProps) {
@@ -221,8 +272,10 @@ export function DrawingOptionsDrawer({
                 <DrawingOptionsContent 
                     currentTool={currentTool}
                     currentColor={currentColor}
+                    currentFontSize={currentFontSize}
                     onToolChange={onToolChange}
                     onColorChange={onColorChange}
+                    onFontSizeChange={onFontSizeChange}
                     onClear={onClear}
                     onClose={onClose}
                 />
@@ -235,7 +288,7 @@ export function DrawingOptionsDrawer({
         return () => {
             unregisterDrawer('drawing-options');
         };
-    }, [isDrawing, currentTool, currentColor, onToolChange, onColorChange, onClear, onClose, registerDrawer, unregisterDrawer]);
+    }, [isDrawing, currentTool, currentColor, currentFontSize, onToolChange, onColorChange, onFontSizeChange, onClear, onClose, registerDrawer, unregisterDrawer]);
     
     return null; // This component manages drawer state only
 }

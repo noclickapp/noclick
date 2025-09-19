@@ -10,7 +10,7 @@ export function useDrawer() {
     if (!context) {
         // Return no-op functions when outside provider context
         // This allows components to work even when not wrapped in ChatDrawerProvider
-        console.log('[useDrawer] No drawer context - returning no-op functions');
+        // No drawer context - returning no-op functions
         return {
             isOpen: false,
             content: null,
@@ -23,7 +23,7 @@ export function useDrawer() {
         };
     }
     
-    console.log('[useDrawer] Context found, isOpen:', context.isOpen, 'visibleDrawerId:', context.visibleDrawerId);
+    // Context found - returning drawer controls
     
     return {
         isOpen: context.isOpen,
