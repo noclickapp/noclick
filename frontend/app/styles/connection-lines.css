@@ -1,0 +1,66 @@
+/* Connection lines animation styles for the landing page */
+/* These styles create animated dashed lines that connect from the chatbox */
+
+@keyframes dash-move-horizontal {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 16px 0;
+    }
+}
+
+@keyframes dash-move-vertical {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 0 16px;
+    }
+}
+
+@keyframes dash-move-vertical-up {
+    0% {
+        background-position: 0 0;
+    }
+    100% {
+        background-position: 0 -16px;
+    }
+}
+
+.animated-dash-horizontal {
+    background-image: linear-gradient(to right, white 50%, transparent 50%);
+    background-size: 16px 2px;
+    background-repeat: repeat-x;
+    background-position: center;
+    animation: dash-move-horizontal 1s linear infinite;
+    border: none !important;
+    height: 2px;
+}
+
+.animated-dash-vertical {
+    background-image: linear-gradient(to bottom, white 50%, transparent 50%);
+    background-size: 2px 16px;
+    background-repeat: repeat-y;
+    background-position: center;
+    animation: dash-move-vertical 1s linear infinite;
+    border: none !important;
+    width: 2px;
+}
+
+.animated-dash-vertical-up {
+    background-image: linear-gradient(to bottom, white 50%, transparent 50%);
+    background-size: 2px 16px;
+    background-repeat: repeat-y;
+    background-position: center;
+    animation: dash-move-vertical-up 1s linear infinite;
+    border: none !important;
+    width: 2px;
+}
+
+/* Show connection lines only above 1370px */
+@media (min-width: 1370px) {
+    .connection-lines-container {
+        display: block !important;
+    }
+}
