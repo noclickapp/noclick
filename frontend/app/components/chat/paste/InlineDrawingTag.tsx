@@ -91,11 +91,11 @@ export function InlineDrawingTag({
                     {/* Pen icon to indicate drawing content */}
                     <Pen className="w-3 h-3 text-zinc-800" />
                     
-                    <img 
-                        src={screenshot} 
+                    <img
+                        src={screenshot}
                         alt="Drawing screenshot"
                         className={cn(
-                            "h-5 w-auto rounded",
+                            "h-4 w-auto rounded",
                             isUpdating && "opacity-50"
                         )}
                     />
