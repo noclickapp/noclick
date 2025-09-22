@@ -6,88 +6,20 @@
 
 import { PassThrough } from 'node:stream';
 
-import type { AppLoadContext, EntryContext } from '@remix-run/node';
+import type { EntryContext } from '@remix-run/node';
 import { createReadableStreamFromReadable } from '@remix-run/node';
 import { RemixServer } from '@remix-run/react';
 import { isbot } from 'isbot';
 import { renderToPipeableStream } from 'react-dom/server';
-import { 
-    extractSubdomain, 
-    getSubdomainFile, 
-    getSubdomainIndex, 
-    decodeFileContent 
-} from '~/lib/redis';
 
 const ABORT_DELAY = 5_000;
-
-async function handleSubdomainRequest(request: Request): Promise<Response | null> {
-    const subdomain = extractSubdomain(request);
-    
-    // If no subdomain, return null to proceed with normal routing
-    if (!subdomain) {
-        return null;
-    }
-    
-    const url = new URL(request.url);
-    const requestedPath = url.pathname;
-    
-    try {
-        // If requesting root path, serve index file
-        if (requestedPath === '/' || requestedPath === '') {
-            const indexFile = await getSubdomainIndex(subdomain);
-            if (!indexFile) {
-                return new Response('Subdomain not found', { status: 404 });
-            }
-            
-            const content = decodeFileContent(indexFile);
-            return new Response(content, {
-                headers: {
-                    'Content-Type': indexFile.content_type,
-                    'Content-Length': indexFile.content_length.toString(),
-                    'Last-Modified': indexFile.last_modified,
-                    'Cache-Control': 'public, max-age=3600'
-                }
-            });
-        }
-        
-        // Try to get the specific file
-        const file = await getSubdomainFile(subdomain, requestedPath);
-        if (!file) {
-            return new Response('File not found', { status: 404 });
-        }
-        
-        const content = decodeFileContent(file);
-        return new Response(content, {
-            headers: {
-                'Content-Type': file.content_type,
-                'Content-Length': file.content_length.toString(),
-                'Last-Modified': file.last_modified,
-                'Cache-Control': 'public, max-age=3600'
-            }
-        });
-    } catch (error) {
-        console.error('Error handling subdomain request:', error);
-        return new Response('Internal Server Error', { status: 500 });
-    }
-}
 
 export default async function handleRequest(
     request: Request,
     responseStatusCode: number,
     responseHeaders: Headers,
-    remixContext: EntryContext,
-    // This is ignored so we can keep it in the template for visibility.  Feel
-    // free to delete this parameter in your app if you're not using it!
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    loadContext: AppLoadContext
+    remixContext: EntryContext
 ) {
-    // Check for subdomain requests first
-    const subdomainResponse = await handleSubdomainRequest(request);
-    if (subdomainResponse) {
-        return subdomainResponse;
-    }
-
-    // If no subdomain, proceed with normal Remix routing
     return isbot(request.headers.get('user-agent') || '')
         ? handleBotRequest(
               request,
