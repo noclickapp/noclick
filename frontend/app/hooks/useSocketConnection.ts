@@ -4,7 +4,22 @@
  */
 
 import { useEffect, useState } from 'react';
-import { socketReceiver, type SocketEnvironment } from '~/lib/socket-receiver';
+import { socketReceiver, type SocketEnvironment, type SocketConnectionState } from '~/lib/socket-receiver';
+
+interface HookConnectionState extends SocketConnectionState {
+  isConnected: boolean;
+  isConnecting: boolean;
+}
+
+const toHookState = (state: SocketConnectionState): HookConnectionState => {
+  const status = state?.status ?? 'disconnected';
+  return {
+    ...state,
+    status,
+    isConnected: status === 'connected',
+    isConnecting: status === 'connecting',
+  };
+};
 
 /**
  * Hook to track socket connection status.
@@ -14,23 +29,32 @@ import { socketReceiver, type SocketEnvironment } from '~/lib/socket-receiver';
  * 
  * @example
  * function MyComponent() {
- *   const isConnected = useSocketConnection();
- *   const isDataEngineConnected = useSocketConnection('DATA_ENGINE');
+ *   const { isConnected, status } = useSocketConnection();
+ *   const dataEngine = useSocketConnection('DATA_ENGINE');
+ *   if (dataEngine.isConnecting) {
+ *     // show loading UI
+ *   }
  * }
  */
-export function useSocketConnection(environment: SocketEnvironment = 'API'): boolean {
-  const [isConnected, setIsConnected] = useState(false);
+export function useSocketConnection(environment: SocketEnvironment = 'API'): HookConnectionState {
+  const [connectionState, setConnectionState] = useState<HookConnectionState>(() => {
+    const initialState = socketReceiver.getConnectionState(environment);
+    return toHookState(initialState);
+  });
 
   useEffect(() => {
     // Check current connection status
-    const socket = socketReceiver.getSocket(environment);
-    setIsConnected(socket?.connected ?? false);
+    socketReceiver.getSocket(environment);
 
     // Subscribe to connection changes
-    const unsubscribe = socketReceiver.subscribeConnection(environment, setIsConnected);
+    const unsubscribe = socketReceiver.subscribeConnection(environment, (state) => {
+      setConnectionState(toHookState(state));
+    });
 
     return unsubscribe;
   }, [environment]);
 
-  return isConnected;
+  return connectionState;
 }
+
+export type { HookConnectionState as UseSocketConnectionState };
