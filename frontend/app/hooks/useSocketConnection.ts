@@ -3,7 +3,7 @@
  * Provides direct access to socket connection state without needing a context provider.
  */
 
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useCallback, useSyncExternalStore } from 'react';
 import { socketReceiver, type SocketEnvironment, type SocketConnectionState } from '~/lib/socket-receiver';
 
 interface HookConnectionState extends SocketConnectionState {
@@ -37,24 +37,21 @@ const toHookState = (state: SocketConnectionState): HookConnectionState => {
  * }
  */
 export function useSocketConnection(environment: SocketEnvironment = 'API'): HookConnectionState {
-  const [connectionState, setConnectionState] = useState<HookConnectionState>(() => {
-    const initialState = socketReceiver.getConnectionState(environment);
-    return toHookState(initialState);
-  });
-
-  useEffect(() => {
-    // Check current connection status
-    socketReceiver.getSocket(environment);
-
-    // Subscribe to connection changes
-    const unsubscribe = socketReceiver.subscribeConnection(environment, (state) => {
-      setConnectionState(toHookState(state));
+  const subscribe = useCallback((onStoreChange: () => void) => {
+    return socketReceiver.subscribeConnection(environment, () => {
+      onStoreChange();
     });
-
-    return unsubscribe;
   }, [environment]);
 
-  return connectionState;
+  const getSnapshot = useCallback(() => socketReceiver.getConnectionState(environment), [environment]);
+
+  const connectionState = useSyncExternalStore(subscribe, getSnapshot, getSnapshot);
+
+  useEffect(() => {
+    socketReceiver.getSocket(environment);
+  }, [environment]);
+
+  return useMemo(() => toHookState(connectionState), [connectionState]);
 }
 
 export type { HookConnectionState as UseSocketConnectionState };
