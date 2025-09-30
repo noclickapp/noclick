@@ -72,7 +72,26 @@ class IndexedDBManager {
         const request = store.get(key);
         request.onsuccess = () => {
           const result = request.result as StoredValue<T> | undefined;
-          resolve(result?.value ?? null);
+          resolve(result?.value ?? null); // return .value, not everything
+        };
+        request.onerror = () => resolve(null);
+      });
+    } catch {
+      return null;
+    }
+  }
+
+  async getWithMetadata<T>(storeName: string, key: string): Promise<StoredValue<T> | null> {
+    try {
+      const db = await this.getDB();
+      const tx = db.transaction(storeName, 'readonly');
+      const store = tx.objectStore(storeName);
+
+      return new Promise(resolve => {
+        const request = store.get(key);
+        request.onsuccess = () => {
+          const result = request.result as StoredValue<T> | undefined;
+          resolve(result ?? null);
         };
         request.onerror = () => resolve(null);
       });
@@ -217,6 +236,7 @@ export const idb = new IndexedDBManager(defaultConfig);
 // Convenient wrapper functions for the most common store
 export const valtioCache = {
   get: <T>(key: string) => idb.get<T>('valtio-cache', key),
+  getWithMetadata: <T>(key: string) => idb.getWithMetadata<T>('valtio-cache', key),
   set: <T>(key: string, value: T) => idb.set('valtio-cache', key, value),
   delete: (key: string) => idb.delete('valtio-cache', key),
   has: (key: string) => idb.has('valtio-cache', key),
