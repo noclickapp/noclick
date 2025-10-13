@@ -110,7 +110,7 @@ export function DateRangePicker({
               defaultMonth={tempDateRange?.from}
               selected={tempDateRange}
               onSelect={setTempDateRange}
-              numberOfMonths={1}
+              numberOfMonths={2}
               className="bg-zinc-900 text-zinc-100"
             />
 
