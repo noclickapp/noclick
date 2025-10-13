@@ -40,21 +40,12 @@ export function DateRangePicker({
     setIsOpen(open)
     if (open) {
       setTempDateRange(dateRange)
+    } else {
+      // Auto-apply when clicking outside (popover closes)
+      if (tempDateRange?.from && tempDateRange?.to) {
+        onDateRangeChange(tempDateRange)
+      }
     }
-  }
-
-  // Apply the selected range
-  const handleApply = () => {
-    if (tempDateRange?.from && tempDateRange?.to) {
-      onDateRangeChange(tempDateRange)
-      setIsOpen(false)
-    }
-  }
-
-  // Cancel and reset
-  const handleCancel = () => {
-    setTempDateRange(dateRange)
-    setIsOpen(false)
   }
 
   // Format date range for display
@@ -113,26 +104,6 @@ export function DateRangePicker({
               numberOfMonths={2}
               className="bg-zinc-900 text-zinc-100"
             />
-
-            {/* Action Buttons */}
-            <div className="flex items-center justify-end gap-2 px-4 py-3 border-t border-zinc-800">
-              <Button
-                variant="ghost"
-                size="sm"
-                onClick={handleCancel}
-                className="h-9 px-4 text-xs text-zinc-400 hover:text-zinc-100 hover:bg-zinc-800"
-              >
-                Cancel
-              </Button>
-              <Button
-                size="sm"
-                onClick={handleApply}
-                disabled={!tempDateRange?.from || !tempDateRange?.to}
-                className="h-9 px-4 text-xs bg-zinc-900 hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                Apply
-              </Button>
-            </div>
           </div>
         </PopoverContent>
       </Popover>
