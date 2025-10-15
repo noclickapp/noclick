@@ -78,6 +78,10 @@ def configure_mock_s3_responses(responses: Dict[str, Any] = None):
         mock_s3_client.put_object.return_value = {'ETag': '"mock-etag"'}
     if "delete_object" not in _mock_s3_responses:
         mock_s3_client.delete_object.return_value = {}
+    if "head_object" not in _mock_s3_responses:
+        mock_s3_client.head_object.return_value = {'ContentType': 'text/html', 'ContentLength': 1024}
+    if "copy_object" not in _mock_s3_responses:
+        mock_s3_client.copy_object.return_value = {'ETag': '"mock-copy-etag"'}
     
     logger.debug(f"Mock S3 responses configured: {list(_mock_s3_responses.keys())}")
 
