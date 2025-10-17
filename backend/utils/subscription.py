@@ -10,16 +10,15 @@ from asyncpg import Pool
 logger = logging.getLogger(__name__)
 
 
-async def get_user_subscription_tier() -> str:
+async def get_user_subscription_tier(user_data: dict) -> str:
     """
-    Determine user's subscription tier based on billing status.
+    Determine user's subscription tier from JWT payload.
 
     Args:
-        pool: Database connection pool
-        user_id: User ID to check
+        user_data: JWT payload containing subscription_tier
 
     Returns:
         "free" - User is on free tier (show banner)
         "plus" - User is on plus tier (no banner)
     """
-    return "free"
+    return user_data.get("subscription_tier", "free")
