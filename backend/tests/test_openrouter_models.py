@@ -5,6 +5,7 @@ Tests for OpenRouter models cache utility.
 import pytest
 from utils.openrouter_models import (
     get_openrouter_models,
+    get_openrouter_models_sync,
     refresh_openrouter_models,
     get_openrouter_model_by_id,
     _models_cache
@@ -70,3 +71,53 @@ async def test_refresh_models():
     assert len(models2) > 0
     # Should be different object (not cached)
     assert models1 is not models2
+
+
+def test_sync_fetch_models():
+    """Test synchronous fetch."""
+    # Clear cache first
+    _models_cache.clear()
+
+    # Fetch synchronously
+    models = get_openrouter_models_sync()
+
+    assert isinstance(models, list)
+    assert len(models) > 0
+    assert 'id' in models[0]
+    print(f"✅ Fetched {len(models)} models (sync)")
+
+
+def test_sync_cache_hit():
+    """Test that sync fetch uses cache."""
+    # Clear cache
+    _models_cache.clear()
+
+    # First fetch (cache miss)
+    models1 = get_openrouter_models_sync()
+
+    # Second fetch (should hit cache)
+    models2 = get_openrouter_models_sync()
+
+    # Should be exact same object from cache
+    assert models1 is models2
+    print(f"✅ Sync cache hit: {len(models2)} models")
+
+
+def test_sync_cache_refresh_on_expiry():
+    """Test that sync fetch refreshes when cache expires."""
+    # Clear cache
+    _models_cache.clear()
+
+    # First fetch
+    models1 = get_openrouter_models_sync()
+
+    # Manually clear cache to simulate expiry
+    _models_cache.clear()
+
+    # Should fetch fresh data
+    models2 = get_openrouter_models_sync()
+
+    assert len(models2) > 0
+    # Should be different object (re-fetched)
+    assert models1 is not models2
+    print(f"✅ Sync refresh on expiry: {len(models2)} models")
