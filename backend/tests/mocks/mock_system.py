@@ -316,11 +316,13 @@ def restore_system_patches():
 def patch_file_operations():
     """Patch file operations to allow failure simulation via configure_subprocess_responses."""
     import shutil
-    
-    # Store original methods  
+
+    # Store original methods (only if not already stored to avoid saving mocked versions)
     global _original_socket_methods
-    _original_socket_methods['shutil_copytree'] = shutil.copytree
-    _original_socket_methods['shutil_rmtree'] = shutil.rmtree
+    if 'shutil_copytree' not in _original_socket_methods:
+        _original_socket_methods['shutil_copytree'] = shutil.copytree
+    if 'shutil_rmtree' not in _original_socket_methods:
+        _original_socket_methods['shutil_rmtree'] = shutil.rmtree
     
     def mock_copytree(src, dst, **kwargs):
         """Mock copytree that can be configured to fail via _subprocess_responses."""
@@ -345,9 +347,14 @@ def patch_file_operations():
         if config and config.get("should_fail", False):
             error_msg = config.get("error", "Mock file removal failure")
             raise OSError(error_msg)
-        
+
         logger.debug(f"Mock rmtree: {path}")
-        # Success case - just log the operation, don't actually remove anything
+        # For OpenHands storage paths, actually delete the files
+        # This is necessary for tests that verify filesystem cleanup
+        path_str = str(path)
+        if 'openhands_sessions' in path_str or 'conversations' in path_str:
+            return _original_socket_methods['shutil_rmtree'](path, **kwargs)
+        # For other paths, just log the operation without actually removing
     
     # Apply patches
     shutil.copytree = mock_copytree
