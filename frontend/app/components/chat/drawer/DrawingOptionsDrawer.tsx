@@ -3,7 +3,7 @@
 // Replaces the hover-based toolbar that was previously shown in the iframe
 
 import { useState, useEffect, useCallback } from 'react';
-import { Pen, Eraser, Trash2, Check, Type } from 'lucide-react';
+import { Pen, Eraser, Trash2, Check, Type, Undo, Redo } from 'lucide-react';
 import { useDrawer } from '~/hooks/useDrawer';
 import { Button } from '~/components/ui/button';
 
@@ -11,10 +11,14 @@ interface DrawingOptionsDrawerProps {
     isDrawing: boolean;
     currentTool?: 'pen' | 'eraser' | 'text';
     currentColor?: string;
+    canUndo?: boolean;
+    canRedo?: boolean;
     onToolChange: (tool: 'pen' | 'eraser' | 'text') => void;
     onColorChange: (color: string) => void;
     onClear: () => void;
     onClose: () => void;
+    onUndo?: () => void;
+    onRedo?: () => void;
 }
 
 const PRESET_COLORS = [
@@ -41,10 +45,14 @@ let persistentState = {
 export function DrawingOptionsContent({
     currentTool: externalTool,
     currentColor: externalColor,
+    canUndo = false,
+    canRedo = false,
     onToolChange,
     onColorChange,
     onClear,
-    onClose
+    onClose,
+    onUndo,
+    onRedo
 }: Omit<DrawingOptionsDrawerProps, 'isDrawing'>) {
     // Initialize with external props, persistent state, or defaults in that order
     const [currentTool, setCurrentTool] = useState<'pen' | 'eraser' | 'text'>(() => {
@@ -98,22 +106,46 @@ export function DrawingOptionsContent({
             </div>
             
             {/* Tool Selection */}
-            <div className="flex justify-end gap-1.5 px-2">
-                <Button
-                    size="sm"
-                    onClick={(e) => handleToolChange('pen', e)}
-                    className={`h-8 w-8 p-0 transition-all rounded-lg bg-zinc-800/80 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200 ${
-                        currentTool === 'pen' 
-                            ? 'border-2 text-zinc-200' 
-                            : 'border border-zinc-700'
-                    }`}
-                    style={{
-                        borderColor: currentTool === 'pen' ? currentColor : undefined
-                    }}
-                    title="Pen Tool"
-                >
-                    <Pen className="h-3.5 w-3.5" />
-                </Button>
+            <div className="flex justify-between gap-1.5 px-2">
+                {/* Undo/Redo */}
+                <div className="flex gap-1.5">
+                    <Button
+                        size="sm"
+                        onClick={onUndo}
+                        disabled={!canUndo}
+                        className="h-8 w-8 p-0 transition-all rounded-lg bg-zinc-800/80 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200 border border-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed"
+                        title="Undo (Ctrl+Z)"
+                    >
+                        <Undo className="h-3.5 w-3.5" />
+                    </Button>
+                    <Button
+                        size="sm"
+                        onClick={onRedo}
+                        disabled={!canRedo}
+                        className="h-8 w-8 p-0 transition-all rounded-lg bg-zinc-800/80 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200 border border-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed"
+                        title="Redo (Ctrl+Y)"
+                    >
+                        <Redo className="h-3.5 w-3.5" />
+                    </Button>
+                </div>
+
+                {/* Drawing Tools */}
+                <div className="flex gap-1.5">
+                    <Button
+                        size="sm"
+                        onClick={(e) => handleToolChange('pen', e)}
+                        className={`h-8 w-8 p-0 transition-all rounded-lg bg-zinc-800/80 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200 ${
+                            currentTool === 'pen'
+                                ? 'border-2 text-zinc-200'
+                                : 'border border-zinc-700'
+                        }`}
+                        style={{
+                            borderColor: currentTool === 'pen' ? currentColor : undefined
+                        }}
+                        title="Pen Tool"
+                    >
+                        <Pen className="h-3.5 w-3.5" />
+                    </Button>
                 <Button
                     size="sm"
                     onClick={(e) => handleToolChange('eraser', e)}
@@ -126,21 +158,22 @@ export function DrawingOptionsContent({
                 >
                     <Eraser className="h-3.5 w-3.5" />
                 </Button>
-                <Button
-                    size="sm"
-                    onClick={(e) => handleToolChange('text', e)}
-                    className={`h-8 w-8 p-0 transition-all rounded-lg bg-zinc-800/80 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200 ${
-                        currentTool === 'text' 
-                            ? 'border-2 text-zinc-200' 
-                            : 'border border-zinc-700'
-                    }`}
-                    style={{
-                        borderColor: currentTool === 'text' ? currentColor : undefined
-                    }}
-                    title="Text Tool"
-                >
-                    <Type className="h-3.5 w-3.5" />
-                </Button>
+                    <Button
+                        size="sm"
+                        onClick={(e) => handleToolChange('text', e)}
+                        className={`h-8 w-8 p-0 transition-all rounded-lg bg-zinc-800/80 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200 ${
+                            currentTool === 'text'
+                                ? 'border-2 text-zinc-200'
+                                : 'border border-zinc-700'
+                        }`}
+                        style={{
+                            borderColor: currentTool === 'text' ? currentColor : undefined
+                        }}
+                        title="Text Tool"
+                    >
+                        <Type className="h-3.5 w-3.5" />
+                    </Button>
+                </div>
             </div>
 
             {/* Color Grid */}
@@ -214,10 +247,14 @@ export function DrawingOptionsDrawer({
     isDrawing,
     currentTool,
     currentColor,
+    canUndo,
+    canRedo,
     onToolChange,
     onColorChange,
     onClear,
-    onClose
+    onClose,
+    onUndo,
+    onRedo
 }: DrawingOptionsDrawerProps) {
     const { registerDrawer, unregisterDrawer } = useDrawer();
 
@@ -238,10 +275,14 @@ export function DrawingOptionsDrawer({
                 <DrawingOptionsContent
                     currentTool={currentTool}
                     currentColor={currentColor}
+                    canUndo={canUndo}
+                    canRedo={canRedo}
                     onToolChange={onToolChange}
                     onColorChange={onColorChange}
                     onClear={onClear}
                     onClose={onClose}
+                    onUndo={onUndo}
+                    onRedo={onRedo}
                 />
             );
         } else {
@@ -252,7 +293,7 @@ export function DrawingOptionsDrawer({
         return () => {
             unregisterDrawer('drawing-options');
         };
-    }, [isDrawing, currentTool, currentColor, onToolChange, onColorChange, onClear, onClose, registerDrawer, unregisterDrawer]);
+    }, [isDrawing, currentTool, currentColor, canUndo, canRedo, onToolChange, onColorChange, onClear, onClose, onUndo, onRedo, registerDrawer, unregisterDrawer]);
     
     return null; // This component manages drawer state only
 }
