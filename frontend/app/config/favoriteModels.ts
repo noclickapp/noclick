@@ -3,6 +3,7 @@
 // Model IDs should match exactly as they appear in the models list
 
 export const FAVORITE_MODELS = [
+    'claude-code',
     'openrouter/openai/gpt-4-turbo',
     'openrouter/anthropic/claude-sonnet-4.5',
     'openrouter/minimax/minimax-m2',
