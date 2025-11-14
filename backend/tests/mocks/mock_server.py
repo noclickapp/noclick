@@ -14,6 +14,7 @@ Usage:
 """
 
 import asyncio
+import inspect
 import json
 import logging
 import socket
@@ -211,7 +212,10 @@ class MockHTTPServer:
             return web.Response(status=404, text="Not Found")
 
         try:
+            # Support both sync and async handlers
             mock_resp = handler(mock_req)
+            if inspect.iscoroutine(mock_resp):
+                mock_resp = await mock_resp
 
             # Handle streaming responses (SSE, chunked transfer, etc.)
             if mock_resp.stream:
