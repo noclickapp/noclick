@@ -1,0 +1,1 @@
+IGNORE_EVENTS = {"terminal:input", "terminal:output"}

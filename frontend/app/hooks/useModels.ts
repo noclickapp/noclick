@@ -47,16 +47,33 @@ export function useModels(): UseModelsResult {
 
     // Combine all models with source information
     const models = useMemo(() => {
+        // Create a map of OpenRouter model IDs (without prefix) to their capabilities
+        const openRouterCapabilities = new Map<string, Model['capabilities']>();
+        openRouter.models.forEach(model => {
+            // Remove "openrouter/" prefix to get the actual model ID
+            const actualId = model.id.replace(/^openrouter\//, '');
+            if (model.capabilities) {
+                openRouterCapabilities.set(actualId, model.capabilities);
+            }
+        });
+
         const openRouterWithSource: ModelWithSource[] = openRouter.models.map(model => ({
             ...model,
             source: 'openrouter' as const
         }));
-        
-        const liteLLMWithSource: ModelWithSource[] = liteLLM.models.map(model => ({
-            ...model,
-            source: 'litellm' as const
-        }));
-        
+
+        // Enrich LiteLLM models with capabilities from OpenRouter if they match
+        const liteLLMWithSource: ModelWithSource[] = liteLLM.models.map(model => {
+            // Check if this LiteLLM model exists in OpenRouter
+            const matchingCapabilities = openRouterCapabilities.get(model.id);
+            return {
+                ...model,
+                source: 'litellm' as const,
+                // Use OpenRouter capabilities if the model exists there, otherwise keep existing
+                capabilities: matchingCapabilities || model.capabilities,
+            };
+        });
+
         return [...openRouterWithSource, ...liteLLMWithSource];
     }, [openRouter.models, liteLLM.models]);
 
