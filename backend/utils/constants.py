@@ -1,1 +1,1 @@
-IGNORE_EVENTS = {"terminal:input", "terminal:output"}
+IGNORE_EVENTS = {"terminal:input", "terminal:output", "yjs:sync"}
