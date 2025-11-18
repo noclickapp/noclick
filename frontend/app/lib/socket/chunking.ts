@@ -66,6 +66,20 @@ export function getPayloadSize(payload: unknown): number {
 }
 
 /**
+ * Convert Uint8Array to base64 without stack overflow.
+ * Can't use String.fromCharCode(...bytes) for large arrays (causes stack overflow).
+ */
+function bytesToBase64(bytes: Uint8Array): string {
+  let binary = '';
+  const batchSize = 8192; // Process 8KB at a time to avoid stack overflow
+  for (let i = 0; i < bytes.length; i += batchSize) {
+    const batch = bytes.subarray(i, Math.min(i + batchSize, bytes.length));
+    binary += String.fromCharCode(...batch);
+  }
+  return btoa(binary);
+}
+
+/**
  * Split any large payload into chunks
  */
 export function chunkPayload(
@@ -88,7 +102,7 @@ export function chunkPayload(
       __chunk_id: chunkId,
       __chunk_index: i,
       __chunk_total: totalChunks,
-      __chunk_data: btoa(String.fromCharCode(...chunkBytes)),
+      __chunk_data: bytesToBase64(chunkBytes),
     });
   }
 
