@@ -36,16 +36,16 @@ class MockSocketIO:
     # Core Methods
     
     async def emit(
-        self, 
-        event: str, 
-        data: Any = None, 
+        self,
+        event: str,
+        data: Any = None,
         to: Optional[str] = None,
         room: Optional[str] = None,
         **kwargs
     ) -> None:
         """
         Emit an event. If linked to a partner, trigger their handlers.
-        
+
         Args:
             event: Event name
             data: Event data
@@ -55,39 +55,48 @@ class MockSocketIO:
         # Record the emission
         target = to or room
         self.emitted_events.append((event, data, target))
-        
-        logger.debug(f"[MockSocketIO] Emitted {event} to {target or 'all'}: {data}")
-        
+
+        logger.info(f"[MockSocketIO:{self.role}] Emitted event={event} to target={target or 'all'}, has_partner={self.partner is not None}")
+
         # If we have a partner, trigger their handlers
         if self.partner:
+            logger.info(f"[MockSocketIO:{self.role}] Forwarding {event} to partner ({self.partner.role})")
             await self.partner._handle_incoming_event(event, target or 'mock-sid', data)
+        else:
+            logger.warning(f"[MockSocketIO:{self.role}] No partner to forward {event} to!")
     
     async def _handle_incoming_event(self, event: str, sid: str, data: Any) -> None:
         """
         Handle an incoming event from the partner socket.
-        
+
         Matches handlers based on:
         1. Exact event name match
         2. Wildcard "*" handlers
         3. Regex pattern matching
-        
+
         Calls handlers based on socket role (client vs server):
         - Server handlers receive sid, client handlers don't
         - Wildcard handlers receive event name as first param
         """
+        logger.info(f"[MockSocketIO:{self.role}] _handle_incoming_event called: event={event}, sid={sid}, registered_handlers={list(self.handlers.keys())}")
+
         # Collect all matching handlers with their event pattern
         handlers_to_call = []
-        
+
         # Check exact match
         if event in self.handlers:
+            logger.info(f"[MockSocketIO:{self.role}] Found {len(self.handlers[event])} exact match handlers for {event}")
             for handler in self.handlers[event]:
                 handlers_to_call.append((handler, event))  # Store pattern with handler
-        
+
         # Check wildcard handlers
         if '*' in self.handlers:
+            logger.info(f"[MockSocketIO:{self.role}] Found {len(self.handlers['*'])} wildcard handlers")
             for handler in self.handlers['*']:
                 handlers_to_call.append((handler, '*'))  # Mark as wildcard
-        
+        else:
+            logger.warning(f"[MockSocketIO:{self.role}] No wildcard handlers registered!")
+
         # Check regex patterns (keys starting with 'regex:')
         for pattern_key, pattern_handlers in self.handlers.items():
             if pattern_key.startswith('regex:'):
@@ -95,9 +104,12 @@ class MockSocketIO:
                 if re.match(pattern, event):
                     for handler in pattern_handlers:
                         handlers_to_call.append((handler, pattern_key))  # Store pattern
-        
+
+        logger.info(f"[MockSocketIO:{self.role}] Found {len(handlers_to_call)} handlers to call for {event}")
+
         # Call all matching handlers with proper signature based on role
         for handler, pattern in handlers_to_call:
+            logger.info(f"[MockSocketIO:{self.role}] Calling handler for pattern={pattern}")
             try:
                 if self.role == 'client':
                     # Client handlers never receive sid

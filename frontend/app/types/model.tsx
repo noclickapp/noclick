@@ -10,16 +10,31 @@ export type { ProviderMetadata };
 export interface Model {
     /** Unique identifier for the model */
     id: string;
-    
+
     /** Provider name (e.g., 'openrouter', 'openai', 'anthropic', 'google') */
     provider: ModelProvider;
-    
+
     /** Human-readable description of the model's capabilities */
     description?: string;
-    
+
     /** Input modalities supported by the model */
     input_modalities: string[];
-    
+
     /** Output modalities supported by the model */
     output_modalities: string[];
+
+    /** Capability flags for UI display */
+    capabilities?: {
+        /** Model can analyze images (has "image" in input_modalities) */
+        imageAnalysis?: boolean;
+
+        /** Model can generate images (has "image" in output_modalities) */
+        imageGeneration?: boolean;
+
+        /** Model supports reasoning/thinking (has "include_reasoning" in supported_parameters) */
+        reasoning?: boolean;
+
+        /** Model supports tool/function calling (has "tools" in supported_parameters) */
+        tools?: boolean;
+    };
 }

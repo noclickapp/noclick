@@ -43,10 +43,10 @@ export function AuthLayout({
                     </div>
                     
                     {/* Black hole image - aligned flush with right edge */}
-                    <img 
-                        src="/blackhole.webp" 
-                        alt="Black hole visualization" 
-                        className="absolute right-0 top-1/2 -translate-y-1/2 h-[65vh] w-auto object-contain opacity-80"
+                    <img
+                        src="/blackhole.webp"
+                        alt="Black hole visualization"
+                        className="absolute right-0 top-1/2 -translate-y-1/2 h-[65vh] w-auto object-contain opacity-80 rr-block"
                     />
                     
                     {/* Particle effects on top - contained within this div */}
