@@ -58,6 +58,12 @@ class MockSocketIO:
 
         logger.info(f"[MockSocketIO:{self.role}] Emitted event={event} to target={target or 'all'}, has_partner={self.partner is not None}")
 
+        # Validate that sandbox-sid targets exist (to catch cross-container MCP bugs)
+        # Real Socket.IO silently ignores emits to non-existent sids
+        if target and target.startswith('sandbox-sid') and target not in self.sessions:
+            logger.warning(f"[MockSocketIO:{self.role}] Cannot emit to sandbox {target} - session not found on this server. Available sessions: {list(self.sessions.keys())}")
+            return
+
         # If we have a partner, trigger their handlers
         if self.partner:
             logger.info(f"[MockSocketIO:{self.role}] Forwarding {event} to partner ({self.partner.role})")
