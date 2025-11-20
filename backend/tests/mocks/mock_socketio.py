@@ -58,6 +58,12 @@ class MockSocketIO:
 
         logger.info(f"[MockSocketIO:{self.role}] Emitted event={event} to target={target or 'all'}, has_partner={self.partner is not None}")
 
+        # Validate that sandbox-sid targets exist (to catch cross-container MCP bugs)
+        # Real Socket.IO silently ignores emits to non-existent sids
+        if target and target.startswith('sandbox-sid') and target not in self.sessions:
+            logger.warning(f"[MockSocketIO:{self.role}] Cannot emit to sandbox {target} - session not found on this server. Available sessions: {list(self.sessions.keys())}")
+            return
+
         # If we have a partner, trigger their handlers
         if self.partner:
             logger.info(f"[MockSocketIO:{self.role}] Forwarding {event} to partner ({self.partner.role})")
@@ -245,6 +251,43 @@ class MockSocketIO:
         logger.debug("[MockSocketIO] Mock disconnect")
         return True
     
+    def start_background_task(self, target, *args, **kwargs):
+        """
+        Mock implementation of Socket.IO's start_background_task.
+
+        In real Socket.IO, this schedules a background task. In tests, we
+        schedule it as an asyncio task but don't wait for it (fire-and-forget).
+        This prevents usage_tracker errors when it tries to send events in background.
+
+        Args:
+            target: Coroutine function or regular function to run
+            *args: Positional arguments to pass to target
+            **kwargs: Keyword arguments to pass to target
+
+        Returns:
+            The scheduled task (or None for sync functions)
+        """
+        import asyncio
+        import inspect
+
+        # Call the target with provided arguments
+        result = target(*args, **kwargs)
+
+        # If it's a coroutine, schedule it as a background task
+        if inspect.iscoroutine(result):
+            try:
+                task = asyncio.create_task(result)
+                logger.debug(f"[MockSocketIO] Scheduled background task: {target.__name__}")
+                return task
+            except RuntimeError:
+                # No event loop running - just ignore
+                logger.debug(f"[MockSocketIO] No event loop for background task: {target.__name__}")
+                return None
+        else:
+            # Synchronous function - already executed
+            logger.debug(f"[MockSocketIO] Executed sync background task: {target.__name__}")
+            return None
+
     @property
     def connected(self):
         """Mock connected property - always True for testing."""
