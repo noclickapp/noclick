@@ -19,7 +19,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
 ];
 
 // Re-export types for convenience
-export type { NodeDefinition, NodeDimensions } from './types';
+export type { NodeDefinition, NodeDimensions, NodeOutputDisplayProps } from './types';
 
 // Build ReactFlow nodeTypes mapping
 // Merges registry nodes with any additional node types passed in
@@ -56,6 +56,12 @@ export function getDimensionsByType(type: string): NodeDimensions | undefined {
 // Helper to get full metadata by type
 export function getNodeMetadata(type: string): NodeDefinition | undefined {
     return AVAILABLE_NODES.find(n => n.type === type);
+}
+
+// Helper to get output display component by node type
+export function getOutputDisplayComponent(type: string): ComponentType<any> | undefined {
+    const node = AVAILABLE_NODES.find(n => n.type === type);
+    return node?.OutputDisplay;
 }
 
 // Helper to create a node with minimal boilerplate
