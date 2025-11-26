@@ -8,6 +8,7 @@ import { TelegramNode } from './TelegramNode';
 import { WhatsAppNode } from './WhatsAppNode';
 import { GoogleNode } from './GoogleNode';
 import { GoogleSheetsNode } from './GoogleSheetsNode';
+import { GmailNode } from './GmailNode';
 import { AIAgentNode } from './AIAgentNode';
 import { NodeDefinition, NodeDimensions } from './types';
 
@@ -17,6 +18,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     WhatsAppNode,
     GoogleNode,
     GoogleSheetsNode,
+    GmailNode,
     AIAgentNode,
 ];
 
