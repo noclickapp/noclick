@@ -1,6 +1,7 @@
 /**
  * Generic hook for managing z-index stacking of nodes based on custom criteria.
  * Allows different node types to have different stacking rules (e.g., area-based for sticky notes).
+ * Supports baseZIndex per group to ensure certain node types always appear above/below others.
  */
 import { useCallback } from 'react';
 import { Node } from 'reactflow';
@@ -12,6 +13,8 @@ interface NodeGroup {
   calculatePriority: (node: Node) => number;
   /** Sort order: 'desc' means higher priority = lower z-index (further back) */
   order: 'asc' | 'desc';
+  /** Base z-index for this group (default: 0). Nodes in this group get baseZIndex + position */
+  baseZIndex?: number;
 }
 
 interface UseNodeZIndexOptions {
@@ -93,9 +96,11 @@ export function useNodeZIndex({ groups }: UseNodeZIndexOptions) {
       });
 
       // Assign z-index: first in sorted array gets lowest z-index
+      // Use baseZIndex to offset the group (allows layering groups above each other)
       // Only create new object if z-index changed to prevent unnecessary re-renders
+      const baseZIndex = group.baseZIndex ?? 0;
       return sorted.map(({ node }, index) => {
-        const newZIndex = index + 1;
+        const newZIndex = baseZIndex + index + 1;
         const currentZIndex = node.style?.zIndex;
 
         if (currentZIndex === newZIndex) {
