@@ -8,6 +8,7 @@ import { TelegramNode } from './TelegramNode';
 import { GoogleSheetsNode } from './GoogleSheetsNode';
 import { GmailNode } from './GmailNode';
 import { AIAgentNode } from './AIAgentNode';
+import { StickyNoteNode } from './StickyNoteNode';
 import { NodeDefinition, NodeDimensions } from './types';
 
 // All available nodes - just a list, no processing
@@ -16,6 +17,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     GoogleSheetsNode,
     GmailNode,
     AIAgentNode,
+    StickyNoteNode,
 ];
 
 // Re-export types for convenience
@@ -23,15 +25,17 @@ export type { NodeDefinition, NodeDimensions, NodeOutputDisplayProps } from './t
 
 // Build ReactFlow nodeTypes mapping
 // Merges registry nodes with any additional node types passed in
+// additionalTypes take priority over registry nodes (allows custom renderers with callbacks)
 export function buildReactFlowNodeTypes(additionalTypes: Record<string, ComponentType<any>> = {}): Record<string, ComponentType<any>> {
-    const types: Record<string, ComponentType<any>> = {
-        ...additionalTypes
-    };
+    const types: Record<string, ComponentType<any>> = {};
 
-    // Add all nodes from registry
+    // Add all nodes from registry first
     AVAILABLE_NODES.forEach((nodeDef) => {
         types[nodeDef.type] = nodeDef.component;
     });
+
+    // Override with additionalTypes (custom renderers take priority)
+    Object.assign(types, additionalTypes);
 
     return types;
 }
