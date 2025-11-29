@@ -1,7 +1,8 @@
 """
 MCP (Model Context Protocol) integration for NoClick.
 
-Provides Socket.IO-based MCP tools with request-response correlation.
+Provides Socket.IO-based MCP tools with request-response correlation
+and OAuth 2.1 authentication for external MCP clients.
 """
 
 from .mcp_socket_adapter import MCPSocketAdapter

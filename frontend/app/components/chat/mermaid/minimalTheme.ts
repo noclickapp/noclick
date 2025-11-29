@@ -1,6 +1,10 @@
-// Minimal Mermaid theming based on official documentation
-// Uses the CORRECT approach according to Mermaid docs
+/**
+ * Mermaid diagram theme configuration for dark mode and sticky notes.
+ * Provides a minimal dark theme for chat messages and customizable theme generation for sticky notes
+ * with light/transparent backgrounds. Uses YAML frontmatter injection for per-diagram theming.
+ */
 
+// Base dark theme configuration for Mermaid diagrams in chat messages
 export const CORRECT_MERMAID_CONFIG = {
   startOnLoad: false,
   securityLevel: 'loose' as const,
@@ -88,6 +92,65 @@ export const MINDMAP_FIX_CSS = `
     fill: #e2e8f0 !important;
   }
 `;
+
+/**
+ * Create a custom Mermaid theme configuration for sticky notes
+ * Merges sticky note colors with the base dark theme configuration
+ */
+export function createStickyNoteThemeConfig(colors: {
+  nodeFill: string;
+  nodeStroke: string;
+  textFill: string;
+  edgeLabelBg: string;
+}) {
+  return {
+    ...CORRECT_MERMAID_CONFIG,
+    themeVariables: {
+      ...CORRECT_MERMAID_CONFIG.themeVariables,
+
+      // Disable dark mode for sticky notes to prevent dark color calculations
+      darkMode: false,
+
+      // Override the SVG background to be transparent (not dark)
+      background: 'transparent',
+
+      // Override node backgrounds and borders
+      mainBkg: colors.nodeFill,
+      nodeBkg: colors.nodeFill,
+      nodeBorder: colors.nodeStroke,
+
+      // Override all text colors
+      nodeTextColor: colors.textFill,
+      primaryTextColor: colors.textFill,
+      textColor: colors.textFill,
+
+      // Override edge/line colors
+      lineColor: colors.nodeStroke,
+      primaryBorderColor: colors.nodeStroke,
+      defaultLinkColor: colors.nodeStroke,
+      edgeLabelBackground: colors.edgeLabelBg,
+
+      // Flowchart specific
+      clusterBkg: colors.nodeFill,
+      clusterBorder: colors.nodeStroke,
+
+      // Sequence diagram
+      actorBkg: colors.nodeFill,
+      actorBorder: colors.nodeStroke,
+      actorTextColor: colors.textFill,
+      signalColor: colors.textFill,
+      signalTextColor: colors.textFill,
+
+      // State diagram
+      stateBkg: colors.nodeFill,
+      stateLabelColor: colors.textFill,
+      altBackground: colors.nodeFill,
+
+      // Class diagram
+      classText: colors.textFill,
+    }
+  };
+}
 
 // Simple detection
 export function needsOverride(definition: string): boolean {
