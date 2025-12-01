@@ -11,6 +11,7 @@ import { AIAgentNode } from './AIAgentNode';
 import { StickyNoteNode } from './StickyNoteNode';
 import { IterationNode } from './IterationNode';
 import { HttpRequestNode } from './HttpRequestNode';
+import { DUMMY_NODES } from './DummyNodes';
 import type { NodeDefinition, NodeDimensions, NodeDisplayStrategy } from './types';
 
 // All available nodes - just a list, no processing
@@ -22,6 +23,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     AIAgentNode,
     IterationNode,
     StickyNoteNode,
+    ...DUMMY_NODES,
 ];
 
 // Re-export types for convenience
