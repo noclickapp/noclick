@@ -10,6 +10,24 @@
     }
 }
 
+@keyframes shimmer-sweep {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+@keyframes svg-dash-flow {
+    0% {
+        stroke-dashoffset: 0;
+    }
+    100% {
+        stroke-dashoffset: -16;
+    }
+}
+
 @keyframes dash-move-vertical {
     0% {
         background-position: 0 0;
@@ -56,6 +74,10 @@
     animation: dash-move-vertical-up 1s linear infinite;
     border: none !important;
     width: 2px;
+}
+
+.animated-svg-dash {
+    animation: svg-dash-flow 1s linear infinite;
 }
 
 /* Show connection lines only above 1370px */
