@@ -10,7 +10,8 @@ export default {
         extend: {
             fontFamily: {
                 sans: [
-                    'Inter',
+                    'Outfit Variable',
+                    'Outfit',
                     'ui-sans-serif',
                     'system-ui',
                     'sans-serif',
@@ -18,6 +19,13 @@ export default {
                     'Segoe UI Emoji',
                     'Segoe UI Symbol',
                     'Noto Color Emoji',
+                ],
+                brand: [
+                    'Inter Variable',
+                    'Inter',
+                    'ui-sans-serif',
+                    'system-ui',
+                    'sans-serif',
                 ],
             },
             borderRadius: {
