@@ -10,8 +10,8 @@ export default {
         extend: {
             fontFamily: {
                 sans: [
-                    'Outfit Variable',
-                    'Outfit',
+                    'Inter Variable',
+                    'Inter',
                     'ui-sans-serif',
                     'system-ui',
                     'sans-serif',
@@ -21,8 +21,8 @@ export default {
                     'Noto Color Emoji',
                 ],
                 brand: [
-                    'Inter Variable',
-                    'Inter',
+                    'Outfit Variable',
+                    'Outfit',
                     'ui-sans-serif',
                     'system-ui',
                     'sans-serif',
