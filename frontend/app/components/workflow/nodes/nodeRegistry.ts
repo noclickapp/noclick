@@ -10,6 +10,7 @@ import { GmailNode } from './GmailNode';
 import { AIAgentNode } from './AIAgentNode';
 import { StickyNoteNode } from './StickyNoteNode';
 import { IterationNode } from './IterationNode';
+import { HttpRequestNode } from './HttpRequestNode';
 import type { NodeDefinition, NodeDimensions, NodeDisplayStrategy } from './types';
 
 // All available nodes - just a list, no processing
@@ -17,6 +18,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     TelegramNode,
     GoogleSheetsNode,
     GmailNode,
+    HttpRequestNode,
     AIAgentNode,
     IterationNode,
     StickyNoteNode,
