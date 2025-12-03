@@ -9,19 +9,35 @@ import { GoogleSheetsNode } from './GoogleSheetsNode';
 import { GmailNode } from './GmailNode';
 import { AIAgentNode } from './AIAgentNode';
 import { StickyNoteNode } from './StickyNoteNode';
-import { NodeDefinition, NodeDimensions } from './types';
+import { IterationNode } from './IterationNode';
+import { HttpRequestNode } from './HttpRequestNode';
+import { DUMMY_NODES } from './DummyNodes';
+import type { NodeDefinition, NodeDimensions, NodeDisplayStrategy } from './types';
 
 // All available nodes - just a list, no processing
 export const AVAILABLE_NODES: NodeDefinition[] = [
     TelegramNode,
     GoogleSheetsNode,
     GmailNode,
+    HttpRequestNode,
     AIAgentNode,
+    IterationNode,
     StickyNoteNode,
+    ...DUMMY_NODES,
 ];
 
 // Re-export types for convenience
-export type { NodeDefinition, NodeDimensions, NodeOutputDisplayProps } from './types';
+export type {
+    NodeDefinition,
+    NodeDimensions,
+    NodeDisplayStrategy,
+    OutputPanelContentProps,
+    JsonValue,
+    JsonObject,
+    JsonArray,
+    JsonPrimitive,
+    ReferenceSuggestion,
+} from './types';
 
 // Build ReactFlow nodeTypes mapping
 // Merges registry nodes with any additional node types passed in
@@ -62,12 +78,6 @@ export function getNodeMetadata(type: string): NodeDefinition | undefined {
     return AVAILABLE_NODES.find(n => n.type === type);
 }
 
-// Helper to get output display component by node type
-export function getOutputDisplayComponent(type: string): ComponentType<any> | undefined {
-    const node = AVAILABLE_NODES.find(n => n.type === type);
-    return node?.OutputDisplay;
-}
-
 // Helper to create a node with minimal boilerplate
 // Pulls Icon and iconColor from registry, only requires node-specific data
 export function createNode(
@@ -82,4 +92,11 @@ export function createNode(
         position,
         data,
     };
+}
+
+// Helper to get display strategy by node type
+// Returns undefined if node has no custom strategy (use default behavior)
+export function getDisplayStrategy(type: string): NodeDisplayStrategy | undefined {
+    const node = AVAILABLE_NODES.find(n => n.type === type);
+    return node?.displayStrategy;
 }
