@@ -2,7 +2,7 @@
 // Provides registry-based drawer management with focus-based visibility
 
 import { useContext } from 'react';
-import { DrawerContext } from '~/components/chat/drawer/ChatDrawerProvider';
+import { DrawerContext, type DrawerOptions } from '~/components/chat/drawer/ChatDrawerProvider';
 
 export function useDrawer() {
     const context = useContext(DrawerContext);
@@ -16,7 +16,7 @@ export function useDrawer() {
             content: null,
             visibleDrawerId: null,
             visibleDrawer: null,
-            registerDrawer: () => {},
+            registerDrawer: (_id: string, _content: React.ReactNode, _options?: DrawerOptions) => {},
             unregisterDrawer: () => {},
             updateDrawer: () => {},
             hasContext: false,
@@ -36,3 +36,5 @@ export function useDrawer() {
         hasContext: true,
     };
 }
+
+export type { DrawerOptions };
