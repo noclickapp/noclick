@@ -11,6 +11,7 @@ import { AIAgentNode } from './AIAgentNode';
 import { StickyNoteNode } from './StickyNoteNode';
 import { IterationNode } from './IterationNode';
 import { HttpRequestNode } from './HttpRequestNode';
+import { LinearNode } from './LinearNode';
 import { DUMMY_NODES } from './DummyNodes';
 import type { NodeDefinition, NodeDimensions, NodeDisplayStrategy } from './types';
 
@@ -20,6 +21,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     GoogleSheetsNode,
     GmailNode,
     HttpRequestNode,
+    LinearNode,
     AIAgentNode,
     IterationNode,
     StickyNoteNode,
