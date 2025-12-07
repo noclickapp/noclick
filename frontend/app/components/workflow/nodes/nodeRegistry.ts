@@ -13,6 +13,7 @@ import { IterationNode } from './IterationNode';
 import { HttpRequestNode } from './HttpRequestNode';
 import { LinearNode } from './LinearNode';
 import { GithubRestNode } from './GithubRestNode';
+import { AirtableNode } from './AirtableNode';
 import { DUMMY_NODES } from './DummyNodes';
 import type { NodeDefinition, NodeDimensions, NodeDisplayStrategy } from './types';
 
@@ -24,6 +25,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     HttpRequestNode,
     LinearNode,
     GithubRestNode,
+    AirtableNode,
     AIAgentNode,
     IterationNode,
     StickyNoteNode,
