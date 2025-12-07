@@ -21,6 +21,7 @@ import { LinkedInNode } from './LinkedInNode';
 import { RedditNode } from './RedditNode';
 import { WebhookTriggerNode } from './WebhookTriggerNode';
 import { CronTriggerNode } from './CronTriggerNode';
+import { NotionNode } from './NotionNode';
 import { DUMMY_NODES } from './DummyNodes';
 import type { NodeDefinition, NodeDimensions, NodeDisplayStrategy } from './types';
 
@@ -42,10 +43,10 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     YouTubeNode,
     LinkedInNode,
     RedditNode,
+    NotionNode,
     AIAgentNode,
     IterationNode,
     StickyNoteNode,
-    ...DUMMY_NODES,
 ];
 
 // Re-export types for convenience
