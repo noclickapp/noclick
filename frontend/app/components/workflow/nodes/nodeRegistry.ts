@@ -19,6 +19,7 @@ import { SalesforceNode } from './SalesforceNode';
 import { YouTubeNode } from './YouTubeNode';
 import { LinkedInNode } from './LinkedInNode';
 import { RedditNode } from './RedditNode';
+import { GoogleCalendarNode } from './GoogleCalendarNode';
 import { WebhookTriggerNode } from './WebhookTriggerNode';
 import { CronTriggerNode } from './CronTriggerNode';
 import { DUMMY_NODES } from './DummyNodes';
@@ -42,6 +43,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     YouTubeNode,
     LinkedInNode,
     RedditNode,
+    GoogleCalendarNode,
     AIAgentNode,
     IterationNode,
     StickyNoteNode,
