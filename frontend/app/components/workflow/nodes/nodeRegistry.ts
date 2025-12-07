@@ -38,6 +38,7 @@ import { InstagramNode } from './InstagramNode';
 import { TwitterNode } from './TwitterNode';
 import { ShopifyNode } from './ShopifyNode';
 import { SlackNode } from './SlackNode';
+import { PostgresNode } from './PostgresNode';
 import { DUMMY_NODES } from './DummyNodes';
 import type { NodeDefinition, NodeDimensions, NodeDisplayStrategy } from './types';
 
@@ -63,6 +64,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     InstagramNode,
     LinkedInNode,
     NotionNode,
+    PostgresNode,
     RedditNode,
     SalesforceNode,
     ShopifyNode,
