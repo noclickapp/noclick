@@ -31,6 +31,7 @@ import { NotionNode } from './NotionNode';
 import { ServerlessFunctionNode } from './ServerlessFunctionNode';
 import { OutlookMailNode } from './OutlookMailNode';
 import { ToolNode } from './ToolNode';
+import { DiscordNode } from './DiscordNode';
 import { DUMMY_NODES } from './DummyNodes';
 import type { NodeDefinition, NodeDimensions, NodeDisplayStrategy } from './types';
 
@@ -55,6 +56,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     RedditNode,
     GoogleCalendarNode,
     NotionNode,
+    DiscordNode,
     AIAgentNode,
     ToolNode,
     IterationNode,
