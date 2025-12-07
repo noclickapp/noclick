@@ -37,6 +37,7 @@ import { ApolloNode } from './ApolloNode';
 import { InstagramNode } from './InstagramNode';
 import { TwitterNode } from './TwitterNode';
 import { ShopifyNode } from './ShopifyNode';
+import { SlackNode } from './SlackNode';
 import { DUMMY_NODES } from './DummyNodes';
 import type { NodeDefinition, NodeDimensions, NodeDisplayStrategy } from './types';
 
@@ -67,6 +68,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     ShopifyNode,
     TwitterNode,
     YouTubeNode,
+    SlackNode,
     AIAgentNode,
     ToolNode,
     IterationNode,
