@@ -6,6 +6,7 @@ import { ComponentType } from 'react';
 import { NodeProps } from 'reactflow';
 import { TelegramNode } from './TelegramNode';
 import { GoogleSheetsNode } from './GoogleSheetsNode';
+import { GoogleDriveNode } from './GoogleDriveNode';
 import { GmailNode } from './GmailNode';
 import { AIAgentNode } from './AIAgentNode';
 import { StickyNoteNode } from './StickyNoteNode';
@@ -22,6 +23,7 @@ import type { NodeDefinition, NodeDimensions, NodeDisplayStrategy } from './type
 export const AVAILABLE_NODES: NodeDefinition[] = [
     TelegramNode,
     GoogleSheetsNode,
+    GoogleDriveNode,
     GmailNode,
     HttpRequestNode,
     LinearNode,
