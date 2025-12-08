@@ -45,6 +45,7 @@ import { SalesforceNode } from './SalesforceNode';
 import { ServerlessFunctionNode } from './ServerlessFunctionNode';
 import { ShopifyNode } from './ShopifyNode';
 import { SlackNode } from './SlackNode';
+import { SupabaseNode } from './SupabaseNode';
 import { ToolNode } from './ToolNode';
 import { TwitterNode } from './TwitterNode';
 import { WebhookTriggerNode } from './WebhookTriggerNode';
@@ -86,6 +87,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     SalesforceNode,
     ShopifyNode,
     SlackNode,
+    SupabaseNode,
     TwitterNode,
     YouTubeNode,
     HubSpotNode,
