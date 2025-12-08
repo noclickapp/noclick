@@ -38,6 +38,7 @@ from nodes.oauth.github_oauth import (
     GITHUB_PUBLIC_SCOPES,
 )
 
+<<<<<<< HEAD
 from nodes.oauth.atlassian_oauth import (
     AtlassianTokens,
     AtlassianResource,
