@@ -1,5 +1,5 @@
 # OAuth utilities for workflow nodes.
-# Provides OAuth 2.0 token management for various providers (Google, Airtable, GitHub).
+# Provides OAuth 2.0 token management for various providers (Google, Airtable, GitHub, Linear).
 
 from nodes.oauth.google_oauth import (
     GoogleTokens,
@@ -38,6 +38,18 @@ from nodes.oauth.github_oauth import (
     GITHUB_PUBLIC_SCOPES,
 )
 
+from nodes.oauth.linear_oauth import (
+    LinearTokens,
+    LinearUserInfo,
+    get_linear_client_config,
+    exchange_code_for_tokens as linear_exchange_code_for_tokens,
+    refresh_access_token as linear_refresh_access_token,
+    is_token_expired as linear_is_token_expired,
+    get_linear_auth_url,
+    revoke_token as linear_revoke_token,
+    LINEAR_DEFAULT_SCOPES,
+)
+
 __all__ = [
     # Google
     'GoogleTokens',
@@ -70,4 +82,14 @@ __all__ = [
     'get_github_auth_url',
     'GITHUB_WORKFLOW_SCOPES',
     'GITHUB_PUBLIC_SCOPES',
+    # Linear
+    'LinearTokens',
+    'LinearUserInfo',
+    'get_linear_client_config',
+    'linear_exchange_code_for_tokens',
+    'linear_refresh_access_token',
+    'linear_is_token_expired',
+    'get_linear_auth_url',
+    'linear_revoke_token',
+    'LINEAR_DEFAULT_SCOPES',
 ]
