@@ -3,6 +3,7 @@
 
 export { useGoogleOAuth } from './useGoogleOAuth';
 export { useAirtableOAuth } from './useAirtableOAuth';
+export { useAtlassianOAuth } from './useAtlassianOAuth';
 export { useDiscordOAuth } from './useDiscordOAuth';
 export { useFacebookOAuth } from './useFacebookOAuth';
 export { useGithubOAuth } from './useGithubOAuth';
