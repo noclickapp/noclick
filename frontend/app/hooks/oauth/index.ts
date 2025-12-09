@@ -4,3 +4,4 @@
 export { useGoogleOAuth } from './useGoogleOAuth';
 export { useAirtableOAuth } from './useAirtableOAuth';
 export { useGithubOAuth } from './useGithubOAuth';
+export { useSalesforceOAuth } from './useSalesforceOAuth';
