@@ -6,6 +6,7 @@ import { ComponentType } from 'react';
 import { NodeProps } from 'reactflow';
 import { TelegramNode } from './TelegramNode';
 import { GoogleSheetsNode } from './GoogleSheetsNode';
+import { GoogleDriveNode } from './GoogleDriveNode';
 import { GmailNode } from './GmailNode';
 import { AIAgentNode } from './AIAgentNode';
 import { StickyNoteNode } from './StickyNoteNode';
@@ -15,6 +16,7 @@ import { LinearNode } from './LinearNode';
 import { GithubRestNode } from './GithubRestNode';
 import { AirtableNode } from './AirtableNode';
 import { SalesforceNode } from './SalesforceNode';
+import { YouTubeNode } from './YouTubeNode';
 import { DUMMY_NODES } from './DummyNodes';
 import type { NodeDefinition, NodeDimensions, NodeDisplayStrategy } from './types';
 
@@ -22,12 +24,14 @@ import type { NodeDefinition, NodeDimensions, NodeDisplayStrategy } from './type
 export const AVAILABLE_NODES: NodeDefinition[] = [
     TelegramNode,
     GoogleSheetsNode,
+    GoogleDriveNode,
     GmailNode,
     HttpRequestNode,
     LinearNode,
     GithubRestNode,
     AirtableNode,
     SalesforceNode,
+    YouTubeNode,
     AIAgentNode,
     IterationNode,
     StickyNoteNode,
