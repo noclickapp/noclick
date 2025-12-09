@@ -15,6 +15,7 @@ import { HttpRequestNode } from './HttpRequestNode';
 import { LinearNode } from './LinearNode';
 import { GithubRestNode } from './GithubRestNode';
 import { AirtableNode } from './AirtableNode';
+import { SalesforceNode } from './SalesforceNode';
 import { YouTubeNode } from './YouTubeNode';
 import { DUMMY_NODES } from './DummyNodes';
 import type { NodeDefinition, NodeDimensions, NodeDisplayStrategy } from './types';
@@ -29,6 +30,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     LinearNode,
     GithubRestNode,
     AirtableNode,
+    SalesforceNode,
     YouTubeNode,
     AIAgentNode,
     IterationNode,
