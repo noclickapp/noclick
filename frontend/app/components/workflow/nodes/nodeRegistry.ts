@@ -17,6 +17,7 @@ import { GithubRestNode } from './GithubRestNode';
 import { AirtableNode } from './AirtableNode';
 import { SalesforceNode } from './SalesforceNode';
 import { YouTubeNode } from './YouTubeNode';
+import { LinkedInNode } from './LinkedInNode';
 import { DUMMY_NODES } from './DummyNodes';
 import type { NodeDefinition, NodeDimensions, NodeDisplayStrategy } from './types';
 
@@ -32,6 +33,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     AirtableNode,
     SalesforceNode,
     YouTubeNode,
+    LinkedInNode,
     AIAgentNode,
     IterationNode,
     StickyNoteNode,
