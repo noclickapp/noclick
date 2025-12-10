@@ -18,6 +18,7 @@ import { AirtableNode } from './AirtableNode';
 import { SalesforceNode } from './SalesforceNode';
 import { YouTubeNode } from './YouTubeNode';
 import { LinkedInNode } from './LinkedInNode';
+import { RedditNode } from './RedditNode';
 import { DUMMY_NODES } from './DummyNodes';
 import type { NodeDefinition, NodeDimensions, NodeDisplayStrategy } from './types';
 
@@ -34,6 +35,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     SalesforceNode,
     YouTubeNode,
     LinkedInNode,
+    RedditNode,
     AIAgentNode,
     IterationNode,
     StickyNoteNode,

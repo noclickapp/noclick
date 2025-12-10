@@ -7,3 +7,4 @@ export { useGithubOAuth } from './useGithubOAuth';
 export { useSalesforceOAuth } from './useSalesforceOAuth';
 export { useLinearOAuth } from './useLinearOAuth';
 export { useLinkedInOAuth } from './useLinkedInOAuth';
+export { useRedditOAuth } from './useRedditOAuth';
