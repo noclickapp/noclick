@@ -6,3 +6,4 @@ export { useAirtableOAuth } from './useAirtableOAuth';
 export { useGithubOAuth } from './useGithubOAuth';
 export { useSalesforceOAuth } from './useSalesforceOAuth';
 export { useLinearOAuth } from './useLinearOAuth';
+export { useLinkedInOAuth } from './useLinkedInOAuth';
