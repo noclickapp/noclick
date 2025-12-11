@@ -19,11 +19,15 @@ import { SalesforceNode } from './SalesforceNode';
 import { YouTubeNode } from './YouTubeNode';
 import { LinkedInNode } from './LinkedInNode';
 import { RedditNode } from './RedditNode';
+import { WebhookTriggerNode } from './WebhookTriggerNode';
 import { DUMMY_NODES } from './DummyNodes';
 import type { NodeDefinition, NodeDimensions, NodeDisplayStrategy } from './types';
 
 // All available nodes - just a list, no processing
 export const AVAILABLE_NODES: NodeDefinition[] = [
+    // Trigger nodes (workflow entry points)
+    WebhookTriggerNode,
+    // Automation nodes
     TelegramNode,
     GoogleSheetsNode,
     GoogleDriveNode,
