@@ -20,6 +20,7 @@ import { YouTubeNode } from './YouTubeNode';
 import { LinkedInNode } from './LinkedInNode';
 import { RedditNode } from './RedditNode';
 import { WebhookTriggerNode } from './WebhookTriggerNode';
+import { CronTriggerNode } from './CronTriggerNode';
 import { DUMMY_NODES } from './DummyNodes';
 import type { NodeDefinition, NodeDimensions, NodeDisplayStrategy } from './types';
 
@@ -27,6 +28,7 @@ import type { NodeDefinition, NodeDimensions, NodeDisplayStrategy } from './type
 export const AVAILABLE_NODES: NodeDefinition[] = [
     // Trigger nodes (workflow entry points)
     WebhookTriggerNode,
+    CronTriggerNode,
     // Automation nodes
     TelegramNode,
     GoogleSheetsNode,
