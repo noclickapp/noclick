@@ -1,10 +1,15 @@
 // Central node registry - single source of truth for all workflow nodes.
 // Simply imports and lists all node definitions.
 // To add a new node: create a new file exporting NodeDefinition, then import and add here.
+//
+// Performance: The registry automatically wraps all node components with React.memo
+// using nodePropsAreEqual. Node files should export RAW components (not memoized).
+// For custom memo behavior, set `memoCompare` in the node definition.
 
-import { ComponentType } from 'react';
+import { ComponentType, memo } from 'react';
 import { NodeProps } from 'reactflow';
 import { TelegramNode } from './TelegramNode';
+import { nodePropsAreEqual } from './types';
 import { GoogleSheetsNode } from './GoogleSheetsNode';
 import { GoogleDriveNode } from './GoogleDriveNode';
 import { GmailNode } from './GmailNode';
@@ -65,12 +70,25 @@ export type {
 // Build ReactFlow nodeTypes mapping
 // Merges registry nodes with any additional node types passed in
 // additionalTypes take priority over registry nodes (allows custom renderers with callbacks)
+//
+// Performance: Automatically wraps all node components with React.memo using nodePropsAreEqual.
+// This prevents unnecessary re-renders during drag operations. Node definitions can:
+// - Export raw components (recommended) - will be auto-wrapped with memo + nodePropsAreEqual
+// - Set `memoCompare` for custom comparison logic (e.g., AIAgentNode)
+// - Set `skipAutoMemo: true` if component handles its own memoization
 export function buildReactFlowNodeTypes(additionalTypes: Record<string, ComponentType<any>> = {}): Record<string, ComponentType<any>> {
     const types: Record<string, ComponentType<any>> = {};
 
-    // Add all nodes from registry first
+    // Add all nodes from registry, auto-wrapping with memo for performance
     AVAILABLE_NODES.forEach((nodeDef) => {
-        types[nodeDef.type] = nodeDef.component;
+        if (nodeDef.skipAutoMemo) {
+            // Node handles its own memoization
+            types[nodeDef.type] = nodeDef.component;
+        } else {
+            // Auto-wrap with memo using custom compare function or default nodePropsAreEqual
+            const compareFunc = nodeDef.memoCompare || nodePropsAreEqual;
+            types[nodeDef.type] = memo(nodeDef.component, compareFunc);
+        }
     });
 
     // Override with additionalTypes (custom renderers take priority)
