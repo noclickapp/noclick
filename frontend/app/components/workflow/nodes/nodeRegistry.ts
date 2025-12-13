@@ -27,6 +27,7 @@ import { RedditNode } from './RedditNode';
 import { WebhookTriggerNode } from './WebhookTriggerNode';
 import { CronTriggerNode } from './CronTriggerNode';
 import { NotionNode } from './NotionNode';
+import { ServerlessFunctionNode } from './ServerlessFunctionNode';
 import { DUMMY_NODES } from './DummyNodes';
 import type { NodeDefinition, NodeDimensions, NodeDisplayStrategy } from './types';
 
@@ -51,6 +52,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     NotionNode,
     AIAgentNode,
     IterationNode,
+    ServerlessFunctionNode,
     StickyNoteNode,
 ];
 
