@@ -328,9 +328,13 @@ test.describe('FlowCanvas Drag Performance', () => {
         // Disable throttling
         await cdpSession.send('Emulation.setCPUThrottlingRate', { rate: 1 });
 
-        // At 4x throttle, RAF fires less frequently due to CPU throttling
-        // frameCount will be much lower than 1x - that itself shows the performance impact
-        expect(results.frameCount).toBeGreaterThan(0);
+        // Performance gate: At 4x throttle with warmup scroll, we must maintain minimum frames
+        // This ensures drag performance doesn't regress below acceptable levels.
+        // Local baseline: ~370 frames (native macOS)
+        // Docker/act baseline: ~150 frames (virtualization overhead)
+        // GitHub Actions baseline: ~56 frames (shared runners have high contention)
+        // CI threshold of 40 provides buffer while catching significant regressions.
+        expect(results.frameCount).toBeGreaterThanOrEqual(45);
     });
 
     test('compares performance with different node counts', async ({ page, context }) => {

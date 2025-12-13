@@ -24,8 +24,8 @@ export default defineConfig({
 
   // Shared settings for all projects
   use: {
-    // Base URL for the dev server
-    baseURL: 'http://localhost:5173',
+    // Base URL - use production port in CI, dev port locally
+    baseURL: process.env.CI ? 'http://localhost:3000' : 'http://localhost:5173',
 
     // Collect trace on failure for debugging
     trace: 'on-first-retry',
@@ -51,11 +51,14 @@ export default defineConfig({
   ],
 
   // Run local dev server before tests if not already running
+  // In CI, server is started manually in the workflow
   webServer: {
-    command: 'pnpm dev',
-    url: 'http://localhost:5173',
-    reuseExistingServer: !process.env.CI,
-    timeout: 120 * 1000,
+    command: process.env.CI ? 'pnpm start' : 'pnpm dev',
+    url: process.env.CI ? 'http://localhost:3000' : 'http://localhost:5173',
+    reuseExistingServer: true, // Always reuse if server is already running
+    timeout: 180 * 1000, // 3 minutes for CI environments
+    stdout: 'pipe',
+    stderr: 'pipe',
   },
 
   // Increase timeout for performance tests (they simulate many operations)
