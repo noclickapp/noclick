@@ -28,6 +28,7 @@ import { WebhookTriggerNode } from './WebhookTriggerNode';
 import { CronTriggerNode } from './CronTriggerNode';
 import { NotionNode } from './NotionNode';
 import { ServerlessFunctionNode } from './ServerlessFunctionNode';
+import { OutlookMailNode } from './OutlookMailNode';
 import { DUMMY_NODES } from './DummyNodes';
 import type { NodeDefinition, NodeDimensions, NodeDisplayStrategy } from './types';
 
@@ -41,6 +42,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     GoogleSheetsNode,
     GoogleDriveNode,
     GmailNode,
+    OutlookMailNode,
     HttpRequestNode,
     LinearNode,
     GithubRestNode,

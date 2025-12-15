@@ -71,6 +71,18 @@ from nodes.oauth.notion_oauth import (
     get_notion_auth_url,
 )
 
+from nodes.oauth.microsoft_oauth import (
+    MicrosoftTokens,
+    MicrosoftUserInfo,
+    get_microsoft_client_config,
+    exchange_code_for_tokens as microsoft_exchange_code_for_tokens,
+    refresh_access_token as microsoft_refresh_access_token,
+    validate_token as microsoft_validate_token,
+    is_token_expired as microsoft_is_token_expired,
+    get_microsoft_auth_url,
+    revoke_token as microsoft_revoke_token,
+)
+
 __all__ = [
     # Google
     'GoogleTokens',
@@ -130,4 +142,14 @@ __all__ = [
     'notion_refresh_access_token',
     'notion_is_token_expired',
     'get_notion_auth_url',
+    # Microsoft
+    'MicrosoftTokens',
+    'MicrosoftUserInfo',
+    'get_microsoft_client_config',
+    'microsoft_exchange_code_for_tokens',
+    'microsoft_refresh_access_token',
+    'microsoft_validate_token',
+    'microsoft_is_token_expired',
+    'get_microsoft_auth_url',
+    'microsoft_revoke_token',
 ]
