@@ -1,5 +1,5 @@
 # OAuth utilities for workflow nodes.
-# Provides OAuth 2.0 token management for various providers (Google, Airtable, GitHub, Linear).
+# Provides OAuth 2.0 token management for various providers (Google, Airtable, GitHub, Linear, Notion, etc.).
 
 from nodes.oauth.google_oauth import (
     GoogleTokens,
@@ -61,6 +61,16 @@ from nodes.oauth.reddit_oauth import (
     REDDIT_WORKFLOW_SCOPES,
 )
 
+from nodes.oauth.notion_oauth import (
+    NotionTokens,
+    NotionWorkspaceInfo,
+    get_notion_client_config,
+    exchange_code_for_tokens as notion_exchange_code_for_tokens,
+    refresh_access_token as notion_refresh_access_token,
+    is_token_expired as notion_is_token_expired,
+    get_notion_auth_url,
+)
+
 __all__ = [
     # Google
     'GoogleTokens',
@@ -112,4 +122,12 @@ __all__ = [
     'reddit_is_token_expired',
     'get_reddit_auth_url',
     'REDDIT_WORKFLOW_SCOPES',
+    # Notion
+    'NotionTokens',
+    'NotionWorkspaceInfo',
+    'get_notion_client_config',
+    'notion_exchange_code_for_tokens',
+    'notion_refresh_access_token',
+    'notion_is_token_expired',
+    'get_notion_auth_url',
 ]
