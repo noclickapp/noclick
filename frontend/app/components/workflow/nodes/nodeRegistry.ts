@@ -27,6 +27,7 @@ import { RedditNode } from './RedditNode';
 import { GoogleCalendarNode } from './GoogleCalendarNode';
 import { WebhookTriggerNode } from './WebhookTriggerNode';
 import { CronTriggerNode } from './CronTriggerNode';
+import { FormInputNode } from './FormInputNode';
 import { NotionNode } from './NotionNode';
 import { ServerlessFunctionNode } from './ServerlessFunctionNode';
 import { OutlookMailNode } from './OutlookMailNode';
@@ -39,6 +40,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     // Trigger nodes (workflow entry points)
     WebhookTriggerNode,
     CronTriggerNode,
+    FormInputNode,
     // Automation nodes
     TelegramNode,
     GoogleSheetsNode,
