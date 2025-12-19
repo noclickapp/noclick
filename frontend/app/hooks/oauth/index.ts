@@ -10,3 +10,4 @@ export { useLinkedInOAuth } from './useLinkedInOAuth';
 export { useRedditOAuth } from './useRedditOAuth';
 export { useNotionOAuth } from './useNotionOAuth';
 export { useMicrosoftOAuth } from './useMicrosoftOAuth';
+export { useDiscordOAuth } from './useDiscordOAuth';
