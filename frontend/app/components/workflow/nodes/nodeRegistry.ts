@@ -30,6 +30,7 @@ import { CronTriggerNode } from './CronTriggerNode';
 import { NotionNode } from './NotionNode';
 import { ServerlessFunctionNode } from './ServerlessFunctionNode';
 import { OutlookMailNode } from './OutlookMailNode';
+import { ToolNode } from './ToolNode';
 import { DUMMY_NODES } from './DummyNodes';
 import type { NodeDefinition, NodeDimensions, NodeDisplayStrategy } from './types';
 
@@ -55,6 +56,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     GoogleCalendarNode,
     NotionNode,
     AIAgentNode,
+    ToolNode,
     IterationNode,
     ServerlessFunctionNode,
     StickyNoteNode,
