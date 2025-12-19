@@ -12,3 +12,4 @@ export { useNotionOAuth } from './useNotionOAuth';
 export { useMicrosoftOAuth } from './useMicrosoftOAuth';
 export { useDiscordOAuth } from './useDiscordOAuth';
 export { useFacebookOAuth } from './useFacebookOAuth';
+export { useTwitterOAuth } from './useTwitterOAuth';
