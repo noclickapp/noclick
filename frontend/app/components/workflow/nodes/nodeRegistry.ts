@@ -33,6 +33,7 @@ import { ServerlessFunctionNode } from './ServerlessFunctionNode';
 import { OutlookMailNode } from './OutlookMailNode';
 import { ToolNode } from './ToolNode';
 import { DiscordNode } from './DiscordNode';
+import { ApolloNode } from './ApolloNode';
 import { InstagramNode } from './InstagramNode';
 import { DUMMY_NODES } from './DummyNodes';
 import type { NodeDefinition, NodeDimensions, NodeDisplayStrategy } from './types';
@@ -60,6 +61,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     GoogleCalendarNode,
     NotionNode,
     DiscordNode,
+    ApolloNode,
     InstagramNode,
     AIAgentNode,
     ToolNode,
