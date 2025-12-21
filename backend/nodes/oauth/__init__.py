@@ -1,5 +1,5 @@
 # OAuth utilities for workflow nodes.
-# Provides OAuth 2.0 token management for various providers (Google, Airtable, GitHub, Linear, Notion, etc.).
+# Provides OAuth 2.0 token management for various providers (Google, Airtable, GitHub, Linear, Notion, Reddit, Microsoft, Facebook).
 
 from nodes.oauth.google_oauth import (
     GoogleTokens,
@@ -83,6 +83,17 @@ from nodes.oauth.microsoft_oauth import (
     revoke_token as microsoft_revoke_token,
 )
 
+from nodes.oauth.facebook_oauth import (
+    FacebookTokens,
+    InstagramAccountInfo,
+    get_facebook_client_config,
+    exchange_code_for_tokens as facebook_exchange_code_for_tokens,
+    refresh_access_token as facebook_refresh_access_token,
+    validate_token as facebook_validate_token,
+    is_token_expired as facebook_is_token_expired,
+    get_facebook_auth_url,
+)
+
 __all__ = [
     # Google
     'GoogleTokens',
@@ -152,4 +163,13 @@ __all__ = [
     'microsoft_is_token_expired',
     'get_microsoft_auth_url',
     'microsoft_revoke_token',
+    # Facebook (for Instagram)
+    'FacebookTokens',
+    'InstagramAccountInfo',
+    'get_facebook_client_config',
+    'facebook_exchange_code_for_tokens',
+    'facebook_refresh_access_token',
+    'facebook_validate_token',
+    'facebook_is_token_expired',
+    'get_facebook_auth_url',
 ]

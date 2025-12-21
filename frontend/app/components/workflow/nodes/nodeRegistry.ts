@@ -27,12 +27,14 @@ import { RedditNode } from './RedditNode';
 import { GoogleCalendarNode } from './GoogleCalendarNode';
 import { WebhookTriggerNode } from './WebhookTriggerNode';
 import { CronTriggerNode } from './CronTriggerNode';
+import { FormInputNode } from './FormInputNode';
 import { NotionNode } from './NotionNode';
 import { ServerlessFunctionNode } from './ServerlessFunctionNode';
 import { OutlookMailNode } from './OutlookMailNode';
 import { ToolNode } from './ToolNode';
 import { DiscordNode } from './DiscordNode';
 import { ApolloNode } from './ApolloNode';
+import { InstagramNode } from './InstagramNode';
 import { DUMMY_NODES } from './DummyNodes';
 import type { NodeDefinition, NodeDimensions, NodeDisplayStrategy } from './types';
 
@@ -41,6 +43,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     // Trigger nodes (workflow entry points)
     WebhookTriggerNode,
     CronTriggerNode,
+    FormInputNode,
     // Automation nodes
     TelegramNode,
     GoogleSheetsNode,
@@ -59,6 +62,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     NotionNode,
     DiscordNode,
     ApolloNode,
+    InstagramNode,
     AIAgentNode,
     ToolNode,
     IterationNode,
