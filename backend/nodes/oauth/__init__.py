@@ -1,5 +1,5 @@
 # OAuth utilities for workflow nodes.
-# Provides OAuth 2.0 token management for various providers (Google, Airtable, GitHub, Linear, Notion, Reddit, Microsoft, Facebook).
+# Provides OAuth 2.0 token management for various providers (Google, Airtable, GitHub, Linear, Notion, Reddit, Microsoft, Facebook, Twitter, Slack).
 
 from nodes.oauth.google_oauth import (
     GoogleTokens,
@@ -105,6 +105,19 @@ from nodes.oauth.twitter_oauth import (
     calculate_expires_at as twitter_calculate_expires_at,
 )
 
+from nodes.oauth.slack_oauth import (
+    SlackTokens,
+    SlackWorkspaceInfo,
+    get_slack_client_config,
+    exchange_code_for_tokens as slack_exchange_code_for_tokens,
+    refresh_access_token as slack_refresh_access_token,
+    is_token_expired as slack_is_token_expired,
+    get_slack_auth_url,
+    validate_token as slack_validate_token,
+    SLACK_WORKFLOW_SCOPES,
+    SLACK_READONLY_SCOPES,
+)
+
 __all__ = [
     # Google
     'GoogleTokens',
@@ -192,4 +205,15 @@ __all__ = [
     'twitter_get_user_info',
     'twitter_revoke_token',
     'twitter_calculate_expires_at',
+    # Slack
+    'SlackTokens',
+    'SlackWorkspaceInfo',
+    'get_slack_client_config',
+    'slack_exchange_code_for_tokens',
+    'slack_refresh_access_token',
+    'slack_is_token_expired',
+    'get_slack_auth_url',
+    'slack_validate_token',
+    'SLACK_WORKFLOW_SCOPES',
+    'SLACK_READONLY_SCOPES',
 ]
