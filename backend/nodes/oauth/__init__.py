@@ -94,6 +94,17 @@ from nodes.oauth.facebook_oauth import (
     get_facebook_auth_url,
 )
 
+from nodes.oauth.twitter_oauth import (
+    TwitterTokenResponse,
+    TwitterUserInfo,
+    exchange_code_for_tokens as twitter_exchange_code_for_tokens,
+    refresh_access_token as twitter_refresh_access_token,
+    is_token_expired as twitter_is_token_expired,
+    get_user_info as twitter_get_user_info,
+    revoke_token as twitter_revoke_token,
+    calculate_expires_at as twitter_calculate_expires_at,
+)
+
 __all__ = [
     # Google
     'GoogleTokens',
@@ -172,4 +183,13 @@ __all__ = [
     'facebook_validate_token',
     'facebook_is_token_expired',
     'get_facebook_auth_url',
+    # Twitter
+    'TwitterTokenResponse',
+    'TwitterUserInfo',
+    'twitter_exchange_code_for_tokens',
+    'twitter_refresh_access_token',
+    'twitter_is_token_expired',
+    'twitter_get_user_info',
+    'twitter_revoke_token',
+    'twitter_calculate_expires_at',
 ]

@@ -35,6 +35,7 @@ import { ToolNode } from './ToolNode';
 import { DiscordNode } from './DiscordNode';
 import { ApolloNode } from './ApolloNode';
 import { InstagramNode } from './InstagramNode';
+import { TwitterNode } from './TwitterNode';
 import { DUMMY_NODES } from './DummyNodes';
 import type { NodeDefinition, NodeDimensions, NodeDisplayStrategy } from './types';
 
@@ -63,6 +64,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     DiscordNode,
     ApolloNode,
     InstagramNode,
+    TwitterNode,
     AIAgentNode,
     ToolNode,
     IterationNode,
