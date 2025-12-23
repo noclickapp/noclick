@@ -36,6 +36,9 @@ import { DiscordNode } from './DiscordNode';
 import { ApolloNode } from './ApolloNode';
 import { InstagramNode } from './InstagramNode';
 import { TwitterNode } from './TwitterNode';
+import { ShopifyNode } from './ShopifyNode';
+import { SlackNode } from './SlackNode';
+import { BlueSkyNode } from './BlueSkyNode';
 import { DUMMY_NODES } from './DummyNodes';
 import type { NodeDefinition, NodeDimensions, NodeDisplayStrategy } from './types';
 
@@ -55,16 +58,19 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     LinearNode,
     GithubRestNode,
     AirtableNode,
-    SalesforceNode,
-    YouTubeNode,
-    LinkedInNode,
-    RedditNode,
-    GoogleCalendarNode,
-    NotionNode,
-    DiscordNode,
     ApolloNode,
+    DiscordNode,
+    GoogleCalendarNode,
     InstagramNode,
+    LinkedInNode,
+    NotionNode,
+    RedditNode,
+    SalesforceNode,
+    ShopifyNode,
     TwitterNode,
+    YouTubeNode,
+    SlackNode,
+    BlueSkyNode,
     AIAgentNode,
     ToolNode,
     IterationNode,
