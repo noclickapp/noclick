@@ -40,6 +40,7 @@ import { ShopifyNode } from './ShopifyNode';
 import { SlackNode } from './SlackNode';
 import { PostgresNode } from './PostgresNode';
 import { BlueSkyNode } from './BlueSkyNode';
+import { RSSNode } from './RSSNode';
 import { DUMMY_NODES } from './DummyNodes';
 import type { NodeDefinition, NodeDimensions, NodeDisplayStrategy } from './types';
 
@@ -73,6 +74,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     YouTubeNode,
     SlackNode,
     BlueSkyNode,
+    RSSNode,
     AIAgentNode,
     ToolNode,
     IterationNode,
