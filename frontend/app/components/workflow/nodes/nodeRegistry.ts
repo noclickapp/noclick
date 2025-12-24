@@ -40,6 +40,7 @@ import { ShopifyNode } from './ShopifyNode';
 import { SlackNode } from './SlackNode';
 import { PostgresNode } from './PostgresNode';
 import { BlueSkyNode } from './BlueSkyNode';
+import { RedisNode } from './RedisNode';
 import { RSSNode } from './RSSNode';
 import { DUMMY_NODES } from './DummyNodes';
 import type { NodeDefinition, NodeDimensions, NodeDisplayStrategy } from './types';
@@ -68,6 +69,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     NotionNode,
     PostgresNode,
     RedditNode,
+    RedisNode,
     SalesforceNode,
     ShopifyNode,
     TwitterNode,
