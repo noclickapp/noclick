@@ -1,18 +1,18 @@
 /**
  * Overlay component that renders collaborator cursors on the flow canvas.
- * Cursors are positioned using flow coordinates and converted to screen coordinates
- * via ReactFlow's project function. Each cursor shows the user's color and name.
+ * Cursors are positioned using flow coordinates transformed to container-relative
+ * coordinates via the viewport (zoom and pan). Each cursor shows the user's color and name.
  */
 
 import { memo, useMemo } from 'react';
-import { useReactFlow } from 'reactflow';
+import { useViewport } from 'reactflow';
 import type { Collaborator } from '~/lib/collaboration';
 
 interface CollaborativeCursorsProps {
   collaborators: Collaborator[];
 }
 
-/** SVG cursor icon - classic pointer shape */
+/** SVG cursor icon - classic pointer shape, sized larger for visibility */
 const CursorIcon = ({ color }: { color: string }) => (
   <svg
     width="24"
@@ -33,7 +33,8 @@ const CursorIcon = ({ color }: { color: string }) => (
 );
 
 function CollaborativeCursorsComponent({ collaborators }: CollaborativeCursorsProps) {
-  const { flowToScreenPosition } = useReactFlow();
+  // Get viewport transform (pan and zoom) to convert flow coords to container coords
+  const { x: panX, y: panY, zoom } = useViewport();
 
   // Filter to only collaborators with active cursors
   const activeCursors = useMemo(
@@ -48,11 +49,11 @@ function CollaborativeCursorsComponent({ collaborators }: CollaborativeCursorsPr
       {activeCursors.map(collaborator => {
         if (!collaborator.cursor) return null;
 
-        // Convert flow coordinates to screen coordinates
-        const screenPos = flowToScreenPosition({
-          x: collaborator.cursor.x,
-          y: collaborator.cursor.y,
-        });
+        // Convert flow coordinates to container-relative coordinates
+        // Formula: containerPos = (flowPos * zoom) + pan
+        // Offset by (-6, -3) to align the cursor tip (which is at ~5.5, 3 in the SVG)
+        const containerX = (collaborator.cursor.x * zoom) + panX - 6;
+        const containerY = (collaborator.cursor.y * zoom) + panY - 3;
 
         return (
           <div
@@ -60,8 +61,7 @@ function CollaborativeCursorsComponent({ collaborators }: CollaborativeCursorsPr
             className="absolute left-0 top-0"
             style={{
               // Use transform for hardware-accelerated positioning
-              // No CSS transition - the mock service already does smooth interpolation
-              transform: `translate(${screenPos.x - 2}px, ${screenPos.y - 2}px)`,
+              transform: `translate(${containerX}px, ${containerY}px)`,
             }}
           >
             {/* Cursor icon */}
