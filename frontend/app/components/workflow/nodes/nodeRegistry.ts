@@ -33,6 +33,8 @@ import { NotionNode } from './NotionNode';
 import { OutlookMailNode } from './OutlookMailNode';
 import { PostgresNode } from './PostgresNode';
 import { RedditNode } from './RedditNode';
+import { BlueSkyNode } from './BlueSkyNode';
+import { RedisNode } from './RedisNode';
 import { RSSNode } from './RSSNode';
 import { SalesforceNode } from './SalesforceNode';
 import { ServerlessFunctionNode } from './ServerlessFunctionNode';
@@ -72,6 +74,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     PostgresNode,
     RedditNode,
     RSSNode,
+    RedisNode,
     SalesforceNode,
     ShopifyNode,
     SlackNode,
