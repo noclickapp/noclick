@@ -8,6 +8,7 @@
 
 import { ComponentType, memo } from 'react';
 import { NodeProps } from 'reactflow';
+import { withCollaborativeBorder } from './withCollaborativeBorder';
 import { TelegramNode } from './TelegramNode';
 import { nodePropsAreEqual } from './types';
 import { GoogleSheetsNode } from './GoogleSheetsNode';
@@ -20,28 +21,30 @@ import { HttpRequestNode } from './HttpRequestNode';
 import { LinearNode } from './LinearNode';
 import { GithubRestNode } from './GithubRestNode';
 import { AirtableNode } from './AirtableNode';
-import { SalesforceNode } from './SalesforceNode';
-import { YouTubeNode } from './YouTubeNode';
-import { LinkedInNode } from './LinkedInNode';
-import { RedditNode } from './RedditNode';
-import { GoogleCalendarNode } from './GoogleCalendarNode';
-import { WebhookTriggerNode } from './WebhookTriggerNode';
-import { CronTriggerNode } from './CronTriggerNode';
-import { FormInputNode } from './FormInputNode';
-import { NotionNode } from './NotionNode';
-import { ServerlessFunctionNode } from './ServerlessFunctionNode';
-import { OutlookMailNode } from './OutlookMailNode';
-import { ToolNode } from './ToolNode';
-import { DiscordNode } from './DiscordNode';
+import { ApifyNode } from './ApifyNode';
 import { ApolloNode } from './ApolloNode';
-import { InstagramNode } from './InstagramNode';
-import { TwitterNode } from './TwitterNode';
-import { ShopifyNode } from './ShopifyNode';
-import { SlackNode } from './SlackNode';
-import { PostgresNode } from './PostgresNode';
 import { BlueSkyNode } from './BlueSkyNode';
+import { CronTriggerNode } from './CronTriggerNode';
+import { DiscordNode } from './DiscordNode';
+import { FormInputNode } from './FormInputNode';
+import { GoogleCalendarNode } from './GoogleCalendarNode';
+import { InstagramNode } from './InstagramNode';
+import { JiraNode } from './JiraNode';
+import { LinkedInNode } from './LinkedInNode';
+import { NotionNode } from './NotionNode';
+import { OutlookMailNode } from './OutlookMailNode';
+import { PostgresNode } from './PostgresNode';
+import { RedditNode } from './RedditNode';
 import { RedisNode } from './RedisNode';
 import { RSSNode } from './RSSNode';
+import { SalesforceNode } from './SalesforceNode';
+import { ServerlessFunctionNode } from './ServerlessFunctionNode';
+import { ShopifyNode } from './ShopifyNode';
+import { SlackNode } from './SlackNode';
+import { ToolNode } from './ToolNode';
+import { TwitterNode } from './TwitterNode';
+import { WebhookTriggerNode } from './WebhookTriggerNode';
+import { YouTubeNode } from './YouTubeNode';
 import { DUMMY_NODES } from './DummyNodes';
 import type { NodeDefinition, NodeDimensions, NodeDisplayStrategy } from './types';
 
@@ -61,22 +64,24 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     LinearNode,
     GithubRestNode,
     AirtableNode,
+    ApifyNode,
     ApolloNode,
+    BlueSkyNode,
     DiscordNode,
     GoogleCalendarNode,
     InstagramNode,
+    JiraNode,
     LinkedInNode,
     NotionNode,
     PostgresNode,
     RedditNode,
+    RSSNode,
     RedisNode,
     SalesforceNode,
     ShopifyNode,
+    SlackNode,
     TwitterNode,
     YouTubeNode,
-    SlackNode,
-    BlueSkyNode,
-    RSSNode,
     AIAgentNode,
     ToolNode,
     IterationNode,
@@ -109,15 +114,18 @@ export type {
 export function buildReactFlowNodeTypes(additionalTypes: Record<string, ComponentType<any>> = {}): Record<string, ComponentType<any>> {
     const types: Record<string, ComponentType<any>> = {};
 
-    // Add all nodes from registry, auto-wrapping with memo for performance
+    // Add all nodes from registry, auto-wrapping with collaborative border + memo
     AVAILABLE_NODES.forEach((nodeDef) => {
+        // First wrap with collaborative border support (shows selection by other users)
+        const withBorder = withCollaborativeBorder(nodeDef.component);
+
         if (nodeDef.skipAutoMemo) {
             // Node handles its own memoization
-            types[nodeDef.type] = nodeDef.component;
+            types[nodeDef.type] = withBorder;
         } else {
             // Auto-wrap with memo using custom compare function or default nodePropsAreEqual
             const compareFunc = nodeDef.memoCompare || nodePropsAreEqual;
-            types[nodeDef.type] = memo(nodeDef.component, compareFunc);
+            types[nodeDef.type] = memo(withBorder, compareFunc);
         }
     });
 
