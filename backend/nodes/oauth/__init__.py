@@ -38,6 +38,19 @@ from nodes.oauth.github_oauth import (
     GITHUB_PUBLIC_SCOPES,
 )
 
+from nodes.oauth.atlassian_oauth import (
+    AtlassianTokens,
+    AtlassianResource,
+    AtlassianUserInfo,
+    get_atlassian_client_config,
+    exchange_code_for_tokens as atlassian_exchange_code_for_tokens,
+    refresh_access_token as atlassian_refresh_access_token,
+    is_token_expired as atlassian_is_token_expired,
+    get_atlassian_auth_url,
+    JIRA_WORKFLOW_SCOPES,
+    JIRA_READ_ONLY_SCOPES,
+)
+
 from nodes.oauth.linear_oauth import (
     LinearTokens,
     LinearUserInfo,
@@ -150,6 +163,17 @@ __all__ = [
     'get_github_auth_url',
     'GITHUB_WORKFLOW_SCOPES',
     'GITHUB_PUBLIC_SCOPES',
+    # Atlassian (Jira)
+    'AtlassianTokens',
+    'AtlassianResource',
+    'AtlassianUserInfo',
+    'get_atlassian_client_config',
+    'atlassian_exchange_code_for_tokens',
+    'atlassian_refresh_access_token',
+    'atlassian_is_token_expired',
+    'get_atlassian_auth_url',
+    'JIRA_WORKFLOW_SCOPES',
+    'JIRA_READ_ONLY_SCOPES',
     # Linear
     'LinearTokens',
     'LinearUserInfo',
