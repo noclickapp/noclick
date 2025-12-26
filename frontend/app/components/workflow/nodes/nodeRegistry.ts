@@ -21,6 +21,7 @@ import { HttpRequestNode } from './HttpRequestNode';
 import { LinearNode } from './LinearNode';
 import { GithubRestNode } from './GithubRestNode';
 import { AirtableNode } from './AirtableNode';
+import { ApifyNode } from './ApifyNode';
 import { ApolloNode } from './ApolloNode';
 import { BlueSkyNode } from './BlueSkyNode';
 import { CronTriggerNode } from './CronTriggerNode';
@@ -34,7 +35,6 @@ import { NotionNode } from './NotionNode';
 import { OutlookMailNode } from './OutlookMailNode';
 import { PostgresNode } from './PostgresNode';
 import { RedditNode } from './RedditNode';
-import { BlueSkyNode } from './BlueSkyNode';
 import { RedisNode } from './RedisNode';
 import { RSSNode } from './RSSNode';
 import { HubSpotNode } from './HubSpotNode';
@@ -65,6 +65,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     LinearNode,
     GithubRestNode,
     AirtableNode,
+    ApifyNode,
     ApolloNode,
     BlueSkyNode,
     DiscordNode,
