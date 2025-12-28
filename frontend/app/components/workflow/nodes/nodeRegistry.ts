@@ -37,6 +37,7 @@ import { PostgresNode } from './PostgresNode';
 import { RedditNode } from './RedditNode';
 import { RedisNode } from './RedisNode';
 import { RSSNode } from './RSSNode';
+import { HubSpotNode } from './HubSpotNode';
 import { SalesforceNode } from './SalesforceNode';
 import { ServerlessFunctionNode } from './ServerlessFunctionNode';
 import { ShopifyNode } from './ShopifyNode';
@@ -82,6 +83,10 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     SlackNode,
     TwitterNode,
     YouTubeNode,
+    SlackNode,
+    BlueSkyNode,
+    RSSNode,
+    HubSpotNode,
     AIAgentNode,
     ToolNode,
     IterationNode,

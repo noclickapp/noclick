@@ -7,6 +7,7 @@ export { useAtlassianOAuth } from './useAtlassianOAuth';
 export { useDiscordOAuth } from './useDiscordOAuth';
 export { useFacebookOAuth } from './useFacebookOAuth';
 export { useGithubOAuth } from './useGithubOAuth';
+export { useHubSpotOAuth } from './useHubSpotOAuth';
 export { useLinearOAuth } from './useLinearOAuth';
 export { useLinkedInOAuth } from './useLinkedInOAuth';
 export { useMicrosoftOAuth } from './useMicrosoftOAuth';
