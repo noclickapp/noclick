@@ -24,6 +24,7 @@ import { AirtableNode } from './AirtableNode';
 import { ApifyNode } from './ApifyNode';
 import { ApolloNode } from './ApolloNode';
 import { BlueSkyNode } from './BlueSkyNode';
+import { CanvaNode } from './CanvaNode';
 import { CronTriggerNode } from './CronTriggerNode';
 import { DiscordNode } from './DiscordNode';
 import { FormInputNode } from './FormInputNode';
@@ -68,6 +69,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     ApifyNode,
     ApolloNode,
     BlueSkyNode,
+    CanvaNode,
     DiscordNode,
     GoogleCalendarNode,
     InstagramNode,
@@ -83,9 +85,6 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     SlackNode,
     TwitterNode,
     YouTubeNode,
-    SlackNode,
-    BlueSkyNode,
-    RSSNode,
     HubSpotNode,
     AIAgentNode,
     ToolNode,
