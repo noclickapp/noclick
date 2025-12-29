@@ -1,0 +1,57 @@
+/* 3D push-button effect styles for CTA buttons.
+ * Creates a tactile "press down" effect with shadow depth that decreases on hover/active.
+ */
+
+/* Primary 3D button - white background with gray shadow depth and subtle glow */
+.btn-3d-white {
+    box-shadow:
+        0 4px 0 0 rgba(180, 180, 180, 0.5),
+        0 0 30px rgba(255, 255, 255, 0.15);
+    transition: transform 150ms, box-shadow 150ms;
+}
+
+.btn-3d-white:hover:not(:disabled) {
+    transform: translateY(2px);
+    box-shadow:
+        0 2px 0 0 rgba(180, 180, 180, 0.5),
+        0 0 30px rgba(255, 255, 255, 0.15);
+}
+
+.btn-3d-white:active:not(:disabled) {
+    transform: translateY(4px);
+    box-shadow:
+        0 0 0 0 rgba(180, 180, 180, 0.5),
+        0 0 30px rgba(255, 255, 255, 0.15);
+}
+
+/* Secondary 3D button - dark background with subtle white shadow depth */
+.btn-3d-dark {
+    box-shadow: 0 4px 0 0 rgba(255, 255, 255, 0.12);
+    transition: transform 150ms, box-shadow 150ms;
+}
+
+.btn-3d-dark:hover:not(:disabled) {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 0 rgba(255, 255, 255, 0.12);
+}
+
+.btn-3d-dark:active:not(:disabled) {
+    transform: translateY(4px);
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.12);
+}
+
+/* Purple 3D button - for enterprise/special CTAs */
+.btn-3d-purple {
+    box-shadow: 0 4px 0 0 rgba(168, 85, 247, 0.35);
+    transition: transform 150ms, box-shadow 150ms;
+}
+
+.btn-3d-purple:hover:not(:disabled) {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 0 rgba(168, 85, 247, 0.35);
+}
+
+.btn-3d-purple:active:not(:disabled) {
+    transform: translateY(4px);
+    box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.35);
+}
