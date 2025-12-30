@@ -29,6 +29,8 @@ import { CronTriggerNode } from './CronTriggerNode';
 import { DiscordNode } from './DiscordNode';
 import { FormInputNode } from './FormInputNode';
 import { GoogleCalendarNode } from './GoogleCalendarNode';
+import { HackerNewsNode } from './HackerNewsNode';
+import { HubSpotNode } from './HubSpotNode';
 import { InstagramNode } from './InstagramNode';
 import { JiraNode } from './JiraNode';
 import { LinkedInNode } from './LinkedInNode';
@@ -38,7 +40,6 @@ import { PostgresNode } from './PostgresNode';
 import { RedditNode } from './RedditNode';
 import { RedisNode } from './RedisNode';
 import { RSSNode } from './RSSNode';
-import { HubSpotNode } from './HubSpotNode';
 import { SalesforceNode } from './SalesforceNode';
 import { ServerlessFunctionNode } from './ServerlessFunctionNode';
 import { ShopifyNode } from './ShopifyNode';
@@ -72,6 +73,8 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     CanvaNode,
     DiscordNode,
     GoogleCalendarNode,
+    HackerNewsNode,
+    HubSpotNode,
     InstagramNode,
     JiraNode,
     LinkedInNode,
@@ -85,7 +88,6 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     SlackNode,
     TwitterNode,
     YouTubeNode,
-    HubSpotNode,
     AIAgentNode,
     ToolNode,
     IterationNode,
