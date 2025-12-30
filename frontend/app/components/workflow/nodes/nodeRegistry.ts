@@ -42,6 +42,7 @@ import { RSSNode } from './RSSNode';
 import { HubSpotNode } from './HubSpotNode';
 import { MailchimpNode } from './MailchimpNode';
 import { SalesforceNode } from './SalesforceNode';
+import { SemrushNode } from './SemrushNode';
 import { ServerlessFunctionNode } from './ServerlessFunctionNode';
 import { ShopifyNode } from './ShopifyNode';
 import { SlackNode } from './SlackNode';
@@ -85,6 +86,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     RSSNode,
     RedisNode,
     SalesforceNode,
+    SemrushNode,
     ShopifyNode,
     SlackNode,
     SupabaseNode,
