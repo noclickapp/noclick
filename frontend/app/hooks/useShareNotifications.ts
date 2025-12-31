@@ -19,7 +19,13 @@ import type { ShareNotificationEvent } from '~/types/socket-events.generated';
  */
 export function useShareNotifications(): void {
     const handleShareNotification = useCallback((data: ShareNotificationEvent) => {
-        const resourceTypeLabel = data.resource_type === 'workflow' ? 'workflow' : 'database';
+        const resourceTypeLabels: Record<string, string> = {
+            workflow: 'workflow',
+            database: 'database',
+            credential: 'credential',
+            saved_output: 'saved output',
+        };
+        const resourceTypeLabel = resourceTypeLabels[data.resource_type] || data.resource_type;
         const permissionLabel = data.permission === 'edit' ? 'edit access' : 'view access';
         const sharer = data.shared_by_name || data.shared_by_email;
 

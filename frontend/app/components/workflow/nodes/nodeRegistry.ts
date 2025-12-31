@@ -43,9 +43,11 @@ import { HubSpotNode } from './HubSpotNode';
 import { MailchimpNode } from './MailchimpNode';
 import { PerplexityNode } from './PerplexityNode';
 import { SalesforceNode } from './SalesforceNode';
+import { SemrushNode } from './SemrushNode';
 import { ServerlessFunctionNode } from './ServerlessFunctionNode';
 import { ShopifyNode } from './ShopifyNode';
 import { SlackNode } from './SlackNode';
+import { SupabaseNode } from './SupabaseNode';
 import { ToolNode } from './ToolNode';
 import { TwitterNode } from './TwitterNode';
 import { WebhookTriggerNode } from './WebhookTriggerNode';
@@ -85,8 +87,10 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     RSSNode,
     RedisNode,
     SalesforceNode,
+    SemrushNode,
     ShopifyNode,
     SlackNode,
+    SupabaseNode,
     TwitterNode,
     YouTubeNode,
     HubSpotNode,
