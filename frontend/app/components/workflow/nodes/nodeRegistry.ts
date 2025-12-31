@@ -42,6 +42,7 @@ import { RSSNode } from './RSSNode';
 import { HubSpotNode } from './HubSpotNode';
 import { MailchimpNode } from './MailchimpNode';
 import { SalesforceNode } from './SalesforceNode';
+import { TypeformNode } from './TypeformNode';
 import { ServerlessFunctionNode } from './ServerlessFunctionNode';
 import { ShopifyNode } from './ShopifyNode';
 import { SlackNode } from './SlackNode';
@@ -87,6 +88,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     ShopifyNode,
     SlackNode,
     TwitterNode,
+    TypeformNode,
     YouTubeNode,
     HubSpotNode,
     MailchimpNode,
