@@ -6,6 +6,7 @@ export { useAirtableOAuth } from './useAirtableOAuth';
 export { useAtlassianOAuth } from './useAtlassianOAuth';
 export { useCanvaOAuth } from './useCanvaOAuth';
 export { useDiscordOAuth } from './useDiscordOAuth';
+export { useDropboxOAuth } from './useDropboxOAuth';
 export { useFacebookOAuth } from './useFacebookOAuth';
 export { useGithubOAuth } from './useGithubOAuth';
 export { useHubSpotOAuth } from './useHubSpotOAuth';
