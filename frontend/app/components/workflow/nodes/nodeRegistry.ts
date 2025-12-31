@@ -41,6 +41,7 @@ import { RedisNode } from './RedisNode';
 import { RSSNode } from './RSSNode';
 import { HubSpotNode } from './HubSpotNode';
 import { MailchimpNode } from './MailchimpNode';
+import { PerplexityNode } from './PerplexityNode';
 import { SalesforceNode } from './SalesforceNode';
 import { ServerlessFunctionNode } from './ServerlessFunctionNode';
 import { ShopifyNode } from './ShopifyNode';
@@ -90,6 +91,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     YouTubeNode,
     HubSpotNode,
     MailchimpNode,
+    PerplexityNode,
     AIAgentNode,
     ToolNode,
     IterationNode,
