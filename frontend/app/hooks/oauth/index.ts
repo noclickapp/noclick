@@ -12,6 +12,7 @@ export { useGithubOAuth } from './useGithubOAuth';
 export { useHubSpotOAuth } from './useHubSpotOAuth';
 export { useMailchimpOAuth } from './useMailchimpOAuth';
 export { useLinearOAuth } from './useLinearOAuth';
+export { useTypeformOAuth } from './useTypeformOAuth';
 export { useLinkedInOAuth } from './useLinkedInOAuth';
 export { useMicrosoftOAuth } from './useMicrosoftOAuth';
 export { useNotionOAuth } from './useNotionOAuth';
