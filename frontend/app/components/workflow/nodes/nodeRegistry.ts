@@ -27,6 +27,7 @@ import { BlueSkyNode } from './BlueSkyNode';
 import { CanvaNode } from './CanvaNode';
 import { CronTriggerNode } from './CronTriggerNode';
 import { DiscordNode } from './DiscordNode';
+import { DropboxNode } from './DropboxNode';
 import { FormInputNode } from './FormInputNode';
 import { GoogleCalendarNode } from './GoogleCalendarNode';
 import { HackerNewsNode } from './HackerNewsNode';
@@ -76,6 +77,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     BlueSkyNode,
     CanvaNode,
     DiscordNode,
+    DropboxNode,
     GoogleCalendarNode,
     HackerNewsNode,
     InstagramNode,
