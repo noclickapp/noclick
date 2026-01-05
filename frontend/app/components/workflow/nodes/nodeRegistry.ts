@@ -51,6 +51,7 @@ import { ShopifyNode } from './ShopifyNode';
 import { SlackNode } from './SlackNode';
 import { SupabaseNode } from './SupabaseNode';
 import { ToolNode } from './ToolNode';
+import { TwilioNode } from './TwilioNode';
 import { TwitterNode } from './TwitterNode';
 import { WebhookTriggerNode } from './WebhookTriggerNode';
 import { YouTubeNode } from './YouTubeNode';
@@ -94,6 +95,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     ShopifyNode,
     SlackNode,
     SupabaseNode,
+    TwilioNode,
     TwitterNode,
     TypeformNode,
     YouTubeNode,
