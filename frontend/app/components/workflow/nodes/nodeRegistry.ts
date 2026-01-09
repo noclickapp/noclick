@@ -55,6 +55,7 @@ import { TwilioNode } from './TwilioNode';
 import { TwitterNode } from './TwitterNode';
 import { WebhookTriggerNode } from './WebhookTriggerNode';
 import { YouTubeNode } from './YouTubeNode';
+import { CSVInputNode } from './CSVInputNode';
 import { DUMMY_NODES } from './DummyNodes';
 import type { NodeDefinition, NodeDimensions, NodeDisplayStrategy } from './types';
 
@@ -105,6 +106,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     AIAgentNode,
     ToolNode,
     IterationNode,
+    CSVInputNode,
     ServerlessFunctionNode,
     StickyNoteNode,
 ];
