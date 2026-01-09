@@ -68,6 +68,83 @@ export function useWorkflowName(): string | undefined {
     return contextValue || getCurrentWorkflowName();
 }
 
+// AI editing state - tracks which nodes are being modified
+let _editingNodeIds: Set<string> = new Set();
+let _isAiEditing: boolean = false;
+
+// Detailed edit info per node for animated editing view
+export interface NodeEditInfo {
+    status: 'processing' | 'complete';
+    action: 'added' | 'removed' | 'updated';
+    operation?: string;
+    config?: Record<string, any>;
+}
+let _nodeEditInfo: Map<string, NodeEditInfo> = new Map();
+
+export function setEditingNodeIds(nodeIds: Set<string>) {
+    _editingNodeIds = nodeIds;
+    _listeners.forEach(listener => listener());
+}
+
+export function getEditingNodeIds(): Set<string> {
+    return _editingNodeIds;
+}
+
+export function setIsAiEditing(isEditing: boolean) {
+    _isAiEditing = isEditing;
+    // Clear edit info when editing stops
+    if (!isEditing) {
+        _nodeEditInfo.clear();
+    }
+    _listeners.forEach(listener => listener());
+}
+
+export function getIsAiEditing(): boolean {
+    return _isAiEditing;
+}
+
+export function isNodeBeingEdited(nodeId: string): boolean {
+    return _editingNodeIds.has(nodeId);
+}
+
+// Node edit info management
+export function setNodeEditInfo(nodeId: string, info: NodeEditInfo) {
+    _nodeEditInfo.set(nodeId, info);
+    _listeners.forEach(listener => listener());
+}
+
+export function updateNodeEditInfo(nodeId: string, partial: Partial<NodeEditInfo>) {
+    const existing = _nodeEditInfo.get(nodeId);
+    if (existing) {
+        // Merge config fields instead of replacing
+        const mergedConfig = partial.config
+            ? { ...(existing.config || {}), ...partial.config }
+            : existing.config;
+        _nodeEditInfo.set(nodeId, { ...existing, ...partial, config: mergedConfig });
+    } else {
+        _nodeEditInfo.set(nodeId, {
+            status: 'processing',
+            action: 'updated',
+            ...partial,
+        } as NodeEditInfo);
+    }
+    _listeners.forEach(listener => listener());
+}
+
+export function getNodeEditInfo(nodeId: string): NodeEditInfo | undefined {
+    return _nodeEditInfo.get(nodeId);
+}
+
+export function clearNodeEditInfo(nodeId: string) {
+    _nodeEditInfo.delete(nodeId);
+    _listeners.forEach(listener => listener());
+}
+
+export function clearAllNodeEditInfo() {
+    _nodeEditInfo.clear();
+    _listeners.forEach(listener => listener());
+}
+
 // Pending node selection - used when navigating from ChatBox to select a specific node
 let _pendingNodeSelection: { workflowId: string; nodeId: string } | null = null;
 
