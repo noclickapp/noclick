@@ -30,6 +30,11 @@ import { DiscordNode } from './DiscordNode';
 import { DropboxNode } from './DropboxNode';
 import { FormInputNode } from './FormInputNode';
 import { GoogleCalendarNode } from './GoogleCalendarNode';
+import { GoogleTasksNode } from './GoogleTasksNode';
+import { GoogleContactsNode } from './GoogleContactsNode';
+import { GoogleDocsNode } from './GoogleDocsNode';
+import { GoogleFormsNode } from './GoogleFormsNode';
+import { GoogleSlidesNode } from './GoogleSlidesNode';
 import { HackerNewsNode } from './HackerNewsNode';
 import { InstagramNode } from './InstagramNode';
 import { JiraNode } from './JiraNode';
@@ -82,6 +87,11 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     DiscordNode,
     DropboxNode,
     GoogleCalendarNode,
+    GoogleTasksNode,
+    GoogleContactsNode,
+    GoogleDocsNode,
+    GoogleFormsNode,
+    GoogleSlidesNode,
     HackerNewsNode,
     InstagramNode,
     JiraNode,
