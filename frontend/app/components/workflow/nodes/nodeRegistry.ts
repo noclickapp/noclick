@@ -17,6 +17,7 @@ import { GmailNode } from './GmailNode';
 import { AIAgentNode } from './AIAgentNode';
 import { StickyNoteNode } from './StickyNoteNode';
 import { IterationNode } from './IterationNode';
+import { DelayNode } from './DelayNode';
 import { HttpRequestNode } from './HttpRequestNode';
 import { LinearNode } from './LinearNode';
 import { GithubRestNode } from './GithubRestNode';
@@ -117,6 +118,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     AIAgentNode,
     ToolNode,
     IterationNode,
+    DelayNode,
     CSVInputNode,
     FilterNode,
     ServerlessFunctionNode,
