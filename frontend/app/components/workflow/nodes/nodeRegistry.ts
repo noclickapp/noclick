@@ -63,6 +63,9 @@ import { WebhookTriggerNode } from './WebhookTriggerNode';
 import { YouTubeNode } from './YouTubeNode';
 import { CSVInputNode } from './CSVInputNode';
 import { FilterNode } from './FilterNode';
+import { ConditionalNode } from './ConditionalNode';
+import { MergeNode } from './MergeNode';
+import { SplitNode } from './SplitNode';
 import { DUMMY_NODES } from './DummyNodes';
 import type { NodeDefinition, NodeDimensions, NodeDisplayStrategy } from './types';
 
@@ -121,6 +124,9 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     DelayNode,
     CSVInputNode,
     FilterNode,
+    ConditionalNode,
+    MergeNode,
+    SplitNode,
     ServerlessFunctionNode,
     StickyNoteNode,
 ];
