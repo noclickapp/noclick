@@ -76,6 +76,13 @@ class StrategyRegistry:
         except ImportError as e:
             logger.warning(f"[StrategyRegistry] Failed to import iteration strategy: {e}")
 
+        try:
+            from nodes.conditional_node import ConditionalExecutionStrategy
+            cls.register(ConditionalExecutionStrategy())
+            logger.info("[StrategyRegistry] Initialized with conditional strategy")
+        except ImportError as e:
+            logger.warning(f"[StrategyRegistry] Failed to import conditional strategy: {e}")
+
     @classmethod
     def clear(cls) -> None:
         """Clear all registered strategies (useful for testing)."""
