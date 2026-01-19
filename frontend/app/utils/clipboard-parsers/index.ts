@@ -58,3 +58,50 @@ export function parseClipboardContent(text: string): ClipboardParseResult | null
 export function getRegisteredParserNames(): string[] {
     return sortedParsers.map((p) => p.name);
 }
+
+/**
+ * Detects if clipboard text contains n8n workflow JSON.
+ * Used for early detection to route n8n workflows to backend conversion
+ * instead of local parsing.
+ *
+ * @param text - Raw clipboard text
+ * @returns true if text appears to be n8n workflow JSON
+ */
+export function detectN8nWorkflow(text: string): boolean {
+    if (!text || !text.trim()) {
+        return false;
+    }
+
+    const trimmed = text.trim();
+
+    // Must start with { to be JSON
+    if (!trimmed.startsWith('{')) {
+        return false;
+    }
+
+    try {
+        const data = JSON.parse(trimmed);
+
+        // Must have nodes array and connections object (n8n structure)
+        if (!Array.isArray(data.nodes) || typeof data.connections !== 'object') {
+            return false;
+        }
+
+        // Check for n8n-specific patterns in nodes
+        for (const node of data.nodes) {
+            const nodeType = node.type || '';
+            // n8n node types contain these patterns
+            if (nodeType.includes('n8n-nodes-base') || nodeType.includes('@n8n/')) {
+                return true;
+            }
+            // n8n uses position as [x, y] array
+            if (Array.isArray(node.position) && node.position.length === 2) {
+                return true;
+            }
+        }
+
+        return false;
+    } catch {
+        return false;
+    }
+}
