@@ -7,7 +7,7 @@
 // For custom memo behavior, set `memoCompare` in the node definition.
 
 import { ComponentType, memo } from 'react';
-import { NodeProps } from 'reactflow';
+import { NodeProps } from '@xyflow/react';
 import { withNodeWrapper } from './withNodeWrapper';
 import { TelegramNode } from './TelegramNode';
 import { nodePropsAreEqual } from './types';

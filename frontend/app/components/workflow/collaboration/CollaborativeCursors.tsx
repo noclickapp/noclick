@@ -5,7 +5,7 @@
  */
 
 import { memo, useMemo } from 'react';
-import { useViewport } from 'reactflow';
+import { useViewport } from '@xyflow/react';
 import type { Collaborator } from '~/lib/collaboration';
 
 interface CollaborativeCursorsProps {

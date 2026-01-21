@@ -4,7 +4,7 @@
  * (NoClick JSON, n8n JSON, Google Sheets URLs, etc.) into workflow nodes/edges.
  */
 
-import { Node, Edge } from 'reactflow';
+import { Node, Edge } from '@xyflow/react';
 
 /**
  * Result of a successful clipboard parse operation.
