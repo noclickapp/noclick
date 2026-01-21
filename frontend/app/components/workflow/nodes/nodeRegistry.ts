@@ -8,7 +8,7 @@
 
 import { ComponentType, memo } from 'react';
 import { NodeProps } from 'reactflow';
-import { withCollaborativeBorder } from './withCollaborativeBorder';
+import { withNodeWrapper } from './withNodeWrapper';
 import { TelegramNode } from './TelegramNode';
 import { nodePropsAreEqual } from './types';
 import { GoogleSheetsNode } from './GoogleSheetsNode';
@@ -156,18 +156,18 @@ export type {
 export function buildReactFlowNodeTypes(additionalTypes: Record<string, ComponentType<any>> = {}): Record<string, ComponentType<any>> {
     const types: Record<string, ComponentType<any>> = {};
 
-    // Add all nodes from registry, auto-wrapping with collaborative border + memo
+    // Add all nodes from registry, auto-wrapping with node wrapper (border + label) + memo
     AVAILABLE_NODES.forEach((nodeDef) => {
-        // First wrap with collaborative border support (shows selection by other users)
-        const withBorder = withCollaborativeBorder(nodeDef.component);
+        // Wrap with node wrapper (collaborative border + editable label)
+        const wrapped = withNodeWrapper(nodeDef.component);
 
         if (nodeDef.skipAutoMemo) {
             // Node handles its own memoization
-            types[nodeDef.type] = withBorder;
+            types[nodeDef.type] = wrapped;
         } else {
             // Auto-wrap with memo using custom compare function or default nodePropsAreEqual
             const compareFunc = nodeDef.memoCompare || nodePropsAreEqual;
-            types[nodeDef.type] = memo(withBorder, compareFunc);
+            types[nodeDef.type] = memo(wrapped, compareFunc);
         }
     });
 
