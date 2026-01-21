@@ -1,0 +1,69 @@
+"""
+Health check routes for monitoring and uptime services.
+
+These endpoints are designed for use with monitoring services like Pulsetic
+to verify API availability and service health.
+"""
+
+import time
+import logging
+from fastapi import APIRouter, Response
+from pydantic import BaseModel
+
+logger = logging.getLogger(__name__)
+
+router = APIRouter(prefix="/health", tags=["health"])
+
+
+class HealthStatus(BaseModel):
+    """Health check response model."""
+    status: str
+    timestamp: float
+
+
+@router.get("")
+@router.get("/")
+async def health_check() -> HealthStatus:
+    """
+    Basic health check endpoint.
+    Returns a simple health status for uptime monitoring.
+    """
+    return HealthStatus(
+        status="healthy",
+        timestamp=time.time()
+    )
+
+
+@router.get("/db")
+async def database_health(response: Response) -> dict:
+    """
+    Database connectivity health check.
+    Performs an actual query to verify database is responsive.
+    """
+    try:
+        from utils.database_pool import get_db_manager
+
+        start_time = time.time()
+        db = get_db_manager()
+
+        result = db.fetchval("SELECT 1")
+        query_time_ms = (time.time() - start_time) * 1000
+
+        pool_status = db.get_pool_status()
+
+        return {
+            "status": "healthy",
+            "query_time_ms": round(query_time_ms, 2),
+            "pool": {
+                "size": pool_status.get("size", 0),
+                "max_size": pool_status.get("max_size", 0),
+                "idle_size": pool_status.get("idle_size", 0),
+            }
+        }
+    except Exception as e:
+        logger.error(f"Database health check failed: {e}")
+        response.status_code = 503
+        return {
+            "status": "unhealthy",
+            "error": str(e)
+        }
