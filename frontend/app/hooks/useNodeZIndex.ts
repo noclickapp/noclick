@@ -4,7 +4,7 @@
  * Supports baseZIndex per group to ensure certain node types always appear above/below others.
  */
 import { useCallback } from 'react';
-import { Node } from 'reactflow';
+import { Node } from '@xyflow/react';
 
 interface NodeGroup {
   /** Filter function to select which nodes this rule applies to */

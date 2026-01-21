@@ -3,7 +3,7 @@
 // Unlike automation nodes, sticky notes are purely visual and don't execute.
 
 import { memo } from 'react';
-import { NodeProps } from 'reactflow';
+import { NodeProps } from '@xyflow/react';
 import { StickyNote as StickyNoteIcon } from 'lucide-react';
 import StickyNote from './StickyNote';
 import { NodeDefinition } from './types';

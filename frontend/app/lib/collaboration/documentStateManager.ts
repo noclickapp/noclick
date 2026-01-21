@@ -8,7 +8,7 @@
  * - Property-level granularity: changes to different properties don't conflict
  */
 
-import type { Node } from 'reactflow';
+import type { Node } from '@xyflow/react';
 
 /** Change record for a single property on a node */
 interface PropertyChange {

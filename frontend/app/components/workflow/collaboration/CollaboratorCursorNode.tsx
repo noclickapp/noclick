@@ -10,7 +10,7 @@
  */
 
 import { memo } from 'react';
-import { NodeProps, useViewport } from 'reactflow';
+import { NodeProps, useViewport } from '@xyflow/react';
 
 interface CollaboratorCursorData {
   name: string;
@@ -37,7 +37,8 @@ const CursorIcon = ({ color }: { color: string }) => (
   </svg>
 );
 
-function CollaboratorCursorNodeComponent({ data }: NodeProps<CollaboratorCursorData>) {
+function CollaboratorCursorNodeComponent({ data }: NodeProps) {
+  const nodeData = data as unknown as CollaboratorCursorData;
   const { zoom } = useViewport();
 
   // Inverse scale: when zoomed out (zoom < 1), make cursor bigger to stay visible
@@ -57,18 +58,18 @@ function CollaboratorCursorNodeComponent({ data }: NodeProps<CollaboratorCursorD
       }}
     >
       {/* Cursor icon */}
-      <CursorIcon color={data.color} />
+      <CursorIcon color={nodeData.color} />
 
       {/* Name label - positioned relative to the larger cursor */}
       <div
         className="absolute left-7 top-6 px-2 py-0.5 rounded text-xs font-medium whitespace-nowrap"
         style={{
-          backgroundColor: data.color,
+          backgroundColor: nodeData.color,
           color: '#000',
           boxShadow: '0 1px 3px rgba(0,0,0,0.3)',
         }}
       >
-        {data.name}
+        {nodeData.name}
       </div>
     </div>
   );

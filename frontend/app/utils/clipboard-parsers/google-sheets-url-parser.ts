@@ -5,7 +5,7 @@
  * and creates a Google Sheets automation node with the spreadsheet_id pre-populated.
  */
 
-import { Node } from 'reactflow';
+import { Node } from '@xyflow/react';
 import { ClipboardParser, ClipboardParseResult } from './types';
 import { generateNodeId } from '~/utils/nodeIdGenerator';
 
