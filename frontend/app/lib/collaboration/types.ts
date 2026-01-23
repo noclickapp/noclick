@@ -52,6 +52,23 @@ export interface NodeDragEvent {
   position: { x: number; y: number };
 }
 
+/** AI editing info for a node being modified by AI */
+export interface AiEditInfo {
+  status: 'processing' | 'complete';
+  action: 'added' | 'removed' | 'updated';
+  operation?: string;
+  config?: Record<string, unknown>;
+}
+
+/** Event data for AI editing operations */
+export interface AiEditingEvent {
+  type: 'ai:editing:start' | 'ai:editing:update' | 'ai:editing:end';
+  collaboratorId: string;
+  nodeIds?: string[];
+  nodeId?: string;
+  info?: AiEditInfo;
+}
+
 /** Configuration for the presence service */
 export interface PresenceServiceConfig {
   workflowId: string;

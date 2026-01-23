@@ -145,6 +145,68 @@ export function clearAllNodeEditInfo() {
     _listeners.forEach(listener => listener());
 }
 
+// Remote AI editing state - tracks which nodes are being edited by remote collaborators
+interface RemoteAiEditingState {
+    userId: string;
+    userName?: string;
+    nodeIds: Set<string>;
+    nodeInfo: Map<string, NodeEditInfo>;
+}
+let _remoteAiEditing: Map<string, RemoteAiEditingState> = new Map();
+
+export function setRemoteAiEditing(userId: string, nodeIds: string[], userName?: string) {
+    _remoteAiEditing.set(userId, {
+        userId,
+        userName,
+        nodeIds: new Set(nodeIds),
+        nodeInfo: new Map(),
+    });
+    _listeners.forEach(listener => listener());
+}
+
+export function updateRemoteAiEditingInfo(userId: string, nodeId: string, info: NodeEditInfo) {
+    const state = _remoteAiEditing.get(userId);
+    if (state) {
+        state.nodeInfo.set(nodeId, info);
+        // Also add to nodeIds if not already present
+        state.nodeIds.add(nodeId);
+        _listeners.forEach(listener => listener());
+    }
+}
+
+export function clearRemoteAiEditing(userId: string) {
+    _remoteAiEditing.delete(userId);
+    _listeners.forEach(listener => listener());
+}
+
+export function getRemoteAiEditing(): Map<string, RemoteAiEditingState> {
+    return _remoteAiEditing;
+}
+
+/**
+ * Check if a node is being edited by a remote collaborator.
+ * Returns the collaborator info and edit info if found, null otherwise.
+ */
+export function isNodeBeingEditedByRemote(nodeId: string): { userId: string; userName?: string; info?: NodeEditInfo } | null {
+    for (const [userId, state] of _remoteAiEditing) {
+        if (state.nodeIds.has(nodeId)) {
+            return {
+                userId,
+                userName: state.userName,
+                info: state.nodeInfo.get(nodeId),
+            };
+        }
+    }
+    return null;
+}
+
+/**
+ * Check if any remote collaborator is currently AI editing.
+ */
+export function isAnyRemoteAiEditing(): boolean {
+    return _remoteAiEditing.size > 0;
+}
+
 // Pending node selection - used when navigating from ChatBox to select a specific node
 let _pendingNodeSelection: { workflowId: string; nodeId: string } | null = null;
 
