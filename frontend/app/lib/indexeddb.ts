@@ -240,7 +240,19 @@ export const valtioCache = {
   set: <T>(key: string, value: T) => idb.set('valtio-cache', key, value),
   delete: (key: string) => idb.delete('valtio-cache', key),
   has: (key: string) => idb.has('valtio-cache', key),
-  clear: () => idb.clear('valtio-cache')
+  clear: () => idb.clear('valtio-cache'),
+  getAllKeys: () => idb.getAllKeys('valtio-cache'),
+  // Debug helper to dump all workflow-outputs entries
+  debugWorkflowOutputs: async () => {
+    const keys = await idb.getAllKeys('valtio-cache');
+    const workflowKeys = keys.filter(k => k.startsWith('workflow-outputs:'));
+    const results: Record<string, unknown> = {};
+    for (const key of workflowKeys) {
+      results[key] = await idb.get('valtio-cache', key);
+    }
+    console.log('[valtioCache] Workflow outputs in IndexedDB:', results);
+    return results;
+  }
 };
 
 export const userPreferences = {
@@ -253,3 +265,29 @@ export const userPreferences = {
 // Export the manager class for advanced usage
 export { IndexedDBManager };
 export type { IDBConfig, StoredValue };
+
+// Expose debug helper on window for console debugging
+if (typeof window !== 'undefined') {
+  (window as any).__debugIndexedDB = {
+    valtioCache,
+    idb,
+    // Quick debug: dump all workflow outputs
+    dumpWorkflowOutputs: async () => {
+      const results = await valtioCache.debugWorkflowOutputs();
+      return results;
+    },
+    // Test write/read cycle
+    testWriteRead: async () => {
+      const testKey = 'test-workflow-outputs';
+      const testData = { 'test-node': { output: 'test', outputTimestamp: Date.now(), executionState: 'completed' } };
+      console.log('[Test] Writing:', testData);
+      const writeSuccess = await valtioCache.set(testKey, testData);
+      console.log('[Test] Write success:', writeSuccess);
+      const loaded = await valtioCache.get(testKey);
+      console.log('[Test] Loaded:', loaded);
+      await valtioCache.delete(testKey);
+      console.log('[Test] Cleaned up test key');
+      return { writeSuccess, loaded, match: JSON.stringify(testData) === JSON.stringify(loaded) };
+    }
+  };
+}
