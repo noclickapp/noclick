@@ -21,3 +21,4 @@ export { useSalesforceOAuth } from './useSalesforceOAuth';
 export { useShopifyOAuth } from './useShopifyOAuth';
 export { useSlackOAuth } from './useSlackOAuth';
 export { useTwitterOAuth } from './useTwitterOAuth';
+export { useMCPOAuth } from './useMCPOAuth';
