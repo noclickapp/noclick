@@ -65,6 +65,7 @@ import { YouTubeNode } from './YouTubeNode';
 import { CSVInputNode } from './CSVInputNode';
 import { FilterNode } from './FilterNode';
 import { ConditionalNode } from './ConditionalNode';
+import { SwitchNode } from './SwitchNode';
 import { MergeNode } from './MergeNode';
 import { SplitNode } from './SplitNode';
 import { StateManagerNode } from './StateManagerNode';
@@ -128,6 +129,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     CSVInputNode,
     FilterNode,
     ConditionalNode,
+    SwitchNode,
     MergeNode,
     SplitNode,
     ServerlessFunctionNode,

@@ -83,6 +83,13 @@ class StrategyRegistry:
         except ImportError as e:
             logger.warning(f"[StrategyRegistry] Failed to import conditional strategy: {e}")
 
+        try:
+            from nodes.switch_node import SwitchExecutionStrategy
+            cls.register(SwitchExecutionStrategy())
+            logger.info("[StrategyRegistry] Initialized with switch strategy")
+        except ImportError as e:
+            logger.warning(f"[StrategyRegistry] Failed to import switch strategy: {e}")
+
     @classmethod
     def clear(cls) -> None:
         """Clear all registered strategies (useful for testing)."""
