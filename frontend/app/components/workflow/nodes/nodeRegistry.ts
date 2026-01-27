@@ -66,6 +66,7 @@ import { FilterNode } from './FilterNode';
 import { ConditionalNode } from './ConditionalNode';
 import { MergeNode } from './MergeNode';
 import { SplitNode } from './SplitNode';
+import { StateManagerNode } from './StateManagerNode';
 import { DUMMY_NODES } from './DummyNodes';
 import type { NodeDefinition, NodeDimensions, NodeDisplayStrategy } from './types';
 
@@ -128,6 +129,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     MergeNode,
     SplitNode,
     ServerlessFunctionNode,
+    StateManagerNode,
     StickyNoteNode,
 ];
 

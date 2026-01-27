@@ -161,8 +161,13 @@ def execute_js(
             };
         """)
 
-        # Inject inputs as frozen object (prevents modification)
-        ctx.eval(f"const inputs = Object.freeze({inputs_json});")
+        # Inject inputs as 'inputs' object
+        ctx.eval(f"const inputs = {inputs_json};")
+
+        # Define 'state' variable - either from inputs or as empty object
+        # This ensures user code referencing 'state' doesn't throw ReferenceError
+        # when no State Manager is connected (state will just be {})
+        ctx.eval("let state = inputs.state ?? {};")
 
         # Now set time limit (after console setup, before user code)
         ctx.set_time_limit(timeout_sec)
@@ -188,6 +193,15 @@ def execute_js(
         stdout = "\n".join(stdout_lines) if stdout_lines else ""
         stderr = "\n".join(stderr_lines) if stderr_lines else ""
 
+        # Capture the current state value after execution (for auto-persistence)
+        # This allows mutations to state to be persisted without explicit return
+        mutated_state = None
+        if 'state' in inputs:
+            try:
+                mutated_state = _convert_result(ctx.eval("state"), ctx)
+            except Exception:
+                pass  # state variable may not exist or be serializable
+
         # Check result size
         try:
             result_str = json.dumps(result_json)
@@ -204,13 +218,19 @@ def execute_js(
             # Result not JSON-serializable, convert to string
             result_json = str(result_json)
 
-        return {
+        response = {
             "success": True,
             "result": result_json,
             "stdout": stdout,
             "stderr": stderr,
             "execution_time_ms": (time.perf_counter() - start_time) * 1000,
         }
+
+        # Include mutated state for auto-persistence (only if state was in inputs)
+        if mutated_state is not None:
+            response["__mutated_state__"] = mutated_state
+
+        return response
 
     except Exception as e:
         error_msg = str(e)
