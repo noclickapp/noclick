@@ -57,6 +57,7 @@ import { ShopifyNode } from './ShopifyNode';
 import { SlackNode } from './SlackNode';
 import { SupabaseNode } from './SupabaseNode';
 import { ToolNode } from './ToolNode';
+import { MCPServerNode } from './MCPServerNode';
 import { TwilioNode } from './TwilioNode';
 import { TwitterNode } from './TwitterNode';
 import { WebhookTriggerNode } from './WebhookTriggerNode';
@@ -121,6 +122,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     PerplexityNode,
     AIAgentNode,
     ToolNode,
+    MCPServerNode,
     IterationNode,
     DelayNode,
     CSVInputNode,
