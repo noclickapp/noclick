@@ -20,7 +20,7 @@ Usage:
 
 import json
 import logging
-from typing import Dict, Any
+from typing import Dict, Any, Optional, List
 
 logger = logging.getLogger(__name__)
 
@@ -56,6 +56,7 @@ def execute_js(
     inputs: Dict[str, Any],
     timeout_sec: float = DEFAULT_TIMEOUT_SEC,
     memory_bytes: int = DEFAULT_MEMORY_BYTES,
+    state_var_names: Optional[list] = None,
 ) -> Dict[str, Any]:
     """
     Execute JavaScript code in a secure QuickJS sandbox.
@@ -164,10 +165,12 @@ def execute_js(
         # Inject inputs as 'inputs' object
         ctx.eval(f"const inputs = {inputs_json};")
 
-        # Define 'state' variable - either from inputs or as empty object
-        # This ensures user code referencing 'state' doesn't throw ReferenceError
-        # when no State Manager is connected (state will just be {})
-        ctx.eval("let state = inputs.state ?? {};")
+        # Define top-level variables for any state inputs so user code can
+        # reference them directly (e.g., `st.counter += 1` instead of `inputs.st.counter += 1`)
+        # and so mutations are auto-captured after execution for persistence.
+        var_names = state_var_names or []
+        for var_name in var_names:
+            ctx.eval(f"let {var_name} = inputs['{var_name}'] ?? {{}};")
 
         # Now set time limit (after console setup, before user code)
         ctx.set_time_limit(timeout_sec)
@@ -193,12 +196,14 @@ def execute_js(
         stdout = "\n".join(stdout_lines) if stdout_lines else ""
         stderr = "\n".join(stderr_lines) if stderr_lines else ""
 
-        # Capture the current state value after execution (for auto-persistence)
-        # This allows mutations to state to be persisted without explicit return
+        # Capture the current state values after execution (for auto-persistence)
+        # This allows mutations to state variables to be persisted without explicit return
         mutated_state = None
-        if 'state' in inputs:
+        # Capture the first state variable (primary state for persistence)
+        capture_var = var_names[0] if var_names else ('state' if 'state' in inputs else None)
+        if capture_var:
             try:
-                mutated_state = _convert_result(ctx.eval("state"), ctx)
+                mutated_state = _convert_result(ctx.eval(capture_var), ctx)
             except Exception:
                 pass  # state variable may not exist or be serializable
 
