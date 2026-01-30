@@ -59,7 +59,7 @@ def extract_client_ip(environ: dict) -> Optional[str]:
     """
     Extract client IP from WSGI/ASGI environ.
 
-    Checks X-Forwarded-For header first (for proxied requests),
+    Checks various headers used by different proxies/load balancers,
     then falls back to REMOTE_ADDR.
 
     Args:
@@ -68,6 +68,12 @@ def extract_client_ip(environ: dict) -> Optional[str]:
     Returns:
         Client IP address or None if not found.
     """
+    # Log available headers for debugging (only IP-related ones)
+    ip_headers = {k: v for k, v in environ.items()
+                  if any(x in k.upper() for x in ['FORWARD', 'REAL', 'REMOTE', 'CLIENT', 'IP'])}
+    # Use INFO level temporarily to debug production
+    logger.info(f"[GEO] Available IP headers: {ip_headers}")
+
     # Check X-Forwarded-For header (may contain multiple IPs)
     forwarded_for = environ.get('HTTP_X_FORWARDED_FOR')
     if forwarded_for:
@@ -78,6 +84,16 @@ def extract_client_ip(environ: dict) -> Optional[str]:
     real_ip = environ.get('HTTP_X_REAL_IP')
     if real_ip:
         return real_ip.strip()
+
+    # Check CF-Connecting-IP (Cloudflare)
+    cf_ip = environ.get('HTTP_CF_CONNECTING_IP')
+    if cf_ip:
+        return cf_ip.strip()
+
+    # Check True-Client-IP (Akamai, Cloudflare Enterprise)
+    true_client = environ.get('HTTP_TRUE_CLIENT_IP')
+    if true_client:
+        return true_client.strip()
 
     # Fall back to REMOTE_ADDR
     return environ.get('REMOTE_ADDR')
