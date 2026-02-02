@@ -61,6 +61,7 @@ import { MCPServerNode } from './MCPServerNode';
 import { TwilioNode } from './TwilioNode';
 import { TwitterNode } from './TwitterNode';
 import { WebhookTriggerNode } from './WebhookTriggerNode';
+import { WhatsAppNode } from './WhatsAppNode';
 import { YouTubeNode } from './YouTubeNode';
 import { CSVInputNode } from './CSVInputNode';
 import { FilterNode } from './FilterNode';
@@ -117,6 +118,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     TwilioNode,
     TwitterNode,
     TypeformNode,
+    WhatsAppNode,
     YouTubeNode,
     HubSpotNode,
     MailchimpNode,
