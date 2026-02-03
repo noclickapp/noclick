@@ -62,6 +62,7 @@ import { TwilioNode } from './TwilioNode';
 import { TwitterNode } from './TwitterNode';
 import { WebhookTriggerNode } from './WebhookTriggerNode';
 import { WhatsAppNode } from './WhatsAppNode';
+import { ElevenLabsNode } from './ElevenLabsNode';
 import { YouTubeNode } from './YouTubeNode';
 import { CSVInputNode } from './CSVInputNode';
 import { FilterNode } from './FilterNode';
@@ -119,6 +120,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     TwitterNode,
     TypeformNode,
     WhatsAppNode,
+    ElevenLabsNode,
     YouTubeNode,
     HubSpotNode,
     MailchimpNode,
