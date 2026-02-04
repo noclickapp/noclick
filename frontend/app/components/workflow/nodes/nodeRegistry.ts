@@ -43,6 +43,7 @@ import { LinkedInNode } from './LinkedInNode';
 import { NotionNode } from './NotionNode';
 import { OutlookMailNode } from './OutlookMailNode';
 import { ExcelNode } from './ExcelNode';
+import { OneDriveNode } from './OneDriveNode';
 import { PostgresNode } from './PostgresNode';
 import { RedditNode } from './RedditNode';
 import { RedisNode } from './RedisNode';
@@ -88,6 +89,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     GmailNode,
     OutlookMailNode,
     ExcelNode,
+    OneDriveNode,
     HttpRequestNode,
     LinearNode,
     GithubRestNode,
