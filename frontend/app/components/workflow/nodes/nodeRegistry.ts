@@ -42,6 +42,7 @@ import { JiraNode } from './JiraNode';
 import { LinkedInNode } from './LinkedInNode';
 import { NotionNode } from './NotionNode';
 import { OutlookMailNode } from './OutlookMailNode';
+import { ExcelNode } from './ExcelNode';
 import { PostgresNode } from './PostgresNode';
 import { RedditNode } from './RedditNode';
 import { RedisNode } from './RedisNode';
@@ -86,6 +87,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     GoogleDriveNode,
     GmailNode,
     OutlookMailNode,
+    ExcelNode,
     HttpRequestNode,
     LinearNode,
     GithubRestNode,
