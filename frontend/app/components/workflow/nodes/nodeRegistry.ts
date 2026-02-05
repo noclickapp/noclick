@@ -45,6 +45,7 @@ import { OutlookMailNode } from './OutlookMailNode';
 import { ExcelNode } from './ExcelNode';
 import { OneDriveNode } from './OneDriveNode';
 import { MicrosoftTodoNode } from './MicrosoftTodoNode';
+import { WordNode } from './WordNode';
 import { PostgresNode } from './PostgresNode';
 import { RedditNode } from './RedditNode';
 import { RedisNode } from './RedisNode';
@@ -92,6 +93,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     ExcelNode,
     OneDriveNode,
     MicrosoftTodoNode,
+    WordNode,
     HttpRequestNode,
     LinearNode,
     GithubRestNode,
