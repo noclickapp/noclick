@@ -342,4 +342,25 @@ MCP_EVENTS: Dict[str, Dict[str, any]] = {
             "idempotentHint": True,
         },
     },
+    "workflow:mcp:update_interface": {
+        "name": "update_interface",
+        "description": (
+            "Update the interface layout for a workflow. Uses XML commands to position and resize "
+            "interface blocks on a 12-column grid (row height 40px).\n\n"
+            "XML commands:\n"
+            '  <set_block_layout id="node-id" x="0" y="0" w="6" h="5" /> - Position/resize a block\n'
+            '  <remove_block id="node-id" /> - Remove a block from the grid (keeps the workflow node)\n'
+            '  <auto_layout /> - Auto-arrange all blocks in a 2-column grid\n'
+            '  <auto_layout strategy="stack" /> - Auto-arrange in a single column\n\n'
+            "Block id must be an existing interface-* workflow node ID. "
+            "Any interface nodes not yet on the grid are auto-created with defaults.\n"
+            "Each block in the response includes minW/minH constraints."
+        ),
+        "tags": {"workflow", "modify", "interface", "layout"},
+        "annotations": {
+            "readOnlyHint": False,
+            "destructiveHint": False,
+            "idempotentHint": True,
+        },
+    },
 }
