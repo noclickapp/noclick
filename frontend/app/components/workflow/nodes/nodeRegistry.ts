@@ -75,6 +75,26 @@ import { SwitchNode } from './SwitchNode';
 import { MergeNode } from './MergeNode';
 import { SplitNode } from './SplitNode';
 import { StateManagerNode } from './StateManagerNode';
+import {
+    InterfaceFormNode,
+    InterfaceMarkdownNode,
+    InterfaceImageNode,
+    InterfaceAudioNode,
+    InterfaceVideoNode,
+    InterfaceFileNode,
+    InterfaceDataframeNode,
+    InterfacePlotNode,
+    InterfaceHtmlNode,
+    InterfaceFileUploadNode,
+    InterfaceChatbotNode,
+    // Legacy (kept for existing workflows)
+    InterfaceTextboxNode,
+    InterfaceNumberNode,
+    InterfaceSliderNode,
+    InterfaceCheckboxNode,
+    InterfaceDropdownNode,
+    InterfaceButtonNode,
+} from './interface';
 import { DUMMY_NODES } from './DummyNodes';
 import type { NodeDefinition, NodeDimensions, NodeDisplayStrategy } from './types';
 
@@ -147,6 +167,25 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     ServerlessFunctionNode,
     StateManagerNode,
     StickyNoteNode,
+    // Interface nodes (UI components for the workflow interface builder)
+    InterfaceFormNode,
+    InterfaceMarkdownNode,
+    InterfaceImageNode,
+    InterfaceAudioNode,
+    InterfaceVideoNode,
+    InterfaceFileNode,
+    InterfaceDataframeNode,
+    InterfacePlotNode,
+    InterfaceHtmlNode,
+    InterfaceFileUploadNode,
+    InterfaceChatbotNode,
+    // Legacy interface nodes (kept for existing workflows)
+    InterfaceTextboxNode,
+    InterfaceNumberNode,
+    InterfaceSliderNode,
+    InterfaceCheckboxNode,
+    InterfaceDropdownNode,
+    InterfaceButtonNode,
 ];
 
 // Re-export types for convenience
