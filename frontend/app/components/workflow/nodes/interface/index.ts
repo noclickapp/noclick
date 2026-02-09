@@ -12,11 +12,3 @@ export { InterfacePlotNode } from './InterfacePlotNode';
 export { InterfaceHtmlNode } from './InterfaceHtmlNode';
 export { InterfaceFileUploadNode } from './InterfaceFileUploadNode';
 export { InterfaceChatbotNode } from './InterfaceChatbotNode';
-
-// Legacy interface nodes (kept for backwards compatibility with existing workflows)
-export { InterfaceTextboxNode } from './InterfaceTextboxNode';
-export { InterfaceNumberNode } from './InterfaceNumberNode';
-export { InterfaceSliderNode } from './InterfaceSliderNode';
-export { InterfaceCheckboxNode } from './InterfaceCheckboxNode';
-export { InterfaceDropdownNode } from './InterfaceDropdownNode';
-export { InterfaceButtonNode } from './InterfaceButtonNode';
