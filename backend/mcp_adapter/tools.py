@@ -124,7 +124,7 @@ MCP_EVENTS: Dict[str, Dict[str, any]] = {
     },
     "workflow:mcp:get_node_output": {
         "name": "get_workflow_node_output",
-        "description": "Get the execution output of a workflow node. If the node is still running, waits until completion (with timeout). Call this after run_workflow to get results from specific nodes.",
+        "description": "Get the execution output of workflow nodes. If a node is still running, waits until completion (with timeout). Call this after run_workflow to get results from specific nodes.",
         "tags": {"workflow", "read", "output", "async"},
         "annotations": {
             "readOnlyHint": True,
