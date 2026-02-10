@@ -23,7 +23,7 @@ const BLOCK_COMPONENTS: Record<string, React.ComponentType<BlockComponentProps>>
   dataframe: DataframeBlock,
   plot: PlotBlock,
   html: HtmlBlock,
-  fileUpload: FileUploadBlock,
+  'file-upload': FileUploadBlock,
   chatbot: ChatbotBlock,
 };
 
