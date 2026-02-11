@@ -1,5 +1,5 @@
 # OAuth utilities for workflow nodes.
-# Provides OAuth 2.0 token management for various providers (Google, Airtable, GitHub, Linear, Notion, Reddit, Microsoft, Facebook, Twitter, Slack).
+# Provides OAuth 2.0 token management for various providers (Google, Airtable, GitHub, Linear, Notion, Reddit, Microsoft, Facebook, Twitter, Slack, WordPress).
 
 from nodes.oauth.google_oauth import (
     GoogleTokens,
@@ -142,6 +142,17 @@ from nodes.oauth.typeform_oauth import (
     TYPEFORM_FULL_SCOPES,
 )
 
+from nodes.oauth.wordpress_oauth import (
+    WordPressTokens,
+    WordPressUserInfo,
+    get_wordpress_client_config,
+    exchange_code_for_tokens as wordpress_exchange_code_for_tokens,
+    refresh_access_token as wordpress_refresh_access_token,
+    is_token_expired as wordpress_is_token_expired,
+    get_wordpress_auth_url,
+    WORDPRESS_DEFAULT_SCOPES,
+)
+
 __all__ = [
     # Google
     'GoogleTokens',
@@ -260,4 +271,13 @@ __all__ = [
     'typeform_is_token_expired',
     'get_typeform_auth_url',
     'TYPEFORM_FULL_SCOPES',
+    # WordPress
+    'WordPressTokens',
+    'WordPressUserInfo',
+    'get_wordpress_client_config',
+    'wordpress_exchange_code_for_tokens',
+    'wordpress_refresh_access_token',
+    'wordpress_is_token_expired',
+    'get_wordpress_auth_url',
+    'WORDPRESS_DEFAULT_SCOPES',
 ]
