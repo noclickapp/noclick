@@ -14,6 +14,18 @@ logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/health", tags=["health"])
 
+# Separate router for .well-known verification endpoints (no prefix nesting)
+well_known_router = APIRouter(prefix="/.well-known", tags=["well-known"])
+
+
+@well_known_router.get("/openai-apps-challenge")
+async def openai_apps_challenge():
+    """OpenAI domain verification token."""
+    return Response(
+        content="ChDH9d9qwvXI5a0j04TwYJD7QJ4YNkrkYLE1uRUxW-U",
+        media_type="text/plain",
+    )
+
 
 class HealthStatus(BaseModel):
     """Health check response model."""
