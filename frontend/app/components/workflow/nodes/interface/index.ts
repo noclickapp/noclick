@@ -12,3 +12,4 @@ export { InterfacePlotNode } from './InterfacePlotNode';
 export { InterfaceHtmlNode } from './InterfaceHtmlNode';
 export { InterfaceFileUploadNode } from './InterfaceFileUploadNode';
 export { InterfaceChatbotNode } from './InterfaceChatbotNode';
+export { InterfaceConfigFormNode } from './InterfaceConfigFormNode';
