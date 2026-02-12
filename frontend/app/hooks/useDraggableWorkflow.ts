@@ -8,16 +8,18 @@ interface UseDraggableWorkflowOptions {
     workflowId: string;
     workflowName: string;
     sourceFolderId?: string | null;
+    source: 'grid' | 'sidebar'; // Source of the drag to ensure unique IDs and prevent cross-component drag styling
 }
 
-export function useDraggableWorkflow({ workflowId, workflowName, sourceFolderId }: UseDraggableWorkflowOptions) {
+export function useDraggableWorkflow({ workflowId, workflowName, sourceFolderId, source }: UseDraggableWorkflowOptions) {
     const { attributes, listeners, setNodeRef, isDragging } = useDraggable({
-        id: `workflow-${workflowId}`,
+        id: `workflow-${source}-${workflowId}`, // Unique ID per source prevents both grid and sidebar from showing drag state
         data: {
             type: 'workflow',
             workflowId,
             workflowName,
             sourceFolderId,
+            source, // Include source in data for potential future use
         },
     });
 
