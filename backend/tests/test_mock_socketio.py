@@ -719,37 +719,29 @@ class TestMockSocketIO:
         assert args[0] == {'msg': 'world'}
     
     @pytest.mark.asyncio
-    async def test_sandbox_handler_pattern_exact_replication(self):
+    async def test_catch_all_handler_pattern(self):
         """
-        Exact replication of SandboxHandler's catch_all pattern.
-        This test should fail with current implementation.
+        Test that catch_all handler receives event name as first arg.
         """
-        # Create linked sockets simulating sandbox_handler_sio and sandbox_api_sio
-        sandbox_handler_sio, sandbox_api_sio = MockSocketIO.create_socketio_connection()
-        
+        # Create linked sockets
+        handler_sio, api_sio = MockSocketIO.create_socketio_connection()
+
         # Track what the handler receives
         received_events = []
-        
-        @sandbox_handler_sio.on('*')
-        async def sandbox_catch_all(event, *args):
-            """
-            This exactly mimics SandboxHandler's catch_all signature.
-            It expects event name as first arg, not sid.
-            """
-            # Log what we received
+
+        @handler_sio.on('*')
+        async def catch_all(event, *args):
             received_events.append({
                 'event': event,
                 'args': args,
                 'first_arg_type': type(event).__name__
             })
-            
-            # Try to forward like SandboxHandler does
+
             if event.startswith('agent:'):
-                # This would fail if event is 'mock-sid' instead of actual event name
                 pass
-        
-        # Simulate sandbox_api emitting a response
-        await sandbox_api_sio.emit('agent:run:command:response', {
+
+        # Emit an event from the api side
+        await api_sio.emit('agent:run:command:response', {
             'success': True,
             'output': 'ls output',
             'exit_code': 0,
@@ -760,12 +752,7 @@ class TestMockSocketIO:
         assert len(received_events) == 1
         received = received_events[0]
         
-        # This assertion will fail, showing the bug
-        assert received['event'] == 'agent:run:command:response', (
-            f"BUG: Expected event name 'agent:run:command:response', "
-            f"but got '{received['event']}' (type: {received['first_arg_type']}). "
-            f"This shows that MockSocketIO incorrectly passes 'mock-sid' as the event name!"
-        )
+        assert received['event'] == 'agent:run:command:response'
         
         # The data should be in args[0]
         assert len(received['args']) == 1
