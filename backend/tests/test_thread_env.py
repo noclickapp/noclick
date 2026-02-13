@@ -20,36 +20,30 @@ class TestThreadEnv:
     @pytest.fixture(autouse=True)
     def setup_and_teardown(self):
         """Ensure environment is clean before and after each test."""
-        # Save the current os.environ so we can restore it after the test
-        saved_environ = os.environ
-
         # Store any existing test vars
         test_vars = [
             'TEST_VAR', 'MY_VAR', 'PARENT_VAR', 'CHILD_VAR', 'OVERRIDE_VAR',
             'THREAD_VAR', 'WORKER_VAR', 'SHARED_VAR', 'API_KEY', 'TASK_ID'
         ]
         original_values = {var: os.environ.get(var) for var in test_vars}
-
+        
         # Clean environment before test
         for var in test_vars:
             if var in os.environ:
                 del os.environ[var]
-
+        
         # Ensure patching is active
         patch_environ()
-
+        
         yield
-
+        
         # Restore original values after test
         for var, value in original_values.items():
             if value is not None:
                 os.environ[var] = value
             elif var in os.environ:
                 del os.environ[var]
-
-        # Restore the original os.environ to avoid polluting other test files
-        os.environ = saved_environ
-
+    
     # ========== Basic Sync Tests (Adapted from async_env) ==========
     
     def test_basic_environment_inheritance_sync(self):
