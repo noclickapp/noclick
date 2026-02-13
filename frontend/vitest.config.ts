@@ -15,7 +15,7 @@ export default defineConfig({
     // Include test files
     include: ['**/*.test.ts', '**/*.spec.ts'],
     // Exclude node_modules and build artifacts
-    exclude: ['node_modules', 'build', '.react-router'],
+    exclude: ['node_modules', 'build', '.react-router', 'tests/nc'],
     // Global test timeout
     testTimeout: 10000,
   },

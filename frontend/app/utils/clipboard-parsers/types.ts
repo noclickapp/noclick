@@ -6,13 +6,27 @@
 
 import { Node, Edge } from '@xyflow/react';
 
+/** Grid layout item for an interface block. */
+export interface InterfaceLayoutItem {
+    i: string;
+    x: number;
+    y: number;
+    w: number;
+    h: number;
+    minW?: number;
+    minH?: number;
+}
+
 /**
  * Result of a successful clipboard parse operation.
- * Contains nodes and edges ready to be added to the canvas.
+ * Contains nodes and edges ready to be added to the canvas,
+ * plus optional interface layout for interface-type nodes.
  */
 export interface ClipboardParseResult {
     nodes: Node[];
     edges: Edge[];
+    /** Grid layout for interface blocks (positions and dimensions) */
+    interface?: { layout: InterfaceLayoutItem[] };
 }
 
 /**

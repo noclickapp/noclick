@@ -12,6 +12,7 @@ from nodes.interface.plot_node import PlotInterfaceNode
 from nodes.interface.html_node import HtmlInterfaceNode
 from nodes.interface.file_upload_node import FileUploadInterfaceNode
 from nodes.interface.chatbot_node import ChatbotInterfaceNode
+from nodes.interface.config_form_node import ConfigFormInterfaceNode
 
 __all__ = [
     'MarkdownInterfaceNode',
@@ -25,4 +26,5 @@ __all__ = [
     'HtmlInterfaceNode',
     'FileUploadInterfaceNode',
     'ChatbotInterfaceNode',
+    'ConfigFormInterfaceNode',
 ]

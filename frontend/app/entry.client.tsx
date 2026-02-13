@@ -12,6 +12,8 @@ import { hydrateRoot } from 'react-dom/client';
 if (process.env.NODE_ENV === 'development') {
     // Register workflow test harness
     import('~/lib/workflowTestHarness').then(m => m.register());
+    // Register nc bridge for HMR-based test execution
+    import('~/lib/nc/bridge');
 
     const logToFile = (type: string, args: any[]) => {
         fetch('/api/console', {
@@ -59,54 +61,6 @@ if (process.env.NODE_ENV === 'development') {
         originalDebug(...args);
         logToFile('debug', args);
     };
-    
-    // Poll for remote console commands
-    let lastCommandId: number | null = null;
-    setInterval(async () => {
-        try {
-            const response = await fetch('/api/exec');
-            if (response.ok) {
-                const { command, id } = await response.json();
-                if (command && id !== lastCommandId) {
-                    lastCommandId = id;
-                    console.log(`[EXEC:${id}] Running: ${command}`);
-                    try {
-                        // Wrap in async IIFE to support await in commands
-                        const asyncCommand = `(async () => { return ${command}; })()`;
-                        const result = await eval(asyncCommand);
-                        console.log(`[EXEC:${id}] Result:`, result);
-
-                        // Post result back to server for CLI to retrieve
-                        await fetch('/api/exec', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                type: 'result',
-                                id,
-                                result: typeof result === 'object' ? JSON.parse(JSON.stringify(result)) : result,
-                            }),
-                        });
-                    } catch (error) {
-                        const errorMsg = error instanceof Error ? error.message : String(error);
-                        console.error(`[EXEC:${id}] Error:`, errorMsg);
-
-                        // Post error back to server
-                        await fetch('/api/exec', {
-                            method: 'POST',
-                            headers: { 'Content-Type': 'application/json' },
-                            body: JSON.stringify({
-                                type: 'result',
-                                id,
-                                error: errorMsg,
-                            }),
-                        });
-                    }
-                }
-            }
-        } catch {
-            // Silently fail if exec endpoint is unavailable
-        }
-    }, 300); // Poll every 300ms for faster response
 }
 
 startTransition(() => {

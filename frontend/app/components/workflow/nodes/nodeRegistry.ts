@@ -88,6 +88,7 @@ import {
     InterfaceHtmlNode,
     InterfaceFileUploadNode,
     InterfaceChatbotNode,
+    InterfaceConfigFormNode,
 } from './interface';
 import { DUMMY_NODES } from './DummyNodes';
 import type { NodeDefinition, NodeDimensions, NodeDisplayStrategy } from './types';
@@ -174,6 +175,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     InterfaceHtmlNode,
     InterfaceFileUploadNode,
     InterfaceChatbotNode,
+    InterfaceConfigFormNode,
 ];
 
 // Re-export types for convenience

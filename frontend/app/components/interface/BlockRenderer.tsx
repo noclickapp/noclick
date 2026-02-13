@@ -11,10 +11,12 @@ import { PlotBlock } from './blocks/PlotBlock';
 import { HtmlBlock } from './blocks/HtmlBlock';
 import { FileUploadBlock } from './blocks/FileUploadBlock';
 import { ChatbotBlock } from './blocks/ChatbotBlock';
+import { ConfigFormBlock } from './blocks/ConfigFormBlock';
 import { GenericBlock } from './blocks/GenericBlock';
 
 const BLOCK_COMPONENTS: Record<string, React.ComponentType<BlockComponentProps>> = {
   form: FormBlock,
+  'config-form': ConfigFormBlock,
   markdown: MarkdownBlock,
   image: ImageBlock,
   audio: AudioBlock,
