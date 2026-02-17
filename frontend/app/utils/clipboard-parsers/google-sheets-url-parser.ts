@@ -47,9 +47,10 @@ export const googleSheetsUrlParser: ClipboardParser = {
             type: 'automation-google-sheets',
             position: { x: 0, y: 0 }, // Will be repositioned at cursor by the paste handler
             data: {
-                // Config fields directly in data (NodeConfig reads from node.data)
+                // Flat format: all config fields directly on node.data
                 operation: 'read',
                 spreadsheet_id: spreadsheetId,
+                configValid: false,
             },
             selected: false,
         };
