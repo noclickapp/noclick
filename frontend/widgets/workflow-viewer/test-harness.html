@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<!-- Local test harness for the workflow viewer widget.
+     Simulates an MCP Apps host by handling the JSON-RPC handshake and sending
+     a mock tool result notification with sample workflow data.
+     Open this file directly in a browser (via Vite dev or file://).  -->
+<html lang="en">
+<head>
+    <meta charset="UTF-8" />
+    <title>Widget Test Harness</title>
+    <style>
+        body { margin: 0; background: #1a1a1a; color: #ccc; font-family: system-ui; }
+        #controls { padding: 12px 16px; display: flex; gap: 12px; align-items: center; }
+        button { padding: 6px 16px; border-radius: 6px; border: 1px solid #555; background: #333; color: #eee; cursor: pointer; font-size: 13px; }
+        button:hover { background: #444; }
+        #log { padding: 8px 16px; font-size: 12px; font-family: monospace; max-height: 120px; overflow-y: auto; background: #111; border-top: 1px solid #333; }
+        .log-entry { margin: 2px 0; }
+        .log-in { color: #6bf; }
+        .log-out { color: #8f8; }
+        iframe { width: 100%; height: calc(100vh - 180px); border: none; background: #0a0a0a; }
+    </style>
+</head>
+<body>
+    <div id="controls">
+        <strong style="color:#fff">Widget Test Harness</strong>
+        <button onclick="sendSampleWorkflow()">Send Sample Workflow</button>
+        <button onclick="sendLargeWorkflow()">Send Large Workflow</button>
+        <button onclick="sendEmptyWorkflow()">Send Empty Result</button>
+    </div>
+    <div id="log"></div>
+    <iframe id="widget" src="../../../backend/mcp_adapter/html_widgets/dist/workflow-viewer.html"></iframe>
+
+    <script>
+        const logEl = document.getElementById('log');
+        const iframe = document.getElementById('widget');
+
+        function log(direction, msg) {
+            const div = document.createElement('div');
+            div.className = 'log-entry ' + (direction === 'in' ? 'log-in' : 'log-out');
+            const short = typeof msg === 'string' ? msg : JSON.stringify(msg).slice(0, 200);
+            div.textContent = `${direction === 'in' ? '←' : '→'} ${short}`;
+            logEl.appendChild(div);
+            logEl.scrollTop = logEl.scrollHeight;
+        }
+
+        // Listen for messages from the widget iframe (JSON-RPC 2.0)
+        window.addEventListener('message', (event) => {
+            const data = event.data;
+            if (!data || typeof data !== 'object' || data.jsonrpc !== '2.0') return;
+
+            log('in', data);
+
+            // Handle ui/initialize request → respond with host capabilities
+            if (data.method === 'ui/initialize' && data.id != null) {
+                const response = {
+                    jsonrpc: '2.0',
+                    id: data.id,
+                    result: {
+                        protocolVersion: '2025-03-26',
+                        hostCapabilities: {},
+                        hostInfo: {
+                            name: 'test-harness',
+                            version: '1.0.0',
+                        },
+                        hostContext: {
+                            theme: 'dark',
+                        },
+                    },
+                };
+                log('out', `initialize response (id=${data.id})`);
+                iframe.contentWindow.postMessage(response, '*');
+            }
+
+            // Handle ui/notifications/initialized → widget is ready
+            if (data.method === 'ui/notifications/initialized') {
+                log('out', 'Widget initialized, sending sample workflow...');
+                // Auto-send sample data on connect
+                setTimeout(() => sendSampleWorkflow(), 200);
+            }
+        });
+
+        // Sample workflow XML with interface nodes
+        const SAMPLE_XML = `
+<node id="interface-form-1" type="interface-form" x="50" y="50" width="300" height="250" label="Input Form" fields="[{&quot;id&quot;:&quot;name&quot;,&quot;type&quot;:&quot;text&quot;,&quot;label&quot;:&quot;Your Name&quot;,&quot;placeholder&quot;:&quot;Enter name&quot;,&quot;required&quot;:true},{&quot;id&quot;:&quot;topic&quot;,&quot;type&quot;:&quot;dropdown&quot;,&quot;label&quot;:&quot;Topic&quot;,&quot;options&quot;:[&quot;Tech&quot;,&quot;Science&quot;,&quot;Art&quot;]}]" />
+<node id="automation-agent-2" type="agent" x="450" y="100" width="90" height="90" label="AI Agent" operation="default" />
+<node id="interface-markdown-3" type="interface-markdown" x="700" y="50" width="300" height="200" label="Output" content="## Results\n\nYour results will appear here." />
+<edge from="interface-form-1" to="automation-agent-2" />
+<edge from="automation-agent-2" to="interface-markdown-3" />
+`.trim();
+
+        const LARGE_XML = `
+<node id="automation-webhook-trigger-1" type="automation-webhook-trigger" x="50" y="200" width="90" height="90" label="Webhook" operation="default" />
+<node id="conditional-2" type="conditional" x="250" y="200" width="90" height="90" label="Check Type" condition_operator="equals" condition_value="urgent" />
+<node id="automation-http-request-3" type="automation-http-request" x="500" y="50" width="90" height="90" label="API Call" operation="get" />
+<node id="automation-google-sheets-4" type="automation-google-sheets" x="500" y="350" width="90" height="90" label="Log to Sheet" operation="append_row" />
+<node id="switch-5" type="switch" x="750" y="50" width="90" height="90" label="Route" switch_cases="[{&quot;value&quot;:&quot;high&quot;},{&quot;value&quot;:&quot;medium&quot;},{&quot;value&quot;:&quot;low&quot;}]" />
+<node id="automation-slack-6" type="automation-slack" x="1000" y="0" width="90" height="90" label="Slack High" operation="post_message" />
+<node id="automation-slack-7" type="automation-slack" x="1000" y="150" width="90" height="90" label="Slack Med" operation="post_message" />
+<node id="automation-slack-8" type="automation-slack" x="1000" y="300" width="90" height="90" label="Slack Low" operation="post_message" />
+<node id="iteration-9" type="iteration" x="500" y="500" width="90" height="90" label="Loop Items" />
+<node id="automation-serverless-function-10" type="automation-serverless-function" x="750" y="500" width="90" height="90" label="Process" operation="javascript" />
+<edge from="automation-webhook-trigger-1" to="conditional-2" />
+<edge from="conditional-2" to="automation-http-request-3" handle="true" />
+<edge from="conditional-2" to="automation-google-sheets-4" handle="false" />
+<edge from="automation-http-request-3" to="switch-5" />
+<edge from="switch-5" to="automation-slack-6" handle="high" />
+<edge from="switch-5" to="automation-slack-7" handle="medium" />
+<edge from="switch-5" to="automation-slack-8" handle="low" />
+<edge from="automation-google-sheets-4" to="iteration-9" />
+<edge from="iteration-9" to="automation-serverless-function-10" handle="loop" />
+`.trim();
+
+        function sendToolResult(data) {
+            const notification = {
+                jsonrpc: '2.0',
+                method: 'ui/notifications/tool-result',
+                params: {
+                    content: [{ type: 'text', text: JSON.stringify(data) }],
+                    isError: false,
+                    structuredContent: data,
+                    _meta: data,
+                },
+            };
+            log('out', `tool-result (${data.name || 'no name'}, xml=${(data.workflow_xml || '').length} chars)`);
+            iframe.contentWindow.postMessage(notification, '*');
+        }
+
+        function sendSampleWorkflow() {
+            sendToolResult({
+                workflow_id: 'test-123',
+                name: 'RSS to Slack Pipeline',
+                workflow_xml: SAMPLE_XML,
+            });
+        }
+
+        function sendLargeWorkflow() {
+            sendToolResult({
+                workflow_id: 'test-456',
+                name: 'Webhook Processing Pipeline',
+                workflow_xml: LARGE_XML,
+            });
+        }
+
+        function sendEmptyWorkflow() {
+            sendToolResult({
+                workflow_id: 'test-empty',
+                name: 'Empty Workflow',
+                workflow_xml: '',
+            });
+        }
+    </script>
+</body>
+</html>
