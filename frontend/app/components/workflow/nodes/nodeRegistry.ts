@@ -65,6 +65,7 @@ import { ToolNode } from './ToolNode';
 import { MCPServerNode } from './MCPServerNode';
 import { TwilioNode } from './TwilioNode';
 import { TwitterNode } from './TwitterNode';
+import { RunTriggerNode } from './RunTriggerNode';
 import { WebhookTriggerNode } from './WebhookTriggerNode';
 import { WhatsAppNode } from './WhatsAppNode';
 import { ElevenLabsNode } from './ElevenLabsNode';
@@ -96,6 +97,7 @@ import type { NodeDefinition, NodeDimensions, NodeDisplayStrategy } from './type
 // All available nodes - just a list, no processing
 export const AVAILABLE_NODES: NodeDefinition[] = [
     // Trigger nodes (workflow entry points)
+    RunTriggerNode,
     WebhookTriggerNode,
     CronTriggerNode,
     FormInputNode,
