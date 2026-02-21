@@ -10,28 +10,6 @@ import { WorkflowViewer } from './WorkflowViewer';
 import { parseWorkflowXml, toReactFlowData } from './xmlToReactFlow';
 import type { Node, Edge } from '@xyflow/react';
 
-// Rewrite /icons/*.svg src attributes to absolute CDN URLs.
-// ChatGPT's CSP blocks <base href>, so we use a MutationObserver instead.
-const CDN_ORIGIN = 'https://noclick.com';
-function rewriteIconSrc(img: HTMLImageElement) {
-    const src = img.getAttribute('src');
-    if (src && src.startsWith('/icons/')) {
-        img.src = CDN_ORIGIN + src;
-    }
-}
-// Rewrite existing and future <img> elements
-const observer = new MutationObserver((mutations) => {
-    for (const m of mutations) {
-        for (const node of m.addedNodes) {
-            if (node instanceof HTMLImageElement) rewriteIconSrc(node);
-            if (node instanceof HTMLElement) {
-                node.querySelectorAll<HTMLImageElement>('img[src^="/icons/"]').forEach(rewriteIconSrc);
-            }
-        }
-    }
-});
-observer.observe(document.documentElement, { childList: true, subtree: true });
-
 // State
 let root: Root | null = null;
 let currentNodes: Node[] = [];
