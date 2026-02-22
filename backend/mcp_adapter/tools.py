@@ -103,7 +103,7 @@ MCP_EVENTS: Dict[str, Dict[str, any]] = {
     },
     "workflow:mcp:create_workflow": {
         "name": "create_workflow",
-        "description": "Create a new workflow and open it in the editor. Returns the new workflow_id.",
+        "description": "Create a new workflow and open it in the editor. Optionally specify a folder_id to create it inside a folder. Returns the new workflow_id.",
         "tags": {"workflow", "create"},
         "annotations": {
             "readOnlyHint": False,
@@ -123,8 +123,8 @@ MCP_EVENTS: Dict[str, Dict[str, any]] = {
     },
     "workflow:mcp:list_workflows": {
         "name": "list_workflows",
-        "description": "List available workflows, optionally filtering by search query. Returns workflow IDs, names, and descriptions.",
-        "tags": {"workflow", "list", "search"},
+        "description": "List available workflows, optionally filtering by search query and/or folder. Use folder_id to list workflows in a specific folder, or empty string '' for root-level (unfiled) workflows only. Returns workflow IDs, names, descriptions, and folder_id.",
+        "tags": {"workflow", "list", "search", "folders"},
         "annotations": {
             "readOnlyHint": True,
             "destructiveHint": False,
@@ -308,6 +308,17 @@ MCP_EVENTS: Dict[str, Dict[str, any]] = {
         "tags": {"workflow", "modify", "interface", "layout"},
         "annotations": {
             "readOnlyHint": False,
+            "destructiveHint": False,
+            "idempotentHint": True,
+        },
+    },
+    # Folder Management Tools
+    "workflow:mcp:get_folder_tree": {
+        "name": "get_workflow_folders",
+        "description": "Get the complete folder tree for organizing workflows. Returns all folders the user has access to in a hierarchical structure with workflow counts. Use this to discover folder IDs for list_workflows or create_workflow.",
+        "tags": {"workflow", "folders", "list"},
+        "annotations": {
+            "readOnlyHint": True,
             "destructiveHint": False,
             "idempotentHint": True,
         },
