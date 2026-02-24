@@ -12,6 +12,7 @@ import fs from 'fs';
 
 const frontendDir = path.resolve(__dirname, '..');
 const stubsPath = path.resolve(__dirname, 'stubs.ts');
+const widgetBlockRendererPath = path.resolve(__dirname, 'WidgetBlockRenderer.tsx');
 const publicIconsDir = path.resolve(frontendDir, 'public', 'icons');
 
 // Inline /icons/*.svg references as data URIs at build time.
@@ -61,6 +62,7 @@ const stubModules = [
     '~/components/chat/ModelDropdown',
     '~/components/chat/MarkdownRenderer',
     '~/components/workflow/IODataDisplay',
+    '~/lib/socket-sender',
     '~/lib/socket',
     '~/lib/socketClient',
 ];
@@ -68,6 +70,7 @@ const stubModules = [
 // Array format guarantees resolution order: specific stubs first, then general '~' alias
 const aliasEntries = [
     ...stubModules.map((mod) => ({ find: mod, replacement: stubsPath })),
+    { find: '~/components/interface/BlockRenderer', replacement: widgetBlockRendererPath },
     { find: '~', replacement: path.resolve(frontendDir, 'app') },
 ];
 
