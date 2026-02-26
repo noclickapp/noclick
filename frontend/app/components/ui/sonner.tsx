@@ -23,6 +23,8 @@ const Toaster = ({ ...props }: ToasterProps) => {
           error:
             "group-[.toaster]:!bg-red-950 group-[.toaster]:!border-red-800 group-[.toaster]:!text-red-200",
           description: "group-[.toast]:text-gray-300",
+          error:
+            "group-[.toaster]:!bg-red-950/80 group-[.toaster]:!border-red-800/60 group-[.toaster]:!text-red-100 group-[.toaster]:backdrop-blur-sm",
           actionButton:
             "group-[.toast]:bg-white group-[.toast]:text-black",
           cancelButton:

@@ -5,7 +5,7 @@
  * Features Apply/Cancel buttons and improved visual feedback for range selection.
  */
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Calendar as CalendarIcon } from "lucide-react"
 import { DateRange } from "react-day-picker"
 import { format } from "date-fns"
@@ -34,6 +34,14 @@ export function DateRangePicker({
 }: DateRangePickerProps) {
   const [isOpen, setIsOpen] = useState(false)
   const [tempDateRange, setTempDateRange] = useState<DateRange | undefined>(dateRange)
+  const [isMobile, setIsMobile] = useState(false)
+
+  useEffect(() => {
+    const check = () => setIsMobile(window.innerWidth < 640)
+    check()
+    window.addEventListener('resize', check)
+    return () => window.removeEventListener('resize', check)
+  }, [])
 
   // Reset temp range when popover opens
   const handleOpenChange = (open: boolean) => {
@@ -56,13 +64,14 @@ export function DateRangePicker({
   }
 
   return (
-    <div className={cn("grid gap-2", className)}>
+    <div className={cn("flex", className)}>
       <Popover open={isOpen} onOpenChange={handleOpenChange}>
         <PopoverTrigger asChild>
           <Button
             variant={"outline"}
             className={cn(
-              "h-9 px-3 justify-start text-left font-normal text-xs bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-100 border-zinc-700 whitespace-nowrap",
+              "h-8 sm:h-9 px-3 justify-start text-left font-normal text-xs bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-100 border-zinc-700 whitespace-nowrap",
+              isMobile && "flex-1 min-w-0",
               !dateRange && "text-zinc-500"
             )}
           >
@@ -71,22 +80,23 @@ export function DateRangePicker({
           </Button>
         </PopoverTrigger>
         <PopoverContent
-          className="w-auto p-0 bg-zinc-900 border-zinc-700 shadow-xl rounded-lg"
-          align={align}
+          className="p-0 w-auto bg-zinc-900 border-zinc-700 shadow-xl rounded-lg"
+          align={isMobile ? "end" : align}
           sideOffset={8}
+          collisionPadding={{ top: 8, right: 8, bottom: 8, left: 8 }}
         >
           <div className="flex flex-col">
             {/* Date Range Display Header */}
             {tempDateRange?.from && (
-              <div className="px-4 pt-4 pb-3 border-b border-zinc-800">
-                <div className="flex items-center justify-center gap-2 text-sm">
-                  <span className="text-zinc-400">
+              <div className="px-4 pt-3 pb-2.5 border-b border-zinc-800">
+                <div className="flex items-center justify-center gap-2 text-xs sm:text-sm">
+                  <span className="text-zinc-300 font-medium">
                     {format(tempDateRange.from, "MMM dd, yyyy")}
                   </span>
                   {tempDateRange.to && (
                     <>
                       <span className="text-zinc-600">—</span>
-                      <span className="text-zinc-400">
+                      <span className="text-zinc-300 font-medium">
                         {format(tempDateRange.to, "MMM dd, yyyy")}
                       </span>
                     </>
@@ -95,13 +105,13 @@ export function DateRangePicker({
               </div>
             )}
 
-            {/* Calendar */}
+            {/* Calendar — 1 month on mobile, 2 on desktop */}
             <Calendar
               mode="range"
               defaultMonth={tempDateRange?.from}
               selected={tempDateRange}
               onSelect={setTempDateRange}
-              numberOfMonths={2}
+              numberOfMonths={isMobile ? 1 : 2}
               className="bg-zinc-900 text-zinc-100"
             />
           </div>
