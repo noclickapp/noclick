@@ -77,6 +77,8 @@ import { SwitchNode } from './SwitchNode';
 import { MergeNode } from './MergeNode';
 import { SplitNode } from './SplitNode';
 import { StateManagerNode } from './StateManagerNode';
+import { SetupNode } from './SetupNode';
+import { SetVariableNode } from './SetVariableNode';
 import {
     InterfaceFormNode,
     InterfaceMarkdownNode,
@@ -164,6 +166,8 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     SplitNode,
     ServerlessFunctionNode,
     StateManagerNode,
+    SetupNode,
+    SetVariableNode,
     StickyNoteNode,
     // Interface nodes (UI components for the workflow interface builder)
     InterfaceFormNode,

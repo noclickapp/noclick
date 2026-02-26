@@ -20,6 +20,8 @@ const Toaster = ({ ...props }: ToasterProps) => {
         classNames: {
           toast:
             "group toast group-[.toaster]:text-white group-[.toaster]:shadow-lg",
+          error:
+            "group-[.toaster]:!bg-red-950 group-[.toaster]:!border-red-800 group-[.toaster]:!text-red-200",
           description: "group-[.toast]:text-gray-300",
           actionButton:
             "group-[.toast]:bg-white group-[.toast]:text-black",
