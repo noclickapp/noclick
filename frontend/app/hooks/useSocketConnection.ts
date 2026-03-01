@@ -30,10 +30,6 @@ const toHookState = (state: SocketConnectionState): HookConnectionState => {
  * @example
  * function MyComponent() {
  *   const { isConnected, status } = useSocketConnection();
- *   const dataEngine = useSocketConnection('DATA_ENGINE');
- *   if (dataEngine.isConnecting) {
- *     // show loading UI
- *   }
  * }
  */
 export function useSocketConnection(environment: SocketEnvironment = 'API'): HookConnectionState {
