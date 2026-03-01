@@ -49,7 +49,7 @@ async def check_resource_access(
     # First check if user is the owner
     if resource_type == "workflow":
         owner_row = await conn.fetchrow(
-            "SELECT owner_id FROM workflows WHERE id = $1",
+            "SELECT owner_id FROM workflows WHERE id = $1 AND deleted_at IS NULL",
             resource_id,
         )
     elif resource_type == "database":
