@@ -5,6 +5,7 @@ These endpoints are designed for use with monitoring services like Pulsetic
 to verify API availability and service health.
 """
 
+import subprocess
 import time
 import logging
 from fastapi import APIRouter, Response
@@ -31,6 +32,18 @@ class HealthStatus(BaseModel):
     """Health check response model."""
     status: str
     timestamp: float
+
+
+@router.get("/info")
+async def server_info():
+    """Returns backend metadata like the current git branch."""
+    try:
+        branch = subprocess.check_output(
+            ["git", "rev-parse", "--abbrev-ref", "HEAD"], stderr=subprocess.DEVNULL
+        ).decode().strip()
+    except Exception:
+        branch = ""
+    return {"branch": branch}
 
 
 @router.get("")
