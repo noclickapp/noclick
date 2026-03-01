@@ -4,7 +4,7 @@ This module provides a centralized proxy for handling incoming SocketIO events w
 
 ## Features
 
-- **Event Routing**: Routes events to appropriate handlers based on environment (API, DATA_ENGINE)
+- **Event Routing**: Routes events to appropriate handlers
 - **Rate Limiting**: Sliding window rate limiter with per-second and per-minute limits
 - **Per-Event Limits**: Configure specific limits for individual event types
 - **User Isolation**: Rate limits are tracked per user session (sid)
@@ -57,8 +57,6 @@ SocketIORateLimitConfig(
 
 **Per-Event Limits**: Each event type has its own counter. For example:
 - `chat:message`: max 5/sec, 15/min
-- `upload:chunk`: max 100/sec, 5000/min
-
 Each event is tracked independently, and a request is blocked if it exceeds its specific event limit.
 
 ## Testing
@@ -71,4 +69,4 @@ pytest handlers/socketio/proxy/tests/test_rate_limiter.py -v
 
 ## Environment Variables
 
-- `SOCKET_PROXY_ENV`: Determines which set of events/handlers to route (default: "API")
+- `SOCKET_PROXY_ENV`: Determines which set of events/handlers to route

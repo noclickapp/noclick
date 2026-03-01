@@ -6,7 +6,7 @@ Most communication between the frontend and the backend happens via the handlers
 
 1. Extend the SocketIOHandler class defined in schema.py with your new handler
 2. Initialize the handler in the setup_config() method of SocketIOProxy (defined in ./proxy/proxy.py)
-3. Based on the deployment environment (API/DATA_ENGINE/etc) update the event_handlers mapping in the proxy setup_config() method. This step introduces somewhat redundant data by redefining the events a handler can accept (this is available via the get_events method of the handler) but helps in blocking certain actions on certain environments and makes it easier to visualize all events in one place improving readability.
+3. Update the event_handlers mapping in the proxy setup_config() method. This step introduces somewhat redundant data by redefining the events a handler can accept (this is available via the get_events method of the handler) but helps in blocking certain actions and makes it easier to visualize all events in one place improving readability.
 
 
 ## Frontend Communication
