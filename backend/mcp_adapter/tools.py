@@ -31,26 +31,6 @@ MCP_EVENTS: Dict[str, Dict[str, any]] = {
             "idempotentHint": True,
         },
     },
-    "workflow:mcp:add_node": {
-        "name": "add_workflow_node",
-        "description": "Add a new node to the currently open workflow. If prev_node_id is provided, auto-connects the new node to that node. Returns the new node_id.",
-        "tags": {"workflow", "create", "nodes"},
-        "annotations": {
-            "readOnlyHint": False,
-            "destructiveHint": False,
-            "idempotentHint": False,
-        },
-    },
-    "workflow:mcp:remove_node": {
-        "name": "remove_workflow_node",
-        "description": "Remove a node and its connections from the currently open workflow.",
-        "tags": {"workflow", "delete", "nodes"},
-        "annotations": {
-            "readOnlyHint": False,
-            "destructiveHint": True,
-            "idempotentHint": True,
-        },
-    },
     "workflow:mcp:get_selected_node": {
         "name": "get_selected_workflow_node",
         "description": "Get the currently selected node in the workflow canvas. Returns null if no node is selected.",
@@ -161,60 +141,10 @@ MCP_EVENTS: Dict[str, Dict[str, any]] = {
             "idempotentHint": True,
         },
     },
-    "workflow:mcp:set_node_mock": {
-        "name": "set_node_mock_output",
-        "description": "Set mock output data for a node. Provide either saved_output_id to use saved data, or output to set raw data directly. Use clear=true to remove mock data.",
-        "tags": {"workflow", "mock", "modify"},
-        "annotations": {
-            "readOnlyHint": False,
-            "destructiveHint": False,
-            "idempotentHint": True,
-        },
-    },
-    "workflow:mcp:set_node_disabled": {
-        "name": "set_node_disabled",
-        "description": "Enable or disable a workflow node. Disabled nodes are skipped during execution.",
-        "tags": {"workflow", "modify", "nodes"},
-        "annotations": {
-            "readOnlyHint": False,
-            "destructiveHint": False,
-            "idempotentHint": True,
-        },
-    },
     "workflow:mcp:run_node": {
         "name": "run_single_node",
         "description": "Execute a single node in the workflow. Previous nodes must have output data (either from prior execution or mock data). Use get_node_output to retrieve results.",
         "tags": {"workflow", "execute", "nodes"},
-        "annotations": {
-            "readOnlyHint": False,
-            "destructiveHint": False,
-            "idempotentHint": False,
-        },
-    },
-    "workflow:mcp:update_node_config": {
-        "name": "update_workflow_node_config",
-        "description": "Update a workflow node's configuration. Use get_node_config_schema first to see the expected config structure for the node type.",
-        "tags": {"workflow", "modify", "nodes", "config"},
-        "annotations": {
-            "readOnlyHint": False,
-            "destructiveHint": False,
-            "idempotentHint": True,
-        },
-    },
-    "workflow:mcp:batch_update_node_config": {
-        "name": "batch_update_workflow_node_config",
-        "description": "Update multiple workflow nodes' configurations in a single operation. More efficient than calling update_workflow_node_config multiple times. Pass a list of {node_id, config} updates.",
-        "tags": {"workflow", "modify", "nodes", "config", "batch"},
-        "annotations": {
-            "readOnlyHint": False,
-            "destructiveHint": False,
-            "idempotentHint": True,
-        },
-    },
-    "workflow:mcp:batch_add_node": {
-        "name": "batch_add_workflow_nodes",
-        "description": "Add multiple nodes and edges to a workflow in a single operation. More efficient than calling add_workflow_node multiple times. Use temp_id in nodes to reference them in edges before real IDs are assigned.",
-        "tags": {"workflow", "create", "nodes", "batch"},
         "annotations": {
             "readOnlyHint": False,
             "destructiveHint": False,
@@ -257,36 +187,6 @@ MCP_EVENTS: Dict[str, Dict[str, any]] = {
         "tags": {"workflow", "read", "nodes", "config"},
         "annotations": {
             "readOnlyHint": True,
-            "destructiveHint": False,
-            "idempotentHint": True,
-        },
-    },
-    "workflow:mcp:add_edge": {
-        "name": "add_workflow_edge",
-        "description": "Add an edge (connection) between two nodes in the workflow. Specify source_id and target_id to create a directional connection.",
-        "tags": {"workflow", "create", "edges"},
-        "annotations": {
-            "readOnlyHint": False,
-            "destructiveHint": False,
-            "idempotentHint": False,
-        },
-    },
-    "workflow:mcp:remove_edge": {
-        "name": "remove_workflow_edge",
-        "description": "Remove an edge from the workflow. Specify either edge_id directly, or source_id + target_id to find and remove the edge.",
-        "tags": {"workflow", "delete", "edges"},
-        "annotations": {
-            "readOnlyHint": False,
-            "destructiveHint": True,
-            "idempotentHint": True,
-        },
-    },
-    "workflow:mcp:update_node_position": {
-        "name": "update_workflow_node_position",
-        "description": "Update a node's position in the workflow canvas. Provide x and y coordinates.",
-        "tags": {"workflow", "modify", "nodes", "position"},
-        "annotations": {
-            "readOnlyHint": False,
             "destructiveHint": False,
             "idempotentHint": True,
         },
