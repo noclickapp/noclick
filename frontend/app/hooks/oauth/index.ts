@@ -20,6 +20,7 @@ export { useRedditOAuth } from './useRedditOAuth';
 export { useSalesforceOAuth } from './useSalesforceOAuth';
 export { useShopifyOAuth } from './useShopifyOAuth';
 export { useSlackOAuth } from './useSlackOAuth';
+export { useTikTokOAuth } from './useTikTokOAuth';
 export { useTwitterOAuth } from './useTwitterOAuth';
 export { useMCPOAuth } from './useMCPOAuth';
 export { useWordPressOAuth } from './useWordPressOAuth';
