@@ -52,6 +52,7 @@ import { RedditNode } from './RedditNode';
 import { RedisNode } from './RedisNode';
 import { RSSNode } from './RSSNode';
 import { HubSpotNode } from './HubSpotNode';
+import { AffinityNode } from './AffinityNode';
 import { MailchimpNode } from './MailchimpNode';
 import { PerplexityNode } from './PerplexityNode';
 import { SalesforceNode } from './SalesforceNode';
@@ -140,6 +141,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     RSSNode,
     RedisNode,
     SalesforceNode,
+    AffinityNode,
     SemrushNode,
     ShopifyNode,
     SlackNode,
