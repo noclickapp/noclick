@@ -207,15 +207,15 @@ export function isAnyRemoteAiEditing(): boolean {
     return _remoteAiEditing.size > 0;
 }
 
-// Pending node selection - used when navigating from ChatBox to select a specific node
-let _pendingNodeSelection: { workflowId: string; nodeId: string } | null = null;
+// Pending node selection - used when navigating from ChatBox or deep links to select a specific node
+let _pendingNodeSelection: { workflowId: string; nodeId: string; fieldKey?: string } | null = null;
 
-export function setPendingNodeSelection(workflowId: string, nodeId: string) {
-    _pendingNodeSelection = { workflowId, nodeId };
+export function setPendingNodeSelection(workflowId: string, nodeId: string, fieldKey?: string) {
+    _pendingNodeSelection = { workflowId, nodeId, fieldKey };
 }
 
 // Peek at pending selection without consuming it
-export function getPendingNodeSelection(): { workflowId: string; nodeId: string } | null {
+export function getPendingNodeSelection(): { workflowId: string; nodeId: string; fieldKey?: string } | null {
     return _pendingNodeSelection;
 }
 
@@ -225,7 +225,7 @@ export function clearPendingNodeSelection(): void {
 }
 
 // Legacy function - consumes and returns in one call
-export function consumePendingNodeSelection(): { workflowId: string; nodeId: string } | null {
+export function consumePendingNodeSelection(): { workflowId: string; nodeId: string; fieldKey?: string } | null {
     const selection = _pendingNodeSelection;
     _pendingNodeSelection = null;
     return selection;
