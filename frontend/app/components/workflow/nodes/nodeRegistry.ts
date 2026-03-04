@@ -71,7 +71,6 @@ import { WebhookTriggerNode } from './WebhookTriggerNode';
 import { WhatsAppNode } from './WhatsAppNode';
 import { ElevenLabsNode } from './ElevenLabsNode';
 import { YouTubeNode } from './YouTubeNode';
-import { CSVInputNode } from './CSVInputNode';
 import { FilterNode } from './FilterNode';
 import { ConditionalNode } from './ConditionalNode';
 import { SwitchNode } from './SwitchNode';
@@ -160,7 +159,6 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     MCPServerNode,
     IterationNode,
     DelayNode,
-    CSVInputNode,
     FilterNode,
     ConditionalNode,
     SwitchNode,
