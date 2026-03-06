@@ -65,6 +65,7 @@ import { SupabaseNode } from './SupabaseNode';
 import { ToolNode } from './ToolNode';
 import { MCPServerNode } from './MCPServerNode';
 import { TwilioNode } from './TwilioNode';
+import { TikTokNode } from './TikTokNode';
 import { TwitterNode } from './TwitterNode';
 import { RunTriggerNode } from './RunTriggerNode';
 import { WebhookTriggerNode } from './WebhookTriggerNode';
@@ -145,6 +146,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     ShopifyNode,
     SlackNode,
     SupabaseNode,
+    TikTokNode,
     TwilioNode,
     TwitterNode,
     TypeformNode,
