@@ -28,7 +28,7 @@ class MockAgentHandler(AgentHandler):
     workspace setup, etc.) intact.
     """
     
-    def __init__(self, sio, proxy=None):
+    def __init__(self, sio):
         """Initialize MockAgentHandler."""
-        super().__init__(sio, proxy)
+        super().__init__(sio)
         logger.debug("MockAgentHandler initialized with pre-patched litellm")
