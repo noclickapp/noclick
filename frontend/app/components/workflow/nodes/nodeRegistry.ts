@@ -38,6 +38,7 @@ import { GoogleFormsNode } from './GoogleFormsNode';
 import { GoogleSlidesNode } from './GoogleSlidesNode';
 import { HackerNewsNode } from './HackerNewsNode';
 import { InstagramNode } from './InstagramNode';
+import { InstantlyNode } from './InstantlyNode';
 import { JiraNode } from './JiraNode';
 import { LinkedInNode } from './LinkedInNode';
 import { NotionNode } from './NotionNode';
@@ -134,6 +135,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     GoogleSlidesNode,
     HackerNewsNode,
     InstagramNode,
+    InstantlyNode,
     JiraNode,
     LinkedInNode,
     NotionNode,
