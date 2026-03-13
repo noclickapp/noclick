@@ -17,6 +17,35 @@ let currentEdges: Edge[] = [];
 let currentName: string | undefined;
 let hasData = false;
 let fallbackTimer: ReturnType<typeof setTimeout> | null = null;
+let currentDisplayMode: string = 'inline';
+
+/**
+ * Toggle fullscreen via the MCP Apps requestDisplayMode API.
+ * Returns true if the host accepted and applied the mode change,
+ * false if the host doesn't support display mode changes (caller uses CSS fallback).
+ */
+async function toggleDisplayMode(): Promise<boolean> {
+    const targetMode = currentDisplayMode === 'fullscreen' ? 'inline' : 'fullscreen';
+    // Check that the host advertises support for the target mode before requesting
+    const hostModes = app.getHostContext()?.availableDisplayModes ?? [];
+    if (!hostModes.includes(targetMode as 'inline' | 'fullscreen')) {
+        return false; // Host doesn't support it → caller falls back to CSS
+    }
+    try {
+        const result = await app.requestDisplayMode({ mode: targetMode as 'inline' | 'fullscreen' });
+        if (result.mode !== currentDisplayMode) {
+            currentDisplayMode = result.mode;
+            // Explicitly reset iframe height when returning to inline so it doesn't stay tall
+            if (result.mode === 'inline') {
+                requestAnimationFrame(() => app.sendSizeChanged({ width: 800, height: 500 }));
+            }
+            render();
+        }
+        return result.mode === targetMode;
+    } catch {
+        return false;
+    }
+}
 
 function render() {
     if (!root) {
@@ -30,6 +59,8 @@ function render() {
             edges={currentEdges}
             workflowName={currentName}
             loading={!hasData}
+            isHostFullscreen={currentDisplayMode === 'fullscreen'}
+            onToggleFullscreen={toggleDisplayMode}
         />,
     );
 }
@@ -126,7 +157,26 @@ async function fetchViaServerTool(workflowId: string) {
 }
 
 // --- MCP Apps bridge ---
-const app = new App({ name: 'noclick-workflow-viewer', version: '1.0.0' });
+// Declare fullscreen capability so hosts know this widget supports display mode changes.
+// autoResize: false prevents the ResizeObserver from reporting the fullscreen height back to
+// the host, which would cause the iframe to stay tall after exiting fullscreen (bug fix).
+const app = new App(
+    { name: 'noclick-workflow-viewer', version: '1.0.0' },
+    { availableDisplayModes: ['inline', 'fullscreen'] },
+    { autoResize: false },
+);
+
+// Track display mode changes initiated by the host (e.g., user exits fullscreen via host UI)
+app.onhostcontextchanged = (params) => {
+    if (params.displayMode !== undefined && params.displayMode !== currentDisplayMode) {
+        currentDisplayMode = params.displayMode;
+        // When host returns to inline, explicitly reset iframe to compact size
+        if (params.displayMode === 'inline') {
+            requestAnimationFrame(() => app.sendSizeChanged({ width: 800, height: 500 }));
+        }
+        render();
+    }
+};
 
 // Listen for tool result (primary data delivery path)
 app.ontoolresult = (params) => {

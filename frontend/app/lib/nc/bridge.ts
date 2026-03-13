@@ -28,8 +28,21 @@ if (import.meta.hot) {
         }
         result = await fn();
       } else if (expr) {
-        const asyncExpr = `(async () => { return ${expr}; })()`;
-        result = await eval(asyncExpr);
+        // Try as single expression first — parens prevent ASI after `return` on newlines
+        // and force a SyntaxError for multi-statement code, triggering the fallback
+        const trimmed = expr.trimStart();
+        let asyncExpr = `(async () => { return (${trimmed}); })()`;
+        try {
+          result = await eval(asyncExpr);
+        } catch (firstErr) {
+          // If syntax error, treat as multi-statement block — eval() captures last expression value
+          if (firstErr instanceof SyntaxError) {
+            asyncExpr = `(async () => { return eval(${JSON.stringify(trimmed)}); })()`;
+            result = await eval(asyncExpr);
+          } else {
+            throw firstErr;
+          }
+        }
       } else {
         throw new Error('Must provide file or expr');
       }
