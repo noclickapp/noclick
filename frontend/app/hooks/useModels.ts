@@ -82,8 +82,10 @@ export function useModels(): UseModelsResult {
             return {
                 ...model,
                 source: 'litellm' as const,
-                // Use OpenRouter capabilities if the model exists there, otherwise keep existing
-                capabilities: matchingCapabilities || model.capabilities,
+                // Merge OpenRouter capabilities with LiteLLM's, so fields from both sources are preserved
+                capabilities: matchingCapabilities
+                    ? { ...model.capabilities, ...matchingCapabilities }
+                    : model.capabilities,
             };
         });
 
