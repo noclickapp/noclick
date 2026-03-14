@@ -3,8 +3,21 @@
 
 import { useCallback, useMemo } from 'react';
 import { Model } from '~/types/model';
+import { ModelProvider } from '~/types/provider';
 import { useOpenRouterModels } from './useOpenRouterModels';
 import { useLiteLLMModels } from './useLiteLLMModels';
+
+// Static model entries for providers not covered by OpenRouter/LiteLLM APIs
+const STATIC_MODELS: Model[] = [
+    {
+        id: 'codex',
+        provider: ModelProvider.CODEX,
+        description: 'OpenAI Codex coding agent',
+        input_modalities: ['text'],
+        output_modalities: ['text'],
+        capabilities: { tools: true },
+    },
+];
 
 // Extended model interface that includes source information
 export interface ModelWithSource extends Model {
@@ -74,7 +87,12 @@ export function useModels(): UseModelsResult {
             };
         });
 
-        return [...openRouterWithSource, ...liteLLMWithSource];
+        const staticWithSource: ModelWithSource[] = STATIC_MODELS.map(model => ({
+            ...model,
+            source: 'litellm' as const,
+        }));
+
+        return [...openRouterWithSource, ...liteLLMWithSource, ...staticWithSource];
     }, [openRouter.models, liteLLM.models]);
 
     // Combined loading state
