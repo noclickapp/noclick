@@ -17,6 +17,14 @@ const STATIC_MODELS: Model[] = [
         output_modalities: ['text'],
         capabilities: { tools: true },
     },
+    {
+        id: 'claude-code',
+        provider: ModelProvider.CLAUDE_CODE,
+        description: 'Anthropic Claude Code coding agent',
+        input_modalities: ['text'],
+        output_modalities: ['text'],
+        capabilities: { tools: true },
+    },
 ];
 
 // Extended model interface that includes source information
