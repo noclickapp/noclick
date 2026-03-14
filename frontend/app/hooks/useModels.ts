@@ -25,6 +25,14 @@ const STATIC_MODELS: Model[] = [
         output_modalities: ['text'],
         capabilities: { tools: true },
     },
+    {
+        id: 'opencode',
+        provider: ModelProvider.OPENCODE,
+        description: 'OpenCode multi-provider coding agent',
+        input_modalities: ['text'],
+        output_modalities: ['text'],
+        capabilities: { tools: true },
+    },
 ];
 
 // Extended model interface that includes source information
