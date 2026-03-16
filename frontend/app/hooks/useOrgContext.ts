@@ -11,10 +11,11 @@ import { useCachedValtioState } from './useCachedValtioState';
 export interface OrgContext {
   id: string | null;
   role: 'owner' | 'admin' | 'member' | null;
-  subscription_tier: 'free' | 'team' | 'enterprise' | null;
+  subscription_tier: 'free' | 'pro' | 'team' | 'enterprise' | null;
+  isPersonalWorkspace: boolean;
 }
 
-const DEFAULT_ORG_CONTEXT: OrgContext = { id: null, role: null, subscription_tier: null };
+const DEFAULT_ORG_CONTEXT: OrgContext = { id: null, role: null, subscription_tier: null, isPersonalWorkspace: true };
 
 /**
  * Hook to get and set the current organization context.

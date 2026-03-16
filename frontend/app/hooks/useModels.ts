@@ -1,14 +1,44 @@
-// Unified hook that combines OpenRouter and LiteLLM models
+// Unified hook that combines OpenRouter, LiteLLM, and static provider models
 // Provides a single interface for accessing all available AI models
 
 import { useCallback, useMemo } from 'react';
 import { Model } from '~/types/model';
+import { ModelProvider } from '~/types/provider';
 import { useOpenRouterModels } from './useOpenRouterModels';
 import { useLiteLLMModels } from './useLiteLLMModels';
+import { KLING_MODELS } from '~/config/klingModels';
+
+// Static model entries for providers not covered by OpenRouter/LiteLLM APIs
+const STATIC_MODELS: Model[] = [
+    {
+        id: 'codex',
+        provider: ModelProvider.CODEX,
+        description: 'OpenAI Codex coding agent',
+        input_modalities: ['text'],
+        output_modalities: ['text'],
+        capabilities: { tools: true },
+    },
+    {
+        id: 'claude-code',
+        provider: ModelProvider.CLAUDE_CODE,
+        description: 'Anthropic Claude Code coding agent',
+        input_modalities: ['text'],
+        output_modalities: ['text'],
+        capabilities: { tools: true },
+    },
+    {
+        id: 'opencode',
+        provider: ModelProvider.OPENCODE,
+        description: 'OpenCode multi-provider coding agent',
+        input_modalities: ['text'],
+        output_modalities: ['text'],
+        capabilities: { tools: true },
+    },
+];
 
 // Extended model interface that includes source information
 export interface ModelWithSource extends Model {
-    source: 'openrouter' | 'litellm';
+    source: 'openrouter' | 'litellm' | 'static';
 }
 
 export interface UseModelsResult {
@@ -69,12 +99,20 @@ export function useModels(): UseModelsResult {
             return {
                 ...model,
                 source: 'litellm' as const,
-                // Use OpenRouter capabilities if the model exists there, otherwise keep existing
-                capabilities: matchingCapabilities || model.capabilities,
+                // Merge OpenRouter capabilities with LiteLLM's, so fields from both sources are preserved
+                capabilities: matchingCapabilities
+                    ? { ...model.capabilities, ...matchingCapabilities }
+                    : model.capabilities,
             };
         });
 
-        return [...openRouterWithSource, ...liteLLMWithSource];
+        // Static models from providers not covered by LiteLLM/OpenRouter (e.g., Codex, Claude Code, Kling)
+        const staticWithSource: ModelWithSource[] = [...STATIC_MODELS, ...KLING_MODELS].map(model => ({
+            ...model,
+            source: 'static' as const,
+        }));
+
+        return [...openRouterWithSource, ...liteLLMWithSource, ...staticWithSource];
     }, [openRouter.models, liteLLM.models]);
 
     // Combined loading state

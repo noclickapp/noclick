@@ -36,5 +36,8 @@ export interface Model {
 
         /** Model supports tool/function calling (has "tools" in supported_parameters) */
         tools?: boolean;
+
+        /** Model can generate videos (has "video" in output_modalities or matches known video gen model patterns) */
+        videoGeneration?: boolean;
     };
 }
