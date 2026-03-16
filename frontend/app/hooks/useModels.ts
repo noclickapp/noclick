@@ -1,4 +1,4 @@
-// Unified hook that combines OpenRouter and LiteLLM models
+// Unified hook that combines OpenRouter, LiteLLM, and static provider models
 // Provides a single interface for accessing all available AI models
 
 import { useCallback, useMemo } from 'react';
@@ -6,6 +6,7 @@ import { Model } from '~/types/model';
 import { ModelProvider } from '~/types/provider';
 import { useOpenRouterModels } from './useOpenRouterModels';
 import { useLiteLLMModels } from './useLiteLLMModels';
+import { KLING_MODELS } from '~/config/klingModels';
 
 // Static model entries for providers not covered by OpenRouter/LiteLLM APIs
 const STATIC_MODELS: Model[] = [
@@ -37,7 +38,7 @@ const STATIC_MODELS: Model[] = [
 
 // Extended model interface that includes source information
 export interface ModelWithSource extends Model {
-    source: 'openrouter' | 'litellm';
+    source: 'openrouter' | 'litellm' | 'static';
 }
 
 export interface UseModelsResult {
@@ -105,9 +106,10 @@ export function useModels(): UseModelsResult {
             };
         });
 
-        const staticWithSource: ModelWithSource[] = STATIC_MODELS.map(model => ({
+        // Static models from providers not covered by LiteLLM/OpenRouter (e.g., Codex, Claude Code, Kling)
+        const staticWithSource: ModelWithSource[] = [...STATIC_MODELS, ...KLING_MODELS].map(model => ({
             ...model,
-            source: 'litellm' as const,
+            source: 'static' as const,
         }));
 
         return [...openRouterWithSource, ...liteLLMWithSource, ...staticWithSource];
