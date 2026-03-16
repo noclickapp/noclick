@@ -65,6 +65,7 @@ import { SlackNode } from './SlackNode';
 import { SupabaseNode } from './SupabaseNode';
 import { ToolNode } from './ToolNode';
 import { MCPServerNode } from './MCPServerNode';
+import { NoClickNode } from './NoClickNode';
 import { AlarmNode } from './AlarmNode';
 import { TwilioNode } from './TwilioNode';
 import { TikTokNode } from './TikTokNode';
@@ -163,6 +164,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     AIAgentNode,
     ToolNode,
     MCPServerNode,
+    NoClickNode,
     AlarmNode,
     IterationNode,
     DelayNode,
