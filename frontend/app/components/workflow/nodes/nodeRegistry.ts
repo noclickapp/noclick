@@ -36,6 +36,9 @@ import { GoogleContactsNode } from './GoogleContactsNode';
 import { GoogleDocsNode } from './GoogleDocsNode';
 import { GoogleFormsNode } from './GoogleFormsNode';
 import { GoogleSlidesNode } from './GoogleSlidesNode';
+import { GoogleAnalyticsNode } from './GoogleAnalyticsNode';
+import { GoogleAdsNode } from './GoogleAdsNode';
+import { GoogleBusinessProfileNode } from './GoogleBusinessProfileNode';
 import { HackerNewsNode } from './HackerNewsNode';
 import { InstagramNode } from './InstagramNode';
 import { InstantlyNode } from './InstantlyNode';
@@ -135,6 +138,9 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     GoogleDocsNode,
     GoogleFormsNode,
     GoogleSlidesNode,
+    GoogleAnalyticsNode,
+    GoogleAdsNode,
+    GoogleBusinessProfileNode,
     HackerNewsNode,
     InstagramNode,
     InstantlyNode,
