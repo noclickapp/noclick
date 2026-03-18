@@ -12,6 +12,7 @@ import { HtmlBlock } from './blocks/HtmlBlock';
 import { FileUploadBlock } from './blocks/FileUploadBlock';
 import { ChatbotBlock } from './blocks/ChatbotBlock';
 import { ConfigFormBlock } from './blocks/ConfigFormBlock';
+import { CustomComponentBlock } from './blocks/CustomComponentBlock';
 import { GenericBlock } from './blocks/GenericBlock';
 
 const BLOCK_COMPONENTS: Record<string, React.ComponentType<BlockComponentProps>> = {
@@ -27,6 +28,7 @@ const BLOCK_COMPONENTS: Record<string, React.ComponentType<BlockComponentProps>>
   html: HtmlBlock,
   'file-upload': FileUploadBlock,
   chatbot: ChatbotBlock,
+  'custom-component': CustomComponentBlock,
 };
 
 interface BlockRendererProps extends BlockComponentProps {

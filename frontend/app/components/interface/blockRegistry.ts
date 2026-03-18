@@ -11,6 +11,7 @@ import {
   Globe,
   MessageSquare,
   Settings2,
+  Code2,
 } from 'lucide-react';
 import type { BlockDefinition, BlockCategory } from './types';
 
@@ -28,6 +29,7 @@ export const BLOCK_DEFINITIONS: BlockDefinition[] = [
   { type: 'dataframe', label: 'Table', category: 'Display', icon: Table, description: 'AG Grid table', defaultW: 6, defaultH: 4, minW: 4, minH: 3, nodeType: 'interface-dataframe' },
   { type: 'plot', label: 'Plot', category: 'Display', icon: BarChart3, description: 'Chart / graph', defaultW: 6, defaultH: 4, minW: 4, minH: 3, nodeType: 'interface-plot' },
   { type: 'html', label: 'HTML', category: 'Display', icon: Globe, description: 'Sandboxed HTML rendering', defaultW: 6, defaultH: 4, minW: 3, minH: 2, nodeType: 'interface-html' },
+  { type: 'custom-component', label: 'Custom Component', category: 'Display', icon: Code2, description: 'React/JSX component', defaultW: 6, defaultH: 6, minW: 4, minH: 4, nodeType: 'interface-custom-component' },
 
   // Interactive
   { type: 'file-upload', label: 'File Upload', category: 'Interactive', icon: Upload, description: 'Drop zone with file picker', defaultW: 4, defaultH: 3, minW: 3, minH: 2, nodeType: 'interface-file-upload' },
