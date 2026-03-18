@@ -334,7 +334,7 @@ test.describe('FlowCanvas Drag Performance', () => {
         // Docker/act baseline: ~150 frames (virtualization overhead)
         // GitHub Actions baseline: ~56 frames (shared runners have high contention)
         // CI threshold of 40 provides buffer while catching significant regressions.
-        expect(results.frameCount).toBeGreaterThanOrEqual(40);
+        expect(results.frameCount).toBeGreaterThanOrEqual(45);
     });
 
     test('compares performance with different node counts', async ({ page, context }) => {
