@@ -70,6 +70,7 @@ import { ToolNode } from './ToolNode';
 import { MCPServerNode } from './MCPServerNode';
 import { NoClickNode } from './NoClickNode';
 import { AlarmNode } from './AlarmNode';
+import { FilesystemNode } from './FilesystemNode';
 import { TwilioNode } from './TwilioNode';
 import { TikTokNode } from './TikTokNode';
 import { TwitterNode } from './TwitterNode';
@@ -172,6 +173,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     MCPServerNode,
     NoClickNode,
     AlarmNode,
+    FilesystemNode,
     IterationNode,
     DelayNode,
     FilterNode,
