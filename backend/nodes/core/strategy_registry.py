@@ -90,6 +90,13 @@ class StrategyRegistry:
         except ImportError as e:
             logger.warning(f"[StrategyRegistry] Failed to import switch strategy: {e}")
 
+        try:
+            from nodes.approval_node import ApprovalExecutionStrategy
+            cls.register(ApprovalExecutionStrategy())
+            logger.info("[StrategyRegistry] Initialized with approval strategy")
+        except ImportError as e:
+            logger.warning(f"[StrategyRegistry] Failed to import approval strategy: {e}")
+
     @classmethod
     def clear(cls) -> None:
         """Clear all registered strategies (useful for testing)."""
