@@ -70,6 +70,7 @@ import { ToolNode } from './ToolNode';
 import { MCPServerNode } from './MCPServerNode';
 import { NoClickNode } from './NoClickNode';
 import { AlarmNode } from './AlarmNode';
+import { FilesystemNode } from './FilesystemNode';
 import { TwilioNode } from './TwilioNode';
 import { TikTokNode } from './TikTokNode';
 import { TwitterNode } from './TwitterNode';
@@ -80,6 +81,7 @@ import { ElevenLabsNode } from './ElevenLabsNode';
 import { YouTubeNode } from './YouTubeNode';
 import { FilterNode } from './FilterNode';
 import { ConditionalNode } from './ConditionalNode';
+import { ApprovalNode } from './ApprovalNode';
 import { SwitchNode } from './SwitchNode';
 import { MergeNode } from './MergeNode';
 import { SplitNode } from './SplitNode';
@@ -173,10 +175,12 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     MCPServerNode,
     NoClickNode,
     AlarmNode,
+    FilesystemNode,
     IterationNode,
     DelayNode,
     FilterNode,
     ConditionalNode,
+    ApprovalNode,
     SwitchNode,
     MergeNode,
     SplitNode,
