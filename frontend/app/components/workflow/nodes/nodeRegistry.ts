@@ -82,6 +82,7 @@ import { YouTubeNode } from './YouTubeNode';
 import { FilterNode } from './FilterNode';
 import { ConditionalNode } from './ConditionalNode';
 import { ApprovalNode } from './ApprovalNode';
+import { LogNode } from './LogNode';
 import { SwitchNode } from './SwitchNode';
 import { MergeNode } from './MergeNode';
 import { SplitNode } from './SplitNode';
@@ -180,6 +181,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     FilterNode,
     ConditionalNode,
     ApprovalNode,
+    LogNode,
     SwitchNode,
     MergeNode,
     SplitNode,
