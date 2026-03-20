@@ -8,11 +8,10 @@ import { VideoBlock } from './blocks/VideoBlock';
 import { FileBlock } from './blocks/FileBlock';
 import { DataframeBlock } from './blocks/DataframeBlock';
 import { PlotBlock } from './blocks/PlotBlock';
-import { HtmlBlock } from './blocks/HtmlBlock';
+import { HtmlReactBlock } from './blocks/HtmlReactBlock';
 import { FileUploadBlock } from './blocks/FileUploadBlock';
 import { ChatbotBlock } from './blocks/ChatbotBlock';
 import { ConfigFormBlock } from './blocks/ConfigFormBlock';
-import { CustomComponentBlock } from './blocks/CustomComponentBlock';
 import { GenericBlock } from './blocks/GenericBlock';
 
 const BLOCK_COMPONENTS: Record<string, React.ComponentType<BlockComponentProps>> = {
@@ -25,10 +24,9 @@ const BLOCK_COMPONENTS: Record<string, React.ComponentType<BlockComponentProps>>
   file: FileBlock,
   dataframe: DataframeBlock,
   plot: PlotBlock,
-  html: HtmlBlock,
+  'html-react': HtmlReactBlock,
   'file-upload': FileUploadBlock,
   chatbot: ChatbotBlock,
-  'custom-component': CustomComponentBlock,
 };
 
 interface BlockRendererProps extends BlockComponentProps {
