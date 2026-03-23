@@ -23,7 +23,7 @@ _EVENT_PERMISSIONS = {
     "workflow:get_node_outputs": "read",
     "workflow:get_node_output_history": "read",
     "workflow:node:load_options": "read",
-    "workflow:node:config_schema": "read",
+    "workflow:node:get_config_schema": "read",
     "workflow:load_node_state": "read",
     "credential:list": "read",
     "credential:get": "read",
@@ -31,13 +31,18 @@ _EVENT_PERMISSIONS = {
     "resource:get": "read",
     "resource:download_url": "read",
     "resource:dataset:rows": "read",
-    "workflow:execution:list": "read",
+    "workflow:list_executions": "read",
 
     # Execute operations
     "workflow:execute": "execute",
     "workflow:stop": "execute",
 
     # Write operations
+    "workflow:node:set_config": "write",
+    "workflow:node:get_config": "read",
+    "workflow:state:get": "read",
+    "workflow:state:set": "write",
+    "workflow:state:keys": "read",
     "workflow:update": "write",
     "workflow:create": "write",
     "workflow:delete": "write",
