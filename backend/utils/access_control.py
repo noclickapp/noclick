@@ -108,6 +108,59 @@ async def check_resource_access(
         perm = Permission.EDIT if org_share["permission"] == "edit" else Permission.VIEW
         return AccessResult(True, perm, "org_share")
 
+    # Check for folder-level share (workflow belongs to a folder — or any ancestor — shared with user)
+    if resource_type == "workflow":
+        folder_user_share = await conn.fetchrow(
+            """
+            SELECT rs.permission
+            FROM resource_shares rs
+            JOIN workflow_folders shared_folder ON shared_folder.id = rs.resource_id
+            JOIN workflows w ON w.id = $1
+            JOIN workflow_folders wf ON wf.id = w.folder_id
+            WHERE rs.resource_type = 'workflow_folder'
+              AND rs.target_type = 'user'
+              AND rs.target_user_id = $2
+              AND (wf.id = shared_folder.id OR wf.path LIKE shared_folder.path || '%')
+            LIMIT 1
+            """,
+            resource_id,
+            user_id,
+        )
+
+        if folder_user_share:
+            perm = (
+                Permission.EDIT
+                if folder_user_share["permission"] == "edit"
+                else Permission.VIEW
+            )
+            return AccessResult(True, perm, "folder_share")
+
+        folder_org_share = await conn.fetchrow(
+            """
+            SELECT rs.permission
+            FROM resource_shares rs
+            JOIN workflow_folders shared_folder ON shared_folder.id = rs.resource_id
+            JOIN workflows w ON w.id = $1
+            JOIN workflow_folders wf ON wf.id = w.folder_id
+            JOIN organization_members om ON rs.target_org_id = om.organization_id
+            WHERE rs.resource_type = 'workflow_folder'
+              AND rs.target_type = 'organization'
+              AND om.user_id = $2
+              AND (wf.id = shared_folder.id OR wf.path LIKE shared_folder.path || '%')
+            LIMIT 1
+            """,
+            resource_id,
+            user_id,
+        )
+
+        if folder_org_share:
+            perm = (
+                Permission.EDIT
+                if folder_org_share["permission"] == "edit"
+                else Permission.VIEW
+            )
+            return AccessResult(True, perm, "org_folder_share")
+
     return AccessResult(False, Permission.NONE)
 
 
