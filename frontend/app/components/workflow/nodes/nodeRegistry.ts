@@ -74,6 +74,7 @@ import { FilesystemNode } from './FilesystemNode';
 import { TwilioNode } from './TwilioNode';
 import { TikTokNode } from './TikTokNode';
 import { TwitterNode } from './TwitterNode';
+import { CloudflareNode } from './CloudflareNode';
 import { RunTriggerNode } from './RunTriggerNode';
 import { WebhookTriggerNode } from './WebhookTriggerNode';
 import { WhatsAppNode } from './WhatsAppNode';
@@ -161,6 +162,7 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     TikTokNode,
     TwilioNode,
     TwitterNode,
+    CloudflareNode,
     TypeformNode,
     WhatsAppNode,
     ElevenLabsNode,
