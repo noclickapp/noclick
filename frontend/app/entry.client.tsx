@@ -61,6 +61,17 @@ if (process.env.NODE_ENV === 'development') {
         originalDebug(...args);
         logToFile('debug', args);
     };
+
+    // Capture uncaught errors and unhandled promise rejections
+    // (these show in DevTools but don't go through console.error)
+    window.addEventListener('error', (event) => {
+        logToFile('error', [`[Uncaught] ${event.message} at ${event.filename}:${event.lineno}:${event.colno}`]);
+    });
+    window.addEventListener('unhandledrejection', (event) => {
+        const reason = event.reason;
+        const msg = reason instanceof Error ? `${reason.message}\n${reason.stack}` : String(reason);
+        logToFile('error', [`[UnhandledRejection] ${msg}`]);
+    });
 }
 
 startTransition(() => {

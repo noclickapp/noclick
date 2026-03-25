@@ -3,6 +3,7 @@
 // internal node rendering doesn't reliably propagate context to custom nodes.
 
 import { createContext, useContext, ReactNode, useEffect } from 'react';
+import { updateBuilderContext } from '~/lib/builder-context';
 
 // Module-level store for current workflow info
 // This is more reliable than React Context for ReactFlow nodes
@@ -12,6 +13,13 @@ const _listeners: Set<() => void> = new Set();
 
 export function setCurrentWorkflowId(id: string | undefined) {
     _currentWorkflowId = id;
+    if (id) {
+        // Persist so headless builder can access after canvas unmounts
+        updateBuilderContext({ workflowId: id, isCanvasMounted: true });
+    } else {
+        updateBuilderContext({ isCanvasMounted: false });
+        // DON'T clear workflowId — keep it for headless builder
+    }
     // Notify listeners (for any components that want to re-render on change)
     _listeners.forEach(listener => listener());
 }
@@ -22,6 +30,9 @@ export function getCurrentWorkflowId(): string | undefined {
 
 export function setCurrentWorkflowName(name: string | undefined) {
     _currentWorkflowName = name;
+    if (name) {
+        updateBuilderContext({ workflowName: name });
+    }
     _listeners.forEach(listener => listener());
 }
 
