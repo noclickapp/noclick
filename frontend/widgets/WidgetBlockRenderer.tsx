@@ -5,12 +5,10 @@
 import { memo, createElement } from 'react';
 import type { BlockComponentProps } from '~/components/interface/types';
 import { FormBlock } from '~/components/interface/blocks/FormBlock';
-import { MarkdownBlock } from '~/components/interface/blocks/MarkdownBlock';
 import { ImageBlock } from '~/components/interface/blocks/ImageBlock';
 import { AudioBlock } from '~/components/interface/blocks/AudioBlock';
 import { VideoBlock } from '~/components/interface/blocks/VideoBlock';
 import { DataframeBlock } from '~/components/interface/blocks/DataframeBlock';
-import { PlotBlock } from '~/components/interface/blocks/PlotBlock';
 import { FileUploadBlock } from '~/components/interface/blocks/FileUploadBlock';
 import { ChatbotBlock } from '~/components/interface/blocks/ChatbotBlock';
 import { ConfigFormBlock } from '~/components/interface/blocks/ConfigFormBlock';
@@ -19,12 +17,10 @@ import { GenericBlock } from '~/components/interface/blocks/GenericBlock';
 const BLOCK_COMPONENTS: Record<string, React.ComponentType<BlockComponentProps>> = {
     form: FormBlock,
     'config-form': ConfigFormBlock,
-    markdown: MarkdownBlock,
     image: ImageBlock,
     audio: AudioBlock,
     video: VideoBlock,
     dataframe: DataframeBlock,
-    plot: PlotBlock,
     'file-upload': FileUploadBlock,
     chatbot: ChatbotBlock,
 };

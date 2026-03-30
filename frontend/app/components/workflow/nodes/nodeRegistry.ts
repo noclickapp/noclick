@@ -93,13 +93,11 @@ import { OnErrorNode } from './OnErrorNode';
 import { SetVariableNode } from './SetVariableNode';
 import {
     InterfaceFormNode,
-    InterfaceMarkdownNode,
     InterfaceImageNode,
     InterfaceAudioNode,
     InterfaceVideoNode,
     InterfaceFileNode,
     InterfaceDataframeNode,
-    InterfacePlotNode,
     InterfaceHtmlReactNode,
     InterfaceFileUploadNode,
     InterfaceChatbotNode,
@@ -195,13 +193,11 @@ export const AVAILABLE_NODES: NodeDefinition[] = [
     StickyNoteNode,
     // Interface nodes (UI components for the workflow interface builder)
     InterfaceFormNode,
-    InterfaceMarkdownNode,
     InterfaceImageNode,
     InterfaceAudioNode,
     InterfaceVideoNode,
     InterfaceFileNode,
     InterfaceDataframeNode,
-    InterfacePlotNode,
     InterfaceHtmlReactNode,
     InterfaceFileUploadNode,
     InterfaceChatbotNode,

@@ -1,13 +1,11 @@
 import {
   ClipboardList,
   Upload,
-  FileText,
   Table,
   Image,
   Volume2,
   Video,
   File,
-  BarChart3,
   MessageSquare,
   Settings2,
   Code2,
@@ -20,13 +18,11 @@ export const BLOCK_DEFINITIONS: BlockDefinition[] = [
   { type: 'config-form', label: 'Config Form', category: 'Input', icon: Settings2, description: 'Persistent configuration form', defaultW: 5, defaultH: 5, minW: 3, minH: 3, nodeType: 'interface-config-form' },
 
   // Display
-  { type: 'markdown', label: 'Markdown', category: 'Display', icon: FileText, description: 'Rich text display', defaultW: 6, defaultH: 4, minW: 3, minH: 2, nodeType: 'interface-markdown' },
   { type: 'image', label: 'Image', category: 'Display', icon: Image, description: 'Image display', defaultW: 4, defaultH: 4, minW: 2, minH: 2, nodeType: 'interface-image' },
   { type: 'audio', label: 'Audio', category: 'Display', icon: Volume2, description: 'Waveform audio player', defaultW: 6, defaultH: 2, minW: 4, minH: 2, nodeType: 'interface-audio' },
   { type: 'video', label: 'Video', category: 'Display', icon: Video, description: 'Video player', defaultW: 6, defaultH: 5, minW: 4, minH: 3, nodeType: 'interface-video' },
   { type: 'file', label: 'File / PDF', category: 'Display', icon: File, description: 'PDF embed or file preview', defaultW: 6, defaultH: 5, minW: 3, minH: 3, nodeType: 'interface-file' },
   { type: 'dataframe', label: 'Table', category: 'Display', icon: Table, description: 'AG Grid table', defaultW: 6, defaultH: 4, minW: 4, minH: 3, nodeType: 'interface-dataframe' },
-  { type: 'plot', label: 'Plot', category: 'Display', icon: BarChart3, description: 'Chart / graph', defaultW: 6, defaultH: 4, minW: 4, minH: 3, nodeType: 'interface-plot' },
   { type: 'html-react', label: 'HTML / React', category: 'Display', icon: Code2, description: 'HTML or React/JSX with SDK', defaultW: 6, defaultH: 4, minW: 3, minH: 2, nodeType: 'interface-html-react' },
 
   // Interactive
