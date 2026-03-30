@@ -2,12 +2,10 @@
 
 import { requestStream, send, request, subscribe, type ExecutionStream } from './transport.js';
 
-export type NodeRef = string | { id: string; config: Record<string, unknown> };
+export type NodeRef = string | { id: string; config?: Record<string, unknown> } | { label: string; config?: Record<string, unknown> };
 
-function serializeNodeRefs(refs: NodeRef[]): Array<{ id: string; config?: Record<string, unknown> }> {
-  return refs.map(ref =>
-    typeof ref === 'string' ? { id: ref } : ref
-  );
+function serializeNodeRefs(refs: NodeRef[]): Array<{ id?: string; label?: string; config?: Record<string, unknown> }> {
+  return refs.map(ref => (typeof ref === 'string' ? { id: ref } : ref));
 }
 
 /**
