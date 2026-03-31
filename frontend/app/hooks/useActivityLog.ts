@@ -4,6 +4,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { sendEventWithCallback } from '~/lib/socket-sender';
 import { onSocketEvent } from '~/lib/socket-receiver';
+import { useOrgContext } from '~/hooks/useOrgContext';
 
 export interface ActivityLogEntry {
     id: string;
@@ -17,6 +18,7 @@ export interface ActivityLogEntry {
 }
 
 export function useActivityLog() {
+    const [orgContext] = useOrgContext();
     const [entries, setEntries] = useState<ActivityLogEntry[]>([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState<string | null>(null);
@@ -38,9 +40,10 @@ export function useActivityLog() {
         );
     }, []);
 
+    // Fetch on mount and when org context changes
     useEffect(() => {
         fetchLogs();
-    }, [fetchLogs]);
+    }, [fetchLogs, orgContext.id]);
 
     // Real-time: new log entries
     useEffect(() => {
