@@ -40,6 +40,28 @@
     box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.12);
 }
 
+/* Subtle 3D button - white background with medium depth */
+.btn-3d-white-subtle {
+    box-shadow:
+        0 3px 0 0 rgba(180, 180, 180, 0.45),
+        0 0 24px rgba(255, 255, 255, 0.1);
+    transition: transform 150ms, box-shadow 150ms;
+}
+
+.btn-3d-white-subtle:hover:not(:disabled) {
+    transform: translateY(1.5px);
+    box-shadow:
+        0 1.5px 0 0 rgba(180, 180, 180, 0.45),
+        0 0 24px rgba(255, 255, 255, 0.1);
+}
+
+.btn-3d-white-subtle:active:not(:disabled) {
+    transform: translateY(3px);
+    box-shadow:
+        0 0 0 0 rgba(180, 180, 180, 0.45),
+        0 0 24px rgba(255, 255, 255, 0.1);
+}
+
 /* Purple 3D button - for enterprise/special CTAs */
 .btn-3d-purple {
     box-shadow: 0 4px 0 0 rgba(168, 85, 247, 0.35);
