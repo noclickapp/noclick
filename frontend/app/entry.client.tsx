@@ -15,6 +15,15 @@ if (process.env.NODE_ENV === 'development') {
     // Register nc bridge for HMR-based test execution
     import('~/lib/nc/bridge');
 
+    // Import channel for pushing errors to Claude Code
+    const channelPromise = import('~/lib/nc/channel');
+
+    const serializeArgs = (args: any[]): string =>
+        args.map(a => {
+            try { return typeof a === 'object' ? JSON.stringify(a) : String(a); }
+            catch { return String(a); }
+        }).join(' ');
+
     const logToFile = (type: string, args: any[]) => {
         fetch('/api/console', {
             method: 'POST',
@@ -26,9 +35,12 @@ if (process.env.NODE_ENV === 'development') {
                     return String(arg);
                 }
             })}),
-        }).catch(() => {
-            // Silently fail if logging endpoint is unavailable
-        });
+        }).catch(() => {});
+    };
+
+    /** Forward a message to the Claude Code channel with a contextual prefix */
+    const pushChannel = (prefix: string, message: string, meta?: Record<string, string>) => {
+        channelPromise.then(({ channel }) => channel.error(`${prefix} ${message}`, meta)).catch(() => {});
     };
 
     const originalLog = console.log;
@@ -45,6 +57,7 @@ if (process.env.NODE_ENV === 'development') {
     console.error = (...args) => {
         originalError(...args);
         logToFile('error', args);
+        pushChannel('Frontend console.error:', serializeArgs(args), { source: 'console.error' });
     };
 
     console.warn = (...args) => {
@@ -63,14 +76,20 @@ if (process.env.NODE_ENV === 'development') {
     };
 
     // Capture uncaught errors and unhandled promise rejections
-    // (these show in DevTools but don't go through console.error)
     window.addEventListener('error', (event) => {
-        logToFile('error', [`[Uncaught] ${event.message} at ${event.filename}:${event.lineno}:${event.colno}`]);
+        const msg = `${event.message} at ${event.filename}:${event.lineno}:${event.colno}`;
+        logToFile('error', [`[Uncaught] ${msg}`]);
+        pushChannel('Uncaught frontend error:', msg, {
+            source: 'uncaught',
+            file: event.filename ?? '',
+            line: String(event.lineno ?? ''),
+        });
     });
     window.addEventListener('unhandledrejection', (event) => {
         const reason = event.reason;
         const msg = reason instanceof Error ? `${reason.message}\n${reason.stack}` : String(reason);
         logToFile('error', [`[UnhandledRejection] ${msg}`]);
+        pushChannel('Unhandled promise rejection:', msg, { source: 'unhandledrejection' });
     });
 }
 
