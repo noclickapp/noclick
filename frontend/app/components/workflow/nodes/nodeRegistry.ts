@@ -272,20 +272,17 @@ export function getNodeMetadata(type: string): NodeDefinition | undefined {
     return AVAILABLE_NODES.find(n => n.type === type);
 }
 
-// Helper to create a node with minimal boilerplate
-// Pulls Icon and iconColor from registry, only requires node-specific data
+// DEPRECATED: Use createWorkflowNode from ~/lib/applyNodeUpdate instead.
+// createWorkflowNode enforces the correct data model (operation top-level, config nested).
+// This function is kept only as a type reference — do not call it.
+/** @deprecated Use createWorkflowNode from ~/lib/applyNodeUpdate */
 export function createNode(
-    id: string,
-    type: string,
-    position: { x: number; y: number },
-    data: Record<string, any> = {}
-): any {
-    return {
-        id,
-        type,
-        position,
-        data,
-    };
+    _id: string,
+    _type: string,
+    _position: { x: number; y: number },
+    _data: Record<string, any> = {}
+): never {
+    throw new Error('createNode is deprecated. Use createWorkflowNode from ~/lib/applyNodeUpdate instead.');
 }
 
 // Helper to get display strategy by node type

@@ -8,6 +8,7 @@
 import { Node } from '@xyflow/react';
 import { ClipboardParser, ClipboardParseResult } from './types';
 import { generateNodeId } from '~/utils/nodeIdGenerator';
+import { createWorkflowNode } from '~/lib/applyNodeUpdate';
 
 /** Regex to match Google Sheets URLs and extract the spreadsheet ID */
 const GOOGLE_SHEETS_URL_REGEX =
@@ -27,8 +28,6 @@ export function extractSpreadsheetId(url: string): string | null {
 /**
  * Parses Google Sheets URLs and creates a pre-configured Google Sheets node.
  * The node will have the spreadsheet_id populated and operation set to 'read'.
- * Config fields are placed directly in node.data (not nested under data.config)
- * to match the structure expected by NodeConfig component.
  */
 export const googleSheetsUrlParser: ClipboardParser = {
     name: 'Google Sheets URL',
@@ -43,15 +42,13 @@ export const googleSheetsUrlParser: ClipboardParser = {
         const nodeId = generateNodeId('automation-google-sheets');
 
         const node: Node = {
-            id: nodeId,
-            type: 'automation-google-sheets',
-            position: { x: 0, y: 0 }, // Will be repositioned at cursor by the paste handler
-            data: {
-                // Flat format: all config fields directly on node.data
-                operation: 'read',
-                spreadsheet_id: spreadsheetId,
-                configValid: false,
-            },
+            ...createWorkflowNode(
+                nodeId,
+                'automation-google-sheets',
+                { x: 0, y: 0 }, // Will be repositioned at cursor by the paste handler
+                { operation: 'read', spreadsheet_id: spreadsheetId },
+                { configValid: false },
+            ),
             selected: false,
         };
 

@@ -1,6 +1,12 @@
 // Browser-side bridge for the nc debug/testing system.
 // Listens for test execution commands from the Vite plugin via HMR WebSocket
 // and runs test files via dynamic import or evaluates expressions.
+// Also exposes `nc` on window so nc_eval can use it without imports.
+
+import { nc } from './index';
+
+// Expose nc globally for nc_eval expressions
+(window as any).nc = nc;
 
 if (import.meta.hot) {
   const claimed = new Set<string>();
