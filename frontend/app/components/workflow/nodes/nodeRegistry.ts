@@ -276,7 +276,7 @@ export function getNodeMetadata(type: string): NodeDefinition | undefined {
 // Derived from x-connectionless in backend-generated JSON schemas (single source of truth).
 import { NODE_SCHEMAS } from '~/utils/nodeSchemas';
 export const CONNECTIONLESS_TYPES: ReadonlySet<string> = new Set(
-    Object.entries(NODE_SCHEMAS)
+    Object.entries(NODE_SCHEMAS || {})
         .filter(([, schema]) => (schema as any)?.['x-connectionless'])
         .map(([type]) => type)
 );
