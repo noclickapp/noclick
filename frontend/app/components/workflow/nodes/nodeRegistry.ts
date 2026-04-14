@@ -272,6 +272,15 @@ export function getNodeMetadata(type: string): NodeDefinition | undefined {
     return AVAILABLE_NODES.find(n => n.type === type);
 }
 
+// SDK-based node types that use @noclick/sdk for communication, not edges.
+// Derived from x-connectionless in backend-generated JSON schemas (single source of truth).
+import { NODE_SCHEMAS } from '~/utils/nodeSchemas';
+export const CONNECTIONLESS_TYPES: ReadonlySet<string> = new Set(
+    Object.entries(NODE_SCHEMAS)
+        .filter(([, schema]) => (schema as any)?.['x-connectionless'])
+        .map(([type]) => type)
+);
+
 // DEPRECATED: Use createWorkflowNode from ~/lib/applyNodeUpdate instead.
 // createWorkflowNode enforces the correct data model (operation top-level, config nested).
 // This function is kept only as a type reference — do not call it.
