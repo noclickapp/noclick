@@ -8,10 +8,11 @@ import { RemixBrowser } from '@remix-run/react';
 import { startTransition, StrictMode } from 'react';
 import { hydrateRoot } from 'react-dom/client';
 
+// Register workflow test harness (needed in all envs for SDK bridge node access)
+import('~/lib/workflowTestHarness').then(m => m.register());
+
 // Override console methods to log to file in development
 if (process.env.NODE_ENV === 'development') {
-    // Register workflow test harness
-    import('~/lib/workflowTestHarness').then(m => m.register());
     // Register nc bridge for HMR-based test execution
     import('~/lib/nc/bridge');
 
