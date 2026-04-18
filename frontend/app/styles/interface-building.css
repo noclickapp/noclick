@@ -1,0 +1,63 @@
+/* Keyframes for InterfaceBuildingAnimation. Inlined as a CSS file so the
+   wireframe morph animations don't bloat tailwind.config.ts (they'd never be
+   reused outside this one component). */
+
+/* Status pill dots */
+@keyframes ifa-dot-bounce {
+  0%, 80%, 100% { transform: translateY(0); opacity: 0.4; }
+  40% { transform: translateY(-3px); opacity: 1; }
+}
+
+/* Skeleton shimmer — sweep via background-position. Hold the start position
+   for the first 10% of the cycle, sweep across during 10–90%, hold the end
+   position for the last 10% — both holds keep the bell well off-screen so
+   the loop teleport (end → start) happens during a quiet period and isn't
+   perceived as an abrupt reset. The 15%/85% bg-pos endpoints are wide enough
+   that the bell's visible brightness span (which extends past the gradient's
+   peak by roughly 30% of viewport on each side) is fully outside the card. */
+@keyframes ifa-shimmer-pos {
+  0%, 10% { background-position: 85% 0; }
+  90%, 100% { background-position: 15% 0; }
+}
+
+/* Outer morph: sidebar width, header height, two-up swap.
+   Ranges are deliberately wide so the layout reads as actively iterating. */
+@keyframes ifa-sidebar-resize {
+  0%, 100% { width: 180px; }
+  50% { width: 340px; }
+}
+@keyframes ifa-header-resize {
+  0%, 100% { height: 48px; }
+  50% { height: 96px; }
+}
+@keyframes ifa-flex-3-to-2 {
+  0%, 100% { flex-grow: 4; }
+  50% { flex-grow: 1; }
+}
+@keyframes ifa-flex-2-to-3 {
+  0%, 100% { flex-grow: 1; }
+  50% { flex-grow: 4; }
+}
+@keyframes ifa-bottom-row-resize {
+  0%, 100% { height: 80px; }
+  50% { height: 180px; }
+}
+
+/* Inner morph: pills grow/shrink (origin-left so they grow rightward),
+   header dots and avatar pulse in scale */
+@keyframes ifa-pill-grow {
+  0%, 100% { transform: scaleX(0.6); }
+  50% { transform: scaleX(1); }
+}
+@keyframes ifa-pill-shrink {
+  0%, 100% { transform: scaleX(1); }
+  50% { transform: scaleX(0.55); }
+}
+@keyframes ifa-dot-pulse {
+  0%, 100% { transform: scale(0.7); opacity: 0.55; }
+  50% { transform: scale(1); opacity: 1; }
+}
+@keyframes ifa-avatar-pulse {
+  0%, 100% { transform: scale(0.9); }
+  50% { transform: scale(1.08); }
+}
