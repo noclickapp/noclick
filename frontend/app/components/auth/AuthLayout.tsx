@@ -18,8 +18,8 @@ export function AuthLayout({
     children, 
     showRightPanel = true,
     quote = {
-        text: "Somewhere, something incredible is waiting to be known.",
-        author: "Carl Sagan"
+        text: "We're supposed to look up and wonder at our place in the stars, not look down and worry about our place in the dirt.",
+        author: "Cooper, Interstellar"
     }
 }: AuthLayoutProps) {
     return (
