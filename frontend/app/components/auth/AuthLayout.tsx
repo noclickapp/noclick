@@ -51,7 +51,7 @@ export function AuthLayout({
                     
                     {/* Particle effects on top - contained within this div */}
                     <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                        <ParticlesBackground count={300} starOpacity={0.8} className="absolute inset-0" />
+                        <ParticlesBackground starOpacity={0.8} className="absolute inset-0" />
                     </div>
                 </div>
             )}
