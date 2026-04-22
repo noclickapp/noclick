@@ -10,7 +10,7 @@ resume the run hours or days later without any in-memory continuity.
 from __future__ import annotations
 
 from dataclasses import dataclass, field
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Literal, Optional
 
 
 STATUS_STREAMING = "streaming"
@@ -70,6 +70,16 @@ class PendingAsk:
     @classmethod
     def from_dict(cls, d: Dict[str, Any]) -> "PendingAsk":
         return cls(ask_id=d["ask_id"], inputs=d.get("inputs", []), title=d.get("title"))
+
+
+NextAction = Literal["continue", "ask", "done"]
+
+
+@dataclass
+class TurnResult:
+    """Outcome of a single run_one_turn call, instructing the outer loop what to do next."""
+    next_action: NextAction
+    pending_ask: Optional[PendingAsk] = None
 
 
 @dataclass
