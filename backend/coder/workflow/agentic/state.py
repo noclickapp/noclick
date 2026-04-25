@@ -34,6 +34,11 @@ class BuilderRuntimeState:
     prev_execution_result: Optional[str] = None
     repeat_count: int = 0
     emitted_text: bool = False
+    # Accumulated assistant text for the current in-flight turn. The handler
+    # writes this on every text_chunk (debounced by IN_FLIGHT_PERSIST_INTERVAL_S)
+    # and once more on turn completion, so get_state can hydrate the sidebar
+    # bubble after a reconnect / refresh without needing replayable socket events.
+    in_flight_text: str = ""
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -42,6 +47,7 @@ class BuilderRuntimeState:
             "prev_execution_result": self.prev_execution_result,
             "repeat_count": self.repeat_count,
             "emitted_text": self.emitted_text,
+            "in_flight_text": self.in_flight_text,
         }
 
     @classmethod
@@ -54,6 +60,7 @@ class BuilderRuntimeState:
             prev_execution_result=d.get("prev_execution_result"),
             repeat_count=d.get("repeat_count", 0),
             emitted_text=d.get("emitted_text", False),
+            in_flight_text=d.get("in_flight_text", ""),
         )
 
 
@@ -87,7 +94,7 @@ class BuilderState:
     """Full serializable snapshot of one builder run."""
     generation_id: str
     user_id: str
-    workflow_id: str
+    workflow_id: Optional[str]
     status: str
     messages: List[Dict[str, Any]]
     graph_snapshot: Dict[str, Any]
@@ -98,7 +105,6 @@ class BuilderState:
     runtime: BuilderRuntimeState = field(default_factory=BuilderRuntimeState)
     conversation_id: Optional[str] = None
     pending_ask: Optional[PendingAsk] = None
-    last_event_seq: int = 0
 
     def to_row_fields(self) -> Dict[str, Any]:
         """Column values for an INSERT/UPDATE on builder_generations."""
@@ -116,7 +122,6 @@ class BuilderState:
             "turn_count": self.turn_count,
             "total_cost": self.total_cost,
             "total_tokens": self.total_tokens,
-            "last_event_seq": self.last_event_seq,
         }
 
     @classmethod
@@ -127,7 +132,7 @@ class BuilderState:
         return cls(
             generation_id=str(row["id"]),
             user_id=str(row["user_id"]),
-            workflow_id=str(row["workflow_id"]),
+            workflow_id=str(row["workflow_id"]) if row.get("workflow_id") else None,
             conversation_id=str(row["conversation_id"]) if row.get("conversation_id") else None,
             status=row["status"],
             messages=list(row["conversation"]) if row.get("conversation") else [],
@@ -138,5 +143,4 @@ class BuilderState:
             n8n_context=dict(n8n_ctx) if n8n_ctx else None,
             runtime=BuilderRuntimeState.from_dict(row.get("runtime_state")),
             pending_ask=PendingAsk.from_dict(pending) if pending else None,
-            last_event_seq=row.get("last_event_seq", 0),
         )
