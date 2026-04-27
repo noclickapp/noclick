@@ -19,6 +19,6 @@ async def get_user_subscription_tier(user_data: dict) -> str:
 
     Returns:
         "free" - User is on free tier (show banner)
-        "team" - User is on team tier (no banner)
+        "plus" / "pro" / "enterprise" - User is on a paid tier (no banner)
     """
     return user_data.get("subscription_tier", "free")

@@ -11,7 +11,7 @@ import { useCachedValtioState } from './useCachedValtioState';
 export interface OrgContext {
   id: string | null;
   role: 'owner' | 'admin' | 'member' | null;
-  subscription_tier: 'free' | 'pro' | 'team' | 'enterprise' | null;
+  subscription_tier: 'free' | 'plus' | 'pro' | 'enterprise' | null;
   isPersonalWorkspace: boolean;
 }
 
