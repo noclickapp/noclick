@@ -34,6 +34,14 @@ class OnErrorNode(WorkflowNode):
     only runs when an error occurs.
     """
 
+    edit_examples = [
+        "Add Slack notification node to alert team when error occurs",
+        "Log error details to external monitoring service for analysis",
+        "Send email with error summary and execution context to admin",
+        "Create error recovery flow for retry logic with backoff strategy",
+        "Store error details in database for historical troubleshooting",
+    ]
+
     @classmethod
     def get_config_model(cls) -> Optional[Type]:
         return OnErrorNodeConfig
