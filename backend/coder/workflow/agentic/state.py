@@ -39,6 +39,12 @@ class BuilderRuntimeState:
     # and once more on turn completion, so get_state can hydrate the sidebar
     # bubble after a reconnect / refresh without needing replayable socket events.
     in_flight_text: str = ""
+    # Rolling buffer (most-recent-first) of skill IDs whose bodies have been
+    # injected into `messages`. P0 only picks from skills NOT in this list,
+    # avoiding double-injection within the active window. Capped to
+    # MAX_LOADED_SKILLS in the builder; oldest entries roll off as new picks
+    # come in.
+    loaded_skill_ids: List[str] = field(default_factory=list)
 
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -48,6 +54,7 @@ class BuilderRuntimeState:
             "repeat_count": self.repeat_count,
             "emitted_text": self.emitted_text,
             "in_flight_text": self.in_flight_text,
+            "loaded_skill_ids": list(self.loaded_skill_ids),
         }
 
     @classmethod
@@ -61,6 +68,7 @@ class BuilderRuntimeState:
             repeat_count=d.get("repeat_count", 0),
             emitted_text=d.get("emitted_text", False),
             in_flight_text=d.get("in_flight_text", ""),
+            loaded_skill_ids=list(d.get("loaded_skill_ids") or []),
         )
 
 
