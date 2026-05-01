@@ -41,6 +41,10 @@ class BuilderRuntimeState:
     # and once more on turn completion, so get_state can hydrate the sidebar
     # bubble after a reconnect / refresh without needing replayable socket events.
     in_flight_text: str = ""
+    # Accumulated 'status' texts for the current run, mirroring the FE's
+    # editSteps log. Survives <ask/> pauses so the reasoning log stays intact
+    # when the user answers and the run resumes in a fresh container.
+    edit_steps: List[str] = field(default_factory=list)
     # Rolling buffer (most-recent-first) of skill IDs whose bodies have been
     # injected into `messages`. P0 only picks from skills NOT in this list,
     # avoiding double-injection within the active window. Capped to
@@ -56,6 +60,7 @@ class BuilderRuntimeState:
             "repeat_count": self.repeat_count,
             "emitted_text": self.emitted_text,
             "in_flight_text": self.in_flight_text,
+            "edit_steps": list(self.edit_steps),
             "loaded_skill_ids": list(self.loaded_skill_ids),
         }
 
@@ -70,6 +75,7 @@ class BuilderRuntimeState:
             repeat_count=d.get("repeat_count", 0),
             emitted_text=d.get("emitted_text", False),
             in_flight_text=d.get("in_flight_text", ""),
+            edit_steps=list(d.get("edit_steps") or []),
             loaded_skill_ids=list(d.get("loaded_skill_ids") or []),
         )
 
