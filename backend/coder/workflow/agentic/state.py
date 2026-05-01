@@ -17,12 +17,14 @@ STATUS_STREAMING = "streaming"
 STATUS_WAITING_FOR_INPUT = "waiting_for_input"
 STATUS_COMPLETED = "completed"
 STATUS_FAILED = "failed"
+STATUS_CANCELLED = "cancelled"
 
 ALL_STATUSES = frozenset({
     STATUS_STREAMING,
     STATUS_WAITING_FOR_INPUT,
     STATUS_COMPLETED,
     STATUS_FAILED,
+    STATUS_CANCELLED,
 })
 
 
@@ -87,7 +89,7 @@ class PendingAsk:
         return cls(ask_id=d["ask_id"], inputs=d.get("inputs", []), title=d.get("title"))
 
 
-NextAction = Literal["continue", "ask", "done"]
+NextAction = Literal["continue", "ask", "done", "cancelled"]
 
 
 @dataclass
