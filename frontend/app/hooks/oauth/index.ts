@@ -24,3 +24,4 @@ export { useTikTokOAuth } from './useTikTokOAuth';
 export { useTwitterOAuth } from './useTwitterOAuth';
 export { useMCPOAuth } from './useMCPOAuth';
 export { useWordPressOAuth } from './useWordPressOAuth';
+export { useSupabaseOAuth } from './useSupabaseOAuth';
