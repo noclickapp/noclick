@@ -50,16 +50,21 @@ export default defineConfig({
     },
   ],
 
-  // Run local dev server before tests if not already running
-  // In CI, server is started manually in the workflow
-  webServer: {
-    command: process.env.CI ? 'pnpm start' : 'pnpm dev',
-    url: process.env.CI ? 'http://localhost:3000' : 'http://localhost:5173',
-    reuseExistingServer: true, // Always reuse if server is already running
-    timeout: 180 * 1000, // 3 minutes for CI environments
-    stdout: 'pipe',
-    stderr: 'pipe',
-  },
+  // Run local dev server before tests if not already running.
+  // In CI the workflow starts the server manually (and verifies readiness with
+  // curl) before invoking Playwright, so we skip Playwright's own webServer
+  // management entirely — `reuseExistingServer: true` was racing with a second
+  // `pnpm start` that couldn't bind to the already-occupied port and timed out.
+  webServer: process.env.CI
+    ? undefined
+    : {
+        command: 'pnpm dev',
+        url: 'http://localhost:5173',
+        reuseExistingServer: true,
+        timeout: 180 * 1000,
+        stdout: 'pipe',
+        stderr: 'pipe',
+      },
 
   // Increase timeout for performance tests (they simulate many operations)
   timeout: 60 * 1000,
