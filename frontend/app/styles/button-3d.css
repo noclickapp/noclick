@@ -5,7 +5,7 @@
 /* Primary 3D button - white background with gray shadow depth and subtle glow */
 .btn-3d-white {
     box-shadow:
-        0 4px 0 0 rgba(180, 180, 180, 0.5),
+        0 4px 0 0 rgba(185, 185, 185, 0.9),
         0 0 30px rgba(255, 255, 255, 0.15);
     transition: transform 150ms, box-shadow 150ms;
 }
@@ -13,14 +13,14 @@
 .btn-3d-white:hover:not(:disabled) {
     transform: translateY(2px);
     box-shadow:
-        0 2px 0 0 rgba(180, 180, 180, 0.5),
+        0 2px 0 0 rgba(185, 185, 185, 0.9),
         0 0 30px rgba(255, 255, 255, 0.15);
 }
 
 .btn-3d-white:active:not(:disabled) {
     transform: translateY(4px);
     box-shadow:
-        0 0 0 0 rgba(180, 180, 180, 0.5),
+        0 0 0 0 rgba(185, 185, 185, 0.9),
         0 0 30px rgba(255, 255, 255, 0.15);
 }
 
@@ -43,7 +43,7 @@
 /* Subtle 3D button - white background with medium depth */
 .btn-3d-white-subtle {
     box-shadow:
-        0 3px 0 0 rgba(180, 180, 180, 0.45),
+        0 3px 0 0 rgba(185, 185, 185, 0.85),
         0 0 24px rgba(255, 255, 255, 0.1);
     transition: transform 150ms, box-shadow 150ms;
 }
@@ -51,14 +51,14 @@
 .btn-3d-white-subtle:hover:not(:disabled) {
     transform: translateY(1.5px);
     box-shadow:
-        0 1.5px 0 0 rgba(180, 180, 180, 0.45),
+        0 1.5px 0 0 rgba(185, 185, 185, 0.85),
         0 0 24px rgba(255, 255, 255, 0.1);
 }
 
 .btn-3d-white-subtle:active:not(:disabled) {
     transform: translateY(3px);
     box-shadow:
-        0 0 0 0 rgba(180, 180, 180, 0.45),
+        0 0 0 0 rgba(185, 185, 185, 0.85),
         0 0 24px rgba(255, 255, 255, 0.1);
 }
 
