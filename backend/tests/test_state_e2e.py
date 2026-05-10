@@ -9,7 +9,9 @@ import pytest
 import uuid
 from unittest.mock import MagicMock, AsyncMock, patch
 
-# Set test database URL
+# Set test database URL. Backend runtime reads POSTGRES_POOLER_URL only;
+# POSTGRES_URL is kept for migrations/scripts/legacy paths.
+os.environ.setdefault('POSTGRES_POOLER_URL', 'postgresql://postgres:postgres@127.0.0.1:54322/postgres')
 os.environ.setdefault('POSTGRES_URL', 'postgresql://postgres:postgres@127.0.0.1:54322/postgres')
 
 
