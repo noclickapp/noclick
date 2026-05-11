@@ -106,103 +106,63 @@ import {
 import { DUMMY_NODES } from './DummyNodes';
 import type { NodeDefinition, NodeDimensions, NodeDisplayStrategy } from './types';
 
-// All available nodes - just a list, no processing
-export const AVAILABLE_NODES: NodeDefinition[] = [
-    // Trigger nodes (workflow entry points)
-    RunTriggerNode,
-    WebhookTriggerNode,
-    CronTriggerNode,
-    FormInputNode,
-    // Automation nodes
-    TelegramNode,
-    GoogleSheetsNode,
-    GoogleDriveNode,
-    GmailNode,
-    OutlookMailNode,
-    ExcelNode,
-    OneDriveNode,
-    MicrosoftTodoNode,
-    WordNode,
-    WordPressNode,
-    HttpRequestNode,
-    LinearNode,
-    GithubRestNode,
-    AirtableNode,
-    ApifyNode,
-    ApolloNode,
-    BlueSkyNode,
-    CanvaNode,
-    DiscordNode,
-    DropboxNode,
-    GoogleCalendarNode,
-    GoogleTasksNode,
-    GoogleContactsNode,
-    GoogleDocsNode,
-    GoogleFormsNode,
-    GoogleSlidesNode,
-    GoogleAnalyticsNode,
-    GoogleAdsNode,
-    GoogleBusinessProfileNode,
-    HackerNewsNode,
-    InstagramNode,
-    InstantlyNode,
-    JiraNode,
-    LinkedInNode,
-    NotionNode,
-    PostgresNode,
-    RedditNode,
-    RSSNode,
-    RedisNode,
-    SalesforceNode,
-    AffinityNode,
-    SemrushNode,
-    ShopifyNode,
-    SlackNode,
-    SupabaseNode,
-    TikTokNode,
-    TwilioNode,
-    TwitterNode,
-    CloudflareNode,
-    TypeformNode,
-    WhatsAppNode,
-    ElevenLabsNode,
-    YouTubeNode,
-    HubSpotNode,
-    MailchimpNode,
-    PerplexityNode,
-    AIAgentNode,
-    ToolNode,
-    MCPServerNode,
-    NoClickNode,
-    AlarmNode,
-    FilesystemNode,
-    IterationNode,
-    DelayNode,
-    FilterNode,
-    ConditionalNode,
-    ApprovalNode,
-    LogNode,
-    SwitchNode,
-    MergeNode,
-    SplitNode,
-    ServerlessFunctionNode,
-    StateManagerNode,
-    SetupNode,
-    OnErrorNode,
-    SetVariableNode,
-    StickyNoteNode,
-    // Interface nodes (UI components for the workflow interface builder)
-    InterfaceFormNode,
-    InterfaceImageNode,
-    InterfaceAudioNode,
-    InterfaceVideoNode,
-    InterfaceFileNode,
-    InterfaceDataframeNode,
-    InterfaceHtmlReactNode,
-    InterfaceFileUploadNode,
-    InterfaceChatbotNode,
-    InterfaceConfigFormNode,
-];
+// All available nodes — built lazily.
+//
+// WHY: Several node files transitively re-import this module (e.g.
+// InterfaceFormNode → InterfaceNode → BlockRenderer → FormBlock → FieldRenderer →
+// SchedulesWidget → DroppableTextField → ReferenceAutocompleteContext → here).
+// During an eager construction `[RunTriggerNode, …]`, accessing these variables while
+// any of the chain is mid-eval throws TDZ. By wrapping the array in a Proxy that builds
+// on first access, the module finishes evaluating without touching any variable; the
+// eventual first read happens after all imports have settled.
+let _availableCache: NodeDefinition[] | null = null;
+function _buildAvailable(): NodeDefinition[] {
+    return [
+        RunTriggerNode,
+        WebhookTriggerNode,
+        CronTriggerNode,
+        FormInputNode,
+        TelegramNode, GoogleSheetsNode, GoogleDriveNode, GmailNode, OutlookMailNode,
+        ExcelNode, OneDriveNode, MicrosoftTodoNode, WordNode, WordPressNode,
+        HttpRequestNode, LinearNode, GithubRestNode, AirtableNode, ApifyNode,
+        ApolloNode, BlueSkyNode, CanvaNode, DiscordNode, DropboxNode,
+        GoogleCalendarNode, GoogleTasksNode, GoogleContactsNode, GoogleDocsNode,
+        GoogleFormsNode, GoogleSlidesNode, GoogleAnalyticsNode, GoogleAdsNode,
+        GoogleBusinessProfileNode, HackerNewsNode, InstagramNode, InstantlyNode,
+        JiraNode, LinkedInNode, NotionNode, PostgresNode, RedditNode, RSSNode,
+        RedisNode, SalesforceNode, AffinityNode, SemrushNode, ShopifyNode, SlackNode,
+        SupabaseNode, TikTokNode, TwilioNode, TwitterNode, CloudflareNode,
+        TypeformNode, WhatsAppNode, ElevenLabsNode, YouTubeNode, HubSpotNode,
+        MailchimpNode, PerplexityNode, AIAgentNode, ToolNode, MCPServerNode,
+        NoClickNode, AlarmNode, FilesystemNode, IterationNode, DelayNode, FilterNode,
+        ConditionalNode, ApprovalNode, LogNode, SwitchNode, MergeNode, SplitNode,
+        ServerlessFunctionNode, StateManagerNode, SetupNode, OnErrorNode,
+        SetVariableNode, StickyNoteNode,
+        InterfaceFormNode, InterfaceImageNode, InterfaceAudioNode, InterfaceVideoNode,
+        InterfaceFileNode, InterfaceDataframeNode, InterfaceHtmlReactNode,
+        InterfaceFileUploadNode, InterfaceChatbotNode, InterfaceConfigFormNode,
+    ];
+}
+export const AVAILABLE_NODES: NodeDefinition[] = new Proxy([] as NodeDefinition[], {
+    get(_t, prop) {
+        if (_availableCache === null) _availableCache = _buildAvailable();
+        const v = (_availableCache as any)[prop];
+        return typeof v === 'function' ? v.bind(_availableCache) : v;
+    },
+    has(_t, prop) {
+        if (_availableCache === null) _availableCache = _buildAvailable();
+        return prop in _availableCache;
+    },
+    ownKeys() {
+        if (_availableCache === null) _availableCache = _buildAvailable();
+        return Reflect.ownKeys(_availableCache);
+    },
+    getOwnPropertyDescriptor(_t, prop) {
+        if (_availableCache === null) _availableCache = _buildAvailable();
+        return Object.getOwnPropertyDescriptor(_availableCache, prop);
+    },
+});
+
 
 // Re-export types for convenience
 export type {
@@ -274,12 +234,9 @@ export function getNodeMetadata(type: string): NodeDefinition | undefined {
 
 // SDK-based node types that use @noclick/sdk for communication, not edges.
 // Derived from x-connectionless in backend-generated JSON schemas (single source of truth).
-import { NODE_SCHEMAS } from '~/utils/nodeSchemas';
-export const CONNECTIONLESS_TYPES: ReadonlySet<string> = new Set(
-    Object.entries(NODE_SCHEMAS || {})
-        .filter(([, schema]) => (schema as any)?.['x-connectionless'])
-        .map(([type]) => type)
-);
+// Definition lives in ./connectionlessTypes so node component files can read it without
+// transitively pulling the heavy registry (would create a circular dep on lazy load).
+export { CONNECTIONLESS_TYPES } from './connectionlessTypes';
 
 // DEPRECATED: Use createWorkflowNode from ~/lib/applyNodeUpdate instead.
 // createWorkflowNode enforces the correct data model (operation top-level, config nested).
