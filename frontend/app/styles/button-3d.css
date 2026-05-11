@@ -1,5 +1,11 @@
 /* 3D push-button effect styles for CTA buttons.
  * Creates a tactile "press down" effect with shadow depth that decreases on hover/active.
+ *
+ * `transition` is marked !important because shadcn's <Button> applies
+ * Tailwind's `transition-colors`, which sets `transition-property` to color-
+ * family longhands and (depending on CSS bundle order) wins over our
+ * shorthand. Without the override, hover translateY/box-shadow snap instead
+ * of animating. The 3D classes own this property exclusively per element.
  */
 
 /* Primary 3D button - white background with gray shadow depth and subtle glow */
@@ -7,7 +13,7 @@
     box-shadow:
         0 4px 0 0 rgba(185, 185, 185, 0.9),
         0 0 30px rgba(255, 255, 255, 0.15);
-    transition: transform 150ms, box-shadow 150ms;
+    transition: transform 150ms, box-shadow 150ms !important;
 }
 
 .btn-3d-white:hover:not(:disabled) {
@@ -27,7 +33,7 @@
 /* Secondary 3D button - dark background with subtle white shadow depth */
 .btn-3d-dark {
     box-shadow: 0 4px 0 0 rgba(255, 255, 255, 0.12);
-    transition: transform 150ms, box-shadow 150ms;
+    transition: transform 150ms, box-shadow 150ms !important;
 }
 
 .btn-3d-dark:hover:not(:disabled) {
@@ -45,7 +51,7 @@
     box-shadow:
         0 3px 0 0 rgba(185, 185, 185, 0.85),
         0 0 24px rgba(255, 255, 255, 0.1);
-    transition: transform 150ms, box-shadow 150ms;
+    transition: transform 150ms, box-shadow 150ms !important;
 }
 
 .btn-3d-white-subtle:hover:not(:disabled) {
@@ -65,7 +71,7 @@
 /* Purple 3D button - for enterprise/special CTAs */
 .btn-3d-purple {
     box-shadow: 0 4px 0 0 rgba(168, 85, 247, 0.35);
-    transition: transform 150ms, box-shadow 150ms;
+    transition: transform 150ms, box-shadow 150ms !important;
 }
 
 .btn-3d-purple:hover:not(:disabled) {
