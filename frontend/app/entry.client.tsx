@@ -8,6 +8,31 @@ import { RemixBrowser } from '@remix-run/react';
 import { startTransition, StrictMode } from 'react';
 import { hydrateRoot } from 'react-dom/client';
 
+// Prevent crashes from third-party DOM mutations (PostHog, browser extensions,
+// Google Translate, etc.) during React's commit phase. React assumes exclusive
+// DOM ownership; external scripts that inject/move/remove nodes break that
+// invariant and cause "removeChild" NotFoundErrors on route transitions.
+// See: https://github.com/facebook/react/issues/11538#issuecomment-417803648
+if (typeof Node !== 'undefined' && Node.prototype) {
+    const origRemoveChild = Node.prototype.removeChild;
+    Node.prototype.removeChild = function <T extends Node>(child: T): T {
+        if (child.parentNode !== this) {
+            console.warn('removeChild: child not found in parent, skipping', child);
+            return child;
+        }
+        return origRemoveChild.call(this, child) as T;
+    };
+
+    const origInsertBefore = Node.prototype.insertBefore;
+    Node.prototype.insertBefore = function <T extends Node>(newNode: T, refNode: Node | null): T {
+        if (refNode && refNode.parentNode !== this) {
+            console.warn('insertBefore: reference node not found in parent, skipping', refNode);
+            return newNode;
+        }
+        return origInsertBefore.call(this, newNode, refNode) as T;
+    };
+}
+
 // Register workflow test harness (needed in all envs for SDK bridge node access)
 import('~/lib/workflowTestHarness').then(m => m.register());
 
