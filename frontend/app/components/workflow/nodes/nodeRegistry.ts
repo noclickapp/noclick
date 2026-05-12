@@ -100,7 +100,6 @@ import {
     InterfaceDataframeNode,
     InterfaceHtmlReactNode,
     InterfaceFileUploadNode,
-    InterfaceChatbotNode,
     InterfaceConfigFormNode,
 } from './interface';
 import { DUMMY_NODES } from './DummyNodes';
@@ -140,7 +139,7 @@ function _buildAvailable(): NodeDefinition[] {
         SetVariableNode, StickyNoteNode,
         InterfaceFormNode, InterfaceImageNode, InterfaceAudioNode, InterfaceVideoNode,
         InterfaceFileNode, InterfaceDataframeNode, InterfaceHtmlReactNode,
-        InterfaceFileUploadNode, InterfaceChatbotNode, InterfaceConfigFormNode,
+        InterfaceFileUploadNode, InterfaceConfigFormNode,
     ];
 }
 export const AVAILABLE_NODES: NodeDefinition[] = new Proxy([] as NodeDefinition[], {
