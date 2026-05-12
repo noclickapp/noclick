@@ -10,7 +10,6 @@ import { AudioBlock } from '~/components/interface/blocks/AudioBlock';
 import { VideoBlock } from '~/components/interface/blocks/VideoBlock';
 import { DataframeBlock } from '~/components/interface/blocks/DataframeBlock';
 import { FileUploadBlock } from '~/components/interface/blocks/FileUploadBlock';
-import { ChatbotBlock } from '~/components/interface/blocks/ChatbotBlock';
 import { ConfigFormBlock } from '~/components/interface/blocks/ConfigFormBlock';
 import { GenericBlock } from '~/components/interface/blocks/GenericBlock';
 
@@ -22,7 +21,6 @@ const BLOCK_COMPONENTS: Record<string, React.ComponentType<BlockComponentProps>>
     video: VideoBlock,
     dataframe: DataframeBlock,
     'file-upload': FileUploadBlock,
-    chatbot: ChatbotBlock,
 };
 
 interface BlockRendererProps extends BlockComponentProps {

@@ -6,7 +6,6 @@ import {
   Volume2,
   Video,
   File,
-  MessageSquare,
   Settings2,
   Code2,
 } from 'lucide-react';
@@ -27,7 +26,6 @@ export const BLOCK_DEFINITIONS: BlockDefinition[] = [
 
   // Interactive
   { type: 'file-upload', label: 'File Upload', category: 'Interactive', icon: Upload, description: 'Drop zone with file picker', defaultW: 4, defaultH: 3, minW: 3, minH: 2, nodeType: 'interface-file-upload' },
-  { type: 'chatbot', label: 'Chatbot', category: 'Interactive', icon: MessageSquare, description: 'Chat interface', defaultW: 6, defaultH: 6, minW: 4, minH: 4, nodeType: 'interface-chatbot' },
 ];
 
 export const BLOCK_CATEGORIES: BlockCategory[] = ['Input', 'Display', 'Interactive'];

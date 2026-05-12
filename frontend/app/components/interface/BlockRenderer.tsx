@@ -8,7 +8,6 @@ import { FileBlock } from './blocks/FileBlock';
 import { DataframeBlock } from './blocks/DataframeBlock';
 import { HtmlReactBlock } from './blocks/HtmlReactBlock';
 import { FileUploadBlock } from './blocks/FileUploadBlock';
-import { ChatbotBlock } from './blocks/ChatbotBlock';
 import { ConfigFormBlock } from './blocks/ConfigFormBlock';
 import { GenericBlock } from './blocks/GenericBlock';
 
@@ -22,7 +21,6 @@ const BLOCK_COMPONENTS: Record<string, React.ComponentType<BlockComponentProps>>
   dataframe: DataframeBlock,
   'html-react': HtmlReactBlock,
   'file-upload': FileUploadBlock,
-  chatbot: ChatbotBlock,
 };
 
 interface BlockRendererProps extends BlockComponentProps {
