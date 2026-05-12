@@ -48,6 +48,7 @@ def _serialize(model: Model) -> dict:
             "videoGeneration": cap.video_generation,
         },
         "source": model.source,
+        "created": model.created,
     }
 
 

@@ -23,6 +23,11 @@ export interface Model {
     /** Output modalities supported by the model */
     output_modalities: string[];
 
+    /** Unix epoch (seconds) when the model was first published. Only set by
+     *  the OpenRouter source; LiteLLM / static entries omit it. Used by the
+     *  node picker to weight recency when matching free-form model queries. */
+    created?: number;
+
     /** Capability flags for UI display */
     capabilities?: {
         /** Model can analyze images (has "image" in input_modalities) */
