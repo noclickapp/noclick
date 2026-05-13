@@ -49,11 +49,16 @@ export interface PersistedMessage {
  *     the trailing assistant IS the bubble; the ask drawer is a separate UI surface.
  */
 export function mapPersistedMessage(msg: PersistedMessage): Message {
+    // Older rows occasionally stored `content` as a raw string. MessagesView
+    // calls `.map()` on it, so anything non-array would crash the chat.
+    // `text` already carries the plain text via `msg.message`, so we drop
+    // malformed values rather than try to repair them here.
+    const safeContent = Array.isArray(msg.content) ? msg.content : undefined;
     const mapped: Message = {
         text: msg.message || '',
         isUser: msg.role === 'user',
         isComplete: true,
-        content: msg.content,
+        content: safeContent,
         editSegments: msg.edit_segments,
         editSteps: msg.edit_steps,
         agenticSteps: msg.agentic_steps ?? msg.agenticSteps,
