@@ -3,14 +3,19 @@
 
 import { ViewPlugin, Decoration, type DecorationSet, type ViewUpdate, type EditorView } from '@codemirror/view';
 import { RangeSetBuilder } from '@codemirror/state';
+import { findNodeIdMatches } from '~/lib/nodeIdReferences';
+
+type CanvasNode = { id?: string; type?: string };
 
 function getWorkflowNodeIds(): string[] {
-  const wt = (window as any).__workflowTest;
-  const rf = (window as any).__reactFlowInstance;
-  const nodes = wt?.getNodes?.() ?? rf?.getNodes?.() ?? [];
+  const win = window as unknown as {
+    __workflowTest?: { getNodes?: () => CanvasNode[] };
+    __reactFlowInstance?: { getNodes?: () => CanvasNode[] };
+  };
+  const nodes = win.__workflowTest?.getNodes?.() ?? win.__reactFlowInstance?.getNodes?.() ?? [];
   return nodes
-    .filter((n: any) => n.id && n.type && !n.type.startsWith('collaborator'))
-    .map((n: any) => n.id as string);
+    .filter((n): n is { id: string; type: string } => !!n.id && !!n.type && !n.type.startsWith('collaborator'))
+    .map((n) => n.id);
 }
 
 const nodeIdMark = Decoration.mark({ class: 'cm-node-id-highlight' });
@@ -19,15 +24,7 @@ function buildDecorations(view: EditorView, nodeIds: string[]): DecorationSet {
   if (nodeIds.length === 0) return Decoration.none;
 
   const doc = view.state.doc.toString();
-  const matches: { from: number; to: number }[] = [];
-
-  for (const id of nodeIds) {
-    let pos = 0;
-    while ((pos = doc.indexOf(id, pos)) !== -1) {
-      matches.push({ from: pos, to: pos + id.length });
-      pos += id.length;
-    }
-  }
+  const matches = findNodeIdMatches(doc, nodeIds);
 
   if (matches.length === 0) return Decoration.none;
 
