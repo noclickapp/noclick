@@ -1,5 +1,7 @@
 // NodeSettings component renders per-node execution settings: retry behavior, error handling,
-// output options, and notes. These settings are stored in node.data._settings and synced via YJS.
+// output options, and notes. These settings are stored in node.data.config._settings (just
+// another config field — see ~/lib/applyNodeUpdate for the canonical data model) and synced
+// to peers via YJS.
 
 import { ChevronDown } from 'lucide-react';
 
