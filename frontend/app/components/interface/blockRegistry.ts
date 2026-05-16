@@ -22,7 +22,7 @@ export const BLOCK_DEFINITIONS: BlockDefinition[] = [
   { type: 'video', label: 'Video', category: 'Display', icon: Video, description: 'Video player', defaultW: 6, defaultH: 5, minW: 4, minH: 3, nodeType: 'interface-video' },
   { type: 'file', label: 'File / PDF', category: 'Display', icon: File, description: 'PDF embed or file preview', defaultW: 6, defaultH: 5, minW: 3, minH: 3, nodeType: 'interface-file' },
   { type: 'dataframe', label: 'Table', category: 'Display', icon: Table, description: 'AG Grid table', defaultW: 6, defaultH: 4, minW: 4, minH: 3, nodeType: 'interface-dataframe' },
-  { type: 'html-react', label: 'HTML / React', category: 'Display', icon: Code2, description: 'HTML or React/JSX with SDK', defaultW: 6, defaultH: 4, minW: 3, minH: 2, nodeType: 'interface-html-react' },
+  { type: 'html-react', label: 'HTML / React', category: 'Display', icon: Code2, description: 'HTML or React/JSX with SDK', defaultW: 6, defaultH: 4, minW: 3, minH: 2, nodeType: 'interface-html-react', usesIframe: true },
 
   // Interactive
   { type: 'file-upload', label: 'File Upload', category: 'Interactive', icon: Upload, description: 'Drop zone with file picker', defaultW: 4, defaultH: 3, minW: 3, minH: 2, nodeType: 'interface-file-upload' },
