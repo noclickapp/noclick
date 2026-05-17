@@ -86,7 +86,6 @@ import { ApprovalNode } from './ApprovalNode';
 import { LogNode } from './LogNode';
 import { SwitchNode } from './SwitchNode';
 import { MergeNode } from './MergeNode';
-import { SplitNode } from './SplitNode';
 import { StateManagerNode } from './StateManagerNode';
 import { SetupNode } from './SetupNode';
 import { OnErrorNode } from './OnErrorNode';
@@ -134,7 +133,7 @@ function _buildAvailable(): NodeDefinition[] {
         TypeformNode, WhatsAppNode, ElevenLabsNode, YouTubeNode, HubSpotNode,
         MailchimpNode, PerplexityNode, AIAgentNode, ToolNode, MCPServerNode,
         NoClickNode, AlarmNode, FilesystemNode, IterationNode, DelayNode, FilterNode,
-        ConditionalNode, ApprovalNode, LogNode, SwitchNode, MergeNode, SplitNode,
+        ConditionalNode, ApprovalNode, LogNode, SwitchNode, MergeNode,
         ServerlessFunctionNode, StateManagerNode, SetupNode, OnErrorNode,
         SetVariableNode, StickyNoteNode,
         InterfaceFormNode, InterfaceImageNode, InterfaceAudioNode, InterfaceVideoNode,
