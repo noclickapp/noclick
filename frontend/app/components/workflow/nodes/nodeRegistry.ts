@@ -43,6 +43,7 @@ import { HackerNewsNode } from './HackerNewsNode';
 import { InstagramNode } from './InstagramNode';
 import { InstantlyNode } from './InstantlyNode';
 import { JiraNode } from './JiraNode';
+import { ResendNode } from './ResendNode';
 import { LinkedInNode } from './LinkedInNode';
 import { NotionNode } from './NotionNode';
 import { OutlookMailNode } from './OutlookMailNode';
@@ -132,7 +133,7 @@ function _buildAvailable(): NodeDefinition[] {
         RedisNode, SalesforceNode, AffinityNode, SemrushNode, ShopifyNode, SlackNode,
         SupabaseNode, TikTokNode, TwilioNode, TwitterNode, CloudflareNode,
         TypeformNode, WhatsAppNode, ElevenLabsNode, YouTubeNode, HubSpotNode,
-        MailchimpNode, PerplexityNode, AIAgentNode, ToolNode, MCPServerNode,
+        MailchimpNode, ResendNode, PerplexityNode, AIAgentNode, ToolNode, MCPServerNode,
         NoClickNode, AlarmNode, FilesystemNode, IterationNode, DelayNode, FilterNode,
         ConditionalNode, ApprovalNode, LogNode, SwitchNode, MergeNode, SplitNode,
         ServerlessFunctionNode, StateManagerNode, SetupNode, OnErrorNode,
