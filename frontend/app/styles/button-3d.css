@@ -30,6 +30,22 @@
         0 0 30px rgba(255, 255, 255, 0.15);
 }
 
+/* 3D white button without the ambient glow — for compact / in-card CTAs */
+.btn-3d-white-flat {
+    box-shadow: 0 4px 0 0 rgba(185, 185, 185, 0.9);
+    transition: transform 150ms, box-shadow 150ms !important;
+}
+
+.btn-3d-white-flat:hover:not(:disabled) {
+    transform: translateY(2px);
+    box-shadow: 0 2px 0 0 rgba(185, 185, 185, 0.9);
+}
+
+.btn-3d-white-flat:active:not(:disabled) {
+    transform: translateY(4px);
+    box-shadow: 0 0 0 0 rgba(185, 185, 185, 0.9);
+}
+
 /* Secondary 3D button - dark background with subtle white shadow depth */
 .btn-3d-dark {
     box-shadow: 0 4px 0 0 rgba(255, 255, 255, 0.12);
