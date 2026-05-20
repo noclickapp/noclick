@@ -59,7 +59,6 @@ import { RSSNode } from './RSSNode';
 import { HubSpotNode } from './HubSpotNode';
 import { AffinityNode } from './AffinityNode';
 import { MailchimpNode } from './MailchimpNode';
-import { PerplexityNode } from './PerplexityNode';
 import { SalesforceNode } from './SalesforceNode';
 import { TypeformNode } from './TypeformNode';
 import { SemrushNode } from './SemrushNode';
@@ -132,7 +131,7 @@ function _buildAvailable(): NodeDefinition[] {
         RedisNode, SalesforceNode, AffinityNode, SemrushNode, ShopifyNode, SlackNode,
         SupabaseNode, TikTokNode, TwilioNode, TwitterNode, CloudflareNode,
         TypeformNode, WhatsAppNode, ElevenLabsNode, YouTubeNode, HubSpotNode,
-        MailchimpNode, ResendNode, PerplexityNode, AIAgentNode, ToolNode, MCPServerNode,
+        MailchimpNode, ResendNode, AIAgentNode, ToolNode, MCPServerNode,
         NoClickNode, AlarmNode, FilesystemNode, IterationNode, DelayNode, FilterNode,
         ConditionalNode, ApprovalNode, LogNode, SwitchNode, MergeNode,
         ServerlessFunctionNode, StateManagerNode, SetupNode, OnErrorNode,
