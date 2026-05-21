@@ -51,6 +51,13 @@ _STATIC_FALLBACK: tuple[Option, ...] = (
         tags=("variant:opencode", "modality:text", "tools"),
     ),
     Option(
+        id="openclaw",
+        label="OpenClaw",
+        description="OpenClaw embedded local agent runtime",
+        tags=("variant:openclaw", "modality:text", "tools"),
+        aliases=("open claw", "openclaw cli"),
+    ),
+    Option(
         id="kling/kling-v3",
         label="Kling V3",
         description="Kling V3 text/image-to-video",
@@ -72,7 +79,7 @@ _STATIC_FALLBACK: tuple[Option, ...] = (
 # ``infer_model_type`` discriminator reads to route into the right
 # Pydantic union branch.
 
-_CLI_PROVIDERS = {"claude_code", "codex", "opencode"}
+_CLI_PROVIDERS = {"claude_code", "codex", "opencode", "openclaw"}
 _KLING_PROVIDERS = {"kling"}
 
 
