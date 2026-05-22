@@ -1,6 +1,6 @@
 import types
 from typing import Type, Any, Dict
-from pydantic import BaseModel
+from pydantic import BaseModel, ConfigDict
 from typing import Any, get_origin, get_args, Union, Any, Dict, List, Type
 from pydantic import BaseModel, Field, create_model
 from enum import Enum
@@ -306,8 +306,7 @@ def create_access_path_model(
             description="Choose a valid flattened path within the model."
         )
 
-        class Config:
-            title = model_name
+        model_config = ConfigDict(title=model_name)
 
     return _AccessPathModel
 
