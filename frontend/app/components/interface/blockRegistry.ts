@@ -8,6 +8,7 @@ import {
   File,
   Settings2,
   Code2,
+  MessageCircle,
 } from 'lucide-react';
 import type { BlockDefinition, BlockCategory } from './types';
 
@@ -26,6 +27,10 @@ export const BLOCK_DEFINITIONS: BlockDefinition[] = [
 
   // Interactive
   { type: 'file-upload', label: 'File Upload', category: 'Interactive', icon: Upload, description: 'Drop zone with file picker', defaultW: 4, defaultH: 3, minW: 3, minH: 2, nodeType: 'interface-file-upload' },
+
+  // Agent — not in BLOCK_CATEGORIES so it doesn't appear in the palette.
+  // Spawned by toggling `show_in_interface=true` on an agent node; always renders fullscreen.
+  { type: 'agent-chat', label: 'Agent Chat', category: 'Agent', icon: MessageCircle, description: 'Chat with an agent node', defaultW: 12, defaultH: 8, minW: 6, minH: 4, nodeType: 'agent' },
 ];
 
 export const BLOCK_CATEGORIES: BlockCategory[] = ['Input', 'Display', 'Interactive'];
