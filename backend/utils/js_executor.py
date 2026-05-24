@@ -7,15 +7,24 @@ Provides secure, fast JavaScript execution with:
 - Memory limits (prevents memory bombs)
 - Fresh context per execution (no state persistence)
 
-Usage:
-    from utils.js_executor import execute_js
+Two entry points:
 
-    result = execute_js(
+- ``execute_js(...)``: synchronous. Runs QuickJS on the calling thread. Use
+  this only when you're already in a worker thread (e.g., the JS pool).
+- ``execute_js_async(...)``: async wrapper that dispatches to the dedicated
+  JS thread pool (``utils.threaded_executors.js_executor``). Use this from
+  asyncio code (every node ``execute()``) so QuickJS's native CPU work
+  doesn't block the event loop.
+
+Usage from async code:
+
+    from utils.js_executor import execute_js_async
+
+    result = await execute_js_async(
         code="return inputs.data.map(x => x * 2)",
         inputs={"data": [1, 2, 3]},
-        timeout_sec=30
+        timeout_sec=30,
     )
-    # result = {"success": True, "result": [2, 4, 6], "stdout": "", "stderr": ""}
 """
 
 import json
@@ -310,3 +319,37 @@ def _convert_result(result, ctx) -> Any:
 
 # Type alias for cleaner imports
 JSResult = Dict[str, Any]
+
+
+async def execute_js_async(
+    code: str,
+    inputs: Dict[str, Any],
+    timeout_sec: float = DEFAULT_TIMEOUT_SEC,
+    memory_bytes: int = DEFAULT_MEMORY_BYTES,
+    state_var_names: Optional[list] = None,
+) -> JSResult:
+    """Async wrapper around ``execute_js`` that runs in the dedicated JS
+    thread pool. Use this from async code so QuickJS native CPU work doesn't
+    block the asyncio event loop.
+
+    The wall-clock timeout is enforced two ways: QuickJS's own
+    ``set_time_limit`` (inside ``execute_js``) and a generous safety net via
+    ``asyncio.wait_for`` at twice the JS budget — if QuickJS hangs (it
+    shouldn't, but native code), the asyncio-side timeout still frees the
+    awaiting task. The thread keeps running until QuickJS returns.
+    """
+    from utils.threaded_executors import run_js_threaded
+
+    # Outer asyncio timeout is generous so QuickJS owns the real enforcement.
+    # If QuickJS's time limit fires, execute_js returns a failure dict, not
+    # a Python exception. The asyncio timeout only kicks in if QuickJS itself
+    # is stuck (which would be a quickjs bug, not a user-code bug).
+    return await run_js_threaded(
+        execute_js,
+        code,
+        inputs,
+        timeout_sec=timeout_sec,
+        memory_bytes=memory_bytes,
+        state_var_names=state_var_names,
+        timeout_s=max(timeout_sec * 2, timeout_sec + 5),
+    )
