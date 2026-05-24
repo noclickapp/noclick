@@ -1,15 +1,19 @@
-"""Dedicated thread pools for non-loop-safe execution paths.
+"""Dedicated thread pool for non-loop-safe execution paths.
 
-Two pools live here, both intentionally separate from asyncio's default
-ThreadPoolExecutor so workloads don't starve each other:
+One pool today (``js_executor``), kept separate from asyncio's default
+ThreadPoolExecutor so it doesn't compete with other sync wrappers for slots.
 
 - ``js_executor``: runs QuickJS code (utils/js_executor.execute_js). QuickJS
   is native code that releases the GIL during JS execution, so threads
   actually parallelize.
-- ``agent_executor``: runs OpenHands agent turns (nodes/agent_node). OpenHands
-  is third-party code we don't fully control; it may have sync chunks that
-  would block the asyncio loop if invoked directly. Threading it keeps the
-  parent loop responsive.
+
+If we ever discover OpenHands or another node kind is blocking the asyncio
+loop (look at ``event_loop.block`` in Honeycomb grouped by ``blocking.stack``),
+the playbook is: add a second ``ThreadPoolExecutor`` here with its own
+``run_*_threaded`` wrapper, dispatch the relevant call site through it, and
+solve any cross-loop callback bridging at the same time. There used to be
+an ``agent_executor`` here as speculative infrastructure — deleted because
+unused infrastructure rots faster than it would save us.
 
 Design notes:
 
@@ -31,7 +35,7 @@ import asyncio
 import logging
 import threading
 from concurrent.futures import ThreadPoolExecutor
-from typing import Awaitable, Callable, Optional, TypeVar
+from typing import Callable, Optional, TypeVar
 
 logger = logging.getLogger(__name__)
 
@@ -39,12 +43,10 @@ logger = logging.getLogger(__name__)
 # Set before any ThreadPoolExecutor is constructed so its worker threads inherit.
 threading.stack_size(512 * 1024)
 
-# Wall-clock defaults. Callers can override per-invocation.
+# Wall-clock default. Callers can override per-invocation.
 JS_DEFAULT_TIMEOUT_S = 30.0
-AGENT_DEFAULT_TIMEOUT_S = 600.0  # 10 min — generous for long OpenHands turns
 
 js_executor = ThreadPoolExecutor(max_workers=512, thread_name_prefix="js")
-agent_executor = ThreadPoolExecutor(max_workers=256, thread_name_prefix="openhands")
 
 T = TypeVar("T")
 
@@ -102,20 +104,6 @@ async def run_js_threaded(
     )
 
 
-async def run_agent_threaded(
-    fn: Callable[..., T],
-    *args,
-    timeout_s: float = AGENT_DEFAULT_TIMEOUT_S,
-    cancel_event: Optional[threading.Event] = None,
-    **kwargs,
-) -> T:
-    """Convenience wrapper for the OpenHands agent pool."""
-    return await run_threaded(
-        agent_executor, fn, *args, timeout_s=timeout_s, cancel_event=cancel_event, **kwargs
-    )
-
-
 def shutdown_executors(wait: bool = False) -> None:
     """Process-exit hook. ``wait=True`` blocks until in-flight threads finish."""
     js_executor.shutdown(wait=wait)
-    agent_executor.shutdown(wait=wait)
