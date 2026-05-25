@@ -103,6 +103,7 @@ import {
 } from './interface';
 import { DUMMY_NODES } from './DummyNodes';
 import type { NodeDefinition, NodeDimensions, NodeDisplayStrategy } from './types';
+import { extractPathsFromData, validatePathDefault } from './strategyDefaults';
 
 // All available nodes — built lazily.
 //
@@ -249,9 +250,22 @@ export function createNode(
     throw new Error('createNode is deprecated. Use createWorkflowNode from ~/lib/applyNodeUpdate instead.');
 }
 
-// Helper to get display strategy by node type
-// Returns undefined if node has no custom strategy (use default behavior)
-export function getDisplayStrategy(type: string): NodeDisplayStrategy | undefined {
-    const node = AVAILABLE_NODES.find(n => n.type === type);
-    return node?.displayStrategy;
+// Returns a complete display strategy for the given node type, merging the node's
+// overrides (if any) on top of the defaults from ./strategyDefaults. Callers can
+// always invoke `strategy.buildSuggestions(...)` / `strategy.validateReference(...)`
+// without guarding — those methods are required on the returned strategy.
+//
+// For unknown node types or when `type` is undefined, returns the bare default
+// strategy. This means an unknown node still gets sensible autocomplete (recursive
+// path extraction from its output) instead of nothing.
+export function getDisplayStrategy(type: string | undefined): NodeDisplayStrategy {
+    const overrides = type
+        ? AVAILABLE_NODES.find(n => n.type === type)?.displayStrategy
+        : undefined;
+    return {
+        buildSuggestions: overrides?.buildSuggestions ?? extractPathsFromData,
+        validateReference: overrides?.validateReference ?? validatePathDefault,
+        buildSuggestionsFromConfig: overrides?.buildSuggestionsFromConfig,
+        OutputPanelContent: overrides?.OutputPanelContent,
+    };
 }
