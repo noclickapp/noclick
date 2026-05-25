@@ -7,14 +7,19 @@ export interface AtlassianOAuthState {
     scopes: string[];
     jiraSite?: string;
     appOrigin: string;
+    redirectUri: string;
     nonce: string;
     timestamp: number;
 }
 
 function getStateSecret(): string {
-    const secret = process.env.ATLASSIAN_CLIENT_SECRET;
+    const secret =
+        process.env.ATLASSIAN_STATE_SECRET ||
+        process.env.SESSION_SECRET ||
+        process.env.ATLASSIAN_CLIENT_SECRET ||
+        process.env.ATLASSIAN_CLIENT_ID;
     if (!secret) {
-        throw new Error('ATLASSIAN_CLIENT_SECRET environment variable is required');
+        throw new Error('ATLASSIAN_STATE_SECRET, SESSION_SECRET, or ATLASSIAN_CLIENT_SECRET environment variable is required');
     }
     return secret;
 }
@@ -48,7 +53,7 @@ export function decodeAtlassianOAuthState(rawState: string): AtlassianOAuthState
     }
 
     const parsed = JSON.parse(Buffer.from(payload, 'base64url').toString('utf-8')) as AtlassianOAuthState;
-    if (!parsed.appOrigin || !parsed.credentialName || !Array.isArray(parsed.scopes) || !parsed.timestamp) {
+    if (!parsed.appOrigin || !parsed.redirectUri || !parsed.credentialName || !Array.isArray(parsed.scopes) || !parsed.timestamp) {
         throw new Error('Invalid state payload');
     }
 
