@@ -15,6 +15,7 @@ import {
     mapPersistedMessages,
     type PersistedMessage,
 } from '~/hooks/conversationRestoreMapping';
+import { persistedEventsToChatMessages } from '~/hooks/useAgentChat';
 
 export default async function () {
     // These payloads MUST match what wss/handlers/agent_handler.py
@@ -106,10 +107,37 @@ export default async function () {
         'the chat history sidebar shows blank bubbles.',
     );
 
+    // ── useAgentChat.persistedEventsToChatMessages: AgentChatBlock's
+    //   restore path goes through THIS mapper (via useAgentChat's
+    //   conversation:resume), not mapPersistedMessage. Both shapes must
+    //   work — chats started pre-Phase-9 have {action, source, args},
+    //   new chats have {role, message}. The interface chat sidebar
+    //   restore was returning empty because this mapper only knew the
+    //   legacy shape; the bug went undetected through two prior fixes.
+    const interfaceMapped = persistedEventsToChatMessages([
+        { role: 'user', message: 'hi from new shape' },
+        { role: 'assistant', message: 'hi back' },
+        { role: 'assistant', message: 'rate limited', cancelled: true },
+        // Mixed with legacy entries (a real conversation from the
+        // migration window can have BOTH shapes if it spans the cutover).
+        { action: 'message', source: 'user', args: { content: 'legacy user' } },
+        { action: 'error', args: { reason: 'legacy error' } },
+    ] as any);
+    nc.assert.equal(interfaceMapped.length, 5, 'persistedEventsToChatMessages: 5 bubbles');
+    nc.assert.equal(interfaceMapped[0].isUser, true, '[0] new-shape user');
+    nc.assert.equal(interfaceMapped[0].text, 'hi from new shape', '[0] body');
+    nc.assert.equal(interfaceMapped[1].isUser, false, '[1] new-shape agent');
+    nc.assert.equal(interfaceMapped[1].text, 'hi back', '[1] body');
+    nc.assert.equal(interfaceMapped[2].error, 'rate limited', '[2] cancelled → error bubble');
+    nc.assert.equal(interfaceMapped[3].isUser, true, '[3] legacy user');
+    nc.assert.equal(interfaceMapped[3].text, 'legacy user', '[3] legacy body via args.content');
+    nc.assert.equal(interfaceMapped[4].error, 'legacy error', '[4] legacy error');
+
     return {
         userMapped, agentMapped, errorMapped,
         transcriptLength: mapped.length,
         legacyShapeRendersWrong: legacyMapped.text === '' && legacyMapped.isUser === false,
+        interfaceMappedLength: interfaceMapped.length,
         allChecksPassed: true,
     };
 }
