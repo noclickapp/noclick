@@ -349,10 +349,10 @@ def patch_file_operations():
             raise OSError(error_msg)
 
         logger.debug(f"Mock rmtree: {path}")
-        # For OpenHands storage paths, actually delete the files
+        # For conversation storage paths, actually delete the files
         # This is necessary for tests that verify filesystem cleanup
         path_str = str(path)
-        if 'openhands_sessions' in path_str or 'conversations' in path_str:
+        if 'conversations' in path_str:
             return _original_socket_methods['shutil_rmtree'](path, **kwargs)
         # For other paths, just log the operation without actually removing
     
