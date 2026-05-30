@@ -1,17 +1,19 @@
-// Persistent badge rendered below a workflow node when it is referenced by one
-// or more interface-html-react nodes through the @noclick/sdk. SDK-based
-// interfaces reference other nodes by bare ID inside their code rather than
-// through canvas edges, so this dependency is otherwise invisible — true even
-// for connected nodes, since an edge doesn't reveal that an interface drives or
-// reads the node. Hovering shows the full interface name(s) as links; clicking
-// the badge — or an individual link — pans the canvas to the interface(s).
+// Badge shown in a node's bottom stack (rendered by NodeLabel, below the label +
+// status chip) when the node is referenced by one or more interface-html-react
+// nodes through the @noclick/sdk. SDK-based interfaces reference other nodes by
+// bare ID inside their code rather than through canvas edges, so this dependency
+// is otherwise invisible — true even for connected nodes, since an edge doesn't
+// reveal that an interface drives or reads the node. Hovering shows the full
+// interface name(s) as links; clicking the badge — or an individual link — pans
+// the canvas to the interface(s). Self-hides (returns null) when there are no
+// consumers. Has no toolbar/positioning of its own: NodeLabel owns the single
+// Bottom NodeToolbar so label, chip, and this badge always flow vertically.
 
 import { useState } from 'react';
-import { Position, useReactFlow } from '@xyflow/react';
+import { useReactFlow } from '@xyflow/react';
 import { Code2, ArrowUpRight } from 'lucide-react';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~/components/ui/tooltip';
 import { useInterfaceConsumers } from '~/hooks/useInterfaceConsumers';
-import { ScaledNodeToolbar } from './ScaledNodeToolbar';
 
 interface InterfaceConsumerBadgeProps {
   nodeId: string;
@@ -44,8 +46,6 @@ export function InterfaceConsumerBadge({ nodeId }: InterfaceConsumerBadgeProps) 
   };
 
   return (
-    // offset 38 clears the editable node label (also a Bottom NodeToolbar).
-    <ScaledNodeToolbar position={Position.Bottom} offset={38}>
       <TooltipProvider delayDuration={150}>
         <Tooltip key={tooltipKey}>
           <TooltipTrigger asChild>
@@ -93,6 +93,5 @@ export function InterfaceConsumerBadge({ nodeId }: InterfaceConsumerBadgeProps) 
           </TooltipContent>
         </Tooltip>
       </TooltipProvider>
-    </ScaledNodeToolbar>
   );
 }
