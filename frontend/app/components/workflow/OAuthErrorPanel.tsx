@@ -33,40 +33,49 @@ export function OAuthErrorPanel({
     const heading = isScopeIssue ? 'Permissions missing' : 'Connection failed';
 
     return (
+        // Left-accent inline notice rather than a fully-bordered card — keeps the
+        // visual weight proportional to a sidebar entry and lets the dismiss X
+        // anchor absolutely to the top-right corner so it doesn't drift down the
+        // panel as the message wraps to 3-4 lines.
         <div
             role="alert"
-            className="mb-2 flex gap-3 rounded-lg border border-red-500/30 bg-red-500/10 p-3"
+            className="relative mb-2 rounded-md border-l-2 border-red-500/60 bg-red-500/[0.07] py-2.5 pl-3 pr-8"
         >
-            <AlertCircle
-                className="mt-0.5 h-4 w-4 shrink-0 text-red-400"
-                aria-hidden
-            />
-            <div className="flex-1 space-y-2">
-                <div className="text-sm font-medium text-red-300">{heading}</div>
-                <div className="text-xs leading-relaxed text-red-200/90">{message}</div>
-                <div className="flex items-center gap-2 pt-0.5">
-                    <button
-                        type="button"
-                        onClick={onReconnect}
-                        disabled={isReconnecting}
-                        className="inline-flex items-center gap-1.5 rounded-md bg-red-500/20 px-2.5 py-1 text-xs font-medium text-red-200 transition-colors hover:bg-red-500/30 disabled:cursor-not-allowed disabled:opacity-50"
-                    >
-                        {isReconnecting ? (
-                            <Loader2 className="h-3 w-3 animate-spin" aria-hidden />
-                        ) : (
-                            <RefreshCw className="h-3 w-3" aria-hidden />
-                        )}
-                        Reconnect
-                    </button>
-                </div>
-            </div>
             <button
                 type="button"
                 onClick={onDismiss}
                 aria-label="Dismiss"
-                className="text-red-400/70 transition-colors hover:text-red-200"
+                className="absolute right-1.5 top-1.5 rounded p-1 text-red-400/60 transition-colors hover:bg-red-500/10 hover:text-red-200"
             >
-                <X className="h-4 w-4" aria-hidden />
+                <X className="h-3.5 w-3.5" aria-hidden />
+            </button>
+            <div className="flex items-center gap-2">
+                <AlertCircle
+                    className="h-3.5 w-3.5 shrink-0 text-red-400"
+                    aria-hidden
+                />
+                <div className="text-xs font-semibold tracking-tight text-red-200">
+                    {heading}
+                </div>
+            </div>
+            <p className="mt-1.5 text-xs leading-[1.55] text-red-100/85">
+                {message}
+            </p>
+            {/* Filled solid-red CTA so Reconnect reads as the obvious next step
+                rather than competing with the heading; matches the visual weight
+                of the error itself. */}
+            <button
+                type="button"
+                onClick={onReconnect}
+                disabled={isReconnecting}
+                className="mt-2.5 inline-flex items-center gap-1.5 rounded-md bg-red-500/90 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-red-500 disabled:cursor-not-allowed disabled:opacity-60"
+            >
+                {isReconnecting ? (
+                    <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />
+                ) : (
+                    <RefreshCw className="h-3.5 w-3.5" aria-hidden />
+                )}
+                {isReconnecting ? 'Reconnecting…' : 'Reconnect'}
             </button>
         </div>
     );
