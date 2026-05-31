@@ -33,13 +33,12 @@ export function OAuthErrorPanel({
     const heading = isScopeIssue ? 'Permissions missing' : 'Connection failed';
 
     return (
-        // Left-accent inline notice rather than a fully-bordered card — keeps the
-        // visual weight proportional to a sidebar entry and lets the dismiss X
-        // anchor absolutely to the top-right corner so it doesn't drift down the
-        // panel as the message wraps to 3-4 lines.
+        // Soft full-border notice (no left accent rule) with a subtle red wash.
+        // Dismiss X is absolutely positioned top-right so it stays anchored
+        // regardless of how many lines the body wraps to.
         <div
             role="alert"
-            className="relative mb-2 rounded-md border-l-2 border-red-500/60 bg-red-500/[0.07] py-2.5 pl-3 pr-8"
+            className="relative mb-2 rounded-md border border-red-500/25 bg-red-500/[0.07] py-2.5 pl-3 pr-8"
         >
             <button
                 type="button"
@@ -51,24 +50,23 @@ export function OAuthErrorPanel({
             </button>
             <div className="flex items-center gap-2">
                 <AlertCircle
-                    className="h-3.5 w-3.5 shrink-0 text-red-400"
+                    className="h-4 w-4 shrink-0 text-red-400"
                     aria-hidden
                 />
-                <div className="text-xs font-semibold tracking-tight text-red-200">
+                <div className="text-sm font-medium text-red-200">
                     {heading}
                 </div>
             </div>
             <p className="mt-1.5 text-xs leading-[1.55] text-red-100/85">
                 {message}
             </p>
-            {/* Filled solid-red CTA so Reconnect reads as the obvious next step
-                rather than competing with the heading; matches the visual weight
-                of the error itself. */}
+            {/* Tinted (not saturated) CTA so Reconnect reads as the obvious next
+                step without screaming over the rest of the sidebar. */}
             <button
                 type="button"
                 onClick={onReconnect}
                 disabled={isReconnecting}
-                className="mt-2.5 inline-flex items-center gap-1.5 rounded-md bg-red-500/90 px-3 py-1.5 text-xs font-semibold text-white shadow-sm transition-colors hover:bg-red-500 disabled:cursor-not-allowed disabled:opacity-60"
+                className="mt-2.5 inline-flex items-center gap-1.5 rounded-md border border-red-500/30 bg-red-500/15 px-3 py-1.5 text-xs font-medium text-red-100 transition-colors hover:border-red-500/50 hover:bg-red-500/25 disabled:cursor-not-allowed disabled:opacity-60"
             >
                 {isReconnecting ? (
                     <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />
