@@ -1,21 +1,9 @@
-"""Regression tests: agent-node usage must be recorded without a live socket.
+"""Regression: agent-node usage must record without a live socket.
 
-Triggered workflow runs (cron, webhook, run-from-API) have no connected client
-socket. The webhook/worker path runs the workflow with ``sid=""`` (empty string,
-set in ``utils/webhook_routes.py`` and passed unchanged into
-``NodeFactory.create_node``), so the agent node's BillingHooks gets a real
-``sio`` but a falsy ``sid``.
-
-The bug these tests guard against: ``BillingHooks.__init__`` used to *require*
-socket context — ``has_direct_socket = sio and sid``, which is falsy when
-``sid == ""`` — and raised ``ValueError`` otherwise. ``Agent._build_billing_hooks``
-swallowed that error and set ``_billing_hooks = None``, so
-``Runner.run_streamed(hooks=None)`` ran with no lifecycle hooks: ``on_llm_end``
-never fired and the LLM cost was never recorded for ANY non-interactive run.
-
-The socket is only used to push live UI updates; billing must never depend on it.
-These tests use ``sid=None`` (a superset of the ``sid=""`` repro — both are
-falsy) to assert that hooks construct and record usage regardless of socket.
+Triggered runs (cron/webhook) execute with sid="". BillingHooks used to require
+socket context and raise; _build_billing_hooks swallowed that and set hooks=None,
+so on_llm_end never fired and cost was never recorded. Tests use sid=None (also
+falsy) to assert hooks construct + record regardless of socket.
 """
 
 from types import SimpleNamespace
@@ -58,11 +46,7 @@ def test_billing_hooks_still_requires_user_id():
 
 @pytest.mark.anyio
 async def test_billing_hooks_records_usage_without_socket():
-    """on_llm_end must record usage even when there is no client socket.
-
-    This is the core regression: a cron/webhook-triggered agent run records its
-    LLM cost to usage_events despite sio/sid being None.
-    """
+    """on_llm_end records usage even with no client socket (the core regression)."""
     hooks = BillingHooks(model="gpt-4o", user_id=_TEST_USER_ID, sio=None, sid=None)
 
     response = SimpleNamespace(
@@ -72,9 +56,7 @@ async def test_billing_hooks_records_usage_without_socket():
         request_id="req-test",
     )
 
-    # track_usage_event is a sync fire-and-forget method on the singleton; the
-    # _record_usage path imports it as `from billing.usage_tracker import
-    # usage_tracker`, so patch the attribute on the singleton instance.
+    # _record_usage imports the usage_tracker singleton, so patch it there.
     with patch(
         "billing.usage_tracker.usage_tracker.track_usage_event", new=MagicMock()
     ) as mock_track:
