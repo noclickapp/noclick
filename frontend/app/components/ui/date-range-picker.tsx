@@ -70,7 +70,7 @@ export function DateRangePicker({
           <Button
             variant={"outline"}
             className={cn(
-              "h-8 sm:h-9 px-3 justify-start text-left font-normal text-xs bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-100 border-zinc-700 whitespace-nowrap",
+              "h-8 sm:h-9 px-3 justify-start text-left font-normal text-xs bg-zinc-800 text-zinc-400 hover:bg-zinc-700 hover:text-zinc-100 border-zinc-800 whitespace-nowrap",
               isMobile && "flex-1 min-w-0",
               !dateRange && "text-zinc-500"
             )}
