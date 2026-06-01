@@ -41,3 +41,29 @@ export function KeyHint({ keys, className }: KeyHintProps) {
         </span>
     );
 }
+
+// Renders a leader sequence as "G then U" — the keys are pressed one after
+// another, not together, so they read with an explicit "then" between keycaps.
+export function SequenceKeyHint({
+    keys,
+    className,
+}: {
+    keys: string[];
+    className?: string;
+}) {
+    return (
+        <span className={cn('inline-flex items-center gap-1.5', className)}>
+            {keys.map((k, i) => (
+                <span
+                    key={`${k}-${i}`}
+                    className="inline-flex items-center gap-1.5"
+                >
+                    {i > 0 && (
+                        <span className="text-[10px] text-zinc-500">then</span>
+                    )}
+                    <KeyHint keys={[k]} />
+                </span>
+            ))}
+        </span>
+    );
+}
