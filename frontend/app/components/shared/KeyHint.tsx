@@ -20,9 +20,12 @@ const GLYPHS: Record<string, string> = {
 interface KeyHintProps {
     keys: string[];
     className?: string;
+    /** Override the keycap (kbd) styling — e.g. brighter chips on a light/filled
+     *  button. Merged over the default zinc/translucent look via cn(). */
+    kbdClassName?: string;
 }
 
-export function KeyHint({ keys, className }: KeyHintProps) {
+export function KeyHint({ keys, className, kbdClassName }: KeyHintProps) {
     const isMac = useIsMac();
     const label = (k: string) =>
         k === 'mod' ? (isMac ? '⌘' : 'Ctrl') : (GLYPHS[k] ?? k);
@@ -36,7 +39,10 @@ export function KeyHint({ keys, className }: KeyHintProps) {
             {keys.map((k, i) => (
                 <kbd
                     key={`${k}-${i}`}
-                    className="text-[10px] font-medium text-zinc-400 bg-white/[0.05] min-w-[17px] h-[17px] px-1 flex items-center justify-center rounded-[4px]"
+                    className={cn(
+                        'text-[10px] font-medium text-zinc-400 bg-white/[0.05] min-w-[17px] h-[17px] px-1 flex items-center justify-center rounded-[4px]',
+                        kbdClassName
+                    )}
                 >
                     {label(k)}
                 </kbd>
