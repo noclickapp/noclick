@@ -1,8 +1,8 @@
 // Reusable keyboard-shortcut preview — renders small kbd chips in the shared
 // style used across search affordances (sidebar search, workflow browser search)
 // so keybinding hints stay visually consistent. Special tokens: 'mod' (⌘ on
-// macOS, Ctrl elsewhere), 'shift', 'enter', 'esc', 'up', 'down'; any other
-// string renders verbatim (e.g. 'K').
+// macOS, Ctrl elsewhere), 'shift', 'enter', 'esc', 'up', 'down', 'left',
+// 'right', 'backspace'; any other string renders verbatim (e.g. 'K').
 import { useIsMac } from '~/hooks/useIsMac';
 import { cn } from '~/lib/utils';
 
@@ -12,6 +12,9 @@ const GLYPHS: Record<string, string> = {
     esc: 'Esc',
     up: '↑',
     down: '↓',
+    left: '←',
+    right: '→',
+    backspace: '⌫',
 };
 
 interface KeyHintProps {
