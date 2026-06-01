@@ -10,13 +10,12 @@ export function NodeStatusBadge({ variant }: { variant: 'error' | 'incomplete' }
     const isError = variant === 'error';
     return (
         <div
-            className={`absolute -top-2 -right-2 z-20 flex items-center justify-center ${isError ? 'animate-pulse' : ''}`}
+            className="absolute -top-2 -right-2 z-20 flex items-center justify-center"
             style={{
                 width: 24,
                 height: 24,
                 borderRadius: '50%',
                 background: isError ? 'rgb(239, 68, 68)' : 'rgb(245, 158, 11)',
-                border: '2px solid #fafafa',
                 boxShadow: isError
                     ? '0 0 10px rgba(239, 68, 68, 0.55)'
                     : '0 0 8px rgba(245, 158, 11, 0.45)',
