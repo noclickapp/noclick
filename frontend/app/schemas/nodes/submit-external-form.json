@@ -1,0 +1,72 @@
+{
+  "$defs": {
+    "SubmitExternalFormConfig": {
+      "description": "Configuration for the Submit External Form node.",
+      "properties": {
+        "workflow": {
+          "default": "",
+          "description": "The flow whose form to submit",
+          "title": "Workflow",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a workflow ID",
+            "field_name": "workflow",
+            "placeholder": "Select a flow...",
+            "searchable": true
+          }
+        },
+        "form": {
+          "default": "",
+          "description": "The form (trigger) in that flow to submit",
+          "title": "Form",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a form node ID",
+            "depends_on": "workflow",
+            "field_name": "form",
+            "placeholder": "Select a form...",
+            "searchable": true
+          }
+        },
+        "inputs": {
+          "additionalProperties": true,
+          "description": "Values for the selected form's fields",
+          "title": "Form Inputs",
+          "type": "object",
+          "ui:widget": "external_form_inputs"
+        }
+      },
+      "title": "SubmitExternalFormConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the Submit External Form node (no credentials needed).",
+  "properties": {
+    "config": {
+      "$ref": "#/$defs/SubmitExternalFormConfig",
+      "description": "Node-specific configuration"
+    },
+    "credentials": {
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials",
+      "type": "null"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Submit-external-form Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Submit the 'New lead' form in my CRM flow",
+    "Trigger the onboarding flow by submitting its intake form",
+    "Run another flow by filling in its form",
+    "Change which flow's form this submits",
+    "Map the email field to the form's email input",
+    "Hand off to the enrichment flow's form and use its result"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}
