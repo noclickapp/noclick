@@ -9,6 +9,7 @@ import json
 from utils.cas.canonical import canonicalize
 from utils.cas.chunking import (
     PRUNED_PLACEHOLDER,
+    _is_placeholder,
     decompose,
     reassemble,
     referenced_hashes,
@@ -27,18 +28,57 @@ class TestDecompose:
         assert manifest == output
         assert chunks == {}
 
-    def test_large_output_becomes_one_chunk(self):
+    def test_large_output_is_chunked_and_roundtrips(self):
         output = {"values": list(range(1000))}  # well over a tiny threshold
         manifest, chunks = decompose(output, threshold=16)
-        assert list(manifest.keys()) == ["$cas"]
-        digest = manifest["$cas"]
-        assert len(chunks) == 1 and digest in chunks
-        assert chunks[digest] == canonicalize(output)
+        assert chunks  # structural produces at least one chunk
+        assert reassemble(manifest, _store_fetch(chunks)) == output
 
     def test_identical_content_same_hash(self):
         a, _ = decompose({"values": list(range(500))}, threshold=16)
         b, _ = decompose({"values": list(range(500))}, threshold=16)
         assert a["$cas"] == b["$cas"]  # dedup: same content → same chunk hash
+
+
+class TestStructural:
+    def test_large_child_factored_skeleton_inlined(self):
+        """A node that's only large because of one big child: the child is
+        chunked, the small skeleton is INLINED (manifest is a dict, not a
+        top-level placeholder) — the no-regression rule (no extra wrapper chunk)."""
+        output = {"body": list(range(2000)), "ts": 1}  # body >= 4KB, skeleton tiny
+        manifest, chunks = decompose(output, threshold=4096)
+        assert isinstance(manifest, dict) and "$cas" not in manifest  # inlined skeleton
+        assert _is_placeholder(manifest["body"]) and manifest["ts"] == 1
+        assert len(chunks) == 1  # just the body chunk, no wrapper
+        assert reassemble(manifest, _store_fetch(chunks)) == output
+
+    def test_shared_subtree_dedups_across_outputs(self):
+        """The whole point: two different outputs sharing a large subtree
+        reference the SAME chunk hash (cross-run dedup)."""
+        body = list(range(2000))
+        m1, c1 = decompose({"body": body, "ts": 1}, threshold=4096)
+        m2, c2 = decompose({"body": body, "ts": 2}, threshold=4096)
+        assert m1["body"]["$cas"] == m2["body"]["$cas"]  # shared chunk
+        assert set(c1) == set(c2)  # identical chunk set; only the inline ts differs
+
+    def test_deep_nesting_emits_transitive_chunks(self):
+        """A chunk whose own bytes contain nested placeholders: chunks must include
+        the nested hashes that referenced_hashes(manifest) cannot see (the reason
+        the store refs list(chunks) and reassembly fetches the transitive closure)."""
+        inner = list(range(2000))
+        output = {f"k{i}": inner for i in range(60)}  # reduced skeleton itself >= 4KB
+        manifest, chunks = decompose(output, threshold=4096)
+        top_refs = referenced_hashes(manifest)
+        assert set(chunks) - top_refs  # nested chunks exist beyond the manifest's refs
+        assert reassemble(manifest, _store_fetch(chunks)) == output
+
+    def test_opaque_scalar_is_one_chunk(self):
+        """A large scalar can't be subdivided → exactly one chunk (== whole-blob);
+        chunking never makes an opaque scalar worse."""
+        output = "x" * 5000
+        manifest, chunks = decompose(output, threshold=4096)
+        assert _is_placeholder(manifest) and len(chunks) == 1
+        assert reassemble(manifest, _store_fetch(chunks)) == output
 
 
 class TestReassemble:

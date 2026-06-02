@@ -1,15 +1,14 @@
 """Decompose a node output into a per-run manifest + content-addressed chunks,
 and reassemble it.
 
-**Slice 1 (this file) stores each output whole — no Merkle.** An output whose
-canonical size is below the threshold is inlined into the manifest verbatim; at
-or above the threshold the whole output becomes one chunk and the manifest is a
-single ``{"$cas": <hash>}`` pointer.
-
-**Slice 2** replaces ``decompose`` with the size-thresholded structural Merkle
-walk (chunk a child when its own canonical size ≥ T, inline smaller children,
-recurse into a chunk's own ≥T children). ``reassemble`` already resolves nested
-placeholders, so it is forward-compatible and does not change in Slice 2.
+**Structural Merkle (Slice 2).** A subtree below the threshold is inlined into
+the manifest verbatim; a container at or above it is recursively decomposed and
+its reduced skeleton chunked only if still ≥ T (else inlined) — so identical
+sub-structures across runs share one content-addressed chunk. ``decompose``
+returns the FLAT transitive set of all chunks (incl. nested); the store refs the
+whole set so GC never orphans a still-referenced nested chunk, and ``reassemble``
+resolves nested placeholders recursively (the store fetches the transitive
+closure; see ``utils/cas/store.py:_reassemble``).
 
 Chunk values are *canonical bytes* (uncompressed). The store layer applies zstd
 before R2 and decompresses on read, so this module stays pure (no I/O, no
@@ -54,17 +53,59 @@ def _is_placeholder(node: Any) -> bool:
 def decompose(
     output: Any, threshold: int = DEFAULT_CHUNK_THRESHOLD_BYTES
 ) -> Tuple[Any, Dict[str, bytes]]:
-    """Return ``(manifest, chunks)`` where ``chunks`` maps hash → canonical bytes.
+    """Structural Merkle decomposition: factor large sub-structures into shared,
+    content-addressed chunks so identical subtrees dedup across runs.
 
-    Slice 1: whole-output. Inline below the threshold (zero chunks); one chunk at
-    or above it. The returned manifest is JSON-serializable (it IS the inlined
-    output, or a single placeholder dict).
+    Walk: a subtree whose canonical size < T is inlined verbatim. A container
+    (dict/list) >= T is recursively decomposed; then its REDUCED form (children
+    that were themselves chunked are now placeholders) is chunked ONLY if the
+    reduced form is still >= T — otherwise the reduced skeleton is inlined into
+    the parent / manifest.
+
+    The "inline the reduced skeleton when it's < T" rule is the no-regression
+    safeguard: a node is never split into a layout that costs more than storing
+    it whole. In particular a single large compressible scalar stays exactly one
+    chunk (== whole-blob), so chunking can't make a node's footprint worse.
+
+    A scalar (string/number) >= T can't be subdivided structurally → one chunk.
+    EXTENSION POINT: route such opaque scalars through content-defined chunking
+    (a $cas pointer to a CDC sub-manifest) to dedup drifting binary/text — purely
+    additive, since reassemble already resolves nested placeholders recursively.
+
+    Returns ``(manifest, chunks)`` where ``chunks`` maps hash → canonical bytes
+    for ALL chunks INCLUDING nested ones (the flat transitive set), so the store
+    refs the complete set and GC never orphans a still-referenced nested chunk.
+    The manifest is JSON-serializable (inlined value, reduced skeleton, or a
+    single placeholder dict).
     """
     data = canonicalize(output)
     if len(data) < threshold:
         return output, {}
-    digest = hash_bytes(data)
-    return {_PLACEHOLDER_KEY: digest}, {digest: data}
+
+    chunks: Dict[str, bytes] = {}
+    if isinstance(output, dict):
+        reduced: Any = {}
+        for key, value in output.items():
+            child_manifest, child_chunks = decompose(value, threshold)
+            reduced[key] = child_manifest
+            chunks.update(child_chunks)
+    elif isinstance(output, list):
+        reduced = []
+        for value in output:
+            child_manifest, child_chunks = decompose(value, threshold)
+            reduced.append(child_manifest)
+            chunks.update(child_chunks)
+    else:
+        # Opaque scalar at or above T — can't subdivide (see EXTENSION POINT).
+        digest = hash_bytes(data)
+        return {_PLACEHOLDER_KEY: digest}, {digest: data}
+
+    reduced_bytes = canonicalize(reduced)
+    if len(reduced_bytes) < threshold:
+        return reduced, chunks                 # inline the reduced skeleton
+    digest = hash_bytes(reduced_bytes)
+    chunks[digest] = reduced_bytes
+    return {_PLACEHOLDER_KEY: digest}, chunks
 
 
 def reassemble(

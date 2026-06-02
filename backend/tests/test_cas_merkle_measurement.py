@@ -21,11 +21,21 @@ import pytest
 from utils.cas.canonical import canonicalize, hash_bytes
 from utils.cas.chunking import (
     DEFAULT_CHUNK_THRESHOLD_BYTES as T,
-    decompose,
     reassemble,
 )
 
 _PLACEHOLDER_KEY = "$cas"
+
+
+def _whole_blob(output, threshold=T):
+    """Slice-1 baseline (whole-output): one chunk at/above T, else inline. (The
+    production `decompose` is now structural Merkle, so this measurement keeps an
+    explicit whole-blob to compare against.)"""
+    data = canonicalize(output)
+    if len(data) < threshold:
+        return output, {}
+    digest = hash_bytes(data)
+    return {_PLACEHOLDER_KEY: digest}, {digest: data}
 
 
 def decompose_structural(output, threshold=T):
@@ -89,7 +99,7 @@ def _measure(make_output, n_runs, k):
     s1_logical = s2_logical = 0
     for i in range(n_runs):
         out = make_output(i, k)
-        _m1, c1 = decompose(out, T)                 # Slice 1 (whole-blob)
+        _m1, c1 = _whole_blob(out, T)               # Slice 1 (whole-blob)
         _m2, c2 = decompose_structural(out, T)      # Slice 2 (structural)
         for h, b in c1.items():
             s1_unique[h] = len(b)
