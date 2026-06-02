@@ -28,6 +28,10 @@ execution_outputs = _cas.read_execution_outputs
 latest_outputs = _cas.read_latest_node_outputs
 # Latest output for a single node (reference resolution).
 latest_output = _cas.read_latest_node_output
+# Latest output for a single node + its store timestamp ({output, created_at}).
+latest_output_meta = _cas.read_latest_node_output_meta
+# Which of the given node_ids have at least one stored output (presence set).
+nodes_with_output = _cas.read_nodes_with_output
 # Latest per-node terminal status/error (status chips on load).
 latest_statuses = _cas.read_latest_node_statuses
 # Last N outputs for a node across executions, newest first (history carousel).
@@ -39,6 +43,7 @@ read_node_output = _cas.read_node_output  # one node's reassembled output for a 
 
 __all__ = [
     "snapshot_graph", "persist_outputs", "persist_node",
-    "execution_outputs", "latest_outputs", "latest_output",
-    "latest_statuses", "output_history", "read_graph", "read_node_output",
+    "execution_outputs", "latest_outputs", "latest_output", "latest_output_meta",
+    "nodes_with_output", "latest_statuses", "output_history",
+    "read_graph", "read_node_output",
 ]
