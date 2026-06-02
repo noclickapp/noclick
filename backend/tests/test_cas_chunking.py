@@ -6,7 +6,9 @@ nested-placeholder reassembly + missing-chunk degradation that Slice 2 relies on
 
 import json
 
-from utils.cas.canonical import canonicalize
+import pytest
+
+from utils.cas.canonical import NonCanonicalizableError, canonicalize
 from utils.cas.chunking import (
     PRUNED_PLACEHOLDER,
     _is_placeholder,
@@ -133,3 +135,105 @@ class TestReferencedHashes:
         h1, h2 = "a" * 64, "b" * 64
         manifest = {"x": {"$cas": h1}, "y": [{"$cas": h2}, 1]}
         assert referenced_hashes(manifest) == {h1, h2}
+
+
+class TestCasCollision:
+    """ACCEPTED, documented limitation: a genuine output value literally shaped
+    like a CAS pointer ({"$cas": <64-hex>}) is indistinguishable from a real
+    pointer at reassemble time, so it degrades to PRUNED_PLACEHOLDER. This is
+    astronomically unlikely (a real value would have to be exactly a single
+    "$cas" key holding a valid 64-char sha256 hex string). These tests PIN the
+    current degradation behavior — they intentionally do NOT assert that the
+    original value survives, and production code must NOT be changed to "fix" it.
+    """
+
+    def test_top_level_collision_value_degrades_to_pruned(self):
+        # Small enough to be inlined verbatim: manifest == output, no chunks.
+        output = {"$cas": "b" * 64}
+        manifest, chunks = decompose(output, threshold=4096)
+        assert manifest == output
+        assert chunks == {}
+        # On reassemble it's read as a pointer to a hash nothing stores → miss.
+        assert reassemble(manifest, lambda _h: None) == PRUNED_PLACEHOLDER
+
+    def test_collision_buried_in_chunked_container_degrades_field(self):
+        # The collision value sits beside a large sibling that forces chunking;
+        # the surrounding skeleton round-trips, but the collision field is read
+        # as a (missing) pointer and degrades. PIN this behavior.
+        output = {"real_field": {"$cas": "a" * 64}, "filler": list(range(2000))}
+        manifest, chunks = decompose(output, threshold=4096)
+        res = reassemble(manifest, _store_fetch(chunks))
+        assert res["real_field"] == PRUNED_PLACEHOLDER
+        assert res["filler"] == list(range(2000))  # the legit big sibling survives
+
+
+class TestDeepNesting:
+    def test_three_level_nesting_roundtrips_with_complete_chunk_set(self):
+        """3 levels deep, each level large enough to be its own chunk. Round-trip
+        must be exact, and the FLAT chunk set must contain every hash reachable
+        by recursively json.loads-ing chunk bytes — no nested chunk may be
+        missing from the flat set (the store refs list(chunks), so a missing
+        nested hash would orphan a still-referenced chunk)."""
+        inner = list(range(2000))
+        mid = {f"m{i}": inner for i in range(60)}
+        top = {f"t{i}": mid for i in range(60)}
+        manifest, chunks = decompose(top, threshold=4096)
+
+        assert reassemble(manifest, _store_fetch(chunks)) == top
+        assert len(chunks) >= 3  # distinct chunks at the three structural levels
+
+        # Every hash reachable through the manifest AND through each chunk's own
+        # decoded bytes must be present in the flat chunk set.
+        reachable: set = set(referenced_hashes(manifest))
+        for raw in chunks.values():
+            reachable |= referenced_hashes(json.loads(raw))
+        assert reachable <= set(chunks)
+
+
+class TestUnicodeByteThreshold:
+    def test_threshold_is_byte_denominated_not_char(self):
+        # 3000 'é' = 3000 chars but 6002 canonical UTF-8 bytes (2 bytes each +
+        # 2 quote bytes), so it crosses a 4096-BYTE threshold despite < 4096 chars.
+        s = "é" * 3000
+        assert len(canonicalize(s)) == 6002
+        assert len(s) == 3000
+        manifest, chunks = decompose(s, threshold=4096)
+        assert _is_placeholder(manifest)  # chunked on bytes, not chars
+        assert reassemble(manifest, _store_fetch(chunks)) == s
+
+    def test_emoji_roundtrip(self):
+        # 4-byte code points: 1100 * 4 = 4400 bytes + quotes > 4096.
+        s = "\U0001F600" * 1100
+        assert len(canonicalize(s)) > 4096
+        manifest, chunks = decompose(s, threshold=4096)
+        assert _is_placeholder(manifest)
+        assert reassemble(manifest, _store_fetch(chunks)) == s
+
+
+class TestNonCanonicalizablePropagates:
+    """No silent fallback: a non-JSON-native value surfaces as
+    NonCanonicalizableError out of decompose (per the canonical-form contract)."""
+
+    def test_raises_for_top_level_non_serializable(self):
+        with pytest.raises(NonCanonicalizableError):
+            decompose({"x": object()}, threshold=1)
+
+    def test_raises_for_non_serializable_nested_in_large_container(self):
+        # The bad value is buried beside a large sibling that triggers the
+        # recursive chunking path; the error must still propagate, not be eaten.
+        with pytest.raises(NonCanonicalizableError):
+            decompose({"big": list(range(2000)), "bad": object()}, threshold=4096)
+
+
+class TestIntraOutputDedup:
+    def test_shared_subtree_within_one_output_dedups_to_one_chunk(self):
+        """Two keys in the SAME output pointing at an identical large subtree
+        share one content-addressed chunk (intra-output dedup, not just
+        cross-run)."""
+        inner = list(range(2000))
+        output = {"a": inner, "b": inner, "tag": 1}
+        manifest, chunks = decompose(output, threshold=4096)
+        assert manifest["a"]["$cas"] == manifest["b"]["$cas"]
+        assert len(chunks) == 1
+        assert manifest["tag"] == 1  # small sibling stays inline
+        assert reassemble(manifest, _store_fetch(chunks)) == output
