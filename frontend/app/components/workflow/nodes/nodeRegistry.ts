@@ -76,6 +76,7 @@ import { TikTokNode } from './TikTokNode';
 import { TwitterNode } from './TwitterNode';
 import { CloudflareNode } from './CloudflareNode';
 import { RunTriggerNode } from './RunTriggerNode';
+import { SubmitExternalFormNode } from './SubmitExternalFormNode';
 import { WebhookTriggerNode } from './WebhookTriggerNode';
 import { WhatsAppNode } from './WhatsAppNode';
 import { ElevenLabsNode } from './ElevenLabsNode';
@@ -134,7 +135,7 @@ function _buildAvailable(): NodeDefinition[] {
         TypeformNode, WhatsAppNode, ElevenLabsNode, YouTubeNode, HubSpotNode,
         MailchimpNode, ResendNode, AIAgentNode, ToolNode, MCPServerNode,
         NoClickNode, AlarmNode, FilesystemNode, IterationNode, DelayNode, FilterNode,
-        ConditionalNode, ApprovalNode, LogNode, SwitchNode, MergeNode,
+        ConditionalNode, ApprovalNode, LogNode, SwitchNode, MergeNode, SubmitExternalFormNode,
         ServerlessFunctionNode, StateManagerNode, SetupNode, OnErrorNode,
         SetVariableNode, StickyNoteNode,
         InterfaceFormNode, InterfaceImageNode, InterfaceAudioNode, InterfaceVideoNode,

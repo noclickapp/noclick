@@ -274,4 +274,55 @@ async def get_accessible_resources(
             }
         )
 
+    # Get folder-shared workflows (a workflow whose folder — or any ancestor — is
+    # shared with the user directly or via their org). Workflow-only; mirrors the
+    # folder branch of check_resource_access so listing matches what's accessible.
+    if resource_type == "workflow":
+        folder_user_shares = await conn.fetch(
+            """
+            SELECT DISTINCT w.id AS resource_id, rs.permission
+            FROM resource_shares rs
+            JOIN workflow_folders shared_folder ON shared_folder.id = rs.resource_id
+            JOIN workflow_folders wf
+              ON (wf.id = shared_folder.id OR wf.path LIKE shared_folder.path || '%')
+            JOIN workflows w ON w.folder_id = wf.id
+            WHERE rs.resource_type = 'workflow_folder'
+              AND rs.target_type = 'user'
+              AND rs.target_user_id = $1
+            """,
+            user_id,
+        )
+        for row in folder_user_shares:
+            resources.append(
+                {
+                    "resource_id": str(row["resource_id"]),
+                    "permission": row["permission"],
+                    "via": "folder_share",
+                }
+            )
+
+        folder_org_shares = await conn.fetch(
+            """
+            SELECT DISTINCT w.id AS resource_id, rs.permission
+            FROM resource_shares rs
+            JOIN workflow_folders shared_folder ON shared_folder.id = rs.resource_id
+            JOIN workflow_folders wf
+              ON (wf.id = shared_folder.id OR wf.path LIKE shared_folder.path || '%')
+            JOIN workflows w ON w.folder_id = wf.id
+            JOIN organization_members om ON rs.target_org_id = om.organization_id
+            WHERE rs.resource_type = 'workflow_folder'
+              AND rs.target_type = 'organization'
+              AND om.user_id = $1
+            """,
+            user_id,
+        )
+        for row in folder_org_shares:
+            resources.append(
+                {
+                    "resource_id": str(row["resource_id"]),
+                    "permission": row["permission"],
+                    "via": "org_folder_share",
+                }
+            )
+
     return resources
