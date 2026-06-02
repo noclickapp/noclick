@@ -5,6 +5,7 @@
 import { useState, useEffect, useCallback } from 'react';
 import { Pen, Eraser, Trash2, Check, Type, Undo, Redo } from 'lucide-react';
 import { useDrawer } from '~/hooks/useDrawer';
+import { useModKey } from '~/hooks/useIsMac';
 import { Button } from '~/components/ui/button';
 
 interface DrawingOptionsDrawerProps {
@@ -54,6 +55,7 @@ export function DrawingOptionsContent({
     onUndo,
     onRedo
 }: Omit<DrawingOptionsDrawerProps, 'isDrawing'>) {
+    const modKey = useModKey();
     // Initialize with external props, persistent state, or defaults in that order
     const [currentTool, setCurrentTool] = useState<'pen' | 'eraser' | 'text'>(() => {
         return externalTool || persistentState.tool;
@@ -114,7 +116,7 @@ export function DrawingOptionsContent({
                         onClick={onUndo}
                         disabled={!canUndo}
                         className="h-8 w-8 p-0 transition-all rounded-lg bg-zinc-800/80 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200 border border-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed"
-                        title="Undo (Ctrl+Z)"
+                        title={`Undo (${modKey}+Z)`}
                     >
                         <Undo className="h-3.5 w-3.5" />
                     </Button>
@@ -123,7 +125,7 @@ export function DrawingOptionsContent({
                         onClick={onRedo}
                         disabled={!canRedo}
                         className="h-8 w-8 p-0 transition-all rounded-lg bg-zinc-800/80 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200 border border-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed"
-                        title="Redo (Ctrl+Y)"
+                        title={`Redo (${modKey}+Y)`}
                     >
                         <Redo className="h-3.5 w-3.5" />
                     </Button>
