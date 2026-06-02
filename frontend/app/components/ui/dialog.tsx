@@ -14,8 +14,10 @@ const DialogClose = DialogPrimitive.Close;
 
 const DialogOverlay = React.forwardRef<
     React.ElementRef<typeof DialogPrimitive.Overlay>,
-    React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay>
->(({ className, ...props }, ref) => (
+    React.ComponentPropsWithoutRef<typeof DialogPrimitive.Overlay> & {
+        noAnimation?: boolean;
+    }
+>(({ className, noAnimation, ...props }, ref) => (
     <DialogPrimitive.Overlay
         ref={ref}
         className={cn(
@@ -23,7 +25,9 @@ const DialogOverlay = React.forwardRef<
             // and the drawer itself (z-[61]) so dialog popups (e.g. upgrade
             // paywall) stay visible and interactive while a builder-input
             // drawer is open.
-            'fixed inset-0 z-[70] bg-black/80 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
+            'fixed inset-0 z-[70] bg-black/80',
+            !noAnimation &&
+                'data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0',
             className
         )}
         {...props}
@@ -33,17 +37,23 @@ DialogOverlay.displayName = DialogPrimitive.Overlay.displayName;
 
 const DialogContent = React.forwardRef<
     React.ElementRef<typeof DialogPrimitive.Content>,
-    React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content>
->(({ className, children, ...props }, ref) => (
+    React.ComponentPropsWithoutRef<typeof DialogPrimitive.Content> & {
+        /** Skip enter/exit animations — Radix then mounts/unmounts instantly, so
+         *  popups that are navigated to/from (e.g. the credential dialog) feel snappy. */
+        noAnimation?: boolean;
+    }
+>(({ className, children, noAnimation, ...props }, ref) => (
     <DialogPortal>
-        <DialogOverlay />
+        <DialogOverlay noAnimation={noAnimation} />
         <DialogPrimitive.Content
             ref={ref}
             onEscapeKeyDown={(e) => {
                 e.stopPropagation();
             }}
             className={cn(
-                'fixed left-[50%] top-[50%] z-[70] grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border border-white/[0.08] bg-[#0a0a0b] p-6 shadow-2xl shadow-black/60 duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%] sm:rounded-xl text-zinc-100',
+                'fixed left-[50%] top-[50%] z-[70] grid w-full max-w-lg translate-x-[-50%] translate-y-[-50%] gap-4 border border-white/[0.08] bg-[#0a0a0b] p-6 shadow-2xl shadow-black/60 sm:rounded-xl text-zinc-100',
+                !noAnimation &&
+                    'duration-200 data-[state=open]:animate-in data-[state=closed]:animate-out data-[state=closed]:fade-out-0 data-[state=open]:fade-in-0 data-[state=closed]:zoom-out-95 data-[state=open]:zoom-in-95 data-[state=closed]:slide-out-to-left-1/2 data-[state=closed]:slide-out-to-top-[48%] data-[state=open]:slide-in-from-left-1/2 data-[state=open]:slide-in-from-top-[48%]',
                 className
             )}
             {...props}

@@ -43,7 +43,7 @@ interface AuroraData {
     isReadOnly?: boolean;
 }
 
-export function NodeAuroraLayers({ data, selected }: { data?: AuroraData; selected?: boolean }) {
+export function NodeAuroraLayers({ data, selected, nodeType }: { data?: AuroraData; selected?: boolean; nodeType?: string }) {
     const executionState = data?.executionState ?? 'idle';
     const isRunning = executionState === 'running';
     const isError = executionState === 'error';
@@ -75,6 +75,9 @@ export function NodeAuroraLayers({ data, selected }: { data?: AuroraData; select
     // Read-only previews (templates / share embeds) are mobile-perf constrained — the
     // node itself already drops blur/glow layers there, so the overlay opts out too.
     if (data?.isReadOnly === true) return null;
+    // Interface (UI) nodes aren't executable steps, so run-status visuals — the
+    // completed/failed outline ring and the ✓ corner badge — don't apply to them.
+    if (nodeType?.startsWith('interface-')) return null;
     if (!isRunning && !showCompleted && !showFailed) return null;
 
     const sweepRing = {
