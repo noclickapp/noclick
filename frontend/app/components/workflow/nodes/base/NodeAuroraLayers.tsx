@@ -10,6 +10,7 @@
 
 import { useEffect, useRef, useState } from 'react';
 import { Check } from 'lucide-react';
+import { useIsMobile } from '~/hooks/useIsMobile';
 
 // The animating "aurora" sweep is the thicker ring that sits just OUTSIDE the box
 // with a small gap (radius = node's 16px + |inset| to stay concentric; gap between
@@ -44,6 +45,7 @@ interface AuroraData {
 }
 
 export function NodeAuroraLayers({ data, selected, nodeType }: { data?: AuroraData; selected?: boolean; nodeType?: string }) {
+    const isMobile = useIsMobile();
     const executionState = data?.executionState ?? 'idle';
     const isRunning = executionState === 'running';
     const isError = executionState === 'error';
@@ -72,9 +74,12 @@ export function NodeAuroraLayers({ data, selected, nodeType }: { data?: AuroraDa
         prevExec.current = executionState;
     }, [executionState]);
 
-    // Read-only previews (templates / share embeds) are mobile-perf constrained — the
-    // node itself already drops blur/glow layers there, so the overlay opts out too.
-    if (data?.isReadOnly === true) return null;
+    // MOBILE read-only previews (templates / share embeds) are perf-constrained —
+    // the node itself drops blur/glow layers there, so the overlay opts out too.
+    // DESKTOP read-only (execution-log replay, desktop public share) keeps the
+    // aurora so completed nodes get their ✓ ring + corner badge — the primary
+    // visual cue for "this node ran successfully in the past run."
+    if (data?.isReadOnly === true && isMobile) return null;
     // Interface (UI) nodes aren't executable steps, so run-status visuals — the
     // completed/failed outline ring and the ✓ corner badge — don't apply to them.
     if (nodeType?.startsWith('interface-')) return null;
