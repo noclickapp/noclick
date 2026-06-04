@@ -16,7 +16,8 @@ import { useOnboardingContext } from '~/hooks/useGetStartedChecklist';
 export type SeenOnceKey =
     | 'invite_walkthrough' // find-the-link tour — marked seen ONLY when it actually completes
     | 'invite_banner_disabled' // "Don't show again" on the inline invite banner
-    | 'quickpublish_banner_disabled'; // "Don't show again" on the quick-publish banner
+    | 'quickpublish_banner_disabled' // "Don't show again" on the quick-publish banner
+    | 'quickpublish_walkthrough'; // find-the-Publish-button tour — marked seen only on completion
 
 export function useSeenOnceState(key: SeenOnceKey) {
     // completionData is seeded synchronously from the localStorage mirror, so the
