@@ -67,6 +67,22 @@ export default async function () {
     nc.assert.truthy(cellTexts.includes('Turbine'), 'third row rendered');
     nc.assert.falsy(cellTexts.includes('Alpha'), 'SAMPLE_ROWS not shown');
 
+    // 4. Refresh button is portaled into the BlockWrapper title bar and
+    //    re-runs the dataset fetch when clicked.
+    const refreshBtn = nc.dom.qs('button[title="Refresh dataset"]') as HTMLButtonElement | null;
+    nc.assert.truthy(refreshBtn, 'refresh button rendered in BlockWrapper header');
+    await sendEventAsync(
+      ResourceDatasetAppendRequest.create({
+        resource_id: resourceId,
+        rows: [{ sku: 'NC-999', label: 'Refreshed', stock: 1 }],
+      }),
+    );
+    refreshBtn!.click();
+    await nc.wait.until(() => {
+      const cells = nc.dom.qsa('.ag-cell-value').map(c => c.textContent?.trim() ?? '');
+      return cells.includes('NC-999') && cells.includes('Refreshed');
+    }, 5000);
+
     return { ok: true, resourceId, nodeId, cellTexts: cellTexts.slice(0, 12) };
   } finally {
     nc.nodes.delete(nodeId);
