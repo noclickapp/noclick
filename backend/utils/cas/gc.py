@@ -41,6 +41,7 @@ DEFAULT_MAX_AGE_DAYS = 14
 DEFAULT_MAX_PER_WORKFLOW = 25_000
 DEFAULT_ORPHAN_GRACE = timedelta(hours=1)
 DEFAULT_SWEEP_BATCH = 5_000
+DEFAULT_RETENTION_BATCH = 2_000
 
 _TERMINAL = ("completed", "error")
 
@@ -61,73 +62,88 @@ async def phase_a_retention(
     pool, *, now: Optional[datetime] = None,
     max_age_days: int = DEFAULT_MAX_AGE_DAYS,
     max_per_workflow: int = DEFAULT_MAX_PER_WORKFLOW,
+    batch: int = DEFAULT_RETENTION_BATCH,
 ) -> dict:
-    """Prune terminal runs past retention; the sole reference-removal path."""
+    """Prune terminal runs past retention; the sole reference-removal path.
+
+    Drain-loops in bounded batches (each its own transaction) so a backlog can't
+    push a single DELETE past the statement timeout. The batch SELECT re-derives
+    the per-workflow ROW_NUMBER each iteration, so deleting the oldest excess
+    converges; the age predicate is monotonic. Still overlap-safe: the
+    workflow_executions DELETE … RETURNING counts only rows this txn deletes."""
     now = _now(now)
     cutoff = now - timedelta(days=max_age_days)
 
-    async with pool.acquire() as conn:
-        async with conn.transaction():
-            prunable = await conn.fetch(
-                """
-                WITH terminal AS (
-                    SELECT id, workflow_id,
-                           ROW_NUMBER() OVER (
-                               PARTITION BY workflow_id ORDER BY started_at DESC
-                           ) AS rn,
-                           started_at
-                    FROM workflow_executions we
-                    WHERE status = ANY($1)
-                      AND NOT EXISTS (
-                          SELECT 1 FROM approval_requests a
-                          WHERE a.execution_id = we.id AND a.status = 'pending')
+    total_pruned = 0
+    affected: set = set()
+    while True:
+        async with pool.acquire() as conn:
+            async with conn.transaction():
+                prunable = await conn.fetch(
+                    """
+                    WITH terminal AS (
+                        SELECT id, workflow_id,
+                               ROW_NUMBER() OVER (
+                                   PARTITION BY workflow_id ORDER BY started_at DESC
+                               ) AS rn,
+                               started_at
+                        FROM workflow_executions we
+                        WHERE status = ANY($1)
+                          AND NOT EXISTS (
+                              SELECT 1 FROM approval_requests a
+                              WHERE a.execution_id = we.id AND a.status = 'pending')
+                    )
+                    SELECT id, workflow_id FROM terminal
+                    WHERE started_at < $2 OR rn > $3
+                    LIMIT $4
+                    """,
+                    list(_TERMINAL), cutoff, max_per_workflow, batch,
                 )
-                SELECT id, workflow_id FROM terminal
-                WHERE started_at < $2 OR rn > $3
-                """,
-                list(_TERMINAL), cutoff, max_per_workflow,
-            )
-            if not prunable:
-                return {"pruned_executions": 0, "workflows_affected": 0}
+                if not prunable:
+                    break
 
-            ids = [r["id"] for r in prunable]
-            # CAS keys by the REAL execution_id (iteration sub-outputs use a
-            # composite node_id, never a synthetic execution_id), so pruning by
-            # execution_id reaches all of a run's refs/manifests.
-            await conn.execute("DELETE FROM cas_refs WHERE execution_id = ANY($1)", ids)
-            await conn.execute("DELETE FROM cas_manifests WHERE execution_id = ANY($1)", ids)
-            deleted = await conn.fetch(
-                "DELETE FROM workflow_executions WHERE id = ANY($1) RETURNING workflow_id",
-                ids,
-            )
-            per_wf = Counter(r["workflow_id"] for r in deleted)
-            if per_wf:
-                await conn.executemany(
-                    """
-                    INSERT INTO workflow_run_totals
-                        (workflow_id, executions_total, last_cleanup_at)
-                    VALUES ($1, $2, $3)
-                    ON CONFLICT (workflow_id) DO UPDATE
-                        SET executions_total =
-                            workflow_run_totals.executions_total + EXCLUDED.executions_total,
-                            last_cleanup_at = EXCLUDED.last_cleanup_at
-                    """,
-                    [(wf, n, now) for wf, n in per_wf.items()],
+                ids = [r["id"] for r in prunable]
+                # CAS keys by the REAL execution_id (iteration sub-outputs use a
+                # composite node_id, never a synthetic execution_id), so pruning by
+                # execution_id reaches all of a run's refs/manifests.
+                await conn.execute("DELETE FROM cas_refs WHERE execution_id = ANY($1)", ids)
+                await conn.execute("DELETE FROM cas_manifests WHERE execution_id = ANY($1)", ids)
+                deleted = await conn.fetch(
+                    "DELETE FROM workflow_executions WHERE id = ANY($1) RETURNING workflow_id",
+                    ids,
                 )
-                total = sum(per_wf.values())
-                await conn.execute(
-                    """
-                    INSERT INTO workflow_run_totals
-                        (workflow_id, executions_total, last_cleanup_at)
-                    VALUES ($1, $2, $3)
-                    ON CONFLICT (workflow_id) DO UPDATE
-                        SET executions_total =
-                            workflow_run_totals.executions_total + EXCLUDED.executions_total,
-                            last_cleanup_at = EXCLUDED.last_cleanup_at
-                    """,
-                    GLOBAL_TOTALS_ID, total, now,
-                )
-    return {"pruned_executions": len(ids), "workflows_affected": len(per_wf)}
+                per_wf = Counter(r["workflow_id"] for r in deleted)
+                if per_wf:
+                    await conn.executemany(
+                        """
+                        INSERT INTO workflow_run_totals
+                            (workflow_id, executions_total, last_cleanup_at)
+                        VALUES ($1, $2, $3)
+                        ON CONFLICT (workflow_id) DO UPDATE
+                            SET executions_total =
+                                workflow_run_totals.executions_total + EXCLUDED.executions_total,
+                                last_cleanup_at = EXCLUDED.last_cleanup_at
+                        """,
+                        [(wf, n, now) for wf, n in per_wf.items()],
+                    )
+                    total = sum(per_wf.values())
+                    await conn.execute(
+                        """
+                        INSERT INTO workflow_run_totals
+                            (workflow_id, executions_total, last_cleanup_at)
+                        VALUES ($1, $2, $3)
+                        ON CONFLICT (workflow_id) DO UPDATE
+                            SET executions_total =
+                                workflow_run_totals.executions_total + EXCLUDED.executions_total,
+                                last_cleanup_at = EXCLUDED.last_cleanup_at
+                        """,
+                        GLOBAL_TOTALS_ID, total, now,
+                    )
+                total_pruned += len(ids)
+                affected.update(per_wf)
+        if len(prunable) < batch:
+            break
+    return {"pruned_executions": total_pruned, "workflows_affected": len(affected)}
 
 
 async def phase_b_orphan_sweep(
