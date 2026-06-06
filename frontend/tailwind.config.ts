@@ -92,11 +92,19 @@ export default {
                     '0%': { opacity: '0', filter: 'blur(8px)', transform: 'translateY(4px)' },
                     '100%': { opacity: '1', filter: 'blur(0)', transform: 'translateY(0)' },
                 },
+                // Opacity-only fade for the hero suggestion-pill row on tab switch.
+                // Replaces a framer-motion AnimatePresence (removed to keep framer
+                // out of the eager landing bundle); no blur, so it stays compositor-cheap.
+                'pill-fade-in': {
+                    '0%': { opacity: '0' },
+                    '100%': { opacity: '1' },
+                },
             },
             animation: {
                 shimmer: 'shimmer 2.5s ease-in-out infinite',
                 'slide-up': 'slide-up 0.3s cubic-bezier(0.16, 1, 0.3, 1)',
                 'ribbon-fade-in': 'ribbon-fade-in 575ms cubic-bezier(0.22, 1, 0.36, 1)',
+                'pill-fade-in': 'pill-fade-in 200ms ease-out',
             },
         },
     },
