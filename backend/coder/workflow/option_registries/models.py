@@ -79,7 +79,7 @@ _STATIC_FALLBACK: tuple[Option, ...] = (
 # ``infer_model_type`` discriminator reads to route into the right
 # Pydantic union branch.
 
-_CLI_PROVIDERS = {"claude_code", "codex", "opencode", "openclaw"}
+_CLI_PROVIDERS = {"claude_code", "codex", "opencode", "openclaw", "hermes_agent"}
 _KLING_PROVIDERS = {"kling"}
 
 
