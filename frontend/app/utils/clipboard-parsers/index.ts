@@ -12,6 +12,7 @@ import { ClipboardParser, ClipboardParseResult } from './types';
 import { noClickParser } from './noclick-parser';
 import { n8nParser } from './n8n-parser';
 import { googleSheetsUrlParser } from './google-sheets-url-parser';
+import { reactHtmlParser } from './react-html-parser';
 
 // Re-export types for convenience
 export type { ClipboardParser, ClipboardParseResult } from './types';
@@ -24,6 +25,7 @@ const CLIPBOARD_PARSERS: ClipboardParser[] = [
     noClickParser,
     googleSheetsUrlParser,
     n8nParser,
+    reactHtmlParser,
 ];
 
 // Sort parsers by priority (highest first)
