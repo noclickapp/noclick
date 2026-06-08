@@ -21,6 +21,7 @@ interface DndProviderProps {
     overlay?: ReactNode;
     onDragStart?: (event: DragStartEvent) => void;
     onDragEnd?: (event: DragEndEvent) => void;
+    autoScroll?: boolean;
 }
 
 /**
@@ -62,6 +63,7 @@ export function DndProvider({
     overlay,
     onDragStart,
     onDragEnd,
+    autoScroll = true,
 }: DndProviderProps) {
     // Set up sensors
     const sensors = useSensors(
@@ -74,6 +76,7 @@ export function DndProvider({
             collisionDetection={mostSpecificPointerWithin}
             onDragStart={onDragStart}
             onDragEnd={onDragEnd}
+            autoScroll={autoScroll}
         >
             {children}
             <DragOverlay dropAnimation={null} zIndex={9999}>
