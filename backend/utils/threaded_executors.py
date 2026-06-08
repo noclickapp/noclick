@@ -1,11 +1,15 @@
-"""Dedicated thread pool for non-loop-safe execution paths.
+"""Dedicated thread pools for non-loop-safe / blocking execution paths.
 
-One pool today (``js_executor``), kept separate from asyncio's default
-ThreadPoolExecutor so it doesn't compete with other sync wrappers for slots.
+Kept separate from asyncio's default ThreadPoolExecutor so they don't compete
+with the other sync wrappers (R2 uploads, CSV parsing) for its handful of slots.
 
 - ``js_executor``: runs QuickJS code (utils/js_executor.execute_js). QuickJS
   is native code that releases the GIL during JS execution, so threads
   actually parallelize.
+- ``analytics_executor``: runs PostHog flushes (utils/analytics). flush() is a
+  blocking HTTPS round-trip that drains the whole client queue, so a degraded
+  PostHog endpoint can pin a thread for retries × timeout — a small bounded pool
+  keeps that blast radius off the default executor.
 
 If we ever discover OpenHands or another node kind is blocking the asyncio
 loop (look at ``event_loop.block`` in Honeycomb grouped by ``blocking.stack``),
@@ -47,6 +51,12 @@ threading.stack_size(512 * 1024)
 JS_DEFAULT_TIMEOUT_S = 30.0
 
 js_executor = ThreadPoolExecutor(max_workers=512, thread_name_prefix="js")
+
+# Small + bounded on purpose: PostHog flush() is a blocking HTTPS POST that drains
+# the whole client queue, so a slow/erroring endpoint can hold a thread for
+# retries × timeout. Capping at 4 contains that and keeps it off the default pool.
+ANALYTICS_DEFAULT_TIMEOUT_S = 10.0
+analytics_executor = ThreadPoolExecutor(max_workers=4, thread_name_prefix="analytics")
 
 T = TypeVar("T")
 
@@ -104,6 +114,17 @@ async def run_js_threaded(
     )
 
 
+async def run_analytics_threaded(
+    fn: Callable[..., T],
+    *args,
+    timeout_s: float = ANALYTICS_DEFAULT_TIMEOUT_S,
+    **kwargs,
+) -> T:
+    """Convenience wrapper for the analytics pool (offloads a blocking PostHog flush)."""
+    return await run_threaded(analytics_executor, fn, *args, timeout_s=timeout_s, **kwargs)
+
+
 def shutdown_executors(wait: bool = False) -> None:
     """Process-exit hook. ``wait=True`` blocks until in-flight threads finish."""
     js_executor.shutdown(wait=wait)
+    analytics_executor.shutdown(wait=wait)
