@@ -78,6 +78,7 @@ import { CloudflareNode } from './CloudflareNode';
 import { RunTriggerNode } from './RunTriggerNode';
 import { SubmitExternalFormNode } from './SubmitExternalFormNode';
 import { WebhookTriggerNode } from './WebhookTriggerNode';
+import { InboundEmailTriggerNode } from './InboundEmailTriggerNode';
 import { WhatsAppNode } from './WhatsAppNode';
 import { ElevenLabsNode } from './ElevenLabsNode';
 import { YouTubeNode } from './YouTubeNode';
@@ -120,6 +121,7 @@ function _buildAvailable(): NodeDefinition[] {
     return [
         RunTriggerNode,
         WebhookTriggerNode,
+        InboundEmailTriggerNode,
         CronTriggerNode,
         FormInputNode,
         TelegramNode, GoogleSheetsNode, GoogleDriveNode, GmailNode, OutlookMailNode,

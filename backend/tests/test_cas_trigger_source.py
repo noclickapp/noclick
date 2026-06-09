@@ -12,6 +12,10 @@ class TestWebhookTriggerSource:
         nodes = [{"id": "t", "type": "trigger-webhook"}]
         assert _webhook_trigger_source(nodes, "t") == "webhook"
 
+    def test_email_trigger_node_is_email(self):
+        nodes = [{"id": "t", "type": "trigger-email"}]
+        assert _webhook_trigger_source(nodes, "t") == "email"
+
     def test_no_start_node_is_webhook(self):
         assert _webhook_trigger_source([], None) == "webhook"
 
