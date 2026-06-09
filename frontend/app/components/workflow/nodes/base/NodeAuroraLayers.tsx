@@ -9,8 +9,9 @@
 // radius.
 
 import { useEffect, useRef, useState } from 'react';
-import { Check } from 'lucide-react';
 import { useIsMobile } from '~/hooks/useIsMobile';
+import { NodeStatusBadge } from './NodeStatusBadge';
+import { RUN_RING } from './nodeRunStatus';
 
 // The animating "aurora" sweep is the thicker ring that sits just OUTSIDE the box
 // with a small gap (radius = node's 16px + |inset| to stay concentric; gap between
@@ -122,8 +123,8 @@ export function NodeAuroraLayers({ data, selected, nodeType }: { data?: AuroraDa
                 <div
                     style={{
                         ...edgeRing,
-                        border: `${EDGE_STROKE}px solid rgba(212,212,216,0.7)`,
-                        boxShadow: '0 0 18px rgba(212,212,216,0.28)',
+                        border: `${EDGE_STROKE}px solid ${RUN_RING.completed.border}`,
+                        boxShadow: RUN_RING.completed.glow,
                     }}
                 />
             )}
@@ -133,8 +134,8 @@ export function NodeAuroraLayers({ data, selected, nodeType }: { data?: AuroraDa
                 <div
                     style={{
                         ...edgeRing,
-                        border: `${EDGE_STROKE}px solid rgba(239,68,68,0.5)`,
-                        boxShadow: '0 0 14px rgba(239,68,68,0.25)',
+                        border: `${EDGE_STROKE}px solid ${RUN_RING.error.border}`,
+                        boxShadow: RUN_RING.error.glow,
                     }}
                 />
             )}
@@ -151,26 +152,13 @@ export function NodeAuroraLayers({ data, selected, nodeType }: { data?: AuroraDa
                 />
             )}
 
-            {/* Completed corner badge — straddles the node's top-right corner (half-in/out). */}
+            {/* Completed corner badge — shared NodeStatusBadge (same ✓ the mobile cards
+                render) with the desktop pop animation layered on via style. */}
             {showCompleted && (
-                <div
-                    className="absolute z-20 flex items-center justify-center rounded-full"
-                    style={{
-                        // Straddle the corner ~half-in / half-out: center sits a few px
-                        // inside the corner (-12 would center on the corner, leaving only
-                        // a quarter overlapping — reads as "mostly out").
-                        top: -9,
-                        right: -9,
-                        width: 24,
-                        height: 24,
-                        background: '#e4e4e7',
-                        border: '2px solid #fafafa',
-                        boxShadow: '0 0 10px rgba(255,255,255,0.6)',
-                        animation: 'node-complete-pop 0.35s cubic-bezier(0.34,1.56,0.64,1)',
-                    }}
-                >
-                    <Check className="w-3.5 h-3.5 text-black" strokeWidth={3} />
-                </div>
+                <NodeStatusBadge
+                    variant="completed"
+                    style={{ animation: 'node-complete-pop 0.35s cubic-bezier(0.34,1.56,0.64,1)' }}
+                />
             )}
         </>
     );
