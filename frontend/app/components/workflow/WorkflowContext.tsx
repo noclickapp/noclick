@@ -271,6 +271,25 @@ export function isAnyRemoteAiEditing(): boolean {
     return workflowEditorStore.remoteAiEditing.size > 0;
 }
 
+// ── Pointer-driven delete ───────────────────────────────────────────────────
+// The post-delete selection-move autopan is helpful for keyboard deletes (the
+// user's focus follows the selection) but distracting for mouse deletes (the
+// cursor is already where the user is looking). The delete pill marks its
+// deletes here; FlowCanvas's remove handler consumes the mark and keeps the
+// selection move while skipping the pan.
+
+let pointerDeleteAt = 0;
+
+export function markPointerDrivenDelete(): void {
+    pointerDeleteAt = Date.now();
+}
+
+export function consumePointerDrivenDelete(): boolean {
+    const recent = Date.now() - pointerDeleteAt < 500;
+    pointerDeleteAt = 0;
+    return recent;
+}
+
 // ── Pending node selection ──────────────────────────────────────────────────
 
 export function setPendingNodeSelection(workflowId: string, nodeId: string, fieldKey?: string) {
