@@ -50,8 +50,8 @@ class TestStateE2E:
                 key = f"{wf_id}:{node_id}"
                 storage[key] = state
 
-        mock.fetchrow = MagicMock(side_effect=mock_fetchrow)
-        mock.execute = MagicMock(side_effect=mock_execute)
+        mock.fetchrow_async = AsyncMock(side_effect=mock_fetchrow)
+        mock.execute_async = AsyncMock(side_effect=mock_execute)
         mock._storage = storage  # Expose for assertions
 
         return mock
