@@ -29,4 +29,5 @@ async def ensure_fresh_google_token(
         user_id=user_id,
         credential=credential,
         refresh=refresh_access_token,
+        provider="google",
     )
