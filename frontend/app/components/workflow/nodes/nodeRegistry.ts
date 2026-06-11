@@ -79,6 +79,7 @@ import { RunTriggerNode } from './RunTriggerNode';
 import { SubmitExternalFormNode } from './SubmitExternalFormNode';
 import { WebhookTriggerNode } from './WebhookTriggerNode';
 import { InboundEmailTriggerNode } from './InboundEmailTriggerNode';
+import { SendEmailNode } from './SendEmailNode';
 import { WhatsAppNode } from './WhatsAppNode';
 import { ElevenLabsNode } from './ElevenLabsNode';
 import { YouTubeNode } from './YouTubeNode';
@@ -135,7 +136,7 @@ function _buildAvailable(): NodeDefinition[] {
         RedisNode, SalesforceNode, AffinityNode, SemrushNode, ShopifyNode, SlackNode,
         SupabaseNode, TikTokNode, TwilioNode, TwitterNode, CloudflareNode,
         TypeformNode, WhatsAppNode, ElevenLabsNode, YouTubeNode, HubSpotNode,
-        MailchimpNode, ResendNode, AIAgentNode, ToolNode, MCPServerNode,
+        MailchimpNode, ResendNode, SendEmailNode, AIAgentNode, ToolNode, MCPServerNode,
         NoClickNode, AlarmNode, FilesystemNode, IterationNode, DelayNode, FilterNode,
         ConditionalNode, ApprovalNode, LogNode, SwitchNode, MergeNode, SubmitExternalFormNode,
         ServerlessFunctionNode, StateManagerNode, SetupNode, OnErrorNode,
