@@ -104,7 +104,7 @@ export function DrawingOptionsContent({
         <div className="p-3 space-y-2.5">
             {/* Header */}
             <div className="mb-1">
-                <h3 className="text-xs font-semibold text-zinc-400 uppercase tracking-wider">Drawing Tools</h3>
+                <h3 className="text-xs font-semibold text-muted-foreground uppercase tracking-wider">Drawing Tools</h3>
             </div>
             
             {/* Tool Selection */}
@@ -115,7 +115,7 @@ export function DrawingOptionsContent({
                         size="sm"
                         onClick={onUndo}
                         disabled={!canUndo}
-                        className="h-8 w-8 p-0 transition-all rounded-lg bg-zinc-800/80 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200 border border-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed"
+                        className="h-8 w-8 p-0 transition-all rounded-lg bg-secondary hover:bg-muted-foreground/30 text-muted-foreground hover:text-foreground/80 border border-border disabled:opacity-30 disabled:cursor-not-allowed"
                         title={`Undo (${modKey}+Z)`}
                     >
                         <Undo className="h-3.5 w-3.5" />
@@ -124,7 +124,7 @@ export function DrawingOptionsContent({
                         size="sm"
                         onClick={onRedo}
                         disabled={!canRedo}
-                        className="h-8 w-8 p-0 transition-all rounded-lg bg-zinc-800/80 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200 border border-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed"
+                        className="h-8 w-8 p-0 transition-all rounded-lg bg-secondary hover:bg-muted-foreground/30 text-muted-foreground hover:text-foreground/80 border border-border disabled:opacity-30 disabled:cursor-not-allowed"
                         title={`Redo (${modKey}+Y)`}
                     >
                         <Redo className="h-3.5 w-3.5" />
@@ -136,10 +136,10 @@ export function DrawingOptionsContent({
                     <Button
                         size="sm"
                         onClick={(e) => handleToolChange('pen', e)}
-                        className={`h-8 w-8 p-0 transition-all rounded-lg bg-zinc-800/80 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200 ${
+                        className={`h-8 w-8 p-0 transition-all rounded-lg bg-secondary hover:bg-muted-foreground/30 text-muted-foreground hover:text-foreground/80 ${
                             currentTool === 'pen'
-                                ? 'border-2 text-zinc-200'
-                                : 'border border-zinc-700'
+                                ? 'border-2 text-foreground'
+                                : 'border border-border'
                         }`}
                         style={{
                             borderColor: currentTool === 'pen' ? currentColor : undefined
@@ -151,10 +151,10 @@ export function DrawingOptionsContent({
                 <Button
                     size="sm"
                     onClick={(e) => handleToolChange('eraser', e)}
-                    className={`h-8 w-8 p-0 transition-all rounded-lg bg-zinc-800/80 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200 ${
-                        currentTool === 'eraser' 
-                            ? 'border-2 border-red-400 text-red-300' 
-                            : 'border border-zinc-700'
+                    className={`h-8 w-8 p-0 transition-all rounded-lg bg-secondary hover:bg-muted-foreground/30 text-muted-foreground hover:text-foreground/80 ${
+                        currentTool === 'eraser'
+                            ? 'border-2 border-red-400 text-red-600 dark:text-red-300'
+                            : 'border border-border'
                     }`}
                     title="Eraser"
                 >
@@ -163,10 +163,10 @@ export function DrawingOptionsContent({
                     <Button
                         size="sm"
                         onClick={(e) => handleToolChange('text', e)}
-                        className={`h-8 w-8 p-0 transition-all rounded-lg bg-zinc-800/80 hover:bg-zinc-700 text-zinc-400 hover:text-zinc-200 ${
+                        className={`h-8 w-8 p-0 transition-all rounded-lg bg-secondary hover:bg-muted-foreground/30 text-muted-foreground hover:text-foreground/80 ${
                             currentTool === 'text'
-                                ? 'border-2 text-zinc-200'
-                                : 'border border-zinc-700'
+                                ? 'border-2 text-foreground'
+                                : 'border border-border'
                         }`}
                         style={{
                             borderColor: currentTool === 'text' ? currentColor : undefined
@@ -187,10 +187,10 @@ export function DrawingOptionsContent({
                             onClick={() => handleColorChange(color)}
                             className={`flex-1 h-6 rounded-sm border transition-all hover:scale-105 relative ${
                                 currentColor === color && (currentTool === 'pen' || currentTool === 'text')
-                                    ? 'border-white shadow-md scale-105 ring-2 ring-white/30'
-                                    : 'border-zinc-600 hover:border-zinc-400'
+                                    ? 'border-foreground shadow-md scale-105 ring-2 ring-ring/30'
+                                    : 'border-muted-foreground/50 hover:border-muted-foreground'
                             } ${currentTool === 'eraser' ? 'opacity-30 cursor-not-allowed' : ''} ${
-                                color === '#ffffff' ? 'border-zinc-500' : ''
+                                color === '#ffffff' ? 'border-muted-foreground/70' : ''
                             }`}
                             style={{ backgroundColor: color }}
                             title={`Color: ${color}`}
@@ -206,10 +206,10 @@ export function DrawingOptionsContent({
                             onClick={() => handleColorChange(color)}
                             className={`flex-1 h-6 rounded-sm border transition-all hover:scale-105 relative ${
                                 currentColor === color && (currentTool === 'pen' || currentTool === 'text')
-                                    ? 'border-white shadow-md scale-105 ring-2 ring-white/30'
-                                    : 'border-zinc-600 hover:border-zinc-400'
+                                    ? 'border-foreground shadow-md scale-105 ring-2 ring-ring/30'
+                                    : 'border-muted-foreground/50 hover:border-muted-foreground'
                             } ${currentTool === 'eraser' ? 'opacity-30 cursor-not-allowed' : ''} ${
-                                color === '#ffffff' ? 'border-zinc-500' : ''
+                                color === '#ffffff' ? 'border-muted-foreground/70' : ''
                             }`}
                             style={{ backgroundColor: color }}
                             title={`Color: ${color}`}
@@ -225,7 +225,7 @@ export function DrawingOptionsContent({
                 <Button
                     size="sm"
                     onClick={onClear}
-                    className="h-8 px-3 bg-red-500/10 hover:bg-red-500/20 text-red-400 hover:text-red-300 border border-red-500/30 hover:border-red-500/50 transition-all flex items-center gap-1.5 rounded-md font-medium"
+                    className="h-8 px-3 bg-red-500/10 hover:bg-red-500/20 text-red-600 hover:text-red-700 dark:text-red-400 dark:hover:text-red-300 border border-red-500/30 hover:border-red-500/50 transition-all flex items-center gap-1.5 rounded-md font-medium"
                     title="Clear Drawing"
                 >
                     <Trash2 className="h-3.5 w-3.5" />
@@ -234,7 +234,7 @@ export function DrawingOptionsContent({
                 <Button
                     size="sm"
                     onClick={onClose}
-                    className="h-8 px-3 bg-white/10 hover:bg-white/20 text-white/70 hover:text-white/90 border border-white/30 hover:border-white/50 transition-all duration-200 flex items-center gap-1.5 rounded-md font-medium"
+                    className="h-8 px-3 bg-foreground/10 hover:bg-foreground/20 text-foreground/70 hover:text-foreground/90 border border-foreground/30 hover:border-foreground/50 transition-all duration-200 flex items-center gap-1.5 rounded-md font-medium"
                     title="Finish Drawing"
                 >
                     <Check className="h-3.5 w-3.5" />

@@ -52,13 +52,13 @@ export function InlineDrawingTag({
                 offset={8}
                 delay={150}
             >
-                <div className="bg-zinc-900 border border-zinc-700 rounded-lg p-2 shadow-xl">
+                <div className="bg-card border border-border rounded-lg p-2 shadow-xl">
                     <img 
                         src={screenshot} 
                         alt="Drawing Screenshot Preview"
                         className="max-w-xs max-h-64 object-contain rounded"
                     />
-                    <div className="mt-1 text-xs text-zinc-400 text-center">
+                    <div className="mt-1 text-xs text-muted-foreground text-center">
                         Auto-updating drawing screenshot
                     </div>
                 </div>

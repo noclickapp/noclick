@@ -12,9 +12,9 @@ export type NodeStatusVariant = 'error' | 'incomplete' | 'completed';
 const VARIANT_STYLE: Record<NodeStatusVariant, React.CSSProperties> = {
     error: { background: 'rgb(239, 68, 68)', boxShadow: '0 0 10px rgba(239, 68, 68, 0.55)' },
     incomplete: { background: 'rgb(245, 158, 11)', boxShadow: '0 0 8px rgba(245, 158, 11, 0.45)' },
-    // Soft zinc fill + near-white ring + black glyph — matches the live-run ✓ treatment.
-    // Deliberately not pure white (that's reserved for selection).
-    completed: { background: '#e4e4e7', border: '2px solid #fafafa', boxShadow: '0 0 10px rgba(255,255,255,0.6)' },
+    // Soft foreground-tinted fill + foreground ring + background-colored glyph — matches
+    // the live-run ✓ treatment. Deliberately not full foreground (that's reserved for selection).
+    completed: { background: 'hsl(var(--foreground) / 0.9)', border: '2px solid hsl(var(--foreground))', boxShadow: '0 0 10px hsl(var(--foreground) / 0.6)' },
 };
 
 export function NodeStatusBadge({ variant, style }: { variant: NodeStatusVariant; style?: React.CSSProperties }) {
@@ -23,9 +23,9 @@ export function NodeStatusBadge({ variant, style }: { variant: NodeStatusVariant
             className="absolute -top-2 -right-2 z-20 flex items-center justify-center"
             style={{ width: 24, height: 24, borderRadius: '50%', ...VARIANT_STYLE[variant], ...style }}
         >
-            {variant === 'error' && <X className="w-3.5 h-3.5 text-white" strokeWidth={3} />}
-            {variant === 'incomplete' && <span className="text-sm font-bold leading-none text-white">!</span>}
-            {variant === 'completed' && <Check className="w-3.5 h-3.5 text-black" strokeWidth={3} />}
+            {variant === 'error' && <X className="w-3.5 h-3.5 text-foreground" strokeWidth={3} />}
+            {variant === 'incomplete' && <span className="text-sm font-bold leading-none text-foreground">!</span>}
+            {variant === 'completed' && <Check className="w-3.5 h-3.5 text-background" strokeWidth={3} />}
         </div>
     );
 }

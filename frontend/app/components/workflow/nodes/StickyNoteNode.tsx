@@ -20,7 +20,7 @@ export const StickyNoteNode: NodeDefinition = {
     label: 'Sticky Note',
     description: 'Add notes',
     Icon: StickyNoteIcon,
-    iconColor: 'text-yellow-400',
+    iconColor: 'text-yellow-600 dark:text-yellow-400',
     dimensions: DIMENSIONS,
     component: memo(StickyNoteNodeComponent),
 };

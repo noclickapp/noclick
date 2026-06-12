@@ -73,9 +73,9 @@ export function DateRangePicker({
                         variant={'outline'}
                         className={cn(
                             // Settings-surface palette (matches credentials/published-apps controls)
-                            'h-8 sm:h-9 px-3 justify-start text-left font-normal text-xs bg-white/[0.04] text-white/60 hover:bg-white/[0.08] hover:text-white/90 border-white/[0.08] whitespace-nowrap',
+                            'h-8 sm:h-9 px-3 justify-start text-left font-normal text-xs bg-secondary text-muted-foreground hover:bg-accent hover:text-foreground border-border whitespace-nowrap',
                             isMobile && 'flex-1 min-w-0',
-                            !dateRange && 'text-white/30'
+                            !dateRange && 'text-muted-foreground'
                         )}
                     >
                         <CalendarIcon className="mr-2 h-3.5 w-3.5 flex-shrink-0" />
@@ -83,7 +83,7 @@ export function DateRangePicker({
                     </Button>
                 </PopoverTrigger>
                 <PopoverContent
-                    className="p-0 w-auto bg-zinc-950 border-white/[0.08] shadow-xl rounded-xl"
+                    className="p-0 w-auto bg-card border-border shadow-xl rounded-xl"
                     align={isMobile ? 'end' : align}
                     sideOffset={8}
                     collisionPadding={{ top: 8, right: 8, bottom: 8, left: 8 }}
@@ -91,9 +91,9 @@ export function DateRangePicker({
                     <div className="flex flex-col">
                         {/* Date Range Display Header */}
                         {tempDateRange?.from && (
-                            <div className="px-4 pt-3 pb-2.5 border-b border-white/[0.08]">
+                            <div className="px-4 pt-3 pb-2.5 border-b border-border">
                                 <div className="flex items-center justify-center gap-2 text-xs sm:text-sm">
-                                    <span className="text-white/80 font-medium">
+                                    <span className="text-foreground/80 font-medium">
                                         {format(
                                             tempDateRange.from,
                                             'MMM dd, yyyy'
@@ -101,10 +101,10 @@ export function DateRangePicker({
                                     </span>
                                     {tempDateRange.to && (
                                         <>
-                                            <span className="text-white/30">
+                                            <span className="text-muted-foreground/70">
                                                 —
                                             </span>
-                                            <span className="text-white/80 font-medium">
+                                            <span className="text-foreground/80 font-medium">
                                                 {format(
                                                     tempDateRange.to,
                                                     'MMM dd, yyyy'
@@ -123,7 +123,7 @@ export function DateRangePicker({
                             selected={tempDateRange}
                             onSelect={setTempDateRange}
                             numberOfMonths={isMobile ? 1 : 2}
-                            className="bg-transparent text-white/90"
+                            className="bg-transparent text-foreground"
                         />
                     </div>
                 </PopoverContent>

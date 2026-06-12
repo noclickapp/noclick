@@ -10,7 +10,7 @@ export const TriggerBoltBadge = () => (
         title="Trigger — starts this workflow when its event fires"
     >
         <Zap
-            className="w-4 h-4 text-amber-400"
+            className="w-4 h-4 text-amber-500 dark:text-amber-400"
             fill="currentColor"
             style={{ filter: 'drop-shadow(0 1px 3px rgba(0, 0, 0, 0.8))' }}
         />

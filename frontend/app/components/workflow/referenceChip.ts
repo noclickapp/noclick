@@ -13,12 +13,12 @@
 // wrapped chip get a full rounded box (bg + ring) on each line instead of one sliced
 // open at the break.
 const CHIP_BASE = 'select-none rounded-sm transition-colors box-decoration-clone';
-const CHIP_VALID = 'bg-white/[0.08] ring-1 ring-inset ring-white/[0.12] hover:bg-white/[0.14] hover:ring-white/[0.2]';
+const CHIP_VALID = 'bg-foreground/[0.08] ring-1 ring-inset ring-foreground/[0.12] hover:bg-foreground/[0.14] hover:ring-foreground/[0.2]';
 const CHIP_INVALID = 'bg-red-500/20 ring-1 ring-inset ring-red-500/40 hover:bg-red-500/30 hover:ring-red-500/50';
 // JS expression ({{ $('node').x.split(',') }}) — a slightly brighter neutral than a
 // plain reference so it reads as "computed" without an off-theme accent color.
 // Evaluated server-side, so never flagged invalid.
-const CHIP_EXPRESSION = 'bg-white/[0.14] ring-1 ring-inset ring-white/25 hover:bg-white/[0.2] hover:ring-white/35';
+const CHIP_EXPRESSION = 'bg-foreground/[0.14] ring-1 ring-inset ring-foreground/25 hover:bg-foreground/[0.2] hover:ring-foreground/35';
 
 export const REFERENCE_CHIP_CLASSES = {
     base: CHIP_BASE,
@@ -37,7 +37,7 @@ export function createReferenceChipElement(reference: string): HTMLSpanElement {
     span.setAttribute('contenteditable', 'false');
     span.dataset.reference = reference;
     span.className =
-        'inline-flex items-center align-baseline px-1 mx-0.5 text-zinc-200 font-mono text-[12.5px] ' +
+        'inline-flex items-center align-baseline px-1 mx-0.5 text-foreground font-mono text-[12.5px] ' +
         `${CHIP_BASE} ${CHIP_VALID}`;
     span.textContent = reference;
     return span;

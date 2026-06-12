@@ -13,9 +13,9 @@
 import React from 'react';
 import '~/styles/interface-building.css';
 
-const SURFACE = 'rounded-xl border border-zinc-800/40 bg-gradient-to-b from-zinc-900/30 to-zinc-900/10 relative overflow-hidden';
-const PILL = 'rounded-full bg-zinc-800/40';
-const DOT = 'rounded-full bg-zinc-800/50';
+const SURFACE = 'rounded-xl border border-border/40 bg-gradient-to-b from-card/30 to-card/10 relative overflow-hidden';
+const PILL = 'rounded-full bg-muted/40';
+const DOT = 'rounded-full bg-muted/50';
 
 const MORPH_CYCLE = 4400;
 const INNER_CYCLE = 2200;
@@ -65,7 +65,7 @@ function MorphDot({ delay = 0 }: { delay?: number }) {
 }
 
 function MorphAvatar({ delay = 0 }: { delay?: number }) {
-    return <div className="w-6 h-6 rounded-full bg-zinc-800/50" style={{ animation: `ifa-avatar-pulse ${INNER_CYCLE}ms ease-in-out infinite`, animationDelay: `${delay}ms` }} />;
+    return <div className="w-6 h-6 rounded-full bg-muted/50" style={{ animation: `ifa-avatar-pulse ${INNER_CYCLE}ms ease-in-out infinite`, animationDelay: `${delay}ms` }} />;
 }
 
 export function InterfaceBuildingAnimation() {
@@ -78,7 +78,7 @@ export function InterfaceBuildingAnimation() {
                     style={{ width: 180, animation: `ifa-sidebar-resize ${MORPH_CYCLE}ms ${MORPH_EASING} infinite` }}
                 >
                     <div className="flex items-center gap-2.5">
-                        <div className="w-6 h-6 rounded-md bg-zinc-800/50" />
+                        <div className="w-6 h-6 rounded-md bg-muted/50" />
                         <MorphPill width="w-20" height="h-2" morph="grow" delay={0} />
                     </div>
                     <div className="flex flex-col gap-3 mt-1">
