@@ -8,10 +8,13 @@ Contract under test:
 - raw HTML inside a markdown body is escaped, never interpreted;
 - structural HTML bodies pass through (document chrome unwrapped, scripts
   dropped) with a tag-stripped text alternative;
-- HTML mentioned inside code fences/spans does not flip the mode.
+- HTML mentioned inside code fences/spans does not flip the mode;
+- ensure_html_body (Gmail/Outlook mailbox sends, body = whole email) keeps
+  HTML byte-identical and renders everything else so newlines survive
+  text/html delivery.
 """
 
-from utils.email_body import looks_like_html, prepare_email_body
+from utils.email_body import ensure_html_body, looks_like_html, prepare_email_body
 
 
 class TestMarkdownMode:
@@ -90,3 +93,23 @@ class TestHtmlMode:
     def test_entities_unescaped_in_text_alternative(self):
         _, text = prepare_email_body("<p>Tom &amp; Jerry</p>")
         assert text == "Tom & Jerry"
+
+
+class TestEnsureHtmlBody:
+    def test_plain_text_newlines_survive(self):
+        html = ensure_html_body("line1\nline2\n\nline3")
+        assert "line1<br>" in html
+        assert "<p" in html  # blank line starts a new paragraph
+
+    def test_markdown_renders(self):
+        html = ensure_html_body("**bold** and a list:\n- one\n- two")
+        assert "<strong>bold</strong>" in html and "<li" in html
+
+    def test_html_passes_through_byte_identical(self):
+        # Unlike prepare_email_body, no fragment extraction: a full HTML
+        # document is a valid whole-email body and must not be rewritten.
+        body = "<!DOCTYPE html><html><body><p>Hi\nthere</p></body></html>"
+        assert ensure_html_body(body) == body
+
+    def test_empty_body_stays_empty(self):
+        assert ensure_html_body("") == ""
