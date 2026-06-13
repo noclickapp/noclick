@@ -52,3 +52,32 @@ def test_empty_values_are_skipped():
     pending = _pending({"id": "ask_0", "label": "Q"})
     out = _fmt({"ask_0": ""}, pending)
     assert out == "[System: User Input Response]\n"
+
+
+def test_message_only_matches_legacy_reply_shape():
+    # A free-form chatbox reply with no form answers surfaces verbatim with the
+    # "honor this reply" nudge — the shape the brain saw before message+values
+    # were unified into one renderer.
+    out = _fmt({}, _pending(), message="proceed without a credential")
+    assert out == (
+        "[System: User Input Response]\n"
+        "proceed without a credential\n"
+        "Honor this reply and continue the workflow."
+    )
+
+
+def test_partial_values_plus_message_surfaces_both():
+    # The user filled one field in the form, then typed a reply in the chatbox
+    # instead of finishing the wizard. Both must reach the brain so the answered
+    # field isn't lost and the user never repeats themselves.
+    pending = _pending(
+        {"id": "ask_0", "nodeId": "sheets_trigger", "fieldKey": "spreadsheet_id",
+         "label": "Which sheet?"},
+        {"id": "ask_1", "label": "Which tab?"},
+    )
+    out = _fmt({"ask_0": "1hWCabc"}, pending, message="use the first tab you find")
+    # the answered field still carries its exact mutation command
+    assert '<field node="sheets_trigger" name="spreadsheet_id" value="1hWCabc" />' in out
+    # the typed reply is appended, flagged as an addition to the form answers
+    assert "The user also replied: use the first tab you find" in out
+    assert "Honor this reply and continue the workflow." in out
