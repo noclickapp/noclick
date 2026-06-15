@@ -39,6 +39,7 @@ import { GoogleSlidesNode } from './GoogleSlidesNode';
 import { GoogleAnalyticsNode } from './GoogleAnalyticsNode';
 import { GoogleAdsNode } from './GoogleAdsNode';
 import { GoogleBusinessProfileNode } from './GoogleBusinessProfileNode';
+import { GoogleSearchConsoleNode } from './GoogleSearchConsoleNode';
 import { HackerNewsNode } from './HackerNewsNode';
 import { InstagramNode } from './InstagramNode';
 import { InstantlyNode } from './InstantlyNode';
@@ -131,7 +132,7 @@ function _buildAvailable(): NodeDefinition[] {
         ApolloNode, BlueSkyNode, CanvaNode, DiscordNode, DropboxNode,
         GoogleCalendarNode, GoogleTasksNode, GoogleContactsNode, GoogleDocsNode,
         GoogleFormsNode, GoogleSlidesNode, GoogleAnalyticsNode, GoogleAdsNode,
-        GoogleBusinessProfileNode, HackerNewsNode, InstagramNode, InstantlyNode,
+        GoogleBusinessProfileNode, GoogleSearchConsoleNode, HackerNewsNode, InstagramNode, InstantlyNode,
         JiraNode, LinkedInNode, NotionNode, PostgresNode, RedditNode, RSSNode,
         RedisNode, SalesforceNode, AffinityNode, SemrushNode, ShopifyNode, SlackNode,
         SupabaseNode, TikTokNode, TwilioNode, TwitterNode, CloudflareNode,
