@@ -32,6 +32,11 @@ export function ShortcutTooltip({
     sideOffset?: number;
     children: ReactNode;
 }) {
+    // Nothing to show (no label, no keys) → render the trigger bare rather than
+    // an empty floating box. Happens when a nav item has no leader shortcut yet.
+    if (!label && !(keys && keys.length > 0)) {
+        return <>{children}</>;
+    }
     return (
         <TooltipProvider delayDuration={300}>
             <Tooltip>
