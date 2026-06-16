@@ -40,4 +40,12 @@ export default defineConfig({
       '~': resolve(__dirname, './app'),
     },
   },
+  server: {
+    fs: {
+      // Allow serving files from the repo root so the SDK E2E tests can load
+      // the real built bundle (sdk/typescript/dist/sdk.esm.js?raw), which lives
+      // outside the frontend project root.
+      allow: [resolve(__dirname, '..')],
+    },
+  },
 });
