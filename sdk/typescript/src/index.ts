@@ -9,7 +9,7 @@ import * as workflow from './core/workflow.js';
 import * as resources from './core/resources.js';
 import * as dataset from './core/dataset.js';
 import { _setNodeId } from './core/workflow.js';
-import { setTransport, subscribe, isInitialized } from './core/transport.js';
+import { setTransport, subscribe, isInitialized, getTransport } from './core/transport.js';
 import { PostMessageTransport } from './transports/postmessage.js';
 
 export { nodes, execution, state, auth, workflow, resources, dataset };
@@ -89,14 +89,20 @@ export async function init(options: InitOptions = {}): Promise<void> {
   if (nodeId) _setNodeId(nodeId);
 }
 
-// Auto-initialize with postMessage transport when running in a browser iframe context.
-// External apps should call init() explicitly with their transport config.
-if (typeof window !== 'undefined' && window.parent !== window) {
-  init({ transport: 'postmessage' });
-}
-
-// Listen for init event from host (sets node ID and initial context)
+// Listen for init event from host (sets node ID and initial context).
+// Registered before the ready signal below so the host's reply can't be missed.
 subscribe('init', (data: unknown) => {
   const d = data as { nodeId?: string };
   if (d.nodeId) _setNodeId(d.nodeId);
 });
+
+// Auto-initialize with postMessage transport when running in a browser iframe context.
+// External apps should call init() explicitly with their transport config.
+if (typeof window !== 'undefined' && window.parent !== window) {
+  init({ transport: 'postmessage' }).then(() => {
+    // Signal readiness so the host (re)sends init even if our subscribe() above
+    // registered after the host's load-time init fired — a load-ordering race that
+    // otherwise leaves workflow.nodeId empty for the life of the component.
+    try { getTransport().send({ type: 'noclick:ready' }); } catch { /* transport not ready */ }
+  });
+}
