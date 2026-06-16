@@ -17,7 +17,8 @@ export type SeenOnceKey =
     | 'invite_walkthrough' // find-the-link tour — marked seen ONLY when it actually completes
     | 'invite_banner_disabled' // "Don't show again" on the inline invite banner
     | 'quickpublish_banner_disabled' // "Don't show again" on the quick-publish banner
-    | 'quickpublish_walkthrough'; // find-the-Publish-button tour — marked seen only on completion
+    | 'quickpublish_walkthrough' // find-the-Publish-button tour — marked seen only on completion
+    | 'run_results_popup_disabled'; // "Don't show again" on the post-run results popup
 
 export function useSeenOnceState(key: SeenOnceKey) {
     // completionData is seeded synchronously from the localStorage mirror, so the
@@ -51,3 +52,19 @@ export function useSeenOnce(key: SeenOnceKey): [boolean, () => void] {
 
 // Read-only sugar for "should I show X?" call sites that don't own the mark.
 export const useHasSeenOnce = (key: SeenOnceKey): boolean => useSeenOnceState(key).seen;
+
+// Bidirectional variant for settings toggles that can re-enable a dismissed
+// popup (markSeen is one-way). Writes the explicit value through the same
+// deep-merging onboarding update.
+export function useSeenOncePref(key: SeenOnceKey): [boolean, (value: boolean) => void] {
+    const { completionData, setCompletionData, updateBackend } = useOnboardingContext();
+    const seen = completionData.seen_once?.[key] === true;
+    const setSeen = useCallback((value: boolean) => {
+        setCompletionData((prev) => {
+            if ((prev.seen_once?.[key] === true) === value) return prev; // idempotent
+            return { ...prev, seen_once: { ...(prev.seen_once ?? {}), [key]: value } };
+        });
+        setTimeout(() => updateBackend({ seen_once: { [key]: value } }), 0);
+    }, [key, setCompletionData, updateBackend]);
+    return [seen, setSeen];
+}
