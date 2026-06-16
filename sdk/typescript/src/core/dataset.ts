@@ -4,9 +4,10 @@ import { request } from './transport.js';
 
 export interface DatasetRow {
   id: string;
+  /** Row position within the dataset (backend DatasetRowInfo.row_index). */
+  row_index?: number;
   data: Record<string, unknown>;
   created_at: string;
-  updated_at: string;
 }
 
 export interface DatasetPage {
