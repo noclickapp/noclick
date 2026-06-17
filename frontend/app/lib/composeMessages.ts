@@ -44,19 +44,20 @@ function activeGenToBubbles(gen: ActiveGeneration): Message[] {
             events: gen.events.map(e => ({ ...(e as Record<string, unknown>), status: 'completed' as const })) as EditSegment['events'],
         });
     }
-    // A gen the user just hit stop on is rendered as a completed
-    // turn (no streaming animation), with `wasInterrupted` set so
-    // MessagesView can show the "Response interrupted by user"
-    // indicator. This stays on screen until the BE's terminal frame
-    // delivers `committed_messages` — at which point the gen evicts
-    // and persisted history takes over rendering.
+    // A gen the user stopped (`wasInterrupted` → "interrupted by user" notice)
+    // OR one the watchdog flagged as interrupted (container drained/killed — no
+    // terminal frame is coming) renders as a completed turn: no streaming
+    // animation. The disconnect case shows no inline notice — the actionable
+    // "connection lost / Retry" affordance lives in the InterruptedRunBanner
+    // above the ChatBox; here we just stop the spinner so it doesn't look live.
+    const ended = !!(gen.stopped || gen.interrupted);
     const assistant: Message = {
         text: '',
         isUser: false,
-        isComplete: !!gen.stopped,
+        isComplete: ended,
         editSegments: segments,
         editSteps: gen.edit_steps.length > 0 ? [...gen.edit_steps] : undefined,
-        editStatus: gen.stopped ? undefined : (gen.status || undefined),
+        editStatus: ended ? undefined : (gen.status || undefined),
         generationId: gen.gen_id,
         ...(gen.stopped ? { wasInterrupted: true } : {}),
     };
@@ -104,13 +105,14 @@ export function composeMessages(
             const last = lastIdx >= 0 ? result[lastIdx] : null;
             if (last && !last.isUser) {
                 const extras = genExtras(gen);
+                const ended = !!(gen.stopped || gen.interrupted);
                 result[lastIdx] = {
                     ...last,
-                    isComplete: !!gen.stopped,
+                    isComplete: ended,
                     pendingAsk: undefined,
                     editSegments: [...(last.editSegments || []), ...extras.segments],
                     editSteps: [...(last.editSteps || []), ...extras.steps],
-                    editStatus: gen.stopped ? undefined : (gen.status || last.editStatus),
+                    editStatus: ended ? undefined : (gen.status || last.editStatus),
                     generationId: gen.gen_id,
                     ...(gen.stopped ? { wasInterrupted: true } : {}),
                 };
