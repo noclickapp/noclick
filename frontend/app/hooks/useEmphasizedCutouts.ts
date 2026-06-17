@@ -4,6 +4,7 @@
 // so the dim overlay hugs their actual rounded shapes and follows resize/drag.
 
 import { useLayoutEffect, useState } from 'react';
+import { getPositioningAncestors } from '~/lib/domGeometry';
 
 export interface CutoutRects {
     drawer: DOMRect;
@@ -46,7 +47,10 @@ export function useEmphasizedCutouts({ enabled, drawerRef, anchorRef }: UseEmpha
 
         const ro = new ResizeObserver(update);
         if (drawerRef.current) ro.observe(drawerRef.current);
-        if (anchorRef?.current) ro.observe(anchorRef.current);
+        // Observe the anchor's offsetParent chain so the cutout follows the
+        // chatbox/drawer when an in-flow sibling (e.g. credit banner) mounts and
+        // shifts them without resizing the anchor itself.
+        if (anchorRef?.current) getPositioningAncestors(anchorRef.current).forEach((el) => ro.observe(el));
         if (chatboxInner) ro.observe(chatboxInner);
         window.addEventListener('resize', update);
         window.addEventListener('scroll', update, true);
