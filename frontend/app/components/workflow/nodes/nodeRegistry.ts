@@ -22,6 +22,7 @@ import { HttpRequestNode } from './HttpRequestNode';
 import { LinearNode } from './LinearNode';
 import { GithubRestNode } from './GithubRestNode';
 import { AirtableNode } from './AirtableNode';
+import { StripeNode } from './StripeNode';
 import { ApifyNode } from './ApifyNode';
 import { ApolloNode } from './ApolloNode';
 import { BlueSkyNode } from './BlueSkyNode';
@@ -131,7 +132,7 @@ function _buildAvailable(): NodeDefinition[] {
         FormInputNode,
         TelegramNode, GoogleSheetsNode, GoogleDriveNode, GmailNode, OutlookMailNode,
         ExcelNode, OneDriveNode, MicrosoftTodoNode, WordNode, WordPressNode,
-        HttpRequestNode, LinearNode, GithubRestNode, AirtableNode, ApifyNode,
+        HttpRequestNode, LinearNode, GithubRestNode, AirtableNode, StripeNode, ApifyNode,
         ApolloNode, BlueSkyNode, CanvaNode, DiscordNode, DropboxNode,
         GoogleCalendarNode, GoogleTasksNode, GoogleContactsNode, GoogleDocsNode,
         GoogleFormsNode, GoogleSlidesNode, GoogleAnalyticsNode, GoogleAdsNode,
