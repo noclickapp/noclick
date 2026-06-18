@@ -94,8 +94,18 @@ export function composeMessages(
     const result = mapPersistedMessages(persisted);
     if (activeGens.length === 0) return result;
 
-    for (const gen of activeGens) {
-        if (!gen.prompt) {
+    for (let i = 0; i < activeGens.length; i++) {
+        const gen = activeGens[i];
+        const prev = i > 0 ? activeGens[i - 1] : null;
+        // A resume re-submits the interrupted run's ORIGINAL prompt. Render it as
+        // a continuation of that dead turn (extend the trailing assistant) rather
+        // than a fresh [user, asst] turn — otherwise the prompt shows twice and
+        // two simultaneously-streaming turns can drive a render loop (React #185).
+        // Keyed on the immediately-prior gen being interrupted with the same
+        // prompt, so genuinely re-typing a prompt after a COMPLETED turn is never
+        // merged.
+        const continuesInterrupted = !!(gen.prompt && prev && prev.interrupted && prev.prompt === gen.prompt);
+        if (!gen.prompt || continuesInterrupted) {
             // Resume / continuation: extend the trailing assistant in
             // place. This is what makes Skip All / credential-submit
             // look like the same bubble continuing — accumulated
