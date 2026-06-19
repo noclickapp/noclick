@@ -76,6 +76,7 @@ import { SigmaNode } from './SigmaNode';
 import { TrelloNode } from './TrelloNode';
 import { FirecrawlNode } from './FirecrawlNode';
 import { AttioNode } from './AttioNode';
+import { IntercomNode } from './IntercomNode';
 import { LinkedInNode } from './LinkedInNode';
 import { NotionNode } from './NotionNode';
 import { OutlookMailNode } from './OutlookMailNode';
@@ -165,7 +166,7 @@ function _buildAvailable(): NodeDefinition[] {
         GoogleCalendarNode, GoogleTasksNode, GoogleContactsNode, GoogleDocsNode,
         GoogleFormsNode, GoogleSlidesNode, GoogleAnalyticsNode, GoogleAdsNode,
         GoogleBusinessProfileNode, GoogleSearchConsoleNode, HackerNewsNode, InstagramNode, InstantlyNode,
-        JiraNode, LinkedInNode, NotionNode, PostgresNode, RedditNode, RSSNode, ExtendNode,
+        JiraNode, IntercomNode, LinkedInNode, NotionNode, PostgresNode, RedditNode, RSSNode, ExtendNode,
         RedisNode, SalesforceNode, AffinityNode, SemrushNode, ShopifyNode, SlackNode,
         SupabaseNode, TikTokNode, TwilioNode, TwitterNode, CloudflareNode,
         TypeformNode, WhatsAppNode, ElevenLabsNode, YouTubeNode, HubSpotNode,
