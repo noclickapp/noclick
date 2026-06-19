@@ -114,6 +114,16 @@ from nodes.oauth.monday_oauth import (
     get_monday_auth_url,
     MONDAY_DEFAULT_SCOPES,
 )
+from nodes.oauth.intercom_oauth import (
+    IntercomTokens,
+    IntercomUserInfo,
+    get_intercom_client_config,
+    exchange_code_for_tokens as intercom_exchange_code_for_tokens,
+    refresh_access_token as intercom_refresh_access_token,
+    is_token_expired as intercom_is_token_expired,
+    get_intercom_auth_url,
+    INTERCOM_DEFAULT_SCOPES,
+)
 
 from nodes.oauth.reddit_oauth import (
     RedditTokens,
@@ -303,6 +313,15 @@ __all__ = [
     "monday_is_token_expired",
     "get_monday_auth_url",
     "MONDAY_DEFAULT_SCOPES",
+    # Intercom
+    "IntercomTokens",
+    "IntercomUserInfo",
+    "get_intercom_client_config",
+    "intercom_exchange_code_for_tokens",
+    "intercom_refresh_access_token",
+    "intercom_is_token_expired",
+    "get_intercom_auth_url",
+    "INTERCOM_DEFAULT_SCOPES",
     # Reddit
     "RedditTokens",
     "RedditUserInfo",

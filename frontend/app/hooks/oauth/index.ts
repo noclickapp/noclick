@@ -20,6 +20,7 @@ export { useBoxOAuth } from './useBoxOAuth';
 export { useAsanaOAuth } from './useAsanaOAuth';
 export { useMondayOAuth } from './useMondayOAuth';
 export { useAttioOAuth } from './useAttioOAuth';
+export { useIntercomOAuth } from './useIntercomOAuth';
 export { useTypeformOAuth } from './useTypeformOAuth';
 export { useLinkedInOAuth } from './useLinkedInOAuth';
 export { useClickUpOAuth } from './useClickUpOAuth';
