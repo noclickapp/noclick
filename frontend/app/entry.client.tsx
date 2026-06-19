@@ -4,6 +4,9 @@
  * For more information, see https://remix.run/file-conventions/entry.client
  */
 
+// MUST be first: installs the React DevTools hook before react-dom injects, so a
+// runaway #185 commit loop is localized (see app/lib/debug/maxUpdateDepthProbe.ts).
+import '~/lib/debug/maxUpdateDepthProbe';
 import { RemixBrowser } from '@remix-run/react';
 import { startTransition, StrictMode } from 'react';
 import { hydrateRoot } from 'react-dom/client';
