@@ -164,6 +164,16 @@ from nodes.oauth.webflow_oauth import (
     get_webflow_auth_url,
     WEBFLOW_DEFAULT_SCOPES,
 )
+from nodes.oauth.snowflake_oauth import (
+    SnowflakeTokens,
+    SnowflakeUserInfo,
+    get_snowflake_client_config,
+    exchange_code_for_tokens as snowflake_exchange_code_for_tokens,
+    refresh_access_token as snowflake_refresh_access_token,
+    is_token_expired as snowflake_is_token_expired,
+    get_snowflake_auth_url,
+    SNOWFLAKE_DEFAULT_SCOPES,
+)
 
 from nodes.oauth.reddit_oauth import (
     RedditTokens,
@@ -472,4 +482,13 @@ __all__ = [
     "wordpress_is_token_expired",
     "get_wordpress_auth_url",
     "WORDPRESS_DEFAULT_SCOPES",
+    # Snowflake
+    "SnowflakeTokens",
+    "SnowflakeUserInfo",
+    "get_snowflake_client_config",
+    "snowflake_exchange_code_for_tokens",
+    "snowflake_refresh_access_token",
+    "snowflake_is_token_expired",
+    "get_snowflake_auth_url",
+    "SNOWFLAKE_DEFAULT_SCOPES",
 ]
