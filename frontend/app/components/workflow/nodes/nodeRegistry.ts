@@ -65,6 +65,7 @@ import { ExaNode } from './ExaNode';
 import { ReductoNode } from './ReductoNode';
 import { FalNode } from './FalNode';
 import { BrandfetchNode } from './BrandfetchNode';
+import { FindymailNode } from './FindymailNode';
 import { LinkedInNode } from './LinkedInNode';
 import { NotionNode } from './NotionNode';
 import { OutlookMailNode } from './OutlookMailNode';
@@ -158,7 +159,11 @@ function _buildAvailable(): NodeDefinition[] {
         RedisNode, SalesforceNode, AffinityNode, SemrushNode, ShopifyNode, SlackNode,
         SupabaseNode, TikTokNode, TwilioNode, TwitterNode, CloudflareNode,
         TypeformNode, WhatsAppNode, ElevenLabsNode, YouTubeNode, HubSpotNode,
-        MailchimpNode, ResendNode, CalComNode, GoogleMapsNode, PerplexityNode, MailgunNode, GitLabNode, BoxNode, ClickUpNode, DevinNode, AsanaNode, FirestoreNode, GoogleCloudStorageNode, MondayNode, ParallelNode, DatadogNode, LoopsNode, ExaNode, ReductoNode, FalNode, BrandfetchNode, SendEmailNode, AIAgentNode, ToolNode, MCPServerNode,
+        MailchimpNode, ResendNode, CalComNode, GoogleMapsNode, PerplexityNode, MailgunNode,
+        GitLabNode, BoxNode, ClickUpNode, DevinNode, AsanaNode, FirestoreNode,
+        GoogleCloudStorageNode, MondayNode, ParallelNode, DatadogNode, LoopsNode,
+        ExaNode, ReductoNode, FalNode, BrandfetchNode, FindymailNode, SendEmailNode,
+        AIAgentNode, ToolNode, MCPServerNode,
         NoClickNode, AlarmNode, FilesystemNode, IterationNode, DelayNode, FilterNode,
         SplitOutNode,
         ConditionalNode, ApprovalNode, LogNode, SwitchNode, MergeNode, SubmitExternalFormNode,
