@@ -1,0 +1,326 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/**
+ * DEV-only probe for React #185 ("Maximum update depth exceeded").
+ *
+ * Localizes a runaway synchronous commit loop BEFORE React throws, by counting
+ * our own `onCommitFiberRoot` invocations as a faithful proxy for react-dom's
+ * internal `nestedUpdateCount` (both run in the same synchronous `flushSpawnedWork`
+ * cascade — verified against react-dom 19.1.1), tripping at 40 (React throws at
+ * >50) while the loop's stack is still live, then dumping the offending fiber.
+ *
+ * It distinguishes the two #185 classes definitively: a callback-ref re-attach
+ * loop (radix composeRefs/setRef churn — e.g. PopperContent's inline setContent
+ * ref) populates `reports[]`; a setState-in-render/effect loop yields an explicit
+ * "no churning ref" warning routing you to the breakpoint recipe.
+ *
+ * MUST be the first import in entry.client.tsx, above `react-dom/client`, so the
+ * DevTools hook exists before react-dom's `injectInternals` reads it. No-ops
+ * outside development (the install body is dead-code-eliminated in prod builds).
+ */
+
+const TRIP_AT = 40; // dump before React's >50 throw (getRootForUpdatedFiber)
+const HARD_CAP = 200;
+const OWNER_MAX = 30;
+const HOOK_MAX = 64;
+const TREE_MAX_NODES = 20000;
+const CHANNEL_MAX = 1400; // nc channel clips at 1500; keep the pointer short
+
+type Fiber = any;
+
+/* React's getComponentNameFromFiber, transcribed for 19.1.1 dev fibers. */
+function componentName(fiber: Fiber | null): string | null {
+    if (!fiber) return null;
+    const type = fiber.type;
+    switch (fiber.tag) {
+        case 5: case 26: case 27: return typeof type === 'string' ? type : 'Host';
+        case 11: {
+            const r = type?.render;
+            const n = r?.displayName || r?.name || '';
+            return type?.displayName || (n ? `ForwardRef(${n})` : 'ForwardRef');
+        }
+        case 16: return 'Lazy';
+        case 10: return (type?.displayName || type?._context?.displayName || 'Context') + '.Provider';
+        case 9: return (type?._context?.displayName || 'Context') + '.Consumer';
+        case 3: return 'HostRoot';
+        case 7: return 'Fragment';
+        case 13: return 'Suspense';
+        case 0: case 1: case 14: case 15:
+            if (typeof type === 'function') return type.displayName || type.name || null;
+            if (type && typeof type === 'object') return type.displayName || type.render?.name || type.type?.name || null;
+            if (typeof type === 'string') return type;
+            return null;
+        default: return null;
+    }
+}
+
+const isFunctionComponentTag = (tag: number) => tag === 0 || tag === 14 || tag === 15;
+const isHostTag = (tag: number) => tag === 5 || tag === 26 || tag === 27;
+
+function summarize(v: unknown, depth = 0): unknown {
+    if (v == null || typeof v === 'number' || typeof v === 'boolean' || typeof v === 'string') return v;
+    if (typeof v === 'function') return `[fn ${(v as any).name || 'anonymous'}]`;
+    if (typeof Element !== 'undefined' && v instanceof Element) return `[Element <${v.tagName.toLowerCase()}>]`;
+    if (depth > 2) return '[…]';
+    if (Array.isArray(v)) return v.slice(0, 8).map((x) => summarize(x, depth + 1));
+    try {
+        const o: Record<string, unknown> = {};
+        for (const k of Object.keys(v as object).slice(0, 16)) o[k] = summarize((v as any)[k], depth + 1);
+        return o;
+    } catch { return '[unserializable]'; }
+}
+
+/** JSX-creator chain (_debugOwner), the "who rendered this" path. */
+function ownerChain(fiber: Fiber, max = OWNER_MAX): string[] {
+    const out: string[] = [];
+    let f: Fiber | null = fiber;
+    const seen = new Set<Fiber>();
+    while (f && !seen.has(f) && out.length < max) {
+        seen.add(f);
+        const n = componentName(f);
+        if (n) out.push(n);
+        f = f._debugOwner ?? null;
+    }
+    return out;
+}
+
+/** Structural mount path (return chain to root). */
+function returnChain(fiber: Fiber, max = OWNER_MAX): string[] {
+    const out: string[] = [];
+    let f: Fiber | null = fiber;
+    while (f && out.length < max) {
+        const n = componentName(f);
+        if (n) out.push(n);
+        f = f.return ?? null;
+    }
+    return out;
+}
+
+/**
+ * Enumerate the hook list. `queue.pending` is best-effort: it is usually already
+ * consumed by the time we read at the commit boundary, so an empty
+ * pendingHookIndexes does NOT exonerate a hook — the breakpoint recipe is the
+ * authoritative culprit identifier.
+ */
+function describeHooks(fiber: Fiber): Array<{ index: number; hasQueue: boolean; hasPending: boolean }> {
+    const hooks: Array<{ index: number; hasQueue: boolean; hasPending: boolean }> = [];
+    let hook = fiber.memoizedState;
+    let i = 0;
+    const seen = new Set<any>();
+    while (hook && !seen.has(hook) && i < HOOK_MAX) {
+        seen.add(hook);
+        if (hook && typeof hook === 'object' && 'memoizedState' in hook) {
+            const q = hook.queue;
+            hooks.push({ index: i, hasQueue: !!q, hasPending: !!(q && q.pending != null) });
+        }
+        hook = hook.next;
+        i++;
+    }
+    return hooks;
+}
+
+function fiberFromDom(node: Element): Fiber | null {
+    for (const k of Object.keys(node)) {
+        if (k.startsWith('__reactFiber$')) return (node as any)[k] ?? null;
+    }
+    return null;
+}
+
+function refSource(ref: unknown): string {
+    if (typeof ref !== 'function') return ref == null ? 'null' : `[ref object ${typeof ref}]`;
+    try {
+        const s = (ref as any).toString();
+        return s.length > 300 ? s.slice(0, 300) + ' …' : s;
+    } catch { return '[unprintable fn]'; }
+}
+
+function fingerprint(parts: string[]): string {
+    const s = parts.join('|');
+    let h = 5381;
+    for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0;
+    return 'fp_' + (h >>> 0).toString(36);
+}
+
+/** Host fibers whose callback `ref` identity differs from the alternate — the composeRefs/setRef churn signature. */
+function findChurningRefFibers(root: Fiber, limit = 12): Fiber[] {
+    const hits: Fiber[] = [];
+    const start: Fiber | null = root.current ?? root;
+    if (!start) return hits;
+    const stack: Fiber[] = [start];
+    const seen = new Set<Fiber>();
+    let visited = 0;
+    while (stack.length && hits.length < limit && visited < TREE_MAX_NODES) {
+        const f = stack.pop();
+        if (!f || seen.has(f)) continue;
+        seen.add(f);
+        visited++;
+        if (isHostTag(f.tag) && typeof f.ref === 'function') {
+            const altRef = f.alternate?.ref;
+            if (altRef !== undefined && altRef !== f.ref) hits.push(f);
+        }
+        if (f.child) stack.push(f.child);
+        if (f.sibling) stack.push(f.sibling);
+    }
+    return hits;
+}
+
+/** Nearest _debugOwner that is a function component holding a useState/useReducer hook. */
+function nearestStatefulOwner(fiber: Fiber): Fiber | null {
+    let f: Fiber | null = fiber;
+    const seen = new Set<Fiber>();
+    while (f && !seen.has(f)) {
+        seen.add(f);
+        if (isFunctionComponentTag(f.tag) && f.memoizedState && describeHooks(f).some((h) => h.hasQueue)) return f;
+        f = f._debugOwner ?? null;
+    }
+    return null;
+}
+
+interface Report {
+    fingerprint: string;
+    suspectComponent: string | null;
+    ownerChain: string[];
+    returnChain: string[];
+    hostElementTag: string | null;
+    refChanged: boolean;
+    refSourceCurrent: string;
+    refSourcePrev: string;
+    pendingHookIndexes: number[];
+    domNode: Element | null;
+    memoizedProps: unknown;
+}
+
+function buildReports(root: Fiber): Report[] {
+    const reports: Report[] = [];
+    for (const hostFiber of findChurningRefFibers(root)) {
+        const dom: Element | null = hostFiber.stateNode ?? null;
+        const owner: Fiber | null = hostFiber._debugOwner ?? null;
+        const suspect: Fiber | null = owner ? nearestStatefulOwner(owner) : null;
+        const hooks = suspect ? describeHooks(suspect) : [];
+        const hostName = componentName(hostFiber);
+        reports.push({
+            fingerprint: fingerprint([componentName(suspect) ?? '?', hostName ?? '?', refSource(hostFiber.ref)]),
+            suspectComponent: componentName(suspect),
+            ownerChain: owner ? ownerChain(owner) : [],
+            returnChain: owner ? returnChain(owner) : [],
+            hostElementTag: hostName,
+            refChanged: hostFiber.alternate?.ref !== hostFiber.ref,
+            refSourceCurrent: refSource(hostFiber.ref),
+            refSourcePrev: refSource(hostFiber.alternate?.ref),
+            pendingHookIndexes: hooks.filter((h) => h.hasPending).map((h) => h.index),
+            domNode: dom,
+            memoizedProps: suspect ? summarize(suspect.memoizedProps) : undefined,
+        });
+    }
+    return reports;
+}
+
+function dump(root: Fiber, count: number) {
+    const reports = buildReports(root);
+    const g = console.groupCollapsed?.bind(console) ?? console.log;
+    g(`%c[#185 PROBE] ${count} nested sync commits on one root — dumping before React's >50 throw`,
+        'color:#f00;font-weight:bold');
+
+    if (reports.length === 0) {
+        console.warn('[#185 PROBE] CLASS = setState-in-render/effect (NOT a composed-ref loop). ' +
+            'No host callback-ref identity churn found. Use the breakpoint recipe: conditional ' +
+            '`nestedUpdateCount > 40` at getRootForUpdatedFiber, then read the dispatching `fiber` + the ' +
+            'hook whose `.queue === queue`. Prime suspect: a setState during render (see composeMessages #185).');
+    }
+    for (const r of reports) {
+        console.log('%c— CLASS = composed-ref re-attach loop —', 'color:#f80;font-weight:bold', r.fingerprint);
+        console.log('host element:', r.hostElementTag, r.domNode);
+        console.log('ref source (current):', r.refSourceCurrent);
+        console.log('ref source (prev):', r.refSourcePrev, ' identity changed:', r.refChanged);
+        console.log('%csuspect (dispatches setState via the churning ref):', 'color:#0a0;font-weight:bold', r.suspectComponent);
+        console.log('  owner chain (JSX creators → root):', r.ownerChain.join(' < '));
+        console.log('  structural chain (return → root):', r.returnChain.join(' < '));
+        console.log('  pending hook indexes (best-effort):', r.pendingHookIndexes);
+        console.log('  memoizedProps:', r.memoizedProps);
+    }
+    console.trace('[#185 PROBE] commit stack at trip point');
+    console.groupEnd?.();
+
+    try {
+        (window as any).__react185 = { tripped: true, count, reports, root, at: new Date().toISOString() };
+    } catch { /* noop */ }
+
+    try {
+        void import('~/lib/nc/channel').then(({ channel }) => {
+            const top = reports[0];
+            const msg = (top
+                ? `[#185] ${count} nested commits. CLASS=ref-loop suspect=${top.suspectComponent} ` +
+                  `host=<${top.hostElementTag}> refChanged=${top.refChanged} fp=${top.fingerprint}\n` +
+                  `owner: ${top.ownerChain.join(' < ')}\nrefCur: ${top.refSourceCurrent}`
+                : `[#185] ${count} nested commits. CLASS=setState-in-render/effect (no churning ref). ` +
+                  `Use breakpoint recipe; suspect composeMessages-style render loop.`
+            ).slice(0, CHANNEL_MAX);
+            channel.error(msg, {
+                source: 'react185-probe',
+                klass: top ? 'ref-loop' : 'setState-in-render',
+                component: top?.suspectComponent ?? 'unknown',
+                fingerprint: top?.fingerprint ?? 'none',
+            });
+        }).catch(() => { /* noop */ });
+    } catch { /* noop */ }
+}
+
+export function installMaxUpdateDepthProbe() {
+    if (process.env.NODE_ENV !== 'development') return;
+    if (typeof window === 'undefined') return;
+
+    const HOOK_KEY = '__REACT_DEVTOOLS_GLOBAL_HOOK__';
+    const w = window as any;
+
+    // Hook object must EXIST before react-dom's injectInternals runs, else React
+    // never calls onCommitFiberRoot. Synthesize a minimal one only if absent
+    // (the real DevTools extension, when present, owns it — we just wrap it).
+    if (!w[HOOK_KEY]) {
+        w[HOOK_KEY] = {
+            isDisabled: false,
+            supportsFiber: true,
+            renderers: new Map(),
+            inject() { return 1; },
+            onCommitFiberRoot() {},
+            onCommitFiberUnmount() {},
+            onPostCommitFiberRoot() {},
+            checkDCE() {},
+            setStrictMode() {},
+        };
+    }
+    const hook = w[HOOK_KEY];
+    if (hook.__maxDepthProbeInstalled) return;
+    hook.__maxDepthProbeInstalled = true;
+
+    const counts = new WeakMap<Fiber, number>();
+    let lastRoot: Fiber | null = null;
+    let scheduled = false;
+    const trippedThisBurst = new WeakSet<Fiber>();
+
+    const resetSoon = () => {
+        if (scheduled) return;
+        scheduled = true;
+        // The whole nested cascade is synchronous, so this microtask drains only
+        // AFTER a real loop has reached TRIP_AT — a legit burst (<40) resets clean.
+        queueMicrotask(() => {
+            scheduled = false;
+            if (lastRoot) { counts.set(lastRoot, 0); trippedThisBurst.delete(lastRoot); }
+        });
+    };
+
+    const prevRoot = hook.onCommitFiberRoot?.bind(hook);
+    hook.onCommitFiberRoot = (id: any, root: Fiber, prio: any, didError: any) => {
+        lastRoot = root;
+        const c = (counts.get(root) ?? 0) + 1;
+        counts.set(root, c);
+        if ((c === TRIP_AT || c === HARD_CAP) && !trippedThisBurst.has(root)) {
+            if (c >= HARD_CAP) trippedThisBurst.add(root);
+            try { dump(root, c); } catch (e) { console.warn('[#185 PROBE] dump failed', e); }
+        }
+        resetSoon();
+        if (prevRoot) { try { prevRoot(id, root, prio, didError); } catch { /* keep extension alive */ } }
+    };
+
+    console.info('[#185 PROBE] installed (DEV). Trip at', TRIP_AT, 'nested commits/root. Inspect window.__react185 after a trip.');
+}
+
+installMaxUpdateDepthProbe();
