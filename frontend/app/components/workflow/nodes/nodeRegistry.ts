@@ -87,6 +87,7 @@ import { ZendeskNode } from './ZendeskNode';
 import { ConfluenceNode } from './ConfluenceNode';
 import { PagerDutyNode } from './PagerDutyNode';
 import { GoogleMeetNode } from './GoogleMeetNode';
+import { ExpensifyNode } from './ExpensifyNode';
 import { LinkedInNode } from './LinkedInNode';
 import { NotionNode } from './NotionNode';
 import { OutlookMailNode } from './OutlookMailNode';
@@ -181,7 +182,7 @@ function _buildAvailable(): NodeDefinition[] {
         SupabaseNode, TikTokNode, TwilioNode, TwitterNode, CloudflareNode,
         TypeformNode, WhatsAppNode, ElevenLabsNode, YouTubeNode, HubSpotNode,
 
-        MailchimpNode, PipedriveNode, ResendNode, PhantomBusterNode, CalComNode, GoogleMapsNode, PerplexityNode, PineconeNode, QdrantNode, UpstashVectorNode, MailgunNode,
+        MailchimpNode, PipedriveNode, ResendNode, ExpensifyNode, PhantomBusterNode, CalComNode, GoogleMapsNode, PerplexityNode, PineconeNode, QdrantNode, UpstashVectorNode, MailgunNode,
         GitLabNode, BoxNode, ClickUpNode, DevinNode, AsanaNode, FirestoreNode,
         GoogleCloudStorageNode, MondayNode, ParallelNode, DatadogNode, LoopsNode,
         ExaNode, ReductoNode, FalNode, BrandfetchNode, FindymailNode, BeehiivNode,
