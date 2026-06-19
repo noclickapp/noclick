@@ -4,6 +4,7 @@ import {
     buildNodeSearchIndexEntry,
     getNodeSearchScore,
     getOperationSearchMatch,
+    type NodeSearchIndexEntry,
 } from '~/utils/nodeSearchMatch';
 
 // buildNodeSearchIndexEntry only reads label/description/type off the node and
@@ -70,5 +71,63 @@ describe('node palette operation matching — multi-word node identity', () => {
         expect(getOperationSearchMatch(sheets, 'google sheets append rows')?.initialOperation).toBe(
             'append_rows_to_sheet',
         );
+    });
+});
+
+// The reported regression: a node matched by its own NAME ranked LAST because a
+// flat operation boost let any sibling whose operation field metadata merely
+// mentioned the term outrank it. These tests pin the band ordering that fixes
+// it. Hand-built entries keep the bands deterministic (independent of whatever
+// the generated schemas happen to contain).
+describe('node palette search ranking bands', () => {
+    const nodeNamed = (label: string, type: string): NodeSearchIndexEntry => ({
+        label: label.toLowerCase(),
+        identityHaystack: `${label} ${type}`.toLowerCase(),
+        baseHaystack: `${label} ${label} automation ${type}`.toLowerCase(),
+        operations: [],
+    });
+    // A sibling node whose operation only mentions the query inside field
+    // metadata (e.g. Slack's "post" op referencing a subreddit field).
+    const siblingWithFieldHit: NodeSearchIndexEntry = {
+        ...nodeNamed('Slack', 'automation-slack'),
+        operations: [
+            { value: 'post', label: 'Post Message', nameHaystack: 'post message post_message', haystack: 'post message post_message subreddit reddit target field' },
+        ],
+    };
+
+    it('ranks a node-name match above a sibling operation field-metadata match', () => {
+        const reddit = nodeNamed('Reddit', 'automation-reddit');
+        const nameScore = getNodeSearchScore(reddit, 'reddit');
+        const fieldMatch = getOperationSearchMatch(siblingWithFieldHit, 'reddit');
+        expect(nameScore).not.toBeNull();
+        expect(fieldMatch).not.toBeNull();
+        expect(nameScore!).toBeGreaterThan(fieldMatch!.score);
+    });
+
+    it('rewards an exact node-name query above a partial identity hit', () => {
+        const reddit = nodeNamed('Reddit', 'automation-reddit');
+        expect(getNodeSearchScore(reddit, 'reddit')!).toBeGreaterThan(getNodeSearchScore(reddit, 'redd')!);
+    });
+
+    it('ranks an operation-name match above a node description-only match', () => {
+        const opNamed: NodeSearchIndexEntry = {
+            ...nodeNamed('Mailer', 'automation-mailer'),
+            operations: [
+                { value: 'send_invoice', label: 'Send Invoice', nameHaystack: 'send invoice send_invoice', haystack: 'send invoice send_invoice recipient' },
+            ],
+        };
+        // "invoice" is operation-intent here (not in Mailer's identity).
+        const opMatch = getOperationSearchMatch(opNamed, 'invoice');
+        // A node whose only "invoice" hit is in its description sits a band lower.
+        const descNode: NodeSearchIndexEntry = {
+            label: 'billing',
+            identityHaystack: 'billing automation-billing',
+            baseHaystack: 'billing billing handles invoice records automation-billing',
+            operations: [],
+        };
+        const descScore = getNodeSearchScore(descNode, 'invoice');
+        expect(opMatch).not.toBeNull();
+        expect(descScore).not.toBeNull();
+        expect(opMatch!.score).toBeGreaterThan(descScore!);
     });
 });
