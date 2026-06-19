@@ -73,6 +73,7 @@ import { ExtendNode } from './ExtendNode';
 import { FellowNode } from './FellowNode';
 import { FathomNode } from './FathomNode';
 import { SigmaNode } from './SigmaNode';
+import { TrelloNode } from './TrelloNode';
 import { LinkedInNode } from './LinkedInNode';
 import { NotionNode } from './NotionNode';
 import { OutlookMailNode } from './OutlookMailNode';
@@ -170,7 +171,7 @@ function _buildAvailable(): NodeDefinition[] {
         GitLabNode, BoxNode, ClickUpNode, DevinNode, AsanaNode, FirestoreNode,
         GoogleCloudStorageNode, MondayNode, ParallelNode, DatadogNode, LoopsNode,
         ExaNode, ReductoNode, FalNode, BrandfetchNode, FindymailNode, BeehiivNode,
-        HexNode, ClickHouseNode, FellowNode, FathomNode, SigmaNode, SendEmailNode, AIAgentNode, ToolNode, MCPServerNode,
+        HexNode, ClickHouseNode, FellowNode, FathomNode, SigmaNode, TrelloNode, SendEmailNode, AIAgentNode, ToolNode, MCPServerNode,
         NoClickNode, AlarmNode, FilesystemNode, IterationNode, DelayNode, FilterNode,
         SplitOutNode,
         ConditionalNode, ApprovalNode, LogNode, SwitchNode, MergeNode, SubmitExternalFormNode,
