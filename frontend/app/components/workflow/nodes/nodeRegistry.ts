@@ -100,6 +100,7 @@ import { PagespeedNode } from './PagespeedNode';
 import { GoogleTranslateNode } from './GoogleTranslateNode';
 import { BigQueryNode } from './BigQueryNode';
 import { SnowflakeNode } from './SnowflakeNode';
+import { DatabricksNode } from './DatabricksNode';
 import { LinkedInNode } from './LinkedInNode';
 import { NotionNode } from './NotionNode';
 import { OutlookMailNode } from './OutlookMailNode';
@@ -199,6 +200,7 @@ function _buildAvailable(): NodeDefinition[] {
         ExaNode, ReductoNode, FalNode, BrandfetchNode, FindymailNode, BeehiivNode,
         HexNode, ClickHouseNode, FellowNode, FathomNode, SigmaNode, TrelloNode,
         FirecrawlNode, AttioNode, ZendeskNode, ConfluenceNode, PagerDutyNode, GoogleMeetNode, FreshsalesNode, AppSheetNode, TableauNode, PagespeedNode, SnowflakeNode, GoogleTranslateNode, SendEmailNode, AIAgentNode, ToolNode, MCPServerNode,
+        DatabricksNode,
         NoClickNode, AlarmNode, FilesystemNode, IterationNode, DelayNode, FilterNode,
         SplitOutNode,
         ConditionalNode, ApprovalNode, LogNode, SwitchNode, MergeNode, SubmitExternalFormNode,
