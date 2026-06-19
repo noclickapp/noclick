@@ -60,6 +60,7 @@ import { GoogleCloudStorageNode } from './GoogleCloudStorageNode';
 import { MondayNode } from './MondayNode';
 import { ParallelNode } from './ParallelNode';
 import { DatadogNode } from './DatadogNode';
+import { LoopsNode } from './LoopsNode';
 import { LinkedInNode } from './LinkedInNode';
 import { NotionNode } from './NotionNode';
 import { OutlookMailNode } from './OutlookMailNode';
@@ -153,7 +154,7 @@ function _buildAvailable(): NodeDefinition[] {
         RedisNode, SalesforceNode, AffinityNode, SemrushNode, ShopifyNode, SlackNode,
         SupabaseNode, TikTokNode, TwilioNode, TwitterNode, CloudflareNode,
         TypeformNode, WhatsAppNode, ElevenLabsNode, YouTubeNode, HubSpotNode,
-        MailchimpNode, ResendNode, CalComNode, GoogleMapsNode, PerplexityNode, MailgunNode, GitLabNode, BoxNode, ClickUpNode, DevinNode, AsanaNode, FirestoreNode, GoogleCloudStorageNode, MondayNode, ParallelNode, DatadogNode, SendEmailNode, AIAgentNode, ToolNode, MCPServerNode,
+        MailchimpNode, ResendNode, CalComNode, GoogleMapsNode, PerplexityNode, MailgunNode, GitLabNode, BoxNode, ClickUpNode, DevinNode, AsanaNode, FirestoreNode, GoogleCloudStorageNode, MondayNode, ParallelNode, DatadogNode, LoopsNode, SendEmailNode, AIAgentNode, ToolNode, MCPServerNode,
         NoClickNode, AlarmNode, FilesystemNode, IterationNode, DelayNode, FilterNode,
         SplitOutNode,
         ConditionalNode, ApprovalNode, LogNode, SwitchNode, MergeNode, SubmitExternalFormNode,
