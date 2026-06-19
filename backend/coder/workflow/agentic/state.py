@@ -36,3 +36,7 @@ class TurnResult:
     """Outcome of a single run_one_turn call, instructing the outer loop what to do next."""
     next_action: NextAction
     pending_ask: Optional[PendingAsk] = None
+    # On a "cancelled" action, the CancelScope reason that produced it — "user"
+    # for an FE Stop (terminal cancel) vs "shutdown" for a container drain
+    # (recoverable interrupt). None for every non-cancelled action.
+    cancel_reason: Optional[str] = None
