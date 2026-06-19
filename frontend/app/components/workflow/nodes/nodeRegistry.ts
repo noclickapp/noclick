@@ -69,6 +69,7 @@ import { FindymailNode } from './FindymailNode';
 import { BeehiivNode } from './BeehiivNode';
 import { HexNode } from './HexNode';
 import { ClickHouseNode } from './ClickHouseNode';
+import { ExtendNode } from './ExtendNode';
 import { LinkedInNode } from './LinkedInNode';
 import { NotionNode } from './NotionNode';
 import { OutlookMailNode } from './OutlookMailNode';
@@ -158,7 +159,7 @@ function _buildAvailable(): NodeDefinition[] {
         GoogleCalendarNode, GoogleTasksNode, GoogleContactsNode, GoogleDocsNode,
         GoogleFormsNode, GoogleSlidesNode, GoogleAnalyticsNode, GoogleAdsNode,
         GoogleBusinessProfileNode, GoogleSearchConsoleNode, HackerNewsNode, InstagramNode, InstantlyNode,
-        JiraNode, LinkedInNode, NotionNode, PostgresNode, RedditNode, RSSNode,
+        JiraNode, LinkedInNode, NotionNode, PostgresNode, RedditNode, RSSNode, ExtendNode,
         RedisNode, SalesforceNode, AffinityNode, SemrushNode, ShopifyNode, SlackNode,
         SupabaseNode, TikTokNode, TwilioNode, TwitterNode, CloudflareNode,
         TypeformNode, WhatsAppNode, ElevenLabsNode, YouTubeNode, HubSpotNode,
