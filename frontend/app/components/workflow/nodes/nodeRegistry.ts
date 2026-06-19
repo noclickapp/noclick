@@ -75,6 +75,7 @@ import { FathomNode } from './FathomNode';
 import { SigmaNode } from './SigmaNode';
 import { TrelloNode } from './TrelloNode';
 import { FirecrawlNode } from './FirecrawlNode';
+import { AttioNode } from './AttioNode';
 import { LinkedInNode } from './LinkedInNode';
 import { NotionNode } from './NotionNode';
 import { OutlookMailNode } from './OutlookMailNode';
@@ -174,6 +175,7 @@ function _buildAvailable(): NodeDefinition[] {
         ExaNode, ReductoNode, FalNode, BrandfetchNode, FindymailNode, BeehiivNode,
         HexNode, ClickHouseNode, FellowNode, FathomNode, SigmaNode, TrelloNode,
         FirecrawlNode, SendEmailNode, AIAgentNode, ToolNode, MCPServerNode,
+        HexNode, ClickHouseNode, FellowNode, FathomNode, SigmaNode, TrelloNode, AttioNode, SendEmailNode, AIAgentNode, ToolNode, MCPServerNode,
         NoClickNode, AlarmNode, FilesystemNode, IterationNode, DelayNode, FilterNode,
         SplitOutNode,
         ConditionalNode, ApprovalNode, LogNode, SwitchNode, MergeNode, SubmitExternalFormNode,
