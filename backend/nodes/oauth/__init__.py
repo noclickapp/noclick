@@ -63,6 +63,17 @@ from nodes.oauth.linear_oauth import (
     LINEAR_DEFAULT_SCOPES,
 )
 
+from nodes.oauth.gitlab_oauth import (
+    GitLabTokens,
+    GitLabUserInfo,
+    get_gitlab_client_config,
+    exchange_code_for_tokens as gitlab_exchange_code_for_tokens,
+    refresh_access_token as gitlab_refresh_access_token,
+    is_token_expired as gitlab_is_token_expired,
+    get_gitlab_auth_url,
+    GITLAB_DEFAULT_SCOPES,
+)
+
 from nodes.oauth.reddit_oauth import (
     RedditTokens,
     RedditUserInfo,
@@ -206,6 +217,15 @@ __all__ = [
     "get_linear_auth_url",
     "linear_revoke_token",
     "LINEAR_DEFAULT_SCOPES",
+    # GitLab
+    "GitLabTokens",
+    "GitLabUserInfo",
+    "get_gitlab_client_config",
+    "gitlab_exchange_code_for_tokens",
+    "gitlab_refresh_access_token",
+    "gitlab_is_token_expired",
+    "get_gitlab_auth_url",
+    "GITLAB_DEFAULT_SCOPES",
     # Reddit
     "RedditTokens",
     "RedditUserInfo",
