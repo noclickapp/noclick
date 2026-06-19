@@ -93,6 +93,15 @@ from nodes.oauth.clickup_oauth import (
     is_token_expired as clickup_is_token_expired,
     get_clickup_auth_url,
     CLICKUP_DEFAULT_SCOPES,
+from nodes.oauth.asana_oauth import (
+    AsanaTokens,
+    AsanaUserInfo,
+    get_asana_client_config,
+    exchange_code_for_tokens as asana_exchange_code_for_tokens,
+    refresh_access_token as asana_refresh_access_token,
+    is_token_expired as asana_is_token_expired,
+    get_asana_auth_url,
+    ASANA_DEFAULT_SCOPES,
 )
 
 from nodes.oauth.reddit_oauth import (
@@ -265,6 +274,15 @@ __all__ = [
     "clickup_is_token_expired",
     "get_clickup_auth_url",
     "CLICKUP_DEFAULT_SCOPES",
+    # Asana
+    "AsanaTokens",
+    "AsanaUserInfo",
+    "get_asana_client_config",
+    "asana_exchange_code_for_tokens",
+    "asana_refresh_access_token",
+    "asana_is_token_expired",
+    "get_asana_auth_url",
+    "ASANA_DEFAULT_SCOPES",
     # Reddit
     "RedditTokens",
     "RedditUserInfo",
