@@ -2,9 +2,27 @@
 // Pure-function test — runs against ~/lib/curlParser without needing a loaded
 // workflow. Run: nc_run_test({ file: "tests/nc/curl-import.test.ts" })
 import { nc } from '~/lib/nc';
-import { parseCurl, methodToOperation } from '~/lib/curlParser';
+import { parseCurl, methodToOperation, isCurlCommand } from '~/lib/curlParser';
+import { parseClipboardContent } from '~/utils/clipboard-parsers';
 
 export default async function () {
+    // Pasting a cURL command creates a pre-configured HTTP node.
+    nc.assert.truthy(isCurlCommand('curl https://x.com'), 'detects curl');
+    nc.assert.truthy(isCurlCommand('$ curl -X POST https://x.com'), 'detects curl after prompt');
+    nc.assert.truthy(!isCurlCommand('not a curl command'), 'rejects non-curl');
+    const pasted = parseClipboardContent(
+        `curl -X POST 'https://api.example.com/users?team=eng' -H 'Authorization: Bearer t' -d '{"name":"Ada"}'`
+    );
+    nc.assert.truthy(!!pasted && pasted.nodes.length === 1, 'one node created from curl paste');
+    const created = pasted!.nodes[0];
+    nc.assert.equal(created.type, 'automation-http-request', 'http node type');
+    nc.assert.equal((created.data as any).operation, 'send_http_post_request', 'POST operation');
+    nc.assert.equal((created.data as any).config.url, 'https://api.example.com/users', 'url set');
+    nc.assert.equal((created.data as any).config.query_params?.[0]?.key, 'team', 'query param set');
+    nc.assert.equal((created.data as any).config.body_type, 'json', 'json body');
+    // Pasting non-curl prose must NOT create an http node.
+    nc.assert.truthy(parseClipboardContent('just some text') === null, 'prose is ignored');
+
     // GET with a query string -> method GET, query split out of the URL
     const get = parseCurl('curl https://api.example.com/users?page=2&q=hi');
     nc.assert.equal(get.method, 'GET', 'GET method');

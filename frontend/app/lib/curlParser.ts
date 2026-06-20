@@ -122,6 +122,17 @@ function parseFormString(data: string): CurlKVRow[] {
 }
 
 /**
+ * Cheap check for whether some pasted text is a cURL command. Requires it to
+ * start with `curl` (optionally after a shell prompt like `$ `), which is a
+ * strong, low-false-positive signal; parseCurl then validates it has a URL.
+ */
+export function isCurlCommand(text: string): boolean {
+    if (!text) return false;
+    const t = text.trim().replace(/^[$>]\s+/, '');
+    return /^curl(\s|$)/i.test(t);
+}
+
+/**
  * Parse a `curl` command into the HTTP Request node config shape.
  * Throws if no URL can be found.
  */
