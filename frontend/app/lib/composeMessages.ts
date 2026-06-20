@@ -58,7 +58,6 @@ function activeGenToBubbles(gen: ActiveGeneration): Message[] {
         editSegments: segments,
         editSteps: gen.edit_steps.length > 0 ? [...gen.edit_steps] : undefined,
         editStatus: ended ? undefined : (gen.status || undefined),
-        tokensProcessed: ended ? undefined : gen.tokensProcessed,
         generationId: gen.gen_id,
         ...(gen.stopped ? { wasInterrupted: true } : {}),
     };
@@ -124,9 +123,6 @@ export function composeMessages(
                     editSegments: [...(last.editSegments || []), ...extras.segments],
                     editSteps: [...(last.editSteps || []), ...extras.steps],
                     editStatus: ended ? undefined : (gen.status || last.editStatus),
-                    // Resumed turn starts a fresh count (no carry-over from the
-                    // pre-ask turn — by design).
-                    tokensProcessed: ended ? undefined : gen.tokensProcessed,
                     generationId: gen.gen_id,
                     ...(gen.stopped ? { wasInterrupted: true } : {}),
                 };
