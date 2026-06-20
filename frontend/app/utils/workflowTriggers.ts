@@ -8,6 +8,7 @@ import { getTriggerOperations, isTriggerSource } from '~/utils/nodeSchemas';
 import { getFieldsForOption } from '~/utils/schemaFieldExtractor';
 import { getCredentialEmail } from '~/utils/credentialAutoSelect';
 import { EMAIL_DOMAIN } from '~/components/workflow/EmailTriggerField';
+import { describeSchedule, getScheduleEntries, isTimeOfDaySchedule } from '~/utils/scheduleFormat';
 
 /** A configured specific the trigger listens to — e.g. the spreadsheet/sheet it
  *  watches, or the address/URL that fires it. */
@@ -157,6 +158,19 @@ function getTriggerParams(
         // so Run, which can't submit the form, points the user to where it lives.
         const url = strv(config.webhook_url);
         return url.startsWith('http') ? [{ label: 'Form URL', value: url, mono: true, href: url }] : [];
+    }
+    if (nodeType === 'trigger-cron') {
+        // Surface when each configured schedule actually fires, plus the timezone
+        // when a schedule is time-of-day based (so "9:00 AM" is unambiguous).
+        const entries = getScheduleEntries(config);
+        const params: TriggerParam[] = [];
+        for (const s of entries) {
+            const phrase = describeSchedule(s);
+            if (phrase) params.push({ label: 'Schedule', value: phrase.charAt(0).toUpperCase() + phrase.slice(1) });
+        }
+        const tz = strv(config.timezone);
+        if (tz && entries.some(isTimeOfDaySchedule)) params.push({ label: 'Timezone', value: tz });
+        return params;
     }
 
     const params: TriggerParam[] = [];
