@@ -8,6 +8,7 @@ import { getTriggerOperations, isTriggerSource } from '~/utils/nodeSchemas';
 import { getFieldsForOption } from '~/utils/schemaFieldExtractor';
 import { getCredentialEmail } from '~/utils/credentialAutoSelect';
 import { EMAIL_DOMAIN } from '~/components/workflow/EmailTriggerField';
+import { describeSchedule, getScheduleEntries, isTimeOfDaySchedule } from '~/utils/scheduleFormat';
 
 /** A configured specific the trigger listens to — e.g. the spreadsheet/sheet it
  *  watches, or the address/URL that fires it. */
@@ -16,6 +17,10 @@ export interface TriggerParam {
     value: string;
     /** Render the value monospace + copyable (addresses, URLs). */
     mono?: boolean;
+    /** When set, the value also gets an "open in a new tab" link (e.g. a form
+     *  trigger's hosted page — pressing Run won't submit it, so this is how the
+     *  user actually exercises the form). */
+    href?: string;
 }
 
 export interface WorkflowTrigger {
@@ -39,11 +44,14 @@ const DEDICATED_TRIGGER_DESCRIPTIONS: Record<string, string> = {
     'trigger-webhook': "Runs when an HTTP request hits this workflow's webhook URL.",
     'trigger-email': "Runs when an email arrives at this workflow's address.",
     'trigger-cron': 'Runs automatically on a recurring schedule.',
+    'trigger-form-input': 'Runs when someone submits this form.',
 };
 
-// Node types that give the user a manual / interactive way to start a run, so the
-// "this only runs on triggers" prompt is suppressed when one is present.
-const MANUAL_ENTRY_TYPES = new Set(['trigger-run', 'trigger-form-input']);
+// The manual Run trigger is the only entry point a user starts by pressing Run,
+// so it suppresses the trigger-info prompt. A form trigger is NOT manual here:
+// pressing Run won't submit the form, so the prompt explains it (and links to the
+// hosted form) instead of silently running with no input.
+const MANUAL_ENTRY_TYPES = new Set(['trigger-run']);
 
 interface CanvasNode {
     id: string;
@@ -144,6 +152,25 @@ function getTriggerParams(
     if (nodeType === 'trigger-webhook') {
         const url = strv(config.webhook_url);
         return url ? [{ label: 'Send a request to', value: url, mono: true }] : [];
+    }
+    if (nodeType === 'trigger-form-input') {
+        // The hosted form page (load-value populated). Surfaced as an openable link
+        // so Run, which can't submit the form, points the user to where it lives.
+        const url = strv(config.webhook_url);
+        return url.startsWith('http') ? [{ label: 'Form URL', value: url, mono: true, href: url }] : [];
+    }
+    if (nodeType === 'trigger-cron') {
+        // Surface when each configured schedule actually fires, plus the timezone
+        // when a schedule is time-of-day based (so "9:00 AM" is unambiguous).
+        const entries = getScheduleEntries(config);
+        const params: TriggerParam[] = [];
+        for (const s of entries) {
+            const phrase = describeSchedule(s);
+            if (phrase) params.push({ label: 'Schedule', value: phrase.charAt(0).toUpperCase() + phrase.slice(1) });
+        }
+        const tz = strv(config.timezone);
+        if (tz && entries.some(isTimeOfDaySchedule)) params.push({ label: 'Timezone', value: tz });
+        return params;
     }
 
     const params: TriggerParam[] = [];
