@@ -133,6 +133,22 @@ function refSource(ref: unknown): string {
     } catch { return '[unprintable fn]'; }
 }
 
+/** Serializable identity of the offending DOM node — which on-screen element is
+ *  looping. Captures tag + classes + aria/title + data-testid + visible text so
+ *  the suspect is identifiable from the persisted log without a live fiber. */
+function describeDom(el: unknown): string {
+    if (typeof Element === 'undefined' || !(el instanceof Element)) return 'none';
+    try {
+        const tag = el.tagName.toLowerCase();
+        const cls = (el.getAttribute('class') || '').slice(0, 140);
+        const aria = el.getAttribute('aria-label') || el.getAttribute('title') || '';
+        const tid = el.getAttribute('data-testid') || el.getAttribute('data-test') || '';
+        const text = (el.textContent || '').trim().replace(/\s+/g, ' ').slice(0, 50);
+        return `<${tag}${tid ? ` data-testid="${tid}"` : ''}${aria ? ` aria-label="${aria}"` : ''}` +
+            `${cls ? ` class="${cls}"` : ''}>${text}`;
+    } catch { return '[undescribable element]'; }
+}
+
 function fingerprint(parts: string[]): string {
     const s = parts.join('|');
     let h = 5381;
@@ -181,6 +197,7 @@ interface Report {
     ownerChain: string[];
     returnChain: string[];
     hostElementTag: string | null;
+    domDesc: string;
     refChanged: boolean;
     refSourceCurrent: string;
     refSourcePrev: string;
@@ -203,6 +220,7 @@ function buildReports(root: Fiber): Report[] {
             ownerChain: owner ? ownerChain(owner) : [],
             returnChain: owner ? returnChain(owner) : [],
             hostElementTag: hostName,
+            domDesc: describeDom(dom),
             refChanged: hostFiber.alternate?.ref !== hostFiber.ref,
             refSourceCurrent: refSource(hostFiber.ref),
             refSourcePrev: refSource(hostFiber.alternate?.ref),
@@ -240,16 +258,54 @@ function dump(root: Fiber, count: number) {
     console.trace('[#185 PROBE] commit stack at trip point');
     console.groupEnd?.();
 
+    const top = reports[0];
+
+    // VISIBLE one-liner (outside the collapsed group) so the culprit is obvious
+    // in a pasted console without expanding anything.
+    if (top) {
+        console.error(
+            `%c[#185] RENDER LOOP → ${top.domDesc}\n` +
+            `  rendered by: ${top.ownerChain.slice(0, 8).join(' < ')}\n` +
+            `  setState dispatcher (suspect): ${top.suspectComponent}\n` +
+            `  full report: window.__react185  |  history: sessionStorage.__react185_log`,
+            'color:#f00;font-weight:bold',
+        );
+    } else {
+        console.error('[#185] RENDER LOOP (setState-in-render/effect — no churning ref). See window.__react185.');
+    }
+
     try {
         (window as any).__react185 = { tripped: true, count, reports, root, at: new Date().toISOString() };
     } catch { /* noop */ }
 
+    // Persist a serializable snapshot to sessionStorage so the report SURVIVES
+    // the error-boundary recreate and a manual reload — read it after the fact
+    // via sessionStorage.__react185_log (window.__react185 is wiped on reload).
+    try {
+        const serializable = reports.map((r) => ({
+            domDesc: r.domDesc,
+            hostElementTag: r.hostElementTag,
+            suspectComponent: r.suspectComponent,
+            refChanged: r.refChanged,
+            refSourceCurrent: r.refSourceCurrent,
+            refSourcePrev: r.refSourcePrev,
+            ownerChain: r.ownerChain,
+            returnChain: r.returnChain,
+            pendingHookIndexes: r.pendingHookIndexes,
+            memoizedProps: r.memoizedProps,
+            fingerprint: r.fingerprint,
+        }));
+        const klass = top ? 'ref-loop' : 'setState-in-render';
+        const prev = JSON.parse(sessionStorage.getItem('__react185_log') || '[]');
+        prev.push({ at: new Date().toISOString(), count, klass, url: location.pathname, reports: serializable });
+        sessionStorage.setItem('__react185_log', JSON.stringify(prev.slice(-8)));
+    } catch { /* noop — sessionStorage full/blocked */ }
+
     try {
         void import('~/lib/nc/channel').then(({ channel }) => {
-            const top = reports[0];
             const msg = (top
                 ? `[#185] ${count} nested commits. CLASS=ref-loop suspect=${top.suspectComponent} ` +
-                  `host=<${top.hostElementTag}> refChanged=${top.refChanged} fp=${top.fingerprint}\n` +
+                  `dom=${top.domDesc} refChanged=${top.refChanged} fp=${top.fingerprint}\n` +
                   `owner: ${top.ownerChain.join(' < ')}\nrefCur: ${top.refSourceCurrent}`
                 : `[#185] ${count} nested commits. CLASS=setState-in-render/effect (no churning ref). ` +
                   `Use breakpoint recipe; suspect composeMessages-style render loop.`
