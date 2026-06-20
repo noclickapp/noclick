@@ -72,6 +72,14 @@ describe('node palette operation matching — multi-word node identity', () => {
             'append_rows_to_sheet',
         );
     });
+
+    it('seeds via authored x-keywords (intent phrasing the label lacks)', () => {
+        // "get rows" / "get values" share no word with "Read Sheet Data"; the
+        // authored x-keywords bridge them, giving FlowHelper palette search the
+        // same intent coverage as the in-node OperationPicker.
+        expect(getOperationSearchMatch(sheets, 'get rows')?.initialOperation).toBe('read_sheet_data');
+        expect(getOperationSearchMatch(sheets, 'get values')?.initialOperation).toBe('read_sheet_data');
+    });
 });
 
 // The reported regression: a node matched by its own NAME ranked LAST because a
