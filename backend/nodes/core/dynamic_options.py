@@ -1,10 +1,14 @@
 """Shared helpers for ``WorkflowNode.load_field_options`` implementations.
 
-Three primitives cover every dynamic-options field handler in the codebase:
+Four primitives cover every dynamic-options field handler in the codebase:
 
 - :func:`normalize_search` — call once in the handler to convert an empty /
   whitespace-only search to ``None`` so every per-node helper can treat
   ``not search`` uniformly as "no filter requested".
+- :func:`require_credential_token` — fail loud when a loader has no
+  credential token, so the load-options handler emits ``success=False`` and
+  the frontend shows the "Open Credentials" prompt instead of a misleading
+  "No options available".
 - :func:`filter_options_by_search` — case-insensitive substring filter over
   the named option fields. Used by helpers whose upstream returns the whole
   set in one shot (no native search, no pagination).
@@ -55,6 +59,24 @@ def normalize_search(search: Optional[str]) -> Optional[str]:
         return None
     trimmed = search.strip()
     return trimmed or None
+
+
+def require_credential_token(token: Optional[str], message: str) -> str:
+    """Return ``token`` or raise when it is missing.
+
+    Dynamic-options loaders must fail loud (raise) — not return an empty list —
+    when their credential token is absent. The load-options handler turns the
+    raise into a ``success=False`` response, which is the only signal
+    ``DynamicOptionsField`` treats as "show the Open Credentials button".
+    Returning empty instead reads as a successful-but-empty load and renders
+    "No options available", hiding the connect-account affordance.
+
+    ``message`` is surfaced to the user in the dropdown, so phrase it as the
+    action to take (e.g. "Connect a Google account to load spreadsheets").
+    """
+    if not token:
+        raise ValueError(message)
+    return token
 
 
 def filter_options_by_search(
