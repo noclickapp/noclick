@@ -1,7 +1,6 @@
-// The chat message bubble chrome, extracted so both the live chat (MessagesView)
-// and the /thinkingstyles gallery render the exact same bubble — same surface,
-// border, radius, and padding — with no drift. Class strings are the single
-// source of truth for the assistant/user bubble look.
+// The chat message bubble chrome, extracted from MessagesView so the bubble
+// look — surface, border, radius, padding — lives in one place. Class strings
+// are the single source of truth for the assistant/user bubble.
 import { cn } from '~/lib/utils';
 import type { CSSProperties, ReactNode } from 'react';
 
