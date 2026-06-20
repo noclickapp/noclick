@@ -344,6 +344,9 @@ export function installMaxUpdateDepthProbe() {
         };
     }
     const hook = w[HOOK_KEY];
+    // Version marker — lets a debugging session confirm the persist-capable probe
+    // is actually loaded (bump on capture-behavior changes).
+    w.__react185_probeVersion = 'v2-sessionpersist';
     if (hook.__maxDepthProbeInstalled) return;
     hook.__maxDepthProbeInstalled = true;
 
