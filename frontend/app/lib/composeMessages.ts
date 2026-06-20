@@ -50,7 +50,7 @@ function activeGenToBubbles(gen: ActiveGeneration): Message[] {
     // animation. The disconnect case shows no inline notice — the actionable
     // "connection lost / Retry" affordance lives in the InterruptedRunBanner
     // above the ChatBox; here we just stop the spinner so it doesn't look live.
-    const ended = !!(gen.stopped || gen.interrupted);
+    const ended = !!(gen.stopped || gen.interrupted || gen.failed);
     const assistant: Message = {
         text: '',
         isUser: false,
@@ -60,6 +60,7 @@ function activeGenToBubbles(gen: ActiveGeneration): Message[] {
         editStatus: ended ? undefined : (gen.status || undefined),
         generationId: gen.gen_id,
         ...(gen.stopped ? { wasInterrupted: true } : {}),
+        ...(gen.failed ? { failed: true, error: gen.error } : {}),
     };
     if (!gen.prompt) {
         // Resume / continuation: no new user bubble.
@@ -115,7 +116,7 @@ export function composeMessages(
             const last = lastIdx >= 0 ? result[lastIdx] : null;
             if (last && !last.isUser) {
                 const extras = genExtras(gen);
-                const ended = !!(gen.stopped || gen.interrupted);
+                const ended = !!(gen.stopped || gen.interrupted || gen.failed);
                 result[lastIdx] = {
                     ...last,
                     isComplete: ended,
@@ -125,6 +126,7 @@ export function composeMessages(
                     editStatus: ended ? undefined : (gen.status || last.editStatus),
                     generationId: gen.gen_id,
                     ...(gen.stopped ? { wasInterrupted: true } : {}),
+                    ...(gen.failed ? { failed: true, error: gen.error } : {}),
                 };
                 continue;
             }
