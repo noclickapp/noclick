@@ -18,8 +18,11 @@
  * outside development (the install body is dead-code-eliminated in prod builds).
  */
 
-const TRIP_AT = 40; // dump before React's >50 throw (getRootForUpdatedFiber)
-const HARD_CAP = 200;
+// Dump well before React's >50 throw. Trip on >= (not ==): some loops throw
+// during a ref-attach setState at ~39 commits, BEFORE the 40th commit's
+// onCommitFiberRoot fires, so an exact ==40 check never matched and the probe
+// silently missed the loop. 30 leaves margin to capture the live fiber tree.
+const TRIP_AT = 30;
 const OWNER_MAX = 30;
 const HOOK_MAX = 64;
 const TREE_MAX_NODES = 20000;
@@ -346,7 +349,40 @@ export function installMaxUpdateDepthProbe() {
     const hook = w[HOOK_KEY];
     // Version marker — lets a debugging session confirm the persist-capable probe
     // is actually loaded (bump on capture-behavior changes).
-    w.__react185_probeVersion = 'v2-sessionpersist';
+    w.__react185_probeVersion = 'v3-stack-backstop';
+
+    // Backstop capture, INDEPENDENT of the commit-counter fiber walk below (which
+    // can miss when a loop unwinds before the counter trips). React (dev) and
+    // React Router log the error WITH its component stack via console.error when
+    // an error boundary catches it; grab that stack into sessionStorage so #185
+    // is captured even when the fiber probe doesn't fire.
+    if (!w.__react185_consoleHooked) {
+        w.__react185_consoleHooked = true;
+        const orig = console.error.bind(console);
+        console.error = (...args: any[]) => {
+            try {
+                let componentStack = '';
+                const parts: string[] = [];
+                for (const a of args) {
+                    if (a && typeof a === 'object') {
+                        const cs = (a as any).componentStack || (a as any).errorInfo?.componentStack;
+                        if (typeof cs === 'string') componentStack = cs;
+                        parts.push(a instanceof Error ? (a.message || '') : ((): string => { try { return String(a); } catch { return '[obj]'; } })());
+                    } else {
+                        parts.push(String(a));
+                    }
+                }
+                const joined = parts.join(' ');
+                if (/Maximum update depth exceeded|above error occurred in|caught the following error/i.test(joined)) {
+                    const prev = JSON.parse(sessionStorage.getItem('__react185_consoleStack') || '[]');
+                    prev.push({ at: new Date().toISOString(), msg: joined.slice(0, 500), componentStack: componentStack.slice(0, 3000) });
+                    sessionStorage.setItem('__react185_consoleStack', JSON.stringify(prev.slice(-8)));
+                }
+            } catch { /* noop */ }
+            return orig(...args);
+        };
+    }
+
     if (hook.__maxDepthProbeInstalled) return;
     hook.__maxDepthProbeInstalled = true;
 
@@ -371,8 +407,8 @@ export function installMaxUpdateDepthProbe() {
         lastRoot = root;
         const c = (counts.get(root) ?? 0) + 1;
         counts.set(root, c);
-        if ((c === TRIP_AT || c === HARD_CAP) && !trippedThisBurst.has(root)) {
-            if (c >= HARD_CAP) trippedThisBurst.add(root);
+        if (c >= TRIP_AT && !trippedThisBurst.has(root)) {
+            trippedThisBurst.add(root); // dump once per synchronous burst; resetSoon clears it after
             try { dump(root, c); } catch (e) { console.warn('[#185 PROBE] dump failed', e); }
         }
         resetSoon();
