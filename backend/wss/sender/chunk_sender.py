@@ -5,6 +5,7 @@ Mirrors the frontend's chunking.ts pattern. Messages exceeding CHUNK_SIZE are sp
 into base64-encoded chunks sent via __chunk__ event, followed by a wrapper via the
 original event name. Frontend's chunk-receiver.ts reassembles them.
 """
+import asyncio
 import json
 import base64
 import zlib
@@ -62,11 +63,22 @@ class ChunkedWrapper:
         }
 
 
+def serialize_payload(data: Any) -> bytes:
+    """JSON-serialize a payload to UTF-8 bytes.
+
+    CPU-bound for large payloads (multi-MB get_node_output_history / valtio
+    state). This was the single largest source of event-loop block time in
+    prod, so callers on the asyncio loop must run it off the loop — see
+    ``maybe_chunk``, which wraps both this and the chunking in
+    ``asyncio.to_thread``.
+    """
+    return json.dumps(data, default=str).encode('utf-8')
+
+
 def get_payload_size(data: Any) -> int:
     """Calculate the serialized size of a payload in bytes."""
     try:
-        serialized = json.dumps(data, default=str)
-        return len(serialized.encode('utf-8'))
+        return len(serialize_payload(data))
     except (TypeError, ValueError):
         return 0
 
@@ -79,7 +91,9 @@ def needs_chunking(data: Any, chunk_size: int = CHUNK_SIZE) -> bool:
 def chunk_payload(
     data: Any,
     chunk_size: int = CHUNK_SIZE,
-    compress: bool = COMPRESSION_ENABLED
+    compress: bool = COMPRESSION_ENABLED,
+    *,
+    serialized: Optional[bytes] = None,
 ) -> Tuple[List[ChunkMetadata], ChunkedWrapper]:
     """
     Split a large payload into chunks.
@@ -88,12 +102,18 @@ def chunk_payload(
         data: The payload to chunk (will be JSON serialized)
         chunk_size: Maximum size per chunk in bytes
         compress: Whether to compress the payload before chunking
+        serialized: Pre-computed JSON bytes of ``data``. When provided, the
+            payload is NOT re-serialized — this lets a caller serialize once
+            (e.g. for the size check) and reuse it here, avoiding a second
+            multi-MB ``json.dumps`` on the hot path. See ``maybe_chunk``.
 
     Returns:
         Tuple of (list of chunks, wrapper to send via original event)
     """
-    # Serialize payload to bytes
-    serialized = json.dumps(data, default=str).encode('utf-8')
+    # Serialize payload to bytes (unless the caller already did, to avoid a
+    # redundant multi-MB encode on the send path).
+    if serialized is None:
+        serialized = serialize_payload(data)
 
     # Optionally compress
     if compress:
@@ -141,6 +161,39 @@ def chunk_payload(
     )
 
     return chunks, wrapper
+
+
+def _serialize_and_maybe_chunk(
+    data: Any, chunk_size: int, compress: bool
+) -> Optional[Tuple[List[ChunkMetadata], ChunkedWrapper]]:
+    """Serialize once, decide chunking from that single serialization, and
+    chunk (reusing the bytes) only when over threshold. Returns None for
+    payloads that fit in one message. Sync body — run via ``maybe_chunk``."""
+    serialized = serialize_payload(data)
+    if len(serialized) <= chunk_size:
+        return None
+    return chunk_payload(data, chunk_size=chunk_size, compress=compress, serialized=serialized)
+
+
+async def maybe_chunk(
+    data: Any,
+    *,
+    chunk_size: int = CHUNK_SIZE,
+    compress: bool = COMPRESSION_ENABLED,
+) -> Optional[Tuple[List[ChunkMetadata], ChunkedWrapper]]:
+    """Loop-safe chunking entry point for the sender.
+
+    Runs the CPU-bound ``json.dumps`` (+ ``zlib`` when chunking) in a worker
+    thread via ``asyncio.to_thread`` so a multi-MB payload never blocks the
+    asyncio event loop — this path was the largest single source of
+    ``event_loop.block`` time in prod (json ``iterencode`` on the send path).
+    The payload is serialized exactly once: the size check and the chunk split
+    share the same bytes.
+
+    Returns ``(chunks, wrapper)`` when the payload exceeds ``chunk_size``, or
+    ``None`` when it fits in a single message (caller emits it directly).
+    """
+    return await asyncio.to_thread(_serialize_and_maybe_chunk, data, chunk_size, compress)
 
 
 async def send_chunked_event(
