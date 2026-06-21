@@ -107,6 +107,54 @@ class TestNeedsChunking:
         assert needs_chunking(data, chunk_size=2000) is False
 
 
+class TestMaybeChunk:
+    """Tests for maybe_chunk — the loop-safe serialize+chunk entry point.
+
+    Regression guard for the perf finding: send_event used to serialize a
+    payload twice on the event loop (once in needs_chunking, once in
+    chunk_payload). maybe_chunk runs off-loop and serializes exactly once.
+    """
+
+    @pytest.mark.asyncio
+    async def test_small_payload_returns_none(self):
+        from wss.sender.chunk_sender import maybe_chunk
+        assert await maybe_chunk({"message": "hello"}) is None
+
+    @pytest.mark.asyncio
+    async def test_large_payload_returns_chunks_matching_chunk_payload(self):
+        from wss.sender.chunk_sender import maybe_chunk, chunk_payload
+        data = {"big": list(range(300000))}  # well over CHUNK_SIZE serialized
+        result = await maybe_chunk(data)
+        assert result is not None
+        chunks, wrapper = result
+        assert len(chunks) > 0
+        assert wrapper.chunked is True
+        # Same chunk count as the synchronous path (modulo the random chunk_id).
+        ref_chunks, ref_wrapper = chunk_payload(data)
+        assert len(chunks) == len(ref_chunks)
+        assert wrapper.chunk_total == ref_wrapper.chunk_total
+        assert wrapper.compressed == ref_wrapper.compressed
+
+    @pytest.mark.asyncio
+    async def test_serializes_exactly_once_for_large_payload(self):
+        """The size decision and the chunk split must share one serialization —
+        no second multi-MB json.dumps on the hot path."""
+        from unittest.mock import patch
+        import wss.sender.chunk_sender as cs
+        real = cs.serialize_payload
+        calls = {"n": 0}
+
+        def counting(data):
+            calls["n"] += 1
+            return real(data)
+
+        data = {"big": list(range(300000))}
+        with patch.object(cs, "serialize_payload", side_effect=counting):
+            result = await cs.maybe_chunk(data)
+        assert result is not None  # chunked
+        assert calls["n"] == 1, f"payload serialized {calls['n']}x, expected exactly 1"
+
+
 class TestChunkPayload:
     """Tests for chunk_payload function."""
 
@@ -430,19 +478,20 @@ class TestIntegrationWithSendEvent:
         # Import and call send_event
         from wss.sender import send_event
 
+        # Exercise the real serialize+chunk path (now run off-loop via
+        # maybe_chunk/asyncio.to_thread). The payload genuinely exceeds
+        # CHUNK_SIZE, so real chunks are produced and send_chunked_event fires.
         with patch('wss.sender.chunk_sender.send_chunked_event', new_callable=AsyncMock) as mock_chunked:
-            # Make needs_chunking return True for this payload
-            with patch('wss.sender.chunk_sender.needs_chunking', return_value=True):
-                with patch('wss.sender.chunk_sender.chunk_payload') as mock_chunk_payload:
-                    # Setup mock return value
-                    mock_chunks = [MagicMock()]
-                    mock_wrapper = MagicMock()
-                    mock_chunk_payload.return_value = (mock_chunks, mock_wrapper)
+            await send_event(mock_sio, "test-sid", event)
 
-                    await send_event(mock_sio, "test-sid", event)
-
-                    # Verify chunking was used
-                    mock_chunked.assert_called_once()
+            # Verify chunking was used with real (non-empty) chunks + wrapper.
+            mock_chunked.assert_called_once()
+            call_args = mock_chunked.call_args.args
+            chunks, wrapper = call_args[3], call_args[4]
+            assert len(chunks) > 0
+            assert wrapper.chunked is True
+            # Large payload was NOT emitted directly (chunked instead).
+            mock_sio.emit.assert_not_called()
 
     @pytest.mark.asyncio
     async def test_send_event_no_chunking_for_small_payload(self):
