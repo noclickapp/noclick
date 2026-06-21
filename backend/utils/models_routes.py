@@ -18,7 +18,7 @@ from __future__ import annotations
 from dataclasses import asdict
 from fastapi import APIRouter, Response
 
-from utils.model_catalog import Model, list_all_models
+from utils.model_catalog import Model, list_all_models_async
 
 
 router = APIRouter(prefix="/api/models", tags=["models"])
@@ -63,7 +63,7 @@ async def list_models(response: Response) -> dict:
     LazyOptionRegistry uses, so backend and frontend always see the same
     snapshot.
     """
-    models = [_serialize(m) for m in list_all_models()]
+    models = [_serialize(m) for m in await list_all_models_async()]
     response.headers["Cache-Control"] = (
         "public, s-maxage=600, stale-while-revalidate=120"
     )
