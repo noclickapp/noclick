@@ -112,3 +112,28 @@ async def test_run_wrapper_resolves_node_output():
         "name": "v.mp4",
         "size_bytes": 7,
     }
+
+
+@pytest.mark.asyncio
+async def test_snapshot_safe_redacts_markers_without_bytes():
+    from nodes.core.binary_output import snapshot_safe
+
+    out = {"file": BinaryOutput(b"rawbytes", "video/mp4", "v.mp4"), "ok": True}
+    safe = snapshot_safe(out)
+    assert safe["ok"] is True
+    assert safe["file"] == {
+        "name": "v.mp4",
+        "mime_type": "video/mp4",
+        "size_bytes": 8,
+        "pending": True,
+    }
+    # no raw bytes leak into the snapshot
+    assert "rawbytes" not in str(safe)
+    assert not isinstance(safe["file"], BinaryOutput)
+
+
+def test_snapshot_safe_passthrough_when_no_marker():
+    from nodes.core.binary_output import snapshot_safe
+
+    out = {"a": 1, "b": ["x"]}
+    assert snapshot_safe(out) is out

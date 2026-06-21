@@ -45,6 +45,33 @@ class BinaryOutput:
         }
 
 
+def snapshot_safe(value: Any) -> Any:
+    """Replace every ``BinaryOutput`` with a lightweight descriptor (no bytes) for
+    a progress snapshot. ``emit()`` runs before ``run()`` resolves the canonical
+    output, so without this a node that emits a marker-bearing output would ship
+    raw bytes (or an unserializable dataclass) over the socket. The real R2 store
+    still happens once, in ``run()`` on the returned output."""
+    if not _contains_marker(value):
+        return value
+
+    def walk(v: Any) -> Any:
+        if isinstance(v, BinaryOutput):
+            return {
+                "name": v.filename,
+                "mime_type": v.content_type,
+                "size_bytes": len(v.data),
+                "pending": True,
+                **v.metadata,
+            }
+        if isinstance(v, dict):
+            return {k: walk(item) for k, item in v.items()}
+        if isinstance(v, (list, tuple)):
+            return [walk(item) for item in v]
+        return v
+
+    return walk(value)
+
+
 def _contains_marker(value: Any) -> bool:
     """Fast read-only scan: True if a BinaryOutput hides anywhere in ``value``.
     Recurses only into containers, so a large text/JSON output is cheap."""
