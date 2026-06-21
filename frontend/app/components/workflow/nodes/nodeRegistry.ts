@@ -85,6 +85,7 @@ import { WhatsAppNode } from './WhatsAppNode';
 import { ElevenLabsNode } from './ElevenLabsNode';
 import { YouTubeNode } from './YouTubeNode';
 import { FilterNode } from './FilterNode';
+import { SplitOutNode } from './SplitOutNode';
 import { ConditionalNode } from './ConditionalNode';
 import { ApprovalNode } from './ApprovalNode';
 import { LogNode } from './LogNode';
@@ -139,6 +140,7 @@ function _buildAvailable(): NodeDefinition[] {
         TypeformNode, WhatsAppNode, ElevenLabsNode, YouTubeNode, HubSpotNode,
         MailchimpNode, ResendNode, SendEmailNode, AIAgentNode, ToolNode, MCPServerNode,
         NoClickNode, AlarmNode, FilesystemNode, IterationNode, DelayNode, FilterNode,
+        SplitOutNode,
         ConditionalNode, ApprovalNode, LogNode, SwitchNode, MergeNode, SubmitExternalFormNode,
         ServerlessFunctionNode, StateManagerNode, SetupNode, OnErrorNode,
         SetVariableNode, StickyNoteNode,
