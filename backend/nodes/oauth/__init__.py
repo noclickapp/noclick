@@ -72,6 +72,7 @@ from nodes.oauth.gitlab_oauth import (
     is_token_expired as gitlab_is_token_expired,
     get_gitlab_auth_url,
     GITLAB_DEFAULT_SCOPES,
+)
 from nodes.oauth.box_oauth import (
     BoxTokens,
     BoxUserInfo,
