@@ -10,6 +10,7 @@ export { useDiscordOAuth } from './useDiscordOAuth';
 export { useDropboxOAuth } from './useDropboxOAuth';
 export { useFacebookOAuth } from './useFacebookOAuth';
 export { useGithubOAuth } from './useGithubOAuth';
+export { useGitLabOAuth } from './useGitLabOAuth';
 export { useHubSpotOAuth } from './useHubSpotOAuth';
 export { useMailchimpOAuth } from './useMailchimpOAuth';
 export { useLinearOAuth } from './useLinearOAuth';
