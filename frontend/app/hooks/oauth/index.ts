@@ -15,6 +15,7 @@ export { useHubSpotOAuth } from './useHubSpotOAuth';
 export { useMailchimpOAuth } from './useMailchimpOAuth';
 export { useLinearOAuth } from './useLinearOAuth';
 export { useCalComOAuth } from './useCalComOAuth';
+export { useBoxOAuth } from './useBoxOAuth';
 export { useTypeformOAuth } from './useTypeformOAuth';
 export { useLinkedInOAuth } from './useLinkedInOAuth';
 export { useMicrosoftOAuth } from './useMicrosoftOAuth';
