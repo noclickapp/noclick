@@ -32,6 +32,7 @@ ROTATING_OAUTH_MODULES = [
     "nodes/oauth/tiktok_oauth.py",
     "nodes/oauth/canva_oauth.py",
     "nodes/oauth/gitlab_oauth.py",
+    "nodes/oauth/box_oauth.py",
 ]
 
 _SILENT_FALLBACK = re.compile(
