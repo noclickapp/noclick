@@ -18,6 +18,7 @@ export { useCalComOAuth } from './useCalComOAuth';
 export { useBoxOAuth } from './useBoxOAuth';
 export { useTypeformOAuth } from './useTypeformOAuth';
 export { useLinkedInOAuth } from './useLinkedInOAuth';
+export { useClickUpOAuth } from './useClickUpOAuth';
 export { useMicrosoftOAuth } from './useMicrosoftOAuth';
 export { useNotionOAuth } from './useNotionOAuth';
 export { useRedditOAuth } from './useRedditOAuth';
