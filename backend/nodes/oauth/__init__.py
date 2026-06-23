@@ -84,6 +84,17 @@ from nodes.oauth.box_oauth import (
     BOX_DEFAULT_SCOPES,
 )
 
+from nodes.oauth.clickup_oauth import (
+    ClickUpTokens,
+    ClickUpUserInfo,
+    get_clickup_client_config,
+    exchange_code_for_tokens as clickup_exchange_code_for_tokens,
+    refresh_access_token as clickup_refresh_access_token,
+    is_token_expired as clickup_is_token_expired,
+    get_clickup_auth_url,
+    CLICKUP_DEFAULT_SCOPES,
+)
+
 from nodes.oauth.reddit_oauth import (
     RedditTokens,
     RedditUserInfo,
@@ -245,6 +256,15 @@ __all__ = [
     "box_is_token_expired",
     "get_box_auth_url",
     "BOX_DEFAULT_SCOPES",
+    # ClickUp
+    "ClickUpTokens",
+    "ClickUpUserInfo",
+    "get_clickup_client_config",
+    "clickup_exchange_code_for_tokens",
+    "clickup_refresh_access_token",
+    "clickup_is_token_expired",
+    "get_clickup_auth_url",
+    "CLICKUP_DEFAULT_SCOPES",
     # Reddit
     "RedditTokens",
     "RedditUserInfo",
