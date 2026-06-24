@@ -93,6 +93,7 @@ from nodes.oauth.clickup_oauth import (
     is_token_expired as clickup_is_token_expired,
     get_clickup_auth_url,
     CLICKUP_DEFAULT_SCOPES,
+)
 from nodes.oauth.asana_oauth import (
     AsanaTokens,
     AsanaUserInfo,
