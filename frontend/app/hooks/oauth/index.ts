@@ -17,6 +17,7 @@ export { useLinearOAuth } from './useLinearOAuth';
 export { useCalComOAuth } from './useCalComOAuth';
 export { useBoxOAuth } from './useBoxOAuth';
 export { useAsanaOAuth } from './useAsanaOAuth';
+export { useMondayOAuth } from './useMondayOAuth';
 export { useTypeformOAuth } from './useTypeformOAuth';
 export { useLinkedInOAuth } from './useLinkedInOAuth';
 export { useClickUpOAuth } from './useClickUpOAuth';
