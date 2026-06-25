@@ -5,15 +5,20 @@
 // avoid an SSR circular dependency with nodeRegistry. Keeping this file
 // dependency-free means it can be safely imported from any module graph.
 
-// box-decoration-clone: when a chip wraps across lines, each line fragment gets its
-// own rounded border + background instead of one box sliced open at the line break.
-const CHIP_BASE = 'select-none rounded-sm border transition-colors box-decoration-clone';
-const CHIP_VALID = 'bg-white/[0.08] border-white/[0.12] hover:bg-white/[0.14] hover:border-white/[0.2]';
-const CHIP_INVALID = 'bg-red-500/20 border-red-500/40 hover:bg-red-500/30 hover:border-red-500/50';
+// The outline is a box-shadow `ring`, NOT a `border`: a border adds inline layout
+// width (and with box-decoration-clone, per line fragment), which shifts where the
+// OVERLAY chips wrap relative to the borderless textarea text beneath them — the
+// highlight then lands on a different line than the text. A ring is painted with zero
+// layout impact, so chip and text wrap identically. box-decoration-clone makes a
+// wrapped chip get a full rounded box (bg + ring) on each line instead of one sliced
+// open at the break.
+const CHIP_BASE = 'select-none rounded-sm transition-colors box-decoration-clone';
+const CHIP_VALID = 'bg-white/[0.08] ring-1 ring-inset ring-white/[0.12] hover:bg-white/[0.14] hover:ring-white/[0.2]';
+const CHIP_INVALID = 'bg-red-500/20 ring-1 ring-inset ring-red-500/40 hover:bg-red-500/30 hover:ring-red-500/50';
 // JS expression ({{ $('node').x.split(',') }}) — a slightly brighter neutral than a
 // plain reference so it reads as "computed" without an off-theme accent color.
 // Evaluated server-side, so never flagged invalid.
-const CHIP_EXPRESSION = 'bg-white/[0.14] border-white/25 hover:bg-white/[0.2] hover:border-white/35';
+const CHIP_EXPRESSION = 'bg-white/[0.14] ring-1 ring-inset ring-white/25 hover:bg-white/[0.2] hover:ring-white/35';
 
 export const REFERENCE_CHIP_CLASSES = {
     base: CHIP_BASE,

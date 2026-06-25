@@ -28,10 +28,20 @@ const DEBOUNCE_MS = 350;
 
 // Build the sample-output map (node id -> last/mocked output) the backend evaluates
 // against, plus the `$json` primary input (the single direct upstream output).
-function buildSampleOutputs(inputNodes: Node[], workflowVariables?: Record<string, unknown>) {
+function buildSampleOutputs(
+    inputNodes: Node[],
+    workflowVariables?: Record<string, unknown>,
+    expectedSchemas?: ReadonlyMap<string, unknown>,
+) {
     const sampleOutputs: Record<string, unknown> = {};
     for (const n of inputNodes) {
-        const out = n.data?.mockedOutput !== undefined ? n.data.mockedOutput : n.data?.output;
+        // Real output (mocked or last run) wins; otherwise fall back to the clipped
+        // schema sample so a reference to a not-yet-run node still previews instead of
+        // erroring "no data for node".
+        const out =
+            n.data?.mockedOutput !== undefined ? n.data.mockedOutput
+            : n.data?.output !== undefined ? n.data.output
+            : expectedSchemas?.get(n.id);
         if (out !== undefined) sampleOutputs[n.id] = out;
     }
     if (workflowVariables && Object.keys(workflowVariables).length > 0) {
@@ -60,6 +70,7 @@ export function useExpressionPreview(expression: string): ExpressionPreviewState
             const { sampleOutputs, workflowNodes, primaryInput } = buildSampleOutputs(
                 ctx?.inputNodes ?? [],
                 ctx?.workflowVariables,
+                ctx?.expectedSchemas,
             );
             try {
                 const resp = (await sendEventAsync(
@@ -85,7 +96,7 @@ export function useExpressionPreview(expression: string): ExpressionPreviewState
         }, DEBOUNCE_MS);
 
         return () => clearTimeout(timer);
-    }, [expression, ctx?.inputNodes, ctx?.workflowVariables]);
+    }, [expression, ctx?.inputNodes, ctx?.workflowVariables, ctx?.expectedSchemas]);
 
     return state;
 }
