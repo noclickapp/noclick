@@ -8,11 +8,16 @@
 const CHIP_BASE = 'select-none rounded-sm border transition-colors';
 const CHIP_VALID = 'bg-white/[0.08] border-white/[0.12] hover:bg-white/[0.14] hover:border-white/[0.2]';
 const CHIP_INVALID = 'bg-red-500/20 border-red-500/40 hover:bg-red-500/30 hover:border-red-500/50';
+// JS expression ({{ $('node').x.split(',') }}) — a slightly brighter neutral than a
+// plain reference so it reads as "computed" without an off-theme accent color.
+// Evaluated server-side, so never flagged invalid.
+const CHIP_EXPRESSION = 'bg-white/[0.14] border-white/25 hover:bg-white/[0.2] hover:border-white/35';
 
 export const REFERENCE_CHIP_CLASSES = {
     base: CHIP_BASE,
     valid: CHIP_VALID,
     invalid: CHIP_INVALID,
+    expression: CHIP_EXPRESSION,
 } as const;
 
 // Build a styled, atomic chip element for inline use inside a contenteditable.
