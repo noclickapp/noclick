@@ -5,7 +5,9 @@
 // avoid an SSR circular dependency with nodeRegistry. Keeping this file
 // dependency-free means it can be safely imported from any module graph.
 
-const CHIP_BASE = 'select-none rounded-sm border transition-colors';
+// box-decoration-clone: when a chip wraps across lines, each line fragment gets its
+// own rounded border + background instead of one box sliced open at the line break.
+const CHIP_BASE = 'select-none rounded-sm border transition-colors box-decoration-clone';
 const CHIP_VALID = 'bg-white/[0.08] border-white/[0.12] hover:bg-white/[0.14] hover:border-white/[0.2]';
 const CHIP_INVALID = 'bg-red-500/20 border-red-500/40 hover:bg-red-500/30 hover:border-red-500/50';
 // JS expression ({{ $('node').x.split(',') }}) — a slightly brighter neutral than a
