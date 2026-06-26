@@ -1,28 +1,42 @@
-"""Regression: OpenRouter ``:free`` models must never be billed.
+"""Regression: OpenRouter ``:free`` models must never be billed, and the
+provider-reported cost on paid models is read in-band from the model
+instance (not from a callback/sink that races against the SDK).
 
-Root cause (prod, 2026-06-18): the agent billing hook captured the provider's
-streamed cost into a container-global ``{response_id: cost}`` dict and popped
-it back in ``on_llm_end``. The SDK reports ``__fake_id__`` as the response id
-for every streamed call, so the keyed lookup always missed and fell back to a
-LIFO "pop the most-recent entry" guess. A ``:free`` model reports $0 (storing
-nothing), then inherited a leftover *paid* cost from an unrelated call —
-billing a free run for another call's spend.
-
-The fix replaces the global dict + LIFO with a per-call cost sink bound to the
-call's async context (no cross-attribution), records a provider-reported $0 as
-$0 (instead of discarding it as "no data"), and adds an explicit ``:free``
-guard so a free model bills $0 no matter what any cost source reports.
+History:
+  - 2026-06-18: agent billing captured provider cost into a container-global
+    ``{response_id: cost}`` dict popped by a ``__fake_id__`` LIFO heuristic.
+    The SDK uses ``__fake_id__`` as the response id for every streamed call,
+    so the keyed lookup always missed and fell back to "pop the most-recent
+    entry" — billing a call for a *different* call's cost. Most visible on
+    ``:free`` models, which report $0 (storing nothing) and inherited a
+    leftover paid cost from an unrelated call.
+  - 2026-06-18: replaced with a per-call cost sink bound to the call's async
+    context (no cross-attribution), plus an explicit ``:free`` guard.
+  - Prior billing regression — ``openrouter/~openai/gpt-mini-latest``
+    and ``deepseek-v4-pro`` calls booking as $0 with cost_source
+    ``lookup_failed``. Root cause: the sink-via-callback channel raced
+    against the SDK's response transformation; under load with large-context
+    prompts the LiteLLM async success callback's queued task didn't run
+    within ``_capture_provider_cost``'s 5s wait, frequently.
+  - This file: covers the in-band capture path that replaced it.
+    ``CostCapturingLitellmModel`` reads ``usage.cost`` off the LiteLLM
+    response BEFORE the SDK transformation strips it, exposes it via
+    ``last_call_cost``, and ``BillingHooks._record_usage`` reads that
+    synchronously — no callback, no contextvar, no timeout.
 """
 
 from decimal import Decimal
 from types import SimpleNamespace
 from unittest.mock import MagicMock, patch
 
-import asyncio
 import pytest
 
 from coder.openai_agent import billing
 from coder.openai_agent.billing import BillingHooks
+from coder.openai_agent.litellm_model import (
+    CostCapturingLitellmModel,
+    extract_cost_from_response,
+)
 
 
 @pytest.fixture
@@ -44,14 +58,13 @@ def _response(input_tokens=25, output_tokens=126):
     )
 
 
-def _bind_sink(cost, reported):
-    """Bind a ready cost sink to the current context, as if the litellm
-    success callback already fired for this call. Returns the reset token."""
-    sink = billing._CostSink()
-    sink.cost = cost
-    sink.reported = reported
-    sink.ready.set()
-    return billing._active_cost_sink.set(sink)
+def _model_with_cost(name: str, cost: float | None, reported: bool) -> CostCapturingLitellmModel:
+    """Build a CostCapturingLitellmModel with the per-call slot pre-populated,
+    as if ``_fetch_response`` had just completed."""
+    m = CostCapturingLitellmModel(model=name)
+    m._call_cost = cost
+    m._call_cost_reported = reported
+    return m
 
 
 async def _track_event(hooks, response):
@@ -69,15 +82,16 @@ async def _track_event(hooks, response):
 @pytest.mark.anyio
 async def test_free_model_bills_zero_even_with_stale_provider_cost():
     """A ``:free`` model must bill $0 even when a non-zero cost is sitting in
-    the active sink — exactly the cross-attribution the old LIFO produced."""
-    hooks = BillingHooks(model=_FREE_MODEL, user_id=_TEST_USER_ID, sio=None, sid=None)
-    # A paid cost is bound (as the old global dict would have leaked); the
-    # ``:free`` guard must ignore it entirely.
-    token = _bind_sink(cost=0.02, reported=True)
-    try:
-        event = await _track_event(hooks, _response())
-    finally:
-        billing._active_cost_sink.reset(token)
+    the model's slot — exactly the cross-attribution the old LIFO produced."""
+    model_instance = _model_with_cost(_FREE_MODEL, cost=0.02, reported=True)
+    hooks = BillingHooks(
+        model=_FREE_MODEL,
+        model_instance=model_instance,
+        user_id=_TEST_USER_ID,
+        sio=None,
+        sid=None,
+    )
+    event = await _track_event(hooks, _response())
 
     assert event.total_cost == Decimal("0")
     assert event.metadata["cost_source"] == "free_model"
@@ -94,12 +108,13 @@ async def test_free_model_bills_zero_even_with_stale_provider_cost():
 async def test_provider_reported_zero_recorded_as_zero():
     """A non-free model whose provider reports $0 bills $0 via the provider
     path — a reported zero is data, not "missing cost"."""
-    hooks = BillingHooks(model="openrouter/openai/gpt-4o-mini", user_id=_TEST_USER_ID, sio=None, sid=None)
-    token = _bind_sink(cost=0.0, reported=True)
-    try:
-        event = await _track_event(hooks, _response())
-    finally:
-        billing._active_cost_sink.reset(token)
+    model = "openrouter/openai/gpt-4o-mini"
+    model_instance = _model_with_cost(model, cost=0.0, reported=True)
+    hooks = BillingHooks(
+        model=model, model_instance=model_instance,
+        user_id=_TEST_USER_ID, sio=None, sid=None,
+    )
+    event = await _track_event(hooks, _response())
 
     assert event.total_cost == Decimal("0")
     assert event.metadata["cost_source"] == "provider"
@@ -108,13 +123,14 @@ async def test_provider_reported_zero_recorded_as_zero():
 @pytest.mark.anyio
 async def test_provider_cost_applied_with_markup():
     """A non-free model with a positive provider cost is billed that cost ×
-    the platform markup, sourced from the per-call sink."""
-    hooks = BillingHooks(model="openrouter/openai/gpt-4o-mini", user_id=_TEST_USER_ID, sio=None, sid=None)
-    token = _bind_sink(cost=0.01, reported=True)
-    try:
-        event = await _track_event(hooks, _response())
-    finally:
-        billing._active_cost_sink.reset(token)
+    the platform markup, sourced from the model's last_call_cost slot."""
+    model = "openrouter/openai/gpt-4o-mini"
+    model_instance = _model_with_cost(model, cost=0.01, reported=True)
+    hooks = BillingHooks(
+        model=model, model_instance=model_instance,
+        user_id=_TEST_USER_ID, sio=None, sid=None,
+    )
+    event = await _track_event(hooks, _response())
 
     from billing.markup import PLATFORM_MIN_MARKUP
     assert event.total_cost == Decimal("0.01") * PLATFORM_MIN_MARKUP
@@ -122,30 +138,35 @@ async def test_provider_cost_applied_with_markup():
 
 
 @pytest.mark.anyio
-async def test_concurrent_calls_capture_their_own_cost():
-    """Two concurrent calls each capture their OWN cost — the contextvar
-    isolation that replaces the cross-attributing global LIFO."""
+async def test_provider_unreported_falls_to_pricing_table():
+    """When the provider didn't surface cost (``reported=False``), fall to
+    ``litellm.completion_cost``. This is the safety net for non-OpenRouter
+    providers — it should NOT be hit in normal OpenRouter operation."""
+    model = "openrouter/openai/gpt-4o-mini"
+    model_instance = _model_with_cost(model, cost=None, reported=False)
+    hooks = BillingHooks(
+        model=model, model_instance=model_instance,
+        user_id=_TEST_USER_ID, sio=None, sid=None,
+    )
+    event = await _track_event(hooks, _response())
 
-    async def call(cost_value):
-        billing._active_cost_sink.set(billing._CostSink())
-        await asyncio.sleep(0)  # interleave with the other call
-        # Simulate the litellm success callback firing for THIS call.
-        billing._record_provider_cost({"response_cost": cost_value}, None)
-        await asyncio.sleep(0)
-        sink = billing._active_cost_sink.get()
-        return (sink.cost, sink.reported)
-
-    results = await asyncio.gather(call(0.01), call(0.99), call(0.0))
-    assert results == [(0.01, True), (0.99, True), (0.0, True)]
+    # gpt-4o-mini IS in litellm's pricing table; cost_source should be the
+    # table path, not the previous lookup_failed leak.
+    assert event.metadata["cost_source"] in ("litellm_pricing_table", "zero")
 
 
-def test_record_provider_cost_noop_without_sink():
-    """A litellm call outside an SDK-agent run (no sink bound) must not record
-    anything — unrelated litellm traffic can't pollute billing."""
-    billing._active_cost_sink.set(None)
-    # Must not raise.
-    billing._record_provider_cost({"response_cost": 0.5}, None)
-    assert billing._active_cost_sink.get() is None
+def test_billing_hooks_rejects_missing_model_instance():
+    """A missing model_instance must fail loud — no fallback path. The
+    previous design's "missing cost = lookup_failed = $0" is what this
+    refactor exists to remove."""
+    with pytest.raises(ValueError, match="CostCapturingLitellmModel"):
+        BillingHooks(
+            model="openrouter/openai/gpt-4o-mini",
+            model_instance=None,  # type: ignore[arg-type]
+            user_id=_TEST_USER_ID,
+            sio=None,
+            sid=None,
+        )
 
 
 # --------------------------------------------------------------------------- #
@@ -162,13 +183,22 @@ def test_is_free_model():
 
 
 def test_extract_distinguishes_reported_zero_from_missing():
-    # Reported via kwargs — including an explicit 0.
-    assert billing._extract_cost_from_litellm_response(None, {"response_cost": 0}) == (0.0, True)
-    assert billing._extract_cost_from_litellm_response(None, {"response_cost": 0.5}) == (0.5, True)
-    # No cost field anywhere → not reported.
-    assert billing._extract_cost_from_litellm_response(None, {}) == (None, False)
+    # No response object → not reported.
+    assert extract_cost_from_response(None) == (None, False)
     # OpenRouter streamed usage.cost — zero and positive both count as reported.
     zero = SimpleNamespace(usage=SimpleNamespace(cost=0.0), _hidden_params={})
-    assert billing._extract_cost_from_litellm_response(zero, {}) == (0.0, True)
+    assert extract_cost_from_response(zero) == (0.0, True)
     paid = SimpleNamespace(usage=SimpleNamespace(cost=0.02), _hidden_params={})
-    assert billing._extract_cost_from_litellm_response(paid, {}) == (0.02, True)
+    assert extract_cost_from_response(paid) == (0.02, True)
+    # Falls through to _hidden_params.response_cost when usage.cost absent.
+    hidden = SimpleNamespace(usage=None, _hidden_params={"response_cost": 0.05})
+    assert extract_cost_from_response(hidden) == (0.05, True)
+    # OpenRouter's non-streaming header path.
+    header = SimpleNamespace(
+        usage=None,
+        _hidden_params={"additional_headers": {"llm_provider-x-litellm-response-cost": "0.07"}},
+    )
+    assert extract_cost_from_response(header) == (0.07, True)
+    # Truly missing cost across all paths.
+    nothing = SimpleNamespace(usage=SimpleNamespace(input_tokens=10, output_tokens=5), _hidden_params={})
+    assert extract_cost_from_response(nothing) == (None, False)
