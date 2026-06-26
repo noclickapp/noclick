@@ -36,6 +36,11 @@ _ACCESSOR_RE = re.compile(r"\$\(|\$(?:ifEmpty|vars|json|now|if)\b")
 _LEGACY_PATH_RE = re.compile(r"^[A-Za-z0-9_-]+(?:\.[A-Za-z0-9_]+|\[\d+\]|\[\])*$")
 # Literal `$('id')` / `$("id")` accessor arguments inside an expression.
 _REF_ARG_RE = re.compile(r"""\$\(\s*['"]([^'"]+)['"]\s*\)""")
+# A `nodeId.<rest>` that starts with a node id then a `.field` / `[idx]` (the rest may
+# be arbitrary JS). Used to upgrade the bare `{{node.field.method()}}` mistake — JS
+# appended to the `{{node.field}}` form instead of using `$('node')` — to the accessor
+# form so it evaluates instead of passing through as a literal.
+_LEADING_NODE_RE = re.compile(r"^([A-Za-z0-9_-]+)((?:\.[A-Za-z_$][\w$]*|\[\d+\]).*)\Z", re.DOTALL)
 
 # Fixed JS preamble exposing the `$`-accessors. `inputs` is declared by the executor
 # in the enclosing scope; the helpers read node data from it (never from source).
@@ -75,6 +80,27 @@ def is_legacy_path_reference(inner: str, node_outputs: Dict[str, Any]) -> bool:
 
 def _is_js_expression(inner: str) -> bool:
     return bool(_ACCESSOR_RE.search(inner))
+
+
+def _as_js_expression(inner: str, node_outputs: Dict[str, Any]) -> Optional[str]:
+    """The JS-ready form of a ``{{ }}`` block, or None if it isn't JS.
+
+    - A ``$``-accessor expression is returned as-is.
+    - A plain legacy data path (``node.field``) returns None — the sync resolver owns it.
+    - A bare ``nodeId.<js>`` whose leading id is a known node (the common
+      ``{{node.field.toUpperCase()}}`` mistake) is upgraded to ``$('nodeId').<js>`` so it
+      evaluates instead of passing through as a literal.
+    - Anything else (literal text) returns None.
+    """
+    s = inner.strip()
+    if _is_js_expression(s):
+        return s
+    if is_legacy_path_reference(s, node_outputs):
+        return None
+    m = _LEADING_NODE_RE.match(s)
+    if m and m.group(1) in node_outputs:
+        return f"$('{m.group(1)}'){m.group(2)}"
+    return None
 
 
 def is_js_expression(inner: str) -> bool:
@@ -219,11 +245,11 @@ async def _evaluate_string(
     if "{{" not in value:
         return value
 
-    js_blocks = [
-        (s, e, inner)
-        for (s, e, inner) in _scan_blocks(value)
-        if not is_legacy_path_reference(inner, node_outputs) and _is_js_expression(inner)
-    ]
+    js_blocks: List[Tuple[int, int, str]] = []
+    for (s, e, inner) in _scan_blocks(value):
+        js = _as_js_expression(inner, node_outputs)
+        if js is not None:
+            js_blocks.append((s, e, js))  # may be the upgraded `$()` form
     if not js_blocks:
         return value  # only legacy/literal blocks — leave for the sync resolver
 
@@ -316,7 +342,10 @@ async def evaluate_single_expression(
     ``ExpressionEvaluationError`` on failure."""
     if not expression.strip():
         return None
-    return await _eval_block(expression, node_outputs, workflow_nodes, primary_input)
+    # Upgrade a bare `node.field.method()` to `$('node')...`; otherwise eval as-is (the
+    # preview always treats its input as JS, accessor or not).
+    expr = _as_js_expression(expression, node_outputs) or expression
+    return await _eval_block(expr, node_outputs, workflow_nodes, primary_input)
 
 
 async def evaluate_expressions(
