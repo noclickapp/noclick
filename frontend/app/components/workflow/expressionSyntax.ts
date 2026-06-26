@@ -106,6 +106,29 @@ export function blockAtCursor(value: string, cursor: number): ScannedBlock | nul
     return null;
 }
 
+// The node reference at the cursor's `{{ }}` block, as { nodeId, path }, or null.
+// Resolves a pure accessor (`$('node').field` / `$vars.path`) and a legacy dotted
+// path precisely; for a transform expression it points at the first node the
+// expression reads. Used to reveal/highlight the matching field in the Input panel
+// when the caret lands inside a reference.
+export function referenceAtCursor(value: string, cursor: number): { nodeId: string; path: string } | null {
+    for (const b of scanBlocks(value)) {
+        if (cursor < b.start || cursor > b.end) continue;
+        const inner = b.inner.trim();
+        const pure = parsePureAccessor(inner);
+        if (pure) return pure;
+        if (isJsExpression(inner)) {
+            const m = inner.match(/\$\(\s*['"]([^'"]+)['"]\s*\)/);
+            return m ? { nodeId: m[1], path: '' } : null;
+        }
+        const dot = inner.indexOf('.');
+        if (dot > 0) return { nodeId: inner.slice(0, dot), path: inner.slice(dot + 1) };
+        if (/^[\w-]+$/.test(inner)) return { nodeId: inner, path: '' };
+        return null;
+    }
+    return null;
+}
+
 // If the whole field value is exactly one JS-expression block (`{{ ... }}`), return
 // its inner expression; otherwise null. Used to show the live-preview editor only for
 // fields that ARE an expression (mixed text/legacy refs are edited inline).
