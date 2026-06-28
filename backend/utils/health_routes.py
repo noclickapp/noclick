@@ -71,7 +71,7 @@ async def database_health(response: Response) -> dict:
         start_time = time.time()
         db = get_db_manager()
 
-        result = db.fetchval("SELECT 1")
+        result = await db.fetch_value_async("SELECT 1")
         query_time_ms = (time.time() - start_time) * 1000
 
         pool_status = db.get_pool_status()
