@@ -9,6 +9,7 @@ export { useCanvaOAuth } from './useCanvaOAuth';
 export { useDiscordOAuth } from './useDiscordOAuth';
 export { useDropboxOAuth } from './useDropboxOAuth';
 export { useFacebookOAuth } from './useFacebookOAuth';
+export { useFathomOAuth } from './useFathomOAuth';
 export { useGithubOAuth } from './useGithubOAuth';
 export { useGitLabOAuth } from './useGitLabOAuth';
 export { useHubSpotOAuth } from './useHubSpotOAuth';
