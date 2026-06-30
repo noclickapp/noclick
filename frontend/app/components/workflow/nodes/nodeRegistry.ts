@@ -50,7 +50,9 @@ import { ResendNode } from './ResendNode';
 import { CalComNode } from './CalComNode';
 import { GoogleMapsNode } from './GoogleMapsNode';
 import { PerplexityNode } from './PerplexityNode';
+
 import { PineconeNode } from './PineconeNode';
+import { QdrantNode } from './QdrantNode';
 import { MailgunNode } from './MailgunNode';
 import { GitLabNode } from './GitLabNode';
 import { BoxNode } from './BoxNode';
@@ -175,7 +177,8 @@ function _buildAvailable(): NodeDefinition[] {
         RedisNode, SalesforceNode, AffinityNode, SemrushNode, ShopifyNode, SlackNode,
         SupabaseNode, TikTokNode, TwilioNode, TwitterNode, CloudflareNode,
         TypeformNode, WhatsAppNode, ElevenLabsNode, YouTubeNode, HubSpotNode,
-        MailchimpNode, PipedriveNode, ResendNode, CalComNode, GoogleMapsNode, PerplexityNode, PineconeNode, MailgunNode,
+
+        MailchimpNode, PipedriveNode, ResendNode, CalComNode, GoogleMapsNode, PerplexityNode, PineconeNode, QdrantNode, MailgunNode,
         GitLabNode, BoxNode, ClickUpNode, DevinNode, AsanaNode, FirestoreNode,
         GoogleCloudStorageNode, MondayNode, ParallelNode, DatadogNode, LoopsNode,
         ExaNode, ReductoNode, FalNode, BrandfetchNode, FindymailNode, BeehiivNode,
