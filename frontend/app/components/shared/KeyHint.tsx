@@ -3,6 +3,10 @@
 // so keybinding hints stay visually consistent. Special tokens: 'mod' (⌘ on
 // macOS, Ctrl elsewhere), 'shift', 'enter', 'esc', 'up', 'down', 'left',
 // 'right', 'backspace'; any other string renders verbatim (e.g. 'K').
+// 'backspace' renders as a Lucide SVG instead of the U+232B glyph — the
+// unicode char looks cramped/blurry inside a 17×17 keycap on most fonts.
+import type { ReactNode } from 'react';
+import { Delete } from 'lucide-react';
 import { useIsMac } from '~/hooks/useIsMac';
 import { cn } from '~/lib/utils';
 
@@ -14,7 +18,9 @@ const GLYPHS: Record<string, string> = {
     down: '↓',
     left: '←',
     right: '→',
-    backspace: '⌫',
+};
+const ICON_KEYS: Record<string, ReactNode> = {
+    backspace: <Delete className="h-2.5 w-2.5" strokeWidth={2.25} />,
 };
 
 interface KeyHintProps {
@@ -27,8 +33,11 @@ interface KeyHintProps {
 
 export function KeyHint({ keys, className, kbdClassName }: KeyHintProps) {
     const isMac = useIsMac();
-    const label = (k: string) =>
-        k === 'mod' ? (isMac ? '⌘' : 'Ctrl') : (GLYPHS[k] ?? k);
+    const render = (k: string): ReactNode => {
+        if (k === 'mod') return isMac ? '⌘' : 'Ctrl';
+        if (k in ICON_KEYS) return ICON_KEYS[k];
+        return GLYPHS[k] ?? k;
+    };
     return (
         <span
             className={cn(
@@ -44,7 +53,7 @@ export function KeyHint({ keys, className, kbdClassName }: KeyHintProps) {
                         kbdClassName
                     )}
                 >
-                    {label(k)}
+                    {render(k)}
                 </kbd>
             ))}
         </span>
