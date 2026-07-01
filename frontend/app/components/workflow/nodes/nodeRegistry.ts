@@ -45,6 +45,7 @@ import { HackerNewsNode } from './HackerNewsNode';
 import { InstagramNode } from './InstagramNode';
 import { InstantlyNode } from './InstantlyNode';
 import { JiraNode } from './JiraNode';
+import { PipedriveNode } from './PipedriveNode';
 import { ResendNode } from './ResendNode';
 import { CalComNode } from './CalComNode';
 import { GoogleMapsNode } from './GoogleMapsNode';
@@ -170,7 +171,7 @@ function _buildAvailable(): NodeDefinition[] {
         RedisNode, SalesforceNode, AffinityNode, SemrushNode, ShopifyNode, SlackNode,
         SupabaseNode, TikTokNode, TwilioNode, TwitterNode, CloudflareNode,
         TypeformNode, WhatsAppNode, ElevenLabsNode, YouTubeNode, HubSpotNode,
-        MailchimpNode, ResendNode, CalComNode, GoogleMapsNode, PerplexityNode, MailgunNode,
+        MailchimpNode, PipedriveNode, ResendNode, CalComNode, GoogleMapsNode, PerplexityNode, MailgunNode,
         GitLabNode, BoxNode, ClickUpNode, DevinNode, AsanaNode, FirestoreNode,
         GoogleCloudStorageNode, MondayNode, ParallelNode, DatadogNode, LoopsNode,
         ExaNode, ReductoNode, FalNode, BrandfetchNode, FindymailNode, BeehiivNode,

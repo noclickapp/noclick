@@ -124,6 +124,16 @@ from nodes.oauth.intercom_oauth import (
     get_intercom_auth_url,
     INTERCOM_DEFAULT_SCOPES,
 )
+from nodes.oauth.pipedrive_oauth import (
+    PipedriveTokens,
+    PipedriveUserInfo,
+    get_pipedrive_client_config,
+    exchange_code_for_tokens as pipedrive_exchange_code_for_tokens,
+    refresh_access_token as pipedrive_refresh_access_token,
+    is_token_expired as pipedrive_is_token_expired,
+    get_pipedrive_auth_url,
+    PIPEDRIVE_DEFAULT_SCOPES,
+)
 
 from nodes.oauth.reddit_oauth import (
     RedditTokens,
@@ -322,6 +332,15 @@ __all__ = [
     "intercom_is_token_expired",
     "get_intercom_auth_url",
     "INTERCOM_DEFAULT_SCOPES",
+    # Pipedrive
+    "PipedriveTokens",
+    "PipedriveUserInfo",
+    "get_pipedrive_client_config",
+    "pipedrive_exchange_code_for_tokens",
+    "pipedrive_refresh_access_token",
+    "pipedrive_is_token_expired",
+    "get_pipedrive_auth_url",
+    "PIPEDRIVE_DEFAULT_SCOPES",
     # Reddit
     "RedditTokens",
     "RedditUserInfo",
