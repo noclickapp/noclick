@@ -104,6 +104,13 @@ class StrategyRegistry:
         except ImportError as e:
             logger.warning(f"[StrategyRegistry] Failed to import delay strategy: {e}")
 
+        try:
+            from nodes.agent.agent_strategy import AgentExecutionStrategy
+            cls.register(AgentExecutionStrategy())
+            logger.info("[StrategyRegistry] Initialized with agent strategy")
+        except ImportError as e:
+            logger.warning(f"[StrategyRegistry] Failed to import agent strategy: {e}")
+
     @classmethod
     def clear(cls) -> None:
         """Clear all registered strategies (useful for testing)."""
