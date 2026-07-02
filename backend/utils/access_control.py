@@ -8,6 +8,8 @@ import logging
 from typing import Optional, Literal, NamedTuple
 from enum import Enum
 
+from repositories.workflow import get_workflow_owner_sql
+
 logger = logging.getLogger(__name__)
 
 
@@ -48,10 +50,7 @@ async def check_resource_access(
     """
     # First check if user is the owner
     if resource_type == "workflow":
-        owner_row = await conn.fetchrow(
-            "SELECT owner_id FROM workflows WHERE id = $1 AND deleted_at IS NULL",
-            resource_id,
-        )
+        owner_row = await conn.fetchrow(get_workflow_owner_sql(), resource_id)
     elif resource_type == "database":
         owner_row = await conn.fetchrow(
             "SELECT owner_id FROM user_tables_metadata WHERE id = $1",

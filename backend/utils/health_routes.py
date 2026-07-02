@@ -66,15 +66,13 @@ async def database_health(response: Response) -> dict:
     Performs an actual query to verify database is responsive.
     """
     try:
-        from utils.database_pool import get_db_manager
+        from utils.database_pool import get_native_pool, get_pool_status
 
         start_time = time.time()
-        db = get_db_manager()
-
-        result = await db.fetch_value_async("SELECT 1")
+        await get_native_pool().fetchval("SELECT 1")
         query_time_ms = (time.time() - start_time) * 1000
 
-        pool_status = db.get_pool_status()
+        pool_status = get_pool_status()
 
         return {
             "status": "healthy",

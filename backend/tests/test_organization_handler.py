@@ -24,12 +24,19 @@ def _make_pool(conn):
     return pool
 
 
+@asynccontextmanager
+async def _fake_transaction():
+    yield
+
+
 def _conn_with_side_effects(fetchrow_values, fetchval_values=None):
     """Build an AsyncMock conn with preset fetchrow/fetchval sequences."""
     conn = AsyncMock()
     conn.fetchrow.side_effect = list(fetchrow_values)
     if fetchval_values is not None:
         conn.fetchval.side_effect = list(fetchval_values)
+    # asyncpg's transaction() is SYNC and returns an async CM.
+    conn.transaction = MagicMock(side_effect=_fake_transaction)
     return conn
 
 
