@@ -30,12 +30,13 @@ class TestStateE2E:
 
     @pytest.fixture
     def mock_db(self):
-        """Create a mock database that simulates state storage."""
+        """A stateful pool double simulating workflow_node_state storage."""
+        from tests.mocks.mock_asyncpg import MockNativePool
+
         storage = {}
+        pool = MockNativePool()
 
-        mock = MagicMock()
-
-        def mock_fetchrow(query, *args):
+        async def mock_fetchrow(query, *args, timeout=None):
             if 'workflow_node_state' in query:
                 wf_id, node_id = args[0], args[1]
                 key = f"{wf_id}:{node_id}"
@@ -44,17 +45,18 @@ class TestStateE2E:
                 return None
             return None
 
-        def mock_execute(query, *args):
+        async def mock_execute(query, *args, timeout=None):
             if 'INSERT INTO workflow_node_state' in query:
                 wf_id, node_id, state = args[0], args[1], args[2]
                 key = f"{wf_id}:{node_id}"
                 storage[key] = state
+            return "EXECUTE 1"
 
-        mock.fetchrow_async = AsyncMock(side_effect=mock_fetchrow)
-        mock.execute_async = AsyncMock(side_effect=mock_execute)
-        mock._storage = storage  # Expose for assertions
+        pool.fetchrow.side_effect = mock_fetchrow
+        pool.execute.side_effect = mock_execute
+        pool._storage = storage  # Expose for assertions
 
-        return mock
+        return pool
 
     def test_state_manager_loads_persisted_state(self, mock_db, workflow_id):
         """Test that StateManagerNode loads state from database."""
@@ -65,7 +67,7 @@ class TestStateE2E:
         # Pre-populate database with existing state
         mock_db._storage[f"{workflow_id}:{state_node_id}"] = {'counter': 5, 'items': ['a', 'b']}
 
-        with patch('utils.database_pool.get_db_manager', return_value=mock_db):
+        with patch('utils.database_pool.get_native_pool', return_value=mock_db):
             node = StateManagerNode(
                 node_id=state_node_id,
                 node_type='state-manager',
@@ -92,7 +94,7 @@ class TestStateE2E:
         # Pre-populate with partial state
         mock_db._storage[f"{workflow_id}:{state_node_id}"] = {'counter': 10}
 
-        with patch('utils.database_pool.get_db_manager', return_value=mock_db):
+        with patch('utils.database_pool.get_native_pool', return_value=mock_db):
             # Create node with default state containing additional keys
             node_data = {
                 'config': {'config': {'state': {'counter': 0, 'name': 'default'}}}
@@ -120,7 +122,7 @@ class TestStateE2E:
         state_node_id = 'state-mgr-3'
         code_node_id = 'code-3'
 
-        with patch('utils.database_pool.get_db_manager', return_value=mock_db):
+        with patch('utils.database_pool.get_native_pool', return_value=mock_db):
             # Simulate: Code node receives injected state and returns modified state
             node = ServerlessFunctionNode(
                 node_id=code_node_id,
@@ -153,7 +155,7 @@ class TestStateE2E:
         state_node_id = 'state-mgr-flow'
         code_node_id = 'code-flow'
 
-        with patch('utils.database_pool.get_db_manager', return_value=mock_db):
+        with patch('utils.database_pool.get_native_pool', return_value=mock_db):
             # === Run 1 ===
             # State Manager loads (empty initially)
             state_node = StateManagerNode(

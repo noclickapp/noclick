@@ -185,7 +185,15 @@ async def phase_b_orphan_sweep(
                     break
                 keys = [r["hash"] for r in dead]
                 # R2 objects FIRST, then rows (crash → re-collectible orphan).
-                await r2_cloudflare.delete_files_from_r2_async(R2_CAS_BUCKET, keys)
+                # The R2 delete deliberately runs INSIDE the row-locked
+                # transaction: a concurrent same-content writer's blob INSERT
+                # blocks on the FOR UPDATE lock, so it can't dedupe-hit (skip
+                # its R2 upload) against a row we're about to delete, and we
+                # can't delete an object it just re-uploaded. Moving this HTTP
+                # call out of the transaction reintroduces that data-loss race.
+                # Holding a conn across HTTP is contained here: the sweep runs
+                # only in the daily_maintenance cron on its own small pool.
+                await r2_cloudflare.delete_files_from_r2_async_native(R2_CAS_BUCKET, keys)
                 await conn.execute("DELETE FROM cas_blobs WHERE hash = ANY($1)", keys)
         deleted_blobs += len(keys)
         bytes_reclaimed += sum(r["size_bytes"] for r in dead)

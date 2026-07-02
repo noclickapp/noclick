@@ -15,8 +15,8 @@ proxy and call typed methods. Benefits:
 Rules for adding a new repository:
 
   - One file per bounded domain (usage, credentials, workflows, ...).
-  - Constructor takes ``pool`` — a ``DatabasePoolProxy`` from
-    ``DatabasePoolMixin.get_pool()`` or the native ``get_cas_pool()``.
+  - Constructor takes ``pool`` — the native ``asyncpg.Pool`` from
+    ``DatabasePoolMixin.get_pool()`` / ``get_native_pool()``.
   - Method contract: return typed values (dataclass / dict[str, T] / list[T]).
     Callers should never see raw ``asyncpg.Record`` types across the boundary
     because they hide the row shape.
