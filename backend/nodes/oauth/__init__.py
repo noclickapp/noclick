@@ -134,6 +134,16 @@ from nodes.oauth.pipedrive_oauth import (
     get_pipedrive_auth_url,
     PIPEDRIVE_DEFAULT_SCOPES,
 )
+from nodes.oauth.zendesk_oauth import (
+    ZendeskTokens,
+    ZendeskUserInfo,
+    get_zendesk_client_config,
+    exchange_code_for_tokens as zendesk_exchange_code_for_tokens,
+    refresh_access_token as zendesk_refresh_access_token,
+    is_token_expired as zendesk_is_token_expired,
+    get_zendesk_auth_url,
+    ZENDESK_DEFAULT_SCOPES,
+)
 
 from nodes.oauth.reddit_oauth import (
     RedditTokens,
@@ -341,6 +351,15 @@ __all__ = [
     "pipedrive_is_token_expired",
     "get_pipedrive_auth_url",
     "PIPEDRIVE_DEFAULT_SCOPES",
+    # Zendesk
+    "ZendeskTokens",
+    "ZendeskUserInfo",
+    "get_zendesk_client_config",
+    "zendesk_exchange_code_for_tokens",
+    "zendesk_refresh_access_token",
+    "zendesk_is_token_expired",
+    "get_zendesk_auth_url",
+    "ZENDESK_DEFAULT_SCOPES",
     # Reddit
     "RedditTokens",
     "RedditUserInfo",

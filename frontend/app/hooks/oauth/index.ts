@@ -25,6 +25,7 @@ export { usePipedriveOAuth } from './usePipedriveOAuth';
 export { useTypeformOAuth } from './useTypeformOAuth';
 export { useLinkedInOAuth } from './useLinkedInOAuth';
 export { useClickUpOAuth } from './useClickUpOAuth';
+export { useZendeskOAuth } from './useZendeskOAuth';
 export { useMicrosoftOAuth } from './useMicrosoftOAuth';
 export { useNotionOAuth } from './useNotionOAuth';
 export { useRedditOAuth } from './useRedditOAuth';
