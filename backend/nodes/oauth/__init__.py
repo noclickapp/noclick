@@ -144,6 +144,16 @@ from nodes.oauth.zendesk_oauth import (
     get_zendesk_auth_url,
     ZENDESK_DEFAULT_SCOPES,
 )
+from nodes.oauth.pagerduty_oauth import (
+    PagerDutyTokens,
+    PagerDutyUserInfo,
+    get_pagerduty_client_config,
+    exchange_code_for_tokens as pagerduty_exchange_code_for_tokens,
+    refresh_access_token as pagerduty_refresh_access_token,
+    is_token_expired as pagerduty_is_token_expired,
+    get_pagerduty_auth_url,
+    PAGERDUTY_DEFAULT_SCOPES,
+)
 
 from nodes.oauth.reddit_oauth import (
     RedditTokens,
@@ -360,6 +370,15 @@ __all__ = [
     "zendesk_is_token_expired",
     "get_zendesk_auth_url",
     "ZENDESK_DEFAULT_SCOPES",
+    # PagerDuty
+    "PagerDutyTokens",
+    "PagerDutyUserInfo",
+    "get_pagerduty_client_config",
+    "pagerduty_exchange_code_for_tokens",
+    "pagerduty_refresh_access_token",
+    "pagerduty_is_token_expired",
+    "get_pagerduty_auth_url",
+    "PAGERDUTY_DEFAULT_SCOPES",
     # Reddit
     "RedditTokens",
     "RedditUserInfo",
