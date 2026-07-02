@@ -79,6 +79,7 @@ import { FirecrawlNode } from './FirecrawlNode';
 import { AttioNode } from './AttioNode';
 import { IntercomNode } from './IntercomNode';
 import { ZendeskNode } from './ZendeskNode';
+import { ConfluenceNode } from './ConfluenceNode';
 import { LinkedInNode } from './LinkedInNode';
 import { NotionNode } from './NotionNode';
 import { OutlookMailNode } from './OutlookMailNode';
@@ -177,7 +178,7 @@ function _buildAvailable(): NodeDefinition[] {
         GoogleCloudStorageNode, MondayNode, ParallelNode, DatadogNode, LoopsNode,
         ExaNode, ReductoNode, FalNode, BrandfetchNode, FindymailNode, BeehiivNode,
         HexNode, ClickHouseNode, FellowNode, FathomNode, SigmaNode, TrelloNode,
-        FirecrawlNode, AttioNode, ZendeskNode, SendEmailNode, AIAgentNode, ToolNode, MCPServerNode,
+        FirecrawlNode, AttioNode, ZendeskNode, ConfluenceNode, SendEmailNode, AIAgentNode, ToolNode, MCPServerNode,
         NoClickNode, AlarmNode, FilesystemNode, IterationNode, DelayNode, FilterNode,
         SplitOutNode,
         ConditionalNode, ApprovalNode, LogNode, SwitchNode, MergeNode, SubmitExternalFormNode,
