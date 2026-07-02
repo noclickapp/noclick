@@ -39,7 +39,7 @@ logger = logging.getLogger(__name__)
 
 async def extend_node_field_scopes(
     *,
-    pool,
+    pool=None,
     workflow_id: str,
     provider_node_id: str,
     new_resource_ids_by_type: Dict[str, str],
@@ -63,6 +63,10 @@ async def extend_node_field_scopes(
     if not new_resource_ids_by_type:
         return None
 
+    if pool is None:
+        from utils.database_pool import get_native_pool
+
+        pool = get_native_pool()
     async with pool.acquire() as conn:
         async with conn.transaction():
             row = await conn.fetchrow(
