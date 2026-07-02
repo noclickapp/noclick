@@ -45,10 +45,12 @@ import { HackerNewsNode } from './HackerNewsNode';
 import { InstagramNode } from './InstagramNode';
 import { InstantlyNode } from './InstantlyNode';
 import { JiraNode } from './JiraNode';
+import { PipedriveNode } from './PipedriveNode';
 import { ResendNode } from './ResendNode';
 import { CalComNode } from './CalComNode';
 import { GoogleMapsNode } from './GoogleMapsNode';
 import { PerplexityNode } from './PerplexityNode';
+import { PineconeNode } from './PineconeNode';
 import { MailgunNode } from './MailgunNode';
 import { GitLabNode } from './GitLabNode';
 import { BoxNode } from './BoxNode';
@@ -77,6 +79,8 @@ import { TrelloNode } from './TrelloNode';
 import { FirecrawlNode } from './FirecrawlNode';
 import { AttioNode } from './AttioNode';
 import { IntercomNode } from './IntercomNode';
+import { ZendeskNode } from './ZendeskNode';
+import { ConfluenceNode } from './ConfluenceNode';
 import { LinkedInNode } from './LinkedInNode';
 import { NotionNode } from './NotionNode';
 import { OutlookMailNode } from './OutlookMailNode';
@@ -170,12 +174,12 @@ function _buildAvailable(): NodeDefinition[] {
         RedisNode, SalesforceNode, AffinityNode, SemrushNode, ShopifyNode, SlackNode,
         SupabaseNode, TikTokNode, TwilioNode, TwitterNode, CloudflareNode,
         TypeformNode, WhatsAppNode, ElevenLabsNode, YouTubeNode, HubSpotNode,
-        MailchimpNode, ResendNode, CalComNode, GoogleMapsNode, PerplexityNode, MailgunNode,
+        MailchimpNode, PipedriveNode, ResendNode, CalComNode, GoogleMapsNode, PerplexityNode, PineconeNode, MailgunNode,
         GitLabNode, BoxNode, ClickUpNode, DevinNode, AsanaNode, FirestoreNode,
         GoogleCloudStorageNode, MondayNode, ParallelNode, DatadogNode, LoopsNode,
         ExaNode, ReductoNode, FalNode, BrandfetchNode, FindymailNode, BeehiivNode,
         HexNode, ClickHouseNode, FellowNode, FathomNode, SigmaNode, TrelloNode,
-        FirecrawlNode, AttioNode, SendEmailNode, AIAgentNode, ToolNode, MCPServerNode,
+        FirecrawlNode, AttioNode, ZendeskNode, ConfluenceNode, SendEmailNode, AIAgentNode, ToolNode, MCPServerNode,
         NoClickNode, AlarmNode, FilesystemNode, IterationNode, DelayNode, FilterNode,
         SplitOutNode,
         ConditionalNode, ApprovalNode, LogNode, SwitchNode, MergeNode, SubmitExternalFormNode,
