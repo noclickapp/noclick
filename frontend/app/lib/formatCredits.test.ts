@@ -18,4 +18,9 @@ describe('formatCredits', () => {
     it('uses 4 decimals for sub-milli amounts', () => {
         expect(formatCredits(0.0005)).toBe('0.0005 credits');
     });
+
+    it('floors below 0.0001 instead of rounding real charges to "0.0000"', () => {
+        expect(formatCredits(0.00004)).toBe('<0.0001 credits'); // ~28-token gpt-4o-mini call
+        expect(formatCredits(0.0001)).toBe('0.0001 credits'); // boundary stays exact
+    });
 });
