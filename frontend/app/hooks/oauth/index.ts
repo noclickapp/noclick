@@ -22,6 +22,7 @@ export { useMondayOAuth } from './useMondayOAuth';
 export { useAttioOAuth } from './useAttioOAuth';
 export { useIntercomOAuth } from './useIntercomOAuth';
 export { usePipedriveOAuth } from './usePipedriveOAuth';
+export { usePagerDutyOAuth } from './usePagerDutyOAuth';
 export { useTypeformOAuth } from './useTypeformOAuth';
 export { useLinkedInOAuth } from './useLinkedInOAuth';
 export { useClickUpOAuth } from './useClickUpOAuth';
