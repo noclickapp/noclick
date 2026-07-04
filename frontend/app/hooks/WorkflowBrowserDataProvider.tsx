@@ -16,13 +16,13 @@ const WorkflowBrowserDataContext =
     createContext<WorkflowBrowserDataStore | null>(null);
 
 export function WorkflowBrowserDataProvider({
-    valtio_path,
+    scopeId,
     children,
 }: {
-    valtio_path: string;
+    scopeId: string;
     children: ReactNode;
 }) {
-    const store = useWorkflowBrowserData(valtio_path);
+    const store = useWorkflowBrowserData(scopeId);
     return (
         <WorkflowBrowserDataContext.Provider value={store}>
             {children}
