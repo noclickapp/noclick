@@ -31,12 +31,22 @@ async def test_none_falls_back_to_active_context():
 
 
 @pytest.mark.asyncio
-async def test_empty_string_is_explicit_personal():
-    """scope_org_id='' → personal context, WITHOUT ever reading the active context."""
+async def test_empty_string_resolves_to_personal_workspace_org():
+    """scope_org_id='' → the user's PERSONAL-WORKSPACE ORG (where a normal user's
+    workflows live), NOT literally org NULL. Forcing NULL hid every workflow under
+    that org — the "only seeing a few of my workflows" regression."""
     repo = OrgRepo(AsyncMock())
-    conn = _conn(primary_org=uuid.uuid4())  # a primary org exists...
-    assert await repo.resolve_scope_org_id(conn, str(uuid.uuid4()), "") is None  # ...but personal is explicit
-    conn.fetchrow.assert_not_called()  # never consulted is_primary
+    pw = uuid.uuid4()
+    conn = AsyncMock(); conn.fetchval.return_value = pw  # get_personal_workspace_org_id → the org
+    assert await repo.resolve_scope_org_id(conn, str(uuid.uuid4()), "") == str(pw)
+
+
+@pytest.mark.asyncio
+async def test_empty_string_is_none_for_legacy_org_null_account():
+    """A legacy account with no personal-workspace org keeps org-NULL personal (None)."""
+    repo = OrgRepo(AsyncMock())
+    conn = AsyncMock(); conn.fetchval.return_value = None  # no personal-workspace org
+    assert await repo.resolve_scope_org_id(conn, str(uuid.uuid4()), "") is None
 
 
 @pytest.mark.asyncio
