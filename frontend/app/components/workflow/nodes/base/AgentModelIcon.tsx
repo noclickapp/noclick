@@ -8,13 +8,9 @@
 import type { CSSProperties } from 'react';
 import { Bot } from 'lucide-react';
 import { OpenAI } from '@lobehub/icons';
+import { HARNESS_BRANDS } from '~/lib/harnessBrand';
 
 export type AgentModelKind = 'codex' | 'claude-code' | 'opencode' | 'openclaw' | 'hermes' | 'bot';
-
-const CLAUDE_CODE_ICON_SRC = '/icons/clawd.svg';
-const OPENCODE_ICON_SRC = '/icons/opencode-wordmark.svg';
-const OPENCLAW_ICON_SRC = '/icons/openclaw.svg';
-const HERMES_ICON_SRC = '/icons/hermes.svg';
 
 /** Maps an agent node's `model` config value to the logo it renders. The CLI
  *  harnesses get bespoke wordmarks; everything else falls back to the Bot glyph. */
@@ -43,11 +39,13 @@ const SIZES: Record<AgentModelKind, { normal: CSSProperties; compact: CSSPropert
     bot: { normal: { width: 40, height: 40 }, compact: { width: 32, height: 32 } },
 };
 
+// Claude Code uses its compact mark (no wordmark); the others use their full
+// wordmark. Both source from the shared HARNESS_BRANDS registry.
 const IMG_META: Record<Exclude<AgentModelKind, 'codex' | 'bot'>, { src: string; alt: string }> = {
-    'claude-code': { src: CLAUDE_CODE_ICON_SRC, alt: 'Claude Code' },
-    opencode: { src: OPENCODE_ICON_SRC, alt: 'OpenCode' },
-    openclaw: { src: OPENCLAW_ICON_SRC, alt: 'OpenClaw' },
-    hermes: { src: HERMES_ICON_SRC, alt: 'Hermes' },
+    'claude-code': { src: HARNESS_BRANDS['claude-code'].markSrc, alt: 'Claude Code' },
+    opencode: { src: HARNESS_BRANDS.opencode.wordmarkSrc!, alt: 'OpenCode' },
+    openclaw: { src: HARNESS_BRANDS.openclaw.wordmarkSrc!, alt: 'OpenClaw' },
+    hermes: { src: HARNESS_BRANDS.hermes.wordmarkSrc!, alt: 'Hermes' },
 };
 
 interface AgentModelIconProps {
