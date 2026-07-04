@@ -49,8 +49,15 @@ async def test_org_uuid_with_membership_returns_that_org_regardless_of_active():
 
 
 @pytest.mark.asyncio
-async def test_org_uuid_without_membership_raises():
-    """A stale/forged scope for a non-member org must NOT read that org's data."""
+async def test_non_member_scope_falls_back_to_active_context_not_raise():
+    """A stale/forged org scope must NOT read that org's data — but it also must NOT
+    raise (the client persists org_context in IndexedDB, so a user removed from an
+    org legitimately requests a stale scope on the next load; erroring blanked the
+    whole browser). It resolves as the active context instead."""
     repo = OrgRepo(AsyncMock())
-    with pytest.raises(PermissionError):
-        await repo.resolve_scope_org_id(_conn(is_member=False), str(uuid.uuid4()), str(uuid.uuid4()))
+    # non-member + no active org → personal (None), NOT the requested org, NOT an error
+    assert await repo.resolve_scope_org_id(_conn(is_member=False), str(uuid.uuid4()), str(uuid.uuid4())) is None
+    # non-member but a valid active org exists → that active org, never the requested one
+    active = uuid.uuid4()
+    got = await repo.resolve_scope_org_id(_conn(primary_org=active, is_member=False), str(uuid.uuid4()), str(uuid.uuid4()))
+    assert got == str(active)
