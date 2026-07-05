@@ -17,6 +17,11 @@ Slack channel.
 Failure posture: recording must never fail the user's send, and a Redis blip
 fails OPEN on the check (one extra fire — today's behavior) rather than eating
 a real human message. Both paths log.
+
+Timing: the fingerprint is written right after the post's HTTP response, and
+Slack's echo delivery must then traverse Slack's fan-out plus this receiver's
+verify/parse/DB hops before the check runs — in practice the SET wins by a
+wide margin. A lost race means one extra fire, bounded by the fire budget.
 """
 
 import logging

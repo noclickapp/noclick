@@ -1,13 +1,22 @@
 """Delivery dedup for app-level webhooks.
 
-Slack redelivers an event (same ``event_id``) when the receiver doesn't ACK
-2xx within ~3s — a slow handler double-fired every subscribed workflow.
+Providers redeliver an event (same id) when the receiver doesn't ACK 2xx
+fast enough (Slack: ~3s) — a slow handler double-fired every subscribed
+workflow. Enabled per provider via the ``event_id`` extractor on
+APP_PROVIDERS; the generic wiring lives in ``handle_app_webhook_payload``.
 
-Two-phase on purpose: ``was_delivered`` is checked before fan-out and
-``mark_delivered`` is recorded only AFTER the event's subscriptions were
-enqueued — a crash mid-processing leaves the event unmarked, so the provider's
-retry recovers it instead of being swallowed. Redis errors fail open (a
-duplicate fire beats a dropped event).
+Deliberately best-effort at-least-once, biased toward firing:
+- ``mark_delivered`` runs only AFTER the event's fan-out was ENQUEUED — a
+  crash before that leaves the event unmarked and the provider's retry
+  recovers it. Residual window: a crash after enqueue but before the queued
+  run completes still marks the event; that loss is accepted (closing it
+  needs a durable queue, not a marker).
+- The check-then-mark split is NOT atomic: a retry arriving while the first
+  delivery is still mid-processing passes the check and double-fires. Spaced
+  retries (the common case — Slack backs off ~1m/5m) are deduped; making the
+  concurrent case atomic would mean claiming BEFORE processing, turning
+  every mid-processing crash into a permanently lost event.
+- Redis errors fail open (a duplicate fire beats a dropped event).
 """
 
 import logging

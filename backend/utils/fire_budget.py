@@ -38,10 +38,12 @@ async def over_fire_budget(
         return False
     key = f"appwebhook:firebudget:{workflow_id}:{node_id}:{channel or 'any'}"
     try:
+        # SET NX EX (not INCR+EXPIRE): creates the window key WITH its TTL
+        # atomically, so a crash can't orphan a TTL-less counter — and unlike
+        # EXPIRE NX it doesn't require Redis 7 (a 6.x server would error into
+        # the fail-open path and silently disable the budget).
+        await client.set(key, 0, ex=FIRE_BUDGET_WINDOW_SECONDS, nx=True)
         count = await client.incr(key)
-        # nx: only set a TTL when none exists — heals a key orphaned by a
-        # crash between INCR and EXPIRE instead of letting it live forever.
-        await client.expire(key, FIRE_BUDGET_WINDOW_SECONDS, nx=True)
         return count > FIRE_BUDGET_MAX
     except Exception as e:
         logger.warning(f"[FireBudget] Check failed for {key}: {e}")
