@@ -12,15 +12,19 @@ interface AuthLayoutProps {
         text: string;
         author: string;
     };
+    /** Replaces the default cosmic black-hole art in the right panel (e.g. the
+        agent-scaffold preview when a visitor arrives from an /agents SEO CTA). */
+    rightPanel?: ReactNode;
 }
 
-export function AuthLayout({ 
-    children, 
+export function AuthLayout({
+    children,
     showRightPanel = true,
     quote = {
         text: "We're supposed to look up and wonder at our place in the stars, not look down and worry about our place in the dirt.",
         author: "Cooper, Interstellar"
-    }
+    },
+    rightPanel
 }: AuthLayoutProps) {
     return (
         <div className="min-h-screen flex bg-black">
@@ -31,28 +35,34 @@ export function AuthLayout({
                 </div>
             </div>
 
-            {/* Right side - Banner with Stars and Black Hole */}
+            {/* Right side - agent-scaffold preview (if supplied) or cosmic banner */}
             {showRightPanel && (
                 <div className="hidden lg:block lg:w-1/2 xl:w-[55%] relative overflow-hidden bg-black border-l border-zinc-800">
-                    {/* Quote in top-left */}
-                    <div className="absolute top-20 left-20 z-20 max-w-md">
-                        <p className="text-white text-3xl font-bold leading-tight tracking-tight mb-3">
-                            "{quote.text}"
-                        </p>
-                        <p className="text-white/70 text-lg">— {quote.author}</p>
-                    </div>
-                    
-                    {/* Black hole image - aligned flush with right edge */}
-                    <img
-                        src="/blackhole.webp"
-                        alt="Black hole visualization"
-                        className="absolute right-0 top-1/2 -translate-y-1/2 h-[65vh] w-auto object-contain opacity-80 rr-block"
-                    />
-                    
-                    {/* Particle effects on top - contained within this div */}
-                    <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                        <ParticlesBackground starOpacity={0.8} className="absolute inset-0" />
-                    </div>
+                    {rightPanel ? (
+                        rightPanel
+                    ) : (
+                        <>
+                            {/* Quote in top-left */}
+                            <div className="absolute top-20 left-20 z-20 max-w-md">
+                                <p className="text-white text-3xl font-bold leading-tight tracking-tight mb-3">
+                                    "{quote.text}"
+                                </p>
+                                <p className="text-white/70 text-lg">— {quote.author}</p>
+                            </div>
+
+                            {/* Black hole image - aligned flush with right edge */}
+                            <img
+                                src="/blackhole.webp"
+                                alt="Black hole visualization"
+                                className="absolute right-0 top-1/2 -translate-y-1/2 h-[65vh] w-auto object-contain opacity-80 rr-block"
+                            />
+
+                            {/* Particle effects on top - contained within this div */}
+                            <div className="absolute inset-0 pointer-events-none overflow-hidden">
+                                <ParticlesBackground starOpacity={0.8} className="absolute inset-0" />
+                            </div>
+                        </>
+                    )}
                 </div>
             )}
         </div>
