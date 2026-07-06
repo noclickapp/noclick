@@ -90,6 +90,7 @@ import { PagerDutyNode } from './PagerDutyNode';
 import { GoogleMeetNode } from './GoogleMeetNode';
 import { ExpensifyNode } from './ExpensifyNode';
 import { FreshsalesNode } from './FreshsalesNode';
+import { LaunchDarklyNode } from './LaunchDarklyNode';
 import { LinkedInNode } from './LinkedInNode';
 import { NotionNode } from './NotionNode';
 import { OutlookMailNode } from './OutlookMailNode';
@@ -183,8 +184,7 @@ function _buildAvailable(): NodeDefinition[] {
         RedisNode, SalesforceNode, AffinityNode, SemrushNode, ShopifyNode, SlackNode,
         SupabaseNode, TikTokNode, TwilioNode, TwitterNode, CloudflareNode,
         TypeformNode, WhatsAppNode, ElevenLabsNode, YouTubeNode, HubSpotNode,
-
-        MailchimpNode, PipedriveNode, ResendNode, ExpensifyNode, PhantomBusterNode, CalComNode, GoogleMapsNode, PerplexityNode, PineconeNode, QdrantNode, UpstashVectorNode, WeaviateNode, ChromaNode, MailgunNode,
+        MailchimpNode, PipedriveNode, ResendNode, ExpensifyNode, LaunchDarklyNode, PhantomBusterNode, CalComNode, GoogleMapsNode, PerplexityNode, PineconeNode, QdrantNode, UpstashVectorNode, WeaviateNode, ChromaNode, MailgunNode,
         GitLabNode, BoxNode, ClickUpNode, DevinNode, AsanaNode, FirestoreNode,
         GoogleCloudStorageNode, MondayNode, ParallelNode, DatadogNode, LoopsNode,
         ExaNode, ReductoNode, FalNode, BrandfetchNode, FindymailNode, BeehiivNode,
