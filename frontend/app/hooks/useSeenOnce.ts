@@ -18,6 +18,7 @@ export type SeenOnceKey =
     | 'invite_banner_disabled' // "Don't show again" on the inline invite banner
     | 'quickpublish_banner_disabled' // "Don't show again" on the quick-publish banner
     | 'quickpublish_walkthrough' // find-the-Publish-button tour — marked seen only on completion
+    | 'agent_chat_walkthrough' // post-build "chat with your agent" tour — marked seen only on completion
     | 'run_results_popup_disabled'; // "Don't show again" on the post-run results popup
 
 export function useSeenOnceState(key: SeenOnceKey) {
