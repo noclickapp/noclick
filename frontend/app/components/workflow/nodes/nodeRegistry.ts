@@ -95,6 +95,7 @@ import { FreshsalesNode } from './FreshsalesNode';
 import { LaunchDarklyNode } from './LaunchDarklyNode';
 import { AppSheetNode } from './AppSheetNode';
 import { TableauNode } from './TableauNode';
+import { AtlasAdminNode } from './AtlasAdminNode';
 import { WebflowNode } from './WebflowNode';
 import { PagespeedNode } from './PagespeedNode';
 import { GoogleTranslateNode } from './GoogleTranslateNode';
@@ -198,7 +199,7 @@ function _buildAvailable(): NodeDefinition[] {
         GoogleCloudStorageNode, MondayNode, ParallelNode, DatadogNode, LoopsNode,
         ExaNode, ReductoNode, FalNode, BrandfetchNode, FindymailNode, BeehiivNode,
         HexNode, ClickHouseNode, FellowNode, FathomNode, SigmaNode, TrelloNode,
-        FirecrawlNode, AttioNode, ZendeskNode, ConfluenceNode, PagerDutyNode, GoogleMeetNode, FreshsalesNode, AppSheetNode, TableauNode, PagespeedNode, SnowflakeNode, GoogleTranslateNode, SendEmailNode, AIAgentNode, ToolNode, MCPServerNode,
+        FirecrawlNode, AttioNode, ZendeskNode, ConfluenceNode, PagerDutyNode, GoogleMeetNode, FreshsalesNode, AppSheetNode, TableauNode, AtlasAdminNode, PagespeedNode, SnowflakeNode, GoogleTranslateNode, SendEmailNode, AIAgentNode, ToolNode, MCPServerNode,
         NoClickNode, AlarmNode, FilesystemNode, IterationNode, DelayNode, FilterNode,
         SplitOutNode,
         ConditionalNode, ApprovalNode, LogNode, SwitchNode, MergeNode, SubmitExternalFormNode,
