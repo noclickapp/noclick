@@ -40,4 +40,3 @@ export { useMCPOAuth } from './useMCPOAuth';
 export { useWordPressOAuth } from './useWordPressOAuth';
 export { useSupabaseOAuth } from './useSupabaseOAuth';
 export { useParallelOAuth } from './useParallelOAuth';
-export { useDatabricksOAuth } from './useDatabricksOAuth';
