@@ -102,6 +102,7 @@ import { GoogleTranslateNode } from './GoogleTranslateNode';
 import { BigQueryNode } from './BigQueryNode';
 import { SnowflakeNode } from './SnowflakeNode';
 import { DatabricksNode } from './DatabricksNode';
+import { MicrosoftTeamsNode } from './MicrosoftTeamsNode';
 import { LinkedInNode } from './LinkedInNode';
 import { NotionNode } from './NotionNode';
 import { OutlookMailNode } from './OutlookMailNode';
@@ -185,7 +186,7 @@ function _buildAvailable(): NodeDefinition[] {
         CronTriggerNode,
         FormInputNode,
         TelegramNode, GoogleSheetsNode, GoogleDriveNode, GmailNode, OutlookMailNode,
-        ExcelNode, OneDriveNode, MicrosoftTodoNode, WordNode, WordPressNode,
+        ExcelNode, OneDriveNode, MicrosoftTodoNode, MicrosoftTeamsNode, WordNode, WordPressNode,
         HttpRequestNode, LinearNode, GithubRestNode, AirtableNode, StripeNode, ApifyNode,
         ApolloNode, BlueSkyNode, CanvaNode, DiscordNode, DropboxNode,
         GoogleCalendarNode, GoogleTasksNode, GoogleContactsNode, GoogleDocsNode,
