@@ -26,6 +26,7 @@ concurrent runs don't fight over the same blobs. No advisory lock needed.
 from __future__ import annotations
 
 import logging
+import os
 import uuid as uuid_module
 from collections import Counter
 from datetime import datetime, timedelta, timezone
@@ -37,8 +38,11 @@ from utils.cas.store import R2_CAS_BUCKET
 logger = logging.getLogger(__name__)
 
 GLOBAL_TOTALS_ID = uuid_module.UUID(int=0)  # 0...0 row = platform totals
-DEFAULT_MAX_AGE_DAYS = 14
-DEFAULT_MAX_PER_WORKFLOW = 25_000
+# Retention window for node-output history. Env-tunable (L5) so a longer
+# "reference" window can be set without a code change; defaults preserve
+# current behavior (14 days / newest 25k terminal runs per workflow).
+DEFAULT_MAX_AGE_DAYS = int(os.environ.get("CAS_RETENTION_MAX_AGE_DAYS", "14"))
+DEFAULT_MAX_PER_WORKFLOW = int(os.environ.get("CAS_RETENTION_MAX_PER_WORKFLOW", "25000"))
 DEFAULT_ORPHAN_GRACE = timedelta(hours=1)
 DEFAULT_SWEEP_BATCH = 5_000
 DEFAULT_RETENTION_BATCH = 2_000
