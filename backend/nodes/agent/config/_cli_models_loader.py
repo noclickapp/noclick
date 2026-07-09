@@ -4,7 +4,7 @@ Everything lives in `_cli_models.json`, refreshed daily from the CLI binaries
 by `.github/workflows/refresh-cli-models.yml`. See `scripts/refresh_cli_models.py`
 for the extraction.
 
-Two kinds of data per harness:
+Three kinds of data per harness:
   • Model lists/aliases (codex, claude-code) — extracted from the binary, which
     bakes them as static literals; the dropdowns render from these.
   • Version pins (codex, claude-code, opencode, openclaw, hermes) — the version
@@ -12,6 +12,12 @@ Two kinds of data per harness:
     image's install command means a bump (landed by the daily refresh PR)
     invalidates the cached layer, so the sandbox binary upgrades in lockstep
     instead of being frozen to whatever `latest` was at first build.
+  • `default_model` — the preselected model for every harness, human-owned in
+    the JSON (the refresh script carries it through and fails if a model-list
+    refresh drops it). `harness_default_model()` is the ONE code path for
+    harness defaults; config classes must not hardcode their own — a code-side
+    heuristic (e.g. "latest -mini suffix") silently breaks when providers
+    change naming schemes.
 """
 
 from __future__ import annotations
@@ -43,6 +49,17 @@ def _pin(harness: str, field: str = "version") -> str:
             "regenerates it daily)."
         )
     return value
+
+
+def harness_default_model(harness: str) -> str:
+    """The preselected model for a CLI harness config.
+
+    Evaluated at class-definition time in each config module, so the value
+    lands in the generated JSON schema as `default` — that's what the FE
+    preselects (a default_factory never serializes one, leaving the picker
+    empty while the runtime silently falls back).
+    """
+    return _pin(harness, "default_model")
 
 
 def codex_models() -> List[str]:
