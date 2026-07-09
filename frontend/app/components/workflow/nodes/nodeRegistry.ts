@@ -51,6 +51,7 @@ import { PhantomBusterNode } from './PhantomBusterNode';
 import { CalComNode } from './CalComNode';
 import { GoogleMapsNode } from './GoogleMapsNode';
 import { PerplexityNode } from './PerplexityNode';
+import { VoyageNode } from './VoyageNode';
 import { PineconeNode } from './PineconeNode';
 import { QdrantNode } from './QdrantNode';
 import { UpstashVectorNode } from './UpstashVectorNode';
@@ -201,7 +202,7 @@ function _buildAvailable(): NodeDefinition[] {
         GoogleCloudStorageNode, MondayNode, ParallelNode, DatadogNode, LoopsNode,
         ExaNode, ReductoNode, FalNode, BrandfetchNode, FindymailNode, BeehiivNode,
         HexNode, ClickHouseNode, FellowNode, FathomNode, SigmaNode, TrelloNode,
-        FirecrawlNode, AttioNode, ZendeskNode, ConfluenceNode, PagerDutyNode, GoogleMeetNode, FreshsalesNode, AppSheetNode, TableauNode, AtlasAdminNode, PagespeedNode, SnowflakeNode, GoogleTranslateNode, SendEmailNode, AIAgentNode, ToolNode, MCPServerNode,
+        FirecrawlNode, AttioNode, ZendeskNode, ConfluenceNode, PagerDutyNode, GoogleMeetNode, FreshsalesNode, AppSheetNode, TableauNode, AtlasAdminNode, PagespeedNode, SnowflakeNode, GoogleTranslateNode, VoyageNode, SendEmailNode, AIAgentNode, ToolNode, MCPServerNode,
         DatabricksNode,
         NoClickNode, AlarmNode, FilesystemNode, IterationNode, DelayNode, FilterNode,
         SplitOutNode,
