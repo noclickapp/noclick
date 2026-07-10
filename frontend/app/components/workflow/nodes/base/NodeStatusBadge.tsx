@@ -23,8 +23,8 @@ export function NodeStatusBadge({ variant, style }: { variant: NodeStatusVariant
             className="absolute -top-2 -right-2 z-20 flex items-center justify-center"
             style={{ width: 24, height: 24, borderRadius: '50%', ...VARIANT_STYLE[variant], ...style }}
         >
-            {variant === 'error' && <X className="w-3.5 h-3.5 text-foreground" strokeWidth={3} />}
-            {variant === 'incomplete' && <span className="text-sm font-bold leading-none text-foreground">!</span>}
+            {variant === 'error' && <X className="w-3.5 h-3.5 text-white" strokeWidth={3} />}
+            {variant === 'incomplete' && <span className="text-sm font-bold leading-none text-white">!</span>}
             {variant === 'completed' && <Check className="w-3.5 h-3.5 text-background" strokeWidth={3} />}
         </div>
     );
