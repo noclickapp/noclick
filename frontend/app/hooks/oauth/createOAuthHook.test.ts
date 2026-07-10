@@ -11,13 +11,14 @@ import { useAttioOAuth } from './useAttioOAuth';
 import { useMicrosoftOAuth } from './useMicrosoftOAuth';
 import { useNotionOAuth } from './useNotionOAuth';
 import { useGithubOAuth } from './useGithubOAuth';
+import { useZoomOAuth } from './useZoomOAuth';
 
 const cfg = (h: any) => h.oauthConfig;
 const scopesOf = (url: string) => new URL(url, 'http://x').searchParams.get('scopes');
 
 describe('createOAuthHook contract', () => {
     it('exposes each factory hook config', () => {
-        for (const h of [useLinearOAuth, useAttioOAuth, useMicrosoftOAuth, useNotionOAuth, useGithubOAuth]) {
+        for (const h of [useLinearOAuth, useAttioOAuth, useMicrosoftOAuth, useNotionOAuth, useGithubOAuth, useZoomOAuth]) {
             expect(cfg(h)?.provider).toBeTruthy();
         }
     });
@@ -45,7 +46,7 @@ describe('createOAuthHook contract', () => {
     });
 
     it('never injects email/profile into any factory provider scopes (Linear regression guard)', () => {
-        for (const h of [useLinearOAuth, useAttioOAuth, useMicrosoftOAuth, useNotionOAuth, useGithubOAuth]) {
+        for (const h of [useLinearOAuth, useAttioOAuth, useMicrosoftOAuth, useNotionOAuth, useGithubOAuth, useZoomOAuth]) {
             const c = cfg(h);
             const s = scopesOf(buildAuthorizeUrl(c, 'x'));
             if (s !== null) {
