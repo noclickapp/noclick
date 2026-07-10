@@ -117,36 +117,36 @@
    inside .dark via these :not(.dark) guards never matching). */
 html:not(.dark) .btn-3d-white {
     box-shadow:
-        0 4px 0 0 hsl(var(--primary) / 0.45),
-        0 0 30px hsl(var(--primary) / 0.12);
+        0 4px 0 0 hsl(var(--primary) / 0.3),
+        0 0 30px hsl(var(--primary) / 0.08);
 }
 html:not(.dark) .btn-3d-white:hover:not(:disabled) {
     box-shadow:
-        0 2px 0 0 hsl(var(--primary) / 0.45),
-        0 0 30px hsl(var(--primary) / 0.12);
+        0 2px 0 0 hsl(var(--primary) / 0.3),
+        0 0 30px hsl(var(--primary) / 0.08);
 }
 html:not(.dark) .btn-3d-white:active:not(:disabled) {
     box-shadow:
-        0 0 0 0 hsl(var(--primary) / 0.45),
-        0 0 30px hsl(var(--primary) / 0.12);
+        0 0 0 0 hsl(var(--primary) / 0.3),
+        0 0 30px hsl(var(--primary) / 0.08);
 }
 html:not(.dark) .btn-3d-white-flat {
-    box-shadow: 0 4px 0 0 hsl(var(--primary) / 0.45);
+    box-shadow: 0 4px 0 0 hsl(var(--primary) / 0.3);
 }
 html:not(.dark) .btn-3d-white-flat:hover:not(:disabled) {
-    box-shadow: 0 2px 0 0 hsl(var(--primary) / 0.45);
+    box-shadow: 0 2px 0 0 hsl(var(--primary) / 0.3);
 }
 html:not(.dark) .btn-3d-white-flat:active:not(:disabled) {
-    box-shadow: 0 0 0 0 hsl(var(--primary) / 0.45);
+    box-shadow: 0 0 0 0 hsl(var(--primary) / 0.3);
 }
 html:not(.dark) .btn-3d-white-subtle {
-    box-shadow: 0 3px 0 0 hsl(var(--primary) / 0.4);
+    box-shadow: 0 3px 0 0 hsl(var(--primary) / 0.28);
 }
 html:not(.dark) .btn-3d-white-subtle:hover:not(:disabled) {
-    box-shadow: 0 1.5px 0 0 hsl(var(--primary) / 0.4);
+    box-shadow: 0 1.5px 0 0 hsl(var(--primary) / 0.28);
 }
 html:not(.dark) .btn-3d-white-subtle:active:not(:disabled) {
-    box-shadow: 0 0 0 0 hsl(var(--primary) / 0.4);
+    box-shadow: 0 0 0 0 hsl(var(--primary) / 0.28);
 }
 html:not(.dark) .btn-3d-dark {
     box-shadow: 0 4px 0 0 hsl(var(--foreground) / 0.14);
