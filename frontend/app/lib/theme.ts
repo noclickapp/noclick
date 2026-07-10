@@ -1,22 +1,14 @@
-// Light/dark theme management for the main app. The preference is stored in
-// localStorage and applied as a `dark` class on <html> (tailwind darkMode:
-// 'class'). Only converted app routes honor the preference — marketing pages
-// and the workflow canvas are still hardcoded-dark, so they keep the `dark`
-// class regardless until their components are migrated to semantic tokens.
+// Light/dark theme management. The preference is stored in localStorage and
+// applied as a `dark` class on <html> (tailwind darkMode: 'class'). Every
+// route honors the preference — components style with semantic tokens
+// (bg-background/card/popover, text-foreground/…) so both themes render from
+// one markup. Deliberate dark islands (code editors, on-artwork overlays)
+// opt out locally.
 
 export type Theme = 'light' | 'dark';
 
 export const THEME_STORAGE_KEY = 'nc-theme';
 export const THEME_CHANGE_EVENT = 'noclick:theme-change';
-
-// Keep in sync with the no-flash inline script in root.tsx. Only the authed
-// dashboard (which hosts the workflow editor + canvas) is themed; public pages
-// like /workflow/<slug> templates and /share use LandingNav and stay dark.
-const THEMED_PATH_RE = /^\/dashboard(\/|$)/;
-
-export function isThemedPath(pathname: string): boolean {
-    return THEMED_PATH_RE.test(pathname);
-}
 
 export function getStoredTheme(): Theme {
     if (typeof window === 'undefined') return 'dark';
@@ -29,10 +21,9 @@ export function getStoredTheme(): Theme {
     }
 }
 
-/** Sync <html>'s `dark` class with the stored preference for the current route. */
-export function applyTheme(pathname = window.location.pathname): void {
-    const dark = !isThemedPath(pathname) || getStoredTheme() === 'dark';
-    document.documentElement.classList.toggle('dark', dark);
+/** Sync <html>'s `dark` class with the stored preference. */
+export function applyTheme(): void {
+    document.documentElement.classList.toggle('dark', getStoredTheme() === 'dark');
 }
 
 export function setTheme(theme: Theme): void {
