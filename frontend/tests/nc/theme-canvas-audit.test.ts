@@ -44,10 +44,15 @@ export default async function () {
     document.head.appendChild(freeze);
     setTheme('light');
     window.dispatchEvent(new CustomEvent('noclick:switch-tab', { detail: { tab: 'flow' } }));
-    await new Promise((r) => setTimeout(r, 500));
 
-    // Open the first workflow card (grid card with the group class from WorkflowBrowserCards)
-    const card = document.querySelector('.grid .cursor-pointer.group') as HTMLElement | null;
+    // Open the first workflow card (grid card with the group class from
+    // WorkflowBrowserCards). Cards render only after the workflow list fetch
+    // lands, so poll up to ~10s instead of a fixed wait.
+    let card: HTMLElement | null = null;
+    for (let i = 0; i < 20 && !card; i++) {
+        await new Promise((r) => setTimeout(r, 500));
+        card = document.querySelector('.grid .cursor-pointer.group') as HTMLElement | null;
+    }
     let canvasResult: unknown = 'no workflow card found';
     if (card) {
         card.click();

@@ -32,9 +32,9 @@ export const InlineContextTag = memo(({
             contentEditable={false}
             className={cn(
                 'inline-flex items-center mx-0.5 relative group',
-                'bg-white/80 rounded px-1 py-0 border border-white/70',
+                'bg-primary/80 rounded px-1 py-0 border border-primary/70',
                 'transition-all duration-150',
-                'hover:bg-white/90 hover:border-white/80',
+                'hover:bg-primary/90 hover:border-primary/80',
                 getSelectionHighlightClass(isSelected)
             )}
             style={{
@@ -47,7 +47,7 @@ export const InlineContextTag = memo(({
         >
             <div className="relative flex items-center gap-0.5">
                 <span className="text-xs text-blue-600 font-medium">@</span>
-                <span className="text-xs text-zinc-800">{value}</span>
+                <span className="text-xs text-primary-foreground">{value}</span>
             </div>
         </span>
     );
