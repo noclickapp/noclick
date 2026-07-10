@@ -107,6 +107,7 @@ import { DatabricksNode } from './DatabricksNode';
 import { MicrosoftTeamsNode } from './MicrosoftTeamsNode';
 import { GoHighLevelNode } from './GoHighLevelNode';
 import { QuickBooksNode } from './QuickBooksNode';
+import { ZoomNode } from './ZoomNode';
 import { LinkedInNode } from './LinkedInNode';
 import { NotionNode } from './NotionNode';
 import { OutlookMailNode } from './OutlookMailNode';
@@ -206,7 +207,7 @@ function _buildAvailable(): NodeDefinition[] {
         ExaNode, ReductoNode, FalNode, BrandfetchNode, FindymailNode, BeehiivNode,
         HexNode, ClickHouseNode, FellowNode, FathomNode, SigmaNode, TrelloNode,
         FirecrawlNode, AttioNode, ZendeskNode, ConfluenceNode, PagerDutyNode, GoogleMeetNode, FreshsalesNode, AppSheetNode, TableauNode, AtlasAdminNode, PagespeedNode, SnowflakeNode, GoogleTranslateNode, VoyageNode, SendEmailNode, AIAgentNode, ToolNode, MCPServerNode,
-        DatabricksNode,
+        DatabricksNode, ZoomNode,
         NoClickNode, AlarmNode, FilesystemNode, IterationNode, DelayNode, FilterNode,
         SplitOutNode,
         ConditionalNode, ApprovalNode, LogNode, SwitchNode, MergeNode, SubmitExternalFormNode,

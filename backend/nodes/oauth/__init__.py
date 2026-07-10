@@ -254,6 +254,17 @@ from nodes.oauth.typeform_oauth import (
     TYPEFORM_FULL_SCOPES,
 )
 
+from nodes.oauth.zoom_oauth import (
+    ZoomTokens,
+    ZoomUserInfo,
+    get_zoom_client_config,
+    exchange_code_for_tokens as zoom_exchange_code_for_tokens,
+    refresh_access_token as zoom_refresh_access_token,
+    is_token_expired as zoom_is_token_expired,
+    get_zoom_auth_url,
+    ZOOM_DEFAULT_SCOPES,
+)
+
 from nodes.oauth.wordpress_oauth import (
     WordPressTokens,
     WordPressUserInfo,
@@ -482,6 +493,15 @@ __all__ = [
     "typeform_is_token_expired",
     "get_typeform_auth_url",
     "TYPEFORM_FULL_SCOPES",
+    # Zoom
+    "ZoomTokens",
+    "ZoomUserInfo",
+    "get_zoom_client_config",
+    "zoom_exchange_code_for_tokens",
+    "zoom_refresh_access_token",
+    "zoom_is_token_expired",
+    "get_zoom_auth_url",
+    "ZOOM_DEFAULT_SCOPES",
     # WordPress
     "WordPressTokens",
     "WordPressUserInfo",
