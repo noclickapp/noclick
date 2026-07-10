@@ -28,7 +28,7 @@ export function SegmentedControl<T extends string>({
     return (
         <div
             className={cn(
-                'flex rounded-lg overflow-hidden border border-foreground/[0.08] bg-foreground/[0.02]',
+                'flex rounded-lg overflow-hidden border border-border bg-muted dark:border-foreground/[0.08] dark:bg-foreground/[0.02]',
                 className
             )}
         >
@@ -41,7 +41,7 @@ export function SegmentedControl<T extends string>({
                     className={cn(
                         'h-8 px-3 text-xs font-medium transition-colors flex items-center justify-center gap-1.5',
                         value === opt.value
-                            ? 'bg-foreground/[0.08] text-foreground/90'
+                            ? 'bg-card shadow-sm text-foreground dark:bg-foreground/[0.08] dark:text-foreground/90 dark:shadow-none'
                             : 'text-foreground/50 hover:text-foreground/70 hover:bg-foreground/[0.04]',
                         buttonClassName
                     )}
