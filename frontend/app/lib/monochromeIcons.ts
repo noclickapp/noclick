@@ -1,10 +1,10 @@
-// Brand-icon files whose art is entirely light (white / near-white) — designed
-// for the old dark node bodies, they vanish on the now-light bodies and chips in
-// light mode. Rendered with `invert dark:invert-0`: a dark glyph on light,
+// Brand-icon files whose rendered art is entirely light (white / near-white) —
+// designed for the old dark node bodies, they vanish on the now-light bodies and
+// chips in light mode. Rendered with `invert dark:invert-0`: a dark mark on light,
 // unchanged white on dark. Derived by scanning public/icons for marks whose every
-// fill has luminance > 0.7 (two-tone marks that carry their own dark, e.g.
-// cal-com, are excluded — they read fine on white). Keep in sync if new all-white
-// brand SVGs are added.
+// VISIBLE fill has luminance > 0.7 — including mask-based marks (cal-com renders a
+// masked white tile; its lone #000 lives inside a <mask> and never paints). Keep
+// in sync if new all-white brand SVGs are added.
 export const MONOCHROME_LIGHT_ICONS = new Set([
     'attio',
     'clickhouse',
@@ -17,6 +17,9 @@ export const MONOCHROME_LIGHT_ICONS = new Set([
     'resend',
     'sigma',
     'zendesk',
+    // cal-com renders a masked WHITE tile (the #000 is only inside its <mask>),
+    // so it reads as a blank square on a light node — invert flips it to a tile.
+    'cal-com',
     // Agent-harness markers (white-on-dark art), shown in card chips.
     'openclaw_marker',
     'hermes_marker',
