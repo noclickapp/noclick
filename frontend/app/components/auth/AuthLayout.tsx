@@ -27,9 +27,9 @@ export function AuthLayout({
     rightPanel
 }: AuthLayoutProps) {
     return (
-        <div className="min-h-screen flex bg-black">
+        <div className="min-h-screen flex bg-background">
             {/* Left side - Auth Form */}
-            <div className="flex-1 flex items-center justify-center px-8 sm:px-12 lg:px-16 bg-zinc-950">
+            <div className="flex-1 flex items-center justify-center px-8 sm:px-12 lg:px-16 bg-card dark:bg-zinc-950">
                 <div className="w-full max-w-md relative z-10">
                     {children}
                 </div>
@@ -37,7 +37,7 @@ export function AuthLayout({
 
             {/* Right side - agent-scaffold preview (if supplied) or cosmic banner */}
             {showRightPanel && (
-                <div className="hidden lg:block lg:w-1/2 xl:w-[55%] relative overflow-hidden bg-black border-l border-zinc-800">
+                <div className="hidden lg:block lg:w-1/2 xl:w-[55%] relative overflow-hidden bg-black border-l border-border">
                     {rightPanel ? (
                         rightPanel
                     ) : (

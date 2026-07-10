@@ -5,8 +5,8 @@ import { cn } from '~/lib/utils';
 import type { CSSProperties, ReactNode } from 'react';
 
 const BASE = 'text-sm p-2.5 rounded-lg font-medium transition-all duration-300 ease-out';
-export const ASSISTANT_BUBBLE_CLASS = cn(BASE, 'bg-white/10 backdrop-blur-sm border border-white/20 text-white mr-auto rounded-tl-none');
-export const USER_BUBBLE_CLASS = cn(BASE, 'bg-zinc-900 text-white ml-auto rounded-tr-none');
+export const ASSISTANT_BUBBLE_CLASS = cn(BASE, 'bg-foreground/10 backdrop-blur-sm border border-foreground/20 text-foreground mr-auto rounded-tl-none');
+export const USER_BUBBLE_CLASS = cn(BASE, 'bg-card text-foreground ml-auto rounded-tr-none');
 
 export function MessageBubble({
     isUser = false,

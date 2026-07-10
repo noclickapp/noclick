@@ -23,7 +23,11 @@ function darkSurfaces() {
         const [rr, gg, bb, a] = rgb;
         const lum = (0.299 * rr + 0.587 * gg + 0.114 * bb) / 255;
         if (a > 0.55 && lum < 0.35) {
-            const cls = (el.className?.toString() || '').slice(0, 110);
+            const fullCls = el.className?.toString() || '';
+            // Inverted CTAs (bg-primary) render near-black in light mode by
+            // design — user-confirmed; not a dark-surface leak.
+            if (/\bbg-primary\b/.test(fullCls)) continue;
+            const cls = fullCls.slice(0, 110);
             const sig = el.tagName + '|' + cls;
             if (seen.has(sig)) continue;
             seen.add(sig);

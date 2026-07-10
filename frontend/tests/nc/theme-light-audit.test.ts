@@ -1,9 +1,9 @@
 // Light-mode audit: flips the dashboard to light, scans visible text elements
 // for unreadably low contrast against their effective background (conversion
-// misses), verifies the route gate re-forces dark off /dashboard, then restores
+// misses), verifies the theme applies globally (no route gate), then restores
 // the original theme.
 import { nc } from '~/lib/nc';
-import { applyTheme, setTheme, getStoredTheme, isThemedPath } from '~/lib/theme';
+import { applyTheme, setTheme, getStoredTheme } from '~/lib/theme';
 
 function effectiveBg(el: Element): string | null {
     let node: Element | null = el;
@@ -63,33 +63,28 @@ export default async function () {
         }
     }
 
-    // Route gate: with a light preference, non-dashboard paths must force dark.
+    // No route gate: applyTheme honors the stored preference on every route.
     setTheme('light');
-    applyTheme('/pricing');
-    const marketingForcedDark = document.documentElement.classList.contains('dark');
-    applyTheme('/workflow/some-slug');
-    const canvasForcedDark = document.documentElement.classList.contains('dark');
-    applyTheme('/dashboard');
-    const dashboardLight = !document.documentElement.classList.contains('dark');
+    applyTheme();
+    const lightApplied = !document.documentElement.classList.contains('dark');
+    setTheme('dark');
+    applyTheme();
+    const darkApplied = document.documentElement.classList.contains('dark');
 
     // Restore the user's original theme
     setTheme(originalTheme);
     await new Promise((r) => setTimeout(r, 100));
     freeze.remove();
 
-    nc.assert.equal(marketingForcedDark, true, '/pricing must stay dark');
-    nc.assert.equal(canvasForcedDark, true, '/workflow/* must stay dark');
-    nc.assert.equal(dashboardLight, true, '/dashboard honors light preference');
-    nc.assert.falsy(isThemedPath('/'), 'landing is not themed');
-    nc.assert.truthy(isThemedPath('/dashboard'), 'dashboard is themed');
+    nc.assert.equal(lightApplied, true, 'light preference applies globally');
+    nc.assert.equal(darkApplied, true, 'dark preference applies globally');
 
     return {
         scannedElements: els.length,
         lowContrast: offenders.slice(0, 25),
         lowContrastCount: offenders.length,
-        marketingForcedDark,
-        canvasForcedDark,
-        dashboardLight,
+        lightApplied,
+        darkApplied,
         restoredTo: originalTheme,
     };
 }
