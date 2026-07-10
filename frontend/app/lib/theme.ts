@@ -1,14 +1,21 @@
-// Light/dark theme management. The preference is stored in localStorage and
-// applied as a `dark` class on <html> (tailwind darkMode: 'class'). Every
-// route honors the preference — components style with semantic tokens
-// (bg-background/card/popover, text-foreground/…) so both themes render from
-// one markup. Deliberate dark islands (code editors, on-artwork overlays)
-// opt out locally.
+// Light/dark theme management for the authed app. The preference is stored in
+// localStorage and applied as a `dark` class on <html> (tailwind darkMode:
+// 'class'). Only the dashboard honors the preference — marketing, blog, and
+// public pages stay dark (their components are tokenized with dark: pins, so
+// forcing the class renders the original dark design exactly).
 
 export type Theme = 'light' | 'dark';
 
 export const THEME_STORAGE_KEY = 'nc-theme';
 export const THEME_CHANGE_EVENT = 'noclick:theme-change';
+
+// Keep in sync with the no-flash inline script in root.tsx. Only /dashboard
+// (which hosts the workflow editor + canvas + settings + usage) is themed.
+const THEMED_PATH_RE = /^\/dashboard(\/|$)/;
+
+export function isThemedPath(pathname: string): boolean {
+    return THEMED_PATH_RE.test(pathname);
+}
 
 export function getStoredTheme(): Theme {
     if (typeof window === 'undefined') return 'dark';
@@ -21,9 +28,10 @@ export function getStoredTheme(): Theme {
     }
 }
 
-/** Sync <html>'s `dark` class with the stored preference. */
-export function applyTheme(): void {
-    document.documentElement.classList.toggle('dark', getStoredTheme() === 'dark');
+/** Sync <html>'s `dark` class with the stored preference for the current route. */
+export function applyTheme(pathname = window.location.pathname): void {
+    const dark = !isThemedPath(pathname) || getStoredTheme() === 'dark';
+    document.documentElement.classList.toggle('dark', dark);
 }
 
 export function setTheme(theme: Theme): void {
@@ -33,5 +41,7 @@ export function setTheme(theme: Theme): void {
         // Storage unavailable (private mode) — the flip still applies this session.
     }
     applyTheme();
-    window.dispatchEvent(new CustomEvent(THEME_CHANGE_EVENT, { detail: theme }));
+    window.dispatchEvent(
+        new CustomEvent(THEME_CHANGE_EVENT, { detail: theme })
+    );
 }

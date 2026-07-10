@@ -83,7 +83,7 @@ export function DateRangePicker({
                     </Button>
                 </PopoverTrigger>
                 <PopoverContent
-                    className="p-0 w-auto bg-card border-border shadow-xl rounded-xl"
+                    className="p-0 w-auto bg-card dark:bg-zinc-950 border-border shadow-xl rounded-xl"
                     align={isMobile ? 'end' : align}
                     sideOffset={8}
                     collisionPadding={{ top: 8, right: 8, bottom: 8, left: 8 }}

@@ -1,9 +1,14 @@
 // Light-mode audit: flips the dashboard to light, scans visible text elements
 // for unreadably low contrast against their effective background (conversion
-// misses), verifies the theme applies globally (no route gate), then restores
+// misses), verifies the route gate re-forces dark off /dashboard, then restores
 // the original theme.
 import { nc } from '~/lib/nc';
-import { applyTheme, setTheme, getStoredTheme } from '~/lib/theme';
+import {
+    applyTheme,
+    setTheme,
+    getStoredTheme,
+    isThemedPath,
+} from '~/lib/theme';
 
 function effectiveBg(el: Element): string | null {
     let node: Element | null = el;
@@ -31,15 +36,22 @@ export default async function () {
     // Freeze transitions: in a backgrounded tab the transition clock doesn't
     // advance, so transitioned colors would be measured at their pre-flip values.
     const freeze = document.createElement('style');
-    freeze.textContent = '* { transition: none !important; animation: none !important; }';
+    freeze.textContent =
+        '* { transition: none !important; animation: none !important; }';
     document.head.appendChild(freeze);
     setTheme('light');
     await new Promise((r) => setTimeout(r, 300));
 
-    const offenders: Array<{ text: string; color: string; bg: string; cls: string }> = [];
+    const offenders: Array<{
+        text: string;
+        color: string;
+        bg: string;
+        cls: string;
+    }> = [];
     const els = Array.from(document.querySelectorAll('body *')).filter((el) => {
         const r = el.getBoundingClientRect();
-        if (r.width < 5 || r.height < 5 || r.bottom < 0 || r.top > innerHeight) return false;
+        if (r.width < 5 || r.height < 5 || r.bottom < 0 || r.top > innerHeight)
+            return false;
         const direct = Array.from(el.childNodes).some(
             (n) => n.nodeType === 3 && (n.textContent || '').trim().length > 1
         );
@@ -63,28 +75,34 @@ export default async function () {
         }
     }
 
-    // No route gate: applyTheme honors the stored preference on every route.
+    // Route gate: with a light preference, non-dashboard paths must force dark.
     setTheme('light');
-    applyTheme();
-    const lightApplied = !document.documentElement.classList.contains('dark');
-    setTheme('dark');
-    applyTheme();
-    const darkApplied = document.documentElement.classList.contains('dark');
+    applyTheme('/pricing');
+    const marketingForcedDark =
+        document.documentElement.classList.contains('dark');
+    applyTheme('/blog/some-post');
+    const blogForcedDark = document.documentElement.classList.contains('dark');
+    applyTheme('/dashboard');
+    const dashboardLight = !document.documentElement.classList.contains('dark');
 
     // Restore the user's original theme
     setTheme(originalTheme);
     await new Promise((r) => setTimeout(r, 100));
     freeze.remove();
 
-    nc.assert.equal(lightApplied, true, 'light preference applies globally');
-    nc.assert.equal(darkApplied, true, 'dark preference applies globally');
+    nc.assert.equal(marketingForcedDark, true, '/pricing must stay dark');
+    nc.assert.equal(blogForcedDark, true, '/blog/* must stay dark');
+    nc.assert.equal(dashboardLight, true, '/dashboard honors light preference');
+    nc.assert.falsy(isThemedPath('/'), 'landing is not themed');
+    nc.assert.truthy(isThemedPath('/dashboard'), 'dashboard is themed');
 
     return {
         scannedElements: els.length,
         lowContrast: offenders.slice(0, 25),
         lowContrastCount: offenders.length,
-        lightApplied,
-        darkApplied,
+        marketingForcedDark,
+        blogForcedDark,
+        dashboardLight,
         restoredTo: originalTheme,
     };
 }
