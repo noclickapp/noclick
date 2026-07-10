@@ -4,7 +4,7 @@
 // public pages stay dark (their components are tokenized with dark: pins, so
 // forcing the class renders the original dark design exactly).
 
-export type Theme = 'light' | 'dark';
+export type Theme = 'light' | 'dark' | 'system';
 
 export const THEME_STORAGE_KEY = 'nc-theme';
 export const THEME_CHANGE_EVENT = 'noclick:theme-change';
@@ -17,12 +17,28 @@ export function isThemedPath(pathname: string): boolean {
     return THEMED_PATH_RE.test(pathname);
 }
 
+/** The user's stored choice — 'system' defers to prefers-color-scheme. The
+ * absence of a stored value is 'dark' (the app's historical default), NOT
+ * 'system', so existing users see no change until they pick. */
 export function getStoredTheme(): Theme {
     if (typeof window === 'undefined') return 'dark';
     try {
-        return window.localStorage.getItem(THEME_STORAGE_KEY) === 'light'
-            ? 'light'
-            : 'dark';
+        const v = window.localStorage.getItem(THEME_STORAGE_KEY);
+        return v === 'light' || v === 'system' ? v : 'dark';
+    } catch {
+        return 'dark';
+    }
+}
+
+/** The stored choice collapsed to what actually renders. */
+export function resolveTheme(
+    theme: Theme = getStoredTheme()
+): 'light' | 'dark' {
+    if (theme !== 'system') return theme;
+    try {
+        return window.matchMedia('(prefers-color-scheme: dark)').matches
+            ? 'dark'
+            : 'light';
     } catch {
         return 'dark';
     }
@@ -30,7 +46,7 @@ export function getStoredTheme(): Theme {
 
 /** Sync <html>'s `dark` class with the stored preference for the current route. */
 export function applyTheme(pathname = window.location.pathname): void {
-    const dark = !isThemedPath(pathname) || getStoredTheme() === 'dark';
+    const dark = !isThemedPath(pathname) || resolveTheme() === 'dark';
     document.documentElement.classList.toggle('dark', dark);
 }
 
@@ -44,4 +60,24 @@ export function setTheme(theme: Theme): void {
     window.dispatchEvent(
         new CustomEvent(THEME_CHANGE_EVENT, { detail: theme })
     );
+}
+
+/** Re-applies the theme when the OS scheme flips while in 'system' mode.
+ * Returns a cleanup fn; wired once from the root layout. */
+export function watchSystemTheme(): () => void {
+    try {
+        const mq = window.matchMedia('(prefers-color-scheme: dark)');
+        const onChange = () => {
+            if (getStoredTheme() === 'system') {
+                applyTheme();
+                window.dispatchEvent(
+                    new CustomEvent(THEME_CHANGE_EVENT, { detail: 'system' })
+                );
+            }
+        };
+        mq.addEventListener('change', onChange);
+        return () => mq.removeEventListener('change', onChange);
+    } catch {
+        return () => {};
+    }
 }
