@@ -22,8 +22,9 @@ export const MONOCHROME_LIGHT_ICONS = new Set([
     'hermes_marker',
 ]);
 
-/** The Tailwind class to invert a monochrome-light mark in light mode, keyed by
- *  an icon src/path or bare slug. '' for colored / two-tone marks. */
+/** The class that inverts a monochrome-light mark in light mode (via `.brand-mono`,
+ *  which composes with inline filters), keyed by an icon src/path or bare slug.
+ *  '' for colored / two-tone marks. */
 export function monochromeIconClass(srcOrSlug: string | undefined): string {
     if (!srcOrSlug) return '';
     const slug = srcOrSlug
@@ -31,7 +32,7 @@ export function monochromeIconClass(srcOrSlug: string | undefined): string {
         .pop()!
         .replace(/\.svg.*$/i, '')
         .replace(/\?.*$/, '');
-    return MONOCHROME_LIGHT_ICONS.has(slug) ? 'invert dark:invert-0' : '';
+    return MONOCHROME_LIGHT_ICONS.has(slug) ? 'brand-mono' : '';
 }
 
 /** Same, reading the src out of a serialized `<img …src="…">` markup string. */
