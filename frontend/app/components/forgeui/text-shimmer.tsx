@@ -41,7 +41,10 @@ const TextShimmer = ({
       style={{
         backgroundSize: "250% 100%",
         backgroundRepeat: "no-repeat",
-        backgroundImage: `linear-gradient(90deg, #71717a calc(50% - ${dynamicSpread}px), #ffffff, #71717a calc(50% + ${dynamicSpread}px)), linear-gradient(#71717a, #71717a)`,
+        // Theme-adaptive via the shared pulse tokens: a soft charcoal crest sweeps
+        // a readable gray base in light mode, a white gleam in dark. A hardcoded
+        // #fff crest erased the letters on the light card.
+        backgroundImage: `linear-gradient(90deg, hsl(var(--pulse-base)) calc(50% - ${dynamicSpread}px), hsl(var(--pulse-crest)), hsl(var(--pulse-base)) calc(50% + ${dynamicSpread}px)), linear-gradient(hsl(var(--pulse-base)), hsl(var(--pulse-base)))`,
       }}
     >
       {children}
