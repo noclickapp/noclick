@@ -8,20 +8,11 @@
 import type { CSSProperties } from 'react';
 import { Bot } from 'lucide-react';
 import { OpenAI } from '@lobehub/icons';
-import { HARNESS_BRANDS } from '~/lib/harnessBrand';
+import { HARNESS_BRANDS, resolveAgentModelKind, type AgentModelKind } from '~/lib/harnessBrand';
 
-export type AgentModelKind = 'codex' | 'claude-code' | 'opencode' | 'openclaw' | 'hermes' | 'bot';
-
-/** Maps an agent node's `model` config value to the logo it renders. The CLI
- *  harnesses get bespoke wordmarks; everything else falls back to the Bot glyph. */
-export function resolveAgentModelKind(model: string): AgentModelKind {
-    if (model === 'codex') return 'codex';
-    if (model === 'claude-code') return 'claude-code';
-    if (model === 'opencode') return 'opencode';
-    if (model === 'openclaw') return 'openclaw';
-    if (model.includes('hermes') || model.includes('nousresearch')) return 'hermes';
-    return 'bot';
-}
+// The model → kind mapping lives in harnessBrand (pure-string leaf module) so
+// data-layer consumers don't import icon components; re-exported for existing sites.
+export { resolveAgentModelKind, type AgentModelKind } from '~/lib/harnessBrand';
 
 const DROP_SHADOW_NORMAL = 'drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4))';
 const DROP_SHADOW_COMPACT = 'drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4))';
@@ -40,8 +31,9 @@ const SIZES: Record<AgentModelKind, { normal: CSSProperties; compact: CSSPropert
 };
 
 // Claude Code uses its compact mark (no wordmark); the others use their full
-// wordmark. Both source from the shared HARNESS_BRANDS registry.
-const IMG_META: Record<Exclude<AgentModelKind, 'codex' | 'bot'>, { src: string; alt: string }> = {
+// wordmark. Both source from the shared HARNESS_BRANDS registry. Exported so the
+// workflow-browser graph preview renders the same assets at thumbnail scale.
+export const IMG_META: Record<Exclude<AgentModelKind, 'codex' | 'bot'>, { src: string; alt: string }> = {
     'claude-code': { src: HARNESS_BRANDS['claude-code'].markSrc, alt: 'Claude Code' },
     opencode: { src: HARNESS_BRANDS.opencode.wordmarkSrc!, alt: 'OpenCode' },
     openclaw: { src: HARNESS_BRANDS.openclaw.wordmarkSrc!, alt: 'OpenClaw' },

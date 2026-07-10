@@ -34,3 +34,19 @@ export function getNodeIconMeta(type: string): SerializedNodeMeta | undefined {
 export function getKnownNodeIconTypes(): string[] {
     return Object.keys(_nodeIconData);
 }
+
+/**
+ * Light mirror of nodeSchemas.isTriggerSource, backed by the serialized
+ * `triggerOps` metadata instead of the full schema-JSON bundle — safe to call
+ * from always-mounted surfaces (e.g. the workflow-browser store). Returns false
+ * when the registry isn't populated yet.
+ */
+export function isTriggerSourceLite(
+    type: string | undefined,
+    operation: string | undefined,
+): boolean {
+    if (!type) return false;
+    if (type.startsWith('trigger-')) return true;
+    if (!operation) return false;
+    return _nodeIconData[type]?.triggerOps?.includes(operation) ?? false;
+}
