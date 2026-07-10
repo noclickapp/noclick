@@ -62,6 +62,16 @@ from nodes.oauth.linear_oauth import (
     revoke_token as linear_revoke_token,
     LINEAR_DEFAULT_SCOPES,
 )
+from nodes.oauth.quickbooks_oauth import (
+    QuickBooksTokens,
+    QuickBooksUserInfo,
+    get_quickbooks_client_config,
+    exchange_code_for_tokens as quickbooks_exchange_code_for_tokens,
+    refresh_access_token as quickbooks_refresh_access_token,
+    is_token_expired as quickbooks_is_token_expired,
+    get_quickbooks_auth_url,
+    QUICKBOOKS_FULL_SCOPES,
+)
 
 from nodes.oauth.gitlab_oauth import (
     GitLabTokens,
@@ -308,6 +318,15 @@ __all__ = [
     "get_linear_auth_url",
     "linear_revoke_token",
     "LINEAR_DEFAULT_SCOPES",
+    # QuickBooks
+    "QuickBooksTokens",
+    "QuickBooksUserInfo",
+    "get_quickbooks_client_config",
+    "quickbooks_exchange_code_for_tokens",
+    "quickbooks_refresh_access_token",
+    "quickbooks_is_token_expired",
+    "get_quickbooks_auth_url",
+    "QUICKBOOKS_FULL_SCOPES",
     # GitLab
     "GitLabTokens",
     "GitLabUserInfo",
