@@ -9,18 +9,37 @@
 
 export type HarnessSlug = 'claude-code' | 'opencode' | 'openclaw' | 'hermes';
 
+export type AgentModelKind = HarnessSlug | 'codex' | 'bot';
+
+/** Maps an agent node's `model` config value to the logo it renders. The CLI
+ *  harnesses (and Hermes models) get brand marks; everything else falls back to
+ *  the generic Bot glyph. Lives here (not AgentModelIcon) so data-layer modules
+ *  can classify without importing icon components. */
+export function resolveAgentModelKind(model: string): AgentModelKind {
+    if (model === 'codex') return 'codex';
+    if (model === 'claude-code') return 'claude-code';
+    if (model === 'opencode') return 'opencode';
+    if (model === 'openclaw') return 'openclaw';
+    if (model.includes('hermes') || model.includes('nousresearch')) return 'hermes';
+    return 'bot';
+}
+
 export interface HarnessBrand {
     /** Compact brand mark for small chrome — chips, dropdown rows, credential wells, badges. */
     markSrc: string;
     /** Full wordmark (logo + name) for large agent-node icons; absent = mark-only harness. */
     wordmarkSrc?: string;
-    /** object-fit inset scale for full-bleed marks squeezed into a square badge (SerializedIcon). */
+    /** Visual-weight scale applied to the mark inside a square badge (SerializedIcon):
+     *  <1 insets full-bleed marks, >1 grows marks whose contain-fit renders small
+     *  (e.g. clawd is wider than tall, so height-fitting leaves it undersized). */
     inset?: number;
 }
 
 export const HARNESS_BRANDS: Record<HarnessSlug, HarnessBrand> = {
-    'claude-code': { markSrc: '/icons/clawd.svg' },
-    opencode: { markSrc: '/icons/opencode.svg', wordmarkSrc: '/icons/opencode-wordmark.svg', inset: 0.8 },
+    // NOTE: bare icon rows (workflow-card pill) now size <img> marks by intrinsic
+    // aspect, so wide marks like clawd no longer need big compensating insets.
+    'claude-code': { markSrc: '/icons/clawd.svg', inset: 1.1 },
+    opencode: { markSrc: '/icons/opencode.svg', wordmarkSrc: '/icons/opencode-wordmark.svg', inset: 0.9 },
     openclaw: { markSrc: '/icons/openclaw_marker.svg', wordmarkSrc: '/icons/openclaw.svg' },
-    hermes: { markSrc: '/icons/hermes_marker.svg', wordmarkSrc: '/icons/hermes.svg' },
+    hermes: { markSrc: '/icons/hermes_marker.svg', wordmarkSrc: '/icons/hermes.svg', inset: 0.95 },
 };
