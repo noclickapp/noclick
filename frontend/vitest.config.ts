@@ -13,7 +13,7 @@ import { resolve } from 'path';
 export default defineConfig({
   test: {
     environment: 'node',
-    include: ['**/*.test.ts', '**/*.spec.ts'],
+    include: ['**/*.test.ts', '**/*.test.tsx', '**/*.spec.ts', '**/*.spec.tsx'],
     exclude: [
       'node_modules',
       'build',
