@@ -4,9 +4,18 @@
 import { cn } from '~/lib/utils';
 import type { CSSProperties, ReactNode } from 'react';
 
-const BASE = 'text-sm p-2.5 rounded-lg font-medium transition-all duration-300 ease-out';
-export const ASSISTANT_BUBBLE_CLASS = cn(BASE, 'bg-foreground/10 backdrop-blur-sm border border-foreground/20 text-foreground mr-auto rounded-tl-none');
-export const USER_BUBBLE_CLASS = cn(BASE, 'bg-card text-foreground ml-auto rounded-tr-none');
+const BASE =
+    'text-sm p-2.5 rounded-lg font-medium transition-all duration-300 ease-out';
+// Light: a soft muted surface with a hairline border reads cleaner than the
+// heavy 10%-black wash. Dark keeps the original white-wash-on-black bubble.
+export const ASSISTANT_BUBBLE_CLASS = cn(
+    BASE,
+    'bg-muted dark:bg-foreground/10 backdrop-blur-sm border border-border dark:border-foreground/20 text-foreground mr-auto rounded-tl-none'
+);
+export const USER_BUBBLE_CLASS = cn(
+    BASE,
+    'bg-card text-foreground ml-auto rounded-tr-none'
+);
 
 export function MessageBubble({
     isUser = false,
@@ -24,7 +33,10 @@ export function MessageBubble({
     return (
         <div
             ref={bubbleRef}
-            className={cn(isUser ? USER_BUBBLE_CLASS : ASSISTANT_BUBBLE_CLASS, className)}
+            className={cn(
+                isUser ? USER_BUBBLE_CLASS : ASSISTANT_BUBBLE_CLASS,
+                className
+            )}
             style={style}
         >
             {children}
