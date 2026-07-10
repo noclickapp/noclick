@@ -20,9 +20,10 @@ export const MONOCHROME_LIGHT_ICONS = new Set([
     // cal-com renders a masked WHITE tile (the #000 is only inside its <mask>),
     // so it reads as a blank square on a light node — invert flips it to a tile.
     'cal-com',
-    // Agent-harness markers (white-on-dark art), shown in card chips.
+    // openclaw's marker is pure-white dark-bg art (see HARNESS_BRANDS.monochrome).
+    // NOT hermes_marker: it's a gold/amber/bronze "H" (#FFD700…) — inverting it
+    // flips the hue to blue. Harness-mark monochrome-ness is owned by HARNESS_BRANDS.
     'openclaw_marker',
-    'hermes_marker',
 ]);
 
 /** The class that inverts a monochrome-light mark in light mode (via `.brand-mono`,
