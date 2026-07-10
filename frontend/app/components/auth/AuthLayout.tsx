@@ -54,7 +54,7 @@ export function AuthLayout({
                             <img
                                 src="/blackhole.webp"
                                 alt="Black hole visualization"
-                                className="absolute right-0 top-1/2 -translate-y-1/2 h-[65vh] w-auto object-contain opacity-80 rr-block"
+                                className="absolute right-0 top-1/2 -translate-y-1/2 h-[65vh] w-auto object-contain opacity-80 rr-block ph-no-capture"
                             />
 
                             {/* Particle effects on top - contained within this div */}
