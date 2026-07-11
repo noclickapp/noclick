@@ -108,11 +108,14 @@ export function AgentModelIcon({
             style={style}
         />
     );
-    // Pure-white dark-bg marks (openclaw) invert to a dark glyph in light mode; the
-    // wrapper carries the filter so it composes with the img's inline drop-shadow
-    // (a className `filter` would be overridden by the inline one).
+    // openclaw's wordmark is white with a RED claw accent, drawn for dark
+    // backgrounds. Inverting it in light mode flipped the red to cyan, so instead
+    // back it with a dark chip in light (bg-foreground = near-black) and drop the
+    // chip in dark, where the surface is already dark. Preserves brand colors.
     return HARNESS_BRANDS[kind].monochrome ? (
-        <span className="inline-flex invert dark:invert-0">{img}</span>
+        <span className="inline-flex items-center rounded bg-foreground px-1 py-0.5 dark:bg-transparent dark:p-0">
+            {img}
+        </span>
     ) : (
         img
     );
