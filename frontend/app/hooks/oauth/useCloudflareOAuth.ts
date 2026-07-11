@@ -1,10 +1,10 @@
-// Cloudflare OAuth — standard Authorization Code flow via Cloudflare's OAuth 2.0 endpoints.
-// Scopes are space-separated (Cloudflare convention, not comma). Built from the shared
-// createOAuthHook factory; only the per-provider config lives here.
+// Cloudflare OAuth — Authorization Code flow via dash.cloudflare.com/oauth2/auth.
+// API permissions (account:read, zone:edit, etc.) are configured on the OAuth client
+// in the Cloudflare dashboard; the authorize URL only sends OIDC scopes.
+// sendScopes:false so no scope param is forwarded from the hook to the authorize route.
 import { createOAuthHook } from './createOAuthHook';
 
 export const useCloudflareOAuth = createOAuthHook({
     provider: 'cloudflare',
-    defaultScopes: ['account:read', 'zone:read', 'zone:edit', 'dns:edit', 'workers:write'],
-    scopeDelimiter: ' ',
+    sendScopes: false,
 });
