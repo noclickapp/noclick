@@ -49,7 +49,12 @@ export function KeyHint({ keys, className, kbdClassName }: KeyHintProps) {
                 <kbd
                     key={`${k}-${i}`}
                     className={cn(
-                        'text-[10px] font-medium text-muted-foreground bg-foreground/[0.05] dark:bg-foreground/[0.06] ring-1 ring-foreground/10 dark:ring-0 min-w-[17px] h-[17px] px-1 flex items-center justify-center rounded-[4px]',
+                        // Single (non-dark:) bg so a kbdClassName override (e.g. the
+                        // dark chip on the white Send button) can win via tailwind-merge
+                        // — a dark: variant here outranks a base override and left the
+                        // chip white-on-white. foreground/[0.1] reads as a chip on both
+                        // the dark popover and light surfaces.
+                        'text-[10px] font-medium text-muted-foreground bg-foreground/[0.1] ring-1 ring-foreground/10 dark:ring-0 min-w-[17px] h-[17px] px-1 flex items-center justify-center rounded-[4px]',
                         kbdClassName
                     )}
                 >
