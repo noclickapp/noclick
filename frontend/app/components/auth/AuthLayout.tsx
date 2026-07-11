@@ -29,7 +29,7 @@ export function AuthLayout({
     return (
         <div className="min-h-screen flex bg-background">
             {/* Left side - Auth Form */}
-            <div className="flex-1 flex items-center justify-center px-8 sm:px-12 lg:px-16 bg-card dark:bg-zinc-950">
+            <div className="flex-1 flex items-center justify-center px-8 sm:px-12 lg:px-16 bg-sunken">
                 <div className="w-full max-w-md relative z-10">
                     {children}
                 </div>
