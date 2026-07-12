@@ -21,9 +21,9 @@ export const MONOCHROME_LIGHT_ICONS = new Set([
     // so it reads as a blank square on a light node — invert flips it to a tile.
     'cal-com',
     // NOT openclaw_marker: it's white claw art WITH a red #f70514 accent, so invert
-    // flips the red to CYAN. It gets a dark backing in light instead (tailwind.css
-    // img[src*=openclaw] rule + AgentModelIcon's chip). NOT hermes_marker either:
-    // a gold/amber/bronze "H" (#FFD700…) whose hue inverts to blue.
+    // flips the red to CYAN. Left un-inverted — the red claw stays visibly red on a
+    // light chip (AgentModelIcon still chips it for the node body). NOT hermes_marker
+    // either: a gold/amber/bronze "H" (#FFD700…) whose hue inverts to blue.
 ]);
 
 /** The class that inverts a monochrome-light mark in light mode (via `.brand-mono`,
