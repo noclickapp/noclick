@@ -1,7 +1,7 @@
 // Theme-aware NoClick mark. The bare glyph (/logo.svg is pure white) — kept as-is
-// in dark; in light a partial invert recolors it to CHARCOAL (white → ~#333 at
-// invert(0.8), not pure black). (Previously this rendered a black-circle app-icon
-// treatment in light; reverted to the plain glyph per design.)
+// in dark; in light a full invert recolors it to pure black (white → #000).
+// (Previously this rendered a black-circle app-icon treatment in light; reverted
+// to the plain glyph per design.)
 import { cn } from '~/lib/utils';
 
 export function LogoMark({
@@ -16,7 +16,7 @@ export function LogoMark({
         <img
             src="/logo.svg"
             alt={alt}
-            className={cn('[filter:invert(0.8)] dark:[filter:invert(0)]', className)}
+            className={cn('[filter:invert(1)] dark:[filter:invert(0)]', className)}
             {...imgProps}
         />
     );
