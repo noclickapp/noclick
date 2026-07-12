@@ -108,21 +108,9 @@ export function AgentModelIcon({
             style={style}
         />
     );
-    if (kind === 'opencode') {
-        // Two-tone gray wordmark (#4B4646 dark / #F1ECEC light): the light half
-        // disappears on a white node body. Rather than box it in a chip, darken
-        // the whole mark in light so BOTH tones read (brightness moves #F1ECEC
-        // ~236->~94 = mid-gray on white, #4B4646 ~75->~30 = near-black); tonal
-        // contrast is preserved. Untouched in dark, where the light half carries.
-        return (
-            <img
-                src={src}
-                alt={alt}
-                className={`${disabled ? 'opacity-35' : '[filter:brightness(0.4)] dark:[filter:none]'} ${stateClassName}`.trim()}
-                style={SIZES[kind][variant]}
-            />
-        );
-    }
+    // opencode's two-tone gray wordmark (#4B4646 / #F1ECEC) loses its light half
+    // on white surfaces; a global CSS rule (tailwind.css) darkens every
+    // img[src*=opencode] in light mode, so no per-render treatment is needed here.
     // openclaw's wordmark is white with a RED claw accent, drawn for dark
     // backgrounds. Inverting it in light mode flipped the red to cyan, so instead
     // back it with a dark chip in light (bg-foreground = near-black) and drop the
