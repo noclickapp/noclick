@@ -7,9 +7,10 @@
 // in sync if new all-white brand SVGs are added.
 export const MONOCHROME_LIGHT_ICONS = new Set([
     'attio',
-    'clickhouse',
+    // NOT clickhouse (#FCFF74 light yellow) or intercom (#6AFDEF light cyan): the
+    // luminance>0.7 heuristic caught light COLORS, not white — inverting them
+    // flips the hue (yellow->blue, cyan->dark-red). They keep their brand color.
     'extend',
-    'intercom',
     'launchdarkly',
     'notion',
     'parallel',
