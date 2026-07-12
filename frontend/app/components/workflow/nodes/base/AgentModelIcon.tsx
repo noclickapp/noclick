@@ -109,14 +109,18 @@ export function AgentModelIcon({
         />
     );
     if (kind === 'opencode') {
-        // Two-tone gray wordmark (#4B4646 / #F1ECEC): on a white node body the
-        // light half disappears (and a near-black chip or an invert would just
-        // hide the OTHER half). Back it with a MID-gray chip so both tones read;
-        // drop the chip in dark, where the light half carries on the dark body.
+        // Two-tone gray wordmark (#4B4646 dark / #F1ECEC light): the light half
+        // disappears on a white node body. Rather than box it in a chip, darken
+        // the whole mark in light so BOTH tones read (brightness moves #F1ECEC
+        // ~236->~94 = mid-gray on white, #4B4646 ~75->~30 = near-black); tonal
+        // contrast is preserved. Untouched in dark, where the light half carries.
         return (
-            <span className="inline-flex items-center rounded bg-zinc-400 px-1 py-0.5 dark:bg-transparent dark:p-0">
-                {img}
-            </span>
+            <img
+                src={src}
+                alt={alt}
+                className={`${disabled ? 'opacity-35' : '[filter:brightness(0.4)] dark:[filter:none]'} ${stateClassName}`.trim()}
+                style={SIZES[kind][variant]}
+            />
         );
     }
     // openclaw's wordmark is white with a RED claw accent, drawn for dark
