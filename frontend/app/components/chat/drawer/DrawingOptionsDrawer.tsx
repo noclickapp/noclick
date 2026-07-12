@@ -187,7 +187,7 @@ export function DrawingOptionsContent({
                             onClick={() => handleColorChange(color)}
                             className={`flex-1 h-6 rounded-sm border transition-all hover:scale-105 relative ${
                                 currentColor === color && (currentTool === 'pen' || currentTool === 'text')
-                                    ? 'border-foreground shadow-md scale-105 ring-2 ring-ring/30'
+                                    ? 'border-foreground shadow-md scale-105 ring-2 ring-ring/30 dark:ring-white/30'
                                     : 'border-muted-foreground/50 hover:border-muted-foreground'
                             } ${currentTool === 'eraser' ? 'opacity-30 cursor-not-allowed' : ''} ${
                                 color === '#ffffff' ? 'border-muted-foreground/70' : ''
@@ -206,7 +206,7 @@ export function DrawingOptionsContent({
                             onClick={() => handleColorChange(color)}
                             className={`flex-1 h-6 rounded-sm border transition-all hover:scale-105 relative ${
                                 currentColor === color && (currentTool === 'pen' || currentTool === 'text')
-                                    ? 'border-foreground shadow-md scale-105 ring-2 ring-ring/30'
+                                    ? 'border-foreground shadow-md scale-105 ring-2 ring-ring/30 dark:ring-white/30'
                                     : 'border-muted-foreground/50 hover:border-muted-foreground'
                             } ${currentTool === 'eraser' ? 'opacity-30 cursor-not-allowed' : ''} ${
                                 color === '#ffffff' ? 'border-muted-foreground/70' : ''

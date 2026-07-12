@@ -54,8 +54,8 @@ export function NodeSettings({ settings, onChange }: NodeSettingsProps) {
 
     const update = (patch: Partial<NodeSettingsData>) => onChange({ ...settings, ...patch });
 
-    const inputClasses = "w-full px-3 py-2 text-sm bg-card dark:bg-foreground/[0.02] border border-input rounded-lg text-foreground/80 placeholder:text-[hsl(var(--placeholder))] focus:outline-none focus:border-muted-foreground/40 transition-colors";
-    const selectClasses = "w-full px-3 py-2 text-sm bg-card dark:bg-foreground/[0.02] border border-input rounded-lg text-foreground/80 focus:outline-none focus:border-muted-foreground/40 transition-colors appearance-none cursor-pointer";
+    const inputClasses = "w-full px-3 py-2 text-sm bg-card dark:bg-foreground/[0.02] border border-input dark:border-white/[0.05] rounded-lg text-foreground/80 placeholder:text-[hsl(var(--placeholder))] focus:outline-none focus:border-muted-foreground/40 dark:focus:border-white/[0.15] transition-colors";
+    const selectClasses = "w-full px-3 py-2 text-sm bg-card dark:bg-foreground/[0.02] border border-input dark:border-white/[0.05] rounded-lg text-foreground/80 focus:outline-none focus:border-muted-foreground/40 dark:focus:border-white/[0.15] transition-colors appearance-none cursor-pointer";
     const labelClasses = "text-[11px] text-muted-foreground uppercase tracking-wider";
 
     return (
@@ -118,7 +118,7 @@ export function NodeSettings({ settings, onChange }: NodeSettingsProps) {
                 <p className="text-[11px] text-muted-foreground/70">What to do when all retries are exhausted</p>
             </div>
 
-            <div className="border-t border-border" />
+            <div className="border-t border-border dark:border-white/[0.05]" />
 
             {/* Always Output Data */}
             <ToggleRow
@@ -136,7 +136,7 @@ export function NodeSettings({ settings, onChange }: NodeSettingsProps) {
                 onToggle={() => update({ executeOnce: executeOnce ? 'false' : 'true' })}
             />
 
-            <div className="border-t border-border" />
+            <div className="border-t border-border dark:border-white/[0.05]" />
 
             {/* Notes */}
             <div className="space-y-1.5">
