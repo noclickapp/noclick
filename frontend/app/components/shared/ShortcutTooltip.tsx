@@ -44,7 +44,7 @@ export function ShortcutTooltip({
                 <TooltipContent
                     side={side}
                     sideOffset={sideOffset}
-                    className="flex items-center gap-2 border-border bg-background text-xs text-foreground shadow-xl dark:shadow-black/60"
+                    className="flex items-center gap-2 border-border dark:border-white/10 bg-background dark:bg-[#0a0a0b] text-xs text-foreground shadow-xl dark:shadow-black/60"
                 >
                     {label && <span>{label}</span>}
                     {keys &&
