@@ -14,7 +14,9 @@ export const ASSISTANT_BUBBLE_CLASS = cn(
 );
 export const USER_BUBBLE_CLASS = cn(
     BASE,
-    'bg-card text-foreground ml-auto rounded-tr-none'
+    // Light: inverted (near-black) so the user bubble stands out from the off-white
+    // chat bg — bg-card white blended in. Dark keeps the zinc-900 card bubble.
+    'bg-primary text-primary-foreground dark:bg-card dark:text-foreground ml-auto rounded-tr-none'
 );
 
 export function MessageBubble({
