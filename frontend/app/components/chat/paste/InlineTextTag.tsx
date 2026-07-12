@@ -42,7 +42,7 @@ export function InlineTextTag({
                 offset={8}
                 delay={150}
             >
-                <div className="bg-card border border-border rounded-lg p-3 shadow-xl max-w-md">
+                <div className="bg-card border border-border dark:border-zinc-700 rounded-lg p-3 shadow-xl max-w-md">
                     <div className="max-h-48 overflow-y-auto whitespace-pre-wrap text-xs text-foreground/80 scrollbar-subtle">
                         {content}
                     </div>

@@ -45,7 +45,7 @@ export function InlineImageTag({
                 offset={8}
                 delay={150}
             >
-                <div className="bg-card border border-border rounded-lg p-2 shadow-xl">
+                <div className="bg-card border border-border dark:border-zinc-700 rounded-lg p-2 shadow-xl">
                     <img 
                         src={preview} 
                         alt="Preview"
@@ -105,7 +105,7 @@ export function InlineImageTag({
                     "absolute opacity-0 group-hover:opacity-100",
                     "bg-secondary rounded-full p-0.5",
                     "hover:bg-card transition-all duration-200",
-                    "border border-border",
+                    "border border-border dark:border-zinc-600",
                     "z-[10000]"  // Higher than tooltips (z-[9999]) to ensure always clickable
                 )}
                 style={{

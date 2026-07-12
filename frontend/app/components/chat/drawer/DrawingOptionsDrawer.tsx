@@ -115,7 +115,7 @@ export function DrawingOptionsContent({
                         size="sm"
                         onClick={onUndo}
                         disabled={!canUndo}
-                        className="h-8 w-8 p-0 transition-all rounded-lg bg-secondary hover:bg-muted-foreground/30 text-muted-foreground hover:text-foreground/80 border border-border disabled:opacity-30 disabled:cursor-not-allowed"
+                        className="h-8 w-8 p-0 transition-all rounded-lg bg-secondary hover:bg-muted-foreground/30 text-muted-foreground hover:text-foreground/80 border border-border dark:border-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed"
                         title={`Undo (${modKey}+Z)`}
                     >
                         <Undo className="h-3.5 w-3.5" />
@@ -124,7 +124,7 @@ export function DrawingOptionsContent({
                         size="sm"
                         onClick={onRedo}
                         disabled={!canRedo}
-                        className="h-8 w-8 p-0 transition-all rounded-lg bg-secondary hover:bg-muted-foreground/30 text-muted-foreground hover:text-foreground/80 border border-border disabled:opacity-30 disabled:cursor-not-allowed"
+                        className="h-8 w-8 p-0 transition-all rounded-lg bg-secondary hover:bg-muted-foreground/30 text-muted-foreground hover:text-foreground/80 border border-border dark:border-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed"
                         title={`Redo (${modKey}+Y)`}
                     >
                         <Redo className="h-3.5 w-3.5" />
@@ -139,7 +139,7 @@ export function DrawingOptionsContent({
                         className={`h-8 w-8 p-0 transition-all rounded-lg bg-secondary hover:bg-muted-foreground/30 text-muted-foreground hover:text-foreground/80 ${
                             currentTool === 'pen'
                                 ? 'border-2 text-foreground'
-                                : 'border border-border'
+                                : 'border border-border dark:border-zinc-700'
                         }`}
                         style={{
                             borderColor: currentTool === 'pen' ? currentColor : undefined
@@ -154,7 +154,7 @@ export function DrawingOptionsContent({
                     className={`h-8 w-8 p-0 transition-all rounded-lg bg-secondary hover:bg-muted-foreground/30 text-muted-foreground hover:text-foreground/80 ${
                         currentTool === 'eraser'
                             ? 'border-2 border-red-400 text-red-600 dark:text-red-300'
-                            : 'border border-border'
+                            : 'border border-border dark:border-zinc-700'
                     }`}
                     title="Eraser"
                 >
@@ -166,7 +166,7 @@ export function DrawingOptionsContent({
                         className={`h-8 w-8 p-0 transition-all rounded-lg bg-secondary hover:bg-muted-foreground/30 text-muted-foreground hover:text-foreground/80 ${
                             currentTool === 'text'
                                 ? 'border-2 text-foreground'
-                                : 'border border-border'
+                                : 'border border-border dark:border-zinc-700'
                         }`}
                         style={{
                             borderColor: currentTool === 'text' ? currentColor : undefined
@@ -188,9 +188,9 @@ export function DrawingOptionsContent({
                             className={`flex-1 h-6 rounded-sm border transition-all hover:scale-105 relative ${
                                 currentColor === color && (currentTool === 'pen' || currentTool === 'text')
                                     ? 'border-foreground shadow-md scale-105 ring-2 ring-ring/30 dark:ring-white/30'
-                                    : 'border-muted-foreground/50 hover:border-muted-foreground'
+                                    : 'border-muted-foreground/50 dark:border-zinc-600 hover:border-muted-foreground'
                             } ${currentTool === 'eraser' ? 'opacity-30 cursor-not-allowed' : ''} ${
-                                color === '#ffffff' ? 'border-muted-foreground/70' : ''
+                                color === '#ffffff' ? 'border-muted-foreground/70 dark:border-zinc-500' : ''
                             }`}
                             style={{ backgroundColor: color }}
                             title={`Color: ${color}`}
@@ -207,9 +207,9 @@ export function DrawingOptionsContent({
                             className={`flex-1 h-6 rounded-sm border transition-all hover:scale-105 relative ${
                                 currentColor === color && (currentTool === 'pen' || currentTool === 'text')
                                     ? 'border-foreground shadow-md scale-105 ring-2 ring-ring/30 dark:ring-white/30'
-                                    : 'border-muted-foreground/50 hover:border-muted-foreground'
+                                    : 'border-muted-foreground/50 dark:border-zinc-600 hover:border-muted-foreground'
                             } ${currentTool === 'eraser' ? 'opacity-30 cursor-not-allowed' : ''} ${
-                                color === '#ffffff' ? 'border-muted-foreground/70' : ''
+                                color === '#ffffff' ? 'border-muted-foreground/70 dark:border-zinc-500' : ''
                             }`}
                             style={{ backgroundColor: color }}
                             title={`Color: ${color}`}

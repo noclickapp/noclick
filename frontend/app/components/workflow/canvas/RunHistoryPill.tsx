@@ -33,7 +33,7 @@ export function RunHistoryPill({ logs, onOpen }: RunHistoryPillProps) {
             Runs
             {latest && latestStatus && (
                 <span className="flex items-center gap-1.5 text-muted-foreground">
-                    <span className="text-muted-foreground/60">·</span>
+                    <span className="text-muted-foreground/60 dark:text-zinc-600">·</span>
                     <latestStatus.Icon
                         className={cn(
                             'h-3.5 w-3.5',

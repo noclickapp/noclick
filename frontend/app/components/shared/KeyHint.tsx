@@ -82,7 +82,7 @@ export function SequenceKeyHint({
                     className="inline-flex items-center gap-1.5"
                 >
                     {i > 0 && (
-                        <span className="text-[10px] text-muted-foreground">
+                        <span className="text-[10px] text-muted-foreground dark:text-zinc-500">
                             then
                         </span>
                     )}

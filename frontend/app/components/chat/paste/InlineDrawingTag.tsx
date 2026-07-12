@@ -52,7 +52,7 @@ export function InlineDrawingTag({
                 offset={8}
                 delay={150}
             >
-                <div className="bg-card border border-border rounded-lg p-2 shadow-xl">
+                <div className="bg-card border border-border dark:border-zinc-700 rounded-lg p-2 shadow-xl">
                     <img 
                         src={screenshot} 
                         alt="Drawing Screenshot Preview"

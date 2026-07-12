@@ -57,7 +57,7 @@ export function InterfaceConsumerBadge({ nodeId }: InterfaceConsumerBadgeProps) 
                 e.stopPropagation();
                 reveal(consumers.map((c) => c.id), e.currentTarget);
               }}
-              className="nodrag flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-card border border-border text-muted-foreground text-[10px] font-medium whitespace-nowrap hover:text-foreground hover:border-muted-foreground/40 transition-colors"
+              className="nodrag flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-card border border-border dark:border-zinc-700/60 text-muted-foreground text-[10px] font-medium whitespace-nowrap hover:text-foreground hover:border-muted-foreground/40 dark:hover:border-zinc-500 transition-colors"
             >
               <Code2 className="w-2.5 h-2.5 shrink-0" />
               <span className="max-w-[110px] truncate">{label}</span>
@@ -65,7 +65,7 @@ export function InterfaceConsumerBadge({ nodeId }: InterfaceConsumerBadgeProps) 
           </TooltipTrigger>
           {/* Portaled to the document root, so the tooltip stays full-size and
               readable even when the badge itself is tiny at low zoom. */}
-          <TooltipContent side="bottom" className="bg-card border-border text-foreground max-w-[260px] p-2.5">
+          <TooltipContent side="bottom" className="bg-card border-border dark:border-zinc-700 text-foreground max-w-[260px] p-2.5">
             <div className="text-[11px] font-semibold text-foreground">
               {single ? 'Used by interface' : `Used by ${consumers.length} interfaces`}
             </div>
@@ -87,7 +87,7 @@ export function InterfaceConsumerBadge({ nodeId }: InterfaceConsumerBadgeProps) 
                 </li>
               ))}
             </ul>
-            <div className="mt-1.5 text-[10px] text-muted-foreground">
+            <div className="mt-1.5 text-[10px] text-muted-foreground dark:text-zinc-500">
               {single ? 'Open the interface on the canvas' : 'Open an interface on the canvas'}
             </div>
           </TooltipContent>

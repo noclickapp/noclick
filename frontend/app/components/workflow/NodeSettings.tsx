@@ -42,7 +42,7 @@ function ToggleRow({ label, description, value, onToggle }: {
                     }`} />
                 </button>
             </div>
-            {description && <div className="text-[11px] text-muted-foreground/70 leading-tight">{description}</div>}
+            {description && <div className="text-[11px] text-muted-foreground/70 dark:text-zinc-600 leading-tight">{description}</div>}
         </div>
     );
 }
@@ -56,7 +56,7 @@ export function NodeSettings({ settings, onChange }: NodeSettingsProps) {
 
     const inputClasses = "w-full px-3 py-2 text-sm bg-card dark:bg-foreground/[0.02] border border-input dark:border-white/[0.05] rounded-lg text-foreground/80 placeholder:text-[hsl(var(--placeholder))] focus:outline-none focus:border-muted-foreground/40 dark:focus:border-white/[0.15] transition-colors";
     const selectClasses = "w-full px-3 py-2 text-sm bg-card dark:bg-foreground/[0.02] border border-input dark:border-white/[0.05] rounded-lg text-foreground/80 focus:outline-none focus:border-muted-foreground/40 dark:focus:border-white/[0.15] transition-colors appearance-none cursor-pointer";
-    const labelClasses = "text-[11px] text-muted-foreground uppercase tracking-wider";
+    const labelClasses = "text-[11px] text-muted-foreground dark:text-zinc-500 uppercase tracking-wider";
 
     return (
         <div className="space-y-5">
@@ -81,7 +81,7 @@ export function NodeSettings({ settings, onChange }: NodeSettingsProps) {
                                 onChange={(e) => update({ maxTries: e.target.value })}
                                 className={inputClasses}
                             />
-                            <p className="text-[11px] text-muted-foreground/70">Total attempts including the first try (2–5)</p>
+                            <p className="text-[11px] text-muted-foreground/70 dark:text-zinc-600">Total attempts including the first try (2–5)</p>
                         </div>
                         <div className="space-y-1.5">
                             <label className={labelClasses}>Wait Between Tries (ms)</label>
@@ -94,7 +94,7 @@ export function NodeSettings({ settings, onChange }: NodeSettingsProps) {
                                 onChange={(e) => update({ waitBetweenTries: e.target.value })}
                                 className={inputClasses}
                             />
-                            <p className="text-[11px] text-muted-foreground/70">Milliseconds to wait between retries (0–5000)</p>
+                            <p className="text-[11px] text-muted-foreground/70 dark:text-zinc-600">Milliseconds to wait between retries (0–5000)</p>
                         </div>
                     </div>
                 )}
@@ -113,9 +113,9 @@ export function NodeSettings({ settings, onChange }: NodeSettingsProps) {
                         <option value="continueRegularOutput" className="bg-card">Continue (Regular Output)</option>
                         <option value="continueErrorOutput" className="bg-card">Continue (Error Output)</option>
                     </select>
-                    <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground pointer-events-none" />
+                    <ChevronDown className="absolute right-2 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground dark:text-zinc-500 pointer-events-none" />
                 </div>
-                <p className="text-[11px] text-muted-foreground/70">What to do when all retries are exhausted</p>
+                <p className="text-[11px] text-muted-foreground/70 dark:text-zinc-600">What to do when all retries are exhausted</p>
             </div>
 
             <div className="border-t border-border dark:border-white/[0.05]" />
