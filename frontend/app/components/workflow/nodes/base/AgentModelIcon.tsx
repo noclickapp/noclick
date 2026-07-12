@@ -108,6 +108,17 @@ export function AgentModelIcon({
             style={style}
         />
     );
+    if (kind === 'opencode') {
+        // Two-tone gray wordmark (#4B4646 / #F1ECEC): on a white node body the
+        // light half disappears (and a near-black chip or an invert would just
+        // hide the OTHER half). Back it with a MID-gray chip so both tones read;
+        // drop the chip in dark, where the light half carries on the dark body.
+        return (
+            <span className="inline-flex items-center rounded bg-zinc-400 px-1 py-0.5 dark:bg-transparent dark:p-0">
+                {img}
+            </span>
+        );
+    }
     // openclaw's wordmark is white with a RED claw accent, drawn for dark
     // backgrounds. Inverting it in light mode flipped the red to cyan, so instead
     // back it with a dark chip in light (bg-foreground = near-black) and drop the
