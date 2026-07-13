@@ -13,7 +13,7 @@ const LogNodeComponent = (props: NodeProps) => (
     <AutomationNode
         {...props}
         Icon={ScrollText}
-        iconColor="text-zinc-400"
+        iconColor="text-muted-foreground"
         width={DIMENSIONS.width}
         height={DIMENSIONS.height}
         iconSize={DIMENSIONS.iconSize}
@@ -25,7 +25,7 @@ export const LogNode: NodeDefinition = {
     label: 'Log',
     description: 'Log activity to feed',
     Icon: ScrollText,
-    iconColor: 'text-zinc-400',
+    iconColor: 'text-muted-foreground',
     dimensions: DIMENSIONS,
     component: memo(LogNodeComponent),
 };

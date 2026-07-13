@@ -57,7 +57,7 @@ export function InterfaceConsumerBadge({ nodeId }: InterfaceConsumerBadgeProps) 
                 e.stopPropagation();
                 reveal(consumers.map((c) => c.id), e.currentTarget);
               }}
-              className="nodrag flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-zinc-900 border border-zinc-700/60 text-zinc-400 text-[10px] font-medium whitespace-nowrap hover:text-zinc-200 hover:border-zinc-500 transition-colors"
+              className="nodrag flex items-center gap-1 px-1.5 py-0.5 rounded-full bg-card border border-border dark:border-zinc-700/60 text-muted-foreground text-[10px] font-medium whitespace-nowrap hover:text-foreground hover:border-muted-foreground/40 dark:hover:border-zinc-500 transition-colors"
             >
               <Code2 className="w-2.5 h-2.5 shrink-0" />
               <span className="max-w-[110px] truncate">{label}</span>
@@ -65,8 +65,8 @@ export function InterfaceConsumerBadge({ nodeId }: InterfaceConsumerBadgeProps) 
           </TooltipTrigger>
           {/* Portaled to the document root, so the tooltip stays full-size and
               readable even when the badge itself is tiny at low zoom. */}
-          <TooltipContent side="bottom" className="bg-zinc-900 border-zinc-700 text-zinc-200 max-w-[260px] p-2.5">
-            <div className="text-[11px] font-semibold text-zinc-100">
+          <TooltipContent side="bottom" className="bg-card border-border dark:border-zinc-700 text-foreground max-w-[260px] p-2.5">
+            <div className="text-[11px] font-semibold text-foreground">
               {single ? 'Used by interface' : `Used by ${consumers.length} interfaces`}
             </div>
             <ul className="mt-1.5 flex flex-col gap-1">
@@ -78,16 +78,16 @@ export function InterfaceConsumerBadge({ nodeId }: InterfaceConsumerBadgeProps) 
                       e.stopPropagation();
                       reveal([c.id], e.currentTarget);
                     }}
-                    className="inline-flex items-center gap-1 text-xs text-zinc-300 hover:text-white transition-colors"
+                    className="inline-flex items-center gap-1 text-xs text-foreground/80 hover:text-foreground transition-colors"
                   >
-                    <Code2 className="w-3 h-3 shrink-0 text-violet-400" />
+                    <Code2 className="w-3 h-3 shrink-0 text-violet-600 dark:text-violet-400" />
                     <span className="truncate underline underline-offset-2">{c.label}</span>
                     <ArrowUpRight className="h-3 w-3 shrink-0" />
                   </button>
                 </li>
               ))}
             </ul>
-            <div className="mt-1.5 text-[10px] text-zinc-500">
+            <div className="mt-1.5 text-[10px] text-muted-foreground dark:text-zinc-500">
               {single ? 'Open the interface on the canvas' : 'Open an interface on the canvas'}
             </div>
           </TooltipContent>

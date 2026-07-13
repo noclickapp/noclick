@@ -44,20 +44,20 @@ export function OAuthErrorPanel({
                 type="button"
                 onClick={onDismiss}
                 aria-label="Dismiss"
-                className="absolute right-1.5 top-1.5 rounded p-1 text-red-400/60 transition-colors hover:bg-red-500/10 hover:text-red-200"
+                className="absolute right-1.5 top-1.5 rounded p-1 text-red-600/60 dark:text-red-400/60 transition-colors hover:bg-red-500/10 hover:text-red-700 dark:hover:text-red-200"
             >
                 <X className="h-3.5 w-3.5" aria-hidden />
             </button>
             <div className="flex items-center gap-2">
                 <AlertCircle
-                    className="h-4 w-4 shrink-0 text-red-400"
+                    className="h-4 w-4 shrink-0 text-red-600 dark:text-red-400"
                     aria-hidden
                 />
-                <div className="text-sm font-medium text-red-200">
+                <div className="text-sm font-medium text-red-800 dark:text-red-200">
                     {heading}
                 </div>
             </div>
-            <p className="mt-1.5 text-xs leading-[1.55] text-red-100/85">
+            <p className="mt-1.5 text-xs leading-[1.55] text-red-900/85 dark:text-red-100/85">
                 {message}
             </p>
             {/* Tinted (not saturated) CTA so Reconnect reads as the obvious next
@@ -66,7 +66,7 @@ export function OAuthErrorPanel({
                 type="button"
                 onClick={onReconnect}
                 disabled={isReconnecting}
-                className="mt-2.5 inline-flex items-center gap-1.5 rounded-md border border-red-500/30 bg-red-500/15 px-3 py-1.5 text-xs font-medium text-red-100 transition-colors hover:border-red-500/50 hover:bg-red-500/25 disabled:cursor-not-allowed disabled:opacity-60"
+                className="mt-2.5 inline-flex items-center gap-1.5 rounded-md border border-red-500/30 bg-red-500/15 px-3 py-1.5 text-xs font-medium text-red-900 dark:text-red-100 transition-colors hover:border-red-500/50 hover:bg-red-500/25 disabled:cursor-not-allowed disabled:opacity-60"
             >
                 {isReconnecting ? (
                     <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />

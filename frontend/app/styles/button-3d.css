@@ -13,7 +13,9 @@
     box-shadow:
         0 4px 0 0 rgba(185, 185, 185, 0.9),
         0 0 30px rgba(255, 255, 255, 0.15);
-    transition: transform 150ms, box-shadow 150ms !important;
+    transition:
+        transform 150ms,
+        box-shadow 150ms !important;
 }
 
 .btn-3d-white:hover:not(:disabled) {
@@ -33,7 +35,9 @@
 /* 3D white button without the ambient glow — for compact / in-card CTAs */
 .btn-3d-white-flat {
     box-shadow: 0 4px 0 0 rgba(185, 185, 185, 0.9);
-    transition: transform 150ms, box-shadow 150ms !important;
+    transition:
+        transform 150ms,
+        box-shadow 150ms !important;
 }
 
 .btn-3d-white-flat:hover:not(:disabled) {
@@ -49,7 +53,9 @@
 /* Secondary 3D button - dark background with subtle white shadow depth */
 .btn-3d-dark {
     box-shadow: 0 4px 0 0 rgba(255, 255, 255, 0.12);
-    transition: transform 150ms, box-shadow 150ms !important;
+    transition:
+        transform 150ms,
+        box-shadow 150ms !important;
 }
 
 .btn-3d-dark:hover:not(:disabled) {
@@ -67,7 +73,9 @@
     box-shadow:
         0 3px 0 0 rgba(185, 185, 185, 0.85),
         0 0 24px rgba(255, 255, 255, 0.1);
-    transition: transform 150ms, box-shadow 150ms !important;
+    transition:
+        transform 150ms,
+        box-shadow 150ms !important;
 }
 
 .btn-3d-white-subtle:hover:not(:disabled) {
@@ -87,7 +95,9 @@
 /* Purple 3D button - for enterprise/special CTAs */
 .btn-3d-purple {
     box-shadow: 0 4px 0 0 rgba(168, 85, 247, 0.35);
-    transition: transform 150ms, box-shadow 150ms !important;
+    transition:
+        transform 150ms,
+        box-shadow 150ms !important;
 }
 
 .btn-3d-purple:hover:not(:disabled) {
@@ -98,4 +108,52 @@
 .btn-3d-purple:active:not(:disabled) {
     transform: translateY(4px);
     box-shadow: 0 0 0 0 rgba(168, 85, 247, 0.35);
+}
+
+/* Light-mode depth: the gray/white lips above were tuned for dark pages.
+   On light surfaces the primary CTAs are accent-colored (bg-primary), so the
+   lip becomes a deeper shade of the accent; neutral lips soften to a faint
+   foreground tint. Dark mode keeps the original values (rules above win
+   inside .dark via these :not(.dark) guards never matching). */
+html:not(.dark) .btn-3d-white {
+    box-shadow:
+        0 4px 0 0 hsl(var(--primary) / 0.3),
+        0 0 30px hsl(var(--primary) / 0.08);
+}
+html:not(.dark) .btn-3d-white:hover:not(:disabled) {
+    box-shadow:
+        0 2px 0 0 hsl(var(--primary) / 0.3),
+        0 0 30px hsl(var(--primary) / 0.08);
+}
+html:not(.dark) .btn-3d-white:active:not(:disabled) {
+    box-shadow:
+        0 0 0 0 hsl(var(--primary) / 0.3),
+        0 0 30px hsl(var(--primary) / 0.08);
+}
+html:not(.dark) .btn-3d-white-flat {
+    box-shadow: 0 4px 0 0 hsl(var(--primary) / 0.3);
+}
+html:not(.dark) .btn-3d-white-flat:hover:not(:disabled) {
+    box-shadow: 0 2px 0 0 hsl(var(--primary) / 0.3);
+}
+html:not(.dark) .btn-3d-white-flat:active:not(:disabled) {
+    box-shadow: 0 0 0 0 hsl(var(--primary) / 0.3);
+}
+html:not(.dark) .btn-3d-white-subtle {
+    box-shadow: 0 3px 0 0 hsl(var(--primary) / 0.28);
+}
+html:not(.dark) .btn-3d-white-subtle:hover:not(:disabled) {
+    box-shadow: 0 1.5px 0 0 hsl(var(--primary) / 0.28);
+}
+html:not(.dark) .btn-3d-white-subtle:active:not(:disabled) {
+    box-shadow: 0 0 0 0 hsl(var(--primary) / 0.28);
+}
+html:not(.dark) .btn-3d-dark {
+    box-shadow: 0 4px 0 0 hsl(var(--foreground) / 0.14);
+}
+html:not(.dark) .btn-3d-dark:hover:not(:disabled) {
+    box-shadow: 0 2px 0 0 hsl(var(--foreground) / 0.14);
+}
+html:not(.dark) .btn-3d-dark:active:not(:disabled) {
+    box-shadow: 0 0 0 0 hsl(var(--foreground) / 0.14);
 }

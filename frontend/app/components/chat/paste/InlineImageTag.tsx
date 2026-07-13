@@ -45,7 +45,7 @@ export function InlineImageTag({
                 offset={8}
                 delay={150}
             >
-                <div className="bg-zinc-900 border border-zinc-700 rounded-lg p-2 shadow-xl">
+                <div className="bg-card border border-border dark:border-zinc-700 rounded-lg p-2 shadow-xl">
                     <img 
                         src={preview} 
                         alt="Preview"
@@ -61,7 +61,7 @@ export function InlineImageTag({
             contentEditable={false}
             className={cn(
                 "inline-flex items-center mx-1 relative group cursor-default",
-                "bg-zinc-700/50 rounded-md p-0.5",
+                "bg-secondary dark:bg-zinc-700/50 rounded-md p-0.5",
                 "transition-colors duration-150",
                 getSelectionHighlightClass(isSelected),
                 className
@@ -85,12 +85,12 @@ export function InlineImageTag({
                 
                 {isLoading && (
                     <div className="absolute inset-0 flex items-center justify-center">
-                        <Loader2 className="w-3 h-3 text-white animate-spin" />
+                        <Loader2 className="w-3 h-3 text-foreground animate-spin" />
                     </div>
                 )}
                 
                 {isLoading && progress > 0 && (
-                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-zinc-800/50 rounded-b">
+                    <div className="absolute bottom-0 left-0 right-0 h-0.5 bg-muted/50 rounded-b">
                         <Progress 
                             value={progress} 
                             className="h-full"
@@ -103,9 +103,9 @@ export function InlineImageTag({
                 onClick={handleRemove}
                 className={cn(
                     "absolute opacity-0 group-hover:opacity-100",
-                    "bg-zinc-800 rounded-full p-0.5",
-                    "hover:bg-zinc-900 transition-all duration-200",
-                    "border border-zinc-600",
+                    "bg-secondary rounded-full p-0.5",
+                    "hover:bg-card transition-all duration-200",
+                    "border border-border dark:border-zinc-600",
                     "z-[10000]"  // Higher than tooltips (z-[9999]) to ensure always clickable
                 )}
                 style={{
@@ -116,7 +116,7 @@ export function InlineImageTag({
                 }}
                 aria-label="Remove image"
             >
-                <X className="w-2.5 h-2.5 text-zinc-400" />
+                <X className="w-2.5 h-2.5 text-muted-foreground" />
             </button>
         </span>
         </>

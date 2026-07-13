@@ -33,13 +33,22 @@ export interface HarnessBrand {
      *  <1 insets full-bleed marks, >1 grows marks whose contain-fit renders small
      *  (e.g. clawd is wider than tall, so height-fitting leaves it undersized). */
     inset?: number;
+    /** Art is pure white (drawn for dark backgrounds). Consumers rendering it on a
+     *  themed surface must invert it in light mode (`invert dark:invert-0`) so it
+     *  reads as a dark glyph on light and stays white on dark; the dark-well chips
+     *  that already sit on a fixed dark circle leave it as-is. */
+    monochrome?: boolean;
 }
 
 export const HARNESS_BRANDS: Record<HarnessSlug, HarnessBrand> = {
     // NOTE: bare icon rows (workflow-card pill) now size <img> marks by intrinsic
     // aspect, so wide marks like clawd no longer need big compensating insets.
+    // clawd.svg is colored (#c97c5d salmon) → visible on both themes.
     'claude-code': { markSrc: '/icons/clawd.svg', inset: 1.1 },
+    // opencode marks are two-tone gray (#4B4646 / #F1ECEC) → self-adapting, no invert.
     opencode: { markSrc: '/icons/opencode.svg', wordmarkSrc: '/icons/opencode-wordmark.svg', inset: 0.9 },
-    openclaw: { markSrc: '/icons/openclaw_marker.svg', wordmarkSrc: '/icons/openclaw.svg' },
+    // openclaw marker + wordmark are pure-white dark-bg art → invert in light mode.
+    openclaw: { markSrc: '/icons/openclaw_marker.svg', wordmarkSrc: '/icons/openclaw.svg', monochrome: true },
+    // hermes marks are gold/amber/bronze (#FFD700…) → visible on both themes.
     hermes: { markSrc: '/icons/hermes_marker.svg', wordmarkSrc: '/icons/hermes.svg', inset: 0.95 },
 };

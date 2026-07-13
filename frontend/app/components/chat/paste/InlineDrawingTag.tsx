@@ -52,13 +52,13 @@ export function InlineDrawingTag({
                 offset={8}
                 delay={150}
             >
-                <div className="bg-zinc-900 border border-zinc-700 rounded-lg p-2 shadow-xl">
+                <div className="bg-card border border-border dark:border-zinc-700 rounded-lg p-2 shadow-xl">
                     <img 
                         src={screenshot} 
                         alt="Drawing Screenshot Preview"
                         className="max-w-xs max-h-64 object-contain rounded"
                     />
-                    <div className="mt-1 text-xs text-zinc-400 text-center">
+                    <div className="mt-1 text-xs text-muted-foreground text-center">
                         Auto-updating drawing screenshot
                     </div>
                 </div>
@@ -72,9 +72,9 @@ export function InlineDrawingTag({
                 contentEditable={false}
                 className={cn(
                     "inline-flex items-center mx-1 relative group",
-                    "bg-white/80 rounded-md p-0.5 border border-white/70",
+                    "bg-primary/80 rounded-md p-0.5 border border-primary/70",
                     "transition-colors duration-150",
-                    onClick ? "cursor-pointer hover:bg-white/90 hover:border-white/80" : "cursor-default",
+                    onClick ? "cursor-pointer hover:bg-primary/90 hover:border-primary/80" : "cursor-default",
                     getSelectionHighlightClass(isSelected),
                     className
                 )}
@@ -89,7 +89,7 @@ export function InlineDrawingTag({
             >
                 <div className="relative flex items-center gap-1">
                     {/* Pen icon to indicate drawing content */}
-                    <Pen className="w-3 h-3 text-zinc-800" />
+                    <Pen className="w-3 h-3 text-primary-foreground" />
                     
                     <img
                         src={screenshot}
@@ -100,13 +100,13 @@ export function InlineDrawingTag({
                         )}
                     />
                     
-                    <span className="text-xs text-zinc-800 font-mono">
+                    <span className="text-xs text-primary-foreground font-mono">
                         Drawing
                     </span>
-                    
+
                     {isUpdating && (
-                        <div className="absolute inset-0 flex items-center justify-center bg-white/30 rounded">
-                            <Loader2 className="w-3 h-3 text-zinc-800 animate-spin" />
+                        <div className="absolute inset-0 flex items-center justify-center bg-primary/30 rounded">
+                            <Loader2 className="w-3 h-3 text-primary-foreground animate-spin" />
                         </div>
                     )}
                 </div>
@@ -115,9 +115,9 @@ export function InlineDrawingTag({
                     onClick={handleRemove}
                     className={cn(
                         "absolute opacity-0 group-hover:opacity-100",
-                        "bg-white/80 rounded-full p-0.5",
-                        "hover:bg-white/90 transition-all duration-200",
-                        "border border-white/70",
+                        "bg-primary/80 rounded-full p-0.5",
+                        "hover:bg-primary/90 transition-all duration-200",
+                        "border border-primary/70",
                         "z-[10000]"  // Higher than tooltips (z-[9999]) to ensure always clickable
                     )}
                     style={{
@@ -128,7 +128,7 @@ export function InlineDrawingTag({
                     }}
                     aria-label="Remove drawing screenshot"
                 >
-                    <X className="w-2.5 h-2.5 text-zinc-800" />
+                    <X className="w-2.5 h-2.5 text-primary-foreground" />
                 </button>
             </span>
         </>

@@ -53,9 +53,9 @@ export function InlineHtmlTag({
             contentEditable={false}
             className={cn(
                 "inline-flex items-center mx-1 relative group",
-                "bg-white/80 rounded-md px-1.5 py-0.5 border border-white/70",
+                "bg-primary/80 rounded-md px-1.5 py-0.5 border border-primary/70",
                 "transition-all duration-150",
-                "hover:bg-white/90 hover:border-white/80",
+                "hover:bg-primary/90 hover:border-primary/80",
                 getSelectionHighlightClass(isSelected),
                 className
             )}
@@ -70,9 +70,9 @@ export function InlineHtmlTag({
         >
             <div className="relative flex items-center gap-1">
                 {/* Code icon to indicate HTML element */}
-                <Code2 className="w-3 h-3 text-zinc-800" />
+                <Code2 className="w-3 h-3 text-primary-foreground" />
 
-                <span className="text-xs text-zinc-800 font-mono lowercase">
+                <span className="text-xs text-primary-foreground font-mono lowercase">
                     {tagName.toLowerCase()}
                 </span>
             </div>
@@ -81,9 +81,9 @@ export function InlineHtmlTag({
                 onClick={handleRemove}
                 className={cn(
                     "absolute opacity-0 group-hover:opacity-100",
-                    "bg-white/80 rounded-full p-0.5",
-                    "hover:bg-white/90 transition-all duration-200",
-                    "border border-white/70",
+                    "bg-primary/80 rounded-full p-0.5",
+                    "hover:bg-primary/90 transition-all duration-200",
+                    "border border-primary/70",
                     "z-[10000]"  // Higher than tooltips to ensure always clickable
                 )}
                 style={{
@@ -94,7 +94,7 @@ export function InlineHtmlTag({
                 }}
                 aria-label={`Remove ${tagName} element`}
             >
-                <X className="w-2.5 h-2.5 text-zinc-800" />
+                <X className="w-2.5 h-2.5 text-primary-foreground" />
             </button>
         </span>
     );

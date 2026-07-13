@@ -26,7 +26,7 @@ const EDGE_RADIUS = 16;
 const EDGE_STROKE = 1.5;
 
 const SWEEP_CONIC =
-    'conic-gradient(from 0deg, transparent 0%, rgba(255,255,255,0.12) 25%, #ffffff 50%, rgba(255,255,255,0.12) 75%, transparent 100%)';
+    'conic-gradient(from 0deg, transparent 0%, hsl(var(--foreground) / 0.12) 25%, hsl(var(--foreground)) 50%, hsl(var(--foreground) / 0.12) 75%, transparent 100%)';
 
 // content-box XOR border-box → a stroke-only mask, so the rotating conic child shows
 // through only the ring while the interior stays transparent (the node shows through).
@@ -146,7 +146,7 @@ export function NodeAuroraLayers({ data, selected, nodeType }: { data?: AuroraDa
                     key={pingNonce}
                     style={{
                         ...edgeRing,
-                        border: `${EDGE_STROKE}px solid #e4e4e7`,
+                        border: `${EDGE_STROKE}px solid hsl(var(--foreground) / 0.9)`,
                         animation: 'node-complete-ping 0.7s ease-out forwards',
                     }}
                 />

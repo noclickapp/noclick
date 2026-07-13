@@ -5,7 +5,10 @@
 import { History } from 'lucide-react';
 import { cn } from '~/lib/utils';
 import { useTimeAgo } from '~/hooks/useTimeAgo';
-import { STATUS_META, type WorkflowExecutionLog } from '../WorkflowExecutionLogs';
+import {
+    STATUS_META,
+    type WorkflowExecutionLog,
+} from '../WorkflowExecutionLogs';
 
 interface RunHistoryPillProps {
     /** Execution list (newest first) — shared with the Logs tab. */
@@ -24,15 +27,23 @@ export function RunHistoryPill({ logs, onOpen }: RunHistoryPillProps) {
             type="button"
             onClick={onOpen}
             title="View this workflow's run results"
-            className="absolute left-4 top-4 z-10 inline-flex items-center gap-2 rounded-full border border-white/10 bg-[#0a0a0b]/90 px-3.5 py-1.5 text-[13px] font-medium text-zinc-200 shadow-lg shadow-black/40 backdrop-blur-sm transition-colors hover:bg-white/[0.08] hover:text-white"
+            className="absolute left-4 top-4 z-10 inline-flex items-center gap-2 rounded-full border border-foreground/10 bg-popover/90 dark:bg-[#0a0a0b]/90 px-3.5 py-1.5 text-[13px] font-medium text-foreground shadow-lg shadow-black/10 dark:shadow-black/40 backdrop-blur-sm transition-colors hover:bg-foreground/[0.08] hover:text-foreground"
         >
-            <History className="h-4 w-4 text-zinc-400" />
+            <History className="h-4 w-4 text-muted-foreground" />
             Runs
             {latest && latestStatus && (
-                <span className="flex items-center gap-1.5 text-zinc-400">
-                    <span className="text-zinc-600">·</span>
-                    <latestStatus.Icon className={cn('h-3.5 w-3.5', latestStatus.text, latestStatus.spin && 'animate-spin')} />
-                    <span className="tabular-nums">{latestAgo || 'just now'}</span>
+                <span className="flex items-center gap-1.5 text-muted-foreground">
+                    <span className="text-muted-foreground/60 dark:text-zinc-600">·</span>
+                    <latestStatus.Icon
+                        className={cn(
+                            'h-3.5 w-3.5',
+                            latestStatus.text,
+                            latestStatus.spin && 'animate-spin'
+                        )}
+                    />
+                    <span className="tabular-nums">
+                        {latestAgo || 'just now'}
+                    </span>
                 </span>
             )}
         </button>

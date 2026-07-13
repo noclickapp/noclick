@@ -3,20 +3,22 @@
 // carried in utm params + the link id. Rendered inline in the composer's hint
 // row (via AgentChatComposer footerEnd) so it costs no vertical space.
 
+import { LogoMark } from '~/components/shared/LogoMark';
+
 export function PoweredByBadge({ linkId }: { linkId: string }) {
-  return (
-    <a
-      href={`https://noclick.com/?utm_source=agent-share&utm_medium=badge&ref=${encodeURIComponent(linkId)}`}
-      target="_blank"
-      rel="noopener noreferrer"
-      data-testid="agent-share-powered-by"
-      className="inline-flex items-center gap-1.5 text-[11px] text-zinc-500 hover:text-zinc-300 border border-zinc-800 hover:border-zinc-700 rounded-full px-2.5 py-1 transition-colors"
-    >
-      Powered by
-      <span className="inline-flex items-center gap-1 font-semibold text-zinc-300">
-        <img src="/logo.svg" alt="" className="w-3 h-3" aria-hidden />
-        NoClick
-      </span>
-    </a>
-  );
+    return (
+        <a
+            href={`https://noclick.com/?utm_source=agent-share&utm_medium=badge&ref=${encodeURIComponent(linkId)}`}
+            target="_blank"
+            rel="noopener noreferrer"
+            data-testid="agent-share-powered-by"
+            className="inline-flex items-center gap-1.5 text-[11px] text-muted-foreground/70 dark:text-zinc-500 hover:text-muted-foreground dark:hover:text-zinc-300 border border-border hover:border-foreground/20 rounded-full px-2.5 py-1 transition-colors"
+        >
+            Powered by
+            <span className="inline-flex items-center gap-1 font-semibold text-muted-foreground dark:text-zinc-300">
+                <LogoMark alt="" className="w-3 h-3" aria-hidden />
+                NoClick
+            </span>
+        </a>
+    );
 }

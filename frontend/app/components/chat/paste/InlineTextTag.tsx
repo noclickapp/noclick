@@ -42,8 +42,8 @@ export function InlineTextTag({
                 offset={8}
                 delay={150}
             >
-                <div className="bg-zinc-900 border border-zinc-700 rounded-lg p-3 shadow-xl max-w-md">
-                    <div className="max-h-48 overflow-y-auto whitespace-pre-wrap text-xs text-zinc-300 scrollbar-subtle">
+                <div className="bg-card border border-border dark:border-zinc-700 rounded-lg p-3 shadow-xl max-w-md">
+                    <div className="max-h-48 overflow-y-auto whitespace-pre-wrap text-xs text-foreground/80 scrollbar-subtle">
                         {content}
                     </div>
                 </div>
@@ -56,7 +56,7 @@ export function InlineTextTag({
             contentEditable={false}
             className={cn(
                 "inline-flex items-center mx-1 relative group cursor-default",
-                "bg-white/80 rounded-md px-2 py-0.5 border border-white/70",
+                "bg-primary/80 rounded-md px-2 py-0.5 border border-primary/70",
                 "transition-colors duration-150",
                 getSelectionHighlightClass(isSelected),
                 className
@@ -69,8 +69,8 @@ export function InlineTextTag({
             data-paste-content={content}
             data-paste-lines={lineCount}
         >
-            <FileText className="w-3 h-3 text-zinc-800 mr-1" />
-            <span className="text-xs text-zinc-800">
+            <FileText className="w-3 h-3 text-primary-foreground mr-1" />
+            <span className="text-xs text-primary-foreground">
                 Pasted {lineCount} lines
             </span>
             
@@ -78,9 +78,9 @@ export function InlineTextTag({
                 onClick={handleRemove}
                 className={cn(
                     "absolute opacity-0 group-hover:opacity-100",
-                    "bg-white/80 rounded-full p-0.5",
-                    "hover:bg-white/90 transition-all duration-200",
-                    "border border-white/70",
+                    "bg-primary/80 rounded-full p-0.5",
+                    "hover:bg-primary/90 transition-all duration-200",
+                    "border border-primary/70",
                     "z-[10000]"  // Higher than tooltips (z-[9999]) to ensure always clickable
                 )}
                 style={{
@@ -91,7 +91,7 @@ export function InlineTextTag({
                 }}
                 aria-label="Remove pasted text"
             >
-                <X className="w-2.5 h-2.5 text-zinc-800" />
+                <X className="w-2.5 h-2.5 text-primary-foreground" />
             </button>
         </span>
         </>

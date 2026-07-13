@@ -14,20 +14,34 @@ import { HARNESS_BRANDS, resolveAgentModelKind, type AgentModelKind } from '~/li
 // data-layer consumers don't import icon components; re-exported for existing sites.
 export { resolveAgentModelKind, type AgentModelKind } from '~/lib/harnessBrand';
 
-const DROP_SHADOW_NORMAL = 'drop-shadow(0 4px 12px rgba(0, 0, 0, 0.4))';
-const DROP_SHADOW_COMPACT = 'drop-shadow(0 2px 6px rgba(0, 0, 0, 0.4))';
+const DROP_SHADOW_NORMAL =
+    'drop-shadow(0 4px 12px rgba(0, 0, 0, calc(0.4 * var(--icon-shadow-scale, 1))))';
+const DROP_SHADOW_COMPACT =
+    'drop-shadow(0 2px 6px rgba(0, 0, 0, calc(0.4 * var(--icon-shadow-scale, 1))))';
 const DISABLED_FILTER = `grayscale(100%) brightness(0.4) ${DROP_SHADOW_NORMAL}`;
 
 // Intrinsic sizing per kind × variant — copied verbatim from the previous inline
 // AIAgentNode render so the desktop look is unchanged. img wordmarks size by a
 // single axis (the other stays auto); the icon components size both.
-const SIZES: Record<AgentModelKind, { normal: CSSProperties; compact: CSSProperties }> = {
-    codex: { normal: { width: 40, height: 40 }, compact: { width: 32, height: 32 } },
+const SIZES: Record<
+    AgentModelKind,
+    { normal: CSSProperties; compact: CSSProperties }
+> = {
+    codex: {
+        normal: { width: 40, height: 40 },
+        compact: { width: 32, height: 32 },
+    },
     'claude-code': { normal: { height: 40 }, compact: { height: 32 } },
     opencode: { normal: { height: 22 }, compact: { height: 18 } },
-    openclaw: { normal: { width: 148, height: 'auto' }, compact: { width: 60, height: 'auto' } },
+    openclaw: {
+        normal: { width: 148, height: 'auto' },
+        compact: { width: 60, height: 'auto' },
+    },
     hermes: { normal: { height: 26 }, compact: { height: 20 } },
-    bot: { normal: { width: 40, height: 40 }, compact: { width: 32, height: 32 } },
+    bot: {
+        normal: { width: 40, height: 40 },
+        compact: { width: 32, height: 32 },
+    },
 };
 
 // Claude Code uses its compact mark (no wordmark); the others use their full
@@ -51,19 +65,53 @@ interface AgentModelIconProps {
     stateClassName?: string;
 }
 
-export function AgentModelIcon({ model, variant = 'normal', disabled = false, stateClassName = '' }: AgentModelIconProps) {
+export function AgentModelIcon({
+    model,
+    variant = 'normal',
+    disabled = false,
+    stateClassName = '',
+}: AgentModelIconProps) {
     const kind = resolveAgentModelKind(model);
     const style: CSSProperties = {
         ...SIZES[kind][variant],
-        filter: disabled ? DISABLED_FILTER : (variant === 'normal' ? DROP_SHADOW_NORMAL : DROP_SHADOW_COMPACT),
+        filter: disabled
+            ? DISABLED_FILTER
+            : variant === 'normal'
+              ? DROP_SHADOW_NORMAL
+              : DROP_SHADOW_COMPACT,
     };
 
     if (kind === 'codex') {
-        return <OpenAI className={`${disabled ? 'opacity-35' : 'text-white'} ${stateClassName}`.trim()} style={style} />;
+        // OpenAI mark paints via currentColor: black on a light node body, white
+        // on dark (dark kept pixel-identical). Fixes the white-on-white bug.
+        return (
+            <OpenAI
+                className={`${disabled ? 'opacity-35' : 'text-zinc-900 dark:text-white'} ${stateClassName}`.trim()}
+                style={style}
+            />
+        );
     }
     if (kind === 'bot') {
-        return <Bot className={`${disabled ? 'opacity-35' : 'text-purple-400'} ${stateClassName}`.trim()} style={style} />;
+        return (
+            <Bot
+                className={`${disabled ? 'opacity-35' : 'text-purple-400'} ${stateClassName}`.trim()}
+                style={style}
+            />
+        );
     }
     const { src, alt } = IMG_META[kind];
-    return <img src={src} alt={alt} className={`${disabled ? 'opacity-35' : ''} ${stateClassName}`.trim()} style={style} />;
+    const img = (
+        <img
+            src={src}
+            alt={alt}
+            className={`${disabled ? 'opacity-35' : ''} ${stateClassName}`.trim()}
+            style={style}
+        />
+    );
+    // opencode's + openclaw's wordmarks are drawn for DARK surfaces and lose their
+    // light parts on a white node. Global CSS rules in tailwind.css recolor each in
+    // light mode (opencode inverts its gray tones; openclaw darkens+saturates so its
+    // white "OPEN" reads as gray while the red claw stays vivid) — no per-render
+    // chip needed here, so brand colors are preserved.
+    return img;
 }

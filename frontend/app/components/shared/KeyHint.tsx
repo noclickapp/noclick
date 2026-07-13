@@ -27,7 +27,7 @@ interface KeyHintProps {
     keys: string[];
     className?: string;
     /** Override the keycap (kbd) styling — e.g. brighter chips on a light/filled
-     *  button. Merged over the default zinc/translucent look via cn(). */
+     *  button. Merged over the default muted-chip look via cn(). */
     kbdClassName?: string;
 }
 
@@ -49,7 +49,12 @@ export function KeyHint({ keys, className, kbdClassName }: KeyHintProps) {
                 <kbd
                     key={`${k}-${i}`}
                     className={cn(
-                        'text-[10px] font-medium text-zinc-400 bg-white/[0.05] min-w-[17px] h-[17px] px-1 flex items-center justify-center rounded-[4px]',
+                        // Single (non-dark:) bg so a kbdClassName override (e.g. the
+                        // dark chip on the white Send button) can win via tailwind-merge
+                        // — a dark: variant here outranks a base override and left the
+                        // chip white-on-white. foreground/[0.1] reads as a chip on both
+                        // the dark popover and light surfaces.
+                        'text-[10px] font-medium text-muted-foreground bg-foreground/[0.1] ring-1 ring-foreground/10 dark:ring-0 min-w-[17px] h-[17px] px-1 flex items-center justify-center rounded-[4px]',
                         kbdClassName
                     )}
                 >
@@ -77,7 +82,9 @@ export function SequenceKeyHint({
                     className="inline-flex items-center gap-1.5"
                 >
                     {i > 0 && (
-                        <span className="text-[10px] text-zinc-500">then</span>
+                        <span className="text-[10px] text-muted-foreground dark:text-zinc-500">
+                            then
+                        </span>
                     )}
                     <KeyHint keys={[k]} />
                 </span>

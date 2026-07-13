@@ -19,7 +19,7 @@ export function SecretInput({ className, inputClassName, ...props }: SecretInput
             <button
                 type="button"
                 onClick={() => setIsVisible((visible) => !visible)}
-                className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-zinc-500 transition-colors hover:text-zinc-300 focus:outline-none focus:ring-1 focus:ring-zinc-700"
+                className="absolute right-2 top-1/2 -translate-y-1/2 rounded p-1 text-muted-foreground dark:text-zinc-500 transition-colors hover:text-foreground/80 focus:outline-none focus:ring-1 focus:ring-border dark:focus:ring-zinc-700"
                 aria-label={isVisible ? 'Hide secret' : 'Show secret'}
                 title={isVisible ? 'Hide secret' : 'Show secret'}
             >
