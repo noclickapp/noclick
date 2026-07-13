@@ -49,6 +49,7 @@ import { PipedriveNode } from './PipedriveNode';
 import { ResendNode } from './ResendNode';
 import { PhantomBusterNode } from './PhantomBusterNode';
 import { CalComNode } from './CalComNode';
+import { CalendlyNode } from './CalendlyNode';
 import { GoogleMapsNode } from './GoogleMapsNode';
 import { PerplexityNode } from './PerplexityNode';
 import { VoyageNode } from './VoyageNode';
@@ -202,7 +203,7 @@ function _buildAvailable(): NodeDefinition[] {
         RedisNode, SalesforceNode, AffinityNode, SemrushNode, ShopifyNode, SlackNode,
         SupabaseNode, TikTokNode, TwilioNode, TwitterNode, CloudflareNode,
         TypeformNode, WhatsAppNode, ElevenLabsNode, YouTubeNode, HubSpotNode,
-        MailchimpNode, PipedriveNode, ResendNode, QuickBooksNode, BigQueryNode, GoHighLevelNode, ExpensifyNode, LaunchDarklyNode, WebflowNode, PhantomBusterNode, CalComNode, GoogleMapsNode, PerplexityNode, PineconeNode, QdrantNode, UpstashVectorNode, WeaviateNode, ChromaNode, MilvusNode, MongoDBNode, ElasticsearchNode, MailgunNode,
+        MailchimpNode, PipedriveNode, ResendNode, QuickBooksNode, BigQueryNode, GoHighLevelNode, ExpensifyNode, LaunchDarklyNode, WebflowNode, PhantomBusterNode, CalComNode, CalendlyNode, GoogleMapsNode, PerplexityNode, PineconeNode, QdrantNode, UpstashVectorNode, WeaviateNode, ChromaNode, MilvusNode, MongoDBNode, ElasticsearchNode, MailgunNode,
         GitLabNode, BoxNode, ClickUpNode, DevinNode, AsanaNode, FirestoreNode,
         GoogleCloudStorageNode, MondayNode, ParallelNode, DatadogNode, LoopsNode,
         ExaNode, ReductoNode, FalNode, BrandfetchNode, FindymailNode, BeehiivNode,
