@@ -14,6 +14,7 @@ export { useGithubOAuth } from './useGithubOAuth';
 export { useGitLabOAuth } from './useGitLabOAuth';
 export { useHubSpotOAuth } from './useHubSpotOAuth';
 export { useMailchimpOAuth } from './useMailchimpOAuth';
+export { useThreadsOAuth } from './useThreadsOAuth';
 export { useLinearOAuth } from './useLinearOAuth';
 export { useCalComOAuth } from './useCalComOAuth';
 export { useBoxOAuth } from './useBoxOAuth';
