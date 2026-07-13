@@ -12,13 +12,14 @@ import { useMicrosoftOAuth } from './useMicrosoftOAuth';
 import { useNotionOAuth } from './useNotionOAuth';
 import { useGithubOAuth } from './useGithubOAuth';
 import { useZoomOAuth } from './useZoomOAuth';
+import { useCalendlyOAuth } from './useCalendlyOAuth';
 
 const cfg = (h: any) => h.oauthConfig;
 const scopesOf = (url: string) => new URL(url, 'http://x').searchParams.get('scopes');
 
 describe('createOAuthHook contract', () => {
     it('exposes each factory hook config', () => {
-        for (const h of [useLinearOAuth, useAttioOAuth, useMicrosoftOAuth, useNotionOAuth, useGithubOAuth, useZoomOAuth]) {
+        for (const h of [useLinearOAuth, useAttioOAuth, useMicrosoftOAuth, useNotionOAuth, useGithubOAuth, useZoomOAuth, useCalendlyOAuth]) {
             expect(cfg(h)?.provider).toBeTruthy();
         }
     });
