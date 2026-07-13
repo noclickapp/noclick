@@ -49,6 +49,7 @@ import { PipedriveNode } from './PipedriveNode';
 import { ResendNode } from './ResendNode';
 import { PhantomBusterNode } from './PhantomBusterNode';
 import { CalComNode } from './CalComNode';
+import { CalendlyNode } from './CalendlyNode';
 import { GoogleMapsNode } from './GoogleMapsNode';
 import { PerplexityNode } from './PerplexityNode';
 import { VoyageNode } from './VoyageNode';
@@ -108,6 +109,8 @@ import { MicrosoftTeamsNode } from './MicrosoftTeamsNode';
 import { GoHighLevelNode } from './GoHighLevelNode';
 import { QuickBooksNode } from './QuickBooksNode';
 import { ZoomNode } from './ZoomNode';
+import { OneLakeNode } from './OneLakeNode';
+import { ThreadsNode } from './ThreadsNode';
 import { LinkedInNode } from './LinkedInNode';
 import { NotionNode } from './NotionNode';
 import { OutlookMailNode } from './OutlookMailNode';
@@ -201,13 +204,14 @@ function _buildAvailable(): NodeDefinition[] {
         RedisNode, SalesforceNode, AffinityNode, SemrushNode, ShopifyNode, SlackNode,
         SupabaseNode, TikTokNode, TwilioNode, TwitterNode, CloudflareNode,
         TypeformNode, WhatsAppNode, ElevenLabsNode, YouTubeNode, HubSpotNode,
-        MailchimpNode, PipedriveNode, ResendNode, QuickBooksNode, BigQueryNode, GoHighLevelNode, ExpensifyNode, LaunchDarklyNode, WebflowNode, PhantomBusterNode, CalComNode, GoogleMapsNode, PerplexityNode, PineconeNode, QdrantNode, UpstashVectorNode, WeaviateNode, ChromaNode, MilvusNode, MongoDBNode, ElasticsearchNode, MailgunNode,
+        MailchimpNode, PipedriveNode, ResendNode, QuickBooksNode, ThreadsNode, BigQueryNode, GoHighLevelNode, ExpensifyNode, LaunchDarklyNode, WebflowNode, PhantomBusterNode, CalComNode, CalendlyNode, GoogleMapsNode, PerplexityNode, PineconeNode, QdrantNode, UpstashVectorNode, WeaviateNode, ChromaNode, MilvusNode, MongoDBNode, ElasticsearchNode, MailgunNode,
         GitLabNode, BoxNode, ClickUpNode, DevinNode, AsanaNode, FirestoreNode,
         GoogleCloudStorageNode, MondayNode, ParallelNode, DatadogNode, LoopsNode,
         ExaNode, ReductoNode, FalNode, BrandfetchNode, FindymailNode, BeehiivNode,
         HexNode, ClickHouseNode, FellowNode, FathomNode, SigmaNode, TrelloNode,
         FirecrawlNode, AttioNode, ZendeskNode, ConfluenceNode, PagerDutyNode, GoogleMeetNode, FreshsalesNode, AppSheetNode, TableauNode, AtlasAdminNode, PagespeedNode, SnowflakeNode, GoogleTranslateNode, VoyageNode, SendEmailNode, AIAgentNode, ToolNode, MCPServerNode,
         DatabricksNode, ZoomNode,
+        OneLakeNode,
         NoClickNode, AlarmNode, FilesystemNode, IterationNode, DelayNode, FilterNode,
         SplitOutNode,
         ConditionalNode, ApprovalNode, LogNode, SwitchNode, MergeNode, SubmitExternalFormNode,
