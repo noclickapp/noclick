@@ -115,7 +115,7 @@ export function DrawingOptionsContent({
                         size="sm"
                         onClick={onUndo}
                         disabled={!canUndo}
-                        className="h-8 w-8 p-0 transition-all rounded-lg bg-secondary hover:bg-muted-foreground/30 text-muted-foreground hover:text-foreground/80 border border-border dark:border-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed"
+                        className="h-8 w-8 p-0 transition-all rounded-lg bg-secondary dark:bg-zinc-800/80 hover:bg-muted-foreground/30 dark:hover:bg-zinc-700 text-muted-foreground hover:text-foreground/80 border border-border dark:border-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed"
                         title={`Undo (${modKey}+Z)`}
                     >
                         <Undo className="h-3.5 w-3.5" />
@@ -124,7 +124,7 @@ export function DrawingOptionsContent({
                         size="sm"
                         onClick={onRedo}
                         disabled={!canRedo}
-                        className="h-8 w-8 p-0 transition-all rounded-lg bg-secondary hover:bg-muted-foreground/30 text-muted-foreground hover:text-foreground/80 border border-border dark:border-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed"
+                        className="h-8 w-8 p-0 transition-all rounded-lg bg-secondary dark:bg-zinc-800/80 hover:bg-muted-foreground/30 dark:hover:bg-zinc-700 text-muted-foreground hover:text-foreground/80 border border-border dark:border-zinc-700 disabled:opacity-30 disabled:cursor-not-allowed"
                         title={`Redo (${modKey}+Y)`}
                     >
                         <Redo className="h-3.5 w-3.5" />
@@ -136,7 +136,7 @@ export function DrawingOptionsContent({
                     <Button
                         size="sm"
                         onClick={(e) => handleToolChange('pen', e)}
-                        className={`h-8 w-8 p-0 transition-all rounded-lg bg-secondary hover:bg-muted-foreground/30 text-muted-foreground hover:text-foreground/80 ${
+                        className={`h-8 w-8 p-0 transition-all rounded-lg bg-secondary dark:bg-zinc-800/80 hover:bg-muted-foreground/30 dark:hover:bg-zinc-700 text-muted-foreground hover:text-foreground/80 ${
                             currentTool === 'pen'
                                 ? 'border-2 text-foreground'
                                 : 'border border-border dark:border-zinc-700'
@@ -151,7 +151,7 @@ export function DrawingOptionsContent({
                 <Button
                     size="sm"
                     onClick={(e) => handleToolChange('eraser', e)}
-                    className={`h-8 w-8 p-0 transition-all rounded-lg bg-secondary hover:bg-muted-foreground/30 text-muted-foreground hover:text-foreground/80 ${
+                    className={`h-8 w-8 p-0 transition-all rounded-lg bg-secondary dark:bg-zinc-800/80 hover:bg-muted-foreground/30 dark:hover:bg-zinc-700 text-muted-foreground hover:text-foreground/80 ${
                         currentTool === 'eraser'
                             ? 'border-2 border-red-400 text-red-600 dark:text-red-300'
                             : 'border border-border dark:border-zinc-700'
@@ -163,7 +163,7 @@ export function DrawingOptionsContent({
                     <Button
                         size="sm"
                         onClick={(e) => handleToolChange('text', e)}
-                        className={`h-8 w-8 p-0 transition-all rounded-lg bg-secondary hover:bg-muted-foreground/30 text-muted-foreground hover:text-foreground/80 ${
+                        className={`h-8 w-8 p-0 transition-all rounded-lg bg-secondary dark:bg-zinc-800/80 hover:bg-muted-foreground/30 dark:hover:bg-zinc-700 text-muted-foreground hover:text-foreground/80 ${
                             currentTool === 'text'
                                 ? 'border-2 text-foreground'
                                 : 'border border-border dark:border-zinc-700'

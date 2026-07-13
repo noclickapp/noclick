@@ -61,7 +61,7 @@ export function InlineImageTag({
             contentEditable={false}
             className={cn(
                 "inline-flex items-center mx-1 relative group cursor-default",
-                "bg-secondary rounded-md p-0.5",
+                "bg-secondary dark:bg-zinc-700/50 rounded-md p-0.5",
                 "transition-colors duration-150",
                 getSelectionHighlightClass(isSelected),
                 className

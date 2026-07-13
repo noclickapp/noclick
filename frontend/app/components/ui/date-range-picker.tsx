@@ -73,7 +73,7 @@ export function DateRangePicker({
                         variant={'outline'}
                         className={cn(
                             // Settings-surface palette (matches credentials/published-apps controls)
-                            'h-8 sm:h-9 px-3 justify-start text-left font-normal text-xs bg-secondary text-muted-foreground dark:text-white/60 hover:bg-accent hover:text-foreground border-border dark:border-white/[0.08] whitespace-nowrap',
+                            'h-8 sm:h-9 px-3 justify-start text-left font-normal text-xs bg-secondary dark:bg-white/[0.04] text-muted-foreground dark:text-white/60 hover:bg-accent dark:hover:bg-white/[0.08] hover:text-foreground border-border dark:border-white/[0.08] whitespace-nowrap',
                             isMobile && 'flex-1 min-w-0',
                             !dateRange && 'text-muted-foreground dark:text-white/30'
                         )}
