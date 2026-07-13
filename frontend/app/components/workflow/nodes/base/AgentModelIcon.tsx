@@ -108,18 +108,10 @@ export function AgentModelIcon({
             style={style}
         />
     );
-    // opencode's two-tone gray wordmark (#4B4646 / #F1ECEC) loses its light half
-    // on white surfaces; a global CSS rule (tailwind.css) darkens every
-    // img[src*=opencode] in light mode, so no per-render treatment is needed here.
-    // openclaw's wordmark is white with a RED claw accent, drawn for dark
-    // backgrounds. Inverting it in light mode flipped the red to cyan, so instead
-    // back it with a dark chip in light (bg-foreground = near-black) and drop the
-    // chip in dark, where the surface is already dark. Preserves brand colors.
-    return HARNESS_BRANDS[kind].monochrome ? (
-        <span className="inline-flex items-center rounded bg-foreground px-1 py-0.5 dark:bg-transparent dark:p-0">
-            {img}
-        </span>
-    ) : (
-        img
-    );
+    // opencode's + openclaw's wordmarks are drawn for DARK surfaces and lose their
+    // light parts on a white node. Global CSS rules in tailwind.css recolor each in
+    // light mode (opencode inverts its gray tones; openclaw darkens+saturates so its
+    // white "OPEN" reads as gray while the red claw stays vivid) — no per-render
+    // chip needed here, so brand colors are preserved.
+    return img;
 }
