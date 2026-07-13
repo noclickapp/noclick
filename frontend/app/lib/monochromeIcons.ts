@@ -2,9 +2,9 @@
 // designed for the old dark node bodies, they vanish on the now-light bodies and
 // chips in light mode. Rendered with `invert dark:invert-0`: a dark mark on light,
 // unchanged white on dark. Derived by scanning public/icons for marks whose every
-// VISIBLE fill has luminance > 0.7 — including mask-based marks (cal-com renders a
-// masked white tile; its lone #000 lives inside a <mask> and never paints). Keep
-// in sync if new all-white brand SVGs are added.
+// VISIBLE fill has luminance > 0.7 — including cut-out marks (cal-com is an
+// all-white tile whose wordmark is punched out via an even-odd path, so it never
+// paints a dark fill). Keep in sync if new all-white brand SVGs are added.
 export const MONOCHROME_LIGHT_ICONS = new Set([
     'attio',
     // NOT clickhouse (#FCFF74 light yellow) or intercom (#6AFDEF light cyan): the
@@ -18,8 +18,11 @@ export const MONOCHROME_LIGHT_ICONS = new Set([
     'resend',
     'sigma',
     'zendesk',
-    // cal-com renders a masked WHITE tile (the #000 is only inside its <mask>),
-    // so it reads as a blank square on a light node — invert flips it to a tile.
+    // cal-com renders an all-WHITE tile (the wordmark is punched out via an
+    // even-odd compound path, not painted), so it reads as a blank square on a
+    // light node — invert flips it to a dark tile. It deliberately uses no <mask>:
+    // iOS/WebKit rasterizes SVG masks in <img> context at CSS-px (not device-px)
+    // resolution, which made the masked version blurry on retina phones.
     'cal-com',
     // NOT openclaw_marker: it's white claw art WITH a red #f70514 accent, so invert
     // flips the red to CYAN. Left un-inverted — the red claw stays visibly red on a
