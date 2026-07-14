@@ -28,6 +28,7 @@ export { useWebflowOAuth } from './useWebflowOAuth';
 export { useQuickBooksOAuth } from './useQuickBooksOAuth';
 export { useZoomOAuth } from './useZoomOAuth';
 export { useCalendlyOAuth } from './useCalendlyOAuth';
+export { usePostHogOAuth } from './usePostHogOAuth';
 export { useTypeformOAuth } from './useTypeformOAuth';
 export { useLinkedInOAuth } from './useLinkedInOAuth';
 export { useClickUpOAuth } from './useClickUpOAuth';
