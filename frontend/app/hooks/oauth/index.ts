@@ -47,3 +47,4 @@ export { useWordPressOAuth } from './useWordPressOAuth';
 export { useSupabaseOAuth } from './useSupabaseOAuth';
 export { useParallelOAuth } from './useParallelOAuth';
 export { useCloudflareOAuth } from './useCloudflareOAuth';
+export { useApolloOAuth } from './useApolloOAuth';
