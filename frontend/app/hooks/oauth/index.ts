@@ -36,6 +36,7 @@ export { useLinkedInOAuth } from './useLinkedInOAuth';
 export { useClickUpOAuth } from './useClickUpOAuth';
 export { useZendeskOAuth } from './useZendeskOAuth';
 export { useBambooHROAuth } from './useBambooHROAuth';
+export { useKlaviyoOAuth } from './useKlaviyoOAuth';
 export { useMicrosoftOAuth } from './useMicrosoftOAuth';
 export { useNotionOAuth } from './useNotionOAuth';
 export { useRedditOAuth } from './useRedditOAuth';
