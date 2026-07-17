@@ -43,6 +43,7 @@ import { GoogleBusinessProfileNode } from './GoogleBusinessProfileNode';
 import { GoogleSearchConsoleNode } from './GoogleSearchConsoleNode';
 import { HackerNewsNode } from './HackerNewsNode';
 import { InstagramNode } from './InstagramNode';
+import { FacebookNode } from './FacebookNode';
 import { InstantlyNode } from './InstantlyNode';
 import { JiraNode } from './JiraNode';
 import { PipedriveNode } from './PipedriveNode';
@@ -50,6 +51,7 @@ import { ResendNode } from './ResendNode';
 import { PhantomBusterNode } from './PhantomBusterNode';
 import { CalComNode } from './CalComNode';
 import { CalendlyNode } from './CalendlyNode';
+import { SentryNode } from './SentryNode';
 import { GoogleMapsNode } from './GoogleMapsNode';
 import { PerplexityNode } from './PerplexityNode';
 import { PostHogNode } from './PostHogNode';
@@ -112,6 +114,8 @@ import { QuickBooksNode } from './QuickBooksNode';
 import { ZoomNode } from './ZoomNode';
 import { OneLakeNode } from './OneLakeNode';
 import { ThreadsNode } from './ThreadsNode';
+import { BambooHRNode } from './BambooHRNode';
+import { KlaviyoNode } from './KlaviyoNode';
 import { LinkedInNode } from './LinkedInNode';
 import { NotionNode } from './NotionNode';
 import { OutlookMailNode } from './OutlookMailNode';
@@ -200,19 +204,19 @@ function _buildAvailable(): NodeDefinition[] {
         ApolloNode, BlueSkyNode, CanvaNode, DiscordNode, DropboxNode,
         GoogleCalendarNode, GoogleTasksNode, GoogleContactsNode, GoogleDocsNode,
         GoogleFormsNode, GoogleSlidesNode, GoogleAnalyticsNode, GoogleAdsNode,
-        GoogleBusinessProfileNode, GoogleSearchConsoleNode, HackerNewsNode, InstagramNode, InstantlyNode,
+        GoogleBusinessProfileNode, GoogleSearchConsoleNode, HackerNewsNode, InstagramNode, FacebookNode, InstantlyNode,
         JiraNode, IntercomNode, LinkedInNode, NotionNode, PostgresNode, RedditNode, RSSNode, ExtendNode,
         RedisNode, SalesforceNode, AffinityNode, SemrushNode, ShopifyNode, SlackNode,
         SupabaseNode, TikTokNode, TwilioNode, TwitterNode, CloudflareNode,
         TypeformNode, WhatsAppNode, ElevenLabsNode, YouTubeNode, HubSpotNode,
-        MailchimpNode, PipedriveNode, ResendNode, QuickBooksNode, ThreadsNode, BigQueryNode, GoHighLevelNode, ExpensifyNode, LaunchDarklyNode, WebflowNode, PhantomBusterNode, CalComNode, CalendlyNode, GoogleMapsNode, PerplexityNode, PostHogNode, PineconeNode, QdrantNode, UpstashVectorNode, WeaviateNode, ChromaNode, MilvusNode, MongoDBNode, ElasticsearchNode, MailgunNode,
+        MailchimpNode, PipedriveNode, ResendNode, QuickBooksNode, ThreadsNode, BigQueryNode, GoHighLevelNode, ExpensifyNode, LaunchDarklyNode, WebflowNode, PhantomBusterNode, CalComNode, CalendlyNode, SentryNode, GoogleMapsNode, PerplexityNode, PostHogNode, PineconeNode, QdrantNode, UpstashVectorNode, WeaviateNode, ChromaNode, MilvusNode, MongoDBNode, ElasticsearchNode, MailgunNode,
         GitLabNode, BoxNode, ClickUpNode, DevinNode, AsanaNode, FirestoreNode,
         GoogleCloudStorageNode, MondayNode, ParallelNode, DatadogNode, LoopsNode,
         ExaNode, ReductoNode, FalNode, BrandfetchNode, FindymailNode, BeehiivNode,
         HexNode, ClickHouseNode, FellowNode, FathomNode, SigmaNode, TrelloNode,
         FirecrawlNode, AttioNode, ZendeskNode, ConfluenceNode, PagerDutyNode, GoogleMeetNode, FreshsalesNode, AppSheetNode, TableauNode, AtlasAdminNode, PagespeedNode, SnowflakeNode, GoogleTranslateNode, VoyageNode, SendEmailNode, AIAgentNode, ToolNode, MCPServerNode,
         DatabricksNode, ZoomNode,
-        OneLakeNode,
+        OneLakeNode, BambooHRNode, KlaviyoNode,
         NoClickNode, AlarmNode, FilesystemNode, IterationNode, DelayNode, FilterNode,
         SplitOutNode,
         ConditionalNode, ApprovalNode, LogNode, SwitchNode, MergeNode, SubmitExternalFormNode,

@@ -41,7 +41,8 @@ class TestStateE2E:
                 wf_id, node_id = args[0], args[1]
                 key = f"{wf_id}:{node_id}"
                 if key in storage:
-                    return {'state': storage[key]}
+                    # `_load_node_state` selects the CAS `version` column too.
+                    return {'state': storage[key], 'version': 0}
                 return None
             return None
 
