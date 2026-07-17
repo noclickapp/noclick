@@ -115,6 +115,7 @@ import { ZoomNode } from './ZoomNode';
 import { OneLakeNode } from './OneLakeNode';
 import { ThreadsNode } from './ThreadsNode';
 import { BambooHRNode } from './BambooHRNode';
+import { KlaviyoNode } from './KlaviyoNode';
 import { LinkedInNode } from './LinkedInNode';
 import { NotionNode } from './NotionNode';
 import { OutlookMailNode } from './OutlookMailNode';
@@ -215,7 +216,7 @@ function _buildAvailable(): NodeDefinition[] {
         HexNode, ClickHouseNode, FellowNode, FathomNode, SigmaNode, TrelloNode,
         FirecrawlNode, AttioNode, ZendeskNode, ConfluenceNode, PagerDutyNode, GoogleMeetNode, FreshsalesNode, AppSheetNode, TableauNode, AtlasAdminNode, PagespeedNode, SnowflakeNode, GoogleTranslateNode, VoyageNode, SendEmailNode, AIAgentNode, ToolNode, MCPServerNode,
         DatabricksNode, ZoomNode,
-        OneLakeNode, BambooHRNode,
+        OneLakeNode, BambooHRNode, KlaviyoNode,
         NoClickNode, AlarmNode, FilesystemNode, IterationNode, DelayNode, FilterNode,
         SplitOutNode,
         ConditionalNode, ApprovalNode, LogNode, SwitchNode, MergeNode, SubmitExternalFormNode,
