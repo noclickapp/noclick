@@ -131,6 +131,7 @@ import { RedisNode } from './RedisNode';
 import { RSSNode } from './RSSNode';
 import { HubSpotNode } from './HubSpotNode';
 import { AffinityNode } from './AffinityNode';
+import { BasedashNode } from './BasedashNode';
 import { MailchimpNode } from './MailchimpNode';
 import { SalesforceNode } from './SalesforceNode';
 import { TypeformNode } from './TypeformNode';
@@ -207,7 +208,7 @@ function _buildAvailable(): NodeDefinition[] {
         GoogleFormsNode, GoogleSlidesNode, GoogleAnalyticsNode, GoogleAdsNode,
         GoogleBusinessProfileNode, GoogleSearchConsoleNode, HackerNewsNode, InstagramNode, FacebookNode, InstantlyNode,
         JiraNode, IntercomNode, LinkedInNode, NotionNode, PostgresNode, RedditNode, RSSNode, ExtendNode,
-        RedisNode, SalesforceNode, AffinityNode, SemrushNode, ShopifyNode, SlackNode,
+        RedisNode, SalesforceNode, AffinityNode, BasedashNode, SemrushNode, ShopifyNode, SlackNode,
         SupabaseNode, TikTokNode, TwilioNode, TwitterNode, CloudflareNode,
         TypeformNode, WhatsAppNode, ElevenLabsNode, YouTubeNode, HubSpotNode,
         MailchimpNode, PipedriveNode, ResendNode, QuickBooksNode, ThreadsNode, MetaNode, BigQueryNode, GoHighLevelNode, ExpensifyNode, LaunchDarklyNode, WebflowNode, PhantomBusterNode, CalComNode, CalendlyNode, SentryNode, GoogleMapsNode, PerplexityNode, PostHogNode, PineconeNode, QdrantNode, UpstashVectorNode, WeaviateNode, ChromaNode, MilvusNode, MongoDBNode, ElasticsearchNode, MailgunNode,
