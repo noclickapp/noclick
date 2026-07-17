@@ -51,3 +51,4 @@ export { useSupabaseOAuth } from './useSupabaseOAuth';
 export { useParallelOAuth } from './useParallelOAuth';
 export { useCloudflareOAuth } from './useCloudflareOAuth';
 export { useApolloOAuth } from './useApolloOAuth';
+export { useMetaOAuth } from './useMetaOAuth';
