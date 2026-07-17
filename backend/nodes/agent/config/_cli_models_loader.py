@@ -63,7 +63,13 @@ def harness_default_model(harness: str) -> str:
 
 
 def codex_models() -> List[str]:
-    return list(_load()["codex"]["models"])
+    """Servable codex model ids: the human-owned ``extra_models`` (codex-family
+    ids the binary's embedded slug list omits — the ONLY models codex-rs
+    exposes MCP servers to; see the JSON's ``_extra_models_note``) first, then
+    the binary-extracted list."""
+    block = _load()["codex"]
+    extras = list(block.get("extra_models") or [])
+    return extras + [m for m in block["models"] if m not in extras]
 
 
 def codex_version() -> str:
