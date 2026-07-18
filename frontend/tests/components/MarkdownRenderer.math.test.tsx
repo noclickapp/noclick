@@ -29,3 +29,32 @@ describe('MarkdownRenderer math handling', () => {
     expect(container.querySelector('.katex')).not.toBeNull();
   });
 });
+
+describe('MarkdownRenderer breaks mode (run-results popup)', () => {
+  it('turns single newlines into hard breaks so plain-text replies keep their lines', () => {
+    const { container } = render(
+      <MarkdownRenderer content={'Line one\nLine two\nLine three'} breaks />,
+    );
+    expect(container.querySelectorAll('br').length).toBe(2);
+    // Default mode: markdown soft-break behavior unchanged (no <br>).
+    const { container: plain } = render(<MarkdownRenderer content={'Line one\nLine two'} />);
+    expect(plain.querySelectorAll('br').length).toBe(0);
+  });
+
+  it('does not inject breaks inside code blocks', () => {
+    const { container } = render(
+      <MarkdownRenderer content={'```\nline a\nline b\n```'} breaks />,
+    );
+    const code = container.querySelector('code');
+    expect(code?.textContent).toContain('line a\nline b');
+    expect(code?.querySelector('br')).toBeNull();
+  });
+
+  it('markdown structure still renders in breaks mode (bold, lists)', () => {
+    const { container } = render(
+      <MarkdownRenderer content={'**Summary**\n- first\n- second'} breaks />,
+    );
+    expect(Array.from(container.querySelectorAll('strong')).map(e => e.textContent)).toContain('Summary');
+    expect(container.querySelectorAll('li').length).toBe(2);
+  });
+});
