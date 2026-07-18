@@ -12,6 +12,10 @@ export interface SocketConnectionState {
   lastDisconnectedAt?: number;
   lastDisconnectReason?: string;
   lastError?: string;
+  /** Machine code from the backend's ConnectionRefusedError payload
+   *  (token_expired | token_invalid | missing_auth | auth_failed | …).
+   *  Auth handling keys on this, never on message text. */
+  lastErrorCode?: string;
 }
 
 export type ConnectionHandler = (state: SocketConnectionState) => void;
