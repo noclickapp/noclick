@@ -13,7 +13,7 @@ export const THEME_CHANGE_EVENT = 'noclick:theme-change';
 // workflow editor + canvas + settings + usage) is themed, plus /b (the public
 // builder input bridge — fully tokenized and carries its own subtle toggle
 // for visitors who prefer light).
-const THEMED_PATH_RE = /^\/(dashboard|b)(\/|$)/;
+const THEMED_PATH_RE = /^\/(dashboard|b|credential\/provide)(\/|$)/;
 
 export function isThemedPath(pathname: string): boolean {
     return THEMED_PATH_RE.test(pathname);
