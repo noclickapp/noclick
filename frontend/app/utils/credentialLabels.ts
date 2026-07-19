@@ -14,15 +14,28 @@ const WORD_CASING: Record<string, string> = {
   gitlab: 'GitLab', hubspot: 'HubSpot', linkedin: 'LinkedIn',
   paypal: 'PayPal', tiktok: 'TikTok', youtube: 'YouTube', posthog: 'PostHog',
   openai: 'OpenAI', clickup: 'ClickUp', pagerduty: 'PagerDuty',
-  bamboohr: 'BambooHR', quickbooks: 'QuickBooks',
+  bamboohr: 'BambooHR', quickbooks: 'QuickBooks', wordpress: 'WordPress',
+  bigquery: 'BigQuery', sendgrid: 'SendGrid', mongodb: 'MongoDB',
+  onedrive: 'OneDrive', launchdarkly: 'LaunchDarkly', pit: 'PIT',
 };
 
-// Compound names the camel-splitter necessarily breaks apart.
+// Compound names the camel-splitter necessarily breaks apart. Audited against
+// every credential class title in the node schemas (2026-07-19).
 const COMPOUND_BRANDS = [
   'WhatsApp', 'GitHub', 'GitLab', 'HubSpot', 'LinkedIn', 'PayPal', 'TikTok',
   'YouTube', 'PostHog', 'OpenAI', 'ClickUp', 'PagerDuty', 'BambooHR',
-  'QuickBooks', 'OAuth',
+  'QuickBooks', 'OAuth', 'WordPress', 'AppSheet', 'ClickHouse', 'BigQuery',
+  'SendGrid', 'MongoDB', 'OneDrive', 'OneLake', 'PageSpeed', 'PhantomBuster',
+  'LaunchDarkly', 'GoHighLevel',
 ];
+
+// Split forms whose CANONICAL brand differs from the class name entirely —
+// the derived-restore trick can't produce these.
+const SPLIT_FORM_CANONICAL: Record<string, string> = {
+  'Cal Com': 'Cal.com',
+  'Blue Sky': 'Bluesky',
+  'Fresh RSS': 'FreshRSS',
+};
 
 function camelSplit(text: string): string {
   return text
@@ -47,6 +60,9 @@ export function humanizeCredentialLabel(label: string): string {
   for (const brand of COMPOUND_BRANDS) {
     const splitForm = camelSplit(brand);
     if (splitForm !== brand) out = out.split(splitForm).join(brand);
+  }
+  for (const [splitForm, canonical] of Object.entries(SPLIT_FORM_CANONICAL)) {
+    out = out.split(splitForm).join(canonical);
   }
   return fixWordCasing(out);
 }
