@@ -74,10 +74,12 @@ export function RedirectOAuthProvideMethod({
     // user hit a dead end mid-flow, say so up front — a sibling method (if any) stays
     // selectable, otherwise this integration must be connected inside NoClick.
     if (oauthNeedsInAppSelection(provider)) {
+        // Tokenized (not zinc) so it reads correctly on BOTH surfaces — the
+        // dark provide page resolves these to the same dark look.
         return (
-            <div className="flex items-start gap-2.5 p-4 rounded-xl bg-zinc-800/50 border border-zinc-700/40">
-                <AlertCircle className="h-4 w-4 text-amber-400 mt-0.5 flex-shrink-0" />
-                <p className="text-xs text-zinc-400 leading-relaxed">
+            <div className="flex items-start gap-2.5 p-4 rounded-xl bg-foreground/[0.04] border border-border">
+                <AlertCircle className="h-4 w-4 text-amber-500 dark:text-amber-400 mt-0.5 flex-shrink-0" />
+                <p className="text-xs text-muted-foreground leading-relaxed">
                     {serviceName} can&apos;t be connected through a shared link — it needs an account
                     selection step inside NoClick. Please connect it from your NoClick workspace.
                 </p>
