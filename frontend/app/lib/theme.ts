@@ -9,9 +9,11 @@ export type Theme = 'light' | 'dark' | 'system';
 export const THEME_STORAGE_KEY = 'nc-theme';
 export const THEME_CHANGE_EVENT = 'noclick:theme-change';
 
-// Keep in sync with the no-flash inline script in root.tsx. Only /dashboard
-// (which hosts the workflow editor + canvas + settings + usage) is themed.
-const THEMED_PATH_RE = /^\/dashboard(\/|$)/;
+// Keep in sync with the no-flash inline script in root.tsx. /dashboard (the
+// workflow editor + canvas + settings + usage) is themed, plus /b (the public
+// builder input bridge — fully tokenized and carries its own subtle toggle
+// for visitors who prefer light).
+const THEMED_PATH_RE = /^\/(dashboard|b)(\/|$)/;
 
 export function isThemedPath(pathname: string): boolean {
     return THEMED_PATH_RE.test(pathname);
