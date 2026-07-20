@@ -1,9 +1,6 @@
 import { memo } from 'react';
 import type { BlockComponentProps } from './types';
 import { FormBlock } from './blocks/FormBlock';
-import { ImageBlock } from './blocks/ImageBlock';
-import { AudioBlock } from './blocks/AudioBlock';
-import { VideoBlock } from './blocks/VideoBlock';
 import { FileBlock } from './blocks/FileBlock';
 import { DataframeBlock } from './blocks/DataframeBlock';
 import { HtmlReactBlock } from './blocks/HtmlReactBlock';
@@ -15,9 +12,6 @@ import { AgentChatBlock } from './blocks/AgentChatBlock';
 const BLOCK_COMPONENTS: Record<string, React.ComponentType<BlockComponentProps>> = {
   form: FormBlock,
   'config-form': ConfigFormBlock,
-  image: ImageBlock,
-  audio: AudioBlock,
-  video: VideoBlock,
   file: FileBlock,
   dataframe: DataframeBlock,
   'html-react': HtmlReactBlock,

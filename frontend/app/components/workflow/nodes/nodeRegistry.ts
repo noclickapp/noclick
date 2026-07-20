@@ -170,9 +170,6 @@ import { OnErrorNode } from './OnErrorNode';
 import { SetVariableNode } from './SetVariableNode';
 import {
     InterfaceFormNode,
-    InterfaceImageNode,
-    InterfaceAudioNode,
-    InterfaceVideoNode,
     InterfaceFileNode,
     InterfaceDataframeNode,
     InterfaceHtmlReactNode,
@@ -224,7 +221,7 @@ function _buildAvailable(): NodeDefinition[] {
         ConditionalNode, ApprovalNode, LogNode, SwitchNode, MergeNode, SubmitExternalFormNode,
         ServerlessFunctionNode, StateManagerNode, SetupNode, OnErrorNode,
         SetVariableNode, StickyNoteNode,
-        InterfaceFormNode, InterfaceImageNode, InterfaceAudioNode, InterfaceVideoNode,
+        InterfaceFormNode,
         InterfaceFileNode, InterfaceDataframeNode, InterfaceHtmlReactNode,
         InterfaceFileUploadNode, InterfaceConfigFormNode,
     ];

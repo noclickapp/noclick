@@ -1,13 +1,11 @@
 // Widget-specific BlockRenderer that renders all interface blocks except
-// HtmlBlock and FileBlock, which use <iframe> and would require frameDomains CSP.
+// HtmlBlock and FileBlock (the universal file/media block), which use <iframe>
+// and would require frameDomains CSP — they fall through to the GenericBlock placeholder.
 // This is aliased in place of ~/components/interface/BlockRenderer during the widget build.
 
 import { memo, createElement } from 'react';
 import type { BlockComponentProps } from '~/components/interface/types';
 import { FormBlock } from '~/components/interface/blocks/FormBlock';
-import { ImageBlock } from '~/components/interface/blocks/ImageBlock';
-import { AudioBlock } from '~/components/interface/blocks/AudioBlock';
-import { VideoBlock } from '~/components/interface/blocks/VideoBlock';
 import { DataframeBlock } from '~/components/interface/blocks/DataframeBlock';
 import { FileUploadBlock } from '~/components/interface/blocks/FileUploadBlock';
 import { ConfigFormBlock } from '~/components/interface/blocks/ConfigFormBlock';
@@ -16,9 +14,6 @@ import { GenericBlock } from '~/components/interface/blocks/GenericBlock';
 const BLOCK_COMPONENTS: Record<string, React.ComponentType<BlockComponentProps>> = {
     form: FormBlock,
     'config-form': ConfigFormBlock,
-    image: ImageBlock,
-    audio: AudioBlock,
-    video: VideoBlock,
     dataframe: DataframeBlock,
     'file-upload': FileUploadBlock,
 };
