@@ -4,7 +4,7 @@ import {
   Table,
   Paperclip,
   Settings2,
-  Code2,
+  AppWindow,
   MessageCircle,
 } from 'lucide-react';
 import type { BlockDefinition, BlockCategory } from './types';
@@ -15,9 +15,9 @@ export const BLOCK_DEFINITIONS: BlockDefinition[] = [
   { type: 'config-form', label: 'Config Form', category: 'Input', icon: Settings2, description: 'Persistent configuration form', defaultW: 5, defaultH: 5, minW: 3, minH: 3, nodeType: 'interface-config-form' },
 
   // Display
-  { type: 'file', label: 'File', category: 'Display', icon: Paperclip, description: 'Any file — image, audio, video, PDF, or download', defaultW: 5, defaultH: 4, minW: 3, minH: 3, nodeType: 'interface-file' },
+  { type: 'file', label: 'Multimedia', category: 'Display', icon: Paperclip, description: 'Any file — image, audio, video, PDF, or download', defaultW: 5, defaultH: 4, minW: 3, minH: 3, nodeType: 'interface-file' },
   { type: 'dataframe', label: 'Table', category: 'Display', icon: Table, description: 'AG Grid table', defaultW: 6, defaultH: 4, minW: 4, minH: 3, nodeType: 'interface-dataframe' },
-  { type: 'html-react', label: 'HTML / React', category: 'Display', icon: Code2, description: 'HTML or React/JSX with SDK', defaultW: 6, defaultH: 4, minW: 3, minH: 2, nodeType: 'interface-html-react', usesIframe: true },
+  { type: 'html-react', label: 'HTML / React', category: 'Display', icon: AppWindow, description: 'HTML or React/JSX with SDK', defaultW: 6, defaultH: 4, minW: 3, minH: 2, nodeType: 'interface-html-react', usesIframe: true },
 
   // Interactive
   { type: 'file-upload', label: 'File Upload', category: 'Interactive', icon: Upload, description: 'Drop zone with file picker', defaultW: 4, defaultH: 3, minW: 3, minH: 2, nodeType: 'interface-file-upload' },
