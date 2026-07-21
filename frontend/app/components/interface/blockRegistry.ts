@@ -1,9 +1,9 @@
 import {
-  ClipboardList,
+  FormInput,
   Upload,
-  Table,
-  Paperclip,
-  Settings2,
+  Table2,
+  Clapperboard,
+  SlidersHorizontal,
   AppWindow,
   MessageCircle,
 } from 'lucide-react';
@@ -11,12 +11,12 @@ import type { BlockDefinition, BlockCategory } from './types';
 
 export const BLOCK_DEFINITIONS: BlockDefinition[] = [
   // Input
-  { type: 'form', label: 'Form', category: 'Input', icon: ClipboardList, description: 'Configurable multi-field form', defaultW: 5, defaultH: 5, minW: 3, minH: 3, nodeType: 'interface-form' },
-  { type: 'config-form', label: 'Config Form', category: 'Input', icon: Settings2, description: 'Persistent configuration form', defaultW: 5, defaultH: 5, minW: 3, minH: 3, nodeType: 'interface-config-form' },
+  { type: 'form', label: 'Form', category: 'Input', icon: FormInput, description: 'Configurable multi-field form', defaultW: 5, defaultH: 5, minW: 3, minH: 3, nodeType: 'interface-form' },
+  { type: 'config-form', label: 'Config Form', category: 'Input', icon: SlidersHorizontal, description: 'Persistent configuration form', defaultW: 5, defaultH: 5, minW: 3, minH: 3, nodeType: 'interface-config-form' },
 
   // Display
-  { type: 'file', label: 'Multimedia', category: 'Display', icon: Paperclip, description: 'Any file — image, audio, video, PDF, or download', defaultW: 5, defaultH: 4, minW: 3, minH: 3, nodeType: 'interface-file' },
-  { type: 'dataframe', label: 'Table', category: 'Display', icon: Table, description: 'AG Grid table', defaultW: 6, defaultH: 4, minW: 4, minH: 3, nodeType: 'interface-dataframe' },
+  { type: 'file', label: 'Multimedia', category: 'Display', icon: Clapperboard, description: 'Any file — image, audio, video, PDF, or download', defaultW: 5, defaultH: 4, minW: 3, minH: 3, nodeType: 'interface-file' },
+  { type: 'dataframe', label: 'Table', category: 'Display', icon: Table2, description: 'AG Grid table', defaultW: 6, defaultH: 4, minW: 4, minH: 3, nodeType: 'interface-dataframe' },
   { type: 'html-react', label: 'HTML / React', category: 'Display', icon: AppWindow, description: 'HTML or React/JSX with SDK', defaultW: 6, defaultH: 4, minW: 3, minH: 2, nodeType: 'interface-html-react', usesIframe: true },
 
   // Interactive
