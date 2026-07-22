@@ -54,6 +54,30 @@ def test_any_variant_folds_into_every_concrete_variant():
     assert registry.variants() == frozenset({"bot", "user"})
 
 
+def test_user_scopes_override_derivation_for_the_user_token():
+    """A send_as endpoint whose scope differs per token derives each token's
+    own scope, not the union — providers define some scopes on only one
+    token type and reject them on the other at the authorize step."""
+    registry = _registry(
+        requirements={
+            "join": ScopeRequirement(
+                scopes=("channels:join",),
+                variant=ANY_VARIANT,
+                user_scopes=("channels:write",),
+            ),
+        }
+    )
+    assert registry.declared_scopes(variant="bot") == ["channels:join"]
+    assert registry.declared_scopes(variant="user") == ["channels:write"]
+
+
+def test_user_scopes_require_any_variant():
+    with pytest.raises(ValueError, match="ANY_VARIANT"):
+        ScopeRequirement(
+            scopes=("a",), variant="bot", user_scopes=("b",)
+        )
+
+
 def test_elevated_tier_is_excluded_from_the_standard_request():
     """The whole point of tiers: an admin scope must not reach the consent
     screen of an ordinary user, because providers refuse the install."""

@@ -12,9 +12,11 @@ to the scopes that unit requires. Two things follow:
 
 - :meth:`ScopeRegistry.declared_scopes` derives the connect-time request from
   the table, so the requested list cannot drift from the code that needs it.
-- ``tests/test_oauth_scope_coverage.py`` asserts every operation is either
-  mapped or explicitly declared unmapped, and that mapped requirements are a
-  subset of what the node requests.
+- ``tests/test_oauth_scope_coverage.py`` asserts every OAuth node has a
+  registry and that mapped requirements are covered by what the node requests.
+  Per-call-site completeness (every reachable endpoint has an entry) is
+  enforced AST-derived for Slack only; elsewhere ``unmapped`` records known
+  gaps as documentation, not as a tested invariant.
 
 Two enforcement strengths, deliberately:
 
@@ -41,6 +43,7 @@ __all__ = [
     "ANY_VARIANT",
     "DEFAULT_VARIANT",
     "STANDARD_TIER",
+    "USER_VARIANT",
     "Enforcement",
     "ScopeRequirement",
     "ScopeRegistry",
@@ -62,6 +65,10 @@ DEFAULT_VARIANT = "default"
 #: granted on every variant. Slack's write operations honor a per-operation
 #: ``send_as``, so ``chat.postMessage`` needs ``chat:write`` on both tokens.
 ANY_VARIANT = "any"
+
+#: The user-token variant, for providers that mint one alongside the default
+#: (bot) token. ``ScopeRequirement.user_scopes`` overrides derivation for it.
+USER_VARIANT = "user"
 
 
 class Enforcement(enum.Enum):
@@ -110,6 +117,12 @@ class ScopeRequirement:
             point, replacing per-handler ``if credential_type != ...`` checks.
         note: Free-text rationale, surfaced in error messages. Use it to say
             what the user must do, not what the code does.
+        user_scopes: For ``ANY_VARIANT`` requirements only — the scope set the
+            USER token needs when it differs from the bot one (Slack's channel
+            management: bot joins with ``channels:join``, a user token joins
+            with ``channels:write``). Folding one union into both requested
+            lists would ask each token for scopes the provider only defines on
+            the other.
     """
 
     scopes: tuple[str, ...] = ()
@@ -117,6 +130,7 @@ class ScopeRequirement:
     tier: str = STANDARD_TIER
     credential_types: tuple[str, ...] = ()
     note: str = ""
+    user_scopes: Optional[tuple[str, ...]] = None
 
     def __post_init__(self) -> None:
         # Normalize so callers can pass a bare string or any iterable and
@@ -125,6 +139,12 @@ class ScopeRequirement:
         object.__setattr__(
             self, "credential_types", tuple(_as_tuple(self.credential_types))
         )
+        if self.user_scopes is not None:
+            if self.variant != ANY_VARIANT:
+                raise ValueError(
+                    "user_scopes is only meaningful on ANY_VARIANT requirements"
+                )
+            object.__setattr__(self, "user_scopes", tuple(_as_tuple(self.user_scopes)))
 
     @property
     def is_standard(self) -> bool:
@@ -245,7 +265,10 @@ class ScopeRegistry:
                 continue
             if req.variant not in (variant, ANY_VARIANT):
                 continue
-            scopes.update(req.scopes)
+            if req.user_scopes is not None and variant == USER_VARIANT:
+                scopes.update(req.user_scopes)
+            else:
+                scopes.update(req.scopes)
         if tier == STANDARD_TIER:
             scopes.update(self._extra.get(variant, ()))
         return sorted(scopes)
