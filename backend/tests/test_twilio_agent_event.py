@@ -47,7 +47,7 @@ def test_plain_sms_surfaces_sender_and_ck():
     assert event["conversation_key"] == "+12025550106:+14155238886"
     assert "+12025550106" in event["text"]  # sender surfaced
     assert "what's my order status?" in event["text"]  # human message text
-    assert "to=+12025550106" in event["text"]  # reply id in send-tool form
+    assert "to_number=+12025550106" in event["text"]  # reply id in send-tool form
     assert "SMS" in event["text"]
 
 
@@ -55,8 +55,8 @@ def test_plain_sms_reply_targets_sender_not_twilio_number():
     out = _inbound_output(from_number="+12025550106", to_number="+14155238886")
     event = TwilioNode.resolve_agent_event(out)
     # Reply goes FROM the Twilio number TO the sender.
-    assert "to=+12025550106" in event["text"]
-    assert "from=+14155238886" in event["text"]
+    assert "to_number=+12025550106" in event["text"]
+    assert "from_number=+14155238886" in event["text"]
 
 
 # ── WhatsApp (whatsapp: prefix must survive) ────────────────────────────────────
@@ -70,7 +70,7 @@ def test_whatsapp_preserves_prefix_in_ck_and_reply():
     event = TwilioNode.resolve_agent_event(out)
 
     assert event["conversation_key"] == "whatsapp:+12025550106:whatsapp:+14155238886"
-    assert "to=whatsapp:+12025550106" in event["text"]  # prefix preserved for send op
+    assert "to_number=whatsapp:+12025550106" in event["text"]  # prefix preserved for send op
     assert "WhatsApp" in event["text"]
     assert "hola" in event["text"]
 

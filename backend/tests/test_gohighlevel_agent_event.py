@@ -54,7 +54,7 @@ def test_inbound_message_surfaces_body_and_reply_target():
     text = ev["text"]
     assert "Hey, has my order shipped yet?" in text
     # Reply target must appear verbatim in the form send_a_new_message accepts.
-    assert "contactId=ct_7bYh4A0e" in text
+    assert "contact_id=ct_7bYh4A0e" in text
     assert "type=SMS" in text
 
 
@@ -79,7 +79,7 @@ def test_missing_conversation_id_falls_back_to_contact_id():
     del payload["conversationId"]
     ev = GoHighLevelNode.resolve_agent_event(payload)
     assert ev["conversation_key"] == "ct_7bYh4A0e"
-    assert "contactId=ct_7bYh4A0e" in ev["text"]
+    assert "contact_id=ct_7bYh4A0e" in ev["text"]
 
 
 # ── Outbound echoes must never trigger a reply ────────────────────────────────

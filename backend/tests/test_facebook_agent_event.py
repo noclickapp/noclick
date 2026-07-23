@@ -90,8 +90,10 @@ def test_message_surfaces_psid_and_text():
     ev = FacebookNode.resolve_agent_event(_messenger_message(text="I need help with my order"))
     assert PSID in ev["text"]
     assert "I need help with my order" in ev["text"]
-    # The reply hint names the exact send-tool parameter verbatim.
+    # The reply hint names the exact send-tool parameters verbatim (recipient_id
+    # is the PSID; page_id is the receiving Page, required by the send ops).
     assert f"recipient_id={PSID}" in ev["text"]
+    assert f"page_id={PAGE_ID}" in ev["text"]
 
 
 def test_distinct_senders_get_distinct_keys():
