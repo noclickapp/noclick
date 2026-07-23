@@ -52,6 +52,15 @@ export function applyTheme(pathname = window.location.pathname): void {
     document.documentElement.classList.toggle('dark', dark);
 }
 
+/** The theme actually rendered right now (the `.dark` class on <html>), not the
+ * stored preference. On non-themed routes this is always 'dark'; on themed routes
+ * it reflects the resolved preference. Use this to tell the AI builder which theme
+ * the user is looking at so generated UIs match the surface, not a mismatched pref. */
+export function getAppliedTheme(): 'light' | 'dark' {
+    if (typeof document === 'undefined') return 'dark';
+    return document.documentElement.classList.contains('dark') ? 'dark' : 'light';
+}
+
 export function setTheme(theme: Theme): void {
     try {
         window.localStorage.setItem(THEME_STORAGE_KEY, theme);
