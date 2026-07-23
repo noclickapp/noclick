@@ -2,9 +2,6 @@
 // These nodes represent UI components in the workflow interface builder.
 
 export { InterfaceFormNode } from './InterfaceFormNode';
-export { InterfaceImageNode } from './InterfaceImageNode';
-export { InterfaceAudioNode } from './InterfaceAudioNode';
-export { InterfaceVideoNode } from './InterfaceVideoNode';
 export { InterfaceFileNode } from './InterfaceFileNode';
 export { InterfaceDataframeNode } from './InterfaceDataframeNode';
 export { InterfaceHtmlReactNode } from './InterfaceHtmlReactNode';

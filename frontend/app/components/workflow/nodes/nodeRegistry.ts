@@ -171,9 +171,6 @@ import { OnErrorNode } from './OnErrorNode';
 import { SetVariableNode } from './SetVariableNode';
 import {
     InterfaceFormNode,
-    InterfaceImageNode,
-    InterfaceAudioNode,
-    InterfaceVideoNode,
     InterfaceFileNode,
     InterfaceDataframeNode,
     InterfaceHtmlReactNode,
@@ -225,7 +222,7 @@ function _buildAvailable(): NodeDefinition[] {
         ConditionalNode, ApprovalNode, LogNode, SwitchNode, MergeNode, SubmitExternalFormNode,
         ServerlessFunctionNode, StateManagerNode, SetupNode, OnErrorNode,
         SetVariableNode, StickyNoteNode,
-        InterfaceFormNode, InterfaceImageNode, InterfaceAudioNode, InterfaceVideoNode,
+        InterfaceFormNode,
         InterfaceFileNode, InterfaceDataframeNode, InterfaceHtmlReactNode,
         InterfaceFileUploadNode, InterfaceConfigFormNode,
     ];
@@ -290,6 +287,18 @@ export function buildReactFlowNodeTypes(additionalTypes: Record<string, Componen
             types[nodeDef.type] = memo(wrapped, compareFunc);
         }
     });
+
+    // Backward-compat: the separate image/audio/video interface nodes were merged
+    // into the universal File/Multimedia node (interface-file) in 2026-07. Render
+    // those legacy types with the File node's component so pre-merge saved workflows
+    // still appear on the canvas. (Schema resolution is handled by the matching
+    // LEGACY_NODE_TYPE_ALIASES proxy in ~/utils/nodeSchemas.)
+    const fileComponent = types['interface-file'];
+    if (fileComponent) {
+        for (const legacy of ['interface-image', 'interface-audio', 'interface-video']) {
+            if (!types[legacy]) types[legacy] = fileComponent;
+        }
+    }
 
     // Override with additionalTypes (custom renderers take priority)
     Object.assign(types, additionalTypes);

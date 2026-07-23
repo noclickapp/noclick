@@ -1,29 +1,22 @@
 import {
   ClipboardList,
   Upload,
-  Table,
-  Image,
-  Volume2,
-  Video,
-  File,
-  Settings2,
-  Code2,
+  SlidersHorizontal,
+  AppWindow,
   MessageCircle,
 } from 'lucide-react';
+import { TableGridIcon, MultimediaIcon } from '~/components/workflow/nodes/interface/interfaceIcons';
 import type { BlockDefinition, BlockCategory } from './types';
 
 export const BLOCK_DEFINITIONS: BlockDefinition[] = [
   // Input
   { type: 'form', label: 'Form', category: 'Input', icon: ClipboardList, description: 'Configurable multi-field form', defaultW: 5, defaultH: 5, minW: 3, minH: 3, nodeType: 'interface-form' },
-  { type: 'config-form', label: 'Config Form', category: 'Input', icon: Settings2, description: 'Persistent configuration form', defaultW: 5, defaultH: 5, minW: 3, minH: 3, nodeType: 'interface-config-form' },
+  { type: 'config-form', label: 'Config Form', category: 'Input', icon: SlidersHorizontal, description: 'Persistent configuration form', defaultW: 5, defaultH: 5, minW: 3, minH: 3, nodeType: 'interface-config-form' },
 
   // Display
-  { type: 'image', label: 'Image', category: 'Display', icon: Image, description: 'Image display', defaultW: 4, defaultH: 4, minW: 2, minH: 2, nodeType: 'interface-image' },
-  { type: 'audio', label: 'Audio', category: 'Display', icon: Volume2, description: 'Waveform audio player', defaultW: 6, defaultH: 2, minW: 4, minH: 2, nodeType: 'interface-audio' },
-  { type: 'video', label: 'Video', category: 'Display', icon: Video, description: 'Video player', defaultW: 6, defaultH: 5, minW: 4, minH: 3, nodeType: 'interface-video' },
-  { type: 'file', label: 'File / PDF', category: 'Display', icon: File, description: 'PDF embed or file preview', defaultW: 6, defaultH: 5, minW: 3, minH: 3, nodeType: 'interface-file' },
-  { type: 'dataframe', label: 'Table', category: 'Display', icon: Table, description: 'AG Grid table', defaultW: 6, defaultH: 4, minW: 4, minH: 3, nodeType: 'interface-dataframe' },
-  { type: 'html-react', label: 'HTML / React', category: 'Display', icon: Code2, description: 'HTML or React/JSX with SDK', defaultW: 6, defaultH: 4, minW: 3, minH: 2, nodeType: 'interface-html-react', usesIframe: true },
+  { type: 'file', label: 'Multimedia', category: 'Display', icon: MultimediaIcon, description: 'Any file — image, audio, video, PDF, or download', defaultW: 5, defaultH: 4, minW: 3, minH: 3, nodeType: 'interface-file' },
+  { type: 'dataframe', label: 'Table', category: 'Display', icon: TableGridIcon, description: 'AG Grid table', defaultW: 6, defaultH: 4, minW: 4, minH: 3, nodeType: 'interface-dataframe' },
+  { type: 'html-react', label: 'HTML / React', category: 'Display', icon: AppWindow, description: 'HTML or React/JSX with SDK', defaultW: 6, defaultH: 4, minW: 3, minH: 2, nodeType: 'interface-html-react', usesIframe: true },
 
   // Interactive
   { type: 'file-upload', label: 'File Upload', category: 'Interactive', icon: Upload, description: 'Drop zone with file picker', defaultW: 4, defaultH: 3, minW: 3, minH: 2, nodeType: 'interface-file-upload' },

@@ -1,7 +1,7 @@
 // Tiny inline hint pill shown next to palette section headers ("Available Nodes",
-// "Found N blocks") to remind users they can drag items onto the canvas.
-// Centralized here so the node palette (FlowHelperView) and block palette (BlockPalette)
-// stay visually consistent without each file redefining the same styling.
+// "Found N nodes") to remind users they can drag items onto the canvas.
+// Centralized here so any palette surface stays visually consistent without
+// each file redefining the same styling.
 
 import { Hand } from 'lucide-react';
 
