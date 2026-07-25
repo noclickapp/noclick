@@ -40,12 +40,25 @@ export interface IncompleteStep {
     /** Missing credentials, or anything else with no inline editor — these need
      *  the config panel. */
     blockers: NodeValidationIssue[];
+    /** Show the operation picker: this step is a tool provider that arrived
+     *  with nothing allowlisted. Not a schema field (it is a canvas-only config
+     *  key), so it gets the real picker rather than a text control — otherwise
+     *  the popup could only say "select at least one action" and leave the user
+     *  to go find where.
+     *
+     *  Sticky like the field editors, and for the same reason: the requirement
+     *  is satisfied by the FIRST selection, so deriving this live tore the
+     *  picker out from under someone who wanted to allowlist two actions. */
+    needsToolActions: boolean;
     /** Nothing missing any more. Stays in the list so the row can show as done
      *  instead of vanishing under the cursor mid-edit. */
     resolved: boolean;
     iconHtml?: string;
     iconColor?: string;
 }
+
+/** Canvas-only config key holding a tool provider's allowlisted operations. */
+export const TOOL_OPERATIONS_KEY = 'agent_tool_operations';
 
 /** The node's live config, which is where field values are authoritative. */
 function nodeConfig(node: Node): Record<string, unknown> {
@@ -75,14 +88,21 @@ function describeStep(
 
     const missing = new Map<string, string>();
     const blockers: NodeValidationIssue[] = [];
+    let toolActionsMissing = false;
     for (const issue of validateNode(node, context).issues) {
         const prop = issue.fieldKey ? schemaFields.get(issue.fieldKey) : undefined;
-        if (issue.fieldKey && prop) {
+        if (issue.fieldKey === TOOL_OPERATIONS_KEY) {
+            toolActionsMissing = true;
+        } else if (issue.fieldKey && prop) {
             missing.set(issue.fieldKey, issue.message);
         } else {
             blockers.push(issue);
         }
     }
+    // Shown while still missing OR once shown before — but only the live state
+    // decides whether the step is done.
+    const needsToolActions =
+        toolActionsMissing || sticky.includes(TOOL_OPERATIONS_KEY);
 
     // Sticky keys first, in the order they were first shown, then anything newly
     // missing. A key the schema no longer describes (the operation changed under
@@ -104,7 +124,9 @@ function describeStep(
         label,
         fields,
         blockers,
-        resolved: missing.size === 0 && blockers.length === 0,
+        needsToolActions,
+        resolved:
+            missing.size === 0 && blockers.length === 0 && !toolActionsMissing,
         iconHtml: meta?.iconHtml,
         iconColor: meta?.iconColor,
     };
