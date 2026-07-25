@@ -29,12 +29,19 @@ const pendingRemoval = new WeakMap<Element, ReturnType<typeof setTimeout>>();
  *  banner asks for more than a field does: it's a larger target the user was
  *  just navigated to, rather than a control they're about to type into.
  *
+ *  `radius` matches the ring to the corner of whatever it is wrapping. The
+ *  default suits a field control; a padded region that groups several controls
+ *  wants a rounder one, or the corners read as a box drawn around the text.
+ *
  *  Re-pulsing an element that's already mid-pulse restarts the animation
  *  instead of doing nothing — stepping through incomplete nodes reuses the same
  *  banner element, so without the reflow the second click looks like a no-op. */
 export function pulseElement(
     el: Element,
-    { cycles = DEFAULT_PULSE_CYCLES }: { cycles?: number } = {}
+    {
+        cycles = DEFAULT_PULSE_CYCLES,
+        radius,
+    }: { cycles?: number; radius?: number } = {}
 ): void {
     const pending = pendingRemoval.get(el);
     if (pending) clearTimeout(pending);
@@ -42,6 +49,7 @@ export function pulseElement(
     const style = (el as HTMLElement).style;
     el.classList.remove('deep-link-highlight');
     style.setProperty('--pulse-cycles', String(cycles));
+    if (radius !== undefined) style.setProperty('--pulse-radius', `${radius}px`);
     void (el as HTMLElement).offsetWidth; // force reflow so the animation restarts
     el.classList.add('deep-link-highlight');
 
@@ -50,6 +58,7 @@ export function pulseElement(
         setTimeout(() => {
             el.classList.remove('deep-link-highlight');
             style.removeProperty('--pulse-cycles');
+            style.removeProperty('--pulse-radius');
             pendingRemoval.delete(el);
         }, cycles * PULSE_CYCLE_MS + PULSE_SLACK_MS)
     );
