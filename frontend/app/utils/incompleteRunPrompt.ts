@@ -217,8 +217,23 @@ export interface RunPath {
     isAgent: boolean;
     /** For agents: the node's saved message, used to prefill the popup's box. */
     message: string;
+    /** Names of the steps this entry point runs after itself, in graph order.
+     *  Without them a row is just the HEAD of a branch — you are asked to tick
+     *  a path while being shown one node of it. */
+    downstream: string[];
+    /** Names of the tool providers wired into it. Not steps: they run only if
+     *  the agent calls them, so they are worth naming separately. */
+    tools: string[];
     iconHtml?: string;
     iconColor?: string;
+}
+
+/** Display name for a node — the service name, else the user's label. */
+function nodeTitle(node: Node): string {
+    const label = (node.data?.label as string | undefined) || '';
+    return (
+        getNodeIconMeta(node.type ?? '')?.label || label || node.type || 'Step'
+    );
 }
 
 /**
@@ -237,12 +252,37 @@ export interface RunPath {
  * backend does not execute them.
  */
 export function getRunStartPaths(nodes: Node[], edges: Edge[]): RunPath[] {
+    const byId = new Map(nodes.map((n) => [n.id, n]));
     const fedInto = new Set<string>();
     const toolProviders = new Set<string>();
+    const nextOf = new Map<string, string[]>();
+    const toolsOf = new Map<string, string[]>();
     for (const edge of edges) {
+        const bucket = edge.targetHandle === 'bottom' ? toolsOf : nextOf;
+        const key = edge.targetHandle === 'bottom' ? edge.target : edge.source;
+        const value =
+            edge.targetHandle === 'bottom' ? edge.source : edge.target;
+        bucket.set(key, [...(bucket.get(key) ?? []), value]);
         if (edge.targetHandle === 'bottom') toolProviders.add(edge.source);
         else fedInto.add(edge.target);
     }
+
+    /** Forward walk from a root, in breadth order, naming each step once. */
+    const chainFrom = (rootId: string): string[] => {
+        const seen = new Set([rootId]);
+        const queue = [rootId];
+        const names: string[] = [];
+        while (queue.length > 0) {
+            for (const next of nextOf.get(queue.shift()!) ?? []) {
+                if (seen.has(next)) continue;
+                seen.add(next);
+                queue.push(next);
+                const node = byId.get(next);
+                if (node && !node.data?.disabled) names.push(nodeTitle(node));
+            }
+        }
+        return names;
+    };
 
     return nodes
         .filter(
@@ -260,9 +300,14 @@ export function getRunStartPaths(nodes: Node[], edges: Edge[]): RunPath[] {
             return {
                 nodeId: node.id,
                 nodeType: node.type ?? '',
-                title: meta?.label || label || node.type || 'Step',
+                title: nodeTitle(node),
                 label,
                 isAgent: node.type === 'agent',
+                downstream: chainFrom(node.id),
+                tools: (toolsOf.get(node.id) ?? [])
+                    .map((id) => byId.get(id))
+                    .filter((n): n is Node => !!n && !n.data?.disabled)
+                    .map(nodeTitle),
                 message: String(nodeConfig(node).message ?? ''),
                 iconHtml: meta?.iconHtml,
                 iconColor: meta?.iconColor,
