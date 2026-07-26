@@ -273,6 +273,20 @@ export function describeRunPath(
     };
 }
 
+/** Names of the tool providers wired into one node. */
+export function toolProviderTitles(
+    nodeId: string,
+    nodes: Node[],
+    edges: Edge[]
+): string[] {
+    const byId = new Map(nodes.map((n) => [n.id, n]));
+    return edges
+        .filter((e) => e.targetHandle === 'bottom' && e.target === nodeId)
+        .map((e) => byId.get(e.source))
+        .filter((n): n is Node => !!n && !n.data?.disabled)
+        .map(nodeTitle);
+}
+
 export function getRunStartPaths(nodes: Node[], edges: Edge[]): RunPath[] {
     const byId = new Map(nodes.map((n) => [n.id, n]));
     const fedInto = new Set<string>();
