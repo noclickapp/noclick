@@ -8,7 +8,10 @@
 
 import { describe, expect, it } from 'vitest';
 
-import { withAncestors } from '~/lib/getGuaranteedReachableNodes';
+import {
+    withAncestors,
+    withWiredToolProviders,
+} from '~/lib/getGuaranteedReachableNodes';
 
 const edge = (source: string, target: string) => ({ source, target });
 
@@ -54,5 +57,61 @@ describe('withAncestors', () => {
 
     it('is empty for no starting points', () => {
         expect(withAncestors([edge('a', 'b')], [])).toEqual(new Set());
+    });
+});
+
+// ── Tool-provider backfill ─────────────────────────────────────────────────
+// A bottom-handle edge points from the provider INTO the agent, so a provider
+// is neither downstream of its consumer nor {{ref}}-referenced by it — but the
+// backend backfills them so the agent keeps its tools. "Run from here" on an
+// agent therefore ran Telegram and Google Forms providers with no actions
+// allowlisted, past a gate that could not see them.
+
+
+const toolEdge = (source: string, target: string) => ({
+    source,
+    target,
+    targetHandle: 'bottom',
+});
+
+describe('withWiredToolProviders', () => {
+    it('pulls in a provider wired into a node in the set', () => {
+        expect(withWiredToolProviders([toolEdge('slack', 'agent')], ['agent'])).toEqual(
+            new Set(['agent', 'slack'])
+        );
+    });
+
+    it('pulls in every provider on the same consumer', () => {
+        const edges = [toolEdge('telegram', 'agent'), toolEdge('forms', 'agent')];
+        expect(withWiredToolProviders(edges, ['agent'])).toEqual(
+            new Set(['agent', 'telegram', 'forms'])
+        );
+    });
+
+    it('ignores ordinary dataflow edges', () => {
+        // Only bottom-handle edges are tool wiring. Treating every incoming
+        // edge as one would drag unrelated upstream steps into the gate.
+        expect(withWiredToolProviders([edge('a', 'agent')], ['agent'])).toEqual(
+            new Set(['agent'])
+        );
+    });
+
+    it('does not pull in providers of a consumer outside the set', () => {
+        const edges = [toolEdge('slack', 'other-agent')];
+        expect(withWiredToolProviders(edges, ['agent'])).toEqual(new Set(['agent']));
+    });
+
+    it('follows hosting chains to a fixpoint', () => {
+        // An MCP node in hosting mode is itself a consumer of bottom-handle
+        // providers, so one pass would stop short of the real leaf.
+        const edges = [toolEdge('mcp', 'agent'), toolEdge('slack', 'mcp')];
+        expect(withWiredToolProviders(edges, ['agent'])).toEqual(
+            new Set(['agent', 'mcp', 'slack'])
+        );
+    });
+
+    it('terminates on a wiring cycle', () => {
+        const edges = [toolEdge('a', 'b'), toolEdge('b', 'a')];
+        expect(withWiredToolProviders(edges, ['a'])).toEqual(new Set(['a', 'b']));
     });
 });
