@@ -251,6 +251,28 @@ function nodeTitle(node: Node): string {
  * Disabled nodes are skipped for the same reason the Run gate skips them: the
  * backend does not execute them.
  */
+/** One node described as an entry point. Used directly for a node-scoped run,
+ *  where the start node IS the entry point and there is nothing to choose. */
+export function describeRunPath(
+    node: Node,
+    downstream: string[] = [],
+    tools: string[] = []
+): RunPath {
+    const meta = getNodeIconMeta(node.type ?? '');
+    return {
+        nodeId: node.id,
+        nodeType: node.type ?? '',
+        title: nodeTitle(node),
+        label: (node.data?.label as string | undefined) || '',
+        isAgent: node.type === 'agent',
+        message: String(nodeConfig(node).message ?? ''),
+        downstream,
+        tools,
+        iconHtml: meta?.iconHtml,
+        iconColor: meta?.iconColor,
+    };
+}
+
 export function getRunStartPaths(nodes: Node[], edges: Edge[]): RunPath[] {
     const byId = new Map(nodes.map((n) => [n.id, n]));
     const fedInto = new Set<string>();
@@ -294,23 +316,14 @@ export function getRunStartPaths(nodes: Node[], edges: Edge[]): RunPath[] {
                 !fedInto.has(node.id) &&
                 !toolProviders.has(node.id)
         )
-        .map((node) => {
-            const meta = getNodeIconMeta(node.type ?? '');
-            const label = (node.data?.label as string | undefined) || '';
-            return {
-                nodeId: node.id,
-                nodeType: node.type ?? '',
-                title: nodeTitle(node),
-                label,
-                isAgent: node.type === 'agent',
-                downstream: chainFrom(node.id),
-                tools: (toolsOf.get(node.id) ?? [])
+        .map((node) =>
+            describeRunPath(
+                node,
+                chainFrom(node.id),
+                (toolsOf.get(node.id) ?? [])
                     .map((id) => byId.get(id))
                     .filter((n): n is Node => !!n && !n.data?.disabled)
-                    .map(nodeTitle),
-                message: String(nodeConfig(node).message ?? ''),
-                iconHtml: meta?.iconHtml,
-                iconColor: meta?.iconColor,
-            };
-        });
+                    .map(nodeTitle)
+            )
+        );
 }
