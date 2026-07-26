@@ -35,6 +35,9 @@ export interface IncompleteStep {
     title: string;
     /** User-given node label, if any (shown as a subtle tag). */
     label: string;
+    /** Selected operation. Credential requirements are per-operation, so the
+     *  inline credential block needs it to ask for the right ones. */
+    operation?: string;
     /** Missing required fields that can be filled in the popup. */
     fields: IncompleteField[];
     /** Missing credentials, or anything else with no inline editor — these need
@@ -122,6 +125,7 @@ function describeStep(
         nodeType: node.type ?? '',
         title: meta?.label || label || node.type || 'Step',
         label,
+        operation,
         fields,
         blockers,
         needsToolActions,
