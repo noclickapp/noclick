@@ -9,6 +9,7 @@
 import { describe, expect, it } from 'vitest';
 
 import {
+    runScopeForRoots,
     withAncestors,
     withWiredToolProviders,
 } from '~/lib/getGuaranteedReachableNodes';
@@ -35,7 +36,12 @@ describe('withAncestors', () => {
     });
 
     it('merges the ancestry of several starting points', () => {
-        const edges = [edge('a', 'c'), edge('b', 'c'), edge('c', 'd'), edge('x', 'y')];
+        const edges = [
+            edge('a', 'c'),
+            edge('b', 'c'),
+            edge('c', 'd'),
+            edge('x', 'y'),
+        ];
         expect(withAncestors(edges, ['d', 'y'])).toEqual(
             new Set(['a', 'b', 'c', 'd', 'x', 'y'])
         );
@@ -49,7 +55,12 @@ describe('withAncestors', () => {
     });
 
     it('handles a diamond without revisiting the shared ancestor', () => {
-        const edges = [edge('root', 'l'), edge('root', 'r'), edge('l', 'end'), edge('r', 'end')];
+        const edges = [
+            edge('root', 'l'),
+            edge('root', 'r'),
+            edge('l', 'end'),
+            edge('r', 'end'),
+        ];
         expect(withAncestors(edges, ['end'])).toEqual(
             new Set(['root', 'l', 'r', 'end'])
         );
@@ -67,7 +78,6 @@ describe('withAncestors', () => {
 // agent therefore ran Telegram and Google Forms providers with no actions
 // allowlisted, past a gate that could not see them.
 
-
 const toolEdge = (source: string, target: string) => ({
     source,
     target,
@@ -76,13 +86,16 @@ const toolEdge = (source: string, target: string) => ({
 
 describe('withWiredToolProviders', () => {
     it('pulls in a provider wired into a node in the set', () => {
-        expect(withWiredToolProviders([toolEdge('slack', 'agent')], ['agent'])).toEqual(
-            new Set(['agent', 'slack'])
-        );
+        expect(
+            withWiredToolProviders([toolEdge('slack', 'agent')], ['agent'])
+        ).toEqual(new Set(['agent', 'slack']));
     });
 
     it('pulls in every provider on the same consumer', () => {
-        const edges = [toolEdge('telegram', 'agent'), toolEdge('forms', 'agent')];
+        const edges = [
+            toolEdge('telegram', 'agent'),
+            toolEdge('forms', 'agent'),
+        ];
         expect(withWiredToolProviders(edges, ['agent'])).toEqual(
             new Set(['agent', 'telegram', 'forms'])
         );
@@ -98,7 +111,9 @@ describe('withWiredToolProviders', () => {
 
     it('does not pull in providers of a consumer outside the set', () => {
         const edges = [toolEdge('slack', 'other-agent')];
-        expect(withWiredToolProviders(edges, ['agent'])).toEqual(new Set(['agent']));
+        expect(withWiredToolProviders(edges, ['agent'])).toEqual(
+            new Set(['agent'])
+        );
     });
 
     it('follows hosting chains to a fixpoint', () => {
@@ -112,6 +127,62 @@ describe('withWiredToolProviders', () => {
 
     it('terminates on a wiring cycle', () => {
         const edges = [toolEdge('a', 'b'), toolEdge('b', 'a')];
-        expect(withWiredToolProviders(edges, ['a'])).toEqual(new Set(['a', 'b']));
+        expect(withWiredToolProviders(edges, ['a'])).toEqual(
+            new Set(['a', 'b'])
+        );
+    });
+});
+
+// ── Selected-entry-point scope ──────────────────────────────────────────────
+// The Run popup lets the user tick which starting points to run. What ships to
+// the backend is narrowed to this set, so an unticked branch must not appear in
+// it — and a ticked agent must still bring its tools.
+
+describe('runScopeForRoots', () => {
+    it('includes the root and everything forward of it', () => {
+        const edges = [edge('a', 'b'), edge('b', 'c')];
+        expect(runScopeForRoots(edges, ['a'])).toEqual(
+            new Set(['a', 'b', 'c'])
+        );
+    });
+
+    it('leaves an unpicked branch out entirely', () => {
+        const edges = [edge('a', 'a2'), edge('b', 'b2')];
+        expect(runScopeForRoots(edges, ['a'])).toEqual(new Set(['a', 'a2']));
+    });
+
+    it('does not walk backward from the root', () => {
+        // Entry points have no ancestors by definition, but a cycle or a stale
+        // edge could still offer one — pulling it in would run a branch the
+        // user did not tick.
+        const edges = [edge('up', 'root'), edge('root', 'down')];
+        expect(runScopeForRoots(edges, ['root'])).toEqual(
+            new Set(['root', 'down'])
+        );
+    });
+
+    it("keeps a picked agent's tool providers", () => {
+        const edges = [toolEdge('telegram', 'agent')];
+        expect(runScopeForRoots(edges, ['agent'])).toEqual(
+            new Set(['agent', 'telegram'])
+        );
+    });
+
+    it('follows both branches of a conditional', () => {
+        // Unlike getGuaranteedReachableNodes: either branch may run, so both
+        // have to be in the executed graph.
+        const edges = [edge('cond', 'yes'), edge('cond', 'no')];
+        expect(runScopeForRoots(edges, ['cond'])).toEqual(
+            new Set(['cond', 'yes', 'no'])
+        );
+    });
+
+    it('terminates on a cycle', () => {
+        const edges = [edge('a', 'b'), edge('b', 'a')];
+        expect(runScopeForRoots(edges, ['a'])).toEqual(new Set(['a', 'b']));
+    });
+
+    it('is empty when nothing is picked', () => {
+        expect(runScopeForRoots([edge('a', 'b')], [])).toEqual(new Set());
     });
 });

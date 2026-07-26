@@ -7,7 +7,7 @@
 // Mirrors workflowTriggers.getTriggerRunPrompt: a pure "should Run be
 // intercepted, and with what?" function, so the gate is testable without the
 // canvas.
-import type { Node } from '@xyflow/react';
+import type { Edge, Node } from '@xyflow/react';
 import { getNodeIconMeta } from '~/lib/nodeIconRegistry';
 import { getFieldsForOption } from '~/utils/schemaFieldExtractor';
 import {
@@ -83,7 +83,7 @@ function describeStep(
     context?: NodeValidationContext,
     /** Field keys the popup is already showing an editor for. They stay in the
      *  list once filled — see describeStepsForIds. */
-    sticky: readonly string[] = [],
+    sticky: readonly string[] = []
 ): IncompleteStep {
     const meta = getNodeIconMeta(node.type ?? '');
     const label = (node.data?.label as string | undefined) || '';
@@ -91,7 +91,10 @@ function describeStep(
         (node.data?.operation as string | undefined) ??
         (nodeConfig(node).operation as string | undefined);
     const schemaFields = new Map(
-        getFieldsForOption(node.type ?? '', undefined, operation).map(f => [f.key, f.prop]),
+        getFieldsForOption(node.type ?? '', undefined, operation).map((f) => [
+            f.key,
+            f.prop,
+        ])
     );
 
     const missing = new Map<string, string>();
@@ -99,7 +102,9 @@ function describeStep(
     let toolActionsMissing = false;
     let operationMissing = false;
     for (const issue of validateNode(node, context).issues) {
-        const prop = issue.fieldKey ? schemaFields.get(issue.fieldKey) : undefined;
+        const prop = issue.fieldKey
+            ? schemaFields.get(issue.fieldKey)
+            : undefined;
         if (issue.type === 'missing_operation') {
             operationMissing = true;
         } else if (issue.fieldKey === TOOL_OPERATIONS_KEY) {
@@ -119,10 +124,10 @@ function describeStep(
     // Sticky keys first, in the order they were first shown, then anything newly
     // missing. A key the schema no longer describes (the operation changed under
     // the popup) is dropped rather than rendered as an uncontrolled box.
-    const keys = [...new Set([...sticky, ...missing.keys()])].filter(k =>
-        schemaFields.has(k),
+    const keys = [...new Set([...sticky, ...missing.keys()])].filter((k) =>
+        schemaFields.has(k)
     );
-    const fields: IncompleteField[] = keys.map(key => ({
+    const fields: IncompleteField[] = keys.map((key) => ({
         key,
         prop: schemaFields.get(key)!,
         message: missing.get(key) ?? '',
@@ -159,11 +164,11 @@ function describeStep(
  */
 export function getIncompleteRunPrompt(
     nodes: Node[],
-    context?: NodeValidationContext,
+    context?: NodeValidationContext
 ): IncompleteStep[] | null {
     const steps = getIncompleteNodes(nodes, context)
-        .filter(node => !node.data?.disabled)
-        .map(node => describeStep(node, context));
+        .filter((node) => !node.data?.disabled)
+        .map((node) => describeStep(node, context));
     return steps.length > 0 ? steps : null;
 }
 
@@ -186,11 +191,81 @@ export function describeStepsForIds(
     nodes: Node[],
     nodeIds: string[],
     context?: NodeValidationContext,
-    stickyFields: Record<string, string[]> = {},
+    stickyFields: Record<string, string[]> = {}
 ): IncompleteStep[] {
-    const byId = new Map(nodes.map(n => [n.id, n]));
+    const byId = new Map(nodes.map((n) => [n.id, n]));
     return nodeIds
-        .map(id => byId.get(id))
+        .map((id) => byId.get(id))
         .filter((n): n is Node => !!n)
-        .map(node => describeStep(node, context, stickyFields[node.id] ?? []));
+        .map((node) =>
+            describeStep(node, context, stickyFields[node.id] ?? [])
+        );
+}
+
+// ── Run paths ───────────────────────────────────────────────────────────────
+// The entry points a full run starts from. Surfaced in the Run popup so a
+// workflow with several independent branches can be run selectively, and so an
+// agent entry point can be given its opening message before the run starts.
+
+/** One selectable entry point for a run. */
+export interface RunPath {
+    nodeId: string;
+    nodeType: string;
+    /** Service / step name, e.g. "Gmail". */
+    title: string;
+    label: string;
+    isAgent: boolean;
+    /** For agents: the node's saved message, used to prefill the popup's box. */
+    message: string;
+    iconHtml?: string;
+    iconColor?: string;
+}
+
+/**
+ * The graph's entry points: nodes nothing feeds into.
+ *
+ * Two kinds of edge are deliberately not "feeding into":
+ *
+ * - Bottom-handle edges point from a tool provider INTO its agent, so counting
+ *   them would make an agent with tools look like a mid-graph node rather than
+ *   the entry point it is.
+ * - The providers themselves have no incoming edges at all, so they would each
+ *   look like an entry point. They cannot start anything — they only answer an
+ *   agent's tool calls — so they are excluded by name.
+ *
+ * Disabled nodes are skipped for the same reason the Run gate skips them: the
+ * backend does not execute them.
+ */
+export function getRunStartPaths(nodes: Node[], edges: Edge[]): RunPath[] {
+    const fedInto = new Set<string>();
+    const toolProviders = new Set<string>();
+    for (const edge of edges) {
+        if (edge.targetHandle === 'bottom') toolProviders.add(edge.source);
+        else fedInto.add(edge.target);
+    }
+
+    return nodes
+        .filter(
+            (node) =>
+                node.type &&
+                node.type !== 'stickyNote' &&
+                !node.id.startsWith('cursor-') &&
+                !node.data?.disabled &&
+                !fedInto.has(node.id) &&
+                !toolProviders.has(node.id)
+        )
+        .map((node) => {
+            const meta = getNodeIconMeta(node.type ?? '');
+            const label = (node.data?.label as string | undefined) || '';
+            return {
+                nodeId: node.id,
+                nodeType: node.type ?? '',
+                title: meta?.label || label || node.type || 'Step',
+                label,
+                isAgent: node.type === 'agent',
+                message: String(nodeConfig(node).message ?? ''),
+                iconHtml: meta?.iconHtml,
+                iconColor: meta?.iconColor,
+            };
+        });
 }
