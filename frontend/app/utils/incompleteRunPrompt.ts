@@ -63,6 +63,11 @@ export interface IncompleteStep {
 /** Canvas-only config key holding a tool provider's allowlisted operations. */
 export const TOOL_OPERATIONS_KEY = 'agent_tool_operations';
 
+/** Sticky-key sentinel for the node's own action. Not a config field — the
+ *  operation is top-level metadata — but it shares the stickiness so the block
+ *  stays put once shown, like every other requirement. */
+export const OPERATION_KEY = '__operation__';
+
 /** The node's live config, which is where field values are authoritative. */
 function nodeConfig(node: Node): Record<string, unknown> {
     return (node.data?.config ?? {}) as Record<string, unknown>;
@@ -92,9 +97,12 @@ function describeStep(
     const missing = new Map<string, string>();
     const blockers: NodeValidationIssue[] = [];
     let toolActionsMissing = false;
+    let operationMissing = false;
     for (const issue of validateNode(node, context).issues) {
         const prop = issue.fieldKey ? schemaFields.get(issue.fieldKey) : undefined;
-        if (issue.fieldKey === TOOL_OPERATIONS_KEY) {
+        if (issue.type === 'missing_operation') {
+            operationMissing = true;
+        } else if (issue.fieldKey === TOOL_OPERATIONS_KEY) {
             toolActionsMissing = true;
         } else if (issue.fieldKey && prop) {
             missing.set(issue.fieldKey, issue.message);
@@ -106,6 +114,7 @@ function describeStep(
     // decides whether the step is done.
     const needsToolActions =
         toolActionsMissing || sticky.includes(TOOL_OPERATIONS_KEY);
+    const needsOperation = operationMissing || sticky.includes(OPERATION_KEY);
 
     // Sticky keys first, in the order they were first shown, then anything newly
     // missing. A key the schema no longer describes (the operation changed under
@@ -129,8 +138,12 @@ function describeStep(
         fields,
         blockers,
         needsToolActions,
+        needsOperation,
         resolved:
-            missing.size === 0 && blockers.length === 0 && !toolActionsMissing,
+            missing.size === 0 &&
+            blockers.length === 0 &&
+            !toolActionsMissing &&
+            !operationMissing,
         iconHtml: meta?.iconHtml,
         iconColor: meta?.iconColor,
     };
