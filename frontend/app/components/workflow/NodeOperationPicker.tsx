@@ -59,7 +59,9 @@ export function NodeOperationPicker({
             getOptionIsTrigger={(idx) => getOperationIsTrigger(nodeType, idx)}
             getOptionTierLabel={(idx) => getOperationTierLabel(nodeType, idx)}
             getOptionKeywords={(idx) => getOperationKeywords(nodeType, idx)}
-            getOptionDescription={(idx) => getOperationDescription(nodeType, idx)}
+            getOptionDescription={(idx) =>
+                getOperationDescription(nodeType, idx) ?? ''
+            }
             hiddenIndices={undefined}
             isOpen={isOpen}
             autoFocusOnOpen={false}

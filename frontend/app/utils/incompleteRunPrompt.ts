@@ -54,6 +54,11 @@ export interface IncompleteStep {
      *  is satisfied by the FIRST selection, so deriving this live tore the
      *  picker out from under someone who wanted to allowlist two actions. */
     needsToolActions: boolean;
+    /** Show the node's own action picker: nothing is selected yet, and until it
+     *  is, which fields this step needs is unknowable. Sticky on the same terms
+     *  as the editors — the first pick satisfies it, and a picker that vanishes
+     *  on the first pick cannot be corrected. */
+    needsOperation: boolean;
     /** Nothing missing any more. Stays in the list so the row can show as done
      *  instead of vanishing under the cursor mid-edit. */
     resolved: boolean;
