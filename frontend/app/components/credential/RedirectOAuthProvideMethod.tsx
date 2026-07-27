@@ -23,6 +23,7 @@ interface RedirectOAuthProvideMethodProps {
     userScopes?: string[];
     supportsCustomClient?: boolean;
     requiresCustomClient?: boolean;
+    redirectUri?: string;
     serviceName: string;
     ServiceIcon: ComponentType<{ className?: string }> | null;
     onProvided: () => void;
@@ -32,7 +33,7 @@ interface RedirectOAuthProvideMethodProps {
 // exchange lands on the credential-request endpoints (not the authed socket).
 function ConnectForm({
     provider, credentialType, scopes, userScopes, supportsCustomClient, requiresCustomClient,
-    serviceName, ServiceIcon, onProvided,
+    redirectUri, serviceName, ServiceIcon, onProvided,
 }: Omit<RedirectOAuthProvideMethodProps, 'apiBase' | 'token'>) {
     const {
         connect, isConnecting, connectingProvider, error, planLimitError,
@@ -49,6 +50,7 @@ function ConnectForm({
             userScopes={userScopes}
             supportsCustomClient={supportsCustomClient}
             requiresCustomClient={requiresCustomClient}
+            redirectUri={redirectUri}
             connect={connect}
             connectingProvider={connectingProvider}
             isConnecting={isConnecting}
@@ -63,7 +65,7 @@ function ConnectForm({
 
 export function RedirectOAuthProvideMethod({
     apiBase, token, credentialType, provider, scopes, userScopes,
-    supportsCustomClient, requiresCustomClient, serviceName, ServiceIcon, onProvided,
+    supportsCustomClient, requiresCustomClient, redirectUri, serviceName, ServiceIcon, onProvided,
 }: RedirectOAuthProvideMethodProps) {
     const transport = useMemo(
         () => provideLinkTransport(apiBase, token, credentialType),
@@ -95,6 +97,7 @@ export function RedirectOAuthProvideMethod({
                 userScopes={userScopes}
                 supportsCustomClient={supportsCustomClient}
                 requiresCustomClient={requiresCustomClient}
+                redirectUri={redirectUri}
                 serviceName={serviceName}
                 ServiceIcon={ServiceIcon}
                 onProvided={onProvided}
