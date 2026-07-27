@@ -6,7 +6,7 @@
 // miss for a long actionable message (e.g. "Google didn't grant the Gmail
 // permission. Please reconnect…") and offered no direct way to retry.
 
-import { AlertCircle, Loader2, RefreshCw, X } from 'lucide-react';
+import { AlertCircle, ExternalLink, Loader2, RefreshCw, X } from 'lucide-react';
 
 interface OAuthErrorPanelProps {
     /** Error text returned by the OAuth exchange (already user-facing). */
@@ -17,6 +17,8 @@ interface OAuthErrorPanelProps {
     onDismiss: () => void;
     /** True while the next attempt's popup is open / token exchange is pending. */
     isReconnecting?: boolean;
+    /** Optional help URL shown below the reconnect button (e.g. apply for API access). */
+    helpUrl?: string;
 }
 
 // Signature substring from the Google scope-rejection message. Lets us swap
@@ -28,6 +30,7 @@ export function OAuthErrorPanel({
     onReconnect,
     onDismiss,
     isReconnecting,
+    helpUrl,
 }: OAuthErrorPanelProps) {
     const isScopeIssue = message.includes(SCOPE_REJECTION_MARKER);
     const heading = isScopeIssue ? 'Permissions missing' : 'Connection failed';
@@ -75,6 +78,16 @@ export function OAuthErrorPanel({
                 )}
                 {isReconnecting ? 'Reconnecting…' : 'Reconnect'}
             </button>
+            {helpUrl && (
+                <a
+                    href={helpUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="mt-2 inline-flex items-center gap-1.5 text-xs text-red-800/80 dark:text-red-200/80 underline underline-offset-2 hover:text-red-900 dark:hover:text-red-100"
+                >
+                    Apply for API access <ExternalLink className="h-3 w-3" aria-hidden />
+                </a>
+            )}
         </div>
     );
 }
