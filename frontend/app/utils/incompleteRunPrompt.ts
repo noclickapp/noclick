@@ -59,6 +59,11 @@ export interface IncompleteStep {
      *  as the editors — the first pick satisfies it, and a picker that vanishes
      *  on the first pick cannot be corrected. */
     needsOperation: boolean;
+    /** Show the credentials block. Sticky, so connecting an account leaves it
+     *  in place marked Done rather than emptying the step. */
+    needsCredentials: boolean;
+    /** Whether that block is satisfied right now. */
+    credentialsConnected: boolean;
     /** Nothing missing any more. Stays in the list so the row can show as done
      *  instead of vanishing under the cursor mid-edit. */
     resolved: boolean;
@@ -73,6 +78,13 @@ export const TOOL_OPERATIONS_KEY = 'agent_tool_operations';
  *  operation is top-level metadata — but it shares the stickiness so the block
  *  stays put once shown, like every other requirement. */
 export const OPERATION_KEY = '__operation__';
+
+/** Sticky-key sentinel for the step's credentials. Like the operation, not a
+ *  config field — the connection lives in `credentialIds` — but it needs the
+ *  same stickiness: connecting an account satisfies the requirement, and a
+ *  block that disappears on being satisfied leaves the step showing "nothing
+ *  left to fill in" instead of the account that was just connected. */
+export const CREDENTIALS_KEY = '__credentials__';
 
 /** The node's live config, which is where field values are authoritative. */
 function nodeConfig(node: Node): Record<string, unknown> {
@@ -127,12 +139,15 @@ function describeStep(
     const blockers: NodeValidationIssue[] = [];
     let toolActionsMissing = false;
     let operationMissing = false;
+    let credentialsMissing = false;
     for (const issue of validateNode(node, context).issues) {
         const prop = issue.fieldKey
             ? schemaFields.get(issue.fieldKey)
             : undefined;
         if (issue.type === 'missing_operation') {
             operationMissing = true;
+        } else if (issue.type === 'missing_credentials') {
+            credentialsMissing = true;
         } else if (issue.fieldKey === TOOL_OPERATIONS_KEY) {
             toolActionsMissing = true;
         } else if (issue.fieldKey && prop) {
@@ -146,6 +161,8 @@ function describeStep(
     const needsToolActions =
         toolActionsMissing || sticky.includes(TOOL_OPERATIONS_KEY);
     const needsOperation = operationMissing || sticky.includes(OPERATION_KEY);
+    const needsCredentials =
+        credentialsMissing || sticky.includes(CREDENTIALS_KEY);
 
     // Sticky keys first, in the order they were first shown, then anything newly
     // missing. A key the schema no longer describes (the operation changed under
@@ -170,9 +187,12 @@ function describeStep(
         blockers,
         needsToolActions,
         needsOperation,
+        needsCredentials,
+        credentialsConnected: !credentialsMissing,
         resolved:
             missing.size === 0 &&
             blockers.length === 0 &&
+            !credentialsMissing &&
             !toolActionsMissing &&
             !operationMissing,
         iconHtml: meta?.iconHtml,
