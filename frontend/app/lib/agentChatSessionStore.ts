@@ -9,37 +9,48 @@ import { proxy } from 'valtio';
 import type { AgentChatMessage } from '~/hooks/useAgentChat';
 
 export interface AgentChatSession {
-  messages: AgentChatMessage[];
-  isStreaming: boolean;
-  errorReason: string | null;
-  /** Epoch ms of the most recent terminal signal (finished frame / terminal
-   *  agent:state / reconciler adoption); 0 if none. */
-  lastFinishedAt: number;
-  /** Whether the persisted-history cold fetch has completed once for this
-   *  conversation — a remount with a live session must NOT reset and refetch
-   *  (that was the erasure), it restores instantly and lets the reconcile
-   *  poll heal any frames missed while unmounted. */
-  resumedOnce: boolean;
+    messages: AgentChatMessage[];
+    isStreaming: boolean;
+    errorReason: string | null;
+    /** Epoch ms of the most recent terminal signal (finished frame / terminal
+     *  agent:state / reconciler adoption); 0 if none. */
+    lastFinishedAt: number;
+    /** Whether the persisted-history cold fetch has completed once for this
+     *  conversation — a remount with a live session must NOT reset and refetch
+     *  (that was the erasure), it restores instantly and lets the reconcile
+     *  poll heal any frames missed while unmounted. */
+    resumedOnce: boolean;
+    /** The model the last send in THIS conversation actually dispatched.
+     *
+     *  The conversations list is the nominal answer, but it is only refetched
+     *  when the History popover opens — so a conversation minted in this session
+     *  has no entry there, and "what model is this thread running?" came back
+     *  undefined exactly when it mattered. That let one thread take a turn on the
+     *  in-process LLM agent and the next on an opencode sandbox, which has none
+     *  of the first turn's history: the agent answered "this is our first
+     *  interaction" to a question about the conversation above it. */
+    lastSentModel: string | null;
 }
 
 const emptySession = (): AgentChatSession => ({
-  messages: [],
-  isStreaming: false,
-  errorReason: null,
-  lastFinishedAt: 0,
-  resumedOnce: false,
+    messages: [],
+    isStreaming: false,
+    errorReason: null,
+    lastFinishedAt: 0,
+    resumedOnce: false,
+    lastSentModel: null,
 });
 
 export const agentChatSessionStore = proxy<{
-  sessions: Record<string, AgentChatSession>;
+    sessions: Record<string, AgentChatSession>;
 }>({ sessions: {} });
 
 /** The LIVE (mutable) session for a conversation, created on first touch. */
 export function getAgentChatSession(conversationId: string): AgentChatSession {
-  return (agentChatSessionStore.sessions[conversationId] ??= emptySession());
+    return (agentChatSessionStore.sessions[conversationId] ??= emptySession());
 }
 
 /** Test isolation — the store is module-level state. */
 export function resetAgentChatSessions(): void {
-  agentChatSessionStore.sessions = {};
+    agentChatSessionStore.sessions = {};
 }
