@@ -47,7 +47,16 @@ export const agentChatSessionStore = proxy<{
 
 /** The LIVE (mutable) session for a conversation, created on first touch. */
 export function getAgentChatSession(conversationId: string): AgentChatSession {
-    return (agentChatSessionStore.sessions[conversationId] ??= emptySession());
+    // Read back AFTER assigning, deliberately. `x ??= y` evaluates to y — the
+    // RAW object — so the FIRST touch of a conversation used to hand out an
+    // unproxied session, and every mutation through it was invisible to valtio.
+    // Existing sessions returned the proxy, which is why this only ever bit the
+    // first write to a brand-new conversation: it landed in the store but
+    // rendered nothing until some unrelated re-render happened to pick it up.
+    if (!agentChatSessionStore.sessions[conversationId]) {
+        agentChatSessionStore.sessions[conversationId] = emptySession();
+    }
+    return agentChatSessionStore.sessions[conversationId];
 }
 
 /** Test isolation — the store is module-level state. */
