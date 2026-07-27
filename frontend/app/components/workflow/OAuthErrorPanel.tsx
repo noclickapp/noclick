@@ -65,29 +65,31 @@ export function OAuthErrorPanel({
             </p>
             {/* Tinted (not saturated) CTA so Reconnect reads as the obvious next
                 step without screaming over the rest of the sidebar. */}
-            <button
-                type="button"
-                onClick={onReconnect}
-                disabled={isReconnecting}
-                className="mt-2.5 inline-flex items-center gap-1.5 rounded-md border border-red-500/30 bg-red-500/15 px-3 py-1.5 text-xs font-medium text-red-900 dark:text-red-100 transition-colors hover:border-red-500/50 hover:bg-red-500/25 disabled:cursor-not-allowed disabled:opacity-60"
-            >
-                {isReconnecting ? (
-                    <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />
-                ) : (
-                    <RefreshCw className="h-3.5 w-3.5" aria-hidden />
-                )}
-                {isReconnecting ? 'Reconnecting…' : 'Reconnect'}
-            </button>
-            {helpUrl && (
-                <a
-                    href={helpUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="mt-2 inline-flex items-center gap-1.5 text-xs text-red-800/80 dark:text-red-200/80 underline underline-offset-2 hover:text-red-900 dark:hover:text-red-100"
+            <div className="mt-2.5 flex items-center gap-4">
+                <button
+                    type="button"
+                    onClick={onReconnect}
+                    disabled={isReconnecting}
+                    className="inline-flex items-center gap-1.5 rounded-md border border-red-500/30 bg-red-500/15 px-3 py-1.5 text-xs font-medium text-red-900 dark:text-red-100 transition-colors hover:border-red-500/50 hover:bg-red-500/25 disabled:cursor-not-allowed disabled:opacity-60"
                 >
-                    Apply for API access <ExternalLink className="h-3 w-3" aria-hidden />
-                </a>
-            )}
+                    {isReconnecting ? (
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden />
+                    ) : (
+                        <RefreshCw className="h-3.5 w-3.5" aria-hidden />
+                    )}
+                    {isReconnecting ? 'Reconnecting…' : 'Reconnect'}
+                </button>
+                {helpUrl && (
+                    <a
+                        href={helpUrl}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="inline-flex items-center gap-1.5 text-xs text-red-800/80 dark:text-red-200/80 underline underline-offset-2 hover:text-red-900 dark:hover:text-red-100"
+                    >
+                        Apply for API access <ExternalLink className="h-3 w-3" aria-hidden />
+                    </a>
+                )}
+            </div>
         </div>
     );
 }
