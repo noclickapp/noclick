@@ -8,6 +8,7 @@
 // intercepted, and with what?" function, so the gate is testable without the
 // canvas.
 import type { Edge, Node } from '@xyflow/react';
+import { agentIconType } from '~/lib/harnessBrand';
 import { getNodeIconMeta } from '~/lib/nodeIconRegistry';
 import { getFieldsForOption } from '~/utils/schemaFieldExtractor';
 import {
@@ -74,6 +75,26 @@ function nodeConfig(node: Node): Record<string, unknown> {
 }
 
 /**
+ * The icon a node shows. An agent resolves to its HARNESS mark (`agent:codex`,
+ * `agent:openclaw`, …) rather than the generic robot — the same synthetic keys
+ * the workflow-browser icon rows use, so an agent looks like the thing it
+ * actually runs under.
+ *
+ * Deliberately the icon ONLY. The harness entry is labelled "Agent (Codex)",
+ * which captions the mark rather than naming the node, so the title keeps
+ * coming from the plain type. And an unresolved harness key drops back to the
+ * plain type: the synthetic entries arrive with the rest of the registry, so a
+ * miss means "not loaded yet", not "this agent has no icon".
+ */
+function iconMetaOf(node: Node) {
+    const type = node.type ?? '';
+    if (type !== 'agent') return getNodeIconMeta(type);
+    const model = (node.data?.config as Record<string, unknown> | undefined)
+        ?.model as string | undefined;
+    return getNodeIconMeta(agentIconType(model)) ?? getNodeIconMeta(type);
+}
+
+/**
  * One step's current state. Issues carrying a `fieldKey` that resolves to a real
  * schema field become inline editors; everything else (credentials, and any
  * field the schema can't describe) stays a blocker that needs the config panel.
@@ -85,7 +106,7 @@ function describeStep(
      *  list once filled — see describeStepsForIds. */
     sticky: readonly string[] = []
 ): IncompleteStep {
-    const meta = getNodeIconMeta(node.type ?? '');
+    const meta = iconMetaOf(node);
     const label = (node.data?.label as string | undefined) || '';
     const operation =
         (node.data?.operation as string | undefined) ??
@@ -137,7 +158,7 @@ function describeStep(
     return {
         nodeId: node.id,
         nodeType: node.type ?? '',
-        title: meta?.label || label || node.type || 'Step',
+        title: nodeTitle(node),
         label,
         operation,
         fields,
@@ -228,7 +249,9 @@ export interface RunPath {
     iconColor?: string;
 }
 
-/** Display name for a node — the service name, else the user's label. */
+/** Display name for a node — the service name, else the user's label. The name
+ *  comes from the plain type: a harness entry is labelled "Agent (Codex)",
+ *  which is the icon's caption, not what this node is called. */
 function nodeTitle(node: Node): string {
     const label = (node.data?.label as string | undefined) || '';
     return (
@@ -258,7 +281,7 @@ export function describeRunPath(
     downstream: string[] = [],
     tools: string[] = []
 ): RunPath {
-    const meta = getNodeIconMeta(node.type ?? '');
+    const meta = iconMetaOf(node);
     return {
         nodeId: node.id,
         nodeType: node.type ?? '',
