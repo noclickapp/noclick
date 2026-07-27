@@ -20,8 +20,23 @@ export function resolveAgentModelKind(model: string): AgentModelKind {
     if (model === 'claude-code') return 'claude-code';
     if (model === 'opencode') return 'opencode';
     if (model === 'openclaw') return 'openclaw';
-    if (model.includes('hermes') || model.includes('nousresearch')) return 'hermes';
+    if (model.includes('hermes') || model.includes('nousresearch'))
+        return 'hermes';
     return 'bot';
+}
+
+/** The icon-registry key for an agent node running `model`.
+ *
+ *  The dashboard loader serializes a synthetic `agent:<harness>` entry per CLI
+ *  harness so light surfaces can show the mark the agent actually runs under
+ *  without importing brand components. API-model agents keep the generic
+ *  `agent` icon, which is also where an unknown kind lands. Shared by the
+ *  workflow-browser icon rows and the Run popup's entry-point screen — an
+ *  agent that renders as a generic robot next to its own message reads as the
+ *  wrong node. */
+export function agentIconType(model: string | undefined | null): string {
+    const kind = resolveAgentModelKind(model ?? '');
+    return kind === 'bot' ? 'agent' : `agent:${kind}`;
 }
 
 export interface HarnessBrand {
@@ -46,9 +61,21 @@ export const HARNESS_BRANDS: Record<HarnessSlug, HarnessBrand> = {
     // clawd.svg is colored (#c97c5d salmon) → visible on both themes.
     'claude-code': { markSrc: '/icons/clawd.svg', inset: 1.1 },
     // opencode marks are two-tone gray (#4B4646 / #F1ECEC) → self-adapting, no invert.
-    opencode: { markSrc: '/icons/opencode.svg', wordmarkSrc: '/icons/opencode-wordmark.svg', inset: 0.9 },
+    opencode: {
+        markSrc: '/icons/opencode.svg',
+        wordmarkSrc: '/icons/opencode-wordmark.svg',
+        inset: 0.9,
+    },
     // openclaw marker + wordmark are pure-white dark-bg art → invert in light mode.
-    openclaw: { markSrc: '/icons/openclaw_marker.svg', wordmarkSrc: '/icons/openclaw.svg', monochrome: true },
+    openclaw: {
+        markSrc: '/icons/openclaw_marker.svg',
+        wordmarkSrc: '/icons/openclaw.svg',
+        monochrome: true,
+    },
     // hermes marks are gold/amber/bronze (#FFD700…) → visible on both themes.
-    hermes: { markSrc: '/icons/hermes_marker.svg', wordmarkSrc: '/icons/hermes.svg', inset: 0.95 },
+    hermes: {
+        markSrc: '/icons/hermes_marker.svg',
+        wordmarkSrc: '/icons/hermes.svg',
+        inset: 0.95,
+    },
 };
