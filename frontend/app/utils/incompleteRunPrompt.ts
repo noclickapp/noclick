@@ -376,7 +376,14 @@ export function getRunStartPaths(nodes: Node[], edges: Edge[]): RunPath[] {
                 !node.id.startsWith('cursor-') &&
                 !node.data?.disabled &&
                 !fedInto.has(node.id) &&
-                !toolProviders.has(node.id)
+                !toolProviders.has(node.id) &&
+                // An interface block heading no branch is a UX surface, not
+                // something to run — a standalone HTML/React app offered as
+                // "Runs on its own" is noise, and skipping it loses nothing.
+                // One that DOES head a branch (form → Slack) stays: ticked
+                // paths become the run's scope, so excluding it would silently
+                // drop everything downstream of it.
+                !(node.type.startsWith('interface-') && !nextOf.has(node.id))
         )
         .map((node) =>
             describeRunPath(
