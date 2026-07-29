@@ -8,7 +8,7 @@ import { nc } from '~/lib/nc';
 const NODE_ID = 'debug-exa-cred-ui';
 
 export default async function () {
-    if (!window.screenToFlowPosition) {
+    if (!nc.nodes.workflowId()) {
         return { skipped: 'No workflow open — open a workflow, then re-run.' };
     }
 
