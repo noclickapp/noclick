@@ -67,3 +67,81 @@ describe('useWorkflowUndoRedo — config survives delete + undo', () => {
         expect(hook.result.current.canUndo).toBe(false);
     });
 });
+
+// Regression (2026-07-30 graph-wipe incident): the hook mounts with an empty
+// canvas, so without re-anchoring at the loaded graph, that empty state sits
+// at the bottom of the undo stack — repeated Cmd+Z walks a loaded workflow
+// down to zero nodes, and the autosave persists the wipe.
+describe('useWorkflowUndoRedo — resetBaseline floors the stack at the loaded graph', () => {
+    it('undo cannot walk below the baseline set after workflow load', () => {
+        const { hook, restored } = setup();
+        const loaded = node({ operation: 'on_charge_succeeded' });
+
+        act(() => {
+            // Pre-load churn (cache restore etc.) lands in history…
+            hook.result.current.captureState([loaded], []);
+            // …then the authoritative load re-anchors: no past, no future.
+            hook.result.current.resetBaseline([loaded], []);
+        });
+        expect(hook.result.current.canUndo).toBe(false);
+        expect(hook.result.current.canRedo).toBe(false);
+
+        // A real post-load edit is still undoable — but only back to the
+        // loaded graph, never to the empty pre-load state.
+        act(() => hook.result.current.captureState([], []));
+        act(() => hook.result.current.undo());
+        expect(restored.nodes).toHaveLength(1);
+        expect(hook.result.current.canUndo).toBe(false);
+    });
+
+    it('Cmd+Z while typing in an input/textarea/contentEditable does not touch the canvas', () => {
+        const { hook, restored } = setup();
+        const loaded = node({});
+        act(() => {
+            hook.result.current.resetBaseline([loaded], []);
+            hook.result.current.captureState([], []); // deletable edit → canUndo
+        });
+        const marker = { nodes: 'untouched' };
+        restored.nodes = marker.nodes as never;
+
+        for (const make of [
+            () => document.createElement('input'),
+            () => document.createElement('textarea'),
+            () => {
+                const div = document.createElement('div');
+                div.setAttribute('contenteditable', 'true');
+                return div;
+            },
+        ]) {
+            const el = make();
+            document.body.appendChild(el);
+            act(() => {
+                el.dispatchEvent(
+                    new KeyboardEvent('keydown', {
+                        key: 'z',
+                        metaKey: true,
+                        ctrlKey: true,
+                        bubbles: true,
+                    }),
+                );
+            });
+            el.remove();
+        }
+        // No undo fired: onNodesChange never ran.
+        expect(restored.nodes).toBe(marker.nodes);
+        expect(hook.result.current.canUndo).toBe(true);
+
+        // Sanity: the same keystroke on the document body DOES undo.
+        act(() => {
+            document.body.dispatchEvent(
+                new KeyboardEvent('keydown', {
+                    key: 'z',
+                    metaKey: true,
+                    ctrlKey: true,
+                    bubbles: true,
+                }),
+            );
+        });
+        expect(restored.nodes).toHaveLength(1);
+    });
+});
