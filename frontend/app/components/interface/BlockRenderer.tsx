@@ -5,13 +5,11 @@ import { FileBlock } from './blocks/FileBlock';
 import { DataframeBlock } from './blocks/DataframeBlock';
 import { HtmlReactBlock } from './blocks/HtmlReactBlock';
 import { FileUploadBlock } from './blocks/FileUploadBlock';
-import { ConfigFormBlock } from './blocks/ConfigFormBlock';
 import { GenericBlock } from './blocks/GenericBlock';
 import { AgentChatBlock } from './blocks/AgentChatBlock';
 
 const BLOCK_COMPONENTS: Record<string, React.ComponentType<BlockComponentProps>> = {
   form: FormBlock,
-  'config-form': ConfigFormBlock,
   file: FileBlock,
   dataframe: DataframeBlock,
   'html-react': HtmlReactBlock,

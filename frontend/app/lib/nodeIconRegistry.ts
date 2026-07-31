@@ -47,6 +47,10 @@ export function isTriggerSourceLite(
 ): boolean {
     if (!type) return false;
     if (type.startsWith('trigger-')) return true;
+    // The unified form node mints a public form URL whose submissions start runs.
+    // (interface-config-form is its pre-merge legacy alias — this light mirror
+    // can't import nodeSchemas' alias map, so the one relevant type is inlined.)
+    if (type === 'interface-form' || type === 'interface-config-form') return true;
     if (!operation) return false;
     return _nodeIconData[type]?.triggerOps?.includes(operation) ?? false;
 }

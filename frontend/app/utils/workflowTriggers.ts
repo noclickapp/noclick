@@ -4,7 +4,7 @@
 // pressing Run on a purely trigger-driven workflow explains how it actually
 // starts, instead of silently doing a confusing one-off test run.
 import { getNodeIconMeta } from '~/lib/nodeIconRegistry';
-import { getTriggerOperations, isTriggerSource } from '~/utils/nodeSchemas';
+import { getTriggerOperations, isTriggerSource, resolveNodeType } from '~/utils/nodeSchemas';
 import { getFieldsForOption } from '~/utils/schemaFieldExtractor';
 import { getCredentialEmail } from '~/utils/credentialAutoSelect';
 import { EMAIL_DOMAIN } from '~/components/workflow/EmailTriggerField';
@@ -38,17 +38,17 @@ export interface WorkflowTrigger {
     iconColor?: string;
 }
 
-// The dedicated trigger-* node types carry no x-is-trigger operation to read a
-// description from, so describe them here.
+// The dedicated trigger node types (trigger-* plus the unified form node) carry
+// no x-is-trigger operation to read a description from, so describe them here.
 const DEDICATED_TRIGGER_DESCRIPTIONS: Record<string, string> = {
     'trigger-webhook': "Runs when an HTTP request hits this workflow's webhook URL.",
     'trigger-email': "Runs when an email arrives at this workflow's address.",
     'trigger-cron': 'Runs automatically on a recurring schedule.',
-    'trigger-form-input': 'Runs when someone submits this form.',
+    'interface-form': 'Runs when someone submits this form.',
 };
 
 // The manual Run trigger is the only entry point a user starts by pressing Run,
-// so it suppresses the trigger-info prompt. A form trigger is NOT manual here:
+// so it suppresses the trigger-info prompt. A form node is NOT manual here:
 // pressing Run won't submit the form, so the prompt explains it (and links to the
 // hosted form) instead of silently running with no input.
 const MANUAL_ENTRY_TYPES = new Set(['trigger-run']);
@@ -153,7 +153,7 @@ function getTriggerParams(
         const url = strv(config.webhook_url);
         return url ? [{ label: 'Send a request to', value: url, mono: true }] : [];
     }
-    if (nodeType === 'trigger-form-input') {
+    if (nodeType === 'interface-form') {
         // The hosted form page (load-value populated). Surfaced as an openable link
         // so Run, which can't submit the form, points the user to where it lives.
         const url = strv(config.webhook_url);
@@ -190,7 +190,7 @@ function getTriggerParams(
 export function getAutomaticTriggers(nodes: CanvasNode[]): WorkflowTrigger[] {
     const out: WorkflowTrigger[] = [];
     for (const node of nodes) {
-        const type = node.type;
+        const type = node.type ? resolveNodeType(node.type) : node.type;
         if (!type || MANUAL_ENTRY_TYPES.has(type) || node.data?.disabled) continue;
         const operation = nodeOperation(node);
         if (!isTriggerSource(type, operation)) continue;
@@ -200,8 +200,8 @@ export function getAutomaticTriggers(nodes: CanvasNode[]): WorkflowTrigger[] {
         const config = (node.data?.config as Record<string, unknown> | undefined) ?? {};
         const credentialIds = node.data?.credentialIds as Record<string, unknown> | undefined;
         let description = 'Runs automatically when triggered.';
-        if (type.startsWith('trigger-')) {
-            description = DEDICATED_TRIGGER_DESCRIPTIONS[type] ?? description;
+        if (DEDICATED_TRIGGER_DESCRIPTIONS[type]) {
+            description = DEDICATED_TRIGGER_DESCRIPTIONS[type];
         } else if (operation) {
             const op = getTriggerOperations(type).find(o => o.operation === operation);
             description = cleanDescription(op?.description || op?.displayName || description);

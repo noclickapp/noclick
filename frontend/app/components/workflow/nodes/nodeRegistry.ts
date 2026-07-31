@@ -30,7 +30,6 @@ import { CanvaNode } from './CanvaNode';
 import { CronTriggerNode } from './CronTriggerNode';
 import { DiscordNode } from './DiscordNode';
 import { DropboxNode } from './DropboxNode';
-import { FormInputNode } from './FormInputNode';
 import { GoogleCalendarNode } from './GoogleCalendarNode';
 import { GoogleTasksNode } from './GoogleTasksNode';
 import { GoogleContactsNode } from './GoogleContactsNode';
@@ -175,7 +174,6 @@ import {
     InterfaceDataframeNode,
     InterfaceHtmlReactNode,
     InterfaceFileUploadNode,
-    InterfaceConfigFormNode,
 } from './interface';
 import { DUMMY_NODES } from './DummyNodes';
 import type { NodeDefinition, NodeDimensions, NodeDisplayStrategy } from './types';
@@ -197,7 +195,8 @@ function _buildAvailable(): NodeDefinition[] {
         WebhookTriggerNode,
         InboundEmailTriggerNode,
         CronTriggerNode,
-        FormInputNode,
+        // The unified form node is a trigger (public form URL) — listed with them
+        InterfaceFormNode,
         TelegramNode, GoogleSheetsNode, GoogleDriveNode, GmailNode, OutlookMailNode,
         ExcelNode, OneDriveNode, MicrosoftTodoNode, MicrosoftTeamsNode, WordNode, WordPressNode,
         HttpRequestNode, LinearNode, GithubRestNode, AirtableNode, StripeNode, ApifyNode,
@@ -222,9 +221,8 @@ function _buildAvailable(): NodeDefinition[] {
         ConditionalNode, ApprovalNode, LogNode, SwitchNode, MergeNode, SubmitExternalFormNode,
         ServerlessFunctionNode, StateManagerNode, SetupNode, OnErrorNode,
         SetVariableNode, StickyNoteNode,
-        InterfaceFormNode,
         InterfaceFileNode, InterfaceDataframeNode, InterfaceHtmlReactNode,
-        InterfaceFileUploadNode, InterfaceConfigFormNode,
+        InterfaceFileUploadNode,
     ];
 }
 export const AVAILABLE_NODES: NodeDefinition[] = new Proxy([] as NodeDefinition[], {
@@ -297,6 +295,12 @@ export function buildReactFlowNodeTypes(additionalTypes: Record<string, Componen
     if (fileComponent) {
         for (const legacy of ['interface-image', 'interface-audio', 'interface-video']) {
             if (!types[legacy]) types[legacy] = fileComponent;
+        }
+    }
+    // 2026-07: the form trigger + config form merged into the unified form node.
+    if (types['interface-form']) {
+        for (const legacy of ['trigger-form-input', 'interface-config-form']) {
+            if (!types[legacy]) types[legacy] = types['interface-form'];
         }
     }
 

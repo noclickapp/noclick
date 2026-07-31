@@ -6,4 +6,3 @@ export { InterfaceFileNode } from './InterfaceFileNode';
 export { InterfaceDataframeNode } from './InterfaceDataframeNode';
 export { InterfaceHtmlReactNode } from './InterfaceHtmlReactNode';
 export { InterfaceFileUploadNode } from './InterfaceFileUploadNode';
-export { InterfaceConfigFormNode } from './InterfaceConfigFormNode';

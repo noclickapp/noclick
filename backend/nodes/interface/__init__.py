@@ -6,7 +6,6 @@ from nodes.interface.file_node import FileInterfaceNode
 from nodes.interface.dataframe_node import DataframeInterfaceNode
 from nodes.interface.html_react_node import HtmlReactInterfaceNode
 from nodes.interface.file_upload_node import FileUploadInterfaceNode
-from nodes.interface.config_form_node import ConfigFormInterfaceNode
 
 __all__ = [
     'FormInterfaceNode',
@@ -14,5 +13,4 @@ __all__ = [
     'DataframeInterfaceNode',
     'HtmlReactInterfaceNode',
     'FileUploadInterfaceNode',
-    'ConfigFormInterfaceNode',
 ]
