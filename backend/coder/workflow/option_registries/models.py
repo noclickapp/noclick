@@ -79,13 +79,17 @@ _STATIC_FALLBACK: tuple[Option, ...] = (
 # ``infer_model_type`` discriminator reads to route into the right
 # Pydantic union branch.
 
-_CLI_PROVIDERS = {"claude_code", "codex", "opencode", "openclaw", "hermes_agent"}
+# CLI wrappers are the entries whose ID is the bare wrapper id itself.
+# Matched by id, not provider: OpenCode Zen/Go catalog models (opencode/*,
+# opencode-go/*) share the `opencode` provider string for credential purposes
+# but run on the in-process LLM path — plain variant:llm.
+_CLI_WRAPPER_IDS = {"claude-code", "codex", "opencode", "openclaw", "hermes"}
 _KLING_PROVIDERS = {"kling"}
 
 
 def _variant_for(model: Model) -> str:
     """Pick the discriminator variant tag for a Model."""
-    if model.provider in _CLI_PROVIDERS:
+    if model.id in _CLI_WRAPPER_IDS:
         return f"variant:{model.provider}"
     if model.provider in _KLING_PROVIDERS:
         return "variant:kling"

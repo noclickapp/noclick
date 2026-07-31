@@ -28,6 +28,11 @@ export interface Model {
      *  node picker to weight recency when matching free-form model queries. */
     created?: number;
 
+    /** Provider serves this model at $0 (explicit zero pricing from the
+     *  OpenRouter / OpenCode Zen sources). Drives the "Free" tag in the model
+     *  picker and makes the model match a "free" search. */
+    free?: boolean;
+
     /** Capability flags for UI display */
     capabilities?: {
         /** Model can analyze images (has "image" in input_modalities) */

@@ -9,7 +9,9 @@ import { ModelProvider } from '~/types/provider';
 
 // Backwards-compatible alias — every Model now carries a `source` field
 // served straight from the backend, so we no longer need to compose it.
-export type ModelWithSource = Model & { source: 'openrouter' | 'litellm' | 'static' };
+export type ModelWithSource = Model & {
+    source: 'openrouter' | 'opencode-zen' | 'litellm' | 'static';
+};
 
 interface ApiModelsResponse {
     models: ModelWithSource[];
