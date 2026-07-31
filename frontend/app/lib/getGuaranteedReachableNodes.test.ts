@@ -37,3 +37,43 @@ describe('getAllDownstreamNodes', () => {
     expect(getAllDownstreamNodes(edges, 'a')).toEqual(new Set(['b', 'c', 'd']));
   });
 });
+
+// Tests for runScopeForRoots' upstream data-provider backfill — the FE mirror
+// of the backend's _get_reachable_nodes Phase 2. An unpicked entry path must
+// not sever an interface value store (form) or state manager that feeds a
+// picked path (2026-07-31 "No data for node" bug).
+import { runScopeForRoots } from './getGuaranteedReachableNodes';
+
+const n = (id: string, type: string) => ({ id, type });
+
+describe('runScopeForRoots data-provider backfill', () => {
+  const edges = [e('form', 'fn'), e('run', 'fn')];
+  const nodes = [n('form', 'interface-form'), n('run', 'trigger-run'), n('fn', 'automation-serverless-function')];
+
+  it('backfills an upstream form store when only the other entry path is picked', () => {
+    expect(runScopeForRoots(edges, ['run'], nodes)).toEqual(new Set(['run', 'fn', 'form']));
+  });
+
+  it('resolves legacy node types through the alias map', () => {
+    const legacy = [n('form', 'interface-config-form'), n('run', 'trigger-run'), n('fn', 'automation-serverless-function')];
+    expect(runScopeForRoots(edges, ['run'], legacy)).toEqual(new Set(['run', 'fn', 'form']));
+  });
+
+  it('does not backfill ordinary automation predecessors', () => {
+    const plain = [n('form', 'automation-slack'), n('run', 'trigger-run'), n('fn', 'automation-serverless-function')];
+    expect(runScopeForRoots(edges, ['run'], plain)).toEqual(new Set(['run', 'fn']));
+  });
+
+  it('keeps forward-only behavior when nodes are not provided', () => {
+    expect(runScopeForRoots(edges, ['run'])).toEqual(new Set(['run', 'fn']));
+  });
+
+  it('backfills transitively through chained providers, without pulling their other descendants', () => {
+    const chainEdges = [e('store', 'form'), e('form', 'fn'), e('run', 'fn'), e('form', 'other')];
+    const chainNodes = [
+      n('store', 'state-manager'), n('form', 'interface-form'),
+      n('run', 'trigger-run'), n('fn', 'automation-serverless-function'), n('other', 'automation-slack'),
+    ];
+    expect(runScopeForRoots(chainEdges, ['run'], chainNodes)).toEqual(new Set(['run', 'fn', 'form', 'store']));
+  });
+});
