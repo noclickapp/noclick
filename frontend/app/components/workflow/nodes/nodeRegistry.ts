@@ -195,6 +195,8 @@ function _buildAvailable(): NodeDefinition[] {
         WebhookTriggerNode,
         InboundEmailTriggerNode,
         CronTriggerNode,
+        // The unified form node is a trigger (public form URL) — listed with them
+        InterfaceFormNode,
         TelegramNode, GoogleSheetsNode, GoogleDriveNode, GmailNode, OutlookMailNode,
         ExcelNode, OneDriveNode, MicrosoftTodoNode, MicrosoftTeamsNode, WordNode, WordPressNode,
         HttpRequestNode, LinearNode, GithubRestNode, AirtableNode, StripeNode, ApifyNode,
@@ -219,7 +221,6 @@ function _buildAvailable(): NodeDefinition[] {
         ConditionalNode, ApprovalNode, LogNode, SwitchNode, MergeNode, SubmitExternalFormNode,
         ServerlessFunctionNode, StateManagerNode, SetupNode, OnErrorNode,
         SetVariableNode, StickyNoteNode,
-        InterfaceFormNode,
         InterfaceFileNode, InterfaceDataframeNode, InterfaceHtmlReactNode,
         InterfaceFileUploadNode,
     ];
