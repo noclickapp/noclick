@@ -49,6 +49,7 @@ def _serialize(model: Model) -> dict:
         },
         "source": model.source,
         "created": model.created,
+        "free": model.free,
     }
 
 
