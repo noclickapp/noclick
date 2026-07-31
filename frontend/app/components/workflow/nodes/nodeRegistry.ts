@@ -174,7 +174,6 @@ import {
     InterfaceDataframeNode,
     InterfaceHtmlReactNode,
     InterfaceFileUploadNode,
-    InterfaceConfigFormNode,
 } from './interface';
 import { DUMMY_NODES } from './DummyNodes';
 import type { NodeDefinition, NodeDimensions, NodeDisplayStrategy } from './types';
@@ -222,7 +221,7 @@ function _buildAvailable(): NodeDefinition[] {
         SetVariableNode, StickyNoteNode,
         InterfaceFormNode,
         InterfaceFileNode, InterfaceDataframeNode, InterfaceHtmlReactNode,
-        InterfaceFileUploadNode, InterfaceConfigFormNode,
+        InterfaceFileUploadNode,
     ];
 }
 export const AVAILABLE_NODES: NodeDefinition[] = new Proxy([] as NodeDefinition[], {
@@ -297,9 +296,11 @@ export function buildReactFlowNodeTypes(additionalTypes: Record<string, Componen
             if (!types[legacy]) types[legacy] = fileComponent;
         }
     }
-    // 2026-07: the form trigger merged into the unified form node.
-    if (types['interface-form'] && !types['trigger-form-input']) {
-        types['trigger-form-input'] = types['interface-form'];
+    // 2026-07: the form trigger + config form merged into the unified form node.
+    if (types['interface-form']) {
+        for (const legacy of ['trigger-form-input', 'interface-config-form']) {
+            if (!types[legacy]) types[legacy] = types['interface-form'];
+        }
     }
 
     // Override with additionalTypes (custom renderers take priority)

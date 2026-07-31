@@ -1,17 +1,16 @@
 import {
   ClipboardList,
   Upload,
-  SlidersHorizontal,
   AppWindow,
   MessageCircle,
 } from 'lucide-react';
 import { TableGridIcon, MultimediaIcon } from '~/components/workflow/nodes/interface/interfaceIcons';
+import { resolveNodeType } from '~/utils/nodeSchemas';
 import type { BlockDefinition, BlockCategory } from './types';
 
 export const BLOCK_DEFINITIONS: BlockDefinition[] = [
   // Input
-  { type: 'form', label: 'Form', category: 'Input', icon: ClipboardList, description: 'Multi-field form with a public shareable link', defaultW: 5, defaultH: 5, minW: 3, minH: 3, nodeType: 'interface-form' },
-  { type: 'config-form', label: 'Config Form', category: 'Input', icon: SlidersHorizontal, description: 'Persistent configuration form', defaultW: 5, defaultH: 5, minW: 3, minH: 3, nodeType: 'interface-config-form' },
+  { type: 'form', label: 'Form', category: 'Input', icon: ClipboardList, description: 'Multi-field form with persistent values and a public shareable link', defaultW: 5, defaultH: 5, minW: 3, minH: 3, nodeType: 'interface-form' },
 
   // Display
   { type: 'file', label: 'Multimedia', category: 'Display', icon: MultimediaIcon, description: 'Any file — image, audio, video, PDF, or download', defaultW: 5, defaultH: 4, minW: 3, minH: 3, nodeType: 'interface-file' },
@@ -36,7 +35,9 @@ export function getBlockDefinition(type: string): BlockDefinition | undefined {
   return BLOCK_DEFINITIONS.find(b => b.type === type);
 }
 
-/** Reverse lookup: find the block type for a given workflow node type (e.g. 'interface-markdown' → 'markdown') */
+/** Reverse lookup: find the block type for a given workflow node type (e.g. 'interface-markdown' → 'markdown').
+ *  Resolves legacy node types (pre-merge saved graphs) to their canonical block. */
 export function getBlockTypeForNodeType(nodeType: string): string | undefined {
-  return BLOCK_DEFINITIONS.find(b => b.nodeType === nodeType)?.type;
+  const canonical = resolveNodeType(nodeType);
+  return BLOCK_DEFINITIONS.find(b => b.nodeType === canonical)?.type;
 }

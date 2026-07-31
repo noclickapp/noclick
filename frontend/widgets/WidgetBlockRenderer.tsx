@@ -8,12 +8,10 @@ import type { BlockComponentProps } from '~/components/interface/types';
 import { FormBlock } from '~/components/interface/blocks/FormBlock';
 import { DataframeBlock } from '~/components/interface/blocks/DataframeBlock';
 import { FileUploadBlock } from '~/components/interface/blocks/FileUploadBlock';
-import { ConfigFormBlock } from '~/components/interface/blocks/ConfigFormBlock';
 import { GenericBlock } from '~/components/interface/blocks/GenericBlock';
 
 const BLOCK_COMPONENTS: Record<string, React.ComponentType<BlockComponentProps>> = {
     form: FormBlock,
-    'config-form': ConfigFormBlock,
     dataframe: DataframeBlock,
     'file-upload': FileUploadBlock,
 };
