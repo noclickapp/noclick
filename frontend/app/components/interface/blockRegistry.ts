@@ -10,7 +10,7 @@ import type { BlockDefinition, BlockCategory } from './types';
 
 export const BLOCK_DEFINITIONS: BlockDefinition[] = [
   // Input
-  { type: 'form', label: 'Form', category: 'Input', icon: ClipboardList, description: 'Configurable multi-field form', defaultW: 5, defaultH: 5, minW: 3, minH: 3, nodeType: 'interface-form' },
+  { type: 'form', label: 'Form', category: 'Input', icon: ClipboardList, description: 'Multi-field form with a public shareable link', defaultW: 5, defaultH: 5, minW: 3, minH: 3, nodeType: 'interface-form' },
   { type: 'config-form', label: 'Config Form', category: 'Input', icon: SlidersHorizontal, description: 'Persistent configuration form', defaultW: 5, defaultH: 5, minW: 3, minH: 3, nodeType: 'interface-config-form' },
 
   // Display

@@ -47,6 +47,8 @@ export function isTriggerSourceLite(
 ): boolean {
     if (!type) return false;
     if (type.startsWith('trigger-')) return true;
+    // The unified form node mints a public form URL whose submissions start runs.
+    if (type === 'interface-form') return true;
     if (!operation) return false;
     return _nodeIconData[type]?.triggerOps?.includes(operation) ?? false;
 }

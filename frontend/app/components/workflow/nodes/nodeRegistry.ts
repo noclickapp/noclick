@@ -30,7 +30,6 @@ import { CanvaNode } from './CanvaNode';
 import { CronTriggerNode } from './CronTriggerNode';
 import { DiscordNode } from './DiscordNode';
 import { DropboxNode } from './DropboxNode';
-import { FormInputNode } from './FormInputNode';
 import { GoogleCalendarNode } from './GoogleCalendarNode';
 import { GoogleTasksNode } from './GoogleTasksNode';
 import { GoogleContactsNode } from './GoogleContactsNode';
@@ -197,7 +196,6 @@ function _buildAvailable(): NodeDefinition[] {
         WebhookTriggerNode,
         InboundEmailTriggerNode,
         CronTriggerNode,
-        FormInputNode,
         TelegramNode, GoogleSheetsNode, GoogleDriveNode, GmailNode, OutlookMailNode,
         ExcelNode, OneDriveNode, MicrosoftTodoNode, MicrosoftTeamsNode, WordNode, WordPressNode,
         HttpRequestNode, LinearNode, GithubRestNode, AirtableNode, StripeNode, ApifyNode,
@@ -298,6 +296,10 @@ export function buildReactFlowNodeTypes(additionalTypes: Record<string, Componen
         for (const legacy of ['interface-image', 'interface-audio', 'interface-video']) {
             if (!types[legacy]) types[legacy] = fileComponent;
         }
+    }
+    // 2026-07: the form trigger merged into the unified form node.
+    if (types['interface-form'] && !types['trigger-form-input']) {
+        types['trigger-form-input'] = types['interface-form'];
     }
 
     // Override with additionalTypes (custom renderers take priority)
