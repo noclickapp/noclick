@@ -9,6 +9,7 @@
 import { ComponentType, memo } from 'react';
 import { NodeProps } from '@xyflow/react';
 import { withNodeWrapper } from './withNodeWrapper';
+import { getDefaultLabelFromType } from './base/NodeLabel';
 import { TelegramNode } from './TelegramNode';
 import { nodePropsAreEqual } from './types';
 import { GoogleSheetsNode } from './GoogleSheetsNode';
@@ -331,6 +332,15 @@ export function getDimensionsByType(type: string): NodeDimensions | undefined {
 // Helper to get full metadata by type
 export function getNodeMetadata(type: string): NodeDefinition | undefined {
     return AVAILABLE_NODES.find(n => n.type === type);
+}
+
+// Display name for a node type — the registry's authored label ('Schedule',
+// 'GitHub', 'X'), which is what the node palette shows, falling back to the
+// type-derived one for types with no registry entry. Use this wherever a node
+// type is named to the user; the derived label alone reads wrong for ~a third
+// of the catalog ('Trigger Cron', 'Github Rest', 'Whatsapp').
+export function getNodeDisplayName(type: string): string {
+    return getNodeMetadata(type)?.label || getDefaultLabelFromType(type) || type;
 }
 
 // SDK-based node types that use @noclick/sdk for communication, not edges.
