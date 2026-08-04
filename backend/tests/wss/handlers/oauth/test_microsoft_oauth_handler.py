@@ -54,3 +54,41 @@ def test_teams_scopes_unaffected():
     assert _handler()._get_credential_type_from_scopes(
         ["https://graph.microsoft.com/Channel.ReadBasic.All"]
     ) == "microsoft_teams_oauth"
+
+
+# Regression (2026-07-27): Word/Excel/OneDrive request IDENTICAL scopes
+# (Files.ReadWrite.All), so the credential NAME is the only discriminator. A
+# humanized label inserts spaces ("One Drive OAuth"), which must still match
+# the compound keyword — otherwise OneDrive/OneLake fell through to the excel
+# scope-match and collided with an existing credential ("limit reached").
+_FILES = ["https://graph.microsoft.com/Files.ReadWrite.All"]
+
+
+def test_word_name_beats_identical_files_scope():
+    assert _handler()._get_credential_type_from_name(
+        "Word OAuth - 7/27/2026", _FILES
+    ) == "microsoft_word_oauth"
+
+
+def test_humanized_onedrive_name_maps_to_onedrive_not_excel():
+    assert _handler()._get_credential_type_from_name(
+        "One Drive OAuth - 7/27/2026", _FILES
+    ) == "microsoft_onedrive_oauth"
+
+
+def test_humanized_onelake_name_maps_to_onelake():
+    assert _handler()._get_credential_type_from_name(
+        "One Lake OAuth - 7/27/2026", []
+    ) == "microsoft_onelake_oauth"
+
+
+def test_humanized_todo_name_maps_to_todo():
+    assert _handler()._get_credential_type_from_name(
+        "Microsoft Todo OAuth - 7/27/2026", []
+    ) == "microsoft_todo_oauth"
+
+
+def test_onelake_not_shadowed_by_onedrive():
+    # 'onedrive' and 'onelake' share no substring, but pin the ordering anyway.
+    assert _handler()._get_credential_type_from_name("OneLakeOAuth", []) == "microsoft_onelake_oauth"
+    assert _handler()._get_credential_type_from_name("OneDriveOAuth", []) == "microsoft_onedrive_oauth"
