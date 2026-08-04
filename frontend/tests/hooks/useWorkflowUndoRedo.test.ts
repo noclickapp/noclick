@@ -145,3 +145,23 @@ describe('useWorkflowUndoRedo — resetBaseline floors the stack at the loaded g
         expect(restored.nodes).toHaveLength(1);
     });
 });
+
+// A position-less node in canvas state (the 2026-08-04 incident: one bad node
+// crashed every state-capture comparison for the whole session) must compare
+// safely instead of throwing.
+describe('positionless node resilience', () => {
+    it('captures history without throwing when a node lacks position', () => {
+        const { hook } = setup();
+        const bad = { id: 'ghost', type: 'agent', data: {} } as unknown as Node;
+        const good = { id: 'n1', type: 'agent', position: { x: 1, y: 2 }, data: {} } as Node;
+        expect(() => {
+            act(() => {
+                hook.result.current.captureState([good, bad], []);
+                hook.result.current.captureState([good, bad], []); // equal-state compare path
+                hook.result.current.captureState(
+                    [good, { ...bad, position: { x: 3, y: 4 } } as Node], []
+                );
+            });
+        }).not.toThrow();
+    });
+});
