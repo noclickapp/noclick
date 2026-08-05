@@ -10,7 +10,7 @@
 // new one-time moment later is one line: const [seen, markSeen] = useSeenOnce('my_key').
 
 import { useCallback } from 'react';
-import { useOnboardingContext } from '~/hooks/useGetStartedChecklist';
+import { useOnboardingContext } from '~/hooks/useOnboarding';
 
 // The known set of one-time keys. Add one line per future coachmark/announcement.
 export type SeenOnceKey =
@@ -36,7 +36,7 @@ export function useSeenOnceState(key: SeenOnceKey) {
             return { ...prev, seen_once: { ...(prev.seen_once ?? {}), [key]: true } };
         });
         // Backend write outside the state updater (updaters must be pure), matching
-        // the existing markComplete/markWelcomeSeen idiom. The provider's cache
+        // the existing markWelcomeSeen idiom. The provider's cache
         // effect mirrors the new blob to localStorage automatically.
         setTimeout(() => {
             if (didUpdate) updateBackend({ seen_once: { [key]: true } });
