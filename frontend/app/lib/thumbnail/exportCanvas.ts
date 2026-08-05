@@ -239,55 +239,69 @@ export async function renderThumbnailCanvas(
         present.map((im) => loadImage(im.src as string))
     );
     const sepW = iS * 0.5;
+    const sizeOf = (im: ImageLayer) => iS * im.sizeScale;
+    // Mirror ThumbnailStage: each icon owns its gap toward the separator; with
+    // no separator the two half-gaps meet (0.28 total default).
+    const sideGap = (im: ImageLayer) =>
+        iS *
+        (state.separator === 'none' ? 0.14 : 0.2) *
+        state.gapScale *
+        im.gapScale;
 
     if (present.length === 2) {
-        const gap = iS * (state.separator === 'none' ? 0.28 : 0.2);
+        const sA = sizeOf(present[0]);
+        const sB = sizeOf(present[1]);
+        const gapA = sideGap(present[0]);
+        const gapB = sideGap(present[1]);
         const midW = state.separator === 'none' ? 0 : sepW;
-        const rowW = iS + gap + midW + gap + iS;
+        const rowW = sA + gapA + midW + gapB + sB;
         let x = (THUMB_W - rowW) / 2;
         drawIcon(
             ctx,
             present[0],
             imgs[0],
             x,
-            rowCY - iS / 2,
-            iS,
+            rowCY - sA / 2,
+            sA,
             state.glowStrength
         );
-        x += iS + gap;
+        x += sA + gapA;
         if (state.separator !== 'none') {
             if (state.separator === 'plus')
                 drawPlus(ctx, x + sepW / 2, rowCY, sepW);
             else drawArrow(ctx, x + sepW / 2, rowCY, sepW);
-            x += midW + gap;
-        } else {
-            x += gap;
+            x += sepW;
         }
+        x += gapB;
         drawIcon(
             ctx,
             present[1],
             imgs[1],
             x,
-            rowCY - iS / 2,
-            iS,
+            rowCY - sB / 2,
+            sB,
             state.glowStrength
         );
     } else if (present.length === 1) {
+        const s = sizeOf(present[0]);
         drawIcon(
             ctx,
             present[0],
             imgs[0],
-            (THUMB_W - iS) / 2,
-            rowCY - iS / 2,
-            iS,
+            (THUMB_W - s) / 2,
+            rowCY - s / 2,
+            s,
             state.glowStrength
         );
     } else {
-        const gap = iS * 0.2;
-        const rowW = iS + gap + sepW + gap + iS;
+        const sA = sizeOf(state.images[0]);
+        const sB = sizeOf(state.images[1]);
+        const gapA = sideGap(state.images[0]);
+        const gapB = sideGap(state.images[1]);
+        const rowW = sA + gapA + sepW + gapB + sB;
         const x = (THUMB_W - rowW) / 2;
-        drawPlaceholder(ctx, x, rowCY - iS / 2, iS);
-        drawPlaceholder(ctx, x + iS + gap + sepW + gap, rowCY - iS / 2, iS);
+        drawPlaceholder(ctx, x, rowCY - sA / 2, sA);
+        drawPlaceholder(ctx, x + sA + gapA + sepW + gapB, rowCY - sB / 2, sB);
     }
 
     // title

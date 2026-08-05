@@ -25,6 +25,8 @@ export interface ImageLayer {
     bg: string;
     frame: boolean;
     fit: Fit;
+    sizeScale: number; // per-icon multiplier on the global iconSize (1 = match)
+    gapScale: number; // per-icon multiplier on its gap to the separator (1 = match)
 }
 
 export interface WorkflowGraph {
@@ -50,6 +52,8 @@ export function newImageLayer(id: 'A' | 'B'): ImageLayer {
         bg: '#ffffff',
         frame: true,
         fit: 'cover',
+        sizeScale: 1,
+        gapScale: 1,
     };
 }
 
@@ -63,6 +67,7 @@ export interface ComposerState {
     separator: Separator;
     workflow: WorkflowGraph | null;
     iconSize: number;
+    gapScale: number; // multiplier on the icon↔separator gap (1 = default)
     glowStrength: number;
     titleSize: number; // 0 = auto-fit to width
     seed: number;
@@ -81,6 +86,7 @@ export function initialComposerState(): ComposerState {
         separator: 'plus',
         workflow: null,
         iconSize: 300,
+        gapScale: 1,
         glowStrength: 70,
         titleSize: 0,
         seed: 1234,
