@@ -15,13 +15,24 @@ provider + model metadata, no user data.
 
 from __future__ import annotations
 
+import asyncio
 from dataclasses import asdict
+from cachetools import TTLCache
 from fastapi import APIRouter, Response
 
 from utils.model_catalog import Model, list_all_models_async
 
 
 router = APIRouter(prefix="/api/models", tags=["models"])
+
+# The rendered response body, cached for the same window this route already
+# advertises as `s-maxage`. The catalog runs to ~3,250 models, so building and
+# serializing it is seconds of CPU; without this every request repeated the
+# whole thing. Payload is provider metadata only (no user data), so one
+# process-wide entry serves everyone.
+_PAYLOAD_TTL_S = 600
+_payload_cache: TTLCache = TTLCache(maxsize=1, ttl=_PAYLOAD_TTL_S)
+_PAYLOAD_KEY = "payload"
 
 
 def _serialize(model: Model) -> dict:
@@ -53,6 +64,12 @@ def _serialize(model: Model) -> dict:
     }
 
 
+def _build_payload(models: list[Model]) -> dict:
+    """Render the response body. Pure CPU over the whole catalog, so callers
+    run it off the event loop."""
+    return {"models": [_serialize(m) for m in models], "count": len(models)}
+
+
 @router.get("")
 @router.get("/")
 async def list_models(response: Response) -> dict:
@@ -63,9 +80,18 @@ async def list_models(response: Response) -> dict:
     small static block for CLI agents and Kling. Same call the resolver's
     LazyOptionRegistry uses, so backend and frontend always see the same
     snapshot.
+
+    Served from ``_payload_cache`` when warm. On a miss the aggregator awaits
+    its network slices and every remaining CPU step runs off-thread, so a
+    cold request can never stall co-resident socket traffic.
     """
-    models = [_serialize(m) for m in await list_all_models_async()]
+    payload = _payload_cache.get(_PAYLOAD_KEY)
+    if payload is None:
+        models = await list_all_models_async()
+        payload = await asyncio.to_thread(_build_payload, models)
+        _payload_cache[_PAYLOAD_KEY] = payload
+
     response.headers["Cache-Control"] = (
-        "public, s-maxage=600, stale-while-revalidate=120"
+        f"public, s-maxage={_PAYLOAD_TTL_S}, stale-while-revalidate=120"
     )
-    return {"models": models, "count": len(models)}
+    return payload
