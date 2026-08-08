@@ -15,19 +15,27 @@ export function HarnessWordmark({
     includesName,
     name,
     slug,
+    size = 'hero',
 }: {
     iconHtml: string;
     iconColor: string;
     includesName: boolean;
     name: string;
     slug: string;
+    /** 'card' is the compact lockup for pickers/tiles; 'hero' is the page header. */
+    size?: 'hero' | 'card';
 }) {
+    const card = size === 'card';
     // Full wordmark: render the (wide) <img> height-driven so its aspect is
     // preserved — SerializedIcon would force w-full/h-full and squish it.
     if (includesName && iconHtml) {
         return (
             <span
-                className="inline-flex items-center [&>img]:h-12 [&>img]:w-auto"
+                className={
+                    card
+                        ? 'inline-flex items-center [&>img]:h-6 [&>img]:w-auto'
+                        : 'inline-flex items-center [&>img]:h-12 [&>img]:w-auto'
+                }
                 dangerouslySetInnerHTML={{ __html: iconHtml }}
             />
         );
@@ -39,9 +47,19 @@ export function HarnessWordmark({
     // transparent overflow is harmless since there's no box to clip it).
     const markScale = slug === 'claude-code' ? 'scale-[1.4]' : '';
     return (
-        <span className="inline-flex items-center gap-2.5">
-            <SerializedIcon html={iconHtml} iconColor={iconColor} className={`w-11 h-11 ${markScale}`} />
-            <span className="font-brand text-4xl font-semibold tracking-tight text-white leading-none">
+        <span className={card ? 'inline-flex items-center gap-1.5' : 'inline-flex items-center gap-2.5'}>
+            <SerializedIcon
+                html={iconHtml}
+                iconColor={iconColor}
+                className={`${card ? 'w-6 h-6' : 'w-11 h-11'} ${markScale}`}
+            />
+            <span
+                className={
+                    card
+                        ? 'font-brand text-[17px] font-semibold tracking-tight text-white leading-none'
+                        : 'font-brand text-4xl font-semibold tracking-tight text-white leading-none'
+                }
+            >
                 {name}
             </span>
         </span>
