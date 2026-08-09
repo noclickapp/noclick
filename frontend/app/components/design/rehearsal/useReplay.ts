@@ -33,6 +33,9 @@ export interface ReplayState {
     t: number;
     rows: ReplayRow[];
     artifacts: Scenario['artifacts'];
+    /** Done because it broke, not because it finished. A failed run must not
+        render the green "nothing to send" — the error panel owns the story. */
+    failed?: boolean;
     start: () => void;
     replay: () => void;
 }
