@@ -16,7 +16,8 @@ export type ReplayRow =
           id: string;
           at: number;
           text: string;
-          provider?: Provider;
+          /** Backend tool-name prefix (provider slug); drives the icon lookup. */
+          provider?: string;
           glyph?: 'globe' | 'plug' | 'terminal';
           status: 'in_progress' | 'completed' | 'error';
           ms?: number;
