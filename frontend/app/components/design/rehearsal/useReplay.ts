@@ -16,8 +16,9 @@ export type ReplayRow =
           id: string;
           at: number;
           text: string;
-          provider: Provider;
-          status: 'in_progress' | 'completed';
+          provider?: Provider;
+          glyph?: 'globe' | 'plug' | 'terminal';
+          status: 'in_progress' | 'completed' | 'error';
           ms?: number;
           elapsed: number;
           args: Record<string, unknown>;
@@ -30,7 +31,7 @@ export interface ReplayState {
     /** Virtual ms since run start; 0 while idle. */
     t: number;
     rows: ReplayRow[];
-    artifact: Scenario['artifact'] | null;
+    artifacts: Scenario['artifacts'];
     start: () => void;
     replay: () => void;
 }
@@ -50,7 +51,8 @@ function rowsAt(scenario: Scenario, t: number): ReplayRow[] {
             at: e.at,
             text: e.text,
             provider: e.provider,
-            status: done ? 'completed' : 'in_progress',
+            glyph: e.glyph,
+            status: done ? (e.failed ? 'error' : 'completed') : 'in_progress',
             ms: done ? e.completeAt - e.at : undefined,
             elapsed: done ? 0 : t - e.at,
             args: e.args,
@@ -96,7 +98,7 @@ export function useReplay(scenario: Scenario, speed: ReplaySpeed): ReplayState {
             phase,
             t: t ?? 0,
             rows: t === null ? [] : rowsAt(scenario, t),
-            artifact: phase === 'done' ? scenario.artifact : null,
+            artifacts: phase === 'done' ? scenario.artifacts : null,
             start: () => setT(speedRef.current === 'end' ? scenario.doneAt : 0),
             replay: () => setT(0),
         };
