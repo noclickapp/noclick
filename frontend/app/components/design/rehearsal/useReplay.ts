@@ -21,7 +21,8 @@ export type ReplayRow =
           status: 'in_progress' | 'completed' | 'error';
           ms?: number;
           elapsed: number;
-          args: Record<string, unknown>;
+          /** Absent when the stream carried none — the row then does not open. */
+          args?: Record<string, unknown>;
           /** Present once completed — what the mock answered. */
           result?: Record<string, unknown>;
       };
