@@ -6,7 +6,9 @@
 
 import { useRef, useState } from 'react';
 import { Check, Link } from 'lucide-react';
-import { resolveNodeType } from '~/utils/nodeSchemas';
+// From the schema-free leaf — this button renders inside the fork canvas,
+// whose chunk must not pull the full ~9MB schema registry.
+import { resolveNodeType } from '~/utils/nodeMeta';
 import { sendEventAsync } from '~/lib/socket-sender';
 import type { BlockConfig } from '~/components/interface/types';
 
