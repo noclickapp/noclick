@@ -5,7 +5,9 @@ import {
   MessageCircle,
 } from 'lucide-react';
 import { TableGridIcon, MultimediaIcon } from '~/components/workflow/nodes/interface/interfaceIcons';
-import { resolveNodeType } from '~/utils/nodeSchemas';
+// From the schema-free leaf — the block registry rides in the fork canvas
+// chunk, which must not pull the full ~9MB schema registry.
+import { resolveNodeType } from '~/utils/nodeMeta';
 import type { BlockDefinition, BlockCategory } from './types';
 
 export const BLOCK_DEFINITIONS: BlockDefinition[] = [

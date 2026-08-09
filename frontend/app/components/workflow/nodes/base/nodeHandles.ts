@@ -5,7 +5,9 @@
 // — and therefore the connection dots + edge endpoints — can't drift between the
 // desktop canvas and the mobile/fork canvas.
 
-import { isAgentToolProviderType, isTriggerSource } from '~/utils/nodeSchemas';
+// From the schema-free leaf: this module is shared with the fork canvas and
+// marketing previews, whose chunks must not pull the full ~9MB schema registry.
+import { isAgentToolProviderType, isTriggerSource } from '~/utils/nodeMeta';
 
 export interface NodeHandleLayout {
     /** Left, target — normal dataflow input. */
