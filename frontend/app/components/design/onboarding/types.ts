@@ -28,6 +28,9 @@ export interface CredentialStep {
     label: string;
     iconHtml: string;
     iconColor: string;
+    /** Client-side alternative to iconHtml: a ready icon element (the workspace
+        registry's Icon components), for hosts with no server loader. */
+    iconNode?: import('react').ReactNode;
     why: string;
     /** Humanized credential class, e.g. "Gmail OAuth". */
     credentialLabel: string | null;
