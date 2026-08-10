@@ -3,21 +3,22 @@
    represent — WhatsApp's green bubble on its dark chat, a GitHub issue card,
    a Monday item row, a Stripe payment — so non-technical users recognise
    their own tools at a glance. Deliberate brand islands (fixed hex, identical
-   in both product themes), the same stance as the marketing hero bands.
+   in both product themes).
+
+   Every palette is the app's own DARK theme: the rehearsal screen is dark,
+   and a white Gmail pane inside it read as a glaring hole (2026-08-10
+   report), so each app contributes the dark mode it actually ships.
 
    `shape` picks the bespoke composition (bespokeFrames.tsx); the palette
-   fills it in. Sibling apps share a composition only when their real
-   artifact genuinely looks alike (Typeform/Google Forms responses); iconic
-   apps get their own. Keyed by the backend tool-name slug
-   (`automation-cal-com` → `cal_com`) with aliases for API-suffixed types.
-   An app without an entry falls back to the neutral structural frames —
-   never a wrong brand. */
+   fills it in. Keyed by the backend tool-name slug (`automation-cal-com` →
+   `cal_com`) with aliases for API-suffixed types. An app without an entry
+   falls back to the neutral structural frames — never a wrong brand. */
 
 export type AppShape =
     | 'bubble'      // WhatsApp / Telegram / iMessage chat
     | 'row'         // Slack / Discord / Teams message row
     | 'email'       // Gmail / Outlook reading pane
-    | 'github'      // issue card with state pill
+    | 'github'      // issue / PR / push / release card
     | 'gitlab'
     | 'linear'      // identifier + priority issue row
     | 'jira'
@@ -27,7 +28,7 @@ export type AppShape =
     | 'trello'      // card on a list
     | 'asana'       // task row with round check
     | 'todoist'
-    | 'stripe'      // payment event with amount-ish badge
+    | 'stripe'      // payment / invoice / subscription event
     | 'shopify'     // order card
     | 'booking'     // Cal.com / Calendly / Zoom / GCal date-block invite
     | 'response'    // Typeform / Google Forms / site form answer
@@ -40,15 +41,14 @@ export type AppShape =
     | 'event';      // themed fallback card
 
 export interface AppTheme {
-    /** Human name, for badges inside the bespoke shapes ("Open", app-specific
-        captions) and a11y. The card header already names the app. */
+    /** Human name, for badges inside the bespoke shapes and a11y. */
     name: string;
     shape: AppShape;
-    /** The app's own surface. Light surfaces are intentional — Gmail IS white. */
+    /** The app's own dark surface. */
     surface: string;
-    /** "Their message" container (bubble/row hover). */
+    /** "Their message" container (bubble/row hover, Trello's raised card). */
     bubbleIn?: string;
-    /** The app's iconic "your message" color (outbound bubble). */
+    /** The app's iconic "your message" color (outbound bubble; gradients ok). */
     bubbleOut?: string;
     /** Author/name ink. */
     author: string;
@@ -60,29 +60,54 @@ export interface AppTheme {
     sub: string;
     /** Hairlines inside the frame. */
     border: string;
+    /** Chat wallpaper (CSS background-image) layered over `surface`. */
+    wallpaper?: string;
+    /** Which corner the inbound bubble's tail cuts; 'none' = uniformly
+        rounded (WhatsApp iOS groups its bubbles tailless). Default 'top'. */
+    tail?: 'top' | 'bottom' | 'none';
+    /** Color of the ✓✓ delivery ticks on the outbound bubble; absent = none. */
+    ticks?: string;
+    /** Render the app's (inert) composer row under the chat. */
+    composer?: boolean;
     /** Stamped from the map key — bespoke frames key sub-variants on it. */
     slug?: string;
 }
 
 const APP_THEME_DEFS: Record<string, Omit<AppTheme, 'slug'>> = {
     /* ------------------------------------------------ chat bubbles */
+    // WhatsApp iOS dark: NEUTRAL near-black with the faint doodle wallpaper
+    // (not the web client's teal-green), neutral gray inbound bubbles, deep
+    // green outbound, amber per-contact author names, teal reserved for
+    // accents (quote bar / links).
     whatsapp: {
         name: 'WhatsApp', shape: 'bubble',
-        surface: '#0b141a', bubbleIn: '#202c33', bubbleOut: '#005c4b',
-        author: '#25d366', accent: '#53bdeb', ink: '#e9edef', sub: '#8696a0',
-        border: 'rgba(233,237,239,0.08)',
+        surface: '#0a0c0b', bubbleIn: '#212423', bubbleOut: '#134d37',
+        author: '#e7a04d', accent: '#06cf9c', ink: '#f2f3f2', sub: '#9a9c9a',
+        border: 'rgba(242,243,242,0.07)',
+        wallpaper:
+            'radial-gradient(ellipse at 25% 20%, rgba(255,255,255,0.035), transparent 55%), radial-gradient(ellipse at 75% 80%, rgba(255,255,255,0.025), transparent 55%)',
+        tail: 'none', ticks: '#53bdeb', composer: true,
     },
+    // Telegram iOS dark: near-black purple-hazed wallpaper, charcoal inbound,
+    // the purple→blue gradient outbound — not the desktop navy.
     telegram: {
         name: 'Telegram', shape: 'bubble',
-        surface: '#0e1621', bubbleIn: '#182533', bubbleOut: '#2b5278',
-        author: '#64b5ef', accent: '#64b5ef', ink: '#f5f5f5', sub: '#708499',
-        border: 'rgba(245,245,245,0.08)',
+        surface: '#08070d',
+        bubbleIn: '#222126',
+        bubbleOut: 'linear-gradient(160deg, #8a63f2 0%, #5b63f5 100%)',
+        author: '#9c84f7', accent: '#6ab2f2', ink: '#ffffff',
+        sub: 'rgba(255,255,255,0.45)',
+        border: 'rgba(255,255,255,0.07)',
+        wallpaper:
+            'radial-gradient(ellipse at 20% 25%, rgba(122,92,220,0.13), transparent 55%), radial-gradient(ellipse at 80% 75%, rgba(91,99,245,0.10), transparent 55%), radial-gradient(ellipse at 60% 40%, rgba(150,110,230,0.06), transparent 60%)',
+        tail: 'bottom', ticks: 'rgba(255,255,255,0.7)', composer: true,
     },
     twilio: {
         name: 'Messages', shape: 'bubble',
         surface: '#000000', bubbleIn: '#26252a', bubbleOut: '#0a84ff',
         author: '#8e8e93', accent: '#0a84ff', ink: '#ffffff', sub: '#8e8e93',
         border: 'rgba(255,255,255,0.08)',
+        tail: 'bottom',
     },
 
     /* ------------------------------------------------ chat rows */
@@ -105,36 +130,36 @@ const APP_THEME_DEFS: Record<string, Omit<AppTheme, 'slug'>> = {
         border: 'rgba(255,255,255,0.08)',
     },
 
-    /* ------------------------------------------------ email panes */
+    /* ------------------------------------------------ email panes (dark) */
     gmail: {
         name: 'Gmail', shape: 'email',
-        surface: '#ffffff', author: '#202124', accent: '#ea4335',
-        ink: '#202124', sub: '#5f6368', border: '#e8eaed',
+        surface: '#1f1f1f', author: '#e8eaed', accent: '#ea4335',
+        ink: '#e8eaed', sub: '#9aa0a6', border: 'rgba(232,234,237,0.12)',
     },
     outlook: {
         name: 'Outlook', shape: 'email',
-        surface: '#ffffff', author: '#242424', accent: '#0f6cbd',
-        ink: '#242424', sub: '#616161', border: '#e6e6e6',
+        surface: '#292929', author: '#ffffff', accent: '#479ef5',
+        ink: '#ffffff', sub: '#adadad', border: 'rgba(255,255,255,0.12)',
     },
     mailgun: {
         name: 'Mailgun', shape: 'email',
-        surface: '#ffffff', author: '#20232a', accent: '#c02428',
-        ink: '#20232a', sub: '#6b7280', border: '#e5e7eb',
+        surface: '#1c1c1e', author: '#f2f2f4', accent: '#e66065',
+        ink: '#f2f2f4', sub: '#98989e', border: 'rgba(242,242,244,0.12)',
     },
     mailchimp: {
         name: 'Mailchimp', shape: 'email',
-        surface: '#ffffff', author: '#241c15', accent: '#007c89',
-        ink: '#241c15', sub: '#736c64', border: '#e7e5e4',
+        surface: '#241c15', author: '#f6f1eb', accent: '#48c4c9',
+        ink: '#f6f1eb', sub: '#a89e93', border: 'rgba(246,241,235,0.12)',
     },
     sendgrid: {
         name: 'SendGrid', shape: 'email',
-        surface: '#ffffff', author: '#1c1c1e', accent: '#1a82e2',
-        ink: '#1c1c1e', sub: '#6b7280', border: '#e5e7eb',
+        surface: '#1c1c1e', author: '#f2f2f4', accent: '#51a9f0',
+        ink: '#f2f2f4', sub: '#98989e', border: 'rgba(242,242,244,0.12)',
     },
     send_email: {
         name: 'Email', shape: 'email',
-        surface: '#ffffff', author: '#18181b', accent: '#18181b',
-        ink: '#18181b', sub: '#71717a', border: '#e4e4e7',
+        surface: '#1c1c1e', author: '#f4f4f5', accent: '#a1a1aa',
+        ink: '#f4f4f5', sub: '#a1a1aa', border: 'rgba(244,244,245,0.12)',
     },
 
     /* ------------------------------------------------ dev trackers */
@@ -145,8 +170,8 @@ const APP_THEME_DEFS: Record<string, Omit<AppTheme, 'slug'>> = {
     },
     gitlab: {
         name: 'GitLab', shape: 'gitlab',
-        surface: '#ffffff', author: '#333238', accent: '#fc6d26',
-        ink: '#333238', sub: '#737278', border: '#dcdcde',
+        surface: '#1f1e24', author: '#ececef', accent: '#fc6d26',
+        ink: '#ececef', sub: '#89888d', border: 'rgba(236,236,239,0.12)',
     },
     linear: {
         name: 'Linear', shape: 'linear',
@@ -155,8 +180,8 @@ const APP_THEME_DEFS: Record<string, Omit<AppTheme, 'slug'>> = {
     },
     jira: {
         name: 'Jira', shape: 'jira',
-        surface: '#ffffff', author: '#172b4d', accent: '#0052cc',
-        ink: '#172b4d', sub: '#6b778c', border: '#dfe1e6',
+        surface: '#1d2125', author: '#b6c2cf', accent: '#579dff',
+        ink: '#b6c2cf', sub: '#8c9bab', border: '#333c43',
     },
     sentry: {
         name: 'Sentry', shape: 'alert',
@@ -165,13 +190,13 @@ const APP_THEME_DEFS: Record<string, Omit<AppTheme, 'slug'>> = {
     },
     datadog: {
         name: 'Datadog', shape: 'alert',
-        surface: '#ffffff', author: '#33344a', accent: '#632ca6',
-        ink: '#33344a', sub: '#6f7086', border: '#e4e4ea',
+        surface: '#1e2231', author: '#e6e8f0', accent: '#9a6bf7',
+        ink: '#e6e8f0', sub: '#8b8fa3', border: 'rgba(230,232,240,0.12)',
     },
     pagerduty: {
         name: 'PagerDuty', shape: 'alert',
-        surface: '#ffffff', author: '#232323', accent: '#06ac38',
-        ink: '#232323', sub: '#767676', border: '#e5e5e5',
+        surface: '#1c1c1c', author: '#f0f0f0', accent: '#2bc95e',
+        ink: '#f0f0f0', sub: '#9b9b9b', border: 'rgba(240,240,240,0.12)',
     },
     supabase: {
         name: 'Supabase', shape: 'event',
@@ -180,40 +205,41 @@ const APP_THEME_DEFS: Record<string, Omit<AppTheme, 'slug'>> = {
     },
     firestore: {
         name: 'Firebase', shape: 'event',
-        surface: '#ffffff', author: '#202124', accent: '#f57c00',
-        ink: '#202124', sub: '#5f6368', border: '#e8eaed',
+        surface: '#1f1f1f', author: '#e8eaed', accent: '#ffca28',
+        ink: '#e8eaed', sub: '#9aa0a6', border: 'rgba(232,234,237,0.12)',
     },
 
     /* ------------------------------------------------ work managers */
     notion: {
         name: 'Notion', shape: 'notion',
-        surface: '#ffffff', author: '#37352f', accent: '#37352f',
-        ink: '#37352f', sub: '#787774', border: '#e9e9e7',
+        surface: '#191919', author: '#e6e5e3', accent: '#e6e5e3',
+        ink: '#e6e5e3', sub: '#7f7f7c', border: 'rgba(230,229,227,0.09)',
     },
     monday: {
         name: 'monday', shape: 'monday',
-        surface: '#ffffff', author: '#323338', accent: '#0073ea',
-        ink: '#323338', sub: '#676879', border: '#d0d4e4',
+        surface: '#181b34', author: '#d5d8df', accent: '#0073ea',
+        ink: '#d5d8df', sub: '#9699a6', border: 'rgba(213,216,223,0.12)',
     },
     clickup: {
         name: 'ClickUp', shape: 'clickup',
-        surface: '#ffffff', author: '#292d34', accent: '#7b68ee',
-        ink: '#292d34', sub: '#7c828d', border: '#e9ebf0',
+        surface: '#1e2126', author: '#e6e8ec', accent: '#7b68ee',
+        ink: '#e6e8ec', sub: '#9aa1ac', border: 'rgba(230,232,236,0.1)',
     },
     trello: {
         name: 'Trello', shape: 'trello',
-        surface: '#ffffff', author: '#172b4d', accent: '#0079bf',
-        ink: '#172b4d', sub: '#6b778c', border: '#dfe1e6',
+        surface: '#1d2125', bubbleIn: '#22272b',
+        author: '#b6c2cf', accent: '#579dff',
+        ink: '#b6c2cf', sub: '#8c9bab', border: 'rgba(182,194,207,0.12)',
     },
     asana: {
         name: 'Asana', shape: 'asana',
-        surface: '#ffffff', author: '#1e1f21', accent: '#f06a6a',
-        ink: '#1e1f21', sub: '#6d6e6f', border: '#e8e8e9',
+        surface: '#1e1f21', author: '#f5f4f3', accent: '#f06a6a',
+        ink: '#f5f4f3', sub: '#a2a0a2', border: 'rgba(245,244,243,0.1)',
     },
     todoist: {
         name: 'Todoist', shape: 'todoist',
-        surface: '#ffffff', author: '#202020', accent: '#dc4c3e',
-        ink: '#202020', sub: '#808080', border: '#eeeeee',
+        surface: '#1f1f1f', author: '#f5f5f5', accent: '#ff7066',
+        ink: '#f5f5f5', sub: '#9b9b9b', border: 'rgba(245,245,245,0.1)',
     },
 
     /* ------------------------------------------------ commerce / billing */
@@ -224,8 +250,8 @@ const APP_THEME_DEFS: Record<string, Omit<AppTheme, 'slug'>> = {
     },
     shopify: {
         name: 'Shopify', shape: 'shopify',
-        surface: '#ffffff', author: '#202223', accent: '#008060',
-        ink: '#202223', sub: '#6d7175', border: '#e1e3e5',
+        surface: '#1a1a1a', author: '#e3e3e3', accent: '#36a874',
+        ink: '#e3e3e3', sub: '#8a8a8a', border: 'rgba(227,227,227,0.12)',
     },
 
     /* ------------------------------------------------ scheduling */
@@ -236,84 +262,84 @@ const APP_THEME_DEFS: Record<string, Omit<AppTheme, 'slug'>> = {
     },
     calendly: {
         name: 'Calendly', shape: 'booking',
-        surface: '#ffffff', author: '#0b3558', accent: '#006bff',
-        ink: '#0b3558', sub: '#476788', border: '#e7edf6',
+        surface: '#14181f', author: '#e8eef7', accent: '#3d8bff',
+        ink: '#e8eef7', sub: '#8fa3bc', border: 'rgba(232,238,247,0.12)',
     },
     zoom: {
         name: 'Zoom', shape: 'booking',
-        surface: '#ffffff', author: '#232333', accent: '#0b5cff',
-        ink: '#232333', sub: '#6e7180', border: '#e7e8ec',
+        surface: '#16161e', author: '#eef0f5', accent: '#4a8cff',
+        ink: '#eef0f5', sub: '#9598a8', border: 'rgba(238,240,245,0.12)',
     },
     google_calendar: {
         name: 'Google Calendar', shape: 'booking',
-        surface: '#ffffff', author: '#202124', accent: '#1a73e8',
-        ink: '#202124', sub: '#5f6368', border: '#e8eaed',
+        surface: '#1f1f1f', author: '#e8eaed', accent: '#8ab4f8',
+        ink: '#e8eaed', sub: '#9aa0a6', border: 'rgba(232,234,237,0.12)',
     },
 
     /* ------------------------------------------------ forms / tables */
     typeform: {
         name: 'Typeform', shape: 'response',
-        surface: '#ffffff', author: '#262627', accent: '#262627',
-        ink: '#262627', sub: '#737373', border: '#e5e5e5',
+        surface: '#1f1f1f', author: '#f0f0f0', accent: '#f0f0f0',
+        ink: '#f0f0f0', sub: '#9b9b9b', border: 'rgba(240,240,240,0.1)',
     },
     google_forms: {
         name: 'Google Forms', shape: 'response',
-        surface: '#ffffff', author: '#202124', accent: '#7248b9',
-        ink: '#202124', sub: '#5f6368', border: '#e8eaed',
+        surface: '#1f1f1f', author: '#e8eaed', accent: '#a586e8',
+        ink: '#e8eaed', sub: '#9aa0a6', border: 'rgba(232,234,237,0.12)',
     },
     wordpress: {
         name: 'WordPress', shape: 'response',
-        surface: '#ffffff', author: '#1d2327', accent: '#21759b',
-        ink: '#1d2327', sub: '#646970', border: '#dcdcde',
+        surface: '#1d2327', author: '#f0f0f1', accent: '#72aee6',
+        ink: '#f0f0f1', sub: '#a7aaad', border: 'rgba(240,240,241,0.12)',
     },
     webflow: {
         name: 'Webflow', shape: 'response',
-        surface: '#ffffff', author: '#171717', accent: '#4353ff',
-        ink: '#171717', sub: '#757575', border: '#e5e5e5',
+        surface: '#1e1e1e', author: '#f5f5f5', accent: '#6e79ff',
+        ink: '#f5f5f5', sub: '#898989', border: 'rgba(245,245,245,0.1)',
     },
     google_sheets: {
         name: 'Google Sheets', shape: 'sheet',
-        surface: '#ffffff', author: '#202124', accent: '#188038',
-        ink: '#202124', sub: '#5f6368', border: '#e8eaed',
+        surface: '#1f1f1f', author: '#e8eaed', accent: '#5bb974',
+        ink: '#e8eaed', sub: '#9aa0a6', border: 'rgba(232,234,237,0.14)',
     },
     airtable: {
         name: 'Airtable', shape: 'sheet',
-        surface: '#ffffff', author: '#333333', accent: '#2d7ff9',
-        ink: '#333333', sub: '#6b7280', border: '#e5e7eb',
+        surface: '#1d2025', author: '#e5e9f0', accent: '#2d7ff9',
+        ink: '#e5e9f0', sub: '#9aa4b2', border: 'rgba(229,233,240,0.12)',
     },
 
     /* ------------------------------------------------ CRM / support */
     hubspot: {
         name: 'HubSpot', shape: 'record',
-        surface: '#ffffff', author: '#33475b', accent: '#ff7a59',
-        ink: '#33475b', sub: '#7c98b6', border: '#e5eaf0',
+        surface: '#1d232c', author: '#e6eaf0', accent: '#ff7a59',
+        ink: '#e6eaf0', sub: '#8b98a9', border: 'rgba(230,234,240,0.12)',
     },
     pipedrive: {
         name: 'Pipedrive', shape: 'record',
-        surface: '#ffffff', author: '#26292c', accent: '#08a742',
-        ink: '#26292c', sub: '#747678', border: '#e4e6e8',
+        surface: '#1e2228', author: '#e8eaec', accent: '#2bbd6e',
+        ink: '#e8eaec', sub: '#93989e', border: 'rgba(232,234,236,0.12)',
     },
     salesforce: {
         name: 'Salesforce', shape: 'record',
-        surface: '#ffffff', author: '#032d60', accent: '#00a1e0',
-        ink: '#032d60', sub: '#706e6b', border: '#e5e5e5',
+        surface: '#1a2634', author: '#e5ecf3', accent: '#00a1e0',
+        ink: '#e5ecf3', sub: '#8d9aa8', border: 'rgba(229,236,243,0.12)',
     },
     zendesk: {
         name: 'Zendesk', shape: 'ticket',
-        surface: '#ffffff', author: '#2f3941', accent: '#03363d',
-        ink: '#2f3941', sub: '#68737d', border: '#d8dcde',
+        surface: '#14282c', author: '#e9ebed', accent: '#78cfc5',
+        ink: '#e9ebed', sub: '#8a9aa1', border: 'rgba(233,235,237,0.12)',
     },
     intercom: {
         name: 'Intercom', shape: 'ticket',
-        surface: '#ffffff', author: '#222222', accent: '#1f8ded',
-        ink: '#222222', sub: '#737376', border: '#e6e6e6',
+        surface: '#16171c', author: '#e8e9ec', accent: '#3d8bff',
+        ink: '#e8e9ec', sub: '#8f919a', border: 'rgba(232,233,236,0.12)',
     },
 
     /* ------------------------------------------------ social */
     reddit: {
         name: 'Reddit', shape: 'post',
-        surface: '#ffffff', author: '#1c1c1c', accent: '#ff4500',
-        ink: '#1c1c1c', sub: '#7c7c7c', border: '#e5e5e5',
+        surface: '#0b1416', author: '#d7dadc', accent: '#ff4500',
+        ink: '#d7dadc', sub: '#818384', border: 'rgba(215,218,220,0.12)',
     },
     twitter: {
         name: 'X', shape: 'post',
@@ -322,13 +348,13 @@ const APP_THEME_DEFS: Record<string, Omit<AppTheme, 'slug'>> = {
     },
     facebook: {
         name: 'Facebook', shape: 'post',
-        surface: '#ffffff', author: '#050505', accent: '#0866ff',
-        ink: '#050505', sub: '#65676b', border: '#e4e6eb',
+        surface: '#242526', author: '#e4e6eb', accent: '#2d88ff',
+        ink: '#e4e6eb', sub: '#b0b3b8', border: 'rgba(228,230,235,0.12)',
     },
     instagram: {
         name: 'Instagram', shape: 'post',
-        surface: '#ffffff', author: '#262626', accent: '#0095f6',
-        ink: '#262626', sub: '#8e8e8e', border: '#efefef',
+        surface: '#000000', author: '#f5f5f5', accent: '#0095f6',
+        ink: '#f5f5f5', sub: '#a8a8a8', border: 'rgba(245,245,245,0.14)',
     },
     youtube: {
         name: 'YouTube', shape: 'post',
@@ -339,13 +365,13 @@ const APP_THEME_DEFS: Record<string, Omit<AppTheme, 'slug'>> = {
     /* ------------------------------------------------ files */
     dropbox: {
         name: 'Dropbox', shape: 'file',
-        surface: '#ffffff', author: '#1e1919', accent: '#0061ff',
-        ink: '#1e1919', sub: '#736c64', border: '#e7e5e4',
+        surface: '#1e1d1b', author: '#f7f5f2', accent: '#3984ff',
+        ink: '#f7f5f2', sub: '#a9a49e', border: 'rgba(247,245,242,0.12)',
     },
     google_drive: {
         name: 'Google Drive', shape: 'file',
-        surface: '#ffffff', author: '#202124', accent: '#1a73e8',
-        ink: '#202124', sub: '#5f6368', border: '#e8eaed',
+        surface: '#1f1f1f', author: '#e8eaed', accent: '#8ab4f8',
+        ink: '#e8eaed', sub: '#9aa0a6', border: 'rgba(232,234,237,0.12)',
     },
 };
 
