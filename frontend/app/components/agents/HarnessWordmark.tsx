@@ -22,19 +22,23 @@ export function HarnessWordmark({
     includesName: boolean;
     name: string;
     slug: string;
-    /** 'card' is the compact lockup for pickers/tiles; 'hero' is the page header. */
-    size?: 'hero' | 'card';
+    /** 'card' is the compact lockup for pickers/tiles; 'hero' is the page
+        header; 'chip' fits inside a text-[13px] pill. */
+    size?: 'hero' | 'card' | 'chip';
 }) {
     const card = size === 'card';
+    const chip = size === 'chip';
     // Full wordmark: render the (wide) <img> height-driven so its aspect is
     // preserved — SerializedIcon would force w-full/h-full and squish it.
     if (includesName && iconHtml) {
         return (
             <span
                 className={
-                    card
-                        ? 'inline-flex items-center [&>img]:h-6 [&>img]:w-auto'
-                        : 'inline-flex items-center [&>img]:h-12 [&>img]:w-auto'
+                    chip
+                        ? 'inline-flex items-center [&>img]:h-[15px] [&>img]:w-auto'
+                        : card
+                          ? 'inline-flex items-center [&>img]:h-6 [&>img]:w-auto'
+                          : 'inline-flex items-center [&>img]:h-12 [&>img]:w-auto'
                 }
                 dangerouslySetInnerHTML={{ __html: iconHtml }}
             />
@@ -47,15 +51,17 @@ export function HarnessWordmark({
     // transparent overflow is harmless since there's no box to clip it).
     const markScale = slug === 'claude-code' ? 'scale-[1.4]' : '';
     return (
-        <span className={card ? 'inline-flex items-center gap-1.5' : 'inline-flex items-center gap-2.5'}>
+        <span className={chip || card ? 'inline-flex items-center gap-1.5' : 'inline-flex items-center gap-2.5'}>
             <SerializedIcon
                 html={iconHtml}
                 iconColor={iconColor}
-                className={`${card ? 'w-6 h-6' : 'w-11 h-11'} ${markScale}`}
+                className={`${chip ? 'w-4 h-4' : card ? 'w-6 h-6' : 'w-11 h-11'} ${markScale}`}
             />
             <span
                 className={
-                    card
+                    chip
+                        ? 'font-brand text-[13px] font-medium tracking-tight text-white leading-none'
+                        : card
                         ? 'font-brand text-[17px] font-semibold tracking-tight text-white leading-none'
                         : 'font-brand text-4xl font-semibold tracking-tight text-white leading-none'
                 }
