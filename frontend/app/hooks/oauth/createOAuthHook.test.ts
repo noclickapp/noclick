@@ -42,8 +42,12 @@ describe('createOAuthHook contract', () => {
         );
     });
 
-    it('honours per-provider deviations: notion sends no scopes param', () => {
-        expect(new URL(buildAuthorizeUrl(cfg(useNotionOAuth), 'x'), 'http://x').searchParams.has('scopes')).toBe(false);
+    it('honours per-provider deviations: Notion and Zoom send no scopes param', () => {
+        for (const hook of [useNotionOAuth, useZoomOAuth]) {
+            expect(
+                new URL(buildAuthorizeUrl(cfg(hook), 'x', ['read:anything']), 'http://x').searchParams.has('scopes'),
+            ).toBe(false);
+        }
     });
 
     it('never injects email/profile into any factory provider scopes (Linear regression guard)', () => {
