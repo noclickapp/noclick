@@ -27,6 +27,12 @@ export function SetupHandoffCover() {
 
     useEffect(() => {
         if (!covering) return;
+        // Primary signal: FlowCanvas announces the moment it consumes the
+        // setup flag and mounts the onboarding beneath us. The flag poll
+        // below is only the backup - the relay's middle state can be shorter
+        // than one poll interval.
+        const onDone = () => window.setTimeout(() => setCovering(false), 400);
+        document.addEventListener('noclick:setup-handoff-done', onDone);
         const started = Date.now();
         // The flags form a relay: fork data is consumed by the fork request,
         // the setup flag appears on success and is consumed by FlowCanvas as
@@ -43,7 +49,10 @@ export function SetupHandoffCover() {
                 window.setTimeout(() => setCovering(false), 400);
             }
         }, 250);
-        return () => window.clearInterval(tick);
+        return () => {
+            window.clearInterval(tick);
+            document.removeEventListener('noclick:setup-handoff-done', onDone);
+        };
     }, [covering]);
 
     if (!covering || typeof document === 'undefined') return null;
