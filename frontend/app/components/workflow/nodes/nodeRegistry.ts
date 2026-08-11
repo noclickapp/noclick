@@ -167,7 +167,6 @@ import { LogNode } from './LogNode';
 import { SwitchNode } from './SwitchNode';
 import { MergeNode } from './MergeNode';
 import { StateManagerNode } from './StateManagerNode';
-import { SetupNode } from './SetupNode';
 import { OnErrorNode } from './OnErrorNode';
 import { SetVariableNode } from './SetVariableNode';
 import {
@@ -221,7 +220,7 @@ function _buildAvailable(): NodeDefinition[] {
         NoClickNode, AlarmNode, FilesystemNode, IterationNode, DelayNode, FilterNode,
         SplitOutNode,
         ConditionalNode, ApprovalNode, LogNode, SwitchNode, MergeNode, SubmitExternalFormNode,
-        ServerlessFunctionNode, StateManagerNode, SetupNode, OnErrorNode,
+        ServerlessFunctionNode, StateManagerNode, OnErrorNode,
         SetVariableNode, StickyNoteNode,
         InterfaceFileNode, InterfaceDataframeNode, InterfaceHtmlReactNode,
         InterfaceFileUploadNode,

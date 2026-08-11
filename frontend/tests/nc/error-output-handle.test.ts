@@ -8,7 +8,7 @@ export default async function () {
   const allNodes = nc.nodes.list();
   // Pick the first automation node on the canvas — they all share AutomationNode.
   const target = allNodes.find((n: any) =>
-    n.type && !['conditional', 'switch', 'iteration', 'on-error', 'sticky-note', 'agent', 'approval', 'alarm', 'mcp-server', 'noclick', 'state-manager', 'serverless-function', 'filesystem', 'interface', 'setup', 'tool', 'run-trigger', 'merge', 'filter'].includes(n.type)
+    n.type && !['conditional', 'switch', 'iteration', 'on-error', 'sticky-note', 'agent', 'approval', 'alarm', 'mcp-server', 'noclick', 'state-manager', 'serverless-function', 'filesystem', 'interface', 'tool', 'run-trigger', 'merge', 'filter'].includes(n.type)
   );
   nc.assert.truthy(target, 'Need at least one automation node on the canvas');
   const nodeId = target.id;
