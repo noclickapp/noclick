@@ -51,7 +51,7 @@ export function SetupHandoffCover() {
         <div className="fixed inset-0 z-30 flex flex-col items-center justify-center gap-5 bg-background">
             <LogoMark className="h-9 w-9" />
             <div className="flex items-center gap-2.5 text-sm text-muted-foreground/80">
-                <ThinkingOrb />
+                <ThinkingOrb state="searching" />
                 Preparing your agent
             </div>
         </div>,
