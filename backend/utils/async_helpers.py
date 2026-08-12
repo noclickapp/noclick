@@ -28,7 +28,7 @@ retaining the returned Task and managing its lifecycle yourself.
 
 import asyncio
 import logging
-from typing import Coroutine, Optional, Set
+from typing import Coroutine, Optional, Set, Tuple
 
 logger = logging.getLogger(__name__)
 
@@ -87,3 +87,56 @@ def active_task_count() -> int:
     that all background work completed before a teardown step.
     """
     return len(_bg_tasks)
+
+
+async def drain_spawned_tasks(timeout: float = 2.0) -> Tuple[int, int]:
+    """Finish tracked one-shot work before process resources are closed.
+
+    Tasks spawned while the drain is in progress are included. Once the
+    bounded grace period expires, remaining tasks are cancelled and awaited so
+    they cannot resume against a closed database or HTTP client.
+
+    Returns:
+        ``(completed_count, cancelled_count)`` for shutdown diagnostics.
+    """
+    loop = asyncio.get_running_loop()
+    current = asyncio.current_task()
+    deadline = loop.time() + max(0.0, timeout)
+    completed = 0
+
+    while True:
+        pending = {
+            task
+            for task in _bg_tasks
+            if task is not current
+            and task.get_loop() is loop
+            and not task.done()
+        }
+        if not pending:
+            return completed, 0
+
+        remaining = deadline - loop.time()
+        if remaining <= 0:
+            break
+
+        done, still_pending = await asyncio.wait(pending, timeout=remaining)
+        completed += len(done)
+        if still_pending:
+            pending = still_pending
+            break
+
+    # Include work spawned by a task at the edge of the deadline.  No new
+    # application work should be admitted once lifespan shutdown has begun,
+    # but collecting the live set again makes the shutdown boundary robust to
+    # a final chained fire-and-forget operation.
+    pending = {
+        task
+        for task in _bg_tasks
+        if task is not current
+        and task.get_loop() is loop
+        and not task.done()
+    }
+    for task in pending:
+        task.cancel()
+    await asyncio.gather(*pending, return_exceptions=True)
+    return completed, len(pending)
