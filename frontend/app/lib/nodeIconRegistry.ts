@@ -30,6 +30,13 @@ export function getNodeIconMeta(type: string): SerializedNodeMeta | undefined {
     return _nodeIconData[type];
 }
 
+/** The current serialized icon map. Passed into pure visual surfaces such as
+ * WorkflowGraphPreview so those components do not need to reach into this
+ * singleton themselves (and public routes can inject their server-built map). */
+export function getNodeIconData(): Readonly<Record<string, SerializedNodeMeta>> {
+    return _nodeIconData;
+}
+
 /** All node types currently known to the icon registry. */
 export function getKnownNodeIconTypes(): string[] {
     return Object.keys(_nodeIconData);
