@@ -69,7 +69,7 @@ function DeferredBlackHoleVideo({ className }: { className: string }) {
             muted
             playsInline
             preload="metadata"
-            poster="/video/blackhole-first-frame.webp"
+            poster="/video/blackhole-v2-16s-first-frame.webp"
             onCanPlay={tryPlay}
             onPlaying={() => setPlaying(true)}
             onPause={() => setPlaying(false)}
@@ -78,10 +78,10 @@ function DeferredBlackHoleVideo({ className }: { className: string }) {
             }`}
         >
             <source
-                src="/video/blackhole-3x.av1.mp4"
+                src="/video/blackhole-v2-16s.av1.mp4"
                 type='video/mp4; codecs="av01.0.05M.10"'
             />
-            <source src="/video/blackhole-3x.mp4" type="video/mp4" />
+            <source src="/video/blackhole-v2-16s.mp4" type="video/mp4" />
         </video>
     );
 }
@@ -116,7 +116,7 @@ export function AuthLayout({
     const shouldLoadVideo =
         desktopPanelVisible && idleReady && !constrainedNetwork;
     const blackHoleClassName =
-        'absolute -right-[77%] xl:-right-[67%] top-[57%] -translate-y-1/2 -rotate-[9deg] w-[70vw] xl:w-[66vw] max-w-[1470px] h-auto object-contain rr-block ph-no-capture';
+        'absolute -right-[96%] xl:-right-[86%] top-[57%] -translate-y-1/2 -rotate-[9deg] w-[90vw] xl:w-[86vw] max-w-[1470px] h-auto object-contain rr-block ph-no-capture';
 
     return (
         <div className="min-h-screen flex bg-background">
@@ -154,7 +154,7 @@ export function AuthLayout({
                             <picture>
                                 <source
                                     media="(min-width: 1024px)"
-                                    srcSet="/video/blackhole-first-frame.webp"
+                                    srcSet="/video/blackhole-v2-16s-first-frame.webp"
                                     type="image/webp"
                                 />
                                 <img

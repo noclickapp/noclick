@@ -16,7 +16,7 @@ export default async function () {
 
     nc.assert.deepEqual(
         sources,
-        ['/video/blackhole-3x.av1.mp4', '/video/blackhole-3x.mp4'],
+        ['/video/blackhole-v2-16s.av1.mp4', '/video/blackhole-v2-16s.mp4'],
         'Login should offer the compressed AV1 asset with an H.264 fallback'
     );
     nc.assert.truthy(video.autoplay, 'Black-hole video should autoplay');
@@ -24,7 +24,7 @@ export default async function () {
     nc.assert.truthy(video.muted, 'Black-hole video should remain muted');
     nc.assert.equal(
         video.getAttribute('poster'),
-        '/video/blackhole-first-frame.webp',
+        '/video/blackhole-v2-16s-first-frame.webp',
         'Black-hole video should use its exact first frame while loading'
     );
     nc.assert.equal(
@@ -49,8 +49,8 @@ export default async function () {
         'Black-hole video should retain its source height'
     );
     nc.assert.truthy(
-        video.duration > 23 && video.duration < 25,
-        'Black-hole loop should be the approved 3× speed'
+        video.duration > 16 && video.duration < 16.1,
+        'Black-hole loop should use the approved 16-second render'
     );
     nc.assert.falsy(
         video.error,
@@ -67,7 +67,7 @@ export default async function () {
         'Black-hole composition should not be upscaled beyond its source height'
     );
     nc.assert.truthy(
-        video.getBoundingClientRect().width <= window.innerWidth * 0.71,
+        video.getBoundingClientRect().width <= window.innerWidth * 0.91,
         'Black-hole composition should remain a controlled fraction of the viewport width'
     );
     nc.assert.truthy(
@@ -75,7 +75,9 @@ export default async function () {
         'Black-hole composition should extend off-canvas'
     );
     nc.assert.truthy(
-        video.parentElement!.getBoundingClientRect().width / window.innerWidth <= 0.46,
+        video.parentElement!.getBoundingClientRect().width /
+            window.innerWidth <=
+            0.46,
         'Standard auth cosmic panel should use 45% of the page'
     );
 
