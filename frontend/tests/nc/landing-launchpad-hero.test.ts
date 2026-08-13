@@ -85,6 +85,9 @@ export default async function () {
     const bulgeBase = art.querySelector(
         '[data-testid="space-hero-galaxy-bulge-base"]'
     ) as HTMLElement;
+    const revealCurtain = art.querySelector(
+        '[data-testid="space-hero-reveal-curtain"]'
+    ) as HTMLElement;
 
     nc.assert.equal(
         Array.from(heading.children)
@@ -230,11 +233,20 @@ export default async function () {
             getComputedStyle(texture).filter.includes('blur'),
             'Galaxy texture grain should not be softened by CSS blur'
         );
-        nc.assert.truthy(
+        nc.assert.falsy(
             getComputedStyle(texture).transitionProperty.includes('opacity'),
-            'Decoded galaxy layers should reveal together with a graceful fade'
+            'Transformed galaxy textures should not fade their rectangular compositor bounds'
         );
     });
+    nc.assert.truthy(
+        getComputedStyle(revealCurtain).transitionProperty.includes('opacity'),
+        'A flat black curtain should reveal the decoded composition as one scene'
+    );
+    nc.assert.equal(
+        getComputedStyle(revealCurtain).opacity,
+        '0',
+        'The reveal curtain should clear after all four textures decode'
+    );
 
     nc.assert.equal(
         art.querySelectorAll(
