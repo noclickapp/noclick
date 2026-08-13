@@ -1,9 +1,24 @@
 import { nc } from '~/lib/nc';
 
 const testIds = {
-    planes: ['space-hero-galaxy-plane-main'],
-    spinners: ['space-hero-galaxy-spinner-main'],
-    textures: ['space-hero-galaxy-texture-main'],
+    planes: [
+        'space-hero-galaxy-plane-halo',
+        'space-hero-galaxy-plane-depth',
+        'space-hero-galaxy-plane-main',
+        'space-hero-galaxy-plane-core',
+    ],
+    spinners: [
+        'space-hero-galaxy-spinner-halo',
+        'space-hero-galaxy-spinner-depth',
+        'space-hero-galaxy-spinner-main',
+        'space-hero-galaxy-spinner-core',
+    ],
+    textures: [
+        'space-hero-galaxy-texture-halo',
+        'space-hero-galaxy-texture-depth',
+        'space-hero-galaxy-texture-main',
+        'space-hero-galaxy-texture-core',
+    ],
 };
 
 export default async function () {
@@ -172,7 +187,12 @@ export default async function () {
         'Final hero should not render comparison or motion controls'
     );
 
-    const expectedAssets = ['/space-hero/galaxy-integrated.png'];
+    const expectedAssets = [
+        '/space-hero/galaxy-halo-parallax.png',
+        '/space-hero/galaxy-depth-parallax.png',
+        '/space-hero/galaxy-main-parallax.png',
+        '/space-hero/galaxy-core-parallax.png',
+    ];
     const expectedOptimizedAssets = expectedAssets.map((src) =>
         src.replace('.png', '.webp')
     );
@@ -266,6 +286,21 @@ export default async function () {
             'Every galaxy plane should use rotateX, rotateY, and translateZ'
         );
     });
+    nc.assert.equal(
+        [
+            '--galaxy-depth-halo',
+            '--galaxy-depth-dust',
+            '--galaxy-depth-main',
+            '--galaxy-depth-core',
+        ]
+            .map((property) => heroStyle.getPropertyValue(property).trim())
+            .join(','),
+        (window.innerWidth <= 700
+            ? ['-24px', '-10px', '0px', '14px']
+            : ['-34px', '-14px', '0px', '18px']
+        ).join(','),
+        'Galaxy textures should occupy distinct Z planes for real parallax'
+    );
 
     for (const intermediate of [camera, rig, ...planes]) {
         const style = getComputedStyle(intermediate);
@@ -312,7 +347,7 @@ export default async function () {
         'Layered hero should use neither video nor canvas'
     );
 
-    const expectedDurations = ['300s'];
+    const expectedDurations = ['330s', '315s', '300s', '288s'];
     spinners.forEach((spinner, index) => {
         const style = getComputedStyle(spinner);
         nc.assert.equal(
@@ -342,12 +377,12 @@ export default async function () {
         );
     });
 
-    const mainAnimation = spinners[0].getAnimations()[0];
+    const mainAnimation = spinners[2].getAnimations()[0];
     mainAnimation.pause();
     mainAnimation.currentTime = 0;
-    const firstTransform = getComputedStyle(spinners[0]).transform;
+    const firstTransform = getComputedStyle(spinners[2]).transform;
     mainAnimation.currentTime = 5_000;
-    const secondTransform = getComputedStyle(spinners[0]).transform;
+    const secondTransform = getComputedStyle(spinners[2]).transform;
     nc.assert.truthy(
         firstTransform !== secondTransform,
         'Always-on galaxy keyframes should produce a changing transform'
@@ -356,7 +391,6 @@ export default async function () {
     for (const fixedLayer of [
         camera,
         rig,
-        ...planes,
         haze,
         depthLight,
         coreShadow,
@@ -423,8 +457,8 @@ export default async function () {
     );
     nc.assert.equal(
         transformLayers.length,
-        1,
-        'Only the single rotating galaxy texture should reserve a compositor layer'
+        4,
+        'Only the four rotating galaxy textures should reserve compositor layers'
     );
 
     return {

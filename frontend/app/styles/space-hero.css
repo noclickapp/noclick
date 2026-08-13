@@ -6,12 +6,21 @@
     --galaxy-tilt: 75deg;
     --galaxy-yaw: -5deg;
     --galaxy-screen-angle: -9deg;
-    --galaxy-opacity-main: 0.9;
+    --galaxy-opacity-halo: 0.32;
+    --galaxy-opacity-depth: 0.42;
+    --galaxy-opacity-main: 0.76;
+    --galaxy-opacity-core: 0.5;
+    --galaxy-depth-halo: -34px;
+    --galaxy-depth-dust: -14px;
     --galaxy-depth-main: 0px;
+    --galaxy-depth-core: 18px;
     --galaxy-depth-bulge-base: 70px;
     --galaxy-depth-bulge: 124px;
 
+    --galaxy-spin-halo: 330s;
+    --galaxy-spin-depth: 315s;
     --galaxy-spin-main: 300s;
+    --galaxy-spin-core: 288s;
     --galaxy-bulge-opacity: 0.82;
     --galaxy-lighting-opacity: 0.76;
 
@@ -90,6 +99,21 @@
         translateZ(var(--galaxy-depth-main));
 }
 
+.space-hero__galaxy-plane--halo {
+    transform: rotateX(var(--galaxy-tilt)) rotateY(var(--galaxy-yaw))
+        translateZ(var(--galaxy-depth-halo));
+}
+
+.space-hero__galaxy-plane--depth {
+    transform: rotateX(var(--galaxy-tilt)) rotateY(var(--galaxy-yaw))
+        translateZ(var(--galaxy-depth-dust));
+}
+
+.space-hero__galaxy-plane--core {
+    transform: rotateX(var(--galaxy-tilt)) rotateY(var(--galaxy-yaw))
+        translateZ(var(--galaxy-depth-core));
+}
+
 .space-hero__galaxy-spinner,
 .space-hero__galaxy-picture,
 .space-hero__galaxy-texture {
@@ -112,6 +136,18 @@
     animation-duration: var(--galaxy-spin-main);
 }
 
+.space-hero__galaxy-spinner--halo {
+    animation-duration: var(--galaxy-spin-halo);
+}
+
+.space-hero__galaxy-spinner--depth {
+    animation-duration: var(--galaxy-spin-depth);
+}
+
+.space-hero__galaxy-spinner--core {
+    animation-duration: var(--galaxy-spin-core);
+}
+
 .space-hero__galaxy-texture {
     object-fit: contain;
     backface-visibility: hidden;
@@ -120,6 +156,18 @@
 
 .space-hero__galaxy-texture--main {
     opacity: var(--galaxy-opacity-main);
+}
+
+.space-hero__galaxy-texture--halo {
+    opacity: var(--galaxy-opacity-halo);
+}
+
+.space-hero__galaxy-texture--depth {
+    opacity: var(--galaxy-opacity-depth);
+}
+
+.space-hero__galaxy-texture--core {
+    opacity: var(--galaxy-opacity-core);
 }
 
 .space-hero__galaxy-bulge {
@@ -247,7 +295,13 @@
         --galaxy-tilt: 74deg;
         --galaxy-yaw: -4deg;
         --galaxy-screen-angle: -10deg;
-        --galaxy-opacity-main: 0.9;
+        --galaxy-opacity-halo: 0.28;
+        --galaxy-opacity-depth: 0.38;
+        --galaxy-opacity-main: 0.8;
+        --galaxy-opacity-core: 0.48;
+        --galaxy-depth-halo: -24px;
+        --galaxy-depth-dust: -10px;
+        --galaxy-depth-core: 14px;
         --galaxy-lighting-opacity: 0.68;
 
         min-height: max(820px, 100svh);
