@@ -1,0 +1,320 @@
+.space-hero {
+    --galaxy-x: 66%;
+    --galaxy-y: 59%;
+    --galaxy-size: min(104vw, 1660px);
+    --galaxy-perspective: 1050px;
+    --galaxy-tilt: 75deg;
+    --galaxy-yaw: -5deg;
+    --galaxy-screen-angle: -9deg;
+    --galaxy-opacity-halo: 0.32;
+    --galaxy-opacity-depth: 0.42;
+    --galaxy-opacity-main: 0.76;
+    --galaxy-opacity-core: 0.5;
+    --galaxy-depth-halo: -34px;
+    --galaxy-depth-dust: -14px;
+    --galaxy-depth-main: 0px;
+    --galaxy-depth-core: 18px;
+    --galaxy-depth-bulge-base: 70px;
+    --galaxy-depth-bulge: 124px;
+
+    --galaxy-spin-halo: 330s;
+    --galaxy-spin-depth: 315s;
+    --galaxy-spin-main: 300s;
+    --galaxy-spin-core: 288s;
+    --galaxy-bulge-opacity: 0.82;
+    --galaxy-lighting-opacity: 0.76;
+
+    position: relative;
+    isolation: isolate;
+    min-height: clamp(820px, 100svh, 1040px);
+    overflow: hidden;
+    background: #000;
+}
+
+.space-hero__art {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+    user-select: none;
+}
+
+.space-hero__galaxy-haze {
+    position: absolute;
+    top: calc(var(--galaxy-y) + 13%);
+    left: var(--galaxy-x);
+    z-index: 1;
+    width: min(102vw, 1620px);
+    height: clamp(220px, 28vw, 430px);
+    background:
+        radial-gradient(
+            ellipse 42% 55% at 32% 55%,
+            rgb(255 255 255 / 10%) 0%,
+            rgb(255 255 255 / 3%) 45%,
+            transparent 78%
+        ),
+        radial-gradient(
+            ellipse 50% 65% at 70% 46%,
+            rgb(255 255 255 / 13%) 0%,
+            rgb(255 255 255 / 4%) 42%,
+            transparent 78%
+        );
+    transform: translate(-50%, -50%) rotate(var(--galaxy-screen-angle));
+    pointer-events: none;
+}
+
+.space-hero__galaxy-camera {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    overflow: visible;
+    perspective: var(--galaxy-perspective);
+    perspective-origin: 64% 42%;
+    transform-style: preserve-3d;
+}
+
+.space-hero__galaxy-rig {
+    position: absolute;
+    top: var(--galaxy-y);
+    left: var(--galaxy-x);
+    width: var(--galaxy-size);
+    aspect-ratio: 1;
+    overflow: visible;
+    transform: translate3d(-50%, -50%, 0) rotateZ(var(--galaxy-screen-angle));
+    transform-style: preserve-3d;
+    transform-origin: 50% 50%;
+}
+
+.space-hero__galaxy-plane {
+    position: absolute;
+    inset: 0;
+    overflow: visible;
+    transform-origin: 50% 50%;
+    transform-style: preserve-3d;
+}
+
+.space-hero__galaxy-plane--main {
+    transform: rotateX(var(--galaxy-tilt)) rotateY(var(--galaxy-yaw))
+        translateZ(var(--galaxy-depth-main));
+}
+
+.space-hero__galaxy-plane--halo {
+    transform: rotateX(var(--galaxy-tilt)) rotateY(var(--galaxy-yaw))
+        translateZ(var(--galaxy-depth-halo));
+}
+
+.space-hero__galaxy-plane--depth {
+    transform: rotateX(var(--galaxy-tilt)) rotateY(var(--galaxy-yaw))
+        translateZ(var(--galaxy-depth-dust));
+}
+
+.space-hero__galaxy-plane--core {
+    transform: rotateX(var(--galaxy-tilt)) rotateY(var(--galaxy-yaw))
+        translateZ(var(--galaxy-depth-core));
+}
+
+.space-hero__galaxy-spinner,
+.space-hero__galaxy-picture,
+.space-hero__galaxy-texture {
+    position: absolute;
+    inset: 0;
+    display: block;
+    width: 100%;
+    height: 100%;
+}
+
+.space-hero__galaxy-spinner {
+    transform-origin: 50% 50%;
+    animation-name: space-hero-galaxy-spin;
+    animation-timing-function: linear;
+    animation-iteration-count: infinite;
+    will-change: transform;
+}
+
+.space-hero__galaxy-spinner--main {
+    animation-duration: var(--galaxy-spin-main);
+}
+
+.space-hero__galaxy-spinner--halo {
+    animation-duration: var(--galaxy-spin-halo);
+}
+
+.space-hero__galaxy-spinner--depth {
+    animation-duration: var(--galaxy-spin-depth);
+}
+
+.space-hero__galaxy-spinner--core {
+    animation-duration: var(--galaxy-spin-core);
+}
+
+.space-hero__galaxy-texture {
+    object-fit: contain;
+    backface-visibility: hidden;
+    transform-origin: 50% 50%;
+}
+
+.space-hero__galaxy-texture--main {
+    opacity: var(--galaxy-opacity-main);
+}
+
+.space-hero__galaxy-texture--halo {
+    opacity: var(--galaxy-opacity-halo);
+}
+
+.space-hero__galaxy-texture--depth {
+    opacity: var(--galaxy-opacity-depth);
+}
+
+.space-hero__galaxy-texture--core {
+    opacity: var(--galaxy-opacity-core);
+}
+
+.space-hero__galaxy-bulge {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    z-index: 3;
+    aspect-ratio: 1.65;
+    border-radius: 50%;
+    background: radial-gradient(
+        circle at 45% 42%,
+        rgb(255 255 255 / 96%) 0%,
+        rgb(255 255 255 / 72%) 18%,
+        rgb(235 235 235 / 28%) 44%,
+        rgb(220 220 220 / 8%) 65%,
+        transparent 78%
+    );
+    pointer-events: none;
+}
+
+.space-hero__galaxy-bulge--base {
+    width: 17%;
+    filter: blur(10px);
+    opacity: calc(var(--galaxy-bulge-opacity) * 0.46);
+    transform: translate3d(-50%, -50%, var(--galaxy-depth-bulge-base));
+}
+
+.space-hero__galaxy-bulge--crown {
+    width: 8.5%;
+    filter: blur(2px);
+    opacity: var(--galaxy-bulge-opacity);
+    transform: translate3d(-50%, -50%, var(--galaxy-depth-bulge));
+}
+
+.space-hero__galaxy-depth-light {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    background:
+        radial-gradient(
+            ellipse 43% 35% at 50% 82%,
+            rgb(255 255 255 / 12%) 0%,
+            rgb(255 255 255 / 5%) 42%,
+            transparent 82%
+        ),
+        radial-gradient(
+            ellipse 45% 34% at 50% 17%,
+            rgb(0 0 0 / 42%) 0%,
+            rgb(0 0 0 / 17%) 44%,
+            transparent 84%
+        );
+    opacity: var(--galaxy-lighting-opacity);
+    transform: translateZ(8px);
+    pointer-events: none;
+}
+
+.space-hero__galaxy-core-shadow {
+    position: absolute;
+    top: 51.5%;
+    left: 50%;
+    z-index: 2;
+    width: 13%;
+    aspect-ratio: 1;
+    border-radius: 50%;
+    background: radial-gradient(
+        circle at center,
+        rgb(0 0 0 / 38%) 0%,
+        rgb(0 0 0 / 14%) 44%,
+        transparent 82%
+    );
+    transform: translate(-50%, -50%);
+    pointer-events: none;
+}
+
+.space-hero__content {
+    position: relative;
+    z-index: 4;
+    width: 100%;
+    padding: 10.75rem 1.5rem 2rem;
+}
+
+.space-hero__content::before {
+    position: absolute;
+    top: 4.5rem;
+    left: 42%;
+    z-index: -1;
+    width: min(78rem, 110vw);
+    height: 31rem;
+    content: '';
+    transform: translateX(-50%);
+    background: radial-gradient(
+        ellipse at center,
+        rgb(0 0 0 / 88%) 0%,
+        rgb(0 0 0 / 56%) 48%,
+        transparent 78%
+    );
+    pointer-events: none;
+}
+
+@keyframes space-hero-galaxy-spin {
+    from {
+        transform: rotateZ(0deg);
+    }
+
+    to {
+        transform: rotateZ(360deg);
+    }
+}
+
+@media (max-width: 1100px) {
+    .space-hero {
+        --galaxy-x: 67%;
+        --galaxy-y: 63%;
+        --galaxy-size: min(162vw, 1390px);
+        --galaxy-perspective: 920px;
+    }
+}
+
+@media (max-width: 700px) {
+    .space-hero {
+        --galaxy-x: 70%;
+        --galaxy-y: 63%;
+        --galaxy-size: 208vw;
+        --galaxy-perspective: 780px;
+        --galaxy-tilt: 74deg;
+        --galaxy-yaw: -4deg;
+        --galaxy-screen-angle: -10deg;
+        --galaxy-opacity-halo: 0.28;
+        --galaxy-opacity-depth: 0.38;
+        --galaxy-opacity-main: 0.8;
+        --galaxy-opacity-core: 0.48;
+        --galaxy-depth-halo: -24px;
+        --galaxy-depth-dust: -10px;
+        --galaxy-depth-core: 14px;
+        --galaxy-lighting-opacity: 0.68;
+
+        min-height: max(820px, 100svh);
+    }
+
+    .space-hero__content {
+        padding: 8.25rem 1rem 2rem;
+    }
+
+    .space-hero__content::before {
+        top: 3.5rem;
+        left: 50%;
+        width: 165vw;
+        height: 29rem;
+    }
+}
