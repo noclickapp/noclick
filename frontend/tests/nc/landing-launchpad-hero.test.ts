@@ -35,6 +35,7 @@ export default async function () {
     const art = spaceHero.querySelector(
         '[data-testid="space-hero-art"]'
     ) as HTMLElement;
+    await nc.wait.forElement('[data-testid="space-hero-art"][data-ready="true"]');
     const content = spaceHero.querySelector(
         '.space-hero__content'
     ) as HTMLElement;
@@ -229,6 +230,10 @@ export default async function () {
             getComputedStyle(texture).filter.includes('blur'),
             'Galaxy texture grain should not be softened by CSS blur'
         );
+        nc.assert.truthy(
+            getComputedStyle(texture).transitionProperty.includes('opacity'),
+            'Decoded galaxy layers should reveal together with a graceful fade'
+        );
     });
 
     nc.assert.equal(
@@ -238,6 +243,12 @@ export default async function () {
         0,
         'Detached screen-space galaxy strips should not be rendered'
     );
+    for (const edgeSafeLeaf of [haze, depthLight]) {
+        nc.assert.truthy(
+            getComputedStyle(edgeSafeLeaf).maskImage !== 'none',
+            'Atmosphere and lighting leaves should fade before their rectangular bounds'
+        );
+    }
 
     const heroStyle = getComputedStyle(spaceHero);
     const cameraStyle = getComputedStyle(camera);

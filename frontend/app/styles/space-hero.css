@@ -60,6 +60,18 @@
             rgb(255 255 255 / 4%) 42%,
             transparent 78%
         );
+    -webkit-mask-image: radial-gradient(
+        ellipse closest-side at 50% 52%,
+        #000 0%,
+        #000 54%,
+        transparent 92%
+    );
+    mask-image: radial-gradient(
+        ellipse closest-side at 50% 52%,
+        #000 0%,
+        #000 54%,
+        transparent 92%
+    );
     transform: translate(-50%, -50%) rotate(var(--galaxy-screen-angle));
     pointer-events: none;
 }
@@ -219,6 +231,18 @@
             rgb(0 0 0 / 17%) 44%,
             transparent 84%
         );
+    -webkit-mask-image: radial-gradient(
+        circle closest-side at 50% 50%,
+        #000 0%,
+        #000 58%,
+        transparent 92%
+    );
+    mask-image: radial-gradient(
+        circle closest-side at 50% 50%,
+        #000 0%,
+        #000 58%,
+        transparent 92%
+    );
     opacity: var(--galaxy-lighting-opacity);
     transform: translateZ(8px);
     pointer-events: none;
@@ -240,6 +264,25 @@
     );
     transform: translate(-50%, -50%);
     pointer-events: none;
+}
+
+/* Keep the empty black composition stable while the independent textures load.
+   Opacity is applied only to leaf artwork so the camera's preserve-3d tree is
+   never grouped or flattened. All layers reveal together after decode. */
+.space-hero__galaxy-haze,
+.space-hero__galaxy-texture,
+.space-hero__galaxy-depth-light,
+.space-hero__galaxy-core-shadow,
+.space-hero__galaxy-bulge {
+    transition: opacity 700ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.space-hero__art[data-ready='false'] .space-hero__galaxy-haze,
+.space-hero__art[data-ready='false'] .space-hero__galaxy-texture,
+.space-hero__art[data-ready='false'] .space-hero__galaxy-depth-light,
+.space-hero__art[data-ready='false'] .space-hero__galaxy-core-shadow,
+.space-hero__art[data-ready='false'] .space-hero__galaxy-bulge {
+    opacity: 0;
 }
 
 .space-hero__content {
@@ -316,5 +359,15 @@
         left: 50%;
         width: 165vw;
         height: 29rem;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .space-hero__galaxy-haze,
+    .space-hero__galaxy-texture,
+    .space-hero__galaxy-depth-light,
+    .space-hero__galaxy-core-shadow,
+    .space-hero__galaxy-bulge {
+        transition-duration: 0ms;
     }
 }
