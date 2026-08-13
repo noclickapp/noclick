@@ -23,8 +23,8 @@ function useConstrainedNetwork(): boolean {
         const update = () =>
             setConstrained(
                 connection.saveData === true ||
-                connection.effectiveType === 'slow-2g' ||
-                connection.effectiveType === '2g'
+                    connection.effectiveType === 'slow-2g' ||
+                    connection.effectiveType === '2g'
             );
         update();
         connection.addEventListener('change', update);
@@ -54,7 +54,10 @@ function DeferredBlackHoleVideo({ className }: { className: string }) {
         document.addEventListener('visibilitychange', handleVisibilityChange);
         tryPlay();
         return () =>
-            document.removeEventListener('visibilitychange', handleVisibilityChange);
+            document.removeEventListener(
+                'visibilitychange',
+                handleVisibilityChange
+            );
     }, []);
 
     return (
@@ -100,9 +103,9 @@ export function AuthLayout({
     showRightPanel = true,
     quote = {
         text: "We're supposed to look up and wonder at our place in the stars, not look down and worry about our place in the dirt.",
-        author: "Cooper, Interstellar"
+        author: 'Cooper, Interstellar',
     },
-    rightPanel
+    rightPanel,
 }: AuthLayoutProps) {
     // Keep media URLs out of the server-rendered video markup. The video is
     // mounted only after hydration, only when its desktop panel is visible,
@@ -118,19 +121,19 @@ export function AuthLayout({
     return (
         <div className="min-h-screen flex bg-background">
             {/* Left side - Auth Form */}
-            <div className="flex-1 flex items-center justify-center px-8 sm:px-12 lg:px-16 bg-sunken">
-                <div className="w-full max-w-md relative z-10">
-                    {children}
-                </div>
+            <div
+                data-testid="auth-left-panel"
+                className="flex flex-1 items-center justify-center bg-sunken px-8 sm:px-12 lg:px-16"
+            >
+                <div className="w-full max-w-md relative z-10">{children}</div>
             </div>
 
             {/* Right side - agent-scaffold preview (if supplied) or cosmic banner */}
             {showRightPanel && (
                 <div
+                    data-testid="auth-right-panel"
                     className={`hidden lg:block relative overflow-hidden bg-black border-l border-border ${
-                        !rightPanel
-                            ? 'lg:w-[45%]'
-                            : 'lg:w-1/2 xl:w-[55%]'
+                        !rightPanel ? 'lg:w-[45%]' : 'lg:w-1/2 xl:w-[55%]'
                     }`}
                 >
                     {rightPanel ? (
@@ -139,10 +142,12 @@ export function AuthLayout({
                         <>
                             {/* Quote in top-left */}
                             <div className="absolute top-20 left-20 z-20 max-w-md">
-                                <p className="text-white text-3xl font-bold leading-tight tracking-tight mb-3">
+                                <p className="mb-3 font-brand text-3xl font-semibold leading-tight tracking-tight text-white">
                                     &ldquo;{quote.text}&rdquo;
                                 </p>
-                                <p className="text-white/70 text-lg">— {quote.author}</p>
+                                <p className="font-brand text-lg text-white/70">
+                                    — {quote.author}
+                                </p>
                             </div>
 
                             {/* Black hole art - oversized, angled, and partially off-canvas */}
@@ -163,12 +168,17 @@ export function AuthLayout({
                                 />
                             </picture>
                             {shouldLoadVideo && (
-                                <DeferredBlackHoleVideo className={blackHoleClassName} />
+                                <DeferredBlackHoleVideo
+                                    className={blackHoleClassName}
+                                />
                             )}
 
                             {/* Particle effects on top - contained within this div */}
                             <div className="absolute inset-0 pointer-events-none overflow-hidden">
-                                <ParticlesBackground starOpacity={0.8} className="absolute inset-0" />
+                                <ParticlesBackground
+                                    starOpacity={0.8}
+                                    className="absolute inset-0"
+                                />
                             </div>
                         </>
                     )}
