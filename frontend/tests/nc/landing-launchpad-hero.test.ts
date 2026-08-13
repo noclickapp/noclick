@@ -82,9 +82,6 @@ export default async function () {
     const bulge = art.querySelector(
         '[data-testid="space-hero-galaxy-bulge"]'
     ) as HTMLElement;
-    const bulgeBase = art.querySelector(
-        '[data-testid="space-hero-galaxy-bulge-base"]'
-    ) as HTMLElement;
     const revealCurtain = art.querySelector(
         '[data-testid="space-hero-reveal-curtain"]'
     ) as HTMLElement;
@@ -246,6 +243,22 @@ export default async function () {
         getComputedStyle(revealCurtain).opacity,
         '0',
         'The reveal curtain should clear after all four textures decode'
+    );
+    nc.assert.equal(
+        art.querySelectorAll('[data-testid="space-hero-galaxy-bulge-base"]')
+            .length,
+        0,
+        'The filtered base bulge should not create a rectangular compositor boundary'
+    );
+    nc.assert.equal(
+        getComputedStyle(bulge).filter,
+        'none',
+        'The remaining core highlight should avoid filter bounds'
+    );
+    nc.assert.equal(
+        getComputedStyle(bulge).opacity,
+        '1',
+        'The remaining core highlight should encode transparency in its gradient'
     );
 
     nc.assert.equal(
@@ -417,7 +430,6 @@ export default async function () {
         haze,
         depthLight,
         coreShadow,
-        bulgeBase,
         bulge,
     ]) {
         nc.assert.equal(
