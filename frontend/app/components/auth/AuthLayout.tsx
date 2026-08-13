@@ -86,9 +86,6 @@ function DeferredBlackHoleVideo({ className }: { className: string }) {
 interface AuthLayoutProps {
     children: ReactNode;
     showRightPanel?: boolean;
-    /** Animates the shared black-hole art by default; individual auth screens
-        can opt out when motion is inappropriate. */
-    animateBlackHole?: boolean;
     quote?: {
         text: string;
         author: string;
@@ -101,7 +98,6 @@ interface AuthLayoutProps {
 export function AuthLayout({
     children,
     showRightPanel = true,
-    animateBlackHole = true,
     quote = {
         text: "We're supposed to look up and wonder at our place in the stars, not look down and worry about our place in the dirt.",
         author: "Cooper, Interstellar"
@@ -115,7 +111,7 @@ export function AuthLayout({
     const idleReady = useIdleReady(1500);
     const constrainedNetwork = useConstrainedNetwork();
     const shouldLoadVideo =
-        animateBlackHole && desktopPanelVisible && idleReady && !constrainedNetwork;
+        desktopPanelVisible && idleReady && !constrainedNetwork;
     const blackHoleClassName =
         'absolute -right-[77%] xl:-right-[67%] top-[57%] -translate-y-1/2 -rotate-[9deg] w-[70vw] xl:w-[66vw] max-w-[1470px] h-auto object-contain rr-block ph-no-capture';
 
@@ -150,34 +146,24 @@ export function AuthLayout({
                             </div>
 
                             {/* Black hole art - oversized, angled, and partially off-canvas */}
-                            {animateBlackHole ? (
-                                <>
-                                    <picture>
-                                        <source
-                                            media="(min-width: 1024px)"
-                                            srcSet="/video/blackhole-first-frame.webp"
-                                            type="image/webp"
-                                        />
-                                        <img
-                                            src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
-                                            alt="Black hole visualization"
-                                            width={1470}
-                                            height={630}
-                                            decoding="async"
-                                            fetchPriority="high"
-                                            className={`${blackHoleClassName} opacity-90`}
-                                        />
-                                    </picture>
-                                    {shouldLoadVideo && (
-                                        <DeferredBlackHoleVideo className={blackHoleClassName} />
-                                    )}
-                                </>
-                            ) : (
-                                <img
-                                    src="/blackhole.webp"
-                                    alt="Black hole visualization"
-                                    className="absolute right-0 top-1/2 -translate-y-1/2 h-[65vh] w-auto object-contain opacity-80 rr-block ph-no-capture"
+                            <picture>
+                                <source
+                                    media="(min-width: 1024px)"
+                                    srcSet="/video/blackhole-first-frame.webp"
+                                    type="image/webp"
                                 />
+                                <img
+                                    src="data:image/gif;base64,R0lGODlhAQABAAD/ACwAAAAAAQABAAACADs="
+                                    alt="Black hole visualization"
+                                    width={1470}
+                                    height={630}
+                                    decoding="async"
+                                    fetchPriority="high"
+                                    className={`${blackHoleClassName} opacity-90`}
+                                />
+                            </picture>
+                            {shouldLoadVideo && (
+                                <DeferredBlackHoleVideo className={blackHoleClassName} />
                             )}
 
                             {/* Particle effects on top - contained within this div */}
