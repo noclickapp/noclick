@@ -35,7 +35,9 @@ export default async function () {
     const art = spaceHero.querySelector(
         '[data-testid="space-hero-art"]'
     ) as HTMLElement;
-    await nc.wait.forElement('[data-testid="space-hero-art"][data-ready="true"]');
+    await nc.wait.forElement(
+        '[data-testid="space-hero-art"][data-ready="true"]'
+    );
     const content = spaceHero.querySelector(
         '.space-hero__content'
     ) as HTMLElement;
@@ -78,9 +80,6 @@ export default async function () {
     ) as HTMLElement;
     const coreShadow = art.querySelector(
         '[data-testid="space-hero-galaxy-core-shadow"]'
-    ) as HTMLElement;
-    const bulge = art.querySelector(
-        '[data-testid="space-hero-galaxy-bulge"]'
     ) as HTMLElement;
     const revealCurtain = art.querySelector(
         '[data-testid="space-hero-reveal-curtain"]'
@@ -245,20 +244,9 @@ export default async function () {
         'The reveal curtain should clear after all four textures decode'
     );
     nc.assert.equal(
-        art.querySelectorAll('[data-testid="space-hero-galaxy-bulge-base"]')
-            .length,
+        art.querySelectorAll('[data-testid*="space-hero-galaxy-bulge"]').length,
         0,
-        'The filtered base bulge should not create a rectangular compositor boundary'
-    );
-    nc.assert.equal(
-        getComputedStyle(bulge).filter,
-        'none',
-        'The remaining core highlight should avoid filter bounds'
-    );
-    nc.assert.equal(
-        getComputedStyle(bulge).opacity,
-        '1',
-        'The remaining core highlight should encode transparency in its gradient'
+        'Synthetic core bulges should not sit over the textured core layer'
     );
 
     nc.assert.equal(
@@ -424,18 +412,11 @@ export default async function () {
         'Always-on galaxy keyframes should produce a changing transform'
     );
     mainAnimation.play();
-    for (const fixedLayer of [
-        camera,
-        rig,
-        haze,
-        depthLight,
-        coreShadow,
-        bulge,
-    ]) {
+    for (const fixedLayer of [camera, rig, haze, depthLight, coreShadow]) {
         nc.assert.equal(
             getComputedStyle(fixedLayer).animationName,
             'none',
-            'Camera, rig, tilt, lighting, atmosphere, and bulge must remain fixed'
+            'Camera, rig, tilt, lighting, and atmosphere must remain fixed'
         );
     }
 
@@ -448,6 +429,11 @@ export default async function () {
         contentStyle.zIndex,
         '4',
         'Hero content should remain above all artwork'
+    );
+    nc.assert.equal(
+        getComputedStyle(content, '::before').content,
+        'none',
+        'Hero copy should not use a rectangular readability overlay across the galaxy'
     );
 
     const promptSection = hero.querySelector(
