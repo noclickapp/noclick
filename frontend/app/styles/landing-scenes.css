@@ -1,0 +1,21 @@
+/* Hero treatment for the scene-based landing page. Clipping the hero artwork to
+   the hero box lands as a hard horizontal line straight across the galaxy, so
+   here the hero paints unclipped and everything below it stays transparent and
+   stacked above — the disc completes into the next screen instead of being cut.
+   Scoped to this composition; other pages keep their own clipping. */
+
+.nc-landing-scenes .space-hero,
+.nc-landing-scenes .space-hero__art {
+    overflow: visible;
+}
+
+.nc-landing-scenes [data-testid='launchpad-hero'] {
+    z-index: 0;
+}
+
+/* Above the artwork, transparent so the galaxy shows through the gap before the
+   first scene. Each section paints its own surfaces on top as usual. */
+.nc-landing-scenes__below {
+    position: relative;
+    z-index: 1;
+}
