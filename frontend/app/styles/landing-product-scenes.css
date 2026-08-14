@@ -1,0 +1,839 @@
+.nc-desktop-scene {
+    position: relative;
+    isolation: isolate;
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    overflow: hidden;
+    clip-path: inset(0 round 30px);
+    contain: paint;
+    border: 1px solid rgb(255 255 255 / 0.075);
+    border-radius: 30px;
+    background: #0a0a0a;
+    box-shadow:
+        0 42px 120px rgb(0 0 0 / 0.46),
+        inset 0 1px rgb(255 255 255 / 0.025);
+}
+
+.nc-desktop-scene::before,
+.nc-desktop-scene::after {
+    position: absolute;
+    inset: 0;
+    content: '';
+    pointer-events: none;
+}
+
+/* The stage is a studio backdrop, not a picture. One soft key light per scene
+   (the only thing that varies) plus a low floor bounce: photography and line
+   grids behind the window competed with the product's own canvas, and a
+   grayscaled galaxy read as noise rather than depth. */
+.nc-desktop-scene::before {
+    background:
+        radial-gradient(
+            110% 80% at var(--nc-scene-key-x) var(--nc-scene-key-y),
+            rgb(255 255 255 / 0.07),
+            transparent 58%
+        ),
+        radial-gradient(
+            90% 60% at 50% 118%,
+            rgb(255 255 255 / 0.028),
+            transparent 62%
+        ),
+        #08080a;
+}
+
+.nc-desktop-scene--graphite {
+    --nc-scene-key-x: 76%;
+    --nc-scene-key-y: 2%;
+}
+
+.nc-desktop-scene--orbit {
+    --nc-scene-key-x: 18%;
+    --nc-scene-key-y: -6%;
+}
+
+.nc-desktop-scene--grid {
+    --nc-scene-key-x: 50%;
+    --nc-scene-key-y: -12%;
+}
+
+.nc-desktop-scene::after {
+    z-index: 1;
+    background:
+        linear-gradient(to bottom, rgb(255 255 255 / 0.02), transparent 14%),
+        radial-gradient(
+            circle at 50% 112%,
+            transparent 46%,
+            rgb(0 0 0 / 0.28) 86%
+        );
+}
+
+.nc-desktop-scene__ambient {
+    position: absolute;
+    z-index: 1;
+    top: -22%;
+    left: 58%;
+    width: 52%;
+    aspect-ratio: 1;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.06);
+    filter: blur(110px);
+    pointer-events: none;
+}
+
+.nc-desktop-scene__composition {
+    position: relative;
+    z-index: 2;
+    display: grid;
+    width: 100%;
+    min-width: 0;
+    grid-template-columns: minmax(230px, 0.3fr) minmax(0, 0.7fr);
+    align-items: center;
+}
+
+.nc-desktop-scene__composition--solo {
+    display: block;
+}
+
+.nc-desktop-scene__composition--solo .nc-desktop-scene__workspace {
+    padding-left: 42px;
+}
+
+.nc-desktop-scene--quiet .nc-desktop-scene__composition {
+    grid-template-columns: minmax(280px, 0.35fr) minmax(0, 0.65fr);
+}
+
+.nc-desktop-scene--quiet .nc-desktop-scene__caption {
+    padding: 44px 30px 44px 46px;
+}
+
+.nc-desktop-scene--quiet .nc-desktop-scene__workspace {
+    padding: 34px 48px 34px 0;
+}
+
+/* Narrative one keeps the product at its native coordinate system, but uses a
+   shallower desktop stage. This preserves React Flow's measured handles while
+   giving the three live demonstrations a calmer, more editorial rhythm. */
+@media (min-width: 1024px) {
+    .nc-desktop-scene--narrative .nc-desktop-scene__composition {
+        grid-template-columns: minmax(260px, 0.32fr) minmax(0, 0.68fr);
+    }
+
+    .nc-desktop-scene--narrative .nc-desktop-scene__caption {
+        padding: 30px 24px 30px 38px;
+    }
+
+    .nc-desktop-scene--narrative .nc-desktop-scene__workspace {
+        padding: 24px 32px 24px 0;
+    }
+}
+
+.nc-desktop-scene__caption {
+    position: relative;
+    z-index: 3;
+    min-width: 0;
+    padding: clamp(30px, 4vw, 64px) clamp(18px, 3vw, 46px);
+}
+
+.nc-desktop-scene__workspace {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    justify-content: center;
+    padding: 42px 42px 42px 0;
+}
+
+.nc-desktop-scene__product-frame {
+    position: relative;
+    flex: none;
+    max-width: none;
+    transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+}
+
+.nc-desktop-scene__product-frame--dragging {
+    transition: none;
+}
+
+.nc-product-window {
+    /* Row heights are the layout budget the scaled chrome block reserves, so
+       they stay the single source of truth for both. */
+    --nc-chrome-titlebar: 34px;
+    --nc-chrome-global-nav: 56px;
+    --nc-chrome-workflow-nav: 48px;
+    --nc-chrome-scale: 0.8;
+    --nc-chrome-height: calc(
+        var(--nc-chrome-titlebar) + var(--nc-chrome-global-nav) +
+            var(--nc-chrome-workflow-nav)
+    );
+    container-type: inline-size;
+    position: relative;
+    isolation: isolate;
+    width: 100%;
+    min-width: 0;
+    overflow: hidden;
+    clip-path: inset(0 round 17px);
+    border: 1px solid rgb(255 255 255 / 0.12);
+    border-radius: 17px;
+    background: #000;
+    box-shadow:
+        0 42px 110px rgb(0 0 0 / 0.76),
+        0 0 0 1px rgb(0 0 0 / 0.88),
+        inset 0 1px rgb(255 255 255 / 0.035);
+    transform-origin: top left;
+}
+
+.nc-product-environment {
+    position: relative;
+    width: 100%;
+    min-width: 0;
+    min-height: 830px;
+    transform-origin: top left;
+}
+
+.nc-product-environment[data-story='run'] {
+    min-height: 690px;
+}
+
+.nc-product-environment--channel-story {
+    height: 620px;
+    min-height: 620px !important;
+}
+
+.nc-product-window::after {
+    position: absolute;
+    z-index: 20;
+    inset: 0;
+    border: 1px solid rgb(255 255 255 / 0.035);
+    border-radius: inherit;
+    content: '';
+    pointer-events: none;
+}
+
+/* Scaling the block (rather than restyling every control) keeps the chrome
+   proportional to the real application at any size. Layout reserves the
+   unscaled height and the negative margin reclaims what the scale gives back. */
+.nc-product-window__chrome {
+    position: relative;
+    z-index: 3;
+    width: calc(100% / var(--nc-chrome-scale));
+    height: var(--nc-chrome-height);
+    flex: none;
+    margin-bottom: calc(var(--nc-chrome-height) * (var(--nc-chrome-scale) - 1));
+    transform: scale(var(--nc-chrome-scale));
+    transform-origin: top left;
+}
+
+.nc-product-window__titlebar {
+    position: relative;
+    display: flex;
+    height: var(--nc-chrome-titlebar);
+    align-items: center;
+    justify-content: center;
+    border-bottom: 1px solid rgb(255 255 255 / 0.07);
+    background: #0b0b0c;
+    color: rgb(255 255 255 / 0.46);
+    font-size: 10px;
+}
+
+.nc-product-window__titlebar--draggable {
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+}
+
+.nc-product-window__titlebar--dragging {
+    cursor: grabbing;
+}
+
+.nc-product-window__traffic-lights {
+    position: absolute;
+    left: 13px;
+    display: flex;
+    gap: 6px;
+}
+
+.nc-product-window__traffic-lights span {
+    width: 8px;
+    height: 8px;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.17);
+    box-shadow: inset 0 1px rgb(255 255 255 / 0.05);
+}
+
+.nc-product-window__title {
+    font-weight: 500;
+    letter-spacing: -0.01em;
+}
+
+.nc-product-window__address {
+    position: absolute;
+    right: 13px;
+    font-family:
+        ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 8px;
+    color: rgb(255 255 255 / 0.25);
+}
+
+.nc-product-window__global-nav,
+.nc-product-window__workflow-nav {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    border-bottom: 1px solid rgb(255 255 255 / 0.07);
+    background: #000;
+    padding-inline: 14px;
+}
+
+.nc-product-window__global-nav {
+    height: var(--nc-chrome-global-nav);
+    justify-content: space-between;
+}
+
+.nc-product-window__workflow-nav {
+    height: var(--nc-chrome-workflow-nav);
+    gap: 12px;
+    border-bottom-width: 2px;
+    background: rgb(9 9 11 / 0.95);
+    box-shadow: 0 8px 24px rgb(0 0 0 / 0.2);
+    backdrop-filter: blur(12px);
+}
+
+/* min-width:0 lets this row be squeezed below its content; without the clip
+   the tabs paint straight over the Share/Run group instead of ending. */
+.nc-product-window__workflow-tabs {
+    display: flex;
+    min-width: 0;
+    align-items: center;
+    gap: 3px;
+    overflow: hidden;
+}
+
+/* The marketing scene keeps the product at its native coordinate system so
+   React Flow can route against real handle positions. At the narrower desktop
+   crop, tighten the genuine app controls rather than scaling or replacing
+   them—the complete navigation remains recognizably NoClick. */
+@container (max-width: 900px) {
+    .nc-product-window__workflow-nav {
+        gap: 7px;
+        padding-inline: 10px;
+    }
+
+    .nc-product-window__workflow-tab {
+        gap: 5px;
+        padding-inline: 6px;
+    }
+
+    .nc-product-window__share {
+        display: none;
+    }
+}
+
+.nc-product-window__content {
+    position: relative;
+    min-width: 0;
+    overflow: hidden;
+    background: #000;
+}
+
+/* The channel story intentionally shows two different products. The compact
+   third-party inbox floats in front of a separate NoClick application window;
+   nothing in the inbox chrome is presented as a NoClick navigation surface. */
+.nc-channel-desktop-environment {
+    position: relative;
+    width: 100%;
+    height: 830px;
+    min-height: 830px;
+    overflow: hidden;
+}
+
+.nc-channel-desktop-environment[data-landing-presentation='true'] {
+    height: 620px;
+    min-height: 620px;
+}
+
+/* Sits low and inset, so the inbox overlaps the workspace chrome rather than
+   the graph and the canvas keeps its clear right side. */
+.nc-channel-desktop-environment[data-landing-presentation='true']
+    .nc-external-app-window {
+    top: 124px;
+    left: 24px;
+    height: 460px;
+}
+
+/* Tucked under the inbox on this crop: only the strip below it shows, which
+   is the depth cue — a wider card would leak its right column instead. */
+.nc-channel-desktop-environment[data-landing-presentation='true']
+    .nc-channel-run-activity {
+    width: 216px;
+}
+
+.nc-channel-noclick-window {
+    position: absolute;
+    z-index: 2;
+    top: 50px;
+    right: 0;
+    bottom: 0;
+    left: 150px;
+    display: flex;
+    width: auto;
+    flex-direction: column;
+    transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+}
+
+.nc-channel-noclick-window .nc-product-window__content {
+    display: flex;
+    min-height: 0;
+    flex: 1;
+    flex-direction: column;
+}
+
+.nc-channel-noclick-window .nc-channel-canvas-surface {
+    min-height: 0;
+    flex: 1;
+    height: 100% !important;
+}
+
+.nc-channel-noclick-window--dragging {
+    transition: none;
+}
+
+.nc-external-app-window {
+    position: absolute;
+    z-index: 6;
+    top: 22px;
+    left: 12px;
+    display: flex;
+    width: 360px;
+    height: 558px;
+    flex-direction: column;
+    overflow: hidden;
+    clip-path: inset(0 round 18px);
+    border: 1px solid rgb(255 255 255 / 0.14);
+    border-radius: 18px;
+    background: #050505;
+    box-shadow:
+        0 34px 90px rgb(0 0 0 / 0.86),
+        0 0 0 1px rgb(0 0 0 / 0.9),
+        inset 0 1px rgb(255 255 255 / 0.04);
+    transition: transform 180ms cubic-bezier(0.22, 1, 0.36, 1);
+    will-change: transform;
+}
+
+.nc-external-app-window--dragging {
+    transition: none;
+}
+
+.nc-external-app__titlebar {
+    position: relative;
+    display: flex;
+    height: 34px;
+    flex: none;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border-bottom: 1px solid rgb(255 255 255 / 0.08);
+    background: #111113;
+    padding-inline: 46px 14px;
+}
+
+.nc-external-app__titlebar--draggable {
+    cursor: grab;
+    touch-action: none;
+    user-select: none;
+}
+
+.nc-external-app__titlebar--dragging {
+    cursor: grabbing;
+}
+
+.nc-external-app__traffic {
+    position: absolute;
+    left: 13px;
+    display: flex;
+    gap: 5px;
+}
+
+/* The channel's own mark, so the floating window reads as that product rather
+   than a generic browser frame. */
+.nc-external-app__brand {
+    display: grid;
+    margin-right: -3px;
+    place-items: center;
+}
+
+.nc-external-app__traffic span {
+    width: 7px;
+    height: 7px;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.18);
+}
+
+/* Takes the window's remaining height, so removing the playback controls
+   hands their space straight to the conversation. */
+.nc-external-app__message {
+    min-height: 0;
+    flex: 1;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 17px;
+    outline: none;
+    scroll-behavior: smooth;
+    scrollbar-color: rgb(255 255 255 / 0.18) transparent;
+    scrollbar-width: thin;
+}
+
+.nc-external-app__message::-webkit-scrollbar {
+    width: 5px;
+}
+
+.nc-external-app__message::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+.nc-external-app__message::-webkit-scrollbar-thumb {
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.16);
+}
+
+.nc-external-app__message:focus-visible {
+    box-shadow: inset 0 0 0 1px rgb(255 255 255 / 0.12);
+}
+
+.nc-external-app__controls {
+    display: flex;
+    height: 54px;
+    flex: none;
+    align-items: center;
+    justify-content: space-between;
+    border-top: 1px solid rgb(255 255 255 / 0.075);
+    background: rgb(5 5 5 / 0.95);
+    padding: 0 14px;
+    backdrop-filter: blur(16px);
+}
+
+/* The channel-native "a reply is being written" signal on the pending card. */
+.nc-typing-dots {
+    display: inline-flex;
+    align-items: center;
+    gap: 3px;
+}
+
+.nc-typing-dots span {
+    width: 3px;
+    height: 3px;
+    border-radius: 999px;
+    background: rgb(255 255 255 / 0.8);
+    animation: nc-typing-dot 1.3s ease-in-out infinite;
+}
+
+.nc-typing-dots span:nth-child(2) {
+    animation-delay: 0.16s;
+}
+
+.nc-typing-dots span:nth-child(3) {
+    animation-delay: 0.32s;
+}
+
+@keyframes nc-typing-dot {
+    0%,
+    65%,
+    100% {
+        opacity: 0.22;
+        transform: translateY(0);
+    }
+    30% {
+        opacity: 0.85;
+        transform: translateY(-2px);
+    }
+}
+
+.nc-channel-run-activity {
+    position: absolute;
+    z-index: 12;
+    bottom: 17px;
+    left: 17px;
+    display: flex;
+    width: 244px;
+    height: 166px;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid rgb(255 255 255 / 0.1);
+    border-radius: 14px;
+    background: rgb(5 5 5 / 0.9);
+    box-shadow: 0 20px 46px rgb(0 0 0 / 0.68);
+    padding: 12px;
+    backdrop-filter: blur(18px);
+}
+
+/* Takes whatever height the card has left, so the list never outgrows the card
+   and the newest step is never clipped by its edge. */
+.nc-channel-run-activity__steps {
+    min-height: 0;
+    flex: 1;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    scroll-behavior: smooth;
+    scrollbar-width: none;
+}
+
+.nc-channel-run-activity__steps::-webkit-scrollbar {
+    display: none;
+}
+
+/* Once a run outgrows the card the newest step stays pinned at the bottom and
+   the earlier ones leave through a fade rather than a hard cut. */
+.nc-channel-run-activity__steps[data-overflowing='true'] {
+    mask-image: linear-gradient(to bottom, transparent, #000 18px);
+}
+
+@media (max-width: 1023px) {
+    .nc-desktop-scene__composition {
+        display: block;
+    }
+
+    .nc-desktop-scene__caption {
+        padding: 32px 32px 0;
+    }
+
+    .nc-desktop-scene__workspace {
+        padding: 28px 32px 32px;
+    }
+
+    .nc-desktop-scene__composition--solo .nc-desktop-scene__workspace {
+        padding-left: 32px;
+    }
+
+    .nc-desktop-scene--quiet .nc-desktop-scene__caption {
+        padding: 32px 32px 0;
+    }
+
+    .nc-desktop-scene--quiet .nc-desktop-scene__workspace {
+        padding: 28px 32px 32px;
+    }
+}
+
+@media (max-width: 767px) {
+    .nc-desktop-scene {
+        border-radius: 23px;
+        clip-path: inset(0 round 23px);
+    }
+
+    .nc-desktop-scene__caption {
+        padding: 24px 20px 0;
+    }
+
+    .nc-desktop-scene__workspace {
+        align-items: flex-start;
+        padding: 20px 11px 11px;
+    }
+
+    .nc-desktop-scene__composition--solo .nc-desktop-scene__workspace {
+        padding-left: 11px;
+    }
+
+    .nc-desktop-scene--quiet .nc-desktop-scene__caption {
+        padding: 24px 20px 0;
+    }
+
+    .nc-desktop-scene--quiet .nc-desktop-scene__workspace {
+        padding: 20px 11px 11px;
+    }
+
+    .nc-desktop-scene__product-frame {
+        width: 100%;
+        min-width: 0;
+        height: auto;
+        transform: none !important;
+    }
+
+    .nc-product-window {
+        /* The phone crop already renders compact chrome at full width, so it
+           keeps its own row heights and skips the desktop scale-down. */
+        --nc-chrome-titlebar: 30px;
+        --nc-chrome-global-nav: 44px;
+        --nc-chrome-workflow-nav: 46px;
+        --nc-chrome-scale: 1;
+        width: 100%;
+        border-radius: 14px;
+        clip-path: inset(0 round 14px);
+        transform: none;
+    }
+
+    .nc-product-environment {
+        min-height: 0;
+        transform: none;
+    }
+
+    .nc-product-window__address {
+        display: none;
+    }
+
+    .nc-product-window__global-nav,
+    .nc-product-window__workflow-nav {
+        padding-inline: 10px;
+    }
+
+    .nc-channel-desktop-environment {
+        display: flex;
+        height: auto;
+        min-height: 0;
+        flex-direction: column;
+        gap: 10px;
+        overflow: visible;
+    }
+
+    .nc-external-app-window,
+    .nc-channel-noclick-window {
+        position: relative;
+        inset: auto;
+        width: 100%;
+        transform: none !important;
+        transition: none;
+    }
+
+    .nc-external-app-window {
+        order: 1;
+        height: 520px;
+        border-radius: 14px;
+        clip-path: inset(0 round 14px);
+    }
+
+    .nc-external-app__message {
+        padding: 13px;
+    }
+
+    .nc-channel-noclick-window {
+        order: 2;
+        display: block;
+    }
+
+    .nc-channel-noclick-window .nc-product-window__content {
+        display: block;
+    }
+
+    .nc-channel-noclick-window .nc-product-window__content > section {
+        height: 590px !important;
+    }
+
+    .nc-channel-run-activity {
+        right: 12px;
+        bottom: 12px;
+        left: 12px;
+        width: auto;
+        height: 174px;
+    }
+
+    /* The landing story uses a deliberately authored mobile crop. Without
+       these fixed scene heights the desktop windows become flex items inside
+       the narrow stack and the browser squeezes the product canvas until only
+       its empty upper edge is visible. Keep both products legible instead of
+       scaling the complete desktop composition down. */
+    .nc-channel-desktop-environment[data-landing-presentation='true'] {
+        height: auto;
+        min-height: 0;
+    }
+
+    .nc-channel-desktop-environment[data-landing-presentation='true']
+        .nc-external-app-window,
+    .nc-channel-desktop-environment[data-landing-presentation='true']
+        .nc-channel-noclick-window {
+        flex: none;
+    }
+
+    .nc-channel-desktop-environment[data-landing-presentation='true']
+        .nc-external-app-window {
+        top: auto;
+        left: auto;
+        height: 320px;
+    }
+
+    /* The thread is taller than the phone crop, so it sits scrolled to the
+       newest message. Fade the top edge instead of slicing a bubble in half. */
+    .nc-external-app__message {
+        mask-image: linear-gradient(to bottom, transparent, #000 22px);
+        -webkit-mask-image: linear-gradient(to bottom, transparent, #000 22px);
+    }
+
+    .nc-channel-desktop-environment[data-landing-presentation='true']
+        .nc-channel-noclick-window
+        .nc-product-window__content
+        > section {
+        height: 300px !important;
+    }
+
+    .nc-channel-desktop-environment[data-landing-presentation='true']
+        .nc-channel-run-activity {
+        right: 9px;
+        bottom: 9px;
+        left: 9px;
+        height: 104px;
+        padding: 9px;
+    }
+
+    .nc-channel-desktop-environment[data-landing-presentation='true']
+        .nc-channel-run-activity
+        > div:first-child {
+        margin-bottom: 5px;
+        padding-bottom: 5px;
+    }
+
+    .nc-product-environment--channel-story {
+        height: auto;
+        min-height: 0 !important;
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .nc-desktop-scene--orbit::before {
+        transform: none;
+    }
+
+    .nc-typing-dots span {
+        opacity: 0.55;
+        animation: none;
+    }
+}
+
+/* Touch devices scroll the PAGE through these scenes. Everything inside is a
+   scripted demo, so a titlebar that claims the gesture, an inner list that
+   scrolls first, or a canvas that pans instead of letting the finger through
+   turns the whole section into a dead zone on a phone. Programmatic scrolling
+   (the activity autoscroll) still works with overflow hidden. */
+@media (hover: none) and (pointer: coarse) {
+    .nc-desktop-scene,
+    .nc-desktop-scene *,
+    .nc-channel-desktop-environment,
+    .nc-channel-desktop-environment * {
+        touch-action: pan-y pinch-zoom;
+    }
+
+    .nc-desktop-scene .overflow-y-auto,
+    .nc-desktop-scene .overflow-y-scroll,
+    .nc-desktop-scene .overflow-auto,
+    .nc-desktop-scene .overflow-scroll,
+    .nc-channel-desktop-environment .overflow-y-auto,
+    .nc-channel-desktop-environment .overflow-y-scroll,
+    .nc-channel-desktop-environment .overflow-auto,
+    .nc-channel-desktop-environment .overflow-scroll,
+    .nc-channel-run-activity__steps,
+    .nc-external-app__message,
+    .nc-product-window__workflow-tabs {
+        overflow: hidden;
+    }
+}
+
+/* A reserved (not-yet-revealed) preview node: holds its box so the camera can
+   frame the space, paints nothing. !important because the point is to beat any
+   inline visibility/opacity a node's own animation sets on its children. */
+.react-flow__node.nc-node-reserved,
+.react-flow__node.nc-node-reserved * {
+    visibility: hidden !important;
+    opacity: 0 !important;
+    pointer-events: none !important;
+}

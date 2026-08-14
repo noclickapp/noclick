@@ -74,6 +74,12 @@ export function AgentModelIcon({
     const kind = resolveAgentModelKind(model);
     const style: CSSProperties = {
         ...SIZES[kind][variant],
+        // Marks size on one axis and keep their intrinsic width (claude's is
+        // 1.31:1), so a compartment narrower than that width would cut the
+        // logo. Scale it down to fit instead — never crop a brand mark.
+        maxWidth: '100%',
+        maxHeight: '100%',
+        objectFit: 'contain',
         filter: disabled
             ? DISABLED_FILTER
             : variant === 'normal'
