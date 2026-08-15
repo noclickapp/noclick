@@ -81,7 +81,9 @@ def execute_js(
 
     Args:
         code: JavaScript code to execute. Can use `inputs` variable and `return`.
-        inputs: Dictionary of inputs available as `inputs` in the code.
+        inputs: Dictionary of inputs available as `inputs` in the code; each
+            key is also bound as a bare global (`x`, not just `inputs.x`),
+            matching the Python runtime's parameter binding.
         timeout_sec: Maximum execution time in seconds (default 3, max 300).
         memory_bytes: Maximum memory usage in bytes (default 15MB, max 500MB).
 
@@ -180,6 +182,19 @@ def execute_js(
         var_names = state_var_names or []
         for var_name in var_names:
             ctx.eval(f"let {var_name} = inputs['{var_name}'] ?? {{}};")
+
+        # Bind every other input as a bare global name too — parity with the
+        # Python runtime, which passes function_inputs as real parameters (the
+        # schema calls them "named input parameters", and code written against
+        # that contract died with `ReferenceError: 'x' is not defined` here,
+        # 2026-08-14). Property assignment instead of let/const so user code
+        # redeclaring a name shadows it rather than throwing, and a pure-JS
+        # loop so untrusted input names are never interpolated into source.
+        ctx.eval(
+            "for (const __k of Object.keys(inputs)) {"
+            " if (!(__k in globalThis) && __k !== '__proto__') { globalThis[__k] = inputs[__k]; }"
+            "}"
+        )
 
         # Now set time limit (after console setup, before user code)
         ctx.set_time_limit(timeout_sec)
