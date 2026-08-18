@@ -2,7 +2,7 @@
 // renders nothing (no URL change, no visual feedback) until the destination
 // route's loader responds, so a slow loader makes nav links feel dead — this
 // gives sub-frame click feedback for any navigation slower than SHOW_DELAY_MS.
-import { useNavigation } from '@remix-run/react';
+import { useNavigation } from 'react-router';
 import type { CSSProperties } from 'react';
 import { useEffect, useState } from 'react';
 

@@ -3,7 +3,8 @@
 // error. Factored out so login + register stay identical — signup gained Google
 // when the /agents SEO "open this agent" CTA started routing new visitors there.
 
-import { json, redirect } from '@remix-run/node';
+import { redirect } from 'react-router';
+import { json } from '~/lib/routerResponse';
 import { authenticate } from '~/lib/auth.server';
 
 export async function handleGoogleOAuthAction(request: Request) {
