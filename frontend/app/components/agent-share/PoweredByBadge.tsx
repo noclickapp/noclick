@@ -1,14 +1,18 @@
 // "Powered by NoClick" referral badge on public shared-agent pages — the
-// growth loop: every shared agent page links back to NoClick with attribution
-// carried in utm params + the link id. Rendered inline in the composer's hint
-// row (via AgentChatComposer footerEnd) so it costs no vertical space.
+// growth loop: every shared agent page links back to NoClick with utm
+// attribution. Rendered inline in the composer's hint row (via
+// AgentChatComposer footerEnd) so it costs no vertical space.
+//
+// The link id is deliberately NOT carried. It is the capability: whoever holds
+// it can talk to the agent, billed to its owner. Putting it in an outbound href
+// hands it to our own logs on every click, and to anything in between.
 
 import { LogoMark } from '~/components/shared/LogoMark';
 
-export function PoweredByBadge({ linkId }: { linkId: string }) {
+export function PoweredByBadge() {
     return (
         <a
-            href={`https://noclick.com/?utm_source=agent-share&utm_medium=badge&ref=${encodeURIComponent(linkId)}`}
+            href="https://noclick.com/?utm_source=agent-share&utm_medium=badge"
             target="_blank"
             rel="noopener noreferrer"
             data-testid="agent-share-powered-by"
