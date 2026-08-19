@@ -495,7 +495,7 @@ class TestConfigParsing:
         ("set_dimension_size", {"start_index": 1, "pixel_size": 200}),
         ("merge_cells", {"range": "A1:D1"}),
         ("unmerge_cells", {"range": "A1:D1"}),
-        ("update_cell_borders", {"range": "A1:D1"}),
+        ("format_borders", {"range": "A1:D1"}),
         ("add_alternating_colors", {"range": "A1:Z100"}),
         ("set_basic_filter", {}),
         ("clear_basic_filter", {}),
