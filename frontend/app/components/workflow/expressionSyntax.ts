@@ -175,7 +175,13 @@ export function detectAccessorContext(value: string, cursorPos: number): Autocom
 // ready for transforms (`.split(',')` etc.). Non-identifier path keys (e.g. "First
 // Name") use bracket notation; `[n]` indices are preserved.
 export function pathToExpression(nodeId: string, path: string): string {
-    const esc = (s: string) => s.replace(/'/g, "\\'");
+    const esc = (s: string) => s
+        .replace(/\\/g, '\\\\')
+        .replace(/'/g, "\\'")
+        .replace(/\r/g, '\\r')
+        .replace(/\n/g, '\\n')
+        .replace(/\u2028/g, '\\u2028')
+        .replace(/\u2029/g, '\\u2029');
     let expr = `$('${esc(nodeId)}')`;
     if (!path) return expr;
     for (const seg of path.split('.')) {

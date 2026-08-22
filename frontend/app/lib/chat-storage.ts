@@ -4,6 +4,8 @@
 // all degrade through the same try/catch path — the hooks remain functional
 // (without persistence) instead of crashing.
 
+import { secureRandomId } from './secureRandom';
+
 function isAvailable(): boolean {
     return typeof window !== 'undefined' && typeof window.sessionStorage !== 'undefined';
 }
@@ -46,7 +48,7 @@ export function writeString(key: string, value: string): void {
     }
 }
 
-/** Crypto-quality random id with a fallback for older browsers. */
+/** Crypto-quality random id. */
 export function freshConversationId(): string {
-    return globalThis.crypto?.randomUUID?.() || `${Date.now()}-${Math.random().toString(36).slice(2)}`;
+    return secureRandomId();
 }

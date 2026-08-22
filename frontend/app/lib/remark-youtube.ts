@@ -6,6 +6,39 @@ import { visit } from 'unist-util-visit';
 import type { Plugin } from 'unified';
 import type { Root, Paragraph, HTML, Text, Link } from 'mdast';
 
+const YOUTUBE_HOSTS = new Set(['youtube.com', 'www.youtube.com', 'm.youtube.com']);
+const YOUTUBE_SHORT_HOSTS = new Set(['youtu.be', 'www.youtu.be']);
+
+/** Resolve a raw video id or a URL on an explicitly trusted YouTube host. */
+export function normalizeYoutubeTarget(target: string): string | null {
+  if (target.startsWith('youtube:')) return target.slice('youtube:'.length);
+
+  const hostWithoutScheme = /^(?:(?:www|m)\.)?youtube\.com\/|^(?:www\.)?youtu\.be\//i;
+  const looksLikeUrl = /^[a-z][a-z0-9+.-]*:\/\//i.test(target) || target.startsWith('//');
+  if (!looksLikeUrl && !hostWithoutScheme.test(target)) return target;
+
+  try {
+    const candidate = target.startsWith('//')
+      ? `https:${target}`
+      : looksLikeUrl
+        ? target
+        : `https://${target}`;
+    const url = new URL(candidate);
+    if (url.protocol !== 'https:' && url.protocol !== 'http:') return null;
+
+    const hostname = url.hostname.toLowerCase();
+    if (YOUTUBE_SHORT_HOSTS.has(hostname)) {
+      return url.pathname.split('/').filter(Boolean)[0] ?? null;
+    }
+    if (YOUTUBE_HOSTS.has(hostname) && url.pathname === '/watch') {
+      return url.searchParams.get('v');
+    }
+    return null;
+  } catch {
+    return null;
+  }
+}
+
 const remarkYoutube: Plugin<[], Root> = () => {
   return (tree) => {
     visit(tree, 'paragraph', (node: Paragraph, index, parent) => {
@@ -49,13 +82,8 @@ const remarkYoutube: Plugin<[], Root> = () => {
       }
 
       // Extract video ID from various URL formats
-      let cleanVideoId = videoId;
-      if (videoId.startsWith('youtube:')) {
-        cleanVideoId = videoId.replace('youtube:', '');
-      } else if (videoId.includes('youtube.com') || videoId.includes('youtu.be')) {
-        const match = videoId.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&?]+)/);
-        cleanVideoId = match ? match[1] : videoId;
-      }
+      const cleanVideoId = normalizeYoutubeTarget(videoId);
+      if (!cleanVideoId) return;
 
       // Security: Validate video ID and extract query parameters
       const [baseVideoId, ...queryParts] = cleanVideoId.split('?');

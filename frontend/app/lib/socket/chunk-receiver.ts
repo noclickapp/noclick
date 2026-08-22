@@ -214,7 +214,9 @@ export class ChunkReassemblyManager {
       console.log(`[ChunkReceiver] Successfully reassembled ${__chunk_id}`);
       return payload;
     } catch (error) {
-      console.error(`[ChunkReceiver] Failed to reassemble ${__chunk_id}:`, error);
+      // Keep the format string constant: chunk ids arrive over the socket and
+      // may contain printf-style tokens interpreted by console implementations.
+      console.error('[ChunkReceiver] Failed to reassemble chunk:', __chunk_id, error);
       this.buffers.delete(__chunk_id);
       return null;
     }

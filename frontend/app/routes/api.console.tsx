@@ -46,6 +46,6 @@ export async function action({ request }: ActionFunctionArgs) {
         return json({ success: true });
     } catch (error) {
         console.error('Failed to write console log:', error);
-        return json({ success: false, error: String(error) }, { status: 500 });
+        return json({ success: false, error: 'Failed to write console log' }, { status: 500 });
     }
 }

@@ -23,8 +23,8 @@ export const CANVAS_GRID_HEX_LIGHT = '#d0d0d6';
 
 // CSS-tileable SVG matching the xyflow cross above, for ForkCanvas's CSS-grid
 // layer. A gap×gap cell with a centered "+" of extent CANVAS_GRID_SIZE.
-const _c = CANVAS_GRID_HEX_DARK.replace('#', '%23');
-const _cl = CANVAS_GRID_HEX_LIGHT.replace('#', '%23');
+const _c = encodeURIComponent(CANVAS_GRID_HEX_DARK);
+const _cl = encodeURIComponent(CANVAS_GRID_HEX_LIGHT);
 const _h = CANVAS_GRID_GAP / 2;
 const _s = CANVAS_GRID_SIZE / 2;
 export const CANVAS_GRID_CSS_BG = `url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='${CANVAS_GRID_GAP}' height='${CANVAS_GRID_GAP}'><path d='M ${_h} ${_h - _s} L ${_h} ${_h + _s} M ${_h - _s} ${_h} L ${_h + _s} ${_h}' stroke='${_c}' stroke-width='1' stroke-linecap='round'/></svg>")`;

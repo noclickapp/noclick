@@ -23,7 +23,7 @@ if (!apiKey) {
 }
 
 console.log('Connecting to NoClick backend...');
-console.log(`  API Key: ${apiKey.substring(0, 12)}...`);
+console.log('  API key: configured');
 console.log(`  Workflow: ${workflowId || '(all)'}`);
 
 try {
