@@ -1,5 +1,5 @@
 """Gemini 3 rejects replayed functionCall parts without a thoughtSignature
-(INVALID_ARGUMENT; the 2026-08-09 BYOK incident — every agent tool-call turn on
+(INVALID_ARGUMENT; a 2026-08 BYOK incident affected every agent tool-call turn on
 gemini-3.5-flash died). Stock litellm >= 1.96 handles this natively:
 a real signature carried on the tool call (provider_specific_fields, tool or
 function level, or encoded into the tool_call_id) is replayed, and a dummy

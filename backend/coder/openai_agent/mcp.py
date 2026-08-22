@@ -39,6 +39,7 @@ import httpx
 from mcp.client.session import ClientSession
 from mcp.client.sse import sse_client
 from mcp.client.streamable_http import streamable_http_client
+from utils.ssrf import assert_url_allowed, ssrf_request_hook
 
 logger = logging.getLogger(__name__)
 
@@ -83,6 +84,21 @@ def _build_headers(
 _HTTP_TIMEOUT = httpx.Timeout(connect=30.0, read=300.0, write=30.0, pool=30.0)
 
 
+def _mcp_http_client_factory(
+    headers: Dict[str, str] | None = None,
+    timeout: httpx.Timeout | None = None,
+    auth: httpx.Auth | None = None,
+) -> httpx.AsyncClient:
+    """Build an MCP client that revalidates every request and redirect hop."""
+    return httpx.AsyncClient(
+        headers=headers,
+        timeout=timeout or _HTTP_TIMEOUT,
+        auth=auth,
+        follow_redirects=True,
+        event_hooks={"request": [ssrf_request_hook()]},
+    )
+
+
 @contextlib.asynccontextmanager
 async def _transport(
     url: str, transport_type: str, headers: Dict[str, str]
@@ -99,12 +115,16 @@ async def _transport(
     closes — even if MCP handshake raises.
     """
     if transport_type == "shttp":
-        async with httpx.AsyncClient(headers=headers, timeout=_HTTP_TIMEOUT) as client:
+        async with _mcp_http_client_factory(headers, _HTTP_TIMEOUT) as client:
             async with streamable_http_client(url, http_client=client) as streams:
                 yield streams
         return
     if transport_type == "sse":
-        async with sse_client(url, headers=headers) as streams:
+        async with sse_client(
+            url,
+            headers=headers,
+            httpx_client_factory=_mcp_http_client_factory,
+        ) as streams:
             yield streams
         return
     raise ValueError(f"Unsupported MCP transport_type: {transport_type!r}")
@@ -150,6 +170,11 @@ async def discover_tools(server_config: Dict[str, Any]) -> List[Dict[str, Any]]:
         massaging out of OpenHands' MCPClient.
     """
     url = server_config["url"]
+    # MCP endpoints are user-configured server-side fetches. Validate before
+    # opening either transport so they cannot target metadata, loopback or
+    # private infrastructure. Local development can use the same explicit
+    # HTTP_NODE_ALLOW_PRIVATE_IPS opt-out as the HTTP node.
+    await assert_url_allowed(url)
     transport_type = server_config.get("transport_type", "shttp")
     headers = _build_headers(
         api_key=server_config.get("api_key"),
@@ -200,6 +225,7 @@ async def call_tool(
     )
 
     try:
+        await assert_url_allowed(url)
         async with _transport(url, transport_type, headers) as streams:
             read, write = streams[0], streams[1]
             async with ClientSession(read, write) as session:

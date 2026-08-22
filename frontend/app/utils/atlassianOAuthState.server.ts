@@ -16,8 +16,7 @@ function getStateSecret(): string {
     const secret =
         process.env.ATLASSIAN_STATE_SECRET ||
         process.env.SESSION_SECRET ||
-        process.env.ATLASSIAN_CLIENT_SECRET ||
-        process.env.ATLASSIAN_CLIENT_ID;
+        process.env.ATLASSIAN_CLIENT_SECRET;
     if (!secret) {
         throw new Error('ATLASSIAN_STATE_SECRET, SESSION_SECRET, or ATLASSIAN_CLIENT_SECRET environment variable is required');
     }

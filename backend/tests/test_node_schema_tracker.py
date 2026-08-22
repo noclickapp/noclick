@@ -1,14 +1,19 @@
-"""Unit tests for the pure helpers in utils/node_schema_tracker.py.
+"""Unit tests for helpers in utils/node_schema_tracker.py.
 
 Covers schema extraction, value clipping, the suggested-refs validator, and
-the deterministic hash. The LLM call itself (``_generate_suggested_refs``)
-and the DB upsert (``track_node_schema``) are exercised via integration
-flows, not here.
+the deterministic hash. The suggested-refs tests cover the edition/credential
+boundary; DB upserts are exercised via integration flows.
 """
+
+import json
+from types import SimpleNamespace
+from unittest.mock import AsyncMock
 
 import pytest
 
+from utils import node_schema_tracker
 from utils.node_schema_tracker import (
+    _generate_suggested_refs,
     clip_values,
     compute_schema_hash,
     extract_schema,
@@ -137,3 +142,97 @@ class TestValidateSuggestedRefs:
         ]}
         result = _validate_suggested_refs(parsed, valid_paths)
         assert result == [{"path": "count", "label": "Total", "description": "Sum."}]
+
+
+class TestGenerateSuggestedRefsCredentialGate:
+    @staticmethod
+    def _valid_response():
+        content = json.dumps(
+            {
+                "refs": [
+                    {
+                        "path": "name",
+                        "label": "Name",
+                        "description": "The displayed name.",
+                    }
+                ],
+            }
+        )
+        return SimpleNamespace(
+            choices=[SimpleNamespace(message=SimpleNamespace(content=content))],
+        )
+
+    @pytest.mark.asyncio
+    @pytest.mark.parametrize("key_value", [None, "", "   "])
+    async def test_keyless_local_skips_without_calling_litellm(
+        self,
+        monkeypatch,
+        key_value,
+    ):
+        monkeypatch.setenv("NOCLICK_LOCAL", "1")
+        if key_value is None:
+            # Explicit deletion keeps an ambient developer-shell key from
+            # turning this no-egress regression into a false positive.
+            monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
+        else:
+            monkeypatch.setenv("OPENROUTER_API_KEY", key_value)
+        # These are upstream routing choices *behind* OpenRouter, not valid
+        # credentials for the fixed openrouter/... LiteLLM model.
+        monkeypatch.setenv("GROQ_API_KEY", "ambient-groq-key")
+        monkeypatch.setenv("CEREBRAS_API_KEY", "ambient-cerebras-key")
+        completion = AsyncMock()
+        monkeypatch.setattr(node_schema_tracker.litellm, "acompletion", completion)
+
+        result = await _generate_suggested_refs(
+            "automation-test",
+            "read",
+            {"name": "string"},
+            {"name": "Ada"},
+        )
+
+        assert result is None
+        completion.assert_not_awaited()
+
+    @pytest.mark.asyncio
+    async def test_configured_local_calls_with_explicit_openrouter_key(
+        self, monkeypatch
+    ):
+        monkeypatch.setenv("NOCLICK_LOCAL", "1")
+        monkeypatch.setenv("OPENROUTER_API_KEY", "operator-configured-key")
+        completion = AsyncMock(return_value=self._valid_response())
+        monkeypatch.setattr(node_schema_tracker.litellm, "acompletion", completion)
+
+        result = await _generate_suggested_refs(
+            "automation-test",
+            "read",
+            {"name": "string"},
+            {"name": "Ada"},
+        )
+
+        assert result == [
+            {
+                "path": "name",
+                "label": "Name",
+                "description": "The displayed name.",
+            }
+        ]
+        assert completion.await_count == 1
+        assert completion.await_args.kwargs["api_key"] == "operator-configured-key"
+
+    @pytest.mark.asyncio
+    async def test_hosted_behavior_does_not_require_environment_key(self, monkeypatch):
+        monkeypatch.delenv("NOCLICK_LOCAL", raising=False)
+        monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
+        completion = AsyncMock(return_value=self._valid_response())
+        monkeypatch.setattr(node_schema_tracker.litellm, "acompletion", completion)
+
+        result = await _generate_suggested_refs(
+            "automation-test",
+            "read",
+            {"name": "string"},
+            {"name": "Ada"},
+        )
+
+        assert result is not None
+        assert completion.await_count == 1
+        assert "api_key" not in completion.await_args.kwargs

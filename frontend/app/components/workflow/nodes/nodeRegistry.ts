@@ -8,6 +8,7 @@
 
 import { ComponentType, memo } from 'react';
 import { NodeProps } from '@xyflow/react';
+import { inboundEmailDomain } from '~/lib/inboundEmail';
 import { withNodeWrapper } from './withNodeWrapper';
 import { getDefaultLabelFromType } from './base/NodeLabel';
 import { TelegramNode } from './TelegramNode';
@@ -313,6 +314,11 @@ export function buildReactFlowNodeTypes(additionalTypes: Record<string, Componen
 
 // Helper function to get all searchable nodes
 export function getSearchableNodes(): NodeDefinition[] {
+    // Keep rendering support for an imported workflow, but do not offer a new
+    // inbound-email trigger until this installation has a domain that it owns.
+    if (!inboundEmailDomain()) {
+        return AVAILABLE_NODES.filter((node) => node.type !== 'trigger-email');
+    }
     return AVAILABLE_NODES;
 }
 

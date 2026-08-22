@@ -1,9 +1,8 @@
-"""
-Geo-IP utility for looking up country from IP address.
-Uses the free ip-api.com service (no API key required, 45 requests/minute limit).
-"""
+"""Optional Geo-IP lookup for operator-configured login notifications."""
 
 import logging
+import os
+import ipaddress
 from typing import Optional
 
 import httpx
@@ -16,7 +15,7 @@ _ip_cache: dict[str, Optional[str]] = {}
 
 async def get_country_from_ip(ip: str) -> Optional[str]:
     """
-    Get country name from IP address using ip-api.com.
+    Get a country name from an operator-configured HTTPS Geo-IP endpoint.
 
     Args:
         ip: IP address to lookup
@@ -26,6 +25,21 @@ async def get_country_from_ip(ip: str) -> Optional[str]:
     """
     if not ip or ip in ('127.0.0.1', 'localhost', '::1'):
         return None
+    try:
+        ipaddress.ip_address(ip)
+    except ValueError:
+        return None
+
+    # IP addresses are personal data.  Never send one to an implicit vendor:
+    # an operator who wants geo on their Slack login notifications must opt in
+    # with an HTTPS endpoint such as ``https://geo.example.com/json/{ip}``.
+    endpoint_template = (os.getenv("GEOIP_LOOKUP_URL") or "").strip()
+    if not endpoint_template:
+        return None
+    if not endpoint_template.startswith("https://"):
+        logger.warning("GEOIP_LOOKUP_URL must use HTTPS; geo lookup disabled")
+        return None
+    endpoint = endpoint_template.replace("{ip}", ip)
 
     # Check cache first
     if ip in _ip_cache:
@@ -34,7 +48,7 @@ async def get_country_from_ip(ip: str) -> Optional[str]:
     try:
         async with httpx.AsyncClient() as client:
             response = await client.get(
-                f"http://ip-api.com/json/{ip}",
+                endpoint,
                 params={"fields": "status,country,countryCode"},
                 timeout=5.0
             )
@@ -68,12 +82,6 @@ def extract_client_ip(environ: dict) -> Optional[str]:
     Returns:
         Client IP address or None if not found.
     """
-    # Log available headers for debugging (only IP-related ones)
-    ip_headers = {k: v for k, v in environ.items()
-                  if any(x in k.upper() for x in ['FORWARD', 'REAL', 'REMOTE', 'CLIENT', 'IP'])}
-    # Use INFO level temporarily to debug production
-    logger.info(f"[GEO] Available IP headers: {ip_headers}")
-
     # Check X-Forwarded-For header (may contain multiple IPs)
     forwarded_for = environ.get('HTTP_X_FORWARDED_FOR')
     if forwarded_for:
