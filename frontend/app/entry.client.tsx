@@ -49,7 +49,14 @@ if (process.env.NODE_ENV === 'development') {
             catch { return String(a); }
         }).join(' ');
 
+    // Circuit-breaker: if /api/console isn't served (e.g. the route module is a
+    // .ts resource route that routes.ts's .tsx-only filter drops), a 404 renders
+    // the SSR error document on every forwarded log, flooding the dev server and
+    // starving real routes. Disable forwarding permanently after the first
+    // non-OK response so a dead endpoint can never loop.
+    let logForwardingDisabled = false;
     const logToFile = (type: string, args: any[]) => {
+        if (logForwardingDisabled) return;
         fetch('/api/console', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
@@ -60,7 +67,8 @@ if (process.env.NODE_ENV === 'development') {
                     return String(arg);
                 }
             })}),
-        }).catch(() => {});
+        }).then(res => { if (!res.ok) logForwardingDisabled = true; })
+          .catch(() => { logForwardingDisabled = true; });
     };
 
     /** Forward a message to the Claude Code channel with a contextual prefix */
