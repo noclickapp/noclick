@@ -39,7 +39,7 @@ import httpx
 from mcp.client.session import ClientSession
 from mcp.client.sse import sse_client
 from mcp.client.streamable_http import streamable_http_client
-from utils.ssrf import assert_url_allowed, ssrf_request_hook
+from utils.ssrf import assert_url_allowed, guarded_async_client
 
 logger = logging.getLogger(__name__)
 
@@ -90,12 +90,11 @@ def _mcp_http_client_factory(
     auth: httpx.Auth | None = None,
 ) -> httpx.AsyncClient:
     """Build an MCP client that revalidates every request and redirect hop."""
-    return httpx.AsyncClient(
+    return guarded_async_client(
         headers=headers,
         timeout=timeout or _HTTP_TIMEOUT,
         auth=auth,
         follow_redirects=True,
-        event_hooks={"request": [ssrf_request_hook()]},
     )
 
 
@@ -173,7 +172,7 @@ async def discover_tools(server_config: Dict[str, Any]) -> List[Dict[str, Any]]:
     # MCP endpoints are user-configured server-side fetches. Validate before
     # opening either transport so they cannot target metadata, loopback or
     # private infrastructure. Local development can use the same explicit
-    # HTTP_NODE_ALLOW_PRIVATE_IPS opt-out as the HTTP node.
+    # OUTBOUND_ALLOW_PRIVATE_IPS opt-out as the other dynamic connectors.
     await assert_url_allowed(url)
     transport_type = server_config.get("transport_type", "shttp")
     headers = _build_headers(

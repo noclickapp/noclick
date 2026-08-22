@@ -11,6 +11,7 @@ from utils.ssrf import SSRFError
 
 @pytest.mark.asyncio
 async def test_mcp_discovery_blocks_private_server_url(monkeypatch):
+    monkeypatch.delenv("OUTBOUND_ALLOW_PRIVATE_IPS", raising=False)
     monkeypatch.delenv("HTTP_NODE_ALLOW_PRIVATE_IPS", raising=False)
 
     with pytest.raises(SSRFError, match="non-public address"):
@@ -22,6 +23,7 @@ async def test_mcp_discovery_blocks_private_server_url(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_mcp_tool_call_reports_private_server_url(monkeypatch):
+    monkeypatch.delenv("OUTBOUND_ALLOW_PRIVATE_IPS", raising=False)
     monkeypatch.delenv("HTTP_NODE_ALLOW_PRIVATE_IPS", raising=False)
 
     result = await call_tool(
@@ -49,6 +51,7 @@ async def test_mcp_private_server_opt_out_is_explicit(monkeypatch):
 
 @pytest.mark.asyncio
 async def test_mcp_transport_revalidates_redirect_hops(monkeypatch):
+    monkeypatch.delenv("OUTBOUND_ALLOW_PRIVATE_IPS", raising=False)
     monkeypatch.delenv("HTTP_NODE_ALLOW_PRIVATE_IPS", raising=False)
     client = _mcp_http_client_factory()
     try:
