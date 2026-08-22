@@ -55,7 +55,7 @@ export function EmphasizedBackdrop({ cutoutRects, isDragging, isResizable }: Emp
                     WebkitMaskRepeat: 'no-repeat',
                     maskSize: '100% 100%',
                     WebkitMaskSize: '100% 100%',
-                }}
+                } as React.CSSProperties}
                 aria-hidden="true"
             />
             {/* Dim layer — same cutout shape via SVG <mask>, sits above the blur */}

@@ -36,6 +36,7 @@ async function openFilterArrayFields(id: string) {
 export default async function () {
   const filter = nc.nodes.list().find((n: any) => n.type === 'filter');
   nc.assert.truthy(filter, 'a filter node must exist on the canvas');
+  if (!filter) throw new Error('filter node not found');
   const id = filter.id;
   const originalOperation = filter.data?.operation ?? 'filter_array';
 

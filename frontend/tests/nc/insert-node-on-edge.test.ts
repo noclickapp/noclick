@@ -54,12 +54,13 @@ export default async function () {
     const edgeOut = afterEdges.find((e: any) => e.source === newNode!.id && e.target === TGT);
 
     nc.assert.truthy(newNode, 'a new node was inserted');
+    if (!newNode) throw new Error('inserted node not found');
     nc.assert.equal(newNode!.type, dataflowType, 'inserted node has the picked type');
     nc.assert.truthy(oldEdgeGone, 'original edge was removed');
     nc.assert.truthy(edgeIn, 'source→new edge was created');
     nc.assert.truthy(edgeOut, 'new→target edge was created');
-    nc.assert.equal(edgeIn!.type, 'animated', 'source→new edge is styled');
-    nc.assert.equal(edgeOut!.type, 'animated', 'new→target edge is styled');
+    nc.assert.equal(edgeIn?.type, 'animated', 'source→new edge is styled');
+    nc.assert.equal(edgeOut?.type, 'animated', 'new→target edge is styled');
     nc.assert.equal(afterEdges.length - beforeEdgeCount, 1, 'net +1 edge (drop 1, add 2)');
 
     return { pass: true, insertedType: dataflowType, spliced: `${SRC} → ${newNode!.id} → ${TGT}` };

@@ -13,6 +13,7 @@
 // what the FE tried to send to the BE.
 
 import { socketReceiver } from '~/lib/socket-receiver';
+import type { ServerToClientEvents } from '~/types/socket-events.generated';
 
 export interface CapturedEmit {
     name: string;
@@ -88,7 +89,10 @@ export class MockSocket {
      *  would in production. */
     serverEmit(name: string, data: unknown): void {
         // socket-receiver injectEvent dispatches to its handler map.
-        socketReceiver.injectEvent(name as never, data as never);
+        socketReceiver.injectWireEvent(
+            name as keyof ServerToClientEvents,
+            data,
+        );
     }
 
     /** Convenience: assert FE emitted a specific event by name; throws

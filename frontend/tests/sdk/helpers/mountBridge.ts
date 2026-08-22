@@ -7,6 +7,7 @@ import { renderHook, act } from '@testing-library/react';
 import { vi } from 'vitest';
 import type { Node } from '@xyflow/react';
 import { socketReceiver } from '~/lib/socket-receiver';
+import type { ServerToClientEvents } from '~/types/socket-events.generated';
 import { useSDKBridge } from '~/hooks/useSDKBridge';
 
 export interface MountBridgeOptions {
@@ -110,7 +111,9 @@ export function mountBridge(opts: MountBridgeOptions = {}) {
     },
     /** Drive a backend socket event into the host (the realtime path). */
     serverEmit(name: string, data: unknown) {
-      act(() => { socketReceiver.injectEvent(name as never, data as never); });
+      act(() => {
+        socketReceiver.injectWireEvent(name as keyof ServerToClientEvents, data);
+      });
     },
     /** Fire the iframe's load event, triggering the bridge's init effect. */
     fireLoad() {

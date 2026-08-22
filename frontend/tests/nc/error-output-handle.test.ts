@@ -11,6 +11,7 @@ export default async function () {
     n.type && !['conditional', 'switch', 'iteration', 'on-error', 'sticky-note', 'agent', 'approval', 'alarm', 'mcp-server', 'noclick', 'state-manager', 'serverless-function', 'filesystem', 'interface', 'tool', 'run-trigger', 'merge', 'filter'].includes(n.type)
   );
   nc.assert.truthy(target, 'Need at least one automation node on the canvas');
+  if (!target) throw new Error('automation node not found');
   const nodeId = target.id;
 
   // Snapshot baseline handle count
@@ -32,10 +33,18 @@ export default async function () {
   nc.assert.gt(handlesAfter, handlesBefore, 'Total handle count should increase after enabling error output');
 
   // Toggle back
+  const current = nc.nodes.get(nodeId);
+  if (!current) throw new Error(`node ${nodeId} disappeared during test`);
+  const currentConfig =
+    current.data?.config &&
+    typeof current.data.config === 'object' &&
+    !Array.isArray(current.data.config)
+      ? (current.data.config as Record<string, unknown>)
+      : {};
   nc.nodes.update(nodeId, {
     config: {
-      ...(nc.nodes.get(nodeId).data?.config ?? {}),
-      _settings: { ...(nc.nodes.get(nodeId).data?.config as any)?._settings, onError: 'stopWorkflow' },
+      ...currentConfig,
+      _settings: { ...(currentConfig._settings as Record<string, unknown> | undefined), onError: 'stopWorkflow' },
     },
   });
   await nc.wait.ms(150);

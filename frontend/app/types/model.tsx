@@ -11,6 +11,10 @@ export interface Model {
     /** Unique identifier for the model */
     id: string;
 
+    /** Human-readable catalog name. Some static entries omit it and fall back
+     * to the model id at display sites. */
+    name?: string;
+
     /** Provider name (e.g., 'openrouter', 'openai', 'anthropic', 'google') */
     provider: ModelProvider;
 

@@ -21,7 +21,12 @@ function visibleOptions(): HTMLButtonElement[] {
 
 function teamIdValue(): string {
   const node = nc.nodes.list().find((n: { id: string }) => n.id === TEMP_ID);
-  return String(node?.data?.config?.teamId ?? '');
+  const config = node?.data?.config;
+  return String(
+    config && typeof config === 'object' && !Array.isArray(config)
+      ? (config as Record<string, unknown>).teamId ?? ''
+      : ''
+  );
 }
 
 const mark = (phase: string) => { (window as unknown as Record<string, unknown>).__comboTestPhase = phase; };
@@ -29,9 +34,16 @@ const mark = (phase: string) => { (window as unknown as Record<string, unknown>)
 export default async function () {
   mark('start');
   // ── Setup: temp Linear node reusing the canvas Linear credential ───────
-  const existingLinear = nc.nodes.list().find((n: { type: string }) => n.type === 'automation-linear');
+  const existingLinear = nc.nodes.list().find((n) => n.type === 'automation-linear');
   nc.assert.truthy(existingLinear, 'an automation-linear node with credentials must exist');
-  const credentialIds = existingLinear.data?.credentialIds ?? {};
+  if (!existingLinear) throw new Error('automation-linear node not found');
+  const rawCredentialIds = existingLinear.data?.credentialIds;
+  const credentialIds =
+    rawCredentialIds &&
+    typeof rawCredentialIds === 'object' &&
+    !Array.isArray(rawCredentialIds)
+      ? (rawCredentialIds as Record<string, unknown>)
+      : {};
   nc.assert.truthy(Object.keys(credentialIds).length > 0, 'linear node should have a credential');
 
   nc.nodes.delete(TEMP_ID); // clean slate if a previous run leaked

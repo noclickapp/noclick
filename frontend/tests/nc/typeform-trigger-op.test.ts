@@ -19,7 +19,7 @@ export default async function () {
     const defs = schema.$defs ?? {};
     const variants = config.oneOf.map((v: any) => {
         const name = String(v.$ref ?? '').split('/').pop();
-        return defs[name] ?? v;
+        return name ? defs[name] ?? v : v;
     });
 
     // Replicate the picker's trigger detection: read `x-is-trigger` off each

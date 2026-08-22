@@ -342,7 +342,15 @@ test.describe('FlowCanvas Drag Performance', () => {
         await cdpSession.send('Emulation.setCPUThrottlingRate', { rate: 2 });
 
         const nodeCounts = [10, 50, 100];
-        const results: Record<number, { stalledFrames: number; sampleCount: number }> = {};
+        const results: Record<
+            number,
+            {
+                stalledFrames: number;
+                frameCount: number;
+                durationMs: number;
+                stallPercent: number;
+            }
+        > = {};
 
         for (const count of nodeCounts) {
             // Inject new node count

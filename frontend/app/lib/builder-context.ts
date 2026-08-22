@@ -58,11 +58,14 @@ export function getBuilderContext(): Readonly<BuilderContext> {
 export function updateBuilderContext(partial: Partial<BuilderContext>): void {
     // Direct assignment on the proxy — Valtio diff-detects per key and only
     // notifies subscribers when something actually changed.
-    for (const key of Object.keys(partial) as (keyof BuilderContext)[]) {
+    const updateKey = <K extends keyof BuilderContext>(key: K) => {
         const next = partial[key];
-        if (builderContextStore[key] !== next) {
-            (builderContextStore as Record<string, unknown>)[key as string] = next as unknown;
+        if (next !== undefined && builderContextStore[key] !== next) {
+            builderContextStore[key] = next;
         }
+    };
+    for (const key of Object.keys(partial) as (keyof BuilderContext)[]) {
+        updateKey(key);
     }
 }
 

@@ -22,6 +22,8 @@ import type { Message, EditSegment } from '~/components/chat/types';
 import type { ActiveGeneration } from '~/lib/activeGenStore';
 import { mapPersistedMessages, type PersistedMessage } from '~/hooks/conversationRestoreMapping';
 
+type EditEvents = Extract<EditSegment, { type: 'events' }>['events'];
+
 /** Convert one active gen into bubbles.
  *
  * A fresh gen produces [user_prompt, asst_in_flight]. A resume gen
@@ -41,7 +43,7 @@ function activeGenToBubbles(gen: ActiveGeneration): Message[] {
     if (gen.events.length > 0) {
         segments.push({
             type: 'events',
-            events: gen.events.map(e => ({ ...(e as Record<string, unknown>), status: 'completed' as const })) as EditSegment['events'],
+            events: gen.events.map(e => ({ ...(e as Record<string, unknown>), status: 'completed' as const })) as EditEvents,
         });
     }
     // A gen the user stopped (`wasInterrupted` → "interrupted by user" notice)
@@ -82,7 +84,7 @@ function genExtras(gen: ActiveGeneration): {
     if (gen.events.length > 0) {
         segments.push({
             type: 'events',
-            events: gen.events.map(e => ({ ...(e as Record<string, unknown>), status: 'completed' as const })) as EditSegment['events'],
+            events: gen.events.map(e => ({ ...(e as Record<string, unknown>), status: 'completed' as const })) as EditEvents,
         });
     }
     return { segments, steps: [...gen.edit_steps] };

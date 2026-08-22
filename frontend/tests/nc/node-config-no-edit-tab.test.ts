@@ -28,6 +28,7 @@ export default async function () {
     .list()
     .find((n: any) => !['stickyNote', 'agent'].includes(n.type) && !String(n.type).startsWith('trigger-'));
   nc.assert.truthy(node, 'an ordinary config node must exist on the canvas');
+  if (!node) throw new Error('ordinary config node not found');
   const id = node.id;
 
   // Self-heal against harness timing: re-dispatch selection until the toggle renders.

@@ -121,7 +121,7 @@ export function chunkPayload(
  * Intercept and chunk payload if needed, return payload to emit
  */
 export function maybeChunk(
-  socket: { emit: (event: string, data: unknown) => void },
+  emitChunk: (chunk: ChunkMetadata) => void,
   payload: unknown,
   chunkSize: number = DEFAULT_CHUNK_SIZE
 ): unknown {
@@ -133,7 +133,7 @@ export function maybeChunk(
   console.log(`[Chunking] Splitting payload into ${chunks.length} chunks (${getPayloadSize(payload)} bytes)`);
 
   // Send chunks first
-  chunks.forEach(chunk => socket.emit('__chunk__', chunk));
+  chunks.forEach(emitChunk);
 
   // Return wrapper to be emitted with original event name
   return wrapper;

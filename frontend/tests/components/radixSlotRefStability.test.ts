@@ -28,7 +28,7 @@ import { Slot } from '@radix-ui/react-slot';
 // hands the slot a forwardedRef, so the slot takes the inline-composeRefs path.
 const Forwarder = React.forwardRef<HTMLButtonElement, { children: React.ReactNode }>(
   function Forwarder(props, ref) {
-    return React.createElement(Slot, { ref }, props.children);
+    return React.createElement(Slot, { ref, children: props.children });
   },
 );
 
@@ -38,12 +38,17 @@ it('react-slot keeps an asChild child ref stable across re-renders (radix #3799 
   const childRef = (node: unknown) => { if (node) attaches++; else detaches++; };
   const forwarded = React.createRef<HTMLButtonElement>();
 
-  const tree = (tick: number) =>
-    React.createElement(
-      Forwarder,
-      { ref: forwarded },
-      React.createElement('button', { ref: childRef, 'data-tick': tick }, 'tab'),
+  const tree = (tick: number) => {
+    const child = React.createElement(
+      'button',
+      { ref: childRef, 'data-tick': tick },
+      'tab',
     );
+    return React.createElement(Forwarder, {
+      ref: forwarded,
+      children: child,
+    });
+  };
 
   const { rerender } = render(tree(0));
   for (let i = 1; i <= 6; i++) rerender(tree(i));
