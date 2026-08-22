@@ -84,9 +84,9 @@ async def database_health(response: Response) -> dict:
             }
         }
     except Exception as e:
-        logger.error(f"Database health check failed: {e}")
+        logger.error(f"Database health check failed: {e}", exc_info=True)
         response.status_code = 503
         return {
             "status": "unhealthy",
-            "error": str(e)
+            "error": "Database unavailable"
         }

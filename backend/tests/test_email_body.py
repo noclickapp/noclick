@@ -90,6 +90,11 @@ class TestHtmlMode:
         assert "<script" not in html and "alert" not in html
         assert text == "hi"
 
+    def test_script_end_tag_with_whitespace_is_dropped(self):
+        html, text = prepare_email_body("<p>hi</p><script>alert(1)</script   >")
+        assert "<script" not in html and "alert" not in html
+        assert text == "hi"
+
     def test_entities_unescaped_in_text_alternative(self):
         _, text = prepare_email_body("<p>Tom &amp; Jerry</p>")
         assert text == "Tom & Jerry"
