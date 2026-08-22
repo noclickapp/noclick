@@ -95,6 +95,28 @@ class TestHtmlMode:
         assert "<script" not in html and "alert" not in html
         assert text == "hi"
 
+    def test_script_end_tag_with_parse_error_text_is_dropped(self):
+        body = "<p>hi</p><script>alert(1)</script\t\n ignored>"
+        html, text = prepare_email_body(body)
+        assert "<script" not in html and "alert" not in html
+        assert html == "<p>hi</p>"
+        assert text == "hi"
+
+    def test_head_end_tag_with_parse_error_text_is_dropped(self):
+        body = (
+            "<!DOCTYPE html><html><head><style>p{color:red}</style>"
+            "</head\t ignored><body><p data-kind=\"report\">All good.</p></body></html>"
+        )
+        html, text = prepare_email_body(body)
+        assert html == '<p data-kind="report">All good.</p>'
+        assert text == "All good."
+
+    def test_similarly_prefixed_tags_are_preserved(self):
+        body = "<p>hi</p><scripture>verse</scripture><header>title</header>"
+        html, text = prepare_email_body(body)
+        assert html == body
+        assert text == "hi\nversetitle"
+
     def test_entities_unescaped_in_text_alternative(self):
         _, text = prepare_email_body("<p>Tom &amp; Jerry</p>")
         assert text == "Tom & Jerry"
