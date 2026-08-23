@@ -23,9 +23,9 @@ export type { DatasetRow, DatasetPage, DatasetInfo } from './core/dataset.js';
 export type { Transport } from './core/transport.js';
 
 // Input subscriptions — both framework-agnostic and React hook.
-// In iframe context, React is always available via import map.
-// For external apps without React, useInputs will be tree-shaken by bundlers
-// since React is marked as an external/optional peer dep.
+// In iframe context, React is available via the import map. The published npm
+// package declares React as a required peer because this root entry point
+// exports useInputs and therefore imports React at module evaluation time.
 export { onInputsChanged } from './inputs.js';
 export { useInputs } from './react.js';
 

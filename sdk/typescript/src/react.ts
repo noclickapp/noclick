@@ -1,5 +1,6 @@
 // React-specific hooks for @noclick/sdk.
-// Import from '@noclick/sdk/react' to avoid pulling React into non-React apps.
+// The explicit '@noclick/sdk/react' entry is available for React-only imports;
+// the root entry also re-exports this hook for existing custom components.
 
 import { useState, useEffect } from 'react';
 import { currentInputs, listeners } from './inputs.js';

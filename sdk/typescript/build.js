@@ -1,5 +1,5 @@
 // Build script: bundles the SDK into a single ES module.
-// React is external (resolved by iframe import map or installed as peer dep).
+// React is external (resolved by the iframe import map or required npm peer).
 // socket.io-client is external (installed separately for WebSocket transport).
 
 import { build } from 'esbuild';
