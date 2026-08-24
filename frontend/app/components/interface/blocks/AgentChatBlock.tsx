@@ -1091,6 +1091,9 @@ export function AgentChatBlock({
                     attachments={attachments}
                     onAddFiles={isReadOnly ? undefined : addFiles}
                     onRemoveAttachment={removeAttachment}
+                    mentionFiles={workspaceFiles.files}
+                    mentionMount={workspaceFiles.mount}
+                    onMentionRefresh={workspaceFiles.refresh}
                 />
             </div>
 

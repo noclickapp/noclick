@@ -7,12 +7,19 @@
 // guards, and dispatch stay with the caller. Attachment UI renders only when
 // the caller passes `onAddFiles` (the public share page doesn't, yet).
 
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { ArrowUp, FileText, Loader2, Paperclip, X } from 'lucide-react';
 import { UploadProgressBar } from '~/components/ui/upload-progress';
 import { cn } from '~/lib/utils';
 import { useIsMobile } from '~/hooks/useIsMobile';
 import type { PendingChatAttachment } from '~/hooks/useChatAttachments';
+import { MentionMenu, type MentionMenuFile } from '~/components/chat/MentionMenu';
+import {
+    applyMention,
+    detectMentionToken,
+    type MentionToken,
+} from '~/utils/mentionToken';
+import { fuzzyFilter } from '~/utils/fuzzySearch';
 
 // Cap for the auto-grow: past this the textarea scrolls internally. Lower on
 // mobile so the composer never dominates a small screen.
@@ -133,6 +140,9 @@ export function AgentChatComposer({
     attachments,
     onAddFiles,
     onRemoveAttachment,
+    mentionFiles,
+    mentionMount,
+    onMentionRefresh,
 }: {
     value: string;
     onChange: (value: string) => void;
@@ -149,12 +159,77 @@ export function AgentChatComposer({
     /** Enables the attach affordances (button / paste / drop) when present. */
     onAddFiles?: (files: File[]) => void;
     onRemoveAttachment?: (localId: string) => void;
+    /** Workspace files for @-mention autocomplete. Absent (e.g. the public
+     *  share page, which has no workspace) → `@` is inert plain text. */
+    mentionFiles?: MentionMenuFile[];
+    /** Sandbox mount for resolving inserted paths (default "/workspace"). */
+    mentionMount?: string | null;
+    /** Refresh the workspace listing — called once when `@` first opens a menu,
+     *  so a chat that never mentions a file pays nothing. */
+    onMentionRefresh?: () => void;
 }) {
     const localRef = useRef<HTMLTextAreaElement>(null);
     const ref = textareaRef ?? localRef;
     const fileInputRef = useRef<HTMLInputElement>(null);
     const [dragOver, setDragOver] = useState(false);
     const attachEnabled = !!onAddFiles && !inputDisabled;
+
+    // --- @-mention state ---
+    const mentionEnabled = !!mentionFiles && !inputDisabled;
+    const [mention, setMention] = useState<MentionToken | null>(null);
+    const [mentionIndex, setMentionIndex] = useState(0);
+    // One refresh() per open token — reset when the token closes.
+    const mentionRefreshedRef = useRef(false);
+
+    const filteredMentions = useMemo(() => {
+        if (!mention || !mentionFiles) return [];
+        return fuzzyFilter(mentionFiles, mention.query, (f) => [
+            { text: f.path.toLowerCase(), weight: 1, fuzzy: true },
+        ]).slice(0, 8);
+    }, [mention, mentionFiles]);
+    const menuOpen = mentionEnabled && mention !== null && filteredMentions.length > 0;
+
+    // Recompute the active token from the textarea's live value + caret.
+    const syncMention = (el: HTMLTextAreaElement) => {
+        if (!mentionEnabled) return;
+        const tok = detectMentionToken(el.value, el.selectionStart ?? el.value.length);
+        setMention((prev) => {
+            if (tok && (!prev || prev.query !== tok.query)) setMentionIndex(0);
+            return tok;
+        });
+        if (tok) {
+            if (!mentionRefreshedRef.current) {
+                mentionRefreshedRef.current = true;
+                onMentionRefresh?.();
+            }
+        } else {
+            mentionRefreshedRef.current = false;
+        }
+    };
+
+    const closeMention = () => {
+        setMention(null);
+        mentionRefreshedRef.current = false;
+    };
+
+    const acceptMention = (index: number) => {
+        const el = ref.current;
+        const file = filteredMentions[index];
+        if (!el || !mention || !file) return;
+        const mount = (mentionMount || '/workspace').replace(/\/+$/, '');
+        const caret = el.selectionStart ?? el.value.length;
+        const next = applyMention(value, caret, mention, `${mount}/${file.path}`);
+        onChange(next.value);
+        closeMention();
+        // Restore the caret after the controlled re-render lands the new value.
+        requestAnimationFrame(() => {
+            const e2 = ref.current;
+            if (e2) {
+                e2.focus();
+                e2.setSelectionRange(next.caret, next.caret);
+            }
+        });
+    };
     const isMobile = useIsMobile();
     const maxTextareaHeight = isMobile
         ? MAX_TEXTAREA_HEIGHT_PX_MOBILE
@@ -190,7 +265,7 @@ export function AgentChatComposer({
             black in dark mode, which read as a flat wireframe box. */}
                 <div
                     className={cn(
-                        'rounded-2xl border border-border/70 bg-card shadow-lg shadow-black/20 transition-colors focus-within:border-foreground/25',
+                        'relative rounded-2xl border border-border/70 bg-card shadow-lg shadow-black/20 transition-colors focus-within:border-foreground/25',
                         dragOver && 'border-primary/60'
                     )}
                     onDragOver={
@@ -232,16 +307,67 @@ export function AgentChatComposer({
                             ))}
                         </div>
                     ) : null}
+                    {menuOpen ? (
+                        <MentionMenu
+                            files={filteredMentions}
+                            activeIndex={mentionIndex}
+                            onSelect={acceptMention}
+                            onHover={setMentionIndex}
+                        />
+                    ) : null}
                     <textarea
                         ref={ref}
                         value={value}
-                        onChange={(e) => onChange(e.target.value)}
+                        onChange={(e) => {
+                            onChange(e.target.value);
+                            syncMention(e.target);
+                        }}
                         onKeyDown={(e) => {
+                            // The mention menu must preempt Enter-to-send, so its
+                            // keys are handled here (a child listener can't
+                            // reliably win the race — R6/B7).
+                            if (menuOpen) {
+                                if (e.key === 'ArrowDown') {
+                                    e.preventDefault();
+                                    setMentionIndex((i) => (i + 1) % filteredMentions.length);
+                                    return;
+                                }
+                                if (e.key === 'ArrowUp') {
+                                    e.preventDefault();
+                                    setMentionIndex((i) =>
+                                        (i - 1 + filteredMentions.length) % filteredMentions.length,
+                                    );
+                                    return;
+                                }
+                                if (e.key === 'Enter' || e.key === 'Tab') {
+                                    e.preventDefault();
+                                    acceptMention(mentionIndex);
+                                    return;
+                                }
+                                if (e.key === 'Escape') {
+                                    e.preventDefault();
+                                    closeMention();
+                                    return;
+                                }
+                            }
                             if (e.key === 'Enter' && !e.shiftKey) {
                                 e.preventDefault();
                                 onSubmit();
                             }
                         }}
+                        onKeyUp={(e) => {
+                            // Caret moved via arrows/click without editing text →
+                            // re-evaluate the token, but don't fight the menu's own
+                            // navigation keys (handled in onKeyDown).
+                            if (
+                                menuOpen &&
+                                ['ArrowDown', 'ArrowUp', 'Enter', 'Tab', 'Escape'].includes(e.key)
+                            ) {
+                                return;
+                            }
+                            syncMention(e.currentTarget);
+                        }}
+                        onBlur={() => closeMention()}
                         onPaste={
                             attachEnabled
                                 ? (e) => {
