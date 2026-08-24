@@ -88,7 +88,13 @@ class PostgresSession:
         )
         if not row:
             return []
-        items = _extract_history(row["metadata"])
+        from .output_limits import clip_history_item
+
+        # Bound stored tool outputs on replay: one oversized item (pre-cap
+        # execute_bash rows) otherwise kills EVERY subsequent turn on the
+        # provider's context limit — the conversation heals instead of
+        # staying bricked. Read-side only; the stored row is untouched.
+        items = [clip_history_item(it) for it in _extract_history(row["metadata"])]
         if limit is not None and limit < len(items):
             return items[-limit:]
         return items
