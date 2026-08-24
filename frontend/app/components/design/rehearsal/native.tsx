@@ -9,7 +9,7 @@
    frames — never a wrong brand. */
 
 import { useEffect, useRef, type CSSProperties } from 'react';
-import { CheckCheck, Mic, Paperclip } from 'lucide-react';
+import { CheckCheck, FileText, Film, Image as ImageIcon, Mic, Music, Paperclip } from 'lucide-react';
 import { SerializedIcon } from '~/components/shared/SerializedIcon';
 import { cn } from '~/lib/utils';
 import { AGENT_NAME, type Scenario } from './fixture';
@@ -627,6 +627,88 @@ export function InboundMessage({ scenario, edit }: { scenario: Scenario; edit?: 
 
 type Artifact = NonNullable<Scenario['artifacts']>[number];
 
+/** The no-preview media chip — an opaque media_id upload, or a file we can
+    only link. The one piece every shape shares. */
+function MediaChip({ media, ink }: { media: NonNullable<Artifact['media']>; ink?: string }) {
+    const Icon =
+        media.kind === 'image' ? ImageIcon : media.kind === 'video' ? Film : media.kind === 'audio' ? Music : FileText;
+    const label =
+        media.kind === 'file' ? 'Attachment' : media.kind.charAt(0).toUpperCase() + media.kind.slice(1);
+    const chip = (
+        <span
+            className={cn(
+                'inline-flex items-center gap-1.5 rounded-md px-2 py-1 text-[11.5px]',
+                !ink && 'border border-foreground/15 text-foreground/60'
+            )}
+            style={ink ? { color: ink, boxShadow: `inset 0 0 0 1px ${ink}55` } : undefined}
+        >
+            <Icon className="h-3.5 w-3.5 shrink-0" />
+            {label}
+        </span>
+    );
+    if (media.url)
+        return (
+            <a href={media.url} target="_blank" rel="noopener noreferrer" className="inline-block">
+                {chip}
+            </a>
+        );
+    return chip;
+}
+
+/** True when the media can render as a real visual preview (vs a chip). */
+function hasPreview(media: Artifact['media']): media is NonNullable<Artifact['media']> & { url: string } {
+    return Boolean(media?.url && media.kind !== 'file');
+}
+
+/** Edge-to-edge media for BUBBLE shapes: the image fills the bubble and is
+    clipped by ITS corners — WhatsApp/Telegram's media-bubble anatomy, not a
+    rounded thumbnail floating inside the padding. (Agent-sent media has no
+    caption track to offer.) */
+function EdgeMedia({ media }: { media: NonNullable<Artifact['media']> & { url: string } }) {
+    if (media.kind === 'image')
+        return <img src={media.url} alt="Sent by the agent" className="block max-h-64 w-full object-cover" />;
+    if (media.kind === 'video')
+        return (
+            <video src={media.url} controls className="block max-h-64 w-full bg-black">
+                <track kind="captions" />
+            </video>
+        );
+    return null; // audio renders in the caption block, voice-note style
+}
+
+/** Attachment-block media for ROW/EMAIL shapes: Slack and mail clients show
+    uploads as a bordered preview under the text, capped at client width. */
+function AttachedMedia({ media, border }: { media: NonNullable<Artifact['media']>; border?: string }) {
+    if (hasPreview(media)) {
+        if (media.kind === 'image')
+            return (
+                <img
+                    src={media.url}
+                    alt="Sent by the agent"
+                    className="block max-h-64 max-w-full rounded-lg"
+                    style={{ maxWidth: 360, border: border ? `1px solid ${border}` : undefined }}
+                />
+            );
+        if (media.kind === 'video')
+            return (
+                <video
+                    src={media.url}
+                    controls
+                    className="block max-h-64 max-w-full rounded-lg bg-black"
+                    style={{ maxWidth: 360 }}
+                >
+                    <track kind="captions" />
+                </video>
+            );
+        return (
+            <audio src={media.url} controls className="w-full" style={{ maxWidth: 360 }}>
+                <track kind="captions" />
+            </audio>
+        );
+    }
+    return <MediaChip media={media} ink={border} />;
+}
+
 /** Email is a SHAPE, not a provider: gmail sends and the internal send-email
     node both carry a subject and belong in the envelope frame. The outcome's
     destination bar uses the same predicate so frame and bar never disagree. */
@@ -705,9 +787,16 @@ function OutboundSlack({
                     // channel — the byline must say "via <app>" itself.
                     via={!artifact.to}
                 />
-                <p className="mb-0 mt-1.5 whitespace-pre-wrap text-[13px] leading-relaxed text-foreground/85">
-                    <ChatMarkup text={artifact.text} />
-                </p>
+                {artifact.text && (
+                    <p className="mb-0 mt-1.5 whitespace-pre-wrap text-[13px] leading-relaxed text-foreground/85">
+                        <ChatMarkup text={artifact.text} />
+                    </p>
+                )}
+                {artifact.media && (
+                    <div className="mt-1.5">
+                        <AttachedMedia media={artifact.media} />
+                    </div>
+                )}
             </div>
         </div>
     );
@@ -743,19 +832,50 @@ function ThemedBubbleOut({
             )}
             <AppSurface theme={theme} className={cn('p-3', !suppressByline && 'mt-2')}>
                 <div className="flex justify-end">
-                    <div
-                        className={cn('max-w-[88%] rounded-2xl px-3.5 py-2.5', tailClass(theme, 'out'))}
-                        style={{ background: theme.bubbleOut }}
-                    >
-                        <p className="m-0 whitespace-pre-wrap text-[13px] leading-relaxed">
-                            <ChatMarkup text={artifact.text} accent={theme.accent} />
-                        </p>
-                        {theme.ticks && (
-                            <p className="m-0 mt-0.5 flex justify-end">
-                                <CheckCheck className="h-3.5 w-3.5" style={{ color: theme.ticks }} />
-                            </p>
-                        )}
-                    </div>
+                    {(() => {
+                        const media = artifact.media;
+                        const edge = hasPreview(media) && media.kind !== 'audio';
+                        return (
+                            <div
+                                className={cn(
+                                    'max-w-[88%] overflow-hidden rounded-2xl',
+                                    tailClass(theme, 'out')
+                                )}
+                                style={{
+                                    background: theme.bubbleOut,
+                                    // Media bubbles hold a fixed width so the
+                                    // image fills edge-to-edge and the caption
+                                    // wraps beneath it — the native anatomy.
+                                    ...(edge ? { width: 'min(320px, 88%)' } : {}),
+                                }}
+                            >
+                                {edge && <EdgeMedia media={media as NonNullable<Artifact['media']> & { url: string }} />}
+                                <div className="px-3.5 py-2.5">
+                                    {media && !edge && (
+                                        <p className="m-0 mb-1">
+                                            {hasPreview(media) ? (
+                                                <audio src={media.url} controls className="w-full">
+                                                    <track kind="captions" />
+                                                </audio>
+                                            ) : (
+                                                <MediaChip media={media} ink={theme.sub} />
+                                            )}
+                                        </p>
+                                    )}
+                                    {artifact.text && (
+                                        <p className="m-0 whitespace-pre-wrap text-[13px] leading-relaxed">
+                                            <ChatMarkup text={artifact.text} accent={theme.accent} />
+                                        </p>
+                                    )}
+                                    {theme.ticks && (
+                                        <p className="m-0 mt-0.5 flex justify-end">
+                                            <CheckCheck className="h-3.5 w-3.5" style={{ color: theme.ticks }} />
+                                        </p>
+                                    )}
+                                </div>
+                            </div>
+                        );
+                    })()}
                 </div>
             </AppSurface>
         </div>
@@ -813,9 +933,16 @@ function ThemedRowOut({
                                 app
                             </span>
                         </p>
-                        <p className="mb-0 mt-0.5 whitespace-pre-wrap text-[13px] leading-relaxed">
-                            <ChatMarkup text={artifact.text} accent={theme.accent} />
-                        </p>
+                        {artifact.text && (
+                            <p className="mb-0 mt-0.5 whitespace-pre-wrap text-[13px] leading-relaxed">
+                                <ChatMarkup text={artifact.text} accent={theme.accent} />
+                            </p>
+                        )}
+                        {artifact.media && (
+                            <div className="mt-1.5">
+                                <AttachedMedia media={artifact.media} border={theme.border} />
+                            </div>
+                        )}
                     </div>
                 </div>
             </AppSurface>
@@ -862,11 +989,20 @@ function ThemedEmailOut({
                         )}
                     </div>
                 )}
-                {/* Email bodies are standard markdown, not chat dialect. */}
-                <MarkdownRenderer
-                    content={artifact.text}
-                    className="px-3.5 py-2.5 text-[13px] leading-relaxed"
-                />
+                <div className="px-3.5 py-2.5">
+                    {/* Email bodies are standard markdown, not chat dialect. */}
+                    {artifact.text && (
+                        <MarkdownRenderer
+                            content={artifact.text}
+                            className="text-[13px] leading-relaxed"
+                        />
+                    )}
+                    {artifact.media && (
+                        <div className={cn(artifact.text && 'mt-2')}>
+                            <AttachedMedia media={artifact.media} border={theme.border} />
+                        </div>
+                    )}
+                </div>
             </AppSurface>
         </div>
     );

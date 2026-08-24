@@ -71,7 +71,10 @@ const asDict = (v: unknown): Dict => (v && typeof v === 'object' ? (v as Dict) :
 
 function str(d: Dict, ...keys: string[]): string | undefined {
     for (const k of keys) {
-        const v = d[k];
+        let v = d[k];
+        // Some senders take lists (to_addresses, media_urls) — the first
+        // entry is the one worth showing.
+        if (Array.isArray(v)) v = v[0];
         if (typeof v === 'string' && v.trim()) return v.trim();
         if (typeof v === 'number' && Number.isFinite(v)) return String(v);
     }
@@ -95,10 +98,12 @@ export function deriveLead(slug: string, output: unknown): Lead | null {
     if (slug === 'whatsapp' || slug === 'telegram') {
         const body = str(d, 'body', 'text', 'message');
         if (!body) return null;
-        const author = str(d, 'sender_name', 'from_name', 'author') ?? str(d, 'from');
+        // No author fallback to the address — author AND handle both reading
+        // "1415…@c.us" printed the id twice in the bubble header.
+        const author = str(d, 'sender_name', 'from_name', 'pushName', 'author');
         const handle = str(d, 'from', 'phone', 'chat_id');
         return {
-            title: author ?? 'Message',
+            title: author ?? handle ?? 'Message',
             meta: handle ?? '',
             body,
             author,
@@ -206,10 +211,20 @@ export function toScenario(node: StoryNodeResult, lead: Lead): Scenario {
 
 /* ---------------------------------------------------------------- sends */
 
+export interface StoryMedia {
+    kind: 'image' | 'video' | 'audio' | 'file';
+    /** Public URL when the call carried one — renders a real preview. An
+        opaque media_id keeps the kind but shows an attachment chip. */
+    url?: string;
+}
+
 export interface StorySend {
     provider: string;
     to: string;
-    text: string;
+    /** The message text/caption, when the call carried one. A media send
+        without a caption is still a send. */
+    text?: string;
+    media?: StoryMedia;
     subject?: string;
     toolName: string;
     /** Index of the tool call that made this send — anchors the send to its
@@ -220,29 +235,126 @@ export interface StorySend {
     clock?: string;
 }
 
-const SEND_OP_RE = /(^|_)(send|reply|post)(_|$)/;
+/** Verb-anchored: an op SENDS when it starts with a sending verb. Segment
+    matching alone counted get_post, on_post_sent and send_http_get_request
+    as sends (2026-08-24 catalog sweep: 264 send-shaped ops, dozens of them
+    CRUD/telemetry/typing-indicators). */
+const SEND_OP_RE = /^(send|reply|post|publish|submit)(_|$)/;
 
-/** The text a send-shaped call carried — undefined disqualifies the call. A
-    FAILED call never yields a send: it did not go out, and the trace row's
-    error owns that story. */
-function outboundText(tc: ReplayToolCall): string | undefined {
-    if (tc.result_status === 'error') return undefined;
-    const op = tc.operation ?? tc.tool_name.split('__').slice(1).join('__');
-    if (!SEND_OP_RE.test(op)) return undefined;
-    return str(asDict(tc.arguments), 'text', 'body', 'message', 'content');
+/** Text argument keys across the sender catalog, preferred-first: plain text
+    beats caption beats html beats an embed's description. Includes twitter/
+    salesforce message_text, linkedin commentary, mailgun/resend html. */
+const TEXT_ARG_KEYS = [
+    'text',
+    'body',
+    'message',
+    'message_text',
+    'content',
+    'commentary',
+    'caption',
+    'text_content',
+    'html_content',
+    'html',
+    'description',
+];
+
+/** Destination keys across the catalog — telegram's camelCase chatId, twilio
+    to_number, salesforce to_addresses (array), twitter participant_id, … */
+const DEST_ARG_KEYS = [
+    'to',
+    'recipient',
+    'recipient_id',
+    'channel',
+    'channel_id',
+    'chat_id',
+    'chatId',
+    'to_number',
+    'to_email',
+    'to_emails',
+    'to_addresses',
+    'participant_id',
+    'to_channel',
+    'to_contact',
+    'username',
+    'email',
+    'conversation_id',
+    'convo_id',
+    'thread_id',
+];
+
+/** Media argument keys, by the vocabulary the sender nodes actually use —
+    whatsapp's image_url/video_url/…, telegram's BARE photo/video/voice/
+    document/animation/sticker (URL or file id), instagram's attachment_url. */
+const MEDIA_URL_KEYS: Array<[string, StoryMedia['kind']]> = [
+    ['image_url', 'image'],
+    ['photo_url', 'image'],
+    ['photo', 'image'],
+    ['sticker_url', 'image'],
+    ['sticker', 'image'],
+    ['video_url', 'video'],
+    ['video', 'video'],
+    ['video_note', 'video'],
+    ['gif_url', 'video'],
+    ['animation', 'video'],
+    ['audio_url', 'audio'],
+    ['audio', 'audio'],
+    ['voice_url', 'audio'],
+    ['voice', 'audio'],
+    ['document_url', 'file'],
+    ['document', 'file'],
+    ['file_url', 'file'],
+    ['media_url', 'file'],
+    ['media_urls', 'file'],
+    ['attachment_url', 'file'],
+];
+
+function mediaKindFromOp(op: string): StoryMedia['kind'] | undefined {
+    // Segment-anchored, not substring: send_inVOICE is not a voice note.
+    if (/(^|_)(image|photo|picture|sticker)(_|$)/.test(op)) return 'image';
+    if (/(^|_)(video|gif|animation|animated)(_|$)/.test(op)) return 'video';
+    if (/(^|_)(audio|voice)(_|$)/.test(op)) return 'audio';
+    if (/(^|_)(document|file|attachment)(_|$)/.test(op)) return 'file';
+    return undefined;
 }
 
+function deriveMedia(op: string, args: Dict): StoryMedia | undefined {
+    const opKind = mediaKindFromOp(op);
+    for (const [key, kind] of MEDIA_URL_KEYS) {
+        const v = str(args, key);
+        // The op's own kind beats the key's default (media_urls on a photo
+        // op is an image, not a generic file).
+        if (v) return { kind: opKind ?? kind, url: /^https?:\/\//.test(v) ? v : undefined };
+    }
+    if (!opKind) return undefined;
+    // A media op with only a generic url argument (facebook send_attachment).
+    const generic = str(args, 'url');
+    if (generic && /^https?:\/\//.test(generic)) return { kind: opKind, url: generic };
+    // No URL at all (media_id uploads) — the frame shows an attachment chip.
+    return { kind: opKind };
+}
+
+/** A send needs BOTH halves: intent from the op name (a sending verb, never
+    a text-argument gate — a captionless image send that vanished from the
+    outcome taught us that) AND a renderable payload (text, media or a
+    subject — which is what keeps send_http_get_request, typing indicators
+    and campaign-id-only sends out of the outcome). */
 export function deriveSends(toolCalls: ReplayToolCall[]): StorySend[] {
     const sends: StorySend[] = [];
     toolCalls.forEach((tc, i) => {
-        const text = outboundText(tc);
-        if (!text) return;
+        if (tc.result_status === 'error') return; // it did NOT go out
+        const op = tc.operation ?? tc.tool_name.split('__').slice(1).join('__');
+        if (!SEND_OP_RE.test(op)) return;
         const args = asDict(tc.arguments);
+        const text = str(args, ...TEXT_ARG_KEYS);
+        const media = deriveMedia(op, args);
+        const subject = str(args, 'subject', 'subject_line');
+        if (!text && !media && !subject) return;
         sends.push({
             provider: tc.tool_name.split('__')[0],
-            to: str(args, 'to', 'recipient', 'channel', 'channel_id', 'chat_id', 'email') ?? '',
-            subject: str(args, 'subject'),
+            to: str(args, ...DEST_ARG_KEYS) ?? '',
+            subject,
             text,
+            media,
             toolName: tc.tool_name,
             callIndex: i,
             ms: tc.duration_ms ?? undefined,
@@ -337,6 +449,94 @@ export function toolCallsToRows(
     }));
 }
 
+/* -------------------------------------------------------------- inbound */
+
+/** Envelope keys the delivery plumbing adds around a fired event — internal
+    ids and routing that mean nothing to the person reading the run. */
+const ENVELOPE_KEYS = new Set([
+    'schedule_id',
+    'workflow_id',
+    'user_id',
+    'node_id',
+    'execution_id',
+    'webhook_id',
+    'event_id',
+    'triggered_at',
+    'source',
+]);
+
+const stripEnvelope = (d: Dict): Dict =>
+    Object.fromEntries(
+        Object.entries(d).filter(([k]) => !k.startsWith('_') && !ENVELOPE_KEYS.has(k))
+    );
+
+/** The fired event with the delivery envelope removed — what a person would
+    call "the event". An object-valued payload/data/body wrapper is unwrapped
+    (WhatsApp delivers {event: 'message', payload: {...}}; webhooks deliver
+    {…ids…, payload: {...}}); scalar siblings like event: "message" are
+    envelope, not content. Empty result means the event has no
+    user-meaningful content (a schedule tick). */
+export function sanitizeEventPayload(raw: unknown): Dict {
+    let d = stripEnvelope(asDict(raw));
+    for (const key of ['payload', 'data', 'body', 'event', 'message']) {
+        const inner = d[key];
+        if (inner && typeof inner === 'object' && !Array.isArray(inner)) {
+            d = stripEnvelope(asDict(inner));
+            break;
+        }
+    }
+    return d;
+}
+
+/* -------------------------------------------------------- tool providers */
+
+export interface StoryToolProvider {
+    nodeId: string;
+    nodeType: string;
+    label: string;
+    /** Allowlisted operation names, as stored (snake_case). */
+    operations: string[];
+    credentialLabel?: string;
+    /** Hosted-MCP node aggregating other providers (bundle). */
+    isBundle: boolean;
+}
+
+/** Sentence-cased operation name — "send_message_to_channel" reads as
+    "Send message to channel" (same treatment as trace-row labels). */
+export function humanizeOp(op: string): string {
+    const s = op.replace(/_/g, ' ').trim();
+    return s.charAt(0).toUpperCase() + s.slice(1);
+}
+
+const PROVIDER_OUTPUT_TYPES = new Set([
+    'node_op_tool_provider',
+    'node_op_tool_provider_bundle',
+]);
+
+function toToolProvider(node: StoryNodeResult): StoryToolProvider | null {
+    const out = asDict(node.output);
+    const type = typeof out.type === 'string' ? out.type : '';
+    if (!PROVIDER_OUTPUT_TYPES.has(type)) return null;
+    const isBundle = type === 'node_op_tool_provider_bundle';
+    const operations = isBundle
+        ? (Array.isArray(out.providers) ? out.providers : []).flatMap((p) => {
+              const ops = asDict(p).allowed_operations;
+              return Array.isArray(ops) ? ops.map(String) : [];
+          })
+        : Array.isArray(out.allowed_operations)
+          ? out.allowed_operations.map(String)
+          : [];
+    return {
+        nodeId: node.nodeId,
+        nodeType: node.nodeType,
+        label: node.label,
+        operations,
+        credentialLabel:
+            typeof out.credential_label === 'string' ? out.credential_label : undefined,
+        isBundle,
+    };
+}
+
 /* ---------------------------------------------------------------- story */
 
 export interface RunStory {
@@ -349,9 +549,14 @@ export interface RunStory {
         slug: string;
         operation?: string;
         /** Set when the payload derived a real lead — InboundMessage renders
-            it; absent lead means the views show the raw event. */
+            it in the app's native frame. */
         scenario?: Scenario;
-        raw: unknown;
+        /** The event has no user-meaningful content (a schedule tick) — the
+            view renders the minimal "fired on schedule" card. */
+        bare?: { time?: string };
+        /** Neither lead nor bare: the SANITIZED event (delivery envelope
+            stripped) for the raw fallback. */
+        event?: Dict;
     };
     agent?: {
         nodeId: string;
@@ -363,6 +568,9 @@ export interface RunStory {
         rows: StoryRow[];
         sends: StorySend[];
     };
+    /** Nodes wired as the agent's tool providers — they equipped the agent,
+        they didn't "run" in the user sense. */
+    providers: StoryToolProvider[];
     /** Every other node that ran, in given order. */
     supporting: StoryNodeResult[];
     stats: {
@@ -386,14 +594,28 @@ export function buildRunStory(input: StoryInput): RunStory {
     let trigger: RunStory['trigger'];
     if (triggerNode) {
         const slug = slugOfType(triggerNode.nodeType);
-        const lead = deriveLead(slug, triggerNode.output);
+        // The message often rides inside a payload wrapper — probe the raw
+        // output first (top-level shapes), then the unwrapped event.
+        const lead =
+            deriveLead(slug, triggerNode.output) ??
+            deriveLead(slug, sanitizeEventPayload(triggerNode.output));
+        const scenario = lead ? toScenario(triggerNode, lead) : undefined;
+        let bare: { time?: string } | undefined;
+        let event: Dict | undefined;
+        if (!scenario) {
+            const sanitized = sanitizeEventPayload(triggerNode.output);
+            const time = clockOf(str(asDict(triggerNode.output), 'triggered_at', 'timestamp', 'date'));
+            if (Object.keys(sanitized).length === 0) bare = { time };
+            else event = sanitized;
+        }
         trigger = {
             nodeId: triggerNode.nodeId,
             label: triggerNode.label,
             slug,
             operation: triggerNode.operation,
-            scenario: lead ? toScenario(triggerNode, lead) : undefined,
-            raw: triggerNode.output,
+            scenario,
+            bare,
+            event,
         };
     }
 
@@ -430,9 +652,14 @@ export function buildRunStory(input: StoryInput): RunStory {
         };
     }
 
-    const supporting = results.filter(
-        (r) => r.nodeId !== triggerNode?.nodeId && r.nodeId !== agentNode?.nodeId
-    );
+    const providers: StoryToolProvider[] = [];
+    const supporting: StoryNodeResult[] = [];
+    for (const r of results) {
+        if (r.nodeId === triggerNode?.nodeId || r.nodeId === agentNode?.nodeId) continue;
+        const provider = toToolProvider(r);
+        if (provider) providers.push(provider);
+        else supporting.push(r);
+    }
 
     const failed = results.some((r) => r.status === 'error');
     return {
@@ -441,6 +668,7 @@ export function buildRunStory(input: StoryInput): RunStory {
         startedAt: input.startedAt,
         trigger,
         agent,
+        providers,
         supporting,
         stats: {
             ran: results.length,
@@ -451,4 +679,22 @@ export function buildRunStory(input: StoryInput): RunStory {
                 input.durationMs !== undefined ? formatDuration(input.durationMs) : undefined,
         },
     };
+}
+
+/* -------------------------------------------------------------- outcome */
+
+export type OutcomeMode = 'sends' | 'reply' | 'restraint' | 'error' | 'none';
+
+/** Which framing the outcome section earns. "Nothing went out" is a verdict
+    about restraint — it only makes sense when the agent actually worked (an
+    event arrived or tools were called) and chose not to send. A bare chat
+    turn's reply IS the outcome and must not be buried under it. */
+export function outcomeModeFor(story: RunStory): OutcomeMode {
+    const a = story.agent;
+    if (!a) return 'none';
+    if (a.status === 'error') return 'error';
+    if (a.sends.length > 0) return 'sends';
+    const toolCalls = a.rows.filter((r) => r.kind === 'tool').length;
+    if (a.response && toolCalls === 0 && !story.trigger) return 'reply';
+    return 'restraint';
 }
