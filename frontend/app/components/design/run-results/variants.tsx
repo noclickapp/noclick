@@ -20,6 +20,7 @@ import {
     Plug,
     Settings2,
     Terminal,
+    Wrench,
     X,
     Zap,
 } from 'lucide-react';
@@ -36,11 +37,14 @@ import { ErrorActionButton, type ErrorAction } from '~/components/workflow/Error
 import { IODataDisplay } from '~/components/workflow/IODataDisplay';
 import {
     deriveNodeDetail,
+    humanizeOp,
+    outcomeModeFor,
     slugOfType,
     type RunStory,
     type StoryNodeResult,
     type StoryRow,
     type StorySend,
+    type StoryToolProvider,
 } from './runStory';
 
 /* ---------------------------------------------------------- run switcher */
@@ -595,7 +599,13 @@ function SentFrame({
     icons: RunVariantProps['icons'];
     agentName?: string;
 }) {
-    const artifact = { provider: send.provider, to: send.to, text: send.text, subject: send.subject };
+    const artifact = {
+        provider: send.provider,
+        to: send.to,
+        text: send.text ?? '',
+        subject: send.subject,
+        media: send.media,
+    };
     const isEmail = isEmailShaped(artifact);
     return (
         <div>
@@ -647,10 +657,14 @@ function SupportingRow({
     node,
     icons,
     onOpenConfig,
+    step,
 }: {
     node: StoryNodeResult;
     icons: RunVariantProps['icons'];
     onOpenConfig?: (id: string) => void;
+    /** 1-based step index — set when the list is the run's primary chain, so
+        a deterministic sequence reads as 01 → 02, not two identical rows. */
+    step?: number;
 }) {
     const [open, setOpen] = useState(false);
     const failed = node.status === 'error';
@@ -670,6 +684,11 @@ function SupportingRow({
                     onClick={() => setOpen((v) => !v)}
                     className="group flex min-w-0 flex-1 items-center gap-2.5 text-left"
                 >
+                    {step !== undefined && (
+                        <span className="w-5 shrink-0 text-right font-mono text-[10.5px] tabular-nums text-foreground/25">
+                            {String(step).padStart(2, '0')}
+                        </span>
+                    )}
                     <span className="flex w-3.5 shrink-0 justify-center">
                         {failed ? (
                             <X className="h-3.5 w-3.5 text-red-500 dark:text-red-400" />
@@ -803,8 +822,10 @@ function TriggerIdentity({ story, icons }: { story: RunStory; icons: RunVariantP
         <span className="inline-flex min-w-0 items-center gap-2">
             <NodeMark slug={t.slug} icons={icons} className="h-3.5 w-3.5 shrink-0" fallback="bolt" />
             <span className="truncate text-[12px] font-medium text-foreground/60">{t.label}</span>
-            {t.scenario?.lead.time && (
-                <span className="font-mono text-[10.5px] text-foreground/30">{t.scenario.lead.time}</span>
+            {(t.scenario?.lead.time ?? t.bare?.time) && (
+                <span className="font-mono text-[10.5px] text-foreground/30">
+                    {t.scenario?.lead.time ?? t.bare?.time}
+                </span>
             )}
         </span>
     );
@@ -825,9 +846,113 @@ function InboundCard({ story }: { story: RunStory }) {
             </div>
         );
     }
+    // A schedule tick has no content — one quiet line, not an id dump.
+    if (t.bare) {
+        const scheduled = /cron|schedule/.test(t.slug);
+        return (
+            <p className={cn('m-0 flex items-center gap-2.5 px-4 py-3 text-[13px] text-foreground/70', SURFACE)}>
+                <Clock className="h-4 w-4 shrink-0 text-foreground/40" />
+                {scheduled ? 'Ran on schedule' : 'Trigger fired'}
+                {t.bare.time && (
+                    <span className="font-mono text-[11px] text-foreground/35">{t.bare.time}</span>
+                )}
+            </p>
+        );
+    }
+    // Unrecognised payload: the SANITIZED event — the delivery envelope's
+    // internal ids and _webhook plumbing never reach the reader.
     return (
         <div className={cn('px-4 py-3.5', SURFACE)}>
-            <IODataDisplay data={t.raw} label="Event" nodeId={t.nodeId} />
+            <IODataDisplay data={t.event ?? {}} label="Event" nodeId={t.nodeId} />
+        </div>
+    );
+}
+
+/** The reply of a bare chat turn, given top billing — for a run with no
+    trigger and no tool calls, this IS the outcome, not a footnote under a
+    "Nothing went out" verdict it never earned. */
+function AgentReply({ response }: { response?: string }) {
+    return (
+        <div className={cn('px-4 py-4', SURFACE)}>
+            <MarkdownRenderer
+                content={response ?? ''}
+                breaks
+                className="text-[13.5px] leading-relaxed text-foreground/90"
+            />
+        </div>
+    );
+}
+
+/** A provider-wired tool node: it equipped the agent, it didn't "run" — so
+    no status check, a wrench, and the toolkit it granted in plain words
+    instead of the internal provider envelope. */
+function ProviderRow({
+    provider,
+    icons,
+    onOpenConfig,
+}: {
+    provider: StoryToolProvider;
+    icons: RunVariantProps['icons'];
+    onOpenConfig?: (id: string) => void;
+}) {
+    const [open, setOpen] = useState(false);
+    const n = provider.operations.length;
+    return (
+        <div>
+            <div
+                className={cn(
+                    'flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 transition-colors hover:bg-foreground/[0.03]',
+                    open && 'bg-foreground/[0.03]'
+                )}
+            >
+                <button
+                    type="button"
+                    onClick={() => setOpen((v) => !v)}
+                    className="group flex min-w-0 flex-1 items-center gap-2.5 text-left"
+                >
+                    <span className="flex w-3.5 shrink-0 justify-center">
+                        <Wrench className="h-3.5 w-3.5 text-foreground/30" />
+                    </span>
+                    <NodeMark slug={provider.nodeType} icons={icons} className="h-3.5 w-3.5 shrink-0" />
+                    <span className="min-w-0 flex-1 truncate text-[13px] text-foreground/80">
+                        {provider.label}
+                        <span className="text-foreground/40">
+                            {' · '}
+                            {n === 0 ? 'no tools allowlisted' : `${n} tool${n === 1 ? '' : 's'}`}
+                        </span>
+                    </span>
+                    <ChevronDown
+                        className={cn(
+                            'h-3 w-3 shrink-0 text-foreground/25 transition-all group-hover:text-foreground/70',
+                            open && 'rotate-180'
+                        )}
+                    />
+                </button>
+                <ConfigButton nodeId={provider.nodeId} onOpenConfig={onOpenConfig} />
+            </div>
+            {open && (
+                <div className="mx-1 mb-1.5 mt-1 rounded-lg border border-foreground/[0.06] bg-foreground/[0.02] px-3.5 py-3">
+                    {n > 0 ? (
+                        <ul className="m-0 list-none space-y-1 p-0">
+                            {provider.operations.map((op) => (
+                                <li key={op} className="flex items-center gap-2 text-[12.5px] text-foreground/70">
+                                    <span className="h-1 w-1 shrink-0 rounded-full bg-foreground/30" />
+                                    {humanizeOp(op)}
+                                </li>
+                            ))}
+                        </ul>
+                    ) : (
+                        <p className="m-0 text-[12.5px] text-foreground/40">
+                            No operations allowlisted — the agent had no tools from this node.
+                        </p>
+                    )}
+                    {provider.credentialLabel && (
+                        <p className="m-0 mt-2 text-[11.5px] text-foreground/40">
+                            Using {provider.credentialLabel}
+                        </p>
+                    )}
+                </div>
+            )}
         </div>
     );
 }
@@ -844,11 +969,13 @@ export function StoryVariant({
     onDontShowAgain,
     builtinClose,
 }: RunVariantProps) {
-    const { trigger, agent, supporting } = story;
+    const { trigger, agent, providers, supporting } = story;
     const failed = agent?.status === 'error';
-    // A restraint run's closing words ARE the outcome — they appear once, in
-    // the outcome card, not twice.
-    const showNote = failed || (agent?.sends.length ?? 0) > 0;
+    const outcome = outcomeModeFor(story);
+    // The agent's closing words appear ONCE: in the trace card when the
+    // outcome section carries sends or an error, in the outcome card when it
+    // carries the reply or restraint.
+    const showNote = outcome === 'sends' || outcome === 'error';
     return (
         <div className="flex h-full min-h-0 flex-col">
             <PanelHeader
@@ -914,20 +1041,26 @@ export function StoryVariant({
                 )}
 
                 {/* A failed run earned no outcome verdict — the error owns the story. */}
-                {agent && !failed && (
+                {agent && outcome === 'sends' && (
                     <section>
-                        <Eyebrow>
-                            {agent.sends.length > 0 ? `What went out (${agent.sends.length})` : 'Outcome'}
-                        </Eyebrow>
-                        {agent.sends.length > 0 ? (
-                            <div className="space-y-4">
-                                {agent.sends.map((s, i) => (
-                                    <SentFrame key={i} send={s} icons={icons} agentName={story.agentName} />
-                                ))}
-                            </div>
-                        ) : (
-                            <NothingWentOut response={agent.response} />
-                        )}
+                        <Eyebrow>What went out ({agent.sends.length})</Eyebrow>
+                        <div className="space-y-4">
+                            {agent.sends.map((s, i) => (
+                                <SentFrame key={i} send={s} icons={icons} agentName={story.agentName} />
+                            ))}
+                        </div>
+                    </section>
+                )}
+                {agent && outcome === 'reply' && (
+                    <section>
+                        <Eyebrow>Agent&apos;s reply</Eyebrow>
+                        <AgentReply response={agent.response} />
+                    </section>
+                )}
+                {agent && outcome === 'restraint' && (
+                    <section>
+                        <Eyebrow>Outcome</Eyebrow>
+                        <NothingWentOut response={agent.response} />
                     </section>
                 )}
 
@@ -946,8 +1079,27 @@ export function StoryVariant({
                     <section>
                         <Eyebrow>{agent ? `Also ran (${supporting.length})` : 'What ran'}</Eyebrow>
                         <div className={cn('px-1.5 py-1.5', SURFACE)}>
-                            {supporting.map((n) => (
-                                <SupportingRow key={n.nodeId} node={n} icons={icons} onOpenConfig={onOpenConfig} />
+                            {supporting.map((n, i) => (
+                                <SupportingRow
+                                    key={n.nodeId}
+                                    node={n}
+                                    icons={icons}
+                                    onOpenConfig={onOpenConfig}
+                                    // A deterministic chain is a SEQUENCE — number
+                                    // the steps so two "Delay" rows read as 01 → 02.
+                                    step={agent ? undefined : i + 1}
+                                />
+                            ))}
+                        </div>
+                    </section>
+                )}
+
+                {providers.length > 0 && (
+                    <section>
+                        <Eyebrow>Agent&apos;s toolkit ({providers.length})</Eyebrow>
+                        <div className={cn('px-1.5 py-1.5', SURFACE)}>
+                            {providers.map((pr) => (
+                                <ProviderRow key={pr.nodeId} provider={pr} icons={icons} onOpenConfig={onOpenConfig} />
                             ))}
                         </div>
                     </section>

@@ -5178,13 +5178,20 @@ const FlowCanvasInner = ({
                             nodeType: type,
                             label:
                                 (gn?.data?.label as string | undefined) ||
+                                (gn?.config?.label as string | undefined) ||
                                 meta?.label ||
                                 type ||
                                 r.node_id,
-                            // Graph snapshots carry operation top-level on
-                            // data; older blobs nested it under config.
+                            // The snapshot's node shape varies by how the run
+                            // started: FE-initiated runs store ReactFlow nodes
+                            // (data.operation), headless webhook/cron/agent
+                            // runs store the backend blob (config.operation) —
+                            // and headless runs are exactly the trigger-fired
+                            // ones, so missing this read dropped the fired
+                            // trigger into "Also ran".
                             operation:
                                 (gn?.data?.operation as string | undefined) ??
+                                (gn?.config?.operation as string | undefined) ??
                                 (gn?.data?.config?.operation as
                                     | string
                                     | undefined),

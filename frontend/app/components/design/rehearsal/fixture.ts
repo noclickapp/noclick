@@ -69,7 +69,15 @@ export interface MockRun {
     /** provider is the sender's real slug (backend tool-name prefix) — it may
         be any wired node, not just a chat channel; the outcome frame routes by
         SHAPE (subject ⇒ envelope) and looks the mark up by this slug. */
-    artifacts: { provider: string; to: string; text: string; subject?: string }[] | null;
+    artifacts: {
+        provider: string;
+        to: string;
+        text: string;
+        subject?: string;
+        /** A media payload riding the send (real runs: image/video/document
+            sends). url renders a preview; kind alone renders a chip. */
+        media?: { kind: 'image' | 'video' | 'audio' | 'file'; url?: string };
+    }[] | null;
     /** Shown at done when there is no artifact: what it chose and why. */
     outcome?: string;
 }
@@ -98,6 +106,7 @@ export type Scenario = Omit<TriggerFixture, 'mocks'> & MockRun & { key: string }
 
 export function composeScenario(trigger: TriggerFixture, mockSlug: string): Scenario {
     const mock = trigger.mocks.find((m) => m.slug === mockSlug) ?? trigger.mocks[0];
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const { mocks: _mocks, ...t } = trigger;
     return { ...t, ...mock, key: `${trigger.slug}:${mock.slug}` };
 }

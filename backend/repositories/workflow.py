@@ -1184,6 +1184,7 @@ class WorkflowRepo:
         rows = await conn.fetch("""
             SELECT node_id, last_run_status, last_run_error, (manifest IS NOT NULL) AS has_output
             FROM cas_manifests WHERE execution_id = $1 AND workflow_id = $2
+            ORDER BY created_at ASC
         """, execution_id, workflow_id)
         return [dict(r) for r in rows]
 
