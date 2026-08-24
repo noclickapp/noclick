@@ -1235,6 +1235,34 @@ export interface AgentShareSetActiveRequest {
   [k: string]: unknown;
 }
 /**
+ * Delete one file from an agent conversation's workspace volume. Same
+ * workflow-access gate as the listing (which also grants upload) — a mutation
+ * symmetric to upload, so listing access implies delete access.
+ */
+export interface AgentWorkspaceDeleteRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  /**
+   * UUID of the workflow containing the agent node
+   */
+  workflow_id: string;
+  /**
+   * Node id of the agent within the workflow
+   */
+  node_id: string;
+  /**
+   * Conversation key whose workspace volume to delete from
+   */
+  conversation_key?: string | null;
+  /**
+   * Volume-relative path of the file to delete
+   */
+  path: string;
+  [k: string]: unknown;
+}
+/**
  * List the files on an agent conversation's persistent workspace volume
  * (the chat's file view). Requires workflow access — the same audience the
  * agent chat itself serves. Response carries per-file signed streaming URLs.
@@ -13237,6 +13265,7 @@ export interface ClientToServerEvents {
   'agent_share:get_or_create': (data: AgentShareGetOrCreateRequest) => void;
   'agent_share:rotate': (data: AgentShareRotateRequest) => void;
   'agent_share:set_active': (data: AgentShareSetActiveRequest) => void;
+  'agent_workspace:delete': (data: AgentWorkspaceDeleteRequest) => void;
   'agent_workspace:list': (data: AgentWorkspaceListRequest) => void;
   'airtable:oauth:exchange': (data: AirtableOAuthExchangeRequest) => void;
   'airtable:oauth:refresh': (data: AirtableOAuthRefreshRequest) => void;
@@ -13554,6 +13583,7 @@ export const ClientEventNames = {
   AgentShareGetOrCreateRequest: 'agent_share:get_or_create',
   AgentShareRotateRequest: 'agent_share:rotate',
   AgentShareSetActiveRequest: 'agent_share:set_active',
+  AgentWorkspaceDeleteRequest: 'agent_workspace:delete',
   AgentWorkspaceListRequest: 'agent_workspace:list',
   AgentWriteFileRequest: 'agent:write:file',
   AirtableOAuthExchangeRequest: 'airtable:oauth:exchange',
@@ -13876,6 +13906,7 @@ interface ClientEventMap {
   AgentShareGetOrCreateRequest: AgentShareGetOrCreateRequest
   AgentShareRotateRequest: AgentShareRotateRequest
   AgentShareSetActiveRequest: AgentShareSetActiveRequest
+  AgentWorkspaceDeleteRequest: AgentWorkspaceDeleteRequest
   AgentWorkspaceListRequest: AgentWorkspaceListRequest
   AgentWriteFileRequest: AgentWriteFileRequest
   AirtableOAuthExchangeRequest: AirtableOAuthExchangeRequest
@@ -14468,6 +14499,10 @@ export const AgentShareRotateRequest = {
 export const AgentShareSetActiveRequest = {
   event_name: 'agent_share:set_active' as const,
   create: (data: AgentShareSetActiveRequest) => ({ event_name: 'agent_share:set_active' as const, ...data })
+};
+export const AgentWorkspaceDeleteRequest = {
+  event_name: 'agent_workspace:delete' as const,
+  create: (data: AgentWorkspaceDeleteRequest) => ({ event_name: 'agent_workspace:delete' as const, ...data })
 };
 export const AgentWorkspaceListRequest = {
   event_name: 'agent_workspace:list' as const,
@@ -15677,6 +15712,7 @@ export const EventRouting = {
   'agent_share:get_or_create': 'API',
   'agent_share:rotate': 'API',
   'agent_share:set_active': 'API',
+  'agent_workspace:delete': 'API',
   'agent_workspace:list': 'API',
   'airtable:oauth:exchange': 'API',
   'airtable:oauth:refresh': 'API',
@@ -16002,4 +16038,3 @@ export const EventRouting = {
 } as const;
 
 export type SocketEnvironment = 'API';
-
