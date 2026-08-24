@@ -166,8 +166,10 @@ def test_agent_ignores_unwired_bundle():
         },
     }
     tool_params, tool_configs, _ = agent._collect_tool_definitions(inputs)
-    assert tool_params == []
-    assert tool_configs == {}
+    # Only the ambient upload_file (on every SDK agent) — nothing from the
+    # unwired bundle.
+    assert [t["function"]["name"] for t in tool_params] == ["upload_file"]
+    assert list(tool_configs) == ["upload_file"]
 
 
 # ============================================================================

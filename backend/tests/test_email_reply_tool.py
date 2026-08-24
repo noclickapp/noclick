@@ -249,7 +249,11 @@ class TestAgentInjection:
             {"em1": _trigger_output()}
         )
         assert EMAIL_REPLY_TOOL_NAME in tool_configs
-        assert [t["function"]["name"] for t in tool_params] == [EMAIL_REPLY_TOOL_NAME]
+        # upload_file is ambient on every SDK agent; the reply tool rides beside it.
+        assert [t["function"]["name"] for t in tool_params] == [
+            "upload_file",
+            EMAIL_REPLY_TOOL_NAME,
+        ]
 
     def test_manual_run_injects_nothing(self):
         """No _triggerPayload → not a fired trigger → no reply capability."""

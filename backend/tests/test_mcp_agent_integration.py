@@ -18,6 +18,15 @@ from nodes.agent_node import AgentNode, AgentConfig, AgentNodeConfig
 from nodes.agent.tool_execution import _execute_mcp_tool
 
 
+def _wired(tool_params):
+    """User-wired tools only — upload_file is ambient on every SDK agent."""
+    return [p for p in tool_params if p["function"]["name"] != "upload_file"]
+
+
+def _wired_cfg(tool_configs):
+    return {k: v for k, v in tool_configs.items() if k != "upload_file"}
+
+
 class TestMCPAgentIntegration:
     """Test that Agent node can collect and use MCP tools."""
 
@@ -81,8 +90,8 @@ class TestMCPAgentIntegration:
         tool_params, tool_configs, _ = agent._collect_tool_definitions(inputs)
 
         # Verify tools were collected
-        assert len(tool_params) == 2
-        assert len(tool_configs) == 2
+        assert len(_wired(tool_params)) == 2
+        assert len(_wired_cfg(tool_configs)) == 2
 
         # Verify first tool
         assert tool_configs['brave_web_search']['tool_type'] == 'mcp'
@@ -94,7 +103,7 @@ class TestMCPAgentIntegration:
         assert tool_configs['brave_news_search']['original_tool_name'] == 'news_search'
 
         # Verify tool params have correct structure for LLM
-        tool_names = [t['function']['name'] for t in tool_params]
+        tool_names = [t['function']['name'] for t in _wired(tool_params)]
         assert 'brave_web_search' in tool_names
         assert 'brave_news_search' in tool_names
 
@@ -143,8 +152,8 @@ class TestMCPAgentIntegration:
         tool_params, tool_configs, _ = agent._collect_tool_definitions(inputs)
 
         # Should have both tools
-        assert len(tool_params) == 2
-        assert len(tool_configs) == 2
+        assert len(_wired(tool_params)) == 2
+        assert len(_wired_cfg(tool_configs)) == 2
 
         # Verify types are different
         assert tool_configs['mcp_search']['tool_type'] == 'mcp'

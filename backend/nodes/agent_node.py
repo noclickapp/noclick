@@ -816,25 +816,17 @@ class AgentNode(WorkflowNode):
                         tool_params, tool_configs, sandbox_mounts,
                     )
 
-        # A provider mount (e.g. a GitHub repo clone) needs a sandbox even
-        # without a FilesystemNode, but FilesystemNode is the only thing that
-        # normally emits the upload_file tool definition.
-        # Synthesize the same entry here so an agent with just a repo mount
-        # can still publish artifacts (build output, generated reports, etc.)
-        # as resource URLs. CLI harnesses inject their own workspace-keyed
-        # upload_file and skip filesystem-type tool_configs entries, so this
-        # addition is used by the SDK path.
+        # Make upload_file available even without a wired FilesystemNode. The
+        # agent's workspace can still contain artifacts created by execute_bash,
+        # and this tool exposes them as controlled resource URLs. An existing
+        # FilesystemNode definition wins when present.
         from nodes.filesystem_node import (
             UPLOAD_FILE_TOOL_NAME,
             get_upload_tool_definition,
         )
 
-        if sandbox_mounts and UPLOAD_FILE_TOOL_NAME not in tool_configs:
+        if UPLOAD_FILE_TOOL_NAME not in tool_configs:
             process_tool_definition(self.node_id, get_upload_tool_definition())
-            logger.info(
-                f"[AgentNode] Synthesized {UPLOAD_FILE_TOOL_NAME} for sandbox-only mount "
-                f"(no FilesystemNode wired)"
-            )
 
         # Opaque email reply: when THIS run was started by an inbound-email
         # trigger wired directly into this agent, inject the locked

@@ -18,6 +18,15 @@ from nodes.agent.config import LLMAgentConfig
 # Fixtures
 # ============================================================================
 
+def _wired(tool_params):
+    """User-wired tools only — upload_file is ambient on every SDK agent."""
+    return [p for p in tool_params if p["function"]["name"] != "upload_file"]
+
+
+def _wired_cfg(tool_configs):
+    return {k: v for k, v in tool_configs.items() if k != "upload_file"}
+
+
 @pytest.fixture
 def simple_tool_config():
     """Create a simple tool configuration with one required parameter."""
@@ -436,9 +445,9 @@ class TestAgentNodeToolCollection:
         tool_params, tool_configs, _ = agent_node._collect_tool_definitions(inputs)
 
         # Verify tool was collected
-        assert len(tool_params) == 1
-        assert tool_params[0]["type"] == "function"
-        assert tool_params[0]["function"]["name"] == "search_database"
+        assert len(_wired(tool_params)) == 1
+        assert _wired(tool_params)[0]["type"] == "function"
+        assert _wired(tool_params)[0]["function"]["name"] == "search_database"
 
         # Verify tool config was captured
         assert "search_database" in tool_configs
@@ -503,8 +512,8 @@ class TestAgentNodeToolCollection:
         tool_params, tool_configs, _ = agent_node._collect_tool_definitions(inputs)
 
         # Verify both tools were collected
-        assert len(tool_params) == 2
-        tool_names = {tp["function"]["name"] for tp in tool_params}
+        assert len(_wired(tool_params)) == 2
+        tool_names = {tp["function"]["name"] for tp in _wired(tool_params)}
         assert tool_names == {"send_message", "get_data"}
 
         # Verify both tool configs were captured
@@ -529,8 +538,8 @@ class TestAgentNodeToolCollection:
         tool_params, tool_configs, _ = agent_node._collect_tool_definitions(inputs)
 
         # Should only collect the actual tool
-        assert len(tool_params) == 1
-        assert tool_params[0]["function"]["name"] == "search_database"
+        assert len(_wired(tool_params)) == 1
+        assert _wired(tool_params)[0]["function"]["name"] == "search_database"
 
     @pytest.mark.asyncio
     async def test_agent_collects_tool_with_all_parameter_types(self, agent_node):
@@ -564,8 +573,8 @@ class TestAgentNodeToolCollection:
 
         tool_params, _, _ = agent_node._collect_tool_definitions(inputs)
 
-        assert len(tool_params) == 1
-        func_params = tool_params[0]["function"]["parameters"]
+        assert len(_wired(tool_params)) == 1
+        func_params = _wired(tool_params)[0]["function"]["parameters"]
 
         # Verify all parameter types are present
         props = func_params["properties"]
@@ -589,16 +598,16 @@ class TestAgentNodeToolCollection:
 
         tool_params, tool_configs, _ = agent_node._collect_tool_definitions(inputs)
 
-        assert tool_params == []
-        assert tool_configs == {}
+        assert _wired(tool_params) == []
+        assert _wired_cfg(tool_configs) == {}
 
     @pytest.mark.asyncio
     async def test_agent_handles_empty_inputs(self, agent_node):
         """Test that AgentNode handles empty inputs gracefully."""
         tool_params, tool_configs, _ = agent_node._collect_tool_definitions({})
 
-        assert tool_params == []
-        assert tool_configs == {}
+        assert _wired(tool_params) == []
+        assert _wired_cfg(tool_configs) == {}
 
     @pytest.mark.asyncio
     async def test_collected_tool_format_matches_litellm(self, tool_node, agent_node):
@@ -609,7 +618,7 @@ class TestAgentNodeToolCollection:
         tool_params, _, _ = agent_node._collect_tool_definitions(inputs)
 
         # Verify LiteLLM format requirements
-        tool = tool_params[0]
+        tool = _wired(tool_params)[0]
         assert tool["type"] == "function"
         assert "function" in tool
 
@@ -817,6 +826,6 @@ class TestToolNodeWorkflowJsonFormat:
         tool_params, tool_configs, _ = agent_node._collect_tool_definitions(inputs)
 
         # CRITICAL: Verify tool was collected
-        assert len(tool_params) == 1, f"Expected 1 tool, got {len(tool_params)}"
-        assert tool_params[0]["function"]["name"] == "send_message"
+        assert len(_wired(tool_params)) == 1, f"Expected 1 tool, got {len(_wired(tool_params))}"
+        assert _wired(tool_params)[0]["function"]["name"] == "send_message"
         assert "send_message" in tool_configs

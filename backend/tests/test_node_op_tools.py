@@ -31,6 +31,15 @@ from nodes.core.run_op import (
 # ============================================================================
 
 
+def _wired(tool_params):
+    """User-wired tools only — upload_file is ambient on every SDK agent."""
+    return [p for p in tool_params if p["function"]["name"] != "upload_file"]
+
+
+def _wired_cfg(tool_configs):
+    return {k: v for k, v in tool_configs.items() if k != "upload_file"}
+
+
 def test_integration_nodes_qualify():
     for node_type in (
         "automation-linear",
@@ -441,7 +450,7 @@ def test_same_type_providers_get_distinct_tool_names():
     }
 
     tool_params, tool_configs, _ = agent._collect_tool_definitions(inputs)
-    names = [p["function"]["name"] for p in tool_params]
+    names = [p["function"]["name"] for p in _wired(tool_params)]
     assert len(names) == len(set(names)), f"colliding tool names: {names}"
 
     # Labeled provider: label-derived slug + label/credential tags in description
@@ -480,7 +489,7 @@ def test_single_provider_keeps_clean_tool_names():
     inputs = {"linear_a": dict(provider), "linear_b": dict(provider)}
 
     tool_params, tool_configs, _ = agent._collect_tool_definitions(inputs)
-    assert [p["function"]["name"] for p in tool_params] == ["linear__list_teams"]
+    assert [p["function"]["name"] for p in _wired(tool_params)] == ["linear__list_teams"]
     assert tool_configs["linear__list_teams"]["node_id"] == "linear_a"
 
 
@@ -580,7 +589,7 @@ def test_legacy_tool_surfaces_are_edge_scoped_too():
     inputs = {"mcp-mine": mcp_output("mine_tool"), "mcp-other": mcp_output("admin_tool")}
 
     tool_params, tool_configs, _ = agent._collect_tool_definitions(inputs)
-    assert [p["function"]["name"] for p in tool_params] == ["mine_tool"]
+    assert [p["function"]["name"] for p in _wired(tool_params)] == ["mine_tool"]
     assert "admin_tool" not in tool_configs
 
 
@@ -606,7 +615,7 @@ def test_agent_collects_only_edge_wired_providers():
     inputs = {"linear-1": dict(provider_output), "linear-2": dict(provider_output)}
 
     tool_params, tool_configs, _ = agent._collect_tool_definitions(inputs)
-    assert [p["function"]["name"] for p in tool_params] == ["linear__list_teams"]
+    assert [p["function"]["name"] for p in _wired(tool_params)] == ["linear__list_teams"]
     assert tool_configs["linear__list_teams"]["node_id"] == "linear-1"
 
 

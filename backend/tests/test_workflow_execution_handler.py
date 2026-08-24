@@ -26,6 +26,15 @@ from wss.sender import send_event
 from wss.receiver.event_routing import Handler
 
 
+def _wired(tool_params):
+    """User-wired tools only — upload_file is ambient on every SDK agent."""
+    return [p for p in tool_params if p["function"]["name"] != "upload_file"]
+
+
+def _wired_cfg(tool_configs):
+    return {k: v for k, v in tool_configs.items() if k != "upload_file"}
+
+
 def test_user_stopped_completion_is_not_logged_as_error():
     with patch("wss.handlers.workflow_execution_handler.logger") as mock_logger:
         WorkflowExecutionHandler._log_execution_completion(
@@ -2595,9 +2604,9 @@ class TestConcurrentExecution:
 
         tool_params, tool_configs, _ = agent._collect_tool_definitions(agent_received_inputs)
 
-        assert len(tool_params) == 1, \
-            f"AgentNode should collect 1 tool from inputs, got {len(tool_params)}"
-        assert tool_params[0]["function"]["name"] == "send_message", \
+        assert len(_wired(tool_params)) == 1, \
+            f"AgentNode should collect 1 tool from inputs, got {len(_wired(tool_params))}"
+        assert _wired(tool_params)[0]["function"]["name"] == "send_message", \
             "Collected tool should have correct name"
 
     async def test_multiple_tools_to_single_agent(self, handler):
@@ -2691,8 +2700,8 @@ class TestConcurrentExecution:
         )
 
         tool_params, _, _ = agent._collect_tool_definitions(agent_received_inputs)
-        assert len(tool_params) == 3
-        tool_names = {tp["function"]["name"] for tp in tool_params}
+        assert len(_wired(tool_params)) == 3
+        tool_names = {tp["function"]["name"] for tp in _wired(tool_params)}
         assert tool_names == {"tool_a", "tool_b", "tool_c"}
 
     def test_get_reachable_nodes_excludes_upstream_tools(self, handler):
