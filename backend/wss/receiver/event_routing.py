@@ -461,6 +461,7 @@ EVENT_ROUTING: Dict[str, Dict[str, Handler]] = {
 
         # Agent workspace file view (chat file rail + preview links)
         "agent_workspace:list": Handler.AGENT_WORKSPACE,
+        "agent_workspace:delete": Handler.AGENT_WORKSPACE,
 
         # Resource forking operations
         "resource:fork": Handler.SHARE,

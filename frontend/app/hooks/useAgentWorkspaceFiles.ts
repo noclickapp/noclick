@@ -112,7 +112,10 @@ export function useAgentWorkspaceFiles(
    *  refetches once something has loaded — the listing is lazy until the
    *  user first opens the panel or a file link. */
   turnWatermark: number,
-): WorkspaceFilesState & { refresh: () => Promise<void> } {
+): WorkspaceFilesState & {
+  refresh: () => Promise<void>;
+  deleteFile: (path: string) => Promise<void>;
+} {
   const [state, setState] = useState<WorkspaceFilesState>(EMPTY);
   const loadedRef = useRef(false);
   const inflightRef = useRef(false);
@@ -170,10 +173,27 @@ export function useAgentWorkspaceFiles(
     }
   }, [workflowId, nodeId, conversationKey]);
 
+  // Delete one file from the workspace volume, then re-list. Throws on failure
+  // so the caller can surface a per-row error; on success the optimistic drop
+  // keeps the row from lingering until the refetch lands.
+  const deleteFile = useCallback(async (path: string) => {
+    if (!workflowId) return;
+    const res = await sendEventAsync<{ success: boolean; error?: string }>({
+      event_name: 'agent_workspace:delete',
+      workflow_id: workflowId,
+      node_id: nodeId,
+      conversation_key: conversationKey,
+      path,
+    });
+    if (!res.success) throw new Error(res.error || 'Failed to delete file');
+    setState(s => ({ ...s, files: s.files.filter(f => f.path !== path) }));
+    void refresh();
+  }, [workflowId, nodeId, conversationKey, refresh]);
+
   // Files usually change when a turn completes; keep an opened panel fresh.
   useEffect(() => {
     if (turnWatermark > 0 && loadedRef.current) void refresh();
   }, [turnWatermark, refresh]);
 
-  return { ...state, refresh };
+  return { ...state, refresh, deleteFile };
 }

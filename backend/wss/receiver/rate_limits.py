@@ -89,6 +89,7 @@ def get_rate_limit_config() -> SocketIORateLimitConfig:
             # these per-sid limits blunt bursts only; real access control is
             # the restricted-session gate + the owner's credit gates.
             "agent_workspace:list": SocketIORateLimit(second=3, minute=40),
+            "agent_workspace:delete": SocketIORateLimit(second=2, minute=30),
             "agent:builder_decision": SocketIORateLimit(second=3, minute=30),
             "workflow:builder:share_ask": SocketIORateLimit(second=2, minute=15),
             "agent_share:get_or_create": SocketIORateLimit(second=2, minute=15),

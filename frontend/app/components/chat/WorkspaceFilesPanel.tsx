@@ -7,8 +7,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import {
-  ChevronRight, Download, FileText, Folder, FolderOpen, Image as ImageIcon,
-  Loader2, RefreshCw, Upload,
+  Check, ChevronRight, Download, FileText, Folder, FolderOpen, Image as ImageIcon,
+  Loader2, RefreshCw, Trash2, Upload, X,
 } from 'lucide-react';
 import {
   Dialog, DialogContent, DialogHeader, DialogTitle,
@@ -233,7 +233,10 @@ export function WorkspaceFilesMenu({
   onRefresh,
   onPreview,
 }: {
-  state: WorkspaceFilesState & { refresh: () => Promise<void> };
+  state: WorkspaceFilesState & {
+    refresh: () => Promise<void>;
+    deleteFile: (path: string) => Promise<void>;
+  };
   onRefresh: () => void;
   onPreview: (request: WorkspacePreviewRequest) => void;
 }) {
@@ -282,6 +285,25 @@ export function WorkspaceFilesMenu({
       setUploadProgress(null);
     }
   }, [state.uploadUrlPath, onRefresh]);
+
+  // Delete a file. Two-step inline confirm (no blocking dialog): first click on
+  // a row's trash arms it; the confirm/cancel controls then replace the size.
+  const [confirmPath, setConfirmPath] = useState<string | null>(null);
+  const [deletingPath, setDeletingPath] = useState<string | null>(null);
+  const [deleteError, setDeleteError] = useState<string | null>(null);
+  const { deleteFile } = state;
+  const handleDelete = useCallback(async (path: string) => {
+    setDeletingPath(path);
+    setConfirmPath(null);
+    setDeleteError(null);
+    try {
+      await deleteFile(path);
+    } catch (e) {
+      setDeleteError(e instanceof Error ? e.message : 'Delete failed');
+    } finally {
+      setDeletingPath(null);
+    }
+  }, [deleteFile]);
 
   // Collapsed directory groups. Lives on the (always-mounted) menu component,
   // so the state survives popover close/reopen within the session.
@@ -407,6 +429,12 @@ export function WorkspaceFilesMenu({
             </div>
           ) : null}
 
+          {deleteError ? (
+            <div className="px-4 py-2 text-xs text-red-600/90 dark:text-red-400/90 border-b border-border dark:border-zinc-900">
+              {deleteError}
+            </div>
+          ) : null}
+
           {state.error ? (
             <div className="px-4 py-6 text-center text-sm text-red-600/90 dark:text-red-400/90">
               {state.error}
@@ -428,22 +456,65 @@ export function WorkspaceFilesMenu({
                   const name = f.path.slice(f.path.lastIndexOf('/') + 1);
                   const isImage = kindOf(f) === 'image';
                   const Icon = isImage ? ImageIcon : FileText;
+                  const armed = confirmPath === f.path;
+                  const deleting = deletingPath === f.path;
                   return (
-                    <button
+                    <div
                       key={f.path}
-                      type="button"
-                      onClick={() => { setOpen(false); onPreview({ path: f.path }); }}
                       data-testid="workspace-file-row"
-                      className="group w-full flex items-center gap-2 rounded-lg px-2.5 py-1.5 text-left hover:bg-foreground/[0.03] transition-colors"
+                      className="group flex items-center gap-2 rounded-lg px-2.5 py-1.5 hover:bg-foreground/[0.03] transition-colors"
                     >
-                      <Icon className="w-3.5 h-3.5 shrink-0 text-muted-foreground dark:text-zinc-500 group-hover:text-foreground/80 transition-colors" />
-                      <span className="flex-1 min-w-0 truncate text-sm text-foreground/80 group-hover:text-foreground transition-colors">
-                        {name}
-                      </span>
+                      <button
+                        type="button"
+                        onClick={() => { setOpen(false); onPreview({ path: f.path }); }}
+                        data-testid="workspace-file-open"
+                        className="flex-1 min-w-0 flex items-center gap-2 text-left"
+                      >
+                        <Icon className="w-3.5 h-3.5 shrink-0 text-muted-foreground dark:text-zinc-500 group-hover:text-foreground/80 transition-colors" />
+                        <span className="flex-1 min-w-0 truncate text-sm text-foreground/80 group-hover:text-foreground transition-colors">
+                          {name}
+                        </span>
+                      </button>
+                      {deleting ? (
+                        <Loader2 className="w-3.5 h-3.5 shrink-0 animate-spin text-muted-foreground" />
+                      ) : armed ? (
+                        <span className="shrink-0 flex items-center gap-1">
+                          <button
+                            type="button"
+                            onClick={() => handleDelete(f.path)}
+                            aria-label={`Confirm delete ${name}`}
+                            title="Confirm delete"
+                            data-testid="workspace-file-delete-confirm"
+                            className="text-red-500 hover:text-red-600 transition-colors"
+                          >
+                            <Check className="w-3.5 h-3.5" />
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => setConfirmPath(null)}
+                            aria-label="Cancel delete"
+                            title="Cancel"
+                            className="text-muted-foreground hover:text-foreground transition-colors"
+                          >
+                            <X className="w-3.5 h-3.5" />
+                          </button>
+                        </span>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={() => { setConfirmPath(f.path); setDeleteError(null); }}
+                          aria-label={`Delete ${name}`}
+                          title="Delete file"
+                          data-testid="workspace-file-delete"
+                          className="shrink-0 text-muted-foreground/60 hover:text-red-500 opacity-0 group-hover:opacity-100 focus:opacity-100 transition-all"
+                        >
+                          <Trash2 className="w-3.5 h-3.5" />
+                        </button>
+                      )}
                       <span className="shrink-0 text-[10px] text-muted-foreground/70 dark:text-zinc-600 tabular-nums">
                         {formatSize(f.size)}
                       </span>
-                    </button>
+                    </div>
                   );
                 });
                 if (!dir) return <div key=".">{rows}</div>;

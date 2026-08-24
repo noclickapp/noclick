@@ -2278,6 +2278,20 @@ class AgentWorkspaceListRequest(ClientEventBase):
     )
 
 
+class AgentWorkspaceDeleteRequest(ClientEventBase):
+    """Delete one file from an agent conversation's workspace volume. Same
+    workflow-access gate as the listing (which also grants upload) — a mutation
+    symmetric to upload, so listing access implies delete access."""
+    event_name: ClassVar[str] = "agent_workspace:delete"
+
+    workflow_id: str = Field(..., description="UUID of the workflow containing the agent node")
+    node_id: str = Field(..., description="Node id of the agent within the workflow")
+    conversation_key: Optional[str] = Field(
+        None, description="Conversation key whose workspace volume to delete from"
+    )
+    path: str = Field(..., description="Volume-relative path of the file to delete")
+
+
 class AgentBuilderDecisionRequest(ClientEventBase):
     """The user's approve/dismiss verdict on an agent's prompt_builder proposal
     card. Persisted as a conversation event so (a) the card's decided state

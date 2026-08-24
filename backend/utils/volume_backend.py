@@ -12,6 +12,7 @@ Backend surface:
     async list_files(name) -> {exists, files: [{path, size, mtime}]}   (recursive)
     def  iter_file(name, path) -> async byte-chunk iterator (VolumeFileNotFound)
     async write_file(name, path, data) -> None   (creates the volume if missing)
+    async delete_file(name, path) -> None        (idempotent — no-op if absent)
     async delete_volume(name) -> bool
     async list_volume_names() -> [str]
 """
@@ -36,6 +37,7 @@ class VolumeBackend(Protocol):
     async def list_files(self, name: str) -> Dict[str, Any]: ...
     async def iter_file(self, name: str, path: str) -> Any: ...
     async def write_file(self, name: str, path: str, data: bytes) -> None: ...
+    async def delete_file(self, name: str, path: str) -> None: ...
     async def delete_volume(self, name: str) -> bool: ...
     async def list_volume_names(self) -> List[str]: ...
 
@@ -167,6 +169,11 @@ class LocalVolumeBackend:
         target = self._file(name, path)
         target.parent.mkdir(parents=True, exist_ok=True)
         target.write_bytes(data)
+
+    async def delete_file(self, name: str, path: str) -> None:
+        target = self._file(name, path)
+        if target.is_file():
+            target.unlink()
 
     async def delete_volume(self, name: str) -> bool:
         import shutil

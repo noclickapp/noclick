@@ -9,6 +9,7 @@ delay, so the UI owns refresh. File URLs are expiring JWT capabilities over
 one volume and path.
 """
 import logging
+import posixpath
 import time
 from dataclasses import dataclass
 from typing import Any, Dict, List, Optional
@@ -212,3 +213,12 @@ def upload_url_path(volume_name: str) -> str:
     from urllib.parse import quote
 
     return f"/agent/workspace/upload?token={quote(mint_upload_token(volume_name))}"
+
+
+def sanitize_volume_path(raw: str) -> Optional[str]:
+    """Volume-relative path for a read/delete, or None when unusable — normalized
+    and refusing anything that escapes the volume root."""
+    path = posixpath.normpath((raw or "").strip().lstrip("/"))
+    if not path or path in (".", "..") or path.startswith("../"):
+        return None
+    return path
