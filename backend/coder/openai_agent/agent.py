@@ -27,11 +27,18 @@ from wss.sender.schema import ContentItem, ImageUrl
 
 from .billing import BillingHooks, InsufficientBalanceError, build_litellm_env
 from .config import AgentConfiguration, LLMConfig
+from .output_limits import clip_bash_result
 from .sandbox import create_sandbox_runtime
 from .session import PostgresSession
 from utils.thread_env import override_env
 
 logger = logging.getLogger(__name__)
+
+# Cap on model turns (tool-call round-trips) in one agent run. The SDK Runner
+# defaults to 10, which cut off multi-step tasks mid-work ("Max turns (10)
+# exceeded"); 30 gives room for a real chain of tool calls without letting a
+# runaway loop bill unbounded.
+AGENT_MAX_TURNS = 30
 
 # ── Transient-error retry for the streamed agent turn ────────────────────────
 # Providers fail mid-stream (observed: OpenRouter relaying a MiniMax inference
@@ -628,6 +635,7 @@ class Agent:
                         "stderr": "",
                         "exit_code": 0,
                     }
+                fabricated = clip_bash_result(fabricated)
                 _record_bash(command, fabricated, start)
                 return json.dumps(fabricated, default=str)
 
@@ -638,6 +646,10 @@ class Agent:
                 _record_bash(command, {"error": str(e)}, start)
                 return json.dumps({"error": str(e)})
 
+            # Uncapped output once put a cat'ed PDF (millions of tokens) into
+            # the model request + persisted history, bricking the conversation
+            # (2026-08-24) — every result is bounded before it leaves the tool.
+            result = clip_bash_result(result)
             _record_bash(command, result, start)
             return json.dumps(result, default=str)
 
@@ -820,6 +832,7 @@ class Agent:
                         input_list,
                         hooks=self._billing_hooks,
                         session=self._session,
+                        max_turns=AGENT_MAX_TURNS,
                     )
                     # Expose to pause() so the chat UI's stop button can cancel
                     # this run. Cleared in the finally below — pause() on a
