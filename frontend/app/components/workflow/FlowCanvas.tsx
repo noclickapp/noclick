@@ -5056,6 +5056,10 @@ const FlowCanvasInner = ({
                         meta?.label ||
                         n.type ||
                         n.id,
+                    // The dialog's story derivation recognises the fired
+                    // trigger the way the canvas does — by the node's
+                    // CURRENT operation.
+                    operation: n.data?.operation as string | undefined,
                     iconHtml: meta?.iconHtml,
                     iconColor: meta?.iconColor,
                     status:
@@ -5177,6 +5181,13 @@ const FlowCanvasInner = ({
                                 meta?.label ||
                                 type ||
                                 r.node_id,
+                            // Graph snapshots carry operation top-level on
+                            // data; older blobs nested it under config.
+                            operation:
+                                (gn?.data?.operation as string | undefined) ??
+                                (gn?.data?.config?.operation as
+                                    | string
+                                    | undefined),
                             iconHtml: meta?.iconHtml,
                             iconColor: meta?.iconColor,
                             status,
@@ -8724,6 +8735,8 @@ const FlowCanvasInner = ({
             {runResultsOpen && (
                 <RunResultsDialog
                     results={runResults}
+                    agentInputs={agentInputs}
+                    workflowName={workflowTitle}
                     runs={logs}
                     currentExecId={runResultsExecId}
                     loading={runResultsLoading}

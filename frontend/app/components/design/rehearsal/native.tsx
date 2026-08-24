@@ -640,6 +640,7 @@ function AgentByline({
     mark,
     showGlyph = true,
     via = false,
+    name,
 }: {
     icons: Icons;
     to?: string;
@@ -648,6 +649,9 @@ function AgentByline({
     /** Show the channel's mark even without a destination — "via Gmail". The
         frame must always say which app the message would leave through. */
     via?: boolean;
+    /** The sending agent's real display name; the rehearsal fixture's name
+        stays the default so existing hosts don't change. */
+    name?: string;
 }) {
     return (
         <p className="m-0 flex flex-wrap items-baseline gap-2">
@@ -656,7 +660,7 @@ function AgentByline({
                     <Glyph mark={icons.agent} className="h-3.5 w-3.5" />
                 </span>
             )}
-            <span className="text-[13.5px] font-semibold">{AGENT_NAME}</span>
+            <span className="text-[13.5px] font-semibold">{name ?? AGENT_NAME}</span>
             <span className="rounded border border-foreground/12 px-1 py-px text-[10px] font-medium uppercase tracking-wide text-foreground/35">
                 app
             </span>
@@ -675,10 +679,12 @@ function OutboundSlack({
     icons,
     artifact,
     hideDestination = false,
+    agentName,
 }: {
     icons: Icons;
     artifact: Artifact;
     hideDestination?: boolean;
+    agentName?: string;
 }) {
     return (
         <div className="flex gap-3">
@@ -688,6 +694,7 @@ function OutboundSlack({
             <div className="min-w-0 flex-1">
                 <AgentByline
                     icons={icons}
+                    name={agentName}
                     to={hideDestination ? undefined : artifact.to}
                     // The artifact's OWN mark, never a borrowed one — this
                     // frame hosts any non-chat sender (the send-email node
@@ -713,21 +720,28 @@ function ThemedBubbleOut({
     artifact,
     theme,
     hideDestination = false,
+    agentName,
+    suppressByline = false,
 }: {
     icons: Icons;
     artifact: Artifact;
     theme: AppTheme;
     hideDestination?: boolean;
+    agentName?: string;
+    suppressByline?: boolean;
 }) {
     return (
         <div>
-            <AgentByline
-                icons={icons}
-                to={hideDestination ? undefined : artifact.to}
-                mark={icons[artifact.provider]}
-                via={!artifact.to}
-            />
-            <AppSurface theme={theme} className="mt-2 p-3">
+            {!suppressByline && (
+                <AgentByline
+                    icons={icons}
+                    name={agentName}
+                    to={hideDestination ? undefined : artifact.to}
+                    mark={icons[artifact.provider]}
+                    via={!artifact.to}
+                />
+            )}
+            <AppSurface theme={theme} className={cn('p-3', !suppressByline && 'mt-2')}>
                 <div className="flex justify-end">
                     <div
                         className={cn('max-w-[88%] rounded-2xl px-3.5 py-2.5', tailClass(theme, 'out'))}
@@ -755,22 +769,31 @@ function ThemedRowOut({
     artifact,
     theme,
     hideDestination = false,
+    agentName,
+    suppressByline = false,
 }: {
     icons: Icons;
     artifact: Artifact;
     theme: AppTheme;
     hideDestination?: boolean;
+    agentName?: string;
+    /** Row-shaped surfaces already name the agent inside the app frame; a host
+        whose own chrome names the destination can drop the byline entirely. */
+    suppressByline?: boolean;
 }) {
     return (
         <div>
-            <AgentByline
-                icons={icons}
-                to={hideDestination ? undefined : artifact.to}
-                mark={icons[artifact.provider]}
-                showGlyph={false}
-                via={!artifact.to}
-            />
-            <AppSurface theme={theme} className="mt-2 px-3.5 py-3">
+            {!suppressByline && (
+                <AgentByline
+                    icons={icons}
+                    name={agentName}
+                    to={hideDestination ? undefined : artifact.to}
+                    mark={icons[artifact.provider]}
+                    showGlyph={false}
+                    via={!artifact.to}
+                />
+            )}
+            <AppSurface theme={theme} className={cn('px-3.5 py-3', !suppressByline && 'mt-2')}>
                 <div className="flex gap-2.5">
                     <span
                         className="grid h-8 w-8 shrink-0 place-items-center rounded-md"
@@ -781,7 +804,7 @@ function ThemedRowOut({
                     <div className="min-w-0 flex-1">
                         <p className="m-0 flex items-baseline gap-2">
                             <span className="text-[13px] font-semibold" style={{ color: theme.author }}>
-                                {AGENT_NAME}
+                                {agentName ?? AGENT_NAME}
                             </span>
                             <span
                                 className="rounded px-1 py-px text-[9.5px] font-semibold uppercase tracking-wide"
@@ -805,16 +828,22 @@ function ThemedEmailOut({
     icons,
     artifact,
     theme,
+    agentName,
+    suppressByline = false,
 }: {
     icons: Icons;
     artifact: Artifact;
     theme: AppTheme;
+    agentName?: string;
+    suppressByline?: boolean;
 }) {
     const hasEnvelope = Boolean(artifact.subject || artifact.to);
     return (
         <div>
-            <AgentByline icons={icons} mark={icons[artifact.provider]} via />
-            <AppSurface theme={theme} className="mt-2.5">
+            {!suppressByline && (
+                <AgentByline icons={icons} name={agentName} mark={icons[artifact.provider]} via />
+            )}
+            <AppSurface theme={theme} className={cn(!suppressByline && 'mt-2.5')}>
                 {hasEnvelope && (
                     <div className="border-b px-3.5 py-2" style={{ borderColor: theme.border }}>
                         {artifact.subject && (
@@ -848,10 +877,19 @@ export function OutboundMessage({
     icons,
     artifact,
     hideDestination = false,
+    agentName,
+    suppressByline = false,
 }: {
     icons: Icons;
     artifact: Artifact;
     hideDestination?: boolean;
+    /** Real-run hosts pass the agent node's display name; rehearsal hosts
+        omit it and keep the fixture's AGENT_NAME. */
+    agentName?: string;
+    /** Drop the byline above themed frames — for hosts whose own chrome
+        already names the destination/sender (the run-results sent frames).
+        The unthemed neutral frame keeps it: the byline IS that frame. */
+    suppressByline?: boolean;
 }) {
     const theme = resolveAppTheme(artifact.provider);
     if (isEmailShaped(artifact)) {
@@ -860,7 +898,15 @@ export function OutboundMessage({
         // neutral white envelope theme.
         const emailTheme =
             theme?.shape === 'email' ? theme : resolveAppTheme('send_email')!;
-        return <ThemedEmailOut icons={icons} artifact={artifact} theme={emailTheme} />;
+        return (
+            <ThemedEmailOut
+                icons={icons}
+                artifact={artifact}
+                theme={emailTheme}
+                agentName={agentName}
+                suppressByline={suppressByline}
+            />
+        );
     }
     if (theme?.shape === 'bubble')
         return (
@@ -869,6 +915,8 @@ export function OutboundMessage({
                 artifact={artifact}
                 theme={theme}
                 hideDestination={hideDestination}
+                agentName={agentName}
+                suppressByline={suppressByline}
             />
         );
     if (theme)
@@ -878,8 +926,10 @@ export function OutboundMessage({
                 artifact={artifact}
                 theme={theme}
                 hideDestination={hideDestination}
+                agentName={agentName}
+                suppressByline={suppressByline}
             />
         );
     // No theme — the plain neutral message frame with the sender's own mark.
-    return <OutboundSlack icons={icons} artifact={artifact} hideDestination={hideDestination} />;
+    return <OutboundSlack icons={icons} artifact={artifact} hideDestination={hideDestination} agentName={agentName} />;
 }
