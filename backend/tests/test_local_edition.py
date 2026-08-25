@@ -360,6 +360,86 @@ def test_local_cron_next_run_computation():
     assert parsed == datetime(2030, 1, 1, tzinfo=tz.utc)
 
 
+def _frozen_local_cron(frozen):
+    from datetime import datetime
+    from unittest.mock import patch
+    from zoneinfo import ZoneInfo
+
+    class _FrozenDT(datetime):
+        @classmethod
+        def now(cls, tzinfo=None):
+            return frozen.astimezone(tzinfo or ZoneInfo("UTC"))
+
+    return patch("utils.local_cron.datetime", _FrozenDT)
+
+
+def test_local_cron_evaluates_expressions_in_schedule_timezone():
+    """Same contract as the CF worker: expressions are LOCAL wall-clock in
+    the schedule's timezone (windowed weekday schedules depend on this)."""
+    from utils.local_cron import _compute_next_run
+    from datetime import datetime, timezone as tz
+
+    # Friday 2026-07-03 22:30 UTC = 18:30 New York — past the window's last
+    # fire; the next must be Monday 9:00 NY = 13:00 UTC (EDT).
+    with _frozen_local_cron(datetime(2026, 7, 3, 22, 30, tzinfo=tz.utc)):
+        nxt = _compute_next_run("0-59/30 9-17 * * 1-5", "America/New_York")
+    assert nxt == datetime(2026, 7, 6, 13, 0, tzinfo=tz.utc)
+
+
+def test_local_cron_is_dst_correct_across_fall_back():
+    """The day-walker exists because croniter iteration lands fires ±1h around
+    DST transitions: from Sat Oct 31 2026, the next daily-9am NY fire is
+    Sun Nov 1 9:00 EST = 14:00 UTC (croniter returned 15:00 = 10:00 local)."""
+    from utils.local_cron import _compute_next_run
+    from datetime import datetime, timezone as tz
+
+    with _frozen_local_cron(datetime(2026, 10, 31, 16, 0, tzinfo=tz.utc)):
+        nxt = _compute_next_run("0 9 * * *", "America/New_York")
+    assert nxt == datetime(2026, 11, 1, 14, 0, tzinfo=tz.utc)
+
+
+def test_local_cron_speaks_the_custom_duration_and_weeks_formats():
+    """"/Nh" and "base /Nw" previously failed croniter parsing outright, so
+    every-5-hours and every-2-weeks schedules could never register locally."""
+    from utils.local_cron import _compute_next_run
+    from datetime import datetime, timedelta, timezone as tz
+
+    frozen = datetime(2026, 7, 6, 14, 0, tzinfo=tz.utc)  # Monday 10:00 NY
+    with _frozen_local_cron(frozen):
+        assert _compute_next_run("0 0 * * * /5h", "UTC") == frozen + timedelta(hours=5)
+
+        # Biweekly Monday 9:00 NY, anchored on this morning's fire → skips
+        # next Monday for the one after (worker-parity stepping).
+        anchored = _compute_next_run(
+            "0 9 * * 1 /2w", "America/New_York",
+            last_run=datetime(2026, 7, 6, 13, 0, tzinfo=tz.utc),
+        )
+        assert anchored == datetime(2026, 7, 20, 13, 0, tzinfo=tz.utc)
+        # No anchor (first-ever fire) → next weekly occurrence.
+        assert _compute_next_run("0 9 * * 1 /2w", "America/New_York") == \
+            datetime(2026, 7, 13, 13, 0, tzinfo=tz.utc)
+
+
+def test_local_cron_constrained_seconds_and_impossible_expressions():
+    from utils.local_cron import _compute_next_run
+    from datetime import datetime, timedelta, timezone as tz
+    import pytest as _pytest
+
+    # In-window Wednesday 10:30 NY: candidate now+10s stands.
+    frozen = datetime(2026, 7, 1, 14, 30, 7, tzinfo=tz.utc)
+    with _frozen_local_cron(frozen):
+        assert _compute_next_run("*/10s * 9-17 * * 1-5", "America/New_York") == \
+            frozen + timedelta(seconds=10)
+    # Out-of-window Friday evening: sleeps to Monday 9:00 NY.
+    with _frozen_local_cron(datetime(2026, 7, 3, 22, 30, tzinfo=tz.utc)):
+        assert _compute_next_run("*/10s * 9-17 * * 1-5", "America/New_York") == \
+            datetime(2026, 7, 6, 13, 0, tzinfo=tz.utc)
+    # A never-fires expression raises (create → 400) instead of scanning forever.
+    with _frozen_local_cron(datetime(2026, 7, 1, tzinfo=tz.utc)):
+        with _pytest.raises(ValueError):
+            _compute_next_run("0 9 30-31 2 *", "UTC")
+
+
 @pytest.mark.asyncio
 async def test_agent_presence_deltas_and_snapshot(fresh_hub):
     sock = FakeSocket()
