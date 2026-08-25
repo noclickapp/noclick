@@ -18,7 +18,8 @@ export default async function () {
     const host = document.createElement('div');
     document.body.appendChild(host);
     const root = createRoot(host);
-    let latest: ScheduleConfig | null = null;
+    const captured: { latest: ScheduleConfig | null } = { latest: null };
+    const latest = (): ScheduleConfig | null => captured.latest;
 
     const render = async (value: ScheduleConfig) => {
         root.render(
@@ -26,7 +27,7 @@ export default async function () {
                 value,
                 showWindow: true,
                 onChange: (v: ScheduleConfig) => {
-                    latest = v;
+                    captured.latest = v;
                 },
             })
         );
@@ -60,9 +61,12 @@ export default async function () {
         const beforeSelects = snapshot<HTMLSelectElement>('select');
         button('all day')!.click();
         await settle();
-        if (latest?.windowStart !== '09:00' || latest?.windowEnd !== '18:00') {
+        if (
+            latest()?.windowStart !== '09:00' ||
+            latest()?.windowEnd !== '18:00'
+        ) {
             throw new Error(
-                `opening the time pill must commit the window: ${JSON.stringify(latest)}`
+                `opening the time pill must commit the window: ${JSON.stringify(latest())}`
             );
         }
         const selects = appeared<HTMLSelectElement>('select', beforeSelects);
@@ -71,9 +75,12 @@ export default async function () {
         selects[1].value = '17:00';
         selects[1].dispatchEvent(new Event('change', { bubbles: true }));
         await settle();
-        if (latest?.windowStart !== '09:00' || latest?.windowEnd !== '17:00') {
+        if (
+            latest()?.windowStart !== '09:00' ||
+            latest()?.windowEnd !== '17:00'
+        ) {
             throw new Error(
-                `time edit did not apply: ${JSON.stringify(latest)}`
+                `time edit did not apply: ${JSON.stringify(latest())}`
             );
         }
 
@@ -111,7 +118,7 @@ export default async function () {
         if (!dayOption) throw new Error('day frequency option not found');
         dayOption.click();
         await settle();
-        const pruned = latest as ScheduleConfig;
+        const pruned = latest() as ScheduleConfig;
         if (
             pruned.windowStart !== undefined ||
             pruned.windowEnd !== undefined

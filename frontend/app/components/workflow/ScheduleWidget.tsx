@@ -30,6 +30,9 @@ export interface ScheduleConfig {
     /** Part-of-year range, months 1–12 inclusive; start > end wraps the new year. */
     monthStart?: number;
     monthEnd?: number;
+    /** Preserve forward-compatible schedule fields when the controlled value
+     * is passed through shared schedule-formatting helpers. */
+    [key: string]: unknown;
 }
 
 interface ScheduleWidgetProps {
