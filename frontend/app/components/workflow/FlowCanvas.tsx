@@ -8742,7 +8742,6 @@ const FlowCanvasInner = ({
             {runResultsOpen && (
                 <RunResultsDialog
                     results={runResults}
-                    agentInputs={agentInputs}
                     workflowName={workflowTitle}
                     runs={logs}
                     currentExecId={runResultsExecId}

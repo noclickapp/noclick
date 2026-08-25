@@ -129,6 +129,33 @@ if rg -n 'PR #[0-9]+' backend frontend sdk docs --glob '!**/node_modules/**'; th
   exit 1
 fi
 
+# Internal hosted-builder and retained-runtime names are architectural source,
+# not useful community terminology. The reviewed tree intentionally contains
+# none of them; keep that exact zero-baseline for every incremental publish.
+for internal_pattern in \
+  'multipass' 'multi-pass' 'Pass 2' 'Pass 3' 'pass2' 'pass3' \
+  'OperationSelector' 'SchemaFiller' 'hosted daemon' 'cli_sandbox' \
+  'Modal Sandbox' 'Pyroscope'
+do
+  if rg -n -i -F "$internal_pattern" backend frontend sdk docs \
+      --glob '!**/node_modules/**' --glob '!**/dist/**' --glob '!**/build/**'; then
+    echo "Community boundary violation: internal architecture term: $internal_pattern" >&2
+    exit 1
+  fi
+done
+
+if rg -n -i -e "n8n[- ]style|copied from n8n|derived from n8n|n8n dialect|based on n8n(['’]s)? (design|implementation|architecture|behavior|semantics)" \
+    backend frontend sdk docs --glob '!**/node_modules/**'; then
+  echo "Community boundary violation: misleading n8n provenance wording" >&2
+  exit 1
+fi
+
+if rg -n -e '\bta-[0-9A-Z]{12,}\b' backend frontend sdk docs \
+    --glob '!**/node_modules/**'; then
+  echo "Community boundary violation: hosted task identifier" >&2
+  exit 1
+fi
+
 # NoClick-managed hostnames fail closed. The managed API default is deliberate
 # only in the reviewed SDK implementations and their contract documentation;
 # the public website and docs hosts are ordinary links. Everything else must
