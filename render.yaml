@@ -19,6 +19,9 @@ services:
     # instance count is one by design — see docs/self-hosting.md.
     numInstances: 1
     plan: standard
+    # Instances created from the public deploy button should stay on the
+    # operator's reviewed revision instead of following every main push.
+    autoDeploy: false
     healthCheckPath: /health
     # Applies the schema and creates both private object-storage buckets.
     # Idempotent, so it is safe on every deploy.

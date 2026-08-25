@@ -25,6 +25,10 @@
 </p>
 
 <p align="center">
+  <a href="https://render.com/deploy?repo=https://github.com/noclickapp/noclick"><img alt="Deploy to Render" src="https://render.com/images/deploy-to-render-button.svg" /></a>
+</p>
+
+<p align="center">
   <a href="https://noclick.com">
     <img src="docs/assets/demo.svg" alt="Typing a prompt, the AI builder assembling a WhatsApp and Slack support agent on the canvas, the run executing with full observability, and the reply landing in WhatsApp" width="860" />
   </a>
@@ -118,6 +122,10 @@ The installer above is the fast path. For a real deployment — your own Postgre
 object storage, OAuth apps for integrations, model providers, and the
 environment variables each side needs — read the
 **[self-hosting guide](./docs/self-hosting.md)**.
+
+The **Deploy to Render** button provisions the included single-origin service
+from [`render.yaml`](./render.yaml). Have a Supabase project ready: Render will
+ask for its database and API credentials before it creates the service.
 
 Releases are what you run: `main` moves with every upstream merge, tags are
 deliberate cuts, and each tag publishes images to GHCR so the compose stack
