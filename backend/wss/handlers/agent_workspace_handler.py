@@ -55,14 +55,14 @@ class AgentWorkspaceHandler(DatabasePoolMixin, SocketIOHandler):
         """Shared gate for every workspace event: authenticate, check workflow
         access, and resolve the workspace source from the STORED graph.
 
-        Returns ``(source, True)`` on success — ``source`` is None for a ck-less
-        conversation (no durable workspace). Returns ``(None, False)`` when an
-        error response has already been sent (unauthenticated / access denied)."""
+        Returns ``(source, access)`` on success — ``source`` is None for a
+        conversation without a durable workspace. Returns ``(None, None)``
+        when an error response has already been sent."""
         session = await self.sio.get_session(sid)
         user_id = session.get("user_id") if session else None
         if not user_id:
             await self._respond(sid, data.request_id, success=False, error="Not authenticated")
-            return None, False
+            return None, None
 
         pool = await self.get_pool()
         async with pool.acquire() as conn:
@@ -71,7 +71,7 @@ class AgentWorkspaceHandler(DatabasePoolMixin, SocketIOHandler):
             )
             if not access.has_access:
                 await self._respond(sid, data.request_id, success=False, error="Access denied")
-                return None, False
+                return None, None
             row = await WorkflowRepo(pool).get_workflow_org_and_data(
                 conn, uuid_module.UUID(data.workflow_id)
             )
@@ -91,12 +91,12 @@ class AgentWorkspaceHandler(DatabasePoolMixin, SocketIOHandler):
             workflow.get("nodes") or [],
             workflow.get("edges") or [],
         )
-        return source, True
+        return source, access
 
     async def list_files(self, sid: str, data: AgentWorkspaceListRequest) -> None:
         try:
-            source, ok = await self._authorize_and_resolve(sid, data)
-            if not ok:
+            source, access = await self._authorize_and_resolve(sid, data)
+            if access is None:
                 return
             if source is None:
                 # ck-less one-off — the sandbox mounts no durable workspace.
@@ -131,8 +131,13 @@ class AgentWorkspaceHandler(DatabasePoolMixin, SocketIOHandler):
 
     async def delete_file(self, sid: str, data: AgentWorkspaceDeleteRequest) -> None:
         try:
-            source, ok = await self._authorize_and_resolve(sid, data)
-            if not ok:
+            source, access = await self._authorize_and_resolve(sid, data)
+            if access is None:
+                return
+            if access.permission not in (Permission.EDIT, Permission.OWNER):
+                await self._respond(
+                    sid, data.request_id, success=False, error="Edit access required"
+                )
                 return
             if source is None:
                 await self._respond(

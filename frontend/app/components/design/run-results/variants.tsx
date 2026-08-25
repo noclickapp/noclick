@@ -29,7 +29,6 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '~/comp
 import { SerializedIcon } from '~/components/shared/SerializedIcon';
 import { cn } from '~/lib/utils';
 import { getNodeIconMeta } from '~/lib/nodeIconRegistry';
-import type { AgentInputGroup } from '~/lib/agentInputs';
 import { InboundMessage, OutboundMessage, isEmailShaped } from '~/components/design/rehearsal/native';
 import { resolveAppTheme } from '~/components/design/rehearsal/appThemes';
 import type { Mark } from '~/components/design/rehearsal/variants';
@@ -83,8 +82,6 @@ export interface RunVariantProps {
     onClose?: () => void;
     /** Run history for the header switcher; absent hides the pill. */
     switcher?: RunSwitcherData;
-    /** The agent inputs rail's data (deliveries the response consumed). */
-    agentInputs?: AgentInputGroup[];
     onDontShowAgain?: () => void;
     /** Host renders its own close (Radix DialogContent's X) — skip ours and
         clear space for it. */
@@ -751,69 +748,6 @@ function SupportingRow({
     );
 }
 
-/** One input delivery group the agent's response consumed — same row anatomy;
-    expanding lists each delivery's payload through the real viewer. */
-function InputRow({ group }: { group: AgentInputGroup }) {
-    const [open, setOpen] = useState(false);
-    return (
-        <div>
-            <button
-                type="button"
-                onClick={() => setOpen((v) => !v)}
-                className={cn(
-                    'group flex w-full items-center gap-2.5 rounded-md px-2.5 py-2 text-left transition-colors hover:bg-foreground/[0.03]',
-                    open && 'bg-foreground/[0.03]'
-                )}
-            >
-                <span className="flex w-3.5 shrink-0 justify-center">
-                    <Check className="h-3.5 w-3.5 text-foreground/40" />
-                </span>
-                {group.iconHtml ? (
-                    <SerializedIcon
-                        html={group.iconHtml}
-                        iconColor={group.iconColor}
-                        className="h-3.5 w-3.5 shrink-0"
-                    />
-                ) : (
-                    <Bot className="h-3.5 w-3.5 shrink-0 text-muted-foreground" />
-                )}
-                <span className="min-w-0 flex-1 truncate text-[13px] text-foreground/80">{group.label}</span>
-                {group.runs.length > 1 && (
-                    <span className="shrink-0 rounded-full bg-foreground/[0.08] px-1.5 py-0.5 text-[10px] font-semibold tabular-nums text-muted-foreground">
-                        ×{group.runs.length}
-                    </span>
-                )}
-                <ChevronDown
-                    className={cn(
-                        'h-3 w-3 shrink-0 text-foreground/25 transition-all group-hover:text-foreground/70',
-                        open && 'rotate-180'
-                    )}
-                />
-            </button>
-            {open && (
-                <div className="mx-1 mb-1.5 mt-1 space-y-3 rounded-lg border border-foreground/[0.06] bg-foreground/[0.02] px-3.5 py-3">
-                    {group.runs.map((run, i) => (
-                        <div key={i}>
-                            {group.runs.length > 1 && (
-                                <p className="m-0 mb-1.5 text-[10px] font-semibold uppercase tracking-[0.1em] text-foreground/30">
-                                    Delivery {i + 1} of {group.runs.length}
-                                </p>
-                            )}
-                            {run.output !== undefined && run.output !== null ? (
-                                <IODataDisplay data={run.output} label="Input" nodeId={group.nodeId} />
-                            ) : (
-                                <p className="m-0 text-[12.5px] text-foreground/40">
-                                    No input data retained for this delivery.
-                                </p>
-                            )}
-                        </div>
-                    ))}
-                </div>
-            )}
-        </div>
-    );
-}
-
 /** The trigger identity row: mark + node name + when the event landed. */
 function TriggerIdentity({ story, icons }: { story: RunStory; icons: RunVariantProps['icons'] }) {
     const t = story.trigger;
@@ -965,7 +899,6 @@ export function StoryVariant({
     onOpenConfig,
     onClose,
     switcher,
-    agentInputs,
     onDontShowAgain,
     builtinClose,
 }: RunVariantProps) {
@@ -1061,17 +994,6 @@ export function StoryVariant({
                     <section>
                         <Eyebrow>Outcome</Eyebrow>
                         <NothingWentOut response={agent.response} />
-                    </section>
-                )}
-
-                {agentInputs && agentInputs.length > 0 && (
-                    <section>
-                        <Eyebrow>Inputs consumed ({agentInputs.length})</Eyebrow>
-                        <div className={cn('px-1.5 py-1.5', SURFACE)}>
-                            {agentInputs.map((g) => (
-                                <InputRow key={g.nodeId} group={g} />
-                            ))}
-                        </div>
                     </section>
                 )}
 

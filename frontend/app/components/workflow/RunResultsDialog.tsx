@@ -3,11 +3,10 @@
 // what the agent did → what went out → also ran): the trigger event and the
 // agent's sends in their apps' native frames, the tool calls as a quiet log —
 // see components/design/run-results/. This file adapts FlowCanvas's data
-// (NodeRunResult rows, execution logs, agent inputs) into that view.
+// (NodeRunResult rows and execution logs) into that view.
 import { useMemo } from 'react';
 import { Inbox, Loader2 } from 'lucide-react';
 import { Dialog, DialogContent, DialogTitle } from '~/components/ui/dialog';
-import type { AgentInputGroup } from '~/lib/agentInputs';
 import {
     buildRunStory,
     type StoryNodeResult,
@@ -62,9 +61,6 @@ function toSwitcherRun(log: WorkflowExecutionLog): SwitcherRun {
 
 interface RunResultsDialogProps {
     results: NodeRunResult[];
-    /** Input deliveries the shown agent response consumed, grouped per node.
-     *  Empty for non-agent runs / runs with no inputs. */
-    agentInputs: AgentInputGroup[];
     onClose: () => void;
     /** Open a node's config panel (expanded), like the trigger-info popup. */
     onOpenConfig: (nodeId: string) => void;
@@ -120,7 +116,6 @@ export function RunResultsDialog({
         }),
         [runs, currentExecId, hasMore, loadingMore, onLoadMore, onSelectRun]
     );
-
     return (
         <Dialog open onOpenChange={(o) => { if (!o) onClose(); }}>
             <DialogContent
@@ -155,7 +150,6 @@ export function RunResultsDialog({
                         icons={icons}
                         onOpenConfig={onOpenConfig}
                         switcher={switcher}
-                        agentInputs={agentInputs}
                         onDontShowAgain={() => {
                             onDontShowAgain();
                             onClose();
