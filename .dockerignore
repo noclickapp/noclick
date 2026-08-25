@@ -1,0 +1,41 @@
+# Anything here would be copied over the image's own install, or is simply
+# weight. node_modules in particular: the build installs its own, and a host
+# copy would overwrite it with the wrong platform's binaries.
+**/node_modules
+**/.git
+**/__pycache__
+**/*.pyc
+**/.pytest_cache
+**/.venv
+**/venv
+
+frontend/build
+frontend/.react-router
+frontend/public/noclick-sdk
+frontend/public/checklist_webms
+frontend/tests
+frontend/**/*.test.*
+sdk/typescript/dist
+sdk/typescript/node_modules
+
+# Test fixtures are never runtime dependencies. Keeping them out of the build
+# context also prevents realistic credential-shaped fixtures or private bug
+# reproductions from surviving in an immutable image layer.
+backend/tests
+backend/**/tests
+backend/**/test_*.py
+
+.env
+.env.*
+**/.env
+**/.env.*
+.noclick/
+logs/
+**/*.log
+.DS_Store
+
+# Not part of any runtime image.
+docs/
+.github/
+.husky/
+oss/

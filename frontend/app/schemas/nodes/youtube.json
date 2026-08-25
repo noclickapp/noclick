@@ -1,0 +1,4350 @@
+{
+  "$defs": {
+    "YouTubeAddLiveChatModeratorConfig": {
+      "description": "Add a moderator to live chat",
+      "properties": {
+        "operation": {
+          "const": "add_live_chat_moderator",
+          "default": "add_live_chat_moderator",
+          "title": "Add Live Chat Moderator",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Live Chat",
+          "x-display-name": "Add Live Chat Moderator",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "make chat mod",
+            "add chat moderator",
+            "promote stream moderator",
+            "assign chat mod"
+          ]
+        },
+        "live_chat_id": {
+          "title": "Live Chat ID",
+          "type": "string"
+        },
+        "channel_id": {
+          "description": "Channel ID of user to make moderator",
+          "title": "Channel ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "live_chat_id",
+        "channel_id"
+      ],
+      "title": "Add Live Chat Moderator",
+      "type": "object"
+    },
+    "YouTubeAddPlaylistItemConfig": {
+      "description": "Add a video to a playlist",
+      "properties": {
+        "operation": {
+          "const": "add_video_to_playlist",
+          "default": "add_video_to_playlist",
+          "title": "Add Video to Playlist",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Playlist",
+          "x-display-name": "Add Video to Playlist",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "add to playlist",
+            "put video in playlist",
+            "insert video playlist",
+            "save video to playlist"
+          ]
+        },
+        "playlist_id": {
+          "description": "The playlist to add to",
+          "title": "Playlist ID",
+          "type": "string"
+        },
+        "video_id": {
+          "description": "The video ID to add",
+          "title": "Video ID",
+          "type": "string"
+        },
+        "position": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Position in playlist (0-based)",
+          "title": "Position"
+        }
+      },
+      "required": [
+        "playlist_id",
+        "video_id"
+      ],
+      "title": "Add to Playlist",
+      "type": "object"
+    },
+    "YouTubeBanLiveChatUserConfig": {
+      "description": "Ban a user from live chat",
+      "properties": {
+        "operation": {
+          "const": "ban_live_chat_user",
+          "default": "ban_live_chat_user",
+          "title": "Ban Live Chat User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Live Chat",
+          "x-display-name": "Ban Live Chat User",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "ban chat viewer",
+            "block chat user",
+            "timeout chat user",
+            "kick from chat"
+          ]
+        },
+        "live_chat_id": {
+          "title": "Live Chat ID",
+          "type": "string"
+        },
+        "channel_id": {
+          "description": "Channel ID of user to ban",
+          "title": "Channel ID",
+          "type": "string"
+        },
+        "ban_type": {
+          "default": "permanent",
+          "description": "permanent or temporary",
+          "title": "Ban Type",
+          "type": "string"
+        },
+        "ban_duration_seconds": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Duration for temporary bans",
+          "title": "Ban Duration (seconds)"
+        }
+      },
+      "required": [
+        "live_chat_id",
+        "channel_id"
+      ],
+      "title": "Ban Live Chat User",
+      "type": "object"
+    },
+    "YouTubeBindBroadcastConfig": {
+      "description": "Bind a broadcast to a stream",
+      "properties": {
+        "operation": {
+          "const": "bind_broadcast_to_stream",
+          "default": "bind_broadcast_to_stream",
+          "title": "Bind Broadcast to Stream",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Live Broadcast",
+          "x-display-name": "Bind Broadcast to Stream",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "bind stream",
+            "attach stream",
+            "link broadcast stream",
+            "connect encoder"
+          ]
+        },
+        "broadcast_id": {
+          "title": "Broadcast ID",
+          "type": "string"
+        },
+        "stream_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Stream ID to bind (leave empty to unbind)",
+          "title": "Stream ID"
+        }
+      },
+      "required": [
+        "broadcast_id"
+      ],
+      "title": "Bind Broadcast to Stream",
+      "type": "object"
+    },
+    "YouTubeCreateBroadcastConfig": {
+      "description": "Create a new live broadcast",
+      "properties": {
+        "operation": {
+          "const": "create_live_broadcast",
+          "default": "create_live_broadcast",
+          "title": "Create Live Broadcast",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Live Broadcast",
+          "x-display-name": "Create Live Broadcast",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "schedule livestream",
+            "new broadcast",
+            "set up live event",
+            "go live setup"
+          ]
+        },
+        "title": {
+          "description": "Broadcast title",
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description",
+          "ui:widget": "textarea"
+        },
+        "scheduled_start_time": {
+          "description": "ISO 8601 datetime (e.g., 2024-12-25T10:00:00Z)",
+          "title": "Scheduled Start Time",
+          "type": "string"
+        },
+        "privacy_status": {
+          "default": "private",
+          "description": "public, private, or unlisted",
+          "title": "Privacy Status",
+          "type": "string"
+        },
+        "made_for_kids": {
+          "default": false,
+          "title": "Made for Kids",
+          "type": "boolean"
+        },
+        "enable_auto_start": {
+          "default": false,
+          "description": "Auto start when stream goes live",
+          "title": "Enable Auto Start",
+          "type": "boolean"
+        },
+        "enable_auto_stop": {
+          "default": false,
+          "description": "Auto stop when stream ends",
+          "title": "Enable Auto Stop",
+          "type": "boolean"
+        },
+        "enable_dvr": {
+          "default": true,
+          "description": "Allow viewers to rewind",
+          "title": "Enable DVR",
+          "type": "boolean"
+        },
+        "enable_live_chat": {
+          "default": true,
+          "title": "Enable Live Chat",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "title",
+        "scheduled_start_time"
+      ],
+      "title": "Create Live Broadcast",
+      "type": "object"
+    },
+    "YouTubeCreateChannelCommentConfig": {
+      "description": "Create a comment on a channel's discussion tab",
+      "properties": {
+        "operation": {
+          "const": "create_channel_discussion_comment",
+          "default": "create_channel_discussion_comment",
+          "title": "Create Channel Discussion Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment",
+          "x-display-name": "Create Channel Discussion Comment",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "channel discussion",
+            "comment on channel",
+            "channel community post",
+            "discussion tab comment"
+          ]
+        },
+        "channel_id": {
+          "description": "Channel to comment on",
+          "title": "Channel ID",
+          "type": "string"
+        },
+        "text": {
+          "description": "The comment text",
+          "title": "Comment Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "channel_id",
+        "text"
+      ],
+      "title": "Comment on Channel",
+      "type": "object"
+    },
+    "YouTubeCreateCommentConfig": {
+      "description": "Create a reply to an existing comment",
+      "properties": {
+        "operation": {
+          "const": "create_comment_reply",
+          "default": "create_comment_reply",
+          "title": "Create Comment Reply",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment",
+          "x-display-name": "Create Comment Reply",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "reply to comment",
+            "respond to comment",
+            "answer a comment"
+          ]
+        },
+        "parent_id": {
+          "description": "The comment ID to reply to",
+          "title": "Parent Comment ID",
+          "type": "string"
+        },
+        "text": {
+          "description": "The reply text",
+          "title": "Comment Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "parent_id",
+        "text"
+      ],
+      "title": "Reply to Comment",
+      "type": "object"
+    },
+    "YouTubeCreatePlaylistConfig": {
+      "description": "Create a new playlist",
+      "properties": {
+        "operation": {
+          "const": "create_playlist",
+          "default": "create_playlist",
+          "title": "Create Playlist",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Playlist",
+          "x-display-name": "Create Playlist",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new playlist",
+            "make playlist",
+            "start a playlist"
+          ]
+        },
+        "title": {
+          "description": "Playlist title",
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Playlist description",
+          "title": "Description",
+          "ui:widget": "textarea"
+        },
+        "privacy_status": {
+          "default": "private",
+          "description": "Privacy status (public, private, unlisted)",
+          "title": "Privacy Status",
+          "type": "string"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated tags",
+          "title": "Tags"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "Create Playlist",
+      "type": "object"
+    },
+    "YouTubeCreateReportingJobConfig": {
+      "description": "Create a scheduled reporting job",
+      "properties": {
+        "operation": {
+          "const": "create_reporting_job",
+          "default": "create_reporting_job",
+          "title": "Create Reporting Job",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reporting Job",
+          "x-display-name": "Create Reporting Job",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "schedule bulk report",
+            "new reporting job",
+            "set up bulk report"
+          ]
+        },
+        "report_type_id": {
+          "description": "The report type ID from list_report_types",
+          "title": "Report Type ID",
+          "type": "string"
+        },
+        "name": {
+          "description": "A name for this reporting job",
+          "title": "Job Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "report_type_id",
+        "name"
+      ],
+      "title": "Create Reporting Job",
+      "type": "object"
+    },
+    "YouTubeCreateStreamConfig": {
+      "description": "Create a new live stream",
+      "properties": {
+        "operation": {
+          "const": "create_live_stream",
+          "default": "create_live_stream",
+          "title": "Create Live Stream",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Live Stream",
+          "x-display-name": "Create Live Stream",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new stream",
+            "create ingestion",
+            "set up encoder stream",
+            "rtmp stream"
+          ]
+        },
+        "title": {
+          "description": "Stream title",
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "frame_rate": {
+          "default": "variable",
+          "description": "30fps, 60fps, or variable",
+          "title": "Frame Rate",
+          "type": "string"
+        },
+        "resolution": {
+          "default": "variable",
+          "description": "240p, 360p, 480p, 720p, 1080p, 1440p, 2160p, or variable",
+          "title": "Resolution",
+          "type": "string"
+        },
+        "ingestion_type": {
+          "default": "rtmp",
+          "description": "rtmp, dash, webrtc, or hls",
+          "title": "Ingestion Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "Create Live Stream",
+      "type": "object"
+    },
+    "YouTubeCreateVideoCommentConfig": {
+      "description": "Create a top-level comment on a video",
+      "properties": {
+        "operation": {
+          "const": "create_video_comment",
+          "default": "create_video_comment",
+          "title": "Create Video Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment",
+          "x-display-name": "Create Video Comment",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "comment on video",
+            "top level comment",
+            "leave video comment",
+            "post video comment"
+          ]
+        },
+        "video_id": {
+          "description": "Video to comment on",
+          "title": "Video ID",
+          "type": "string"
+        },
+        "text": {
+          "description": "The comment text",
+          "title": "Comment Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "video_id",
+        "text"
+      ],
+      "title": "Comment on Video",
+      "type": "object"
+    },
+    "YouTubeDeleteBroadcastConfig": {
+      "description": "Delete a live broadcast",
+      "properties": {
+        "operation": {
+          "const": "delete_live_broadcast",
+          "default": "delete_live_broadcast",
+          "title": "Delete Live Broadcast",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Live Broadcast",
+          "x-display-name": "Delete Live Broadcast",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove broadcast",
+            "cancel livestream",
+            "delete live event"
+          ]
+        },
+        "broadcast_id": {
+          "description": "The broadcast ID to delete",
+          "title": "Broadcast ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "broadcast_id"
+      ],
+      "title": "Delete Live Broadcast",
+      "type": "object"
+    },
+    "YouTubeDeleteCommentConfig": {
+      "description": "Delete a comment",
+      "properties": {
+        "operation": {
+          "const": "delete_comment",
+          "default": "delete_comment",
+          "title": "Delete Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment",
+          "x-display-name": "Delete Comment",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove comment",
+            "trash comment",
+            "take down comment"
+          ]
+        },
+        "comment_id": {
+          "description": "The comment ID to delete",
+          "title": "Comment ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "comment_id"
+      ],
+      "title": "Delete Comment",
+      "type": "object"
+    },
+    "YouTubeDeleteLiveChatMessageConfig": {
+      "description": "Delete a message from live chat",
+      "properties": {
+        "operation": {
+          "const": "delete_live_chat_message",
+          "default": "delete_live_chat_message",
+          "title": "Delete Live Chat Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Live Chat",
+          "x-display-name": "Delete Live Chat Message",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "delete chat message",
+            "remove livestream chat",
+            "purge chat message"
+          ]
+        },
+        "message_id": {
+          "title": "Message ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message_id"
+      ],
+      "title": "Delete Live Chat Message",
+      "type": "object"
+    },
+    "YouTubeDeletePlaylistConfig": {
+      "description": "Delete a playlist",
+      "properties": {
+        "operation": {
+          "const": "delete_playlist",
+          "default": "delete_playlist",
+          "title": "Delete Playlist",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Playlist",
+          "x-display-name": "Delete Playlist",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove playlist",
+            "trash playlist",
+            "destroy playlist"
+          ]
+        },
+        "playlist_id": {
+          "description": "The playlist ID to delete",
+          "title": "Playlist ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "playlist_id"
+      ],
+      "title": "Delete Playlist",
+      "type": "object"
+    },
+    "YouTubeDeletePlaylistItemConfig": {
+      "description": "Remove an item from a playlist",
+      "properties": {
+        "operation": {
+          "const": "remove_item_from_playlist",
+          "default": "remove_item_from_playlist",
+          "title": "Remove Item from Playlist",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Playlist",
+          "x-display-name": "Remove Item from Playlist",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove from playlist",
+            "take video out playlist",
+            "delete playlist video"
+          ]
+        },
+        "playlist_item_id": {
+          "description": "The playlist item ID to remove",
+          "title": "Playlist Item ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "playlist_item_id"
+      ],
+      "title": "Remove from Playlist",
+      "type": "object"
+    },
+    "YouTubeDeleteReportingJobConfig": {
+      "description": "Delete a reporting job",
+      "properties": {
+        "operation": {
+          "const": "delete_reporting_job",
+          "default": "delete_reporting_job",
+          "title": "Delete Reporting Job",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reporting Job",
+          "x-display-name": "Delete Reporting Job",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove reporting job",
+            "cancel bulk report",
+            "stop scheduled report"
+          ]
+        },
+        "job_id": {
+          "description": "The reporting job ID to delete",
+          "title": "Job ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "Delete Reporting Job",
+      "type": "object"
+    },
+    "YouTubeDeleteStreamConfig": {
+      "description": "Delete a live stream",
+      "properties": {
+        "operation": {
+          "const": "delete_live_stream",
+          "default": "delete_live_stream",
+          "title": "Delete Live Stream",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Live Stream",
+          "x-display-name": "Delete Live Stream",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "delete rtmp stream",
+            "remove ingestion stream",
+            "delete stream key",
+            "tear down livestream"
+          ]
+        },
+        "stream_id": {
+          "title": "Stream ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "stream_id"
+      ],
+      "title": "Delete Live Stream",
+      "type": "object"
+    },
+    "YouTubeDeleteVideoConfig": {
+      "description": "Delete a video",
+      "properties": {
+        "operation": {
+          "const": "delete_video",
+          "default": "delete_video",
+          "title": "Delete Video",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Video",
+          "x-display-name": "Delete Video",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "take down video",
+            "remove my upload",
+            "unpublish video"
+          ]
+        },
+        "video_id": {
+          "description": "The video ID to delete",
+          "title": "Video ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "video_id"
+      ],
+      "title": "Delete Video",
+      "type": "object"
+    },
+    "YouTubeDownloadCaptionConfig": {
+      "description": "Download a caption track",
+      "properties": {
+        "operation": {
+          "const": "download_caption_track",
+          "default": "download_caption_track",
+          "title": "Download Caption Track",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Caption",
+          "x-display-name": "Download Caption Track",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "download captions",
+            "export subtitles",
+            "get caption file",
+            "save srt"
+          ]
+        },
+        "caption_id": {
+          "description": "The caption track ID",
+          "title": "Caption ID",
+          "type": "string"
+        },
+        "tfmt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Caption format (sbv, scc, srt, ttml, vtt)",
+          "title": "Format"
+        }
+      },
+      "required": [
+        "caption_id"
+      ],
+      "title": "Download Caption",
+      "type": "object"
+    },
+    "YouTubeGetChannelAnalyticsConfig": {
+      "description": "Get analytics for your channel (views, watch time, subscribers, etc.)",
+      "properties": {
+        "operation": {
+          "const": "get_channel_analytics",
+          "default": "get_channel_analytics",
+          "title": "Get Channel Analytics",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Channel",
+          "x-display-name": "Get Channel Analytics",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "channel stats",
+            "views watch time",
+            "subscriber metrics",
+            "channel performance"
+          ]
+        },
+        "start_date": {
+          "description": "Start date in YYYY-MM-DD format",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "description": "End date in YYYY-MM-DD format",
+          "title": "End Date",
+          "type": "string"
+        },
+        "metrics": {
+          "default": "views,estimatedMinutesWatched,averageViewDuration,subscribersGained,subscribersLost",
+          "description": "Comma-separated metrics: views, estimatedMinutesWatched, averageViewDuration, subscribersGained, subscribersLost, likes, dislikes, comments, shares",
+          "title": "Metrics",
+          "type": "string"
+        },
+        "dimensions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated dimensions to group by: day, month, video, country, deviceType, operatingSystem",
+          "title": "Dimensions"
+        },
+        "filters": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter expression (e.g., country==US, video==VIDEO_ID)",
+          "title": "Filters"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort order (e.g., -views for descending by views)",
+          "title": "Sort"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 200,
+          "title": "Max Results"
+        }
+      },
+      "required": [
+        "start_date",
+        "end_date"
+      ],
+      "title": "Get Channel Analytics",
+      "type": "object"
+    },
+    "YouTubeGetDemographicsConfig": {
+      "description": "Get viewer demographics (age, gender)",
+      "properties": {
+        "operation": {
+          "const": "get_viewer_demographics",
+          "default": "get_viewer_demographics",
+          "title": "Get Viewer Demographics",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Analytics",
+          "x-display-name": "Get Viewer Demographics",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "audience demographics",
+            "age gender",
+            "viewer breakdown",
+            "who watches"
+          ]
+        },
+        "start_date": {
+          "description": "Start date in YYYY-MM-DD format",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "description": "End date in YYYY-MM-DD format",
+          "title": "End Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "start_date",
+        "end_date"
+      ],
+      "title": "Get Viewer Demographics",
+      "type": "object"
+    },
+    "YouTubeGetMyChannelConfig": {
+      "description": "Get the authenticated user's channel",
+      "properties": {
+        "operation": {
+          "const": "get_authenticated_user_channel",
+          "default": "get_authenticated_user_channel",
+          "title": "Get Authenticated User Channel",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Channel",
+          "x-display-name": "Get Authenticated User Channel",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "my channel",
+            "my own channel",
+            "current channel",
+            "this account channel"
+          ]
+        },
+        "part": {
+          "default": "snippet,contentDetails,statistics,status,brandingSettings",
+          "description": "Comma-separated list of channel resource parts",
+          "title": "Parts",
+          "type": "string"
+        }
+      },
+      "title": "Get My Channel",
+      "type": "object"
+    },
+    "YouTubeGetPlaylistConfig": {
+      "description": "Get a single playlist",
+      "properties": {
+        "operation": {
+          "const": "get_playlist",
+          "default": "get_playlist",
+          "title": "Get Playlist",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Playlist",
+          "x-display-name": "Get Playlist",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "single playlist",
+            "one playlist details",
+            "playlist info"
+          ]
+        },
+        "playlist_id": {
+          "description": "The playlist ID",
+          "title": "Playlist ID",
+          "type": "string"
+        },
+        "part": {
+          "default": "snippet,contentDetails,status",
+          "title": "Parts",
+          "type": "string"
+        }
+      },
+      "required": [
+        "playlist_id"
+      ],
+      "title": "Get Playlist",
+      "type": "object"
+    },
+    "YouTubeGetReportingJobConfig": {
+      "description": "Get details of a specific reporting job",
+      "properties": {
+        "operation": {
+          "const": "get_reporting_job",
+          "default": "get_reporting_job",
+          "title": "Get Reporting Job",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reporting Job",
+          "x-display-name": "Get Reporting Job",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "single reporting job",
+            "one bulk report",
+            "reporting job details"
+          ]
+        },
+        "job_id": {
+          "description": "The reporting job ID",
+          "title": "Job ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "Get Reporting Job",
+      "type": "object"
+    },
+    "YouTubeGetRevenueAnalyticsConfig": {
+      "description": "Get revenue analytics for your channel (requires monetization)",
+      "properties": {
+        "operation": {
+          "const": "get_channel_revenue_analytics",
+          "default": "get_channel_revenue_analytics",
+          "title": "Get Channel Revenue Analytics",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Analytics",
+          "x-display-name": "Get Channel Revenue Analytics",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "revenue stats",
+            "ad earnings",
+            "monetization income",
+            "estimated revenue",
+            "money earned"
+          ]
+        },
+        "start_date": {
+          "description": "Start date in YYYY-MM-DD format",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "description": "End date in YYYY-MM-DD format",
+          "title": "End Date",
+          "type": "string"
+        },
+        "metrics": {
+          "default": "estimatedRevenue,estimatedAdRevenue,grossRevenue,estimatedRedPartnerRevenue,cpm,adImpressions,monetizedPlaybacks",
+          "description": "Revenue metrics: estimatedRevenue, estimatedAdRevenue, grossRevenue, cpm, adImpressions, monetizedPlaybacks",
+          "title": "Metrics",
+          "type": "string"
+        },
+        "dimensions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "day",
+          "description": "Dimensions: day, month, video, country, adType",
+          "title": "Dimensions"
+        }
+      },
+      "required": [
+        "start_date",
+        "end_date"
+      ],
+      "title": "Get Revenue Analytics",
+      "type": "object"
+    },
+    "YouTubeGetTopVideosConfig": {
+      "description": "Get your top performing videos by various metrics",
+      "properties": {
+        "operation": {
+          "const": "get_top_performing_videos",
+          "default": "get_top_performing_videos",
+          "title": "Get Top Performing Videos",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Video",
+          "x-display-name": "Get Top Performing Videos",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "best videos",
+            "top videos",
+            "highest performing",
+            "most successful videos"
+          ]
+        },
+        "start_date": {
+          "description": "Start date in YYYY-MM-DD format",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "description": "End date in YYYY-MM-DD format",
+          "title": "End Date",
+          "type": "string"
+        },
+        "metric": {
+          "default": "estimatedMinutesWatched",
+          "description": "Metric to rank by: views, estimatedMinutesWatched, subscribersGained, likes",
+          "title": "Sort By Metric",
+          "type": "string"
+        },
+        "max_results": {
+          "default": 10,
+          "description": "Number of top videos to return (max 200)",
+          "title": "Number of Videos",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "start_date",
+        "end_date"
+      ],
+      "title": "Get Top Videos",
+      "type": "object"
+    },
+    "YouTubeGetTrafficSourcesConfig": {
+      "description": "Get traffic source breakdown for your channel",
+      "properties": {
+        "operation": {
+          "const": "get_channel_traffic_sources",
+          "default": "get_channel_traffic_sources",
+          "title": "Get Channel Traffic Sources",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Analytics",
+          "x-display-name": "Get Channel Traffic Sources",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "traffic sources",
+            "where views come from",
+            "discovery breakdown",
+            "referral sources"
+          ]
+        },
+        "start_date": {
+          "description": "Start date in YYYY-MM-DD format",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "description": "End date in YYYY-MM-DD format",
+          "title": "End Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "start_date",
+        "end_date"
+      ],
+      "title": "Get Traffic Sources",
+      "type": "object"
+    },
+    "YouTubeGetVideoAnalyticsConfig": {
+      "description": "Get analytics for specific videos",
+      "properties": {
+        "operation": {
+          "const": "get_video_analytics",
+          "default": "get_video_analytics",
+          "title": "Get Video Analytics",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Video",
+          "x-display-name": "Get Video Analytics",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "video stats",
+            "video performance",
+            "per video metrics",
+            "video views"
+          ]
+        },
+        "video_id": {
+          "description": "The video ID to get analytics for",
+          "title": "Video ID",
+          "type": "string"
+        },
+        "start_date": {
+          "description": "Start date in YYYY-MM-DD format",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "description": "End date in YYYY-MM-DD format",
+          "title": "End Date",
+          "type": "string"
+        },
+        "metrics": {
+          "default": "views,estimatedMinutesWatched,averageViewDuration,averageViewPercentage,likes,dislikes,comments,shares",
+          "description": "Comma-separated metrics to retrieve",
+          "title": "Metrics",
+          "type": "string"
+        },
+        "dimensions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated dimensions: day, country, deviceType, operatingSystem, subscribedStatus, trafficSourceType",
+          "title": "Dimensions"
+        }
+      },
+      "required": [
+        "video_id",
+        "start_date",
+        "end_date"
+      ],
+      "title": "Get Video Analytics",
+      "type": "object"
+    },
+    "YouTubeGetVideoConfig": {
+      "description": "Get a single video by ID",
+      "properties": {
+        "operation": {
+          "const": "get_video",
+          "default": "get_video",
+          "title": "Get Video",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Video",
+          "x-display-name": "Get Video",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "single video",
+            "one video details",
+            "video by id",
+            "video info"
+          ]
+        },
+        "video_id": {
+          "description": "The YouTube video ID",
+          "title": "Video ID",
+          "type": "string"
+        },
+        "part": {
+          "default": "snippet,contentDetails,statistics,status",
+          "description": "Comma-separated list of video resource parts",
+          "title": "Parts",
+          "type": "string"
+        }
+      },
+      "required": [
+        "video_id"
+      ],
+      "title": "Get Video",
+      "type": "object"
+    },
+    "YouTubeGetVideoRatingConfig": {
+      "description": "Get your rating for videos",
+      "properties": {
+        "operation": {
+          "const": "get_user_video_ratings",
+          "default": "get_user_video_ratings",
+          "title": "Get User Video Ratings",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Video",
+          "x-display-name": "Get User Video Ratings",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "my rating for video",
+            "check my rating",
+            "did i like",
+            "video rating status"
+          ]
+        },
+        "video_ids": {
+          "description": "Comma-separated list of video IDs",
+          "title": "Video IDs",
+          "type": "string"
+        }
+      },
+      "required": [
+        "video_ids"
+      ],
+      "title": "Get Video Rating",
+      "type": "object"
+    },
+    "YouTubeListBroadcastsConfig": {
+      "description": "List live broadcasts",
+      "properties": {
+        "operation": {
+          "const": "list_live_broadcasts",
+          "default": "list_live_broadcasts",
+          "title": "List Live Broadcasts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Live Broadcast",
+          "x-display-name": "List Live Broadcasts",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "livestreams",
+            "live broadcasts",
+            "scheduled streams",
+            "my broadcasts"
+          ]
+        },
+        "broadcast_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by status: all, active, completed, upcoming",
+          "title": "Broadcast Status"
+        },
+        "mine": {
+          "default": true,
+          "description": "Only return broadcasts owned by authenticated user",
+          "title": "Mine Only",
+          "type": "boolean"
+        },
+        "part": {
+          "default": "snippet,contentDetails,status",
+          "title": "Parts",
+          "type": "string"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "title": "Max Results"
+        }
+      },
+      "title": "List Live Broadcasts",
+      "type": "object"
+    },
+    "YouTubeListCaptionsConfig": {
+      "description": "List captions for a video",
+      "properties": {
+        "operation": {
+          "const": "list_video_captions",
+          "default": "list_video_captions",
+          "title": "List Video Captions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Caption",
+          "x-display-name": "List Video Captions",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "video captions",
+            "subtitle tracks",
+            "available subtitles",
+            "closed captions"
+          ]
+        },
+        "video_id": {
+          "description": "The video ID",
+          "title": "Video ID",
+          "type": "string"
+        },
+        "part": {
+          "default": "snippet",
+          "title": "Parts",
+          "type": "string"
+        }
+      },
+      "required": [
+        "video_id"
+      ],
+      "title": "List Captions",
+      "type": "object"
+    },
+    "YouTubeListChannelActivitiesConfig": {
+      "description": "List activities for a specific channel",
+      "properties": {
+        "operation": {
+          "const": "list_channel_activities",
+          "default": "list_channel_activities",
+          "title": "List Channel Activities",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Channel",
+          "x-display-name": "List Channel Activities",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "channel activity",
+            "recent channel actions",
+            "another channel activity"
+          ]
+        },
+        "channel_id": {
+          "description": "Channel to get activities for",
+          "title": "Channel ID",
+          "type": "string"
+        },
+        "part": {
+          "default": "snippet,contentDetails",
+          "title": "Parts",
+          "type": "string"
+        },
+        "published_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC 3339 timestamp",
+          "title": "Published After"
+        },
+        "published_before": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC 3339 timestamp",
+          "title": "Published Before"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "title": "Max Results"
+        }
+      },
+      "required": [
+        "channel_id"
+      ],
+      "title": "Get Channel Activities",
+      "type": "object"
+    },
+    "YouTubeListChannelCommentsConfig": {
+      "description": "List comment threads for a channel's videos",
+      "properties": {
+        "operation": {
+          "const": "list_channel_video_comments",
+          "default": "list_channel_video_comments",
+          "title": "List Channel Video Comments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Channel",
+          "x-display-name": "List Channel Video Comments",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "all channel comments",
+            "comments across channel",
+            "channel videos comments"
+          ]
+        },
+        "channel_id": {
+          "description": "Channel to get comments for",
+          "title": "Channel ID",
+          "type": "string"
+        },
+        "part": {
+          "default": "snippet,replies",
+          "title": "Parts",
+          "type": "string"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "relevance",
+          "description": "Sort order (time, relevance)",
+          "title": "Order"
+        },
+        "search_terms": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Note: YouTube API doesn't support text search for comments. This field is ignored.",
+          "title": "Search Terms (Not Supported)"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "title": "Max Results"
+        },
+        "time_period": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "all_time",
+          "description": "Filter comments by time period (overrides custom date range if set)",
+          "enum": [
+            "last_hour",
+            "last_24_hours",
+            "last_7_days",
+            "last_30_days",
+            "all_time"
+          ],
+          "title": "Time Period",
+          "x-enum-searchable": true
+        },
+        "published_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 timestamp (e.g., 2025-01-20T00:00:00Z). Only used if time_period is 'all_time'. Client-side filtering.",
+          "title": "Published After (Custom)"
+        },
+        "published_before": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 timestamp (e.g., 2025-01-21T00:00:00Z). Client-side filtering.",
+          "title": "Published Before (Custom)"
+        }
+      },
+      "required": [
+        "channel_id"
+      ],
+      "title": "List Channel Comments",
+      "type": "object"
+    },
+    "YouTubeListChannelPlaylistsConfig": {
+      "description": "Get playlists from a specific channel",
+      "properties": {
+        "operation": {
+          "const": "list_channel_playlists",
+          "default": "list_channel_playlists",
+          "title": "List Channel Playlists",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Channel",
+          "x-display-name": "List Channel Playlists",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "playlists from channel",
+            "another channel playlists",
+            "playlists of channel"
+          ]
+        },
+        "channel_id": {
+          "description": "Channel ID to list playlists for",
+          "title": "Channel ID",
+          "type": "string"
+        },
+        "part": {
+          "default": "snippet,contentDetails,status",
+          "title": "Parts",
+          "type": "string"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "description": "Maximum results per page (1-50)",
+          "title": "Max Results"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token for fetching the next page of results",
+          "title": "Page Token"
+        }
+      },
+      "required": [
+        "channel_id"
+      ],
+      "title": "Get Channel Playlists",
+      "type": "object"
+    },
+    "YouTubeListChannelSectionsConfig": {
+      "description": "List channel sections for a specific channel",
+      "properties": {
+        "operation": {
+          "const": "list_channel_sections",
+          "default": "list_channel_sections",
+          "title": "List Channel Sections",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Channel",
+          "x-display-name": "List Channel Sections",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "channel sections",
+            "channel shelves",
+            "homepage layout sections"
+          ]
+        },
+        "channel_id": {
+          "description": "The channel ID to get sections for",
+          "title": "Channel ID",
+          "type": "string"
+        },
+        "part": {
+          "default": "snippet,contentDetails",
+          "title": "Parts",
+          "type": "string"
+        }
+      },
+      "required": [
+        "channel_id"
+      ],
+      "title": "Get Channel Sections",
+      "type": "object"
+    },
+    "YouTubeListChannelsConfig": {
+      "description": "Get channels by their IDs",
+      "properties": {
+        "operation": {
+          "const": "list_channels_by_id",
+          "default": "list_channels_by_id",
+          "title": "List Channels by Id",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Channel",
+          "x-display-name": "List Channels by Id",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "channels by id",
+            "multiple channel details",
+            "batch channel lookup",
+            "specific channels"
+          ]
+        },
+        "channel_ids": {
+          "description": "Comma-separated list of channel IDs",
+          "title": "Channel IDs",
+          "type": "string"
+        },
+        "part": {
+          "default": "snippet,contentDetails,statistics",
+          "description": "Comma-separated list of channel resource parts",
+          "title": "Parts",
+          "type": "string"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "description": "Maximum results (1-50)",
+          "title": "Max Results"
+        }
+      },
+      "required": [
+        "channel_ids"
+      ],
+      "title": "Get Channels by ID",
+      "type": "object"
+    },
+    "YouTubeListCommentRepliesConfig": {
+      "description": "List replies to a comment",
+      "properties": {
+        "operation": {
+          "const": "list_comment_replies",
+          "default": "list_comment_replies",
+          "title": "List Comment Replies",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment",
+          "x-display-name": "List Comment Replies",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "replies to comment",
+            "comment replies",
+            "responses to comment"
+          ]
+        },
+        "parent_id": {
+          "description": "Comment thread ID to get replies for",
+          "title": "Parent Comment ID",
+          "type": "string"
+        },
+        "part": {
+          "default": "snippet",
+          "title": "Parts",
+          "type": "string"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "title": "Max Results"
+        }
+      },
+      "required": [
+        "parent_id"
+      ],
+      "title": "List Comment Replies",
+      "type": "object"
+    },
+    "YouTubeListCommentsByIdConfig": {
+      "description": "Get comments by their IDs",
+      "properties": {
+        "operation": {
+          "const": "list_comments_by_id",
+          "default": "list_comments_by_id",
+          "title": "List Comments by Id",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment",
+          "x-display-name": "List Comments by Id",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "comments by id",
+            "specific comments",
+            "batch comment lookup"
+          ]
+        },
+        "comment_ids": {
+          "description": "Comma-separated comment IDs",
+          "title": "Comment IDs",
+          "type": "string"
+        },
+        "part": {
+          "default": "snippet",
+          "title": "Parts",
+          "type": "string"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "title": "Max Results"
+        }
+      },
+      "required": [
+        "comment_ids"
+      ],
+      "title": "Get Comments by ID",
+      "type": "object"
+    },
+    "YouTubeListLanguagesConfig": {
+      "description": "List supported languages",
+      "properties": {
+        "operation": {
+          "const": "list_supported_languages",
+          "default": "list_supported_languages",
+          "title": "List Supported Languages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Language",
+          "x-display-name": "List Supported Languages",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "supported languages",
+            "available languages",
+            "language list",
+            "i18n languages"
+          ]
+        },
+        "part": {
+          "default": "snippet",
+          "title": "Parts",
+          "type": "string"
+        },
+        "hl": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "en",
+          "description": "Language for localized names",
+          "title": "Language"
+        }
+      },
+      "title": "List Languages",
+      "type": "object"
+    },
+    "YouTubeListLiveChatMessagesConfig": {
+      "description": "List messages from a live chat",
+      "properties": {
+        "operation": {
+          "const": "list_live_chat_messages",
+          "default": "list_live_chat_messages",
+          "title": "List Live Chat Messages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Live Chat",
+          "x-display-name": "List Live Chat Messages",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "read live chat",
+            "stream chat messages",
+            "fetch livestream chat",
+            "live chat feed"
+          ]
+        },
+        "live_chat_id": {
+          "description": "The live chat ID (from broadcast)",
+          "title": "Live Chat ID",
+          "type": "string"
+        },
+        "part": {
+          "default": "snippet,authorDetails",
+          "title": "Parts",
+          "type": "string"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 200,
+          "title": "Max Results"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Token"
+        }
+      },
+      "required": [
+        "live_chat_id"
+      ],
+      "title": "List Live Chat Messages",
+      "type": "object"
+    },
+    "YouTubeListLiveChatModeratorsConfig": {
+      "description": "List moderators for a live chat",
+      "properties": {
+        "operation": {
+          "const": "list_live_chat_moderators",
+          "default": "list_live_chat_moderators",
+          "title": "List Live Chat Moderators",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Live Chat",
+          "x-display-name": "List Live Chat Moderators",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "live chat mods",
+            "stream moderators list",
+            "chat moderator list"
+          ]
+        },
+        "live_chat_id": {
+          "title": "Live Chat ID",
+          "type": "string"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "title": "Max Results"
+        }
+      },
+      "required": [
+        "live_chat_id"
+      ],
+      "title": "List Live Chat Moderators",
+      "type": "object"
+    },
+    "YouTubeListMembersConfig": {
+      "description": "List channel members (requires channel membership feature)",
+      "properties": {
+        "operation": {
+          "const": "list_channel_members",
+          "default": "list_channel_members",
+          "title": "List Channel Members",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Member",
+          "x-display-name": "List Channel Members",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "channel members",
+            "paid memberships",
+            "channel sponsors",
+            "membership roster"
+          ]
+        },
+        "mode": {
+          "default": "all_current",
+          "description": "all_current or updates",
+          "title": "Mode",
+          "type": "string"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "title": "Max Results"
+        }
+      },
+      "title": "List Channel Members",
+      "type": "object"
+    },
+    "YouTubeListMembershipLevelsConfig": {
+      "description": "List channel membership levels",
+      "properties": {
+        "operation": {
+          "const": "list_membership_levels",
+          "default": "list_membership_levels",
+          "title": "List Membership Levels",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Member",
+          "x-display-name": "List Membership Levels",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "membership levels",
+            "membership tiers",
+            "sponsor levels",
+            "perk tiers"
+          ]
+        }
+      },
+      "title": "List Membership Levels",
+      "type": "object"
+    },
+    "YouTubeListMyActivitiesConfig": {
+      "description": "List your channel activities",
+      "properties": {
+        "operation": {
+          "const": "list_authenticated_user_activities",
+          "default": "list_authenticated_user_activities",
+          "title": "List Authenticated User Activities",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Activity",
+          "x-display-name": "List Authenticated User Activities",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "my channel activity",
+            "my recent actions",
+            "own activity feed"
+          ]
+        },
+        "part": {
+          "default": "snippet,contentDetails",
+          "title": "Parts",
+          "type": "string"
+        },
+        "published_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC 3339 timestamp",
+          "title": "Published After"
+        },
+        "published_before": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC 3339 timestamp",
+          "title": "Published Before"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "title": "Max Results"
+        }
+      },
+      "title": "Get My Activities",
+      "type": "object"
+    },
+    "YouTubeListMyChannelSectionsConfig": {
+      "description": "List your channel sections",
+      "properties": {
+        "operation": {
+          "const": "list_authenticated_user_channel_sections",
+          "default": "list_authenticated_user_channel_sections",
+          "title": "List Authenticated User Channel Sections",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Channel",
+          "x-display-name": "List Authenticated User Channel Sections",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "my channel sections",
+            "my homepage layout",
+            "own channel shelves"
+          ]
+        },
+        "part": {
+          "default": "snippet,contentDetails",
+          "title": "Parts",
+          "type": "string"
+        }
+      },
+      "title": "Get My Channel Sections",
+      "type": "object"
+    },
+    "YouTubeListMyPlaylistsConfig": {
+      "description": "Get your own playlists",
+      "properties": {
+        "operation": {
+          "const": "list_authenticated_user_playlists",
+          "default": "list_authenticated_user_playlists",
+          "title": "List Authenticated User Playlists",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Playlist",
+          "x-display-name": "List Authenticated User Playlists",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "my playlists",
+            "my own playlists",
+            "playlists i own",
+            "own playlists"
+          ]
+        },
+        "part": {
+          "default": "snippet,contentDetails,status",
+          "title": "Parts",
+          "type": "string"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "description": "Maximum results per page (1-50)",
+          "title": "Max Results"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token for fetching the next page of results",
+          "title": "Page Token"
+        }
+      },
+      "title": "Get My Playlists",
+      "type": "object"
+    },
+    "YouTubeListMyRatedVideosConfig": {
+      "description": "Get videos you've liked or disliked",
+      "properties": {
+        "operation": {
+          "const": "list_authenticated_user_rated_videos",
+          "default": "list_authenticated_user_rated_videos",
+          "title": "List Authenticated User Rated Videos",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Rating",
+          "x-display-name": "List Authenticated User Rated Videos",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "my liked videos",
+            "videos i liked",
+            "my disliked videos",
+            "videos i rated",
+            "my rated videos"
+          ]
+        },
+        "my_rating": {
+          "default": "like",
+          "description": "Filter by your rating (like or dislike)",
+          "title": "Rating",
+          "type": "string"
+        },
+        "part": {
+          "default": "snippet,contentDetails,statistics",
+          "description": "Comma-separated list of video resource parts",
+          "title": "Parts",
+          "type": "string"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "description": "Maximum number of results (1-50)",
+          "title": "Max Results"
+        }
+      },
+      "title": "Get My Rated Videos",
+      "type": "object"
+    },
+    "YouTubeListPlaylistItemsConfig": {
+      "description": "List items in a playlist",
+      "properties": {
+        "operation": {
+          "const": "list_playlist_items",
+          "default": "list_playlist_items",
+          "title": "List Playlist Items",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Playlist",
+          "x-display-name": "List Playlist Items",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "videos in playlist",
+            "playlist contents",
+            "playlist videos",
+            "items in playlist"
+          ]
+        },
+        "playlist_id": {
+          "description": "The playlist to get items from",
+          "title": "Playlist ID",
+          "type": "string"
+        },
+        "part": {
+          "default": "snippet,contentDetails,status",
+          "title": "Parts",
+          "type": "string"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "title": "Max Results"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token for pagination",
+          "title": "Page Token"
+        }
+      },
+      "required": [
+        "playlist_id"
+      ],
+      "title": "List Playlist Items",
+      "type": "object"
+    },
+    "YouTubeListPlaylistsByIdConfig": {
+      "description": "Get playlists by their IDs",
+      "properties": {
+        "operation": {
+          "const": "list_playlists_by_id",
+          "default": "list_playlists_by_id",
+          "title": "List Playlists by Id",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Playlist",
+          "x-display-name": "List Playlists by Id",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "playlists by id",
+            "specific playlists",
+            "batch playlist lookup",
+            "playlists by their ids"
+          ]
+        },
+        "playlist_ids": {
+          "description": "Comma-separated playlist IDs",
+          "title": "Playlist IDs",
+          "type": "string"
+        },
+        "part": {
+          "default": "snippet,contentDetails,status",
+          "title": "Parts",
+          "type": "string"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "description": "Maximum results per page (1-50)",
+          "title": "Max Results"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token for fetching the next page of results",
+          "title": "Page Token"
+        }
+      },
+      "required": [
+        "playlist_ids"
+      ],
+      "title": "Get Playlists by ID",
+      "type": "object"
+    },
+    "YouTubeListPopularVideosConfig": {
+      "description": "Get most popular videos in a region",
+      "properties": {
+        "operation": {
+          "const": "list_region_popular_videos",
+          "default": "list_region_popular_videos",
+          "title": "List Region Popular Videos",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Video",
+          "x-display-name": "List Region Popular Videos",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "popular videos",
+            "trending videos",
+            "most popular",
+            "top videos region",
+            "trending in country"
+          ]
+        },
+        "region_code": {
+          "default": "US",
+          "description": "ISO 3166-1 alpha-2 country code (e.g., US, GB, IN)",
+          "title": "Region Code",
+          "type": "string"
+        },
+        "part": {
+          "default": "snippet,contentDetails,statistics",
+          "description": "Comma-separated list of video resource parts",
+          "title": "Parts",
+          "type": "string"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "description": "Maximum number of results (1-50)",
+          "title": "Max Results"
+        }
+      },
+      "title": "Get Popular Videos",
+      "type": "object"
+    },
+    "YouTubeListRegionsConfig": {
+      "description": "List supported regions",
+      "properties": {
+        "operation": {
+          "const": "list_supported_regions",
+          "default": "list_supported_regions",
+          "title": "List Supported Regions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Region",
+          "x-display-name": "List Supported Regions",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "supported regions",
+            "available countries",
+            "region list",
+            "i18n regions"
+          ]
+        },
+        "part": {
+          "default": "snippet",
+          "title": "Parts",
+          "type": "string"
+        },
+        "hl": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "en",
+          "description": "Language for localized names",
+          "title": "Language"
+        }
+      },
+      "title": "List Regions",
+      "type": "object"
+    },
+    "YouTubeListReportTypesConfig": {
+      "description": "List available report types for bulk reporting",
+      "properties": {
+        "operation": {
+          "const": "list_bulk_reporting_types",
+          "default": "list_bulk_reporting_types",
+          "title": "List Bulk Reporting Types",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reporting Job",
+          "x-display-name": "List Bulk Reporting Types",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "report types",
+            "available bulk reports",
+            "reporting report types"
+          ]
+        }
+      },
+      "title": "List Report Types",
+      "type": "object"
+    },
+    "YouTubeListReportingJobsConfig": {
+      "description": "List all scheduled reporting jobs",
+      "properties": {
+        "operation": {
+          "const": "list_reporting_jobs",
+          "default": "list_reporting_jobs",
+          "title": "List Reporting Jobs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reporting Job",
+          "x-display-name": "List Reporting Jobs",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "reporting jobs",
+            "scheduled reports",
+            "all bulk reports"
+          ]
+        }
+      },
+      "title": "List Reporting Jobs",
+      "type": "object"
+    },
+    "YouTubeListReportsConfig": {
+      "description": "List reports generated by a reporting job",
+      "properties": {
+        "operation": {
+          "const": "list_reporting_job_reports",
+          "default": "list_reporting_job_reports",
+          "title": "List Reporting Job Reports",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reporting Job",
+          "x-display-name": "List Reporting Job Reports",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "generated reports",
+            "report files",
+            "downloadable reports",
+            "job report outputs"
+          ]
+        },
+        "job_id": {
+          "description": "The reporting job ID",
+          "title": "Job ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "List Reports",
+      "type": "object"
+    },
+    "YouTubeListStreamsConfig": {
+      "description": "List live streams",
+      "properties": {
+        "operation": {
+          "const": "list_live_streams",
+          "default": "list_live_streams",
+          "title": "List Live Streams",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Live Stream",
+          "x-display-name": "List Live Streams",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "live streams",
+            "stream ingestions",
+            "encoder streams",
+            "my streams"
+          ]
+        },
+        "mine": {
+          "default": true,
+          "title": "Mine Only",
+          "type": "boolean"
+        },
+        "part": {
+          "default": "snippet,cdn,contentDetails,status",
+          "title": "Parts",
+          "type": "string"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "title": "Max Results"
+        }
+      },
+      "title": "List Live Streams",
+      "type": "object"
+    },
+    "YouTubeListSubscriptionsConfig": {
+      "description": "List subscriptions",
+      "properties": {
+        "operation": {
+          "const": "list_subscriptions",
+          "default": "list_subscriptions",
+          "title": "List Subscriptions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscription",
+          "x-display-name": "List Subscriptions",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "my subscriptions",
+            "channels i follow",
+            "subscribed channels"
+          ]
+        },
+        "part": {
+          "default": "snippet,contentDetails",
+          "title": "Parts",
+          "type": "string"
+        },
+        "mine": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "List my subscriptions",
+          "title": "Mine"
+        },
+        "channel_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Channel to list subscriptions for",
+          "title": "Channel ID"
+        },
+        "for_channel_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter subscriptions to a specific channel",
+          "title": "For Channel ID"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "relevance",
+          "description": "Sort order (alphabetical, relevance, unread)",
+          "title": "Order"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "title": "Max Results"
+        }
+      },
+      "title": "List Subscriptions",
+      "type": "object"
+    },
+    "YouTubeListSuperChatEventsConfig": {
+      "description": "List Super Chat events from live streams",
+      "properties": {
+        "operation": {
+          "const": "list_super_chat_events",
+          "default": "list_super_chat_events",
+          "title": "List Super Chat Events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Super Chat",
+          "x-display-name": "List Super Chat Events",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "super chat donations",
+            "paid chat messages",
+            "stream tips list",
+            "superchat history"
+          ]
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "title": "Max Results"
+        }
+      },
+      "title": "List Super Chat Events",
+      "type": "object"
+    },
+    "YouTubeListVideoCategoriesConfig": {
+      "description": "List video categories",
+      "properties": {
+        "operation": {
+          "const": "list_video_categories",
+          "default": "list_video_categories",
+          "title": "List Video Categories",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Video Category",
+          "x-display-name": "List Video Categories",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "video categories",
+            "available categories",
+            "category list"
+          ]
+        },
+        "part": {
+          "default": "snippet",
+          "title": "Parts",
+          "type": "string"
+        },
+        "region_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "US",
+          "description": "ISO 3166-1 alpha-2 country code",
+          "title": "Region Code"
+        },
+        "hl": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "en",
+          "description": "Language for localized text",
+          "title": "Language"
+        }
+      },
+      "title": "List Video Categories",
+      "type": "object"
+    },
+    "YouTubeListVideoCommentsConfig": {
+      "description": "List comment threads for a video",
+      "properties": {
+        "operation": {
+          "const": "list_video_comments",
+          "default": "list_video_comments",
+          "title": "List Video Comments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment",
+          "x-display-name": "List Video Comments",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "comments on video",
+            "video comment threads",
+            "read video comments",
+            "fetch video comments"
+          ]
+        },
+        "video_id": {
+          "description": "Video to get comments for",
+          "title": "Video ID",
+          "type": "string"
+        },
+        "part": {
+          "default": "snippet,replies",
+          "title": "Parts",
+          "type": "string"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "relevance",
+          "description": "Sort order (time, relevance)",
+          "title": "Order"
+        },
+        "search_terms": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Note: YouTube API doesn't support text search for comments. This field is ignored.",
+          "title": "Search Terms (Not Supported)"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "title": "Max Results"
+        },
+        "time_period": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "all_time",
+          "description": "Filter comments by time period (overrides custom date range if set)",
+          "enum": [
+            "last_hour",
+            "last_24_hours",
+            "last_7_days",
+            "last_30_days",
+            "all_time"
+          ],
+          "title": "Time Period",
+          "x-enum-searchable": true
+        },
+        "published_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 timestamp (e.g., 2025-01-20T00:00:00Z). Only used if time_period is 'all_time'. Client-side filtering.",
+          "title": "Published After (Custom)"
+        },
+        "published_before": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 timestamp (e.g., 2025-01-21T00:00:00Z). Client-side filtering.",
+          "title": "Published Before (Custom)"
+        }
+      },
+      "required": [
+        "video_id"
+      ],
+      "title": "List Video Comments",
+      "type": "object"
+    },
+    "YouTubeListVideosConfig": {
+      "description": "Get videos by their IDs",
+      "properties": {
+        "operation": {
+          "const": "list_videos_by_id",
+          "default": "list_videos_by_id",
+          "title": "List Videos by Id",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Video",
+          "x-display-name": "List Videos by Id",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "videos by id",
+            "multiple video details",
+            "batch video lookup",
+            "videos by their ids",
+            "specific videos"
+          ]
+        },
+        "video_ids": {
+          "description": "Comma-separated list of video IDs to retrieve",
+          "title": "Video IDs",
+          "type": "string"
+        },
+        "part": {
+          "default": "snippet,contentDetails,statistics",
+          "description": "Comma-separated list of video resource parts (snippet,contentDetails,statistics,status,player)",
+          "title": "Parts",
+          "type": "string"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "description": "Maximum number of results (1-50)",
+          "title": "Max Results"
+        }
+      },
+      "required": [
+        "video_ids"
+      ],
+      "title": "Get Videos by ID",
+      "type": "object"
+    },
+    "YouTubeOAuthCredential": {
+      "description": "OAuth credential for YouTube access.\nTokens are obtained via OAuth flow, not entered manually.",
+      "properties": {
+        "credential_type": {
+          "const": "google_youtube_oauth",
+          "default": "google_youtube_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "OAuth 2.0 access token from Google",
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "description": "OAuth 2.0 refresh token for automatic renewal",
+          "title": "Refresh Token",
+          "type": "string"
+        },
+        "expires_at": {
+          "description": "ISO 8601 timestamp when access token expires",
+          "title": "Token Expiry",
+          "type": "string"
+        },
+        "email": {
+          "description": "Email address of the connected Google account",
+          "title": "Google Account",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "email"
+      ],
+      "title": "YouTubeOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-oauth-provider": "google",
+      "x-oauth-scopes": [
+        "https://www.googleapis.com/auth/youtube.force-ssl",
+        "https://www.googleapis.com/auth/youtube.upload",
+        "https://www.googleapis.com/auth/yt-analytics.readonly",
+        "https://www.googleapis.com/auth/yt-analytics-monetary.readonly",
+        "https://www.googleapis.com/auth/youtube.channel-memberships.creator"
+      ]
+    },
+    "YouTubeRateVideoConfig": {
+      "description": "Rate a video (like/dislike/none)",
+      "properties": {
+        "operation": {
+          "const": "rate_video",
+          "default": "rate_video",
+          "title": "Rate Video",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Video",
+          "x-display-name": "Rate Video",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "like a video",
+            "dislike video",
+            "thumbs up video",
+            "give rating"
+          ]
+        },
+        "video_id": {
+          "description": "The video ID to rate",
+          "title": "Video ID",
+          "type": "string"
+        },
+        "rating": {
+          "description": "Rating to apply (like, dislike, none)",
+          "title": "Rating",
+          "type": "string"
+        }
+      },
+      "required": [
+        "video_id",
+        "rating"
+      ],
+      "title": "Rate Video",
+      "type": "object"
+    },
+    "YouTubeRemoveLiveChatModeratorConfig": {
+      "description": "Remove a moderator from live chat",
+      "properties": {
+        "operation": {
+          "const": "remove_live_chat_moderator",
+          "default": "remove_live_chat_moderator",
+          "title": "Remove Live Chat Moderator",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Live Chat",
+          "x-display-name": "Remove Live Chat Moderator",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "demote chat mod",
+            "remove chat moderator",
+            "strip moderator role",
+            "unmod chat user"
+          ]
+        },
+        "moderator_id": {
+          "title": "Moderator ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "moderator_id"
+      ],
+      "title": "Remove Live Chat Moderator",
+      "type": "object"
+    },
+    "YouTubeSearchConfig": {
+      "description": "Search for videos, channels, or playlists",
+      "properties": {
+        "operation": {
+          "const": "search_youtube",
+          "default": "search_youtube",
+          "title": "Search Youtube",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Search",
+          "x-display-name": "Search Youtube",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "search videos",
+            "find videos channels",
+            "youtube search",
+            "search content"
+          ]
+        },
+        "query": {
+          "description": "Search query string",
+          "title": "Search Query",
+          "type": "string"
+        },
+        "part": {
+          "default": "snippet",
+          "title": "Parts",
+          "type": "string"
+        },
+        "search_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "video",
+          "description": "Resource type (video, channel, playlist, or comma-separated)",
+          "title": "Type"
+        },
+        "channel_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by channel",
+          "title": "Channel ID"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "relevance",
+          "description": "Sort order (date, rating, relevance, title, videoCount, viewCount)",
+          "title": "Order"
+        },
+        "published_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by publish date (RFC 3339 format)",
+          "title": "Published After"
+        },
+        "published_before": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by publish date (RFC 3339 format)",
+          "title": "Published Before"
+        },
+        "region_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 3166-1 alpha-2 country code",
+          "title": "Region Code"
+        },
+        "video_duration": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by duration (any, long, medium, short)",
+          "title": "Video Duration"
+        },
+        "video_definition": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by definition (any, high, standard)",
+          "title": "Video Definition"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "description": "Maximum results (1-50)",
+          "title": "Max Results"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "Search",
+      "type": "object"
+    },
+    "YouTubeSendLiveChatMessageConfig": {
+      "description": "Send a message to live chat",
+      "properties": {
+        "operation": {
+          "const": "send_live_chat_message",
+          "default": "send_live_chat_message",
+          "title": "Send Live Chat Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Live Chat",
+          "x-display-name": "Send Live Chat Message",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "post live chat",
+            "chat in livestream",
+            "write chat message",
+            "say in chat"
+          ]
+        },
+        "live_chat_id": {
+          "title": "Live Chat ID",
+          "type": "string"
+        },
+        "message": {
+          "description": "Message text to send",
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "live_chat_id",
+        "message"
+      ],
+      "title": "Send Live Chat Message",
+      "type": "object"
+    },
+    "YouTubeSetCommentModerationConfig": {
+      "description": "Set moderation status for a comment",
+      "properties": {
+        "operation": {
+          "const": "set_comment_moderation_status",
+          "default": "set_comment_moderation_status",
+          "title": "Set Comment Moderation Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment",
+          "x-display-name": "Set Comment Moderation Status",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "moderate comment",
+            "approve comment",
+            "reject comment",
+            "hold comment",
+            "mark spam"
+          ]
+        },
+        "comment_ids": {
+          "description": "Comma-separated comment IDs",
+          "title": "Comment IDs",
+          "type": "string"
+        },
+        "moderation_status": {
+          "description": "Status (heldForReview, published, rejected)",
+          "title": "Moderation Status",
+          "type": "string"
+        },
+        "ban_author": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Ban the comment author",
+          "title": "Ban Author"
+        }
+      },
+      "required": [
+        "comment_ids",
+        "moderation_status"
+      ],
+      "title": "Moderate Comment",
+      "type": "object"
+    },
+    "YouTubeSetThumbnailConfig": {
+      "description": "Set a custom thumbnail for a video",
+      "properties": {
+        "operation": {
+          "const": "set_video_thumbnail",
+          "default": "set_video_thumbnail",
+          "title": "Set Video Thumbnail",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Video",
+          "x-display-name": "Set Video Thumbnail",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "video thumbnail",
+            "custom thumbnail",
+            "change thumbnail",
+            "set cover image"
+          ]
+        },
+        "video_id": {
+          "title": "Video ID",
+          "type": "string"
+        },
+        "thumbnail_url": {
+          "description": "The thumbnail to send \u2014 upload a file, paste a URL, or reference an upstream file (e.g. {{http-1.response.url}}). Image (JPEG, PNG, GIF, BMP), max 2MB.",
+          "title": "Thumbnail",
+          "type": "string",
+          "ui:accept": "image/*",
+          "ui:widget": "media_upload"
+        }
+      },
+      "required": [
+        "video_id",
+        "thumbnail_url"
+      ],
+      "title": "Set Video Thumbnail",
+      "type": "object"
+    },
+    "YouTubeSubscribeConfig": {
+      "description": "Subscribe to a channel",
+      "properties": {
+        "operation": {
+          "const": "subscribe_to_channel",
+          "default": "subscribe_to_channel",
+          "title": "Subscribe to Channel",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscription",
+          "x-display-name": "Subscribe to Channel",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "subscribe channel",
+            "follow channel",
+            "hit subscribe"
+          ]
+        },
+        "channel_id": {
+          "description": "The channel ID to subscribe to",
+          "title": "Channel ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "channel_id"
+      ],
+      "title": "Subscribe",
+      "type": "object"
+    },
+    "YouTubeTransitionBroadcastConfig": {
+      "description": "Transition broadcast to a new status (start/end)",
+      "properties": {
+        "operation": {
+          "const": "transition_broadcast_status",
+          "default": "transition_broadcast_status",
+          "title": "Transition Broadcast Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Live Broadcast",
+          "x-display-name": "Transition Broadcast Status",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "start broadcast",
+            "end stream",
+            "go live now",
+            "stop streaming",
+            "change broadcast state"
+          ]
+        },
+        "broadcast_id": {
+          "title": "Broadcast ID",
+          "type": "string"
+        },
+        "broadcast_status": {
+          "description": "testing, live, or complete",
+          "title": "New Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "broadcast_id",
+        "broadcast_status"
+      ],
+      "title": "Transition Live Broadcast",
+      "type": "object"
+    },
+    "YouTubeUnbanLiveChatUserConfig": {
+      "description": "Remove a ban from live chat",
+      "properties": {
+        "operation": {
+          "const": "unban_live_chat_user",
+          "default": "unban_live_chat_user",
+          "title": "Unban Live Chat User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Live Chat",
+          "x-display-name": "Unban Live Chat User",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "unban chat viewer",
+            "lift chat ban",
+            "remove chat ban",
+            "restore banned user"
+          ]
+        },
+        "ban_id": {
+          "title": "Ban ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ban_id"
+      ],
+      "title": "Unban Live Chat User",
+      "type": "object"
+    },
+    "YouTubeUnsubscribeConfig": {
+      "description": "Unsubscribe from a channel",
+      "properties": {
+        "operation": {
+          "const": "unsubscribe_from_channel",
+          "default": "unsubscribe_from_channel",
+          "title": "Unsubscribe from Channel",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscription",
+          "x-display-name": "Unsubscribe from Channel",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "unsubscribe channel",
+            "unfollow channel",
+            "stop following"
+          ]
+        },
+        "subscription_id": {
+          "description": "The subscription ID to remove",
+          "title": "Subscription ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "subscription_id"
+      ],
+      "title": "Unsubscribe",
+      "type": "object"
+    },
+    "YouTubeUpdateBroadcastConfig": {
+      "description": "Update a live broadcast",
+      "properties": {
+        "operation": {
+          "const": "update_live_broadcast",
+          "default": "update_live_broadcast",
+          "title": "Update Live Broadcast",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Live Broadcast",
+          "x-display-name": "Update Live Broadcast",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "edit broadcast",
+            "change livestream details",
+            "broadcast settings"
+          ]
+        },
+        "broadcast_id": {
+          "description": "The broadcast ID to update",
+          "title": "Broadcast ID",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description",
+          "ui:widget": "textarea"
+        },
+        "privacy_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "public, private, or unlisted",
+          "title": "Privacy Status"
+        }
+      },
+      "required": [
+        "broadcast_id"
+      ],
+      "title": "Update Live Broadcast",
+      "type": "object"
+    },
+    "YouTubeUpdateChannelConfig": {
+      "description": "Update channel branding settings",
+      "properties": {
+        "operation": {
+          "const": "update_channel_branding",
+          "default": "update_channel_branding",
+          "title": "Update Channel Branding",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Channel",
+          "x-display-name": "Update Channel Branding",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "channel branding",
+            "channel banner",
+            "channel art",
+            "branding settings"
+          ]
+        },
+        "channel_id": {
+          "description": "The channel ID to update",
+          "title": "Channel ID",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New channel description",
+          "title": "Description",
+          "ui:widget": "textarea"
+        },
+        "keywords": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Channel keywords",
+          "title": "Keywords"
+        },
+        "default_language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Default language code",
+          "title": "Default Language"
+        }
+      },
+      "required": [
+        "channel_id"
+      ],
+      "title": "Update Channel",
+      "type": "object"
+    },
+    "YouTubeUpdateCommentConfig": {
+      "description": "Update a comment",
+      "properties": {
+        "operation": {
+          "const": "update_comment",
+          "default": "update_comment",
+          "title": "Update Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment",
+          "x-display-name": "Update Comment",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "edit comment",
+            "change comment text",
+            "rephrase comment"
+          ]
+        },
+        "comment_id": {
+          "description": "The comment ID to update",
+          "title": "Comment ID",
+          "type": "string"
+        },
+        "text": {
+          "description": "The updated comment text",
+          "title": "Comment Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "comment_id",
+        "text"
+      ],
+      "title": "Update Comment",
+      "type": "object"
+    },
+    "YouTubeUpdatePlaylistConfig": {
+      "description": "Update a playlist",
+      "properties": {
+        "operation": {
+          "const": "update_playlist",
+          "default": "update_playlist",
+          "title": "Update Playlist",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Playlist",
+          "x-display-name": "Update Playlist",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "edit playlist",
+            "rename playlist",
+            "change playlist title"
+          ]
+        },
+        "playlist_id": {
+          "description": "The playlist ID to update",
+          "title": "Playlist ID",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New playlist title",
+          "title": "Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description",
+          "ui:widget": "textarea"
+        },
+        "privacy_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Privacy Status"
+        }
+      },
+      "required": [
+        "playlist_id"
+      ],
+      "title": "Update Playlist",
+      "type": "object"
+    },
+    "YouTubeUpdatePlaylistItemConfig": {
+      "description": "Update a playlist item position",
+      "properties": {
+        "operation": {
+          "const": "update_playlist_item_position",
+          "default": "update_playlist_item_position",
+          "title": "Update Playlist Item Position",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Playlist",
+          "x-display-name": "Update Playlist Item Position",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "reorder playlist",
+            "move video in playlist",
+            "change playlist order",
+            "reposition playlist item"
+          ]
+        },
+        "playlist_item_id": {
+          "description": "The playlist item ID",
+          "title": "Playlist Item ID",
+          "type": "string"
+        },
+        "playlist_id": {
+          "description": "The playlist ID",
+          "title": "Playlist ID",
+          "type": "string"
+        },
+        "video_id": {
+          "description": "The video ID",
+          "title": "Video ID",
+          "type": "string"
+        },
+        "position": {
+          "description": "New position in playlist",
+          "title": "Position",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "playlist_item_id",
+        "playlist_id",
+        "video_id",
+        "position"
+      ],
+      "title": "Update Playlist Item",
+      "type": "object"
+    },
+    "YouTubeUpdateStreamConfig": {
+      "description": "Update a live stream",
+      "properties": {
+        "operation": {
+          "const": "update_live_stream",
+          "default": "update_live_stream",
+          "title": "Update Live Stream",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Live Stream",
+          "x-display-name": "Update Live Stream",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "edit stream",
+            "change stream settings",
+            "stream config"
+          ]
+        },
+        "stream_id": {
+          "title": "Stream ID",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "stream_id"
+      ],
+      "title": "Update Live Stream",
+      "type": "object"
+    },
+    "YouTubeUpdateVideoConfig": {
+      "description": "Update video metadata",
+      "properties": {
+        "operation": {
+          "const": "update_video_metadata",
+          "default": "update_video_metadata",
+          "title": "Update Video Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Video",
+          "x-display-name": "Update Video Metadata",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "edit video title",
+            "change video description",
+            "edit video details",
+            "video metadata",
+            "rename video"
+          ]
+        },
+        "video_id": {
+          "description": "The video ID to update",
+          "title": "Video ID",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New video title",
+          "title": "Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New video description",
+          "title": "Description",
+          "ui:widget": "textarea"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of tags",
+          "title": "Tags"
+        },
+        "category_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Video category ID",
+          "title": "Category ID"
+        },
+        "privacy_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Privacy status (public, private, unlisted)",
+          "title": "Privacy Status"
+        }
+      },
+      "required": [
+        "video_id"
+      ],
+      "title": "Update Video",
+      "type": "object"
+    },
+    "YouTubeUploadVideoConfig": {
+      "description": "Upload a video (file upload, URL, or upstream reference)",
+      "properties": {
+        "operation": {
+          "const": "upload_video_from_url",
+          "default": "upload_video_from_url",
+          "title": "Upload Video",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Video",
+          "x-display-name": "Upload Video",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "upload video",
+            "publish video",
+            "post video",
+            "video from url"
+          ]
+        },
+        "video_url": {
+          "description": "The video to upload \u2014 upload a file, paste a direct URL, or reference an upstream file (e.g. {{http-1.response.url}}).",
+          "title": "Video",
+          "type": "string",
+          "ui:accept": "video/*",
+          "ui:widget": "media_upload"
+        },
+        "title": {
+          "description": "Video title (required)",
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Video description",
+          "title": "Description",
+          "ui:widget": "textarea"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of tags",
+          "title": "Tags"
+        },
+        "category_id": {
+          "default": "22",
+          "description": "Video category ID (22 = People & Blogs)",
+          "title": "Category ID",
+          "type": "string"
+        },
+        "privacy_status": {
+          "default": "private",
+          "description": "Privacy status (public, private, unlisted)",
+          "title": "Privacy Status",
+          "type": "string"
+        },
+        "made_for_kids": {
+          "default": false,
+          "description": "Whether the video is made for kids",
+          "title": "Made for Kids",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "video_url",
+        "title"
+      ],
+      "title": "Upload Video",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for YouTube node including credentials",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_live_chat_moderator": "#/$defs/YouTubeAddLiveChatModeratorConfig",
+          "add_video_to_playlist": "#/$defs/YouTubeAddPlaylistItemConfig",
+          "ban_live_chat_user": "#/$defs/YouTubeBanLiveChatUserConfig",
+          "bind_broadcast_to_stream": "#/$defs/YouTubeBindBroadcastConfig",
+          "create_channel_discussion_comment": "#/$defs/YouTubeCreateChannelCommentConfig",
+          "create_comment_reply": "#/$defs/YouTubeCreateCommentConfig",
+          "create_live_broadcast": "#/$defs/YouTubeCreateBroadcastConfig",
+          "create_live_stream": "#/$defs/YouTubeCreateStreamConfig",
+          "create_playlist": "#/$defs/YouTubeCreatePlaylistConfig",
+          "create_reporting_job": "#/$defs/YouTubeCreateReportingJobConfig",
+          "create_video_comment": "#/$defs/YouTubeCreateVideoCommentConfig",
+          "delete_comment": "#/$defs/YouTubeDeleteCommentConfig",
+          "delete_live_broadcast": "#/$defs/YouTubeDeleteBroadcastConfig",
+          "delete_live_chat_message": "#/$defs/YouTubeDeleteLiveChatMessageConfig",
+          "delete_live_stream": "#/$defs/YouTubeDeleteStreamConfig",
+          "delete_playlist": "#/$defs/YouTubeDeletePlaylistConfig",
+          "delete_reporting_job": "#/$defs/YouTubeDeleteReportingJobConfig",
+          "delete_video": "#/$defs/YouTubeDeleteVideoConfig",
+          "download_caption_track": "#/$defs/YouTubeDownloadCaptionConfig",
+          "get_authenticated_user_channel": "#/$defs/YouTubeGetMyChannelConfig",
+          "get_channel_analytics": "#/$defs/YouTubeGetChannelAnalyticsConfig",
+          "get_channel_revenue_analytics": "#/$defs/YouTubeGetRevenueAnalyticsConfig",
+          "get_channel_traffic_sources": "#/$defs/YouTubeGetTrafficSourcesConfig",
+          "get_playlist": "#/$defs/YouTubeGetPlaylistConfig",
+          "get_reporting_job": "#/$defs/YouTubeGetReportingJobConfig",
+          "get_top_performing_videos": "#/$defs/YouTubeGetTopVideosConfig",
+          "get_user_video_ratings": "#/$defs/YouTubeGetVideoRatingConfig",
+          "get_video": "#/$defs/YouTubeGetVideoConfig",
+          "get_video_analytics": "#/$defs/YouTubeGetVideoAnalyticsConfig",
+          "get_viewer_demographics": "#/$defs/YouTubeGetDemographicsConfig",
+          "list_authenticated_user_activities": "#/$defs/YouTubeListMyActivitiesConfig",
+          "list_authenticated_user_channel_sections": "#/$defs/YouTubeListMyChannelSectionsConfig",
+          "list_authenticated_user_playlists": "#/$defs/YouTubeListMyPlaylistsConfig",
+          "list_authenticated_user_rated_videos": "#/$defs/YouTubeListMyRatedVideosConfig",
+          "list_bulk_reporting_types": "#/$defs/YouTubeListReportTypesConfig",
+          "list_channel_activities": "#/$defs/YouTubeListChannelActivitiesConfig",
+          "list_channel_members": "#/$defs/YouTubeListMembersConfig",
+          "list_channel_playlists": "#/$defs/YouTubeListChannelPlaylistsConfig",
+          "list_channel_sections": "#/$defs/YouTubeListChannelSectionsConfig",
+          "list_channel_video_comments": "#/$defs/YouTubeListChannelCommentsConfig",
+          "list_channels_by_id": "#/$defs/YouTubeListChannelsConfig",
+          "list_comment_replies": "#/$defs/YouTubeListCommentRepliesConfig",
+          "list_comments_by_id": "#/$defs/YouTubeListCommentsByIdConfig",
+          "list_live_broadcasts": "#/$defs/YouTubeListBroadcastsConfig",
+          "list_live_chat_messages": "#/$defs/YouTubeListLiveChatMessagesConfig",
+          "list_live_chat_moderators": "#/$defs/YouTubeListLiveChatModeratorsConfig",
+          "list_live_streams": "#/$defs/YouTubeListStreamsConfig",
+          "list_membership_levels": "#/$defs/YouTubeListMembershipLevelsConfig",
+          "list_playlist_items": "#/$defs/YouTubeListPlaylistItemsConfig",
+          "list_playlists_by_id": "#/$defs/YouTubeListPlaylistsByIdConfig",
+          "list_region_popular_videos": "#/$defs/YouTubeListPopularVideosConfig",
+          "list_reporting_job_reports": "#/$defs/YouTubeListReportsConfig",
+          "list_reporting_jobs": "#/$defs/YouTubeListReportingJobsConfig",
+          "list_subscriptions": "#/$defs/YouTubeListSubscriptionsConfig",
+          "list_super_chat_events": "#/$defs/YouTubeListSuperChatEventsConfig",
+          "list_supported_languages": "#/$defs/YouTubeListLanguagesConfig",
+          "list_supported_regions": "#/$defs/YouTubeListRegionsConfig",
+          "list_video_captions": "#/$defs/YouTubeListCaptionsConfig",
+          "list_video_categories": "#/$defs/YouTubeListVideoCategoriesConfig",
+          "list_video_comments": "#/$defs/YouTubeListVideoCommentsConfig",
+          "list_videos_by_id": "#/$defs/YouTubeListVideosConfig",
+          "rate_video": "#/$defs/YouTubeRateVideoConfig",
+          "remove_item_from_playlist": "#/$defs/YouTubeDeletePlaylistItemConfig",
+          "remove_live_chat_moderator": "#/$defs/YouTubeRemoveLiveChatModeratorConfig",
+          "search_youtube": "#/$defs/YouTubeSearchConfig",
+          "send_live_chat_message": "#/$defs/YouTubeSendLiveChatMessageConfig",
+          "set_comment_moderation_status": "#/$defs/YouTubeSetCommentModerationConfig",
+          "set_video_thumbnail": "#/$defs/YouTubeSetThumbnailConfig",
+          "subscribe_to_channel": "#/$defs/YouTubeSubscribeConfig",
+          "transition_broadcast_status": "#/$defs/YouTubeTransitionBroadcastConfig",
+          "unban_live_chat_user": "#/$defs/YouTubeUnbanLiveChatUserConfig",
+          "unsubscribe_from_channel": "#/$defs/YouTubeUnsubscribeConfig",
+          "update_channel_branding": "#/$defs/YouTubeUpdateChannelConfig",
+          "update_comment": "#/$defs/YouTubeUpdateCommentConfig",
+          "update_live_broadcast": "#/$defs/YouTubeUpdateBroadcastConfig",
+          "update_live_stream": "#/$defs/YouTubeUpdateStreamConfig",
+          "update_playlist": "#/$defs/YouTubeUpdatePlaylistConfig",
+          "update_playlist_item_position": "#/$defs/YouTubeUpdatePlaylistItemConfig",
+          "update_video_metadata": "#/$defs/YouTubeUpdateVideoConfig",
+          "upload_video_from_url": "#/$defs/YouTubeUploadVideoConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/YouTubeListVideosConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeListPopularVideosConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeListMyRatedVideosConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeGetVideoConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeUpdateVideoConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeDeleteVideoConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeRateVideoConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeGetVideoRatingConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeUploadVideoConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeSetThumbnailConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeListChannelsConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeGetMyChannelConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeUpdateChannelConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeListMyPlaylistsConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeListPlaylistsByIdConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeListChannelPlaylistsConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeGetPlaylistConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeCreatePlaylistConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeUpdatePlaylistConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeDeletePlaylistConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeListPlaylistItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeAddPlaylistItemConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeUpdatePlaylistItemConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeDeletePlaylistItemConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeListCommentRepliesConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeListCommentsByIdConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeListVideoCommentsConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeListChannelCommentsConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeCreateCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeCreateVideoCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeCreateChannelCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeUpdateCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeDeleteCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeSetCommentModerationConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeListSubscriptionsConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeSubscribeConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeUnsubscribeConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeListCaptionsConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeDownloadCaptionConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeListMyActivitiesConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeListChannelActivitiesConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeListVideoCategoriesConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeListLanguagesConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeListRegionsConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeListMyChannelSectionsConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeListChannelSectionsConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeListMembersConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeListMembershipLevelsConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeGetChannelAnalyticsConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeGetVideoAnalyticsConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeGetRevenueAnalyticsConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeGetTopVideosConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeGetDemographicsConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeGetTrafficSourcesConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeListReportTypesConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeCreateReportingJobConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeListReportingJobsConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeGetReportingJobConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeDeleteReportingJobConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeListReportsConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeListBroadcastsConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeCreateBroadcastConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeUpdateBroadcastConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeDeleteBroadcastConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeTransitionBroadcastConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeBindBroadcastConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeListStreamsConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeCreateStreamConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeUpdateStreamConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeDeleteStreamConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeListLiveChatMessagesConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeSendLiveChatMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeDeleteLiveChatMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeListLiveChatModeratorsConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeAddLiveChatModeratorConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeRemoveLiveChatModeratorConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeBanLiveChatUserConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeUnbanLiveChatUserConfig"
+        },
+        {
+          "$ref": "#/$defs/YouTubeListSuperChatEventsConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/YouTubeOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Youtube Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Get stats for the last 10 videos and find which had highest engagement",
+    "Search for trending AI content and get top 20 results with view counts",
+    "Add the latest 5 uploads to the \"Marketing\" playlist automatically",
+    "Get comments from the product demo video and flag suspicious activity",
+    "Fetch channel analytics for the past 30 days and export to CSV format",
+    "List all playlists and update descriptions with latest publish dates",
+    "Get popular videos in Tech category and calculate average like-to-view ratio"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

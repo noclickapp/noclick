@@ -1,0 +1,3040 @@
+{
+  "$defs": {
+    "BigQueryCancelJobConfig": {
+      "description": "Request cancellation of a running job.",
+      "properties": {
+        "operation": {
+          "const": "cancel_job",
+          "default": "cancel_job",
+          "title": "Cancel Job",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Jobs",
+          "x-display-name": "Cancel Job",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "GCP project ID (billing/quota project)",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "job_id": {
+          "description": "The job ID",
+          "title": "Job",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste job ID",
+            "depends_on": "project_id",
+            "field_name": "job_id",
+            "placeholder": "Select a job...",
+            "searchable": true
+          }
+        },
+        "location": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Job location (e.g. US, EU)",
+          "title": "Location"
+        }
+      },
+      "required": [
+        "project_id",
+        "job_id"
+      ],
+      "title": "BigQueryCancelJobConfig",
+      "type": "object"
+    },
+    "BigQueryCreateDatasetConfig": {
+      "description": "Create a new dataset.",
+      "properties": {
+        "operation": {
+          "const": "create_dataset",
+          "default": "create_dataset",
+          "title": "Create Dataset",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Datasets",
+          "x-creates-resource": true,
+          "x-display-name": "Create Dataset",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.datasetReference.datasetId",
+          "x-resource-type": "bigquery_dataset"
+        },
+        "project_id": {
+          "description": "GCP project ID (billing/quota project)",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "dataset_id": {
+          "description": "ID for the new dataset",
+          "title": "Dataset ID",
+          "type": "string"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Data location (e.g. US, EU, us-central1)",
+          "title": "Location"
+        },
+        "friendly_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Human-readable dataset name",
+          "title": "Friendly Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Dataset description",
+          "title": "Description"
+        }
+      },
+      "required": [
+        "project_id",
+        "dataset_id"
+      ],
+      "title": "BigQueryCreateDatasetConfig",
+      "type": "object"
+    },
+    "BigQueryCreateRoutineConfig": {
+      "description": "Create a stored procedure / UDF / TVF.",
+      "properties": {
+        "operation": {
+          "const": "create_routine",
+          "default": "create_routine",
+          "title": "Create Routine",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Routines",
+          "x-creates-resource": true,
+          "x-display-name": "Create Routine",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.routineReference.routineId",
+          "x-resource-type": "bigquery_routine"
+        },
+        "project_id": {
+          "description": "GCP project ID (billing/quota project)",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "dataset_id": {
+          "description": "The dataset ID",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste dataset ID",
+            "field_name": "dataset_id",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "bigquery_dataset"
+        },
+        "resource": {
+          "description": "Full routine resource JSON (routineReference, definitionBody, routineType, etc.)",
+          "title": "Routine Resource",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "project_id",
+        "dataset_id",
+        "resource"
+      ],
+      "title": "BigQueryCreateRoutineConfig",
+      "type": "object"
+    },
+    "BigQueryCreateTableConfig": {
+      "description": "Create a table or view with a schema.",
+      "properties": {
+        "operation": {
+          "const": "create_table",
+          "default": "create_table",
+          "title": "Create Table",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tables",
+          "x-creates-resource": true,
+          "x-display-name": "Create Table",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.tableReference.tableId",
+          "x-resource-type": "bigquery_table"
+        },
+        "project_id": {
+          "description": "GCP project ID (billing/quota project)",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "dataset_id": {
+          "description": "The dataset ID",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste dataset ID",
+            "field_name": "dataset_id",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "bigquery_dataset"
+        },
+        "table_id": {
+          "description": "ID for the new table",
+          "title": "Table ID",
+          "type": "string"
+        },
+        "output_schema": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Schema fields JSON, e.g. {\"fields\": [{\"name\": \"id\", \"type\": \"INTEGER\"}]}",
+          "title": "Schema",
+          "ui:widget": "textarea"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Table description",
+          "title": "Description"
+        }
+      },
+      "required": [
+        "project_id",
+        "dataset_id",
+        "table_id"
+      ],
+      "title": "BigQueryCreateTableConfig",
+      "type": "object"
+    },
+    "BigQueryDeleteDatasetConfig": {
+      "description": "Delete a dataset.",
+      "properties": {
+        "operation": {
+          "const": "delete_dataset",
+          "default": "delete_dataset",
+          "title": "Delete Dataset",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Datasets",
+          "x-display-name": "Delete Dataset",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "GCP project ID (billing/quota project)",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "dataset_id": {
+          "description": "The dataset ID",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste dataset ID",
+            "field_name": "dataset_id",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "bigquery_dataset"
+        },
+        "delete_contents": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "false",
+          "description": "Also delete all tables in the dataset",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Delete Contents",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "project_id",
+        "dataset_id"
+      ],
+      "title": "BigQueryDeleteDatasetConfig",
+      "type": "object"
+    },
+    "BigQueryDeleteJobConfig": {
+      "description": "Delete a job's metadata.",
+      "properties": {
+        "operation": {
+          "const": "delete_job",
+          "default": "delete_job",
+          "title": "Delete Job",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Jobs",
+          "x-display-name": "Delete Job",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "GCP project ID (billing/quota project)",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "job_id": {
+          "description": "The job ID",
+          "title": "Job",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste job ID",
+            "depends_on": "project_id",
+            "field_name": "job_id",
+            "placeholder": "Select a job...",
+            "searchable": true
+          }
+        },
+        "location": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Job location (e.g. US, EU)",
+          "title": "Location"
+        }
+      },
+      "required": [
+        "project_id",
+        "job_id"
+      ],
+      "title": "BigQueryDeleteJobConfig",
+      "type": "object"
+    },
+    "BigQueryDeleteModelConfig": {
+      "description": "Delete a BQML model.",
+      "properties": {
+        "operation": {
+          "const": "delete_model",
+          "default": "delete_model",
+          "title": "Delete Model",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Models",
+          "x-display-name": "Delete Model",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "GCP project ID (billing/quota project)",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "dataset_id": {
+          "description": "The dataset ID",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste dataset ID",
+            "field_name": "dataset_id",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "bigquery_dataset"
+        },
+        "model_id": {
+          "description": "The BQML model ID",
+          "title": "Model",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste model ID",
+            "depends_on": "dataset_id",
+            "field_name": "model_id",
+            "placeholder": "Select a model...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "project_id",
+        "dataset_id",
+        "model_id"
+      ],
+      "title": "BigQueryDeleteModelConfig",
+      "type": "object"
+    },
+    "BigQueryDeleteRoutineConfig": {
+      "description": "Delete a routine (routines.delete).",
+      "properties": {
+        "operation": {
+          "const": "delete_routine",
+          "default": "delete_routine",
+          "title": "Delete Routine",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Routines",
+          "x-display-name": "Delete Routine",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "GCP project ID (billing/quota project)",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "dataset_id": {
+          "description": "The dataset ID",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste dataset ID",
+            "field_name": "dataset_id",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "bigquery_dataset"
+        },
+        "routine_id": {
+          "description": "The routine ID",
+          "title": "Routine",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste routine ID",
+            "depends_on": "dataset_id",
+            "field_name": "routine_id",
+            "placeholder": "Select a routine...",
+            "searchable": true
+          },
+          "x-resource-type": "bigquery_routine"
+        }
+      },
+      "required": [
+        "project_id",
+        "dataset_id",
+        "routine_id"
+      ],
+      "title": "BigQueryDeleteRoutineConfig",
+      "type": "object"
+    },
+    "BigQueryDeleteTableConfig": {
+      "description": "Delete a table or view.",
+      "properties": {
+        "operation": {
+          "const": "delete_table",
+          "default": "delete_table",
+          "title": "Delete Table",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tables",
+          "x-display-name": "Delete Table",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "GCP project ID (billing/quota project)",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "dataset_id": {
+          "description": "The dataset ID",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste dataset ID",
+            "field_name": "dataset_id",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "bigquery_dataset"
+        },
+        "table_id": {
+          "description": "The table ID",
+          "title": "Table",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste table ID",
+            "field_name": "table_id",
+            "placeholder": "Select a table...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "bigquery_table"
+        }
+      },
+      "required": [
+        "project_id",
+        "dataset_id",
+        "table_id"
+      ],
+      "title": "BigQueryDeleteTableConfig",
+      "type": "object"
+    },
+    "BigQueryGetDatasetConfig": {
+      "description": "Fetch dataset metadata.",
+      "properties": {
+        "operation": {
+          "const": "get_dataset",
+          "default": "get_dataset",
+          "title": "Get Dataset",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Datasets",
+          "x-display-name": "Get Dataset",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "GCP project ID (billing/quota project)",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "dataset_id": {
+          "description": "The dataset ID",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste dataset ID",
+            "field_name": "dataset_id",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "bigquery_dataset"
+        }
+      },
+      "required": [
+        "project_id",
+        "dataset_id"
+      ],
+      "title": "BigQueryGetDatasetConfig",
+      "type": "object"
+    },
+    "BigQueryGetJobConfig": {
+      "description": "Fetch a job's status and statistics (poll until DONE).",
+      "properties": {
+        "operation": {
+          "const": "get_job",
+          "default": "get_job",
+          "title": "Get Job",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Jobs",
+          "x-display-name": "Get Job",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "GCP project ID (billing/quota project)",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "job_id": {
+          "description": "The job ID",
+          "title": "Job",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste job ID",
+            "depends_on": "project_id",
+            "field_name": "job_id",
+            "placeholder": "Select a job...",
+            "searchable": true
+          }
+        },
+        "location": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Job location (e.g. US, EU)",
+          "title": "Location"
+        }
+      },
+      "required": [
+        "project_id",
+        "job_id"
+      ],
+      "title": "BigQueryGetJobConfig",
+      "type": "object"
+    },
+    "BigQueryGetModelConfig": {
+      "description": "Fetch BQML model metadata.",
+      "properties": {
+        "operation": {
+          "const": "get_model",
+          "default": "get_model",
+          "title": "Get Model",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Models",
+          "x-display-name": "Get Model",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "GCP project ID (billing/quota project)",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "dataset_id": {
+          "description": "The dataset ID",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste dataset ID",
+            "field_name": "dataset_id",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "bigquery_dataset"
+        },
+        "model_id": {
+          "description": "The BQML model ID",
+          "title": "Model",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste model ID",
+            "depends_on": "dataset_id",
+            "field_name": "model_id",
+            "placeholder": "Select a model...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "project_id",
+        "dataset_id",
+        "model_id"
+      ],
+      "title": "BigQueryGetModelConfig",
+      "type": "object"
+    },
+    "BigQueryGetQueryResultsConfig": {
+      "description": "Page through the results of a (possibly async) query job.",
+      "properties": {
+        "operation": {
+          "const": "get_query_results",
+          "default": "get_query_results",
+          "title": "Get Query Results",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Queries",
+          "x-display-name": "Get Query Results",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "GCP project ID (billing/quota project)",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "job_id": {
+          "description": "The job ID",
+          "title": "Job",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste job ID",
+            "depends_on": "project_id",
+            "field_name": "job_id",
+            "placeholder": "Select a job...",
+            "searchable": true
+          }
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of result rows per page",
+          "title": "Max Results"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token to fetch the next page of results",
+          "title": "Page Token"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Dataset location (e.g. US, EU)",
+          "title": "Location"
+        }
+      },
+      "required": [
+        "project_id",
+        "job_id"
+      ],
+      "title": "BigQueryGetQueryResultsConfig",
+      "type": "object"
+    },
+    "BigQueryGetRoutineConfig": {
+      "description": "Fetch a routine definition.",
+      "properties": {
+        "operation": {
+          "const": "get_routine",
+          "default": "get_routine",
+          "title": "Get Routine",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Routines",
+          "x-display-name": "Get Routine",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "GCP project ID (billing/quota project)",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "dataset_id": {
+          "description": "The dataset ID",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste dataset ID",
+            "field_name": "dataset_id",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "bigquery_dataset"
+        },
+        "routine_id": {
+          "description": "The routine ID",
+          "title": "Routine",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste routine ID",
+            "depends_on": "dataset_id",
+            "field_name": "routine_id",
+            "placeholder": "Select a routine...",
+            "searchable": true
+          },
+          "x-resource-type": "bigquery_routine"
+        }
+      },
+      "required": [
+        "project_id",
+        "dataset_id",
+        "routine_id"
+      ],
+      "title": "BigQueryGetRoutineConfig",
+      "type": "object"
+    },
+    "BigQueryGetRowAccessPolicyConfig": {
+      "description": "Get a single row access policy (rowAccessPolicies.get).",
+      "properties": {
+        "operation": {
+          "const": "get_row_access_policy",
+          "default": "get_row_access_policy",
+          "title": "Get Row Access Policy",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Row Access Policies",
+          "x-display-name": "Get Row Access Policy",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "GCP project ID (billing/quota project)",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "dataset_id": {
+          "description": "The dataset ID",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste dataset ID",
+            "field_name": "dataset_id",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "bigquery_dataset"
+        },
+        "table_id": {
+          "description": "The table ID",
+          "title": "Table",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste table ID",
+            "field_name": "table_id",
+            "placeholder": "Select a table...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "bigquery_table"
+        },
+        "policy_id": {
+          "description": "The row access policy ID",
+          "title": "Policy ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "dataset_id",
+        "table_id",
+        "policy_id"
+      ],
+      "title": "BigQueryGetRowAccessPolicyConfig",
+      "type": "object"
+    },
+    "BigQueryGetServiceAccountConfig": {
+      "description": "Return the BigQuery service account for the project (KMS/transfer grants).",
+      "properties": {
+        "operation": {
+          "const": "get_service_account",
+          "default": "get_service_account",
+          "title": "Get Service Account",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Project",
+          "x-display-name": "Get Service Account",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "GCP project ID (billing/quota project)",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "BigQueryGetServiceAccountConfig",
+      "type": "object"
+    },
+    "BigQueryGetTableConfig": {
+      "description": "Fetch table metadata/schema.",
+      "properties": {
+        "operation": {
+          "const": "get_table",
+          "default": "get_table",
+          "title": "Get Table",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tables",
+          "x-display-name": "Get Table",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "GCP project ID (billing/quota project)",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "dataset_id": {
+          "description": "The dataset ID",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste dataset ID",
+            "field_name": "dataset_id",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "bigquery_dataset"
+        },
+        "table_id": {
+          "description": "The table ID",
+          "title": "Table",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste table ID",
+            "field_name": "table_id",
+            "placeholder": "Select a table...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "bigquery_table"
+        }
+      },
+      "required": [
+        "project_id",
+        "dataset_id",
+        "table_id"
+      ],
+      "title": "BigQueryGetTableConfig",
+      "type": "object"
+    },
+    "BigQueryGetTableIamPolicyConfig": {
+      "description": "Get the IAM policy for a table (tables.getIamPolicy).",
+      "properties": {
+        "operation": {
+          "const": "get_table_iam_policy",
+          "default": "get_table_iam_policy",
+          "title": "Get Table IAM Policy",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tables",
+          "x-display-name": "Get Table IAM Policy",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "GCP project ID (billing/quota project)",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "dataset_id": {
+          "description": "The dataset ID",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste dataset ID",
+            "field_name": "dataset_id",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "bigquery_dataset"
+        },
+        "table_id": {
+          "description": "The table ID",
+          "title": "Table",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste table ID",
+            "field_name": "table_id",
+            "placeholder": "Select a table...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "bigquery_table"
+        }
+      },
+      "required": [
+        "project_id",
+        "dataset_id",
+        "table_id"
+      ],
+      "title": "BigQueryGetTableIamPolicyConfig",
+      "type": "object"
+    },
+    "BigQueryInsertJobConfig": {
+      "description": "Start a query / load / extract / copy job (async).",
+      "properties": {
+        "operation": {
+          "const": "insert_job",
+          "default": "insert_job",
+          "title": "Insert Job",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Jobs",
+          "x-display-name": "Insert Job",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "GCP project ID (billing/quota project)",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "configuration": {
+          "description": "JSON job configuration, e.g. {\"query\": {\"query\": \"SELECT 1\", \"useLegacySql\": false}}",
+          "title": "Job Configuration",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "project_id",
+        "configuration"
+      ],
+      "title": "BigQueryInsertJobConfig",
+      "type": "object"
+    },
+    "BigQueryListDatasetsConfig": {
+      "description": "List datasets in the project.",
+      "properties": {
+        "operation": {
+          "const": "list_datasets",
+          "default": "list_datasets",
+          "title": "List Datasets",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Datasets",
+          "x-display-name": "List Datasets",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "GCP project ID (billing/quota project)",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of datasets to return",
+          "title": "Max Results"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "BigQueryListDatasetsConfig",
+      "type": "object"
+    },
+    "BigQueryListJobsConfig": {
+      "description": "List jobs in a project (filter by state, time range).",
+      "properties": {
+        "operation": {
+          "const": "list_jobs",
+          "default": "list_jobs",
+          "title": "List Jobs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Jobs",
+          "x-display-name": "List Jobs",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "GCP project ID (billing/quota project)",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "state_filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter jobs by state",
+          "enum": [
+            "",
+            "running",
+            "pending",
+            "done"
+          ],
+          "enumNames": [
+            "Any",
+            "Running",
+            "Pending",
+            "Done"
+          ],
+          "title": "State Filter",
+          "x-enum-searchable": true
+        },
+        "all_users": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "false",
+          "description": "Include jobs from all project users (not just the caller)",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "All Users",
+          "x-enum-searchable": true
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of jobs to return",
+          "title": "Max Results"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "BigQueryListJobsConfig",
+      "type": "object"
+    },
+    "BigQueryListModelsConfig": {
+      "description": "List BigQuery ML models in a dataset.",
+      "properties": {
+        "operation": {
+          "const": "list_models",
+          "default": "list_models",
+          "title": "List Models",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Models",
+          "x-display-name": "List Models",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "GCP project ID (billing/quota project)",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "dataset_id": {
+          "description": "The dataset ID",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste dataset ID",
+            "field_name": "dataset_id",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "bigquery_dataset"
+        }
+      },
+      "required": [
+        "project_id",
+        "dataset_id"
+      ],
+      "title": "BigQueryListModelsConfig",
+      "type": "object"
+    },
+    "BigQueryListProjectsConfig": {
+      "description": "List projects the caller can access (for project picker UIs).",
+      "properties": {
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "title": "List Projects",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Project",
+          "x-display-name": "List Projects",
+          "x-is-trigger": false
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of projects to return",
+          "title": "Max Results"
+        }
+      },
+      "title": "BigQueryListProjectsConfig",
+      "type": "object"
+    },
+    "BigQueryListRoutinesConfig": {
+      "description": "List stored procedures / UDFs / TVFs in a dataset.",
+      "properties": {
+        "operation": {
+          "const": "list_routines",
+          "default": "list_routines",
+          "title": "List Routines",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Routines",
+          "x-display-name": "List Routines",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "GCP project ID (billing/quota project)",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "dataset_id": {
+          "description": "The dataset ID",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste dataset ID",
+            "field_name": "dataset_id",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "bigquery_dataset"
+        }
+      },
+      "required": [
+        "project_id",
+        "dataset_id"
+      ],
+      "title": "BigQueryListRoutinesConfig",
+      "type": "object"
+    },
+    "BigQueryListRowAccessPoliciesConfig": {
+      "description": "List row access policies on a table (rowAccessPolicies.list).",
+      "properties": {
+        "operation": {
+          "const": "list_row_access_policies",
+          "default": "list_row_access_policies",
+          "title": "List Row Access Policies",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Row Access Policies",
+          "x-display-name": "List Row Access Policies",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "GCP project ID (billing/quota project)",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "dataset_id": {
+          "description": "The dataset ID",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste dataset ID",
+            "field_name": "dataset_id",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "bigquery_dataset"
+        },
+        "table_id": {
+          "description": "The table ID",
+          "title": "Table",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste table ID",
+            "field_name": "table_id",
+            "placeholder": "Select a table...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "bigquery_table"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of policies to return",
+          "title": "Page Size"
+        }
+      },
+      "required": [
+        "project_id",
+        "dataset_id",
+        "table_id"
+      ],
+      "title": "BigQueryListRowAccessPoliciesConfig",
+      "type": "object"
+    },
+    "BigQueryListTableDataConfig": {
+      "description": "Read rows from a table directly (paginated, no SQL).",
+      "properties": {
+        "operation": {
+          "const": "list_table_data",
+          "default": "list_table_data",
+          "title": "List Table Data",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tables",
+          "x-display-name": "List Table Data",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "GCP project ID (billing/quota project)",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "dataset_id": {
+          "description": "The dataset ID",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste dataset ID",
+            "field_name": "dataset_id",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "bigquery_dataset"
+        },
+        "table_id": {
+          "description": "The table ID",
+          "title": "Table",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste table ID",
+            "field_name": "table_id",
+            "placeholder": "Select a table...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "bigquery_table"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of rows per page",
+          "title": "Max Results"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token to fetch the next page of rows",
+          "title": "Page Token"
+        }
+      },
+      "required": [
+        "project_id",
+        "dataset_id",
+        "table_id"
+      ],
+      "title": "BigQueryListTableDataConfig",
+      "type": "object"
+    },
+    "BigQueryListTablesConfig": {
+      "description": "List tables/views in a dataset.",
+      "properties": {
+        "operation": {
+          "const": "list_tables",
+          "default": "list_tables",
+          "title": "List Tables",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tables",
+          "x-display-name": "List Tables",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "GCP project ID (billing/quota project)",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "dataset_id": {
+          "description": "The dataset ID",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste dataset ID",
+            "field_name": "dataset_id",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "bigquery_dataset"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of tables to return",
+          "title": "Max Results"
+        }
+      },
+      "required": [
+        "project_id",
+        "dataset_id"
+      ],
+      "title": "BigQueryListTablesConfig",
+      "type": "object"
+    },
+    "BigQueryOAuthCredential": {
+      "description": "OAuth credential for Google BigQuery.\n\nTokens are obtained via the Google OAuth flow, not entered manually.",
+      "properties": {
+        "credential_type": {
+          "const": "bigquery_oauth",
+          "default": "bigquery_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "OAuth 2.0 access token from Google",
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "description": "OAuth 2.0 refresh token for automatic renewal",
+          "title": "Refresh Token",
+          "type": "string"
+        },
+        "expires_at": {
+          "description": "ISO 8601 timestamp when the access token expires",
+          "title": "Token Expiry",
+          "type": "string"
+        },
+        "email": {
+          "description": "Email address of the connected Google account",
+          "title": "Google Account",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "email"
+      ],
+      "title": "BigQueryOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://console.cloud.google.com/apis/credentials",
+      "x-oauth-provider": "google",
+      "x-oauth-scopes": [
+        "https://www.googleapis.com/auth/bigquery"
+      ]
+    },
+    "BigQueryOnQueryResultsConfig": {
+      "description": "Poll-based trigger: run a SQL query on a schedule and emit NEW rows.\n\nBigQuery has no native webhooks, so this acts as a scheduled query: on each\ntick the user's SQL runs and only rows whose ``cursor_column`` is greater\nthan the last-seen cursor are emitted. The cursor high-water-mark lives in\ndurable node state (not config, which isn't persisted across polls) so\nalready-seen rows are never re-emitted, and the first poll baselines.",
+      "properties": {
+        "operation": {
+          "const": "on_query_results",
+          "default": "on_query_results",
+          "title": "On Scheduled Query Results",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Scheduled Query Results",
+          "x-is-trigger": true
+        },
+        "project_id": {
+          "description": "GCP project ID (billing/quota project)",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "query": {
+          "description": "The SQL query to run on each poll (GoogleSQL). Must include the cursor column and be ordered so new rows have a higher cursor value.",
+          "title": "SQL Query",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "cursor_column": {
+          "description": "Name of the timestamp/id column used to detect new rows. Only rows whose value in this column is greater than the last-seen value are emitted.",
+          "placeholder": "created_at",
+          "title": "Cursor Column",
+          "type": "string"
+        },
+        "use_legacy_sql": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "false",
+          "description": "Use BigQuery legacy SQL dialect instead of GoogleSQL",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Use Legacy SQL",
+          "x-enum-searchable": true
+        },
+        "location": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Dataset location (e.g. US, EU, us-central1)",
+          "title": "Location"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "1000",
+          "description": "Maximum number of rows to scan per poll",
+          "title": "Max Rows Per Poll"
+        },
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": {
+            "frequency": "minutes",
+            "interval": 5,
+            "hour": 9,
+            "minute": 0,
+            "dayOfWeek": 1,
+            "dayOfMonth": 1
+          },
+          "description": "How often to run the query and check for new rows",
+          "title": "Check Frequency",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:copyable": true,
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Check",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "project_id",
+        "query",
+        "cursor_column"
+      ],
+      "title": "BigQueryOnQueryResultsConfig",
+      "type": "object"
+    },
+    "BigQueryPatchDatasetConfig": {
+      "description": "Partial update of dataset metadata (PATCH).",
+      "properties": {
+        "operation": {
+          "const": "patch_dataset",
+          "default": "patch_dataset",
+          "title": "Patch Dataset",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Datasets",
+          "x-display-name": "Patch Dataset",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "GCP project ID (billing/quota project)",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "dataset_id": {
+          "description": "The dataset ID",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste dataset ID",
+            "field_name": "dataset_id",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "bigquery_dataset"
+        },
+        "resource": {
+          "description": "Partial dataset resource JSON with only the fields to change",
+          "title": "Patch JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "project_id",
+        "dataset_id",
+        "resource"
+      ],
+      "title": "BigQueryPatchDatasetConfig",
+      "type": "object"
+    },
+    "BigQueryPatchModelConfig": {
+      "description": "Update mutable BQML model metadata (models.patch).",
+      "properties": {
+        "operation": {
+          "const": "patch_model",
+          "default": "patch_model",
+          "title": "Patch Model",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Models",
+          "x-display-name": "Patch Model",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "GCP project ID (billing/quota project)",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "dataset_id": {
+          "description": "The dataset ID",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste dataset ID",
+            "field_name": "dataset_id",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "bigquery_dataset"
+        },
+        "model_id": {
+          "description": "The BQML model ID",
+          "title": "Model",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste model ID",
+            "depends_on": "dataset_id",
+            "field_name": "model_id",
+            "placeholder": "Select a model...",
+            "searchable": true
+          }
+        },
+        "resource": {
+          "description": "Model fields to update (e.g. friendlyName, description, labels, expirationTime)",
+          "title": "Patch JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "project_id",
+        "dataset_id",
+        "model_id",
+        "resource"
+      ],
+      "title": "BigQueryPatchModelConfig",
+      "type": "object"
+    },
+    "BigQueryPatchTableConfig": {
+      "description": "Partial update of a table (add columns, set expiration, etc.).",
+      "properties": {
+        "operation": {
+          "const": "patch_table",
+          "default": "patch_table",
+          "title": "Patch Table",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tables",
+          "x-display-name": "Patch Table",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "GCP project ID (billing/quota project)",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "dataset_id": {
+          "description": "The dataset ID",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste dataset ID",
+            "field_name": "dataset_id",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "bigquery_dataset"
+        },
+        "table_id": {
+          "description": "The table ID",
+          "title": "Table",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste table ID",
+            "field_name": "table_id",
+            "placeholder": "Select a table...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "bigquery_table"
+        },
+        "resource": {
+          "description": "Partial table resource JSON with only the fields to change",
+          "title": "Patch JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "project_id",
+        "dataset_id",
+        "table_id",
+        "resource"
+      ],
+      "title": "BigQueryPatchTableConfig",
+      "type": "object"
+    },
+    "BigQueryRunQueryConfig": {
+      "description": "Run a SQL query and return results inline (synchronous, bounded by timeout).",
+      "properties": {
+        "operation": {
+          "const": "run_query",
+          "default": "run_query",
+          "title": "Run Query",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Queries",
+          "x-display-name": "Run Query",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "GCP project ID (billing/quota project)",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "query": {
+          "description": "The SQL query to execute (GoogleSQL syntax)",
+          "title": "SQL Query",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "use_legacy_sql": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "false",
+          "description": "Use BigQuery legacy SQL dialect instead of GoogleSQL",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Use Legacy SQL",
+          "x-enum-searchable": true
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of result rows to return",
+          "title": "Max Results"
+        },
+        "timeout_ms": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "30000",
+          "description": "How long to wait for the query to complete before returning",
+          "title": "Timeout (ms)"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Dataset location (e.g. US, EU, us-central1)",
+          "title": "Location"
+        }
+      },
+      "required": [
+        "project_id",
+        "query"
+      ],
+      "title": "BigQueryRunQueryConfig",
+      "type": "object"
+    },
+    "BigQueryServiceAccountCredential": {
+      "description": "Service-account JSON key for server-to-server BigQuery access.\n\nThe primary auth method for automated/backend BigQuery access \u2014 a signed\nJWT is exchanged for an OAuth access token per run. The project is read\nfrom the key, so ``project_id`` fields can be left blank to default to it.",
+      "properties": {
+        "credential_type": {
+          "const": "bigquery_service_account",
+          "default": "bigquery_service_account",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "service_account_json": {
+          "description": "Raw JSON key for a Google Cloud service account with BigQuery access",
+          "title": "Service Account JSON",
+          "type": "string",
+          "ui:rows": 12,
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "service_account_json"
+      ],
+      "title": "BigQueryServiceAccountCredential",
+      "type": "object",
+      "x-credential-instructions": "Create a JSON key for a service account with the required BigQuery IAM roles (e.g. BigQuery Job User + BigQuery Data Editor). Prefer user OAuth for user-delegated access; use service accounts for server-to-server automation.",
+      "x-credential-url": "https://console.cloud.google.com/iam-admin/serviceaccounts"
+    },
+    "BigQuerySetTableIamPolicyConfig": {
+      "description": "Set the IAM policy for a table (tables.setIamPolicy).",
+      "properties": {
+        "operation": {
+          "const": "set_table_iam_policy",
+          "default": "set_table_iam_policy",
+          "title": "Set Table IAM Policy",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tables",
+          "x-display-name": "Set Table IAM Policy",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "GCP project ID (billing/quota project)",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "dataset_id": {
+          "description": "The dataset ID",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste dataset ID",
+            "field_name": "dataset_id",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "bigquery_dataset"
+        },
+        "table_id": {
+          "description": "The table ID",
+          "title": "Table",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste table ID",
+            "field_name": "table_id",
+            "placeholder": "Select a table...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "bigquery_table"
+        },
+        "policy": {
+          "description": "IAM policy JSON, e.g. {\"bindings\":[{\"role\":\"roles/bigquery.dataViewer\",\"members\":[\"user:x@y.com\"]}]}",
+          "title": "Policy JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "project_id",
+        "dataset_id",
+        "table_id",
+        "policy"
+      ],
+      "title": "BigQuerySetTableIamPolicyConfig",
+      "type": "object"
+    },
+    "BigQueryStreamInsertConfig": {
+      "description": "Streaming insert of JSON rows into a table (real-time append).",
+      "properties": {
+        "operation": {
+          "const": "stream_insert",
+          "default": "stream_insert",
+          "title": "Stream Insert Rows",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tables",
+          "x-display-name": "Stream Insert Rows",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "GCP project ID (billing/quota project)",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "dataset_id": {
+          "description": "The dataset ID",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste dataset ID",
+            "field_name": "dataset_id",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "bigquery_dataset"
+        },
+        "table_id": {
+          "description": "The table ID",
+          "title": "Table",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste table ID",
+            "field_name": "table_id",
+            "placeholder": "Select a table...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "bigquery_table"
+        },
+        "rows": {
+          "description": "JSON array of row objects, e.g. [{\"id\": 1, \"name\": \"Ada\"}]",
+          "title": "Rows",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "skip_invalid_rows": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "false",
+          "description": "Insert all valid rows even if some rows are invalid",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Skip Invalid Rows",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "project_id",
+        "dataset_id",
+        "table_id",
+        "rows"
+      ],
+      "title": "BigQueryStreamInsertConfig",
+      "type": "object"
+    },
+    "BigQueryTestTableIamPermissionsConfig": {
+      "description": "Test the caller's permissions on a table (tables.testIamPermissions).",
+      "properties": {
+        "operation": {
+          "const": "test_table_iam_permissions",
+          "default": "test_table_iam_permissions",
+          "title": "Test Table IAM Permissions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tables",
+          "x-display-name": "Test Table IAM Permissions",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "GCP project ID (billing/quota project)",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "dataset_id": {
+          "description": "The dataset ID",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste dataset ID",
+            "field_name": "dataset_id",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "bigquery_dataset"
+        },
+        "table_id": {
+          "description": "The table ID",
+          "title": "Table",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste table ID",
+            "field_name": "table_id",
+            "placeholder": "Select a table...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "bigquery_table"
+        },
+        "permissions": {
+          "description": "JSON array of permissions to test, e.g. [\"bigquery.tables.get\",\"bigquery.tables.getData\"]",
+          "title": "Permissions",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "project_id",
+        "dataset_id",
+        "table_id",
+        "permissions"
+      ],
+      "title": "BigQueryTestTableIamPermissionsConfig",
+      "type": "object"
+    },
+    "BigQueryUndeleteDatasetConfig": {
+      "description": "Restore a dataset within its time-travel window (datasets.undelete).",
+      "properties": {
+        "operation": {
+          "const": "undelete_dataset",
+          "default": "undelete_dataset",
+          "title": "Undelete Dataset",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Datasets",
+          "x-display-name": "Undelete Dataset",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "GCP project ID (billing/quota project)",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "dataset_id": {
+          "description": "The dataset ID",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste dataset ID",
+            "field_name": "dataset_id",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "bigquery_dataset"
+        },
+        "deletion_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC3339 timestamp of the dataset version to restore (optional)",
+          "title": "Deletion Time"
+        }
+      },
+      "required": [
+        "project_id",
+        "dataset_id"
+      ],
+      "title": "BigQueryUndeleteDatasetConfig",
+      "type": "object"
+    },
+    "BigQueryUpdateDatasetConfig": {
+      "description": "Full replace of dataset metadata (PUT).",
+      "properties": {
+        "operation": {
+          "const": "update_dataset",
+          "default": "update_dataset",
+          "title": "Update Dataset",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Datasets",
+          "x-display-name": "Update Dataset",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "GCP project ID (billing/quota project)",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "dataset_id": {
+          "description": "The dataset ID",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste dataset ID",
+            "field_name": "dataset_id",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "bigquery_dataset"
+        },
+        "resource": {
+          "description": "Full dataset resource JSON to replace the existing metadata",
+          "title": "Dataset Resource",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "project_id",
+        "dataset_id",
+        "resource"
+      ],
+      "title": "BigQueryUpdateDatasetConfig",
+      "type": "object"
+    },
+    "BigQueryUpdateRoutineConfig": {
+      "description": "Replace a routine's full definition (routines.update, PUT).",
+      "properties": {
+        "operation": {
+          "const": "update_routine",
+          "default": "update_routine",
+          "title": "Update Routine",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Routines",
+          "x-display-name": "Update Routine",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "GCP project ID (billing/quota project)",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "dataset_id": {
+          "description": "The dataset ID",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste dataset ID",
+            "field_name": "dataset_id",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "bigquery_dataset"
+        },
+        "routine_id": {
+          "description": "The routine ID",
+          "title": "Routine",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste routine ID",
+            "depends_on": "dataset_id",
+            "field_name": "routine_id",
+            "placeholder": "Select a routine...",
+            "searchable": true
+          },
+          "x-resource-type": "bigquery_routine"
+        },
+        "resource": {
+          "description": "Full routine resource JSON to replace the existing definition",
+          "title": "Routine Resource",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "project_id",
+        "dataset_id",
+        "routine_id",
+        "resource"
+      ],
+      "title": "BigQueryUpdateRoutineConfig",
+      "type": "object"
+    },
+    "BigQueryUpdateTableConfig": {
+      "description": "Full replace of table metadata (PUT).",
+      "properties": {
+        "operation": {
+          "const": "update_table",
+          "default": "update_table",
+          "title": "Update Table",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tables",
+          "x-display-name": "Update Table",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "GCP project ID (billing/quota project)",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "dataset_id": {
+          "description": "The dataset ID",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste dataset ID",
+            "field_name": "dataset_id",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "bigquery_dataset"
+        },
+        "table_id": {
+          "description": "The table ID",
+          "title": "Table",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste table ID",
+            "field_name": "table_id",
+            "placeholder": "Select a table...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "bigquery_table"
+        },
+        "resource": {
+          "description": "Full table resource JSON to replace the existing metadata",
+          "title": "Table Resource",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "project_id",
+        "dataset_id",
+        "table_id",
+        "resource"
+      ],
+      "title": "BigQueryUpdateTableConfig",
+      "type": "object"
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the BigQuery node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_job": "#/$defs/BigQueryCancelJobConfig",
+          "create_dataset": "#/$defs/BigQueryCreateDatasetConfig",
+          "create_routine": "#/$defs/BigQueryCreateRoutineConfig",
+          "create_table": "#/$defs/BigQueryCreateTableConfig",
+          "delete_dataset": "#/$defs/BigQueryDeleteDatasetConfig",
+          "delete_job": "#/$defs/BigQueryDeleteJobConfig",
+          "delete_model": "#/$defs/BigQueryDeleteModelConfig",
+          "delete_routine": "#/$defs/BigQueryDeleteRoutineConfig",
+          "delete_table": "#/$defs/BigQueryDeleteTableConfig",
+          "get_dataset": "#/$defs/BigQueryGetDatasetConfig",
+          "get_job": "#/$defs/BigQueryGetJobConfig",
+          "get_model": "#/$defs/BigQueryGetModelConfig",
+          "get_query_results": "#/$defs/BigQueryGetQueryResultsConfig",
+          "get_routine": "#/$defs/BigQueryGetRoutineConfig",
+          "get_row_access_policy": "#/$defs/BigQueryGetRowAccessPolicyConfig",
+          "get_service_account": "#/$defs/BigQueryGetServiceAccountConfig",
+          "get_table": "#/$defs/BigQueryGetTableConfig",
+          "get_table_iam_policy": "#/$defs/BigQueryGetTableIamPolicyConfig",
+          "insert_job": "#/$defs/BigQueryInsertJobConfig",
+          "list_datasets": "#/$defs/BigQueryListDatasetsConfig",
+          "list_jobs": "#/$defs/BigQueryListJobsConfig",
+          "list_models": "#/$defs/BigQueryListModelsConfig",
+          "list_projects": "#/$defs/BigQueryListProjectsConfig",
+          "list_routines": "#/$defs/BigQueryListRoutinesConfig",
+          "list_row_access_policies": "#/$defs/BigQueryListRowAccessPoliciesConfig",
+          "list_table_data": "#/$defs/BigQueryListTableDataConfig",
+          "list_tables": "#/$defs/BigQueryListTablesConfig",
+          "on_query_results": "#/$defs/BigQueryOnQueryResultsConfig",
+          "patch_dataset": "#/$defs/BigQueryPatchDatasetConfig",
+          "patch_model": "#/$defs/BigQueryPatchModelConfig",
+          "patch_table": "#/$defs/BigQueryPatchTableConfig",
+          "run_query": "#/$defs/BigQueryRunQueryConfig",
+          "set_table_iam_policy": "#/$defs/BigQuerySetTableIamPolicyConfig",
+          "stream_insert": "#/$defs/BigQueryStreamInsertConfig",
+          "test_table_iam_permissions": "#/$defs/BigQueryTestTableIamPermissionsConfig",
+          "undelete_dataset": "#/$defs/BigQueryUndeleteDatasetConfig",
+          "update_dataset": "#/$defs/BigQueryUpdateDatasetConfig",
+          "update_routine": "#/$defs/BigQueryUpdateRoutineConfig",
+          "update_table": "#/$defs/BigQueryUpdateTableConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/BigQueryRunQueryConfig"
+        },
+        {
+          "$ref": "#/$defs/BigQueryGetQueryResultsConfig"
+        },
+        {
+          "$ref": "#/$defs/BigQueryOnQueryResultsConfig"
+        },
+        {
+          "$ref": "#/$defs/BigQueryInsertJobConfig"
+        },
+        {
+          "$ref": "#/$defs/BigQueryGetJobConfig"
+        },
+        {
+          "$ref": "#/$defs/BigQueryListJobsConfig"
+        },
+        {
+          "$ref": "#/$defs/BigQueryCancelJobConfig"
+        },
+        {
+          "$ref": "#/$defs/BigQueryDeleteJobConfig"
+        },
+        {
+          "$ref": "#/$defs/BigQueryListDatasetsConfig"
+        },
+        {
+          "$ref": "#/$defs/BigQueryGetDatasetConfig"
+        },
+        {
+          "$ref": "#/$defs/BigQueryCreateDatasetConfig"
+        },
+        {
+          "$ref": "#/$defs/BigQueryUpdateDatasetConfig"
+        },
+        {
+          "$ref": "#/$defs/BigQueryPatchDatasetConfig"
+        },
+        {
+          "$ref": "#/$defs/BigQueryDeleteDatasetConfig"
+        },
+        {
+          "$ref": "#/$defs/BigQueryListTablesConfig"
+        },
+        {
+          "$ref": "#/$defs/BigQueryGetTableConfig"
+        },
+        {
+          "$ref": "#/$defs/BigQueryCreateTableConfig"
+        },
+        {
+          "$ref": "#/$defs/BigQueryPatchTableConfig"
+        },
+        {
+          "$ref": "#/$defs/BigQueryUpdateTableConfig"
+        },
+        {
+          "$ref": "#/$defs/BigQueryDeleteTableConfig"
+        },
+        {
+          "$ref": "#/$defs/BigQueryStreamInsertConfig"
+        },
+        {
+          "$ref": "#/$defs/BigQueryListTableDataConfig"
+        },
+        {
+          "$ref": "#/$defs/BigQueryListRoutinesConfig"
+        },
+        {
+          "$ref": "#/$defs/BigQueryGetRoutineConfig"
+        },
+        {
+          "$ref": "#/$defs/BigQueryCreateRoutineConfig"
+        },
+        {
+          "$ref": "#/$defs/BigQueryListModelsConfig"
+        },
+        {
+          "$ref": "#/$defs/BigQueryGetModelConfig"
+        },
+        {
+          "$ref": "#/$defs/BigQueryDeleteModelConfig"
+        },
+        {
+          "$ref": "#/$defs/BigQueryGetServiceAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/BigQueryListProjectsConfig"
+        },
+        {
+          "$ref": "#/$defs/BigQueryUndeleteDatasetConfig"
+        },
+        {
+          "$ref": "#/$defs/BigQueryUpdateRoutineConfig"
+        },
+        {
+          "$ref": "#/$defs/BigQueryDeleteRoutineConfig"
+        },
+        {
+          "$ref": "#/$defs/BigQueryPatchModelConfig"
+        },
+        {
+          "$ref": "#/$defs/BigQueryGetTableIamPolicyConfig"
+        },
+        {
+          "$ref": "#/$defs/BigQuerySetTableIamPolicyConfig"
+        },
+        {
+          "$ref": "#/$defs/BigQueryTestTableIamPermissionsConfig"
+        },
+        {
+          "$ref": "#/$defs/BigQueryListRowAccessPoliciesConfig"
+        },
+        {
+          "$ref": "#/$defs/BigQueryGetRowAccessPolicyConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BigQueryOAuthCredential"
+        },
+        {
+          "$ref": "#/$defs/BigQueryServiceAccountCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Bigquery Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Run a SQL query against a BigQuery dataset",
+    "Stream-insert event rows into a BigQuery table",
+    "List all datasets in a project",
+    "Create a new dataset for analytics data",
+    "Fetch the schema of a table"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

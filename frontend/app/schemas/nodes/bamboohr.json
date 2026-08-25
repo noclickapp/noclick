@@ -1,0 +1,2736 @@
+{
+  "$defs": {
+    "BambooAddEmployeeConfig": {
+      "properties": {
+        "operation": {
+          "const": "add_employee",
+          "default": "add_employee",
+          "title": "Add Employee",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Employees",
+          "x-display-name": "Add Employee"
+        },
+        "first_name": {
+          "description": "The employee's first name",
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "description": "The employee's last name",
+          "title": "Last Name",
+          "type": "string"
+        },
+        "fields_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Extra employee fields as a JSON object, e.g. {\"jobTitle\":\"Engineer\",\"workEmail\":\"a@b.com\"}",
+          "title": "Additional Fields (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "first_name",
+        "last_name"
+      ],
+      "title": "BambooAddEmployeeConfig",
+      "type": "object"
+    },
+    "BambooAddTableRowConfig": {
+      "properties": {
+        "operation": {
+          "const": "add_table_row",
+          "default": "add_table_row",
+          "title": "Add Table Row",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tables",
+          "x-display-name": "Add Table Row"
+        },
+        "employee_id": {
+          "description": "Employee ID (use 0 for the API-key owner)",
+          "title": "Employee",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an employee ID (0 = me)",
+            "field_name": "employee_id",
+            "placeholder": "Select an employee\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "table_name": {
+          "description": "Employee data table",
+          "enum": [
+            "jobInfo",
+            "compensation",
+            "employmentStatus",
+            "bonus",
+            "commission",
+            "contacts",
+            "dependents",
+            "earnings",
+            "emergencyContacts",
+            "employeeAssets",
+            "employeeCertifications",
+            "employeeEducation",
+            "employeeEquityGrants",
+            "employeePassports",
+            "employeeStockOptions",
+            "employeeVisas"
+          ],
+          "title": "Table",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "fields_json": {
+          "description": "Row column values, e.g. {\"jobTitle\":\"Engineer\"}",
+          "title": "Row Fields (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "employee_id",
+        "table_name",
+        "fields_json"
+      ],
+      "title": "BambooAddTableRowConfig",
+      "type": "object"
+    },
+    "BambooAddTimeOffHistoryConfig": {
+      "properties": {
+        "operation": {
+          "const": "add_time_off_history",
+          "default": "add_time_off_history",
+          "title": "Add Time Off History",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Time Off",
+          "x-display-name": "Add Time Off History"
+        },
+        "employee_id": {
+          "description": "Employee ID (use 0 for the API-key owner)",
+          "title": "Employee",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an employee ID (0 = me)",
+            "field_name": "employee_id",
+            "placeholder": "Select an employee\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "fields_json": {
+          "description": "e.g. {\"date\":\"2026-01-01\",\"note\":\"Manual entry\",\"amount\":8}",
+          "title": "History Entry (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "employee_id",
+        "fields_json"
+      ],
+      "title": "BambooAddTimeOffHistoryConfig",
+      "type": "object"
+    },
+    "BambooAddTimeOffRequestConfig": {
+      "properties": {
+        "operation": {
+          "const": "add_time_off_request",
+          "default": "add_time_off_request",
+          "title": "Add Time Off Request",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Time Off",
+          "x-display-name": "Add Time Off Request"
+        },
+        "employee_id": {
+          "description": "Employee ID (use 0 for the API-key owner)",
+          "title": "Employee",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an employee ID (0 = me)",
+            "field_name": "employee_id",
+            "placeholder": "Select an employee\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "start": {
+          "description": "Range start",
+          "title": "Start Date",
+          "type": "string",
+          "ui:widget": "date"
+        },
+        "end": {
+          "description": "Range end",
+          "title": "End Date",
+          "type": "string",
+          "ui:widget": "date"
+        },
+        "time_off_type_id": {
+          "description": "The type of time off",
+          "title": "Time Off Type",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a time off type ID",
+            "field_name": "time_off_type_id",
+            "placeholder": "Select a time off type\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "amount": {
+          "description": "Hours or days depending on the type's unit",
+          "title": "Amount",
+          "type": "string"
+        },
+        "status": {
+          "default": "requested",
+          "description": "Initial request status",
+          "enum": [
+            "requested",
+            "approved",
+            "denied"
+          ],
+          "title": "Status",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional note shown on the request",
+          "title": "Notes"
+        }
+      },
+      "required": [
+        "employee_id",
+        "start",
+        "end",
+        "time_off_type_id",
+        "amount"
+      ],
+      "title": "BambooAddTimeOffRequestConfig",
+      "type": "object"
+    },
+    "BambooAddTimeTrackingConfig": {
+      "properties": {
+        "operation": {
+          "const": "add_time_tracking",
+          "default": "add_time_tracking",
+          "title": "Add Hour Entry",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Time Tracking",
+          "x-display-name": "Add Hour Entry"
+        },
+        "fields_json": {
+          "description": "e.g. {\"employeeId\":123,\"date\":\"2026-01-01\",\"hours\":8}",
+          "title": "Hour Entry (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "fields_json"
+      ],
+      "title": "BambooAddTimeTrackingConfig",
+      "type": "object"
+    },
+    "BambooAdjustBalanceConfig": {
+      "properties": {
+        "operation": {
+          "const": "adjust_time_off_balance",
+          "default": "adjust_time_off_balance",
+          "title": "Adjust Time Off Balance",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Time Off",
+          "x-display-name": "Adjust Time Off Balance"
+        },
+        "employee_id": {
+          "description": "Employee ID (use 0 for the API-key owner)",
+          "title": "Employee",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an employee ID (0 = me)",
+            "field_name": "employee_id",
+            "placeholder": "Select an employee\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "date": {
+          "description": "Effective date of the adjustment",
+          "title": "Date",
+          "type": "string",
+          "ui:widget": "date"
+        },
+        "time_off_type_id": {
+          "description": "The type of time off",
+          "title": "Time Off Type",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a time off type ID",
+            "field_name": "time_off_type_id",
+            "placeholder": "Select a time off type\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "amount": {
+          "description": "Positive or negative adjustment",
+          "title": "Amount",
+          "type": "string"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional note",
+          "title": "Note"
+        }
+      },
+      "required": [
+        "employee_id",
+        "date",
+        "time_off_type_id",
+        "amount"
+      ],
+      "title": "BambooAdjustBalanceConfig",
+      "type": "object"
+    },
+    "BambooChangeRequestStatusConfig": {
+      "properties": {
+        "operation": {
+          "const": "change_time_off_request_status",
+          "default": "change_time_off_request_status",
+          "title": "Change Request Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Time Off",
+          "x-display-name": "Change Request Status"
+        },
+        "request_id": {
+          "description": "The time-off request id",
+          "title": "Request ID",
+          "type": "string"
+        },
+        "status": {
+          "description": "New status for the request",
+          "enum": [
+            "approved",
+            "denied",
+            "canceled"
+          ],
+          "title": "Status",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional note",
+          "title": "Note"
+        }
+      },
+      "required": [
+        "request_id",
+        "status"
+      ],
+      "title": "BambooChangeRequestStatusConfig",
+      "type": "object"
+    },
+    "BambooClockInConfig": {
+      "properties": {
+        "operation": {
+          "const": "clock_in",
+          "default": "clock_in",
+          "title": "Clock In",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Time Tracking",
+          "x-display-name": "Clock In"
+        },
+        "employee_id": {
+          "description": "Employee ID (use 0 for the API-key owner)",
+          "title": "Employee",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an employee ID (0 = me)",
+            "field_name": "employee_id",
+            "placeholder": "Select an employee\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "fields_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional {\"timezone\":\"\u2026\",\"note\":\"\u2026\",\"projectId\":\u2026}",
+          "title": "Options (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "employee_id"
+      ],
+      "title": "BambooClockInConfig",
+      "type": "object"
+    },
+    "BambooClockOutConfig": {
+      "properties": {
+        "operation": {
+          "const": "clock_out",
+          "default": "clock_out",
+          "title": "Clock Out",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Time Tracking",
+          "x-display-name": "Clock Out"
+        },
+        "employee_id": {
+          "description": "Employee ID (use 0 for the API-key owner)",
+          "title": "Employee",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an employee ID (0 = me)",
+            "field_name": "employee_id",
+            "placeholder": "Select an employee\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "employee_id"
+      ],
+      "title": "BambooClockOutConfig",
+      "type": "object"
+    },
+    "BambooCreateWebhookConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_webhook",
+          "default": "create_webhook",
+          "title": "Create Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Create Webhook"
+        },
+        "definition_json": {
+          "description": "e.g. {\"name\":\"\u2026\",\"monitorFields\":[\"jobTitle\"],\"postFields\":{\"jobTitle\":\"jobTitle\"},\"url\":\"https://\u2026\",\"format\":\"json\"}",
+          "title": "Webhook Definition (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "definition_json"
+      ],
+      "title": "BambooCreateWebhookConfig",
+      "type": "object"
+    },
+    "BambooCustomReportConfig": {
+      "properties": {
+        "operation": {
+          "const": "request_custom_report",
+          "default": "request_custom_report",
+          "title": "Request Custom Report",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reports",
+          "x-display-name": "Request Custom Report"
+        },
+        "fields": {
+          "description": "Comma-separated field aliases/ids (max 400)",
+          "title": "Fields",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Report title (optional)",
+          "title": "Title"
+        },
+        "filters_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional, e.g. {\"lastChanged\":{\"includeNull\":\"no\",\"value\":\"2026-01-01T00:00:00Z\"}}",
+          "title": "Filters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "fields"
+      ],
+      "title": "BambooCustomReportConfig",
+      "type": "object"
+    },
+    "BambooDeleteEmployeeFileConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_employee_file",
+          "default": "delete_employee_file",
+          "title": "Delete Employee File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Files",
+          "x-display-name": "Delete Employee File"
+        },
+        "employee_id": {
+          "description": "Employee ID (use 0 for the API-key owner)",
+          "title": "Employee",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an employee ID (0 = me)",
+            "field_name": "employee_id",
+            "placeholder": "Select an employee\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "file_id": {
+          "description": "The file's numeric id",
+          "title": "File ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "employee_id",
+        "file_id"
+      ],
+      "title": "BambooDeleteEmployeeFileConfig",
+      "type": "object"
+    },
+    "BambooDeleteTableRowConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_table_row",
+          "default": "delete_table_row",
+          "title": "Delete Table Row",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tables",
+          "x-display-name": "Delete Table Row"
+        },
+        "employee_id": {
+          "description": "Employee ID (use 0 for the API-key owner)",
+          "title": "Employee",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an employee ID (0 = me)",
+            "field_name": "employee_id",
+            "placeholder": "Select an employee\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "table_name": {
+          "description": "Employee data table",
+          "enum": [
+            "jobInfo",
+            "compensation",
+            "employmentStatus",
+            "bonus",
+            "commission",
+            "contacts",
+            "dependents",
+            "earnings",
+            "emergencyContacts",
+            "employeeAssets",
+            "employeeCertifications",
+            "employeeEducation",
+            "employeeEquityGrants",
+            "employeePassports",
+            "employeeStockOptions",
+            "employeeVisas"
+          ],
+          "title": "Table",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "row_id": {
+          "description": "The table row's id",
+          "title": "Row ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "employee_id",
+        "table_name",
+        "row_id"
+      ],
+      "title": "BambooDeleteTableRowConfig",
+      "type": "object"
+    },
+    "BambooDeleteTimeTrackingConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_time_tracking",
+          "default": "delete_time_tracking",
+          "title": "Delete Hour Entry",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Time Tracking",
+          "x-display-name": "Delete Hour Entry"
+        },
+        "time_tracking_id": {
+          "description": "The time-tracking entry id",
+          "title": "Time Tracking ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "time_tracking_id"
+      ],
+      "title": "BambooDeleteTimeTrackingConfig",
+      "type": "object"
+    },
+    "BambooDeleteWebhookConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_webhook",
+          "default": "delete_webhook",
+          "title": "Delete Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Delete Webhook"
+        },
+        "webhook_id": {
+          "description": "The BambooHR webhook to target",
+          "title": "Webhook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a webhook ID",
+            "field_name": "webhook_id",
+            "placeholder": "Select a webhook\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "BambooDeleteWebhookConfig",
+      "type": "object"
+    },
+    "BambooEstimateBalanceConfig": {
+      "properties": {
+        "operation": {
+          "const": "estimate_future_balance",
+          "default": "estimate_future_balance",
+          "title": "Estimate Future Balance",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Time Off",
+          "x-display-name": "Estimate Future Balance"
+        },
+        "employee_id": {
+          "description": "Employee ID (use 0 for the API-key owner)",
+          "title": "Employee",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an employee ID (0 = me)",
+            "field_name": "employee_id",
+            "placeholder": "Select an employee\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "end": {
+          "description": "Project the balance to this date",
+          "title": "As-of Date",
+          "type": "string",
+          "ui:widget": "date"
+        }
+      },
+      "required": [
+        "employee_id",
+        "end"
+      ],
+      "title": "BambooEstimateBalanceConfig",
+      "type": "object"
+    },
+    "BambooGetAccountConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Get Account Info",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metadata",
+          "x-display-name": "Get Account Info"
+        }
+      },
+      "title": "BambooGetAccountConfig",
+      "type": "object"
+    },
+    "BambooGetChangedEmployeesConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_changed_employees",
+          "default": "get_changed_employees",
+          "title": "Get Changed Employees",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Employees",
+          "x-display-name": "Get Changed Employees"
+        },
+        "since": {
+          "description": "Only employees changed at or after this time",
+          "title": "Since",
+          "type": "string",
+          "ui:widget": "datetime"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by change kind (optional)",
+          "enum": [
+            "",
+            "inserted",
+            "updated",
+            "deleted"
+          ],
+          "title": "Change Type",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "since"
+      ],
+      "title": "BambooGetChangedEmployeesConfig",
+      "type": "object"
+    },
+    "BambooGetChangedTableConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_changed_table_rows",
+          "default": "get_changed_table_rows",
+          "title": "Get Changed Table Rows",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tables",
+          "x-display-name": "Get Changed Table Rows"
+        },
+        "table_name": {
+          "description": "Employee data table",
+          "enum": [
+            "jobInfo",
+            "compensation",
+            "employmentStatus",
+            "bonus",
+            "commission",
+            "contacts",
+            "dependents",
+            "earnings",
+            "emergencyContacts",
+            "employeeAssets",
+            "employeeCertifications",
+            "employeeEducation",
+            "employeeEquityGrants",
+            "employeePassports",
+            "employeeStockOptions",
+            "employeeVisas"
+          ],
+          "title": "Table",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "since": {
+          "description": "Only rows changed at or after this time",
+          "title": "Since",
+          "type": "string",
+          "ui:widget": "datetime"
+        }
+      },
+      "required": [
+        "table_name",
+        "since"
+      ],
+      "title": "BambooGetChangedTableConfig",
+      "type": "object"
+    },
+    "BambooGetCompanyFileConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_company_file",
+          "default": "get_company_file",
+          "title": "Get Company File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Files",
+          "x-display-name": "Get Company File"
+        },
+        "file_id": {
+          "description": "The file's numeric id",
+          "title": "File ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "BambooGetCompanyFileConfig",
+      "type": "object"
+    },
+    "BambooGetDirectoryConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_employee_directory",
+          "default": "get_employee_directory",
+          "title": "Get Employee Directory",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Employees",
+          "x-display-name": "Get Employee Directory"
+        }
+      },
+      "title": "BambooGetDirectoryConfig",
+      "type": "object"
+    },
+    "BambooGetEmployeeConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_employee",
+          "default": "get_employee",
+          "title": "Get Employee",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Employees",
+          "x-display-name": "Get Employee"
+        },
+        "employee_id": {
+          "description": "Employee ID (use 0 for the API-key owner)",
+          "title": "Employee",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an employee ID (0 = me)",
+            "field_name": "employee_id",
+            "placeholder": "Select an employee\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "fields": {
+          "default": "firstName,lastName,jobTitle,workEmail,department,division,location,supervisor,status",
+          "description": "Comma-separated field aliases/ids to return, or 'all'",
+          "title": "Fields",
+          "type": "string"
+        }
+      },
+      "required": [
+        "employee_id"
+      ],
+      "title": "BambooGetEmployeeConfig",
+      "type": "object"
+    },
+    "BambooGetEmployeeFileConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_employee_file",
+          "default": "get_employee_file",
+          "title": "Get Employee File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Files",
+          "x-display-name": "Get Employee File"
+        },
+        "employee_id": {
+          "description": "Employee ID (use 0 for the API-key owner)",
+          "title": "Employee",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an employee ID (0 = me)",
+            "field_name": "employee_id",
+            "placeholder": "Select an employee\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "file_id": {
+          "description": "The file's numeric id",
+          "title": "File ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "employee_id",
+        "file_id"
+      ],
+      "title": "BambooGetEmployeeFileConfig",
+      "type": "object"
+    },
+    "BambooGetEmployeePhotoConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_employee_photo",
+          "default": "get_employee_photo",
+          "title": "Get Employee Photo",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Employees",
+          "x-display-name": "Get Employee Photo"
+        },
+        "employee_id": {
+          "description": "Employee ID (use 0 for the API-key owner)",
+          "title": "Employee",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an employee ID (0 = me)",
+            "field_name": "employee_id",
+            "placeholder": "Select an employee\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "size": {
+          "default": "small",
+          "enum": [
+            "original",
+            "large",
+            "medium",
+            "small",
+            "xs",
+            "tiny"
+          ],
+          "title": "Size",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "employee_id"
+      ],
+      "title": "BambooGetEmployeePhotoConfig",
+      "type": "object"
+    },
+    "BambooGetListsConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_lists",
+          "default": "get_lists",
+          "title": "Get Lists",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metadata",
+          "x-display-name": "Get Lists"
+        }
+      },
+      "title": "BambooGetListsConfig",
+      "type": "object"
+    },
+    "BambooGetReportConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_report",
+          "default": "get_report",
+          "title": "Get Report",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reports",
+          "x-display-name": "Get Report"
+        },
+        "report_id": {
+          "description": "Numeric ID of a saved company report (from the report's URL in BambooHR)",
+          "title": "Report ID",
+          "type": "string"
+        },
+        "report_format": {
+          "default": "JSON",
+          "enum": [
+            "JSON",
+            "CSV",
+            "XLS",
+            "PDF"
+          ],
+          "title": "Format",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "report_id"
+      ],
+      "title": "BambooGetReportConfig",
+      "type": "object"
+    },
+    "BambooGetTableRowsConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_table_rows",
+          "default": "get_table_rows",
+          "title": "Get Table Rows",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tables",
+          "x-display-name": "Get Table Rows"
+        },
+        "employee_id": {
+          "description": "Employee ID (use 0 for the API-key owner)",
+          "title": "Employee",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an employee ID (0 = me)",
+            "field_name": "employee_id",
+            "placeholder": "Select an employee\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "table_name": {
+          "description": "Employee data table",
+          "enum": [
+            "jobInfo",
+            "compensation",
+            "employmentStatus",
+            "bonus",
+            "commission",
+            "contacts",
+            "dependents",
+            "earnings",
+            "emergencyContacts",
+            "employeeAssets",
+            "employeeCertifications",
+            "employeeEducation",
+            "employeeEquityGrants",
+            "employeePassports",
+            "employeeStockOptions",
+            "employeeVisas"
+          ],
+          "title": "Table",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "employee_id",
+        "table_name"
+      ],
+      "title": "BambooGetTableRowsConfig",
+      "type": "object"
+    },
+    "BambooGetWebhookConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_webhook",
+          "default": "get_webhook",
+          "title": "Get Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Get Webhook"
+        },
+        "webhook_id": {
+          "description": "The BambooHR webhook to target",
+          "title": "Webhook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a webhook ID",
+            "field_name": "webhook_id",
+            "placeholder": "Select a webhook\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "BambooGetWebhookConfig",
+      "type": "object"
+    },
+    "BambooHRApiKeyCredential": {
+      "description": "API key credential for BambooHR (HTTP Basic auth).\n\nThe API key is used as the Basic-auth username with any string as the\npassword. The key inherits the creating user's UI permissions. Generate one\nfrom the BambooHR UI: click your name (lower-left) \u2192 API Keys.",
+      "properties": {
+        "credential_type": {
+          "const": "bamboohr_api_key",
+          "default": "bamboohr_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "subdomain": {
+          "description": "Your BambooHR subdomain. For acme.bamboohr.com enter 'acme'.",
+          "title": "Company Subdomain",
+          "type": "string"
+        },
+        "api_key": {
+          "description": "API key from BambooHR: click your name (lower-left) \u2192 API Keys.",
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "subdomain",
+        "api_key"
+      ],
+      "title": "BambooHRApiKeyCredential",
+      "type": "object",
+      "x-credential-instructions": "In BambooHR, click your name in the lower-left, choose 'API Keys', and generate a key. It inherits your UI permissions. Enter your subdomain (the text before .bamboohr.com) and the key.",
+      "x-credential-url": "https://documentation.bamboohr.com/docs/getting-started"
+    },
+    "BambooHROAuthCredential": {
+      "description": "OAuth 2.0 credential for BambooHR (authorization-code flow).\n\nRestricted to approved Marketplace apps. Subdomain-scoped: the company\nsubdomain forms the OAuth host, and the token response returns it back as\nthe company context used for gateway API calls.",
+      "properties": {
+        "credential_type": {
+          "const": "bamboohr_oauth",
+          "default": "bamboohr_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "subdomain": {
+          "description": "Your BambooHR subdomain. For acme.bamboohr.com enter 'acme'.",
+          "title": "Company Subdomain",
+          "type": "string"
+        },
+        "access_token": {
+          "title": "Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refresh Token"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Expiry"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Email"
+        }
+      },
+      "required": [
+        "subdomain",
+        "access_token"
+      ],
+      "title": "BambooHROAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://documentation.bamboohr.com/page/authenticate-integration",
+      "x-oauth-custom-client-help": "BambooHR OAuth is limited to approved Marketplace apps. Register one in the BambooHR Developer Portal, whitelist NoClick's BambooHR callback as a redirect URI (exact match), and paste its client ID + secret here \u2014 or use the API-key credential instead (no app approval needed).",
+      "x-oauth-provider": "bamboohr",
+      "x-oauth-scopes": [
+        "openid",
+        "offline_access",
+        "employee",
+        "employee.write",
+        "employee_directory",
+        "employee:file",
+        "employee:file.write",
+        "employee:photo",
+        "time_off",
+        "time_off.write",
+        "time_tracking",
+        "time_tracking.write",
+        "report",
+        "report.write",
+        "company_file",
+        "company_file.write",
+        "company:info",
+        "company:details",
+        "webhooks",
+        "webhooks.write",
+        "meta",
+        "user"
+      ],
+      "x-oauth-supports-custom-client": true
+    },
+    "BambooListCompanyFilesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_company_files",
+          "default": "list_company_files",
+          "title": "List Company Files",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Files",
+          "x-display-name": "List Company Files"
+        }
+      },
+      "title": "BambooListCompanyFilesConfig",
+      "type": "object"
+    },
+    "BambooListDatasetsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_datasets",
+          "default": "list_datasets",
+          "title": "List Datasets",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reports",
+          "x-display-name": "List Datasets"
+        }
+      },
+      "title": "BambooListDatasetsConfig",
+      "type": "object"
+    },
+    "BambooListEmployeeFilesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_employee_files",
+          "default": "list_employee_files",
+          "title": "List Employee Files",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Files",
+          "x-display-name": "List Employee Files"
+        },
+        "employee_id": {
+          "description": "Employee ID (use 0 for the API-key owner)",
+          "title": "Employee",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an employee ID (0 = me)",
+            "field_name": "employee_id",
+            "placeholder": "Select an employee\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "employee_id"
+      ],
+      "title": "BambooListEmployeeFilesConfig",
+      "type": "object"
+    },
+    "BambooListFieldsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_fields",
+          "default": "list_fields",
+          "title": "List Fields",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metadata",
+          "x-display-name": "List Fields"
+        }
+      },
+      "title": "BambooListFieldsConfig",
+      "type": "object"
+    },
+    "BambooListMonitorFieldsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_monitor_fields",
+          "default": "list_monitor_fields",
+          "title": "List Monitor Fields",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "List Monitor Fields"
+        }
+      },
+      "title": "BambooListMonitorFieldsConfig",
+      "type": "object"
+    },
+    "BambooListTabularFieldsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_tabular_fields",
+          "default": "list_tabular_fields",
+          "title": "List Tabular Fields",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metadata",
+          "x-display-name": "List Tabular Fields"
+        }
+      },
+      "title": "BambooListTabularFieldsConfig",
+      "type": "object"
+    },
+    "BambooListTimeOffPoliciesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_time_off_policies",
+          "default": "list_time_off_policies",
+          "title": "List Time Off Policies",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Time Off",
+          "x-display-name": "List Time Off Policies"
+        }
+      },
+      "title": "BambooListTimeOffPoliciesConfig",
+      "type": "object"
+    },
+    "BambooListTimeOffRequestsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_time_off_requests",
+          "default": "list_time_off_requests",
+          "title": "List Time Off Requests",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Time Off",
+          "x-display-name": "List Time Off Requests"
+        },
+        "start": {
+          "description": "Range start",
+          "title": "Start Date",
+          "type": "string",
+          "ui:widget": "date"
+        },
+        "end": {
+          "description": "Range end",
+          "title": "End Date",
+          "type": "string",
+          "ui:widget": "date"
+        },
+        "employee_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter to one employee (optional)",
+          "title": "Employee",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an employee ID (0 = me)",
+            "field_name": "employee_id",
+            "placeholder": "Select an employee\u2026",
+            "searchable": true
+          }
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by request status (optional)",
+          "enum": [
+            "",
+            "approved",
+            "denied",
+            "superseded",
+            "requested",
+            "canceled"
+          ],
+          "title": "Status",
+          "x-enum-searchable": true
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter to one time off type (optional)",
+          "title": "Time Off Type",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a time off type ID",
+            "field_name": "time_off_type_id",
+            "placeholder": "Select a time off type\u2026",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ],
+      "title": "BambooListTimeOffRequestsConfig",
+      "type": "object"
+    },
+    "BambooListTimeOffTypesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_time_off_types",
+          "default": "list_time_off_types",
+          "title": "List Time Off Types",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Time Off",
+          "x-display-name": "List Time Off Types"
+        }
+      },
+      "title": "BambooListTimeOffTypesConfig",
+      "type": "object"
+    },
+    "BambooListUsersConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "List Users",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metadata",
+          "x-display-name": "List Users"
+        }
+      },
+      "title": "BambooListUsersConfig",
+      "type": "object"
+    },
+    "BambooListWebhooksConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_webhooks",
+          "default": "list_webhooks",
+          "title": "List Webhooks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "List Webhooks"
+        }
+      },
+      "title": "BambooListWebhooksConfig",
+      "type": "object"
+    },
+    "BambooOnContactInfoChangeConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NoClick auto-generates this and registers it with BambooHR",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_contact_info_change",
+          "default": "on_contact_info_change",
+          "title": "On Contact Info Change",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Contact Info Change",
+          "x-is-trigger": true
+        }
+      },
+      "title": "BambooOnContactInfoChangeConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "BambooOnEmploymentStatusChangeConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NoClick auto-generates this and registers it with BambooHR",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_employment_status_change",
+          "default": "on_employment_status_change",
+          "title": "On Employment Status Change",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Employment Status Change",
+          "x-is-trigger": true
+        }
+      },
+      "title": "BambooOnEmploymentStatusChangeConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "BambooOnFieldChangeConfig": {
+      "description": "Generic trigger: fire when any user-chosen fields change.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NoClick auto-generates this and registers it with BambooHR",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_field_change",
+          "default": "on_field_change",
+          "title": "On Field Change (Any)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Field Change (Any)",
+          "x-is-trigger": true
+        },
+        "monitor_fields": {
+          "default": "jobTitle,department,status",
+          "description": "Comma-separated field aliases/names to watch for changes",
+          "title": "Monitored Fields",
+          "type": "string"
+        }
+      },
+      "title": "BambooOnFieldChangeConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "BambooOnJobChangeConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NoClick auto-generates this and registers it with BambooHR",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_job_change",
+          "default": "on_job_change",
+          "title": "On Job Change",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Job Change",
+          "x-is-trigger": true
+        }
+      },
+      "title": "BambooOnJobChangeConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "BambooOnPersonalInfoChangeConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NoClick auto-generates this and registers it with BambooHR",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_personal_info_change",
+          "default": "on_personal_info_change",
+          "title": "On Personal Info Change",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Personal Info Change",
+          "x-is-trigger": true
+        }
+      },
+      "title": "BambooOnPersonalInfoChangeConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "BambooTimesheetSummaryConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_timesheet_summary",
+          "default": "get_timesheet_summary",
+          "title": "Get Timesheet Summary",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Time Tracking",
+          "x-display-name": "Get Timesheet Summary"
+        },
+        "employee_ids": {
+          "description": "Comma-separated employee IDs",
+          "title": "Employee IDs",
+          "type": "string"
+        },
+        "start": {
+          "description": "Range start",
+          "title": "Start Date",
+          "type": "string",
+          "ui:widget": "date"
+        },
+        "end": {
+          "description": "Range end",
+          "title": "End Date",
+          "type": "string",
+          "ui:widget": "date"
+        }
+      },
+      "required": [
+        "employee_ids",
+        "start",
+        "end"
+      ],
+      "title": "BambooTimesheetSummaryConfig",
+      "type": "object"
+    },
+    "BambooUpdateEmployeeConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_employee",
+          "default": "update_employee",
+          "title": "Update Employee",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Employees",
+          "x-display-name": "Update Employee"
+        },
+        "employee_id": {
+          "description": "Employee ID (use 0 for the API-key owner)",
+          "title": "Employee",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an employee ID (0 = me)",
+            "field_name": "employee_id",
+            "placeholder": "Select an employee\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "fields_json": {
+          "description": "Fields to update as a JSON object, e.g. {\"jobTitle\":\"Senior Engineer\"}",
+          "title": "Fields (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "employee_id",
+        "fields_json"
+      ],
+      "title": "BambooUpdateEmployeeConfig",
+      "type": "object"
+    },
+    "BambooUpdateTableRowConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_table_row",
+          "default": "update_table_row",
+          "title": "Update Table Row",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tables",
+          "x-display-name": "Update Table Row"
+        },
+        "employee_id": {
+          "description": "Employee ID (use 0 for the API-key owner)",
+          "title": "Employee",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an employee ID (0 = me)",
+            "field_name": "employee_id",
+            "placeholder": "Select an employee\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "table_name": {
+          "description": "Employee data table",
+          "enum": [
+            "jobInfo",
+            "compensation",
+            "employmentStatus",
+            "bonus",
+            "commission",
+            "contacts",
+            "dependents",
+            "earnings",
+            "emergencyContacts",
+            "employeeAssets",
+            "employeeCertifications",
+            "employeeEducation",
+            "employeeEquityGrants",
+            "employeePassports",
+            "employeeStockOptions",
+            "employeeVisas"
+          ],
+          "title": "Table",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "row_id": {
+          "description": "The table row's id",
+          "title": "Row ID",
+          "type": "string"
+        },
+        "fields_json": {
+          "description": "Row column values, e.g. {\"jobTitle\":\"Engineer\"}",
+          "title": "Row Fields (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "employee_id",
+        "table_name",
+        "row_id",
+        "fields_json"
+      ],
+      "title": "BambooUpdateTableRowConfig",
+      "type": "object"
+    },
+    "BambooUpdateTimeTrackingConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_time_tracking",
+          "default": "update_time_tracking",
+          "title": "Update Hour Entry",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Time Tracking",
+          "x-display-name": "Update Hour Entry"
+        },
+        "time_tracking_id": {
+          "description": "The time-tracking entry id",
+          "title": "Time Tracking ID",
+          "type": "string"
+        },
+        "fields_json": {
+          "description": "Fields to change, e.g. {\"hours\":6.5}",
+          "title": "Fields (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "time_tracking_id",
+        "fields_json"
+      ],
+      "title": "BambooUpdateTimeTrackingConfig",
+      "type": "object"
+    },
+    "BambooUpdateWebhookConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_webhook",
+          "default": "update_webhook",
+          "title": "Update Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Update Webhook"
+        },
+        "webhook_id": {
+          "description": "The BambooHR webhook to target",
+          "title": "Webhook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a webhook ID",
+            "field_name": "webhook_id",
+            "placeholder": "Select a webhook\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "definition_json": {
+          "description": "Full updated definition, e.g. {\"name\":\"\u2026\",\"monitorFields\":[\"jobTitle\"],\"url\":\"https://\u2026\"}",
+          "title": "Webhook Definition (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "webhook_id",
+        "definition_json"
+      ],
+      "title": "BambooUpdateWebhookConfig",
+      "type": "object"
+    },
+    "BambooUploadEmployeeFileConfig": {
+      "properties": {
+        "operation": {
+          "const": "upload_employee_file",
+          "default": "upload_employee_file",
+          "title": "Upload Employee File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Files",
+          "x-display-name": "Upload Employee File"
+        },
+        "employee_id": {
+          "description": "Employee ID (use 0 for the API-key owner)",
+          "title": "Employee",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an employee ID (0 = me)",
+            "field_name": "employee_id",
+            "placeholder": "Select an employee\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "file_name": {
+          "description": "Name to save the file as, e.g. contract.pdf",
+          "title": "File Name",
+          "type": "string"
+        },
+        "category_id": {
+          "description": "Employee file category",
+          "title": "Category",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a category id",
+            "field_name": "category_id",
+            "placeholder": "Select a category\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "content_base64": {
+          "description": "The file bytes, base64-encoded",
+          "title": "File Content (base64)",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "share": {
+          "default": "yes",
+          "enum": [
+            "yes",
+            "no"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Share with Employee",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "employee_id",
+        "file_name",
+        "category_id",
+        "content_base64"
+      ],
+      "title": "BambooUploadEmployeeFileConfig",
+      "type": "object"
+    },
+    "BambooWhosOutConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_whos_out",
+          "default": "get_whos_out",
+          "title": "Get Who's Out",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Time Off",
+          "x-display-name": "Get Who's Out"
+        },
+        "start": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Defaults to today",
+          "title": "Start Date",
+          "ui:widget": "date"
+        },
+        "end": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Range end (optional)",
+          "title": "End Date",
+          "ui:widget": "date"
+        }
+      },
+      "title": "BambooWhosOutConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full BambooHR node configuration including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_employee": "#/$defs/BambooAddEmployeeConfig",
+          "add_table_row": "#/$defs/BambooAddTableRowConfig",
+          "add_time_off_history": "#/$defs/BambooAddTimeOffHistoryConfig",
+          "add_time_off_request": "#/$defs/BambooAddTimeOffRequestConfig",
+          "add_time_tracking": "#/$defs/BambooAddTimeTrackingConfig",
+          "adjust_time_off_balance": "#/$defs/BambooAdjustBalanceConfig",
+          "change_time_off_request_status": "#/$defs/BambooChangeRequestStatusConfig",
+          "clock_in": "#/$defs/BambooClockInConfig",
+          "clock_out": "#/$defs/BambooClockOutConfig",
+          "create_webhook": "#/$defs/BambooCreateWebhookConfig",
+          "delete_employee_file": "#/$defs/BambooDeleteEmployeeFileConfig",
+          "delete_table_row": "#/$defs/BambooDeleteTableRowConfig",
+          "delete_time_tracking": "#/$defs/BambooDeleteTimeTrackingConfig",
+          "delete_webhook": "#/$defs/BambooDeleteWebhookConfig",
+          "estimate_future_balance": "#/$defs/BambooEstimateBalanceConfig",
+          "get_account": "#/$defs/BambooGetAccountConfig",
+          "get_changed_employees": "#/$defs/BambooGetChangedEmployeesConfig",
+          "get_changed_table_rows": "#/$defs/BambooGetChangedTableConfig",
+          "get_company_file": "#/$defs/BambooGetCompanyFileConfig",
+          "get_employee": "#/$defs/BambooGetEmployeeConfig",
+          "get_employee_directory": "#/$defs/BambooGetDirectoryConfig",
+          "get_employee_file": "#/$defs/BambooGetEmployeeFileConfig",
+          "get_employee_photo": "#/$defs/BambooGetEmployeePhotoConfig",
+          "get_lists": "#/$defs/BambooGetListsConfig",
+          "get_report": "#/$defs/BambooGetReportConfig",
+          "get_table_rows": "#/$defs/BambooGetTableRowsConfig",
+          "get_timesheet_summary": "#/$defs/BambooTimesheetSummaryConfig",
+          "get_webhook": "#/$defs/BambooGetWebhookConfig",
+          "get_whos_out": "#/$defs/BambooWhosOutConfig",
+          "list_company_files": "#/$defs/BambooListCompanyFilesConfig",
+          "list_datasets": "#/$defs/BambooListDatasetsConfig",
+          "list_employee_files": "#/$defs/BambooListEmployeeFilesConfig",
+          "list_fields": "#/$defs/BambooListFieldsConfig",
+          "list_monitor_fields": "#/$defs/BambooListMonitorFieldsConfig",
+          "list_tabular_fields": "#/$defs/BambooListTabularFieldsConfig",
+          "list_time_off_policies": "#/$defs/BambooListTimeOffPoliciesConfig",
+          "list_time_off_requests": "#/$defs/BambooListTimeOffRequestsConfig",
+          "list_time_off_types": "#/$defs/BambooListTimeOffTypesConfig",
+          "list_users": "#/$defs/BambooListUsersConfig",
+          "list_webhooks": "#/$defs/BambooListWebhooksConfig",
+          "on_contact_info_change": "#/$defs/BambooOnContactInfoChangeConfig",
+          "on_employment_status_change": "#/$defs/BambooOnEmploymentStatusChangeConfig",
+          "on_field_change": "#/$defs/BambooOnFieldChangeConfig",
+          "on_job_change": "#/$defs/BambooOnJobChangeConfig",
+          "on_personal_info_change": "#/$defs/BambooOnPersonalInfoChangeConfig",
+          "request_custom_report": "#/$defs/BambooCustomReportConfig",
+          "update_employee": "#/$defs/BambooUpdateEmployeeConfig",
+          "update_table_row": "#/$defs/BambooUpdateTableRowConfig",
+          "update_time_tracking": "#/$defs/BambooUpdateTimeTrackingConfig",
+          "update_webhook": "#/$defs/BambooUpdateWebhookConfig",
+          "upload_employee_file": "#/$defs/BambooUploadEmployeeFileConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/BambooGetEmployeeConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooGetDirectoryConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooAddEmployeeConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooUpdateEmployeeConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooGetChangedEmployeesConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooGetEmployeePhotoConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooGetTableRowsConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooAddTableRowConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooUpdateTableRowConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooDeleteTableRowConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooGetChangedTableConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooListTimeOffRequestsConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooAddTimeOffRequestConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooChangeRequestStatusConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooAddTimeOffHistoryConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooAdjustBalanceConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooEstimateBalanceConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooListTimeOffTypesConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooListTimeOffPoliciesConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooWhosOutConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooTimesheetSummaryConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooClockInConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooClockOutConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooAddTimeTrackingConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooUpdateTimeTrackingConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooDeleteTimeTrackingConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooListDatasetsConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooGetReportConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooCustomReportConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooListEmployeeFilesConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooUploadEmployeeFileConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooGetEmployeeFileConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooDeleteEmployeeFileConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooListCompanyFilesConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooGetCompanyFileConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooListFieldsConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooListTabularFieldsConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooGetListsConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooListUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooGetAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooListWebhooksConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooCreateWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooGetWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooUpdateWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooDeleteWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooListMonitorFieldsConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooOnEmploymentStatusChangeConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooOnJobChangeConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooOnContactInfoChangeConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooOnPersonalInfoChangeConfig"
+        },
+        {
+          "$ref": "#/$defs/BambooOnFieldChangeConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BambooHROAuthCredential"
+        },
+        {
+          "$ref": "#/$defs/BambooHRApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Bamboohr Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Get an employee's job title and department from BambooHR",
+    "List all time-off requests approved this month",
+    "Create a BambooHR employee when a new hire form is submitted",
+    "Trigger a workflow when an employee's department changes",
+    "Pull a BambooHR company report and email it"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

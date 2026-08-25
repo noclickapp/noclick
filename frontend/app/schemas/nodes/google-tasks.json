@@ -1,0 +1,864 @@
+{
+  "$defs": {
+    "GoogleTasksClearCompletedConfig": {
+      "description": "Configuration for clearing all completed tasks from a task list",
+      "properties": {
+        "operation": {
+          "const": "clear_completed_tasks",
+          "default": "clear_completed_tasks",
+          "description": "Clear all completed tasks",
+          "title": "Clear Completed Tasks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Task",
+          "x-display-name": "Clear Completed Tasks",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "clear completed",
+            "remove done tasks",
+            "wipe finished",
+            "purge completed",
+            "delete checked off"
+          ]
+        },
+        "task_list_id": {
+          "description": "Select a task list to clear completed tasks from",
+          "title": "Task List",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter task list ID",
+            "field_name": "task_list_id",
+            "placeholder": "Select a task list...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_tasklist"
+        }
+      },
+      "required": [
+        "task_list_id"
+      ],
+      "title": "GoogleTasksClearCompletedConfig",
+      "type": "object"
+    },
+    "GoogleTasksCreateTaskConfig": {
+      "description": "Configuration for creating a new task",
+      "properties": {
+        "operation": {
+          "const": "create_new_task",
+          "default": "create_new_task",
+          "description": "Create a new task",
+          "title": "Create New Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Task",
+          "x-display-name": "Create New Task",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new task",
+            "add todo",
+            "make a task",
+            "add to do",
+            "create reminder"
+          ]
+        },
+        "task_list_id": {
+          "description": "Select a task list to create the task in",
+          "title": "Task List",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter task list ID",
+            "field_name": "task_list_id",
+            "placeholder": "Select a task list...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_tasklist"
+        },
+        "title": {
+          "description": "Title of the task",
+          "placeholder": "Complete project report",
+          "title": "Title",
+          "type": "string"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Additional notes or description for the task",
+          "placeholder": "Task details...",
+          "title": "Notes",
+          "ui:widget": "textarea"
+        },
+        "due": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Due date for the task (RFC 3339 format, date only: YYYY-MM-DD)",
+          "placeholder": "2024-01-15 (optional)",
+          "title": "Due Date"
+        }
+      },
+      "required": [
+        "task_list_id",
+        "title"
+      ],
+      "title": "GoogleTasksCreateTaskConfig",
+      "type": "object"
+    },
+    "GoogleTasksCreateTaskListConfig": {
+      "description": "Configuration for creating a new task list",
+      "properties": {
+        "operation": {
+          "const": "create_new_task_list",
+          "default": "create_new_task_list",
+          "description": "Create a new task list",
+          "title": "Create New Task List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Task List",
+          "x-creates-resource": true,
+          "x-display-name": "Create New Task List",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new task list",
+            "start task list",
+            "make todo list",
+            "add task list"
+          ],
+          "x-resource-id-path": "task_list.id",
+          "x-resource-type": "google_tasklist"
+        },
+        "title": {
+          "description": "Title of the new task list",
+          "placeholder": "My Tasks",
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "GoogleTasksCreateTaskListConfig",
+      "type": "object"
+    },
+    "GoogleTasksDeleteTaskConfig": {
+      "description": "Configuration for deleting a task",
+      "properties": {
+        "operation": {
+          "const": "delete_task_from_list",
+          "default": "delete_task_from_list",
+          "description": "Delete a task",
+          "title": "Delete Task from List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Task",
+          "x-display-name": "Delete Task from List",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove task",
+            "delete todo",
+            "trash task",
+            "drop task"
+          ]
+        },
+        "task_list_id": {
+          "description": "Select a task list",
+          "title": "Task List",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter task list ID",
+            "field_name": "task_list_id",
+            "placeholder": "Select a task list...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_tasklist"
+        },
+        "task_id": {
+          "description": "The ID of the task to delete",
+          "placeholder": "Task ID",
+          "title": "Task ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_list_id",
+        "task_id"
+      ],
+      "title": "GoogleTasksDeleteTaskConfig",
+      "type": "object"
+    },
+    "GoogleTasksDeleteTaskListConfig": {
+      "description": "Configuration for deleting a task list",
+      "properties": {
+        "operation": {
+          "const": "delete_task_list",
+          "default": "delete_task_list",
+          "description": "Delete a task list",
+          "title": "Delete Task List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Task List",
+          "x-display-name": "Delete Task List",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove task list",
+            "delete todo list",
+            "trash task list",
+            "drop list"
+          ]
+        },
+        "task_list_id": {
+          "description": "Select a task list to delete",
+          "title": "Task List",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter task list ID",
+            "field_name": "task_list_id",
+            "placeholder": "Select a task list...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_tasklist"
+        }
+      },
+      "required": [
+        "task_list_id"
+      ],
+      "title": "GoogleTasksDeleteTaskListConfig",
+      "type": "object"
+    },
+    "GoogleTasksGetTaskConfig": {
+      "description": "Configuration for getting a single task",
+      "properties": {
+        "operation": {
+          "const": "fetch_task_from_list",
+          "default": "fetch_task_from_list",
+          "description": "Get a specific task",
+          "title": "Fetch Task from List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Task",
+          "x-display-name": "Fetch Task from List",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "get a task",
+            "single task",
+            "task details",
+            "one todo"
+          ]
+        },
+        "task_list_id": {
+          "description": "Select a task list",
+          "title": "Task List",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter task list ID",
+            "field_name": "task_list_id",
+            "placeholder": "Select a task list...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_tasklist"
+        },
+        "task_id": {
+          "description": "The ID of the task to retrieve",
+          "placeholder": "Task ID",
+          "title": "Task ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_list_id",
+        "task_id"
+      ],
+      "title": "GoogleTasksGetTaskConfig",
+      "type": "object"
+    },
+    "GoogleTasksGetTaskListConfig": {
+      "description": "Configuration for getting a single task list",
+      "properties": {
+        "operation": {
+          "const": "fetch_task_list",
+          "default": "fetch_task_list",
+          "description": "Get a specific task list",
+          "title": "Fetch Task List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Task List",
+          "x-display-name": "Fetch Task List",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "get task list",
+            "single task list",
+            "task list details",
+            "one todo list"
+          ]
+        },
+        "task_list_id": {
+          "description": "Select a task list",
+          "title": "Task List",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter task list ID",
+            "field_name": "task_list_id",
+            "placeholder": "Select a task list...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_tasklist"
+        }
+      },
+      "required": [
+        "task_list_id"
+      ],
+      "title": "GoogleTasksGetTaskListConfig",
+      "type": "object"
+    },
+    "GoogleTasksListTaskListsConfig": {
+      "description": "Configuration for listing all task lists",
+      "properties": {
+        "operation": {
+          "const": "list_all_task_lists",
+          "default": "list_all_task_lists",
+          "description": "List all task lists",
+          "title": "List All Task Lists",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Task List",
+          "x-display-name": "List All Task Lists",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "my task lists",
+            "all task lists",
+            "show task lists",
+            "browse task lists",
+            "todo lists"
+          ]
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "description": "Maximum number of task lists to return (1-100)",
+          "title": "Max Results"
+        }
+      },
+      "title": "GoogleTasksListTaskListsConfig",
+      "type": "object"
+    },
+    "GoogleTasksListTasksConfig": {
+      "description": "Configuration for listing tasks in a task list",
+      "properties": {
+        "operation": {
+          "const": "list_tasks_in_list",
+          "default": "list_tasks_in_list",
+          "description": "List tasks in a task list",
+          "title": "List Tasks in List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Task",
+          "x-display-name": "List Tasks in List",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "tasks in list",
+            "show my tasks",
+            "todo items",
+            "all tasks",
+            "list todos"
+          ]
+        },
+        "task_list_id": {
+          "description": "Select a task list",
+          "title": "Task List",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter task list ID",
+            "field_name": "task_list_id",
+            "placeholder": "Select a task list...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_tasklist"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "description": "Maximum number of tasks to return (1-100)",
+          "title": "Max Results"
+        },
+        "show_completed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "Whether to include completed tasks",
+          "title": "Show Completed"
+        },
+        "show_hidden": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Whether to include hidden tasks",
+          "title": "Show Hidden"
+        },
+        "due_min": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter tasks due after this date (RFC 3339 format)",
+          "placeholder": "2024-01-01T00:00:00Z (optional)",
+          "title": "Due After"
+        },
+        "due_max": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter tasks due before this date (RFC 3339 format)",
+          "placeholder": "2024-12-31T23:59:59Z (optional)",
+          "title": "Due Before"
+        }
+      },
+      "required": [
+        "task_list_id"
+      ],
+      "title": "GoogleTasksListTasksConfig",
+      "type": "object"
+    },
+    "GoogleTasksMoveTaskConfig": {
+      "description": "Configuration for moving a task to a different position",
+      "properties": {
+        "operation": {
+          "const": "move_task_to_position",
+          "default": "move_task_to_position",
+          "description": "Move a task to a different position",
+          "title": "Move Task to Position",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Task",
+          "x-display-name": "Move Task to Position",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "reorder task",
+            "reposition task",
+            "indent task",
+            "move under parent",
+            "rearrange task"
+          ]
+        },
+        "task_list_id": {
+          "description": "Select a task list",
+          "title": "Task List",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter task list ID",
+            "field_name": "task_list_id",
+            "placeholder": "Select a task list...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_tasklist"
+        },
+        "task_id": {
+          "description": "The ID of the task to move",
+          "placeholder": "Task ID",
+          "title": "Task ID",
+          "type": "string"
+        },
+        "parent": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of parent task to move under (makes this a subtask)",
+          "placeholder": "Parent task ID (optional)",
+          "title": "Parent Task ID"
+        },
+        "previous": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of task to position after",
+          "placeholder": "Previous task ID (optional)",
+          "title": "Previous Task ID"
+        }
+      },
+      "required": [
+        "task_list_id",
+        "task_id"
+      ],
+      "title": "GoogleTasksMoveTaskConfig",
+      "type": "object"
+    },
+    "GoogleTasksOAuthCredential": {
+      "description": "OAuth credential for Google Tasks access.\nTokens are obtained via OAuth flow, not entered manually.",
+      "properties": {
+        "credential_type": {
+          "const": "google_tasks_oauth",
+          "default": "google_tasks_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "OAuth 2.0 access token from Google",
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "description": "OAuth 2.0 refresh token for automatic renewal",
+          "title": "Refresh Token",
+          "type": "string"
+        },
+        "expires_at": {
+          "description": "ISO 8601 timestamp when access token expires",
+          "title": "Token Expiry",
+          "type": "string"
+        },
+        "email": {
+          "description": "Email address of the connected Google account",
+          "title": "Google Account",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "email"
+      ],
+      "title": "GoogleTasksOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-oauth-provider": "google",
+      "x-oauth-scopes": [
+        "https://www.googleapis.com/auth/tasks"
+      ]
+    },
+    "GoogleTasksUpdateTaskConfig": {
+      "description": "Configuration for updating a task",
+      "properties": {
+        "operation": {
+          "const": "update_task_in_list",
+          "default": "update_task_in_list",
+          "description": "Update a task",
+          "title": "Update Task in List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Task",
+          "x-display-name": "Update Task in List",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "edit task",
+            "mark done",
+            "complete task",
+            "rename task",
+            "change due date"
+          ]
+        },
+        "task_list_id": {
+          "description": "Select a task list",
+          "title": "Task List",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter task list ID",
+            "field_name": "task_list_id",
+            "placeholder": "Select a task list...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_tasklist"
+        },
+        "task_id": {
+          "description": "The ID of the task to update",
+          "placeholder": "Task ID",
+          "title": "Task ID",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New title for the task (leave empty to keep current)",
+          "placeholder": "New title (optional)",
+          "title": "Title"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New notes for the task (leave empty to keep current)",
+          "placeholder": "New notes (optional)",
+          "title": "Notes",
+          "ui:widget": "textarea"
+        },
+        "due": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New due date (RFC 3339 format, date only: YYYY-MM-DD)",
+          "placeholder": "2024-01-15 (optional)",
+          "title": "Due Date"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "needsAction",
+                "completed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Task status",
+          "placeholder": "Select status (optional)",
+          "title": "Status",
+          "enum": [
+            "needsAction",
+            "completed"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "task_list_id",
+        "task_id"
+      ],
+      "title": "GoogleTasksUpdateTaskConfig",
+      "type": "object"
+    },
+    "GoogleTasksUpdateTaskListConfig": {
+      "description": "Configuration for updating a task list",
+      "properties": {
+        "operation": {
+          "const": "update_task_list_metadata",
+          "default": "update_task_list_metadata",
+          "description": "Update a task list",
+          "title": "Update Task List Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Task List",
+          "x-display-name": "Update Task List Metadata",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "rename task list",
+            "edit task list",
+            "task list title",
+            "change list name"
+          ]
+        },
+        "task_list_id": {
+          "description": "Select a task list to update",
+          "title": "Task List",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter task list ID",
+            "field_name": "task_list_id",
+            "placeholder": "Select a task list...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_tasklist"
+        },
+        "title": {
+          "description": "New title for the task list",
+          "placeholder": "Updated Task List Name",
+          "title": "New Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_list_id",
+        "title"
+      ],
+      "title": "GoogleTasksUpdateTaskListConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for Google Tasks node including credentials",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "clear_completed_tasks": "#/$defs/GoogleTasksClearCompletedConfig",
+          "create_new_task": "#/$defs/GoogleTasksCreateTaskConfig",
+          "create_new_task_list": "#/$defs/GoogleTasksCreateTaskListConfig",
+          "delete_task_from_list": "#/$defs/GoogleTasksDeleteTaskConfig",
+          "delete_task_list": "#/$defs/GoogleTasksDeleteTaskListConfig",
+          "fetch_task_from_list": "#/$defs/GoogleTasksGetTaskConfig",
+          "fetch_task_list": "#/$defs/GoogleTasksGetTaskListConfig",
+          "list_all_task_lists": "#/$defs/GoogleTasksListTaskListsConfig",
+          "list_tasks_in_list": "#/$defs/GoogleTasksListTasksConfig",
+          "move_task_to_position": "#/$defs/GoogleTasksMoveTaskConfig",
+          "update_task_in_list": "#/$defs/GoogleTasksUpdateTaskConfig",
+          "update_task_list_metadata": "#/$defs/GoogleTasksUpdateTaskListConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GoogleTasksListTaskListsConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleTasksGetTaskListConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleTasksCreateTaskListConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleTasksUpdateTaskListConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleTasksDeleteTaskListConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleTasksListTasksConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleTasksGetTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleTasksCreateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleTasksUpdateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleTasksDeleteTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleTasksClearCompletedConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleTasksMoveTaskConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GoogleTasksOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Google-tasks Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Add new tasks to the Q2 Goals list with due dates and descriptions",
+    "Mark all completed items from the Groceries list and clear them out",
+    "Create a new task list for the new client project called ProjectAlpha",
+    "Move overdue tasks from Q1 to Q2 list and add priority subtasks",
+    "List all tasks due this week across all lists and create a summary",
+    "Update task status from \"todo\" to \"in_progress\" for the sprint tasks",
+    "Get all tasks from the \"Bugs\" list and move critical ones to today"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

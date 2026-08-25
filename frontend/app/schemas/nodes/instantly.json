@@ -1,0 +1,1745 @@
+{
+  "$defs": {
+    "InstantlyAPIKeyCredential": {
+      "description": "API Key credential for Instantly.",
+      "properties": {
+        "credential_type": {
+          "const": "instantly_api_key",
+          "default": "instantly_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Your Instantly API key from Settings > Integrations",
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "InstantlyAPIKeyCredential",
+      "type": "object",
+      "x-credential-url": "https://app.instantly.ai/app/settings/integrations"
+    },
+    "InstantlyActivateCampaignConfig": {
+      "description": "Activate (start/resume) a campaign.",
+      "properties": {
+        "operation": {
+          "const": "activate_campaign",
+          "default": "activate_campaign",
+          "title": "Activate Campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaign",
+          "x-display-name": "Activate Campaign",
+          "x-is-trigger": false
+        },
+        "campaign_id": {
+          "description": "The campaign UUID to activate",
+          "title": "Campaign ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "InstantlyActivateCampaignConfig",
+      "type": "object"
+    },
+    "InstantlyBulkAddLeadsConfig": {
+      "description": "Add up to 1000 leads to a campaign or list.",
+      "properties": {
+        "operation": {
+          "const": "bulk_add_leads_to_campaign",
+          "default": "bulk_add_leads_to_campaign",
+          "title": "Bulk Add Leads to Campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lead",
+          "x-display-name": "Bulk Add Leads to Campaign",
+          "x-is-trigger": false
+        },
+        "leads": {
+          "description": "JSON array of lead objects, e.g. [{\"email\": \"a@b.com\", \"first_name\": \"John\"}]",
+          "title": "Leads (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "campaign_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Campaign UUID to add leads to",
+          "title": "Campaign ID"
+        },
+        "list_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Lead list UUID to add leads to",
+          "title": "List ID"
+        }
+      },
+      "required": [
+        "leads"
+      ],
+      "title": "InstantlyBulkAddLeadsConfig",
+      "type": "object"
+    },
+    "InstantlyCountUnreadEmailsConfig": {
+      "description": "Count unread emails in your inbox.",
+      "properties": {
+        "operation": {
+          "const": "count_unread_emails",
+          "default": "count_unread_emails",
+          "title": "Count Unread Emails",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email",
+          "x-display-name": "Count Unread Emails",
+          "x-is-trigger": false
+        }
+      },
+      "title": "InstantlyCountUnreadEmailsConfig",
+      "type": "object"
+    },
+    "InstantlyCreateAccountConfig": {
+      "description": "Add a new email account to your workspace.",
+      "properties": {
+        "operation": {
+          "const": "create_email_account",
+          "default": "create_email_account",
+          "title": "Create Email Account",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Account",
+          "x-display-name": "Create Email Account",
+          "x-is-trigger": false
+        },
+        "email": {
+          "description": "Email address for the account",
+          "title": "Email",
+          "type": "string"
+        },
+        "first_name": {
+          "description": "Sender first name",
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "description": "Sender last name",
+          "title": "Last Name",
+          "type": "string"
+        },
+        "provider_code": {
+          "default": "1",
+          "description": "Email provider type",
+          "enum": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "8"
+          ],
+          "enumNames": [
+            "Custom IMAP/SMTP",
+            "Google",
+            "Microsoft",
+            "AWS",
+            "AirMail"
+          ],
+          "title": "Provider",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "daily_limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max emails per day",
+          "title": "Daily Limit"
+        }
+      },
+      "required": [
+        "email",
+        "first_name",
+        "last_name"
+      ],
+      "title": "InstantlyCreateAccountConfig",
+      "type": "object"
+    },
+    "InstantlyCreateCampaignConfig": {
+      "description": "Create a new email campaign.",
+      "properties": {
+        "operation": {
+          "const": "create_campaign",
+          "default": "create_campaign",
+          "title": "Create Campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaign",
+          "x-display-name": "Create Campaign",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Name for the new campaign",
+          "title": "Campaign Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "InstantlyCreateCampaignConfig",
+      "type": "object"
+    },
+    "InstantlyCreateLeadConfig": {
+      "description": "Create a new lead.",
+      "properties": {
+        "operation": {
+          "const": "create_lead",
+          "default": "create_lead",
+          "title": "Create Lead",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lead",
+          "x-display-name": "Create Lead",
+          "x-is-trigger": false
+        },
+        "email": {
+          "description": "Lead email address",
+          "title": "Email",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Lead first name",
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Lead last name",
+          "title": "Last Name"
+        },
+        "company_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Lead company name",
+          "title": "Company"
+        },
+        "website": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Lead website URL",
+          "title": "Website"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Lead phone number",
+          "title": "Phone"
+        },
+        "campaign": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Campaign UUID to add lead to",
+          "title": "Campaign ID"
+        },
+        "list_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Lead list UUID to add lead to",
+          "title": "List ID"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "InstantlyCreateLeadConfig",
+      "type": "object"
+    },
+    "InstantlyCreateLeadListConfig": {
+      "description": "Create a new lead list.",
+      "properties": {
+        "operation": {
+          "const": "create_lead_list",
+          "default": "create_lead_list",
+          "title": "Create Lead List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lead List",
+          "x-display-name": "Create Lead List",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Name for the new lead list",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "InstantlyCreateLeadListConfig",
+      "type": "object"
+    },
+    "InstantlyDeleteAccountConfig": {
+      "description": "Delete an email account from your workspace.",
+      "properties": {
+        "operation": {
+          "const": "delete_email_account",
+          "default": "delete_email_account",
+          "title": "Delete Email Account",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Account",
+          "x-display-name": "Delete Email Account",
+          "x-is-trigger": false
+        },
+        "email": {
+          "description": "The email address of the account to delete",
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "InstantlyDeleteAccountConfig",
+      "type": "object"
+    },
+    "InstantlyDeleteCampaignConfig": {
+      "description": "Delete a campaign.",
+      "properties": {
+        "operation": {
+          "const": "delete_campaign",
+          "default": "delete_campaign",
+          "title": "Delete Campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaign",
+          "x-display-name": "Delete Campaign",
+          "x-is-trigger": false
+        },
+        "campaign_id": {
+          "description": "The campaign UUID to delete",
+          "title": "Campaign ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "InstantlyDeleteCampaignConfig",
+      "type": "object"
+    },
+    "InstantlyDeleteLeadConfig": {
+      "description": "Delete a lead.",
+      "properties": {
+        "operation": {
+          "const": "delete_lead",
+          "default": "delete_lead",
+          "title": "Delete Lead",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lead",
+          "x-display-name": "Delete Lead",
+          "x-is-trigger": false
+        },
+        "lead_id": {
+          "description": "The lead UUID to delete",
+          "title": "Lead ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "lead_id"
+      ],
+      "title": "InstantlyDeleteLeadConfig",
+      "type": "object"
+    },
+    "InstantlyDeleteLeadListConfig": {
+      "description": "Delete a lead list.",
+      "properties": {
+        "operation": {
+          "const": "delete_lead_list",
+          "default": "delete_lead_list",
+          "title": "Delete Lead List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lead List",
+          "x-display-name": "Delete Lead List",
+          "x-is-trigger": false
+        },
+        "list_id": {
+          "description": "The lead list UUID to delete",
+          "title": "List ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "InstantlyDeleteLeadListConfig",
+      "type": "object"
+    },
+    "InstantlyGetAccountConfig": {
+      "description": "Get details of a specific email account.",
+      "properties": {
+        "operation": {
+          "const": "get_email_account",
+          "default": "get_email_account",
+          "title": "Get Email Account",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Account",
+          "x-display-name": "Get Email Account",
+          "x-is-trigger": false
+        },
+        "email": {
+          "description": "The email address of the account",
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "InstantlyGetAccountConfig",
+      "type": "object"
+    },
+    "InstantlyGetCampaignAnalyticsConfig": {
+      "description": "Get analytics for a campaign.",
+      "properties": {
+        "operation": {
+          "const": "get_campaign_analytics",
+          "default": "get_campaign_analytics",
+          "title": "Get Campaign Analytics",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaign",
+          "x-display-name": "Get Campaign Analytics",
+          "x-is-trigger": false
+        },
+        "campaign_id": {
+          "description": "The campaign UUID",
+          "title": "Campaign ID",
+          "type": "string"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start date (YYYY-MM-DD)",
+          "title": "Start Date"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End date (YYYY-MM-DD)",
+          "title": "End Date"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "InstantlyGetCampaignAnalyticsConfig",
+      "type": "object"
+    },
+    "InstantlyGetCampaignConfig": {
+      "description": "Get details of a specific campaign.",
+      "properties": {
+        "operation": {
+          "const": "get_campaign",
+          "default": "get_campaign",
+          "title": "Get Campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaign",
+          "x-display-name": "Get Campaign",
+          "x-is-trigger": false
+        },
+        "campaign_id": {
+          "description": "The campaign UUID",
+          "title": "Campaign ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "InstantlyGetCampaignConfig",
+      "type": "object"
+    },
+    "InstantlyGetDailyCampaignAnalyticsConfig": {
+      "description": "Get daily campaign analytics across all campaigns.",
+      "properties": {
+        "operation": {
+          "const": "get_daily_campaign_analytics",
+          "default": "get_daily_campaign_analytics",
+          "title": "Get Daily Campaign Analytics",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaign",
+          "x-display-name": "Get Daily Campaign Analytics",
+          "x-is-trigger": false
+        },
+        "campaign_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by campaign UUID",
+          "title": "Campaign ID"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start date (YYYY-MM-DD)",
+          "title": "Start Date"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End date (YYYY-MM-DD)",
+          "title": "End Date"
+        }
+      },
+      "title": "InstantlyGetDailyCampaignAnalyticsConfig",
+      "type": "object"
+    },
+    "InstantlyGetEmailConfig": {
+      "description": "Get details of a specific email.",
+      "properties": {
+        "operation": {
+          "const": "get_email",
+          "default": "get_email",
+          "title": "Get Email",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email",
+          "x-display-name": "Get Email",
+          "x-is-trigger": false
+        },
+        "email_id": {
+          "description": "The email UUID",
+          "title": "Email ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email_id"
+      ],
+      "title": "InstantlyGetEmailConfig",
+      "type": "object"
+    },
+    "InstantlyGetLeadConfig": {
+      "description": "Get details of a specific lead.",
+      "properties": {
+        "operation": {
+          "const": "get_lead",
+          "default": "get_lead",
+          "title": "Get Lead",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lead",
+          "x-display-name": "Get Lead",
+          "x-is-trigger": false
+        },
+        "lead_id": {
+          "description": "The lead UUID",
+          "title": "Lead ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "lead_id"
+      ],
+      "title": "InstantlyGetLeadConfig",
+      "type": "object"
+    },
+    "InstantlyGetLeadListConfig": {
+      "description": "Get details of a specific lead list.",
+      "properties": {
+        "operation": {
+          "const": "get_lead_list",
+          "default": "get_lead_list",
+          "title": "Get Lead List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lead List",
+          "x-display-name": "Get Lead List",
+          "x-is-trigger": false
+        },
+        "list_id": {
+          "description": "The lead list UUID",
+          "title": "List ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "InstantlyGetLeadListConfig",
+      "type": "object"
+    },
+    "InstantlyGetWarmupAnalyticsConfig": {
+      "description": "Get warmup analytics for an email account.",
+      "properties": {
+        "operation": {
+          "const": "get_account_warmup_analytics",
+          "default": "get_account_warmup_analytics",
+          "title": "Get Account Warmup Analytics",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Analytics",
+          "x-display-name": "Get Account Warmup Analytics",
+          "x-is-trigger": false
+        },
+        "email": {
+          "description": "The email address of the account",
+          "title": "Email",
+          "type": "string"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start date (YYYY-MM-DD)",
+          "title": "Start Date"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End date (YYYY-MM-DD)",
+          "title": "End Date"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "InstantlyGetWarmupAnalyticsConfig",
+      "type": "object"
+    },
+    "InstantlyListAccountsConfig": {
+      "description": "List email accounts in your workspace.",
+      "properties": {
+        "operation": {
+          "const": "list_email_accounts",
+          "default": "list_email_accounts",
+          "title": "List Email Accounts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Account",
+          "x-display-name": "List Email Accounts",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "10",
+          "description": "Number of accounts to return (max 100)",
+          "title": "Limit"
+        },
+        "starting_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from previous response",
+          "title": "Starting After"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by email domain",
+          "title": "Search"
+        }
+      },
+      "title": "InstantlyListAccountsConfig",
+      "type": "object"
+    },
+    "InstantlyListCampaignsConfig": {
+      "description": "List campaigns in your workspace.",
+      "properties": {
+        "operation": {
+          "const": "list_campaigns",
+          "default": "list_campaigns",
+          "title": "List Campaigns",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaign",
+          "x-display-name": "List Campaigns",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "10",
+          "description": "Number of campaigns to return (max 100)",
+          "title": "Limit"
+        },
+        "starting_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from previous response",
+          "title": "Starting After"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by campaign name",
+          "title": "Search"
+        }
+      },
+      "title": "InstantlyListCampaignsConfig",
+      "type": "object"
+    },
+    "InstantlyListEmailsConfig": {
+      "description": "List emails with optional filters.",
+      "properties": {
+        "operation": {
+          "const": "list_emails",
+          "default": "list_emails",
+          "title": "List Emails",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email",
+          "x-display-name": "List Emails",
+          "x-is-trigger": false
+        },
+        "campaign_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by campaign UUID",
+          "title": "Campaign ID"
+        },
+        "lead_email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by lead email address",
+          "title": "Lead Email"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "10",
+          "description": "Number of emails to return (max 20/min rate limit)",
+          "title": "Limit"
+        }
+      },
+      "title": "InstantlyListEmailsConfig",
+      "type": "object"
+    },
+    "InstantlyListLeadListsConfig": {
+      "description": "List all lead lists.",
+      "properties": {
+        "operation": {
+          "const": "list_lead_lists",
+          "default": "list_lead_lists",
+          "title": "List Lead Lists",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lead List",
+          "x-display-name": "List Lead Lists",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "10",
+          "description": "Number of lists to return (max 100)",
+          "title": "Limit"
+        },
+        "starting_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from previous response",
+          "title": "Starting After"
+        }
+      },
+      "title": "InstantlyListLeadListsConfig",
+      "type": "object"
+    },
+    "InstantlyListLeadsConfig": {
+      "description": "List leads with optional filters.",
+      "properties": {
+        "operation": {
+          "const": "list_leads",
+          "default": "list_leads",
+          "title": "List Leads",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lead",
+          "x-display-name": "List Leads",
+          "x-is-trigger": false
+        },
+        "campaign_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by campaign UUID",
+          "title": "Campaign ID"
+        },
+        "list_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by lead list UUID",
+          "title": "List ID"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "10",
+          "description": "Number of leads to return",
+          "title": "Limit"
+        },
+        "starting_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Lead ID for cursor-based pagination",
+          "title": "Starting After"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by exact email address",
+          "title": "Email Filter"
+        }
+      },
+      "title": "InstantlyListLeadsConfig",
+      "type": "object"
+    },
+    "InstantlyMarkThreadReadConfig": {
+      "description": "Mark an email thread as read.",
+      "properties": {
+        "operation": {
+          "const": "mark_email_thread_as_read",
+          "default": "mark_email_thread_as_read",
+          "title": "Mark Email Thread As Read",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email",
+          "x-display-name": "Mark Email Thread As Read",
+          "x-is-trigger": false
+        },
+        "thread_id": {
+          "description": "The email thread UUID to mark as read",
+          "title": "Thread ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "thread_id"
+      ],
+      "title": "InstantlyMarkThreadReadConfig",
+      "type": "object"
+    },
+    "InstantlyMoveLeadConfig": {
+      "description": "Move leads to a different campaign or list.",
+      "properties": {
+        "operation": {
+          "const": "move_leads_to_campaign",
+          "default": "move_leads_to_campaign",
+          "title": "Move Leads to Campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lead",
+          "x-display-name": "Move Leads to Campaign",
+          "x-is-trigger": false
+        },
+        "lead_ids": {
+          "description": "Comma-separated lead UUIDs to move",
+          "title": "Lead IDs",
+          "type": "string"
+        },
+        "to_campaign_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Target campaign UUID",
+          "title": "To Campaign ID"
+        },
+        "to_list_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Target lead list UUID",
+          "title": "To List ID"
+        }
+      },
+      "required": [
+        "lead_ids"
+      ],
+      "title": "InstantlyMoveLeadConfig",
+      "type": "object"
+    },
+    "InstantlyPauseAccountConfig": {
+      "description": "Pause an email account.",
+      "properties": {
+        "operation": {
+          "const": "pause_email_account",
+          "default": "pause_email_account",
+          "title": "Pause Email Account",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Account",
+          "x-display-name": "Pause Email Account",
+          "x-is-trigger": false
+        },
+        "email": {
+          "description": "The email address of the account to pause",
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "InstantlyPauseAccountConfig",
+      "type": "object"
+    },
+    "InstantlyPauseCampaignConfig": {
+      "description": "Pause (stop) a running campaign.",
+      "properties": {
+        "operation": {
+          "const": "pause_campaign",
+          "default": "pause_campaign",
+          "title": "Pause Campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaign",
+          "x-display-name": "Pause Campaign",
+          "x-is-trigger": false
+        },
+        "campaign_id": {
+          "description": "The campaign UUID to pause",
+          "title": "Campaign ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "InstantlyPauseCampaignConfig",
+      "type": "object"
+    },
+    "InstantlyReceiveWebhookConfig": {
+      "description": "Receive webhook events from Instantly (e.g. reply_received, positive_reply).",
+      "properties": {
+        "operation": {
+          "const": "receive_webhook_events",
+          "default": "receive_webhook_events",
+          "title": "Receive Webhook Events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "Receive Webhook Events",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "reply_received",
+          "description": "The type of Instantly event to subscribe to",
+          "enum": [
+            "reply_received",
+            "email_sent",
+            "email_opened",
+            "link_clicked",
+            "lead_unsubscribed",
+            "lead_interested",
+            "lead_not_interested",
+            "lead_wrong_person",
+            "lead_meeting_booked",
+            "lead_meeting_completed",
+            "lead_out_of_office",
+            "lead_closed"
+          ],
+          "enumNames": [
+            "Reply Received",
+            "Email Sent",
+            "Email Opened",
+            "Link Clicked",
+            "Lead Unsubscribed",
+            "Lead Interested",
+            "Lead Not Interested",
+            "Lead Wrong Person",
+            "Lead Meeting Booked",
+            "Lead Meeting Completed",
+            "Lead Out of Office",
+            "Lead Closed"
+          ],
+          "title": "Event Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Auto-generated URL registered with Instantly",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "instantly_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The webhook ID on Instantly's side",
+          "title": "Instantly Webhook Id",
+          "ui:hidden": true
+        }
+      },
+      "title": "InstantlyReceiveWebhookConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "InstantlyReplyToEmailConfig": {
+      "description": "Reply to an email thread.",
+      "properties": {
+        "operation": {
+          "const": "reply_to_email",
+          "default": "reply_to_email",
+          "title": "Reply to Email",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email",
+          "x-display-name": "Reply to Email",
+          "x-is-trigger": false
+        },
+        "reply_to_uuid": {
+          "description": "The email UUID to reply to",
+          "title": "Email UUID",
+          "type": "string"
+        },
+        "eaccount": {
+          "description": "Sender email account (must be active)",
+          "title": "Sender Account",
+          "type": "string"
+        },
+        "subject": {
+          "description": "Reply subject line",
+          "title": "Subject",
+          "type": "string"
+        },
+        "body": {
+          "description": "Reply body (HTML supported)",
+          "title": "Body",
+          "type": "string",
+          "ui:rows": 4
+        },
+        "cc": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "CC email addresses (comma-separated)",
+          "title": "CC"
+        },
+        "bcc": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "BCC email addresses (comma-separated)",
+          "title": "BCC"
+        }
+      },
+      "required": [
+        "reply_to_uuid",
+        "eaccount",
+        "subject",
+        "body"
+      ],
+      "title": "InstantlyReplyToEmailConfig",
+      "type": "object"
+    },
+    "InstantlyResumeAccountConfig": {
+      "description": "Resume a paused email account.",
+      "properties": {
+        "operation": {
+          "const": "resume_email_account",
+          "default": "resume_email_account",
+          "title": "Resume Email Account",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Account",
+          "x-display-name": "Resume Email Account",
+          "x-is-trigger": false
+        },
+        "email": {
+          "description": "The email address of the account to resume",
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "InstantlyResumeAccountConfig",
+      "type": "object"
+    },
+    "InstantlySearchCampaignsByContactConfig": {
+      "description": "Search campaigns by lead email address.",
+      "properties": {
+        "operation": {
+          "const": "search_campaigns_by_contact_email",
+          "default": "search_campaigns_by_contact_email",
+          "title": "Search Campaigns by Contact Email",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaign",
+          "x-display-name": "Search Campaigns by Contact Email",
+          "x-is-trigger": false
+        },
+        "email": {
+          "description": "Email address of the lead to search for",
+          "title": "Lead Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "InstantlySearchCampaignsByContactConfig",
+      "type": "object"
+    },
+    "InstantlyUpdateCampaignConfig": {
+      "description": "Update an existing campaign.",
+      "properties": {
+        "operation": {
+          "const": "update_campaign",
+          "default": "update_campaign",
+          "title": "Update Campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaign",
+          "x-display-name": "Update Campaign",
+          "x-is-trigger": false
+        },
+        "campaign_id": {
+          "description": "The campaign UUID",
+          "title": "Campaign ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New campaign name",
+          "title": "Name"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "InstantlyUpdateCampaignConfig",
+      "type": "object"
+    },
+    "InstantlyUpdateLeadConfig": {
+      "description": "Update an existing lead.",
+      "properties": {
+        "operation": {
+          "const": "update_lead",
+          "default": "update_lead",
+          "title": "Update Lead",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lead",
+          "x-display-name": "Update Lead",
+          "x-is-trigger": false
+        },
+        "lead_id": {
+          "description": "The lead UUID",
+          "title": "Lead ID",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New first name",
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New last name",
+          "title": "Last Name"
+        },
+        "company_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New company name",
+          "title": "Company"
+        },
+        "website": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New website URL",
+          "title": "Website"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New phone number",
+          "title": "Phone"
+        }
+      },
+      "required": [
+        "lead_id"
+      ],
+      "title": "InstantlyUpdateLeadConfig",
+      "type": "object"
+    },
+    "InstantlyUpdateLeadListConfig": {
+      "description": "Update an existing lead list.",
+      "properties": {
+        "operation": {
+          "const": "update_lead_list",
+          "default": "update_lead_list",
+          "title": "Update Lead List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lead List",
+          "x-display-name": "Update Lead List",
+          "x-is-trigger": false
+        },
+        "list_id": {
+          "description": "The lead list UUID",
+          "title": "List ID",
+          "type": "string"
+        },
+        "name": {
+          "description": "New name for the lead list",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id",
+        "name"
+      ],
+      "title": "InstantlyUpdateLeadListConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for Instantly node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "activate_campaign": "#/$defs/InstantlyActivateCampaignConfig",
+          "bulk_add_leads_to_campaign": "#/$defs/InstantlyBulkAddLeadsConfig",
+          "count_unread_emails": "#/$defs/InstantlyCountUnreadEmailsConfig",
+          "create_campaign": "#/$defs/InstantlyCreateCampaignConfig",
+          "create_email_account": "#/$defs/InstantlyCreateAccountConfig",
+          "create_lead": "#/$defs/InstantlyCreateLeadConfig",
+          "create_lead_list": "#/$defs/InstantlyCreateLeadListConfig",
+          "delete_campaign": "#/$defs/InstantlyDeleteCampaignConfig",
+          "delete_email_account": "#/$defs/InstantlyDeleteAccountConfig",
+          "delete_lead": "#/$defs/InstantlyDeleteLeadConfig",
+          "delete_lead_list": "#/$defs/InstantlyDeleteLeadListConfig",
+          "get_account_warmup_analytics": "#/$defs/InstantlyGetWarmupAnalyticsConfig",
+          "get_campaign": "#/$defs/InstantlyGetCampaignConfig",
+          "get_campaign_analytics": "#/$defs/InstantlyGetCampaignAnalyticsConfig",
+          "get_daily_campaign_analytics": "#/$defs/InstantlyGetDailyCampaignAnalyticsConfig",
+          "get_email": "#/$defs/InstantlyGetEmailConfig",
+          "get_email_account": "#/$defs/InstantlyGetAccountConfig",
+          "get_lead": "#/$defs/InstantlyGetLeadConfig",
+          "get_lead_list": "#/$defs/InstantlyGetLeadListConfig",
+          "list_campaigns": "#/$defs/InstantlyListCampaignsConfig",
+          "list_email_accounts": "#/$defs/InstantlyListAccountsConfig",
+          "list_emails": "#/$defs/InstantlyListEmailsConfig",
+          "list_lead_lists": "#/$defs/InstantlyListLeadListsConfig",
+          "list_leads": "#/$defs/InstantlyListLeadsConfig",
+          "mark_email_thread_as_read": "#/$defs/InstantlyMarkThreadReadConfig",
+          "move_leads_to_campaign": "#/$defs/InstantlyMoveLeadConfig",
+          "pause_campaign": "#/$defs/InstantlyPauseCampaignConfig",
+          "pause_email_account": "#/$defs/InstantlyPauseAccountConfig",
+          "receive_webhook_events": "#/$defs/InstantlyReceiveWebhookConfig",
+          "reply_to_email": "#/$defs/InstantlyReplyToEmailConfig",
+          "resume_email_account": "#/$defs/InstantlyResumeAccountConfig",
+          "search_campaigns_by_contact_email": "#/$defs/InstantlySearchCampaignsByContactConfig",
+          "update_campaign": "#/$defs/InstantlyUpdateCampaignConfig",
+          "update_lead": "#/$defs/InstantlyUpdateLeadConfig",
+          "update_lead_list": "#/$defs/InstantlyUpdateLeadListConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/InstantlyListAccountsConfig"
+        },
+        {
+          "$ref": "#/$defs/InstantlyGetAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/InstantlyCreateAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/InstantlyPauseAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/InstantlyResumeAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/InstantlyDeleteAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/InstantlyListCampaignsConfig"
+        },
+        {
+          "$ref": "#/$defs/InstantlyGetCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/InstantlyCreateCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/InstantlyUpdateCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/InstantlyDeleteCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/InstantlyActivateCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/InstantlyPauseCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/InstantlySearchCampaignsByContactConfig"
+        },
+        {
+          "$ref": "#/$defs/InstantlyListLeadsConfig"
+        },
+        {
+          "$ref": "#/$defs/InstantlyGetLeadConfig"
+        },
+        {
+          "$ref": "#/$defs/InstantlyCreateLeadConfig"
+        },
+        {
+          "$ref": "#/$defs/InstantlyUpdateLeadConfig"
+        },
+        {
+          "$ref": "#/$defs/InstantlyDeleteLeadConfig"
+        },
+        {
+          "$ref": "#/$defs/InstantlyBulkAddLeadsConfig"
+        },
+        {
+          "$ref": "#/$defs/InstantlyMoveLeadConfig"
+        },
+        {
+          "$ref": "#/$defs/InstantlyListLeadListsConfig"
+        },
+        {
+          "$ref": "#/$defs/InstantlyGetLeadListConfig"
+        },
+        {
+          "$ref": "#/$defs/InstantlyCreateLeadListConfig"
+        },
+        {
+          "$ref": "#/$defs/InstantlyUpdateLeadListConfig"
+        },
+        {
+          "$ref": "#/$defs/InstantlyDeleteLeadListConfig"
+        },
+        {
+          "$ref": "#/$defs/InstantlyListEmailsConfig"
+        },
+        {
+          "$ref": "#/$defs/InstantlyGetEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/InstantlyReplyToEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/InstantlyCountUnreadEmailsConfig"
+        },
+        {
+          "$ref": "#/$defs/InstantlyMarkThreadReadConfig"
+        },
+        {
+          "$ref": "#/$defs/InstantlyGetCampaignAnalyticsConfig"
+        },
+        {
+          "$ref": "#/$defs/InstantlyGetDailyCampaignAnalyticsConfig"
+        },
+        {
+          "$ref": "#/$defs/InstantlyGetWarmupAnalyticsConfig"
+        },
+        {
+          "$ref": "#/$defs/InstantlyReceiveWebhookConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/InstantlyAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Instantly Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Create campaign with 3-step sequence and add 500 leads from CSV",
+    "Activate campaign targeting leads with name matching pattern",
+    "Count unread emails in inbox and mark customer reply threads read",
+    "List leads with status contacted and move to different campaign",
+    "Get campaign analytics for last 30 days (opens, clicks, replies)",
+    "Create new email account and enable warmup with daily limits",
+    "Search for specific contact email across all campaigns"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

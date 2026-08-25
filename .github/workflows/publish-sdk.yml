@@ -1,0 +1,319 @@
+name: Publish SDK
+
+# Manually increments the patch version and publishes to npm and/or PyPI.
+#
+# Publishing happens HERE, from the public repository, and not from a private
+# one: what npm and PyPI receive is then exactly what anyone can read, and no
+# packaging mistake can put private code in a public tarball.
+# Manual only, deliberately. Publishing to a registry is a public act; a merge
+# to main must not be able to pre-empt it.
+on:
+  workflow_dispatch:
+    inputs:
+      target:
+        description: "Which SDK to publish"
+        type: choice
+        options: [typescript, python, both]
+        default: typescript
+
+permissions:
+  contents: read
+
+concurrency:
+  # Registry-derived patch versions must be serialized across dispatches.
+  group: sdk-release-${{ github.repository }}
+  cancel-in-progress: false
+
+jobs:
+  detect-changes:
+    # OIDC publishing is a public side effect. Keep the workflow reviewable in
+    # the private candidate while making repository visibility and the protected
+    # main ref joint launch gates.
+    if: github.event.repository.visibility == 'public' && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    outputs:
+      typescript: ${{ steps.changes.outputs.typescript }}
+      python: ${{ steps.changes.outputs.python }}
+    steps:
+      - id: changes
+        env:
+          TARGET: ${{ inputs.target }}
+        run: |
+          set -euo pipefail
+          case "$TARGET" in
+            typescript) echo "typescript=true"  >> "$GITHUB_OUTPUT"; echo "python=false" >> "$GITHUB_OUTPUT" ;;
+            python)     echo "typescript=false" >> "$GITHUB_OUTPUT"; echo "python=true"  >> "$GITHUB_OUTPUT" ;;
+            both)       echo "typescript=true"  >> "$GITHUB_OUTPUT"; echo "python=true"  >> "$GITHUB_OUTPUT" ;;
+            *) echo "::error::unsupported SDK target: $TARGET"; exit 1 ;;
+          esac
+
+  build-npm:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.typescript == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Upgrade npm
+        # OIDC trusted publishing requires npm >= 11.5.1; the runner ships npm 10.x.
+        run: npm install -g npm@11.5.1
+
+      - name: Install dependencies
+        working-directory: sdk/typescript
+        run: npm ci
+
+      - name: Run tests
+        working-directory: sdk/typescript
+        run: npm test
+
+      - name: Check the launcher parses
+        # It ships as the package's `bin`, so a syntax error here is a broken
+        # `npx noclick` for everyone until the next publish.
+        run: node --check sdk/typescript/bin/noclick.mjs
+
+      - name: Set next version from the npm registry
+        working-directory: sdk/typescript
+        # Derive from what's actually published, not the source baseline. This
+        # workflow never writes generated version bumps directly to main.
+        run: |
+          set -euo pipefail
+          PUBLISHED=$(npm view noclick version)
+          if [[ ! "$PUBLISHED" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+            echo "::error::npm returned a non-canonical version: $PUBLISHED"
+            exit 1
+          fi
+          npm version "$PUBLISHED" --no-git-tag-version --allow-same-version
+          npm version patch --no-git-tag-version
+          echo "VERSION=$(node -p "require('./package.json').version")" >> "$GITHUB_ENV"
+
+      - name: Materialise the license
+        working-directory: sdk/typescript
+        # Keep the package copy byte-identical to the root license immediately
+        # before packing, so published metadata and contents cannot drift.
+        run: rm -f LICENSE.md && cp ../../LICENSE.md LICENSE.md
+
+      - name: Build
+        working-directory: sdk/typescript
+        run: node build.js
+
+      - name: Pack the exact npm artifact
+        working-directory: sdk/typescript
+        run: |
+          set -euo pipefail
+          package_dir="$RUNNER_TEMP/npm-package"
+          mkdir -p "$package_dir"
+          npm pack --ignore-scripts --pack-destination "$package_dir"
+          shopt -s nullglob
+          packages=("$package_dir"/*.tgz)
+          if [ "${#packages[@]}" -ne 1 ]; then
+            echo "::error::expected one npm tarball, found ${#packages[@]}"
+            exit 1
+          fi
+          package_name="$(basename "${packages[0]}")"
+          smoke_dir="$RUNNER_TEMP/npm-import-smoke"
+          npm install --prefix "$smoke_dir" --ignore-scripts "${packages[0]}"
+          (cd "$smoke_dir" && node --input-type=module -e "await import('noclick')")
+          (cd "$package_dir" && sha256sum -- "$package_name" > SHA256SUMS)
+
+      - name: Upload the reviewed npm artifact
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: noclick-npm-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            ${{ runner.temp }}/npm-package/*.tgz
+            ${{ runner.temp }}/npm-package/SHA256SUMS
+          if-no-files-found: error
+          retention-days: 7
+
+  build-python:
+    needs: detect-changes
+    if: needs.detect-changes.outputs.python == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12"
+
+      - name: Install build tool
+        run: pip install build==1.3.0 twine==6.2.0
+
+      - name: Set next version from PyPI
+        working-directory: sdk/python
+        # Derive from the published version, not the source baseline. This
+        # workflow never writes generated version bumps directly to main.
+        run: |
+          set -euo pipefail
+          PUBLISHED=$(curl -fsSL https://pypi.org/pypi/noclick/json | python -c "import sys,json; print(json.load(sys.stdin)['info']['version'])")
+          if [[ ! "$PUBLISHED" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+            echo "::error::PyPI returned a non-canonical version: $PUBLISHED"
+            exit 1
+          fi
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$PUBLISHED"
+          NEW="$MAJOR.$MINOR.$((PATCH + 1))"
+          sed -i "s/^version = \".*\"/version = \"$NEW\"/" pyproject.toml
+          sed -i "s/^__version__ = \".*\"/__version__ = \"$NEW\"/" noclick/__init__.py
+          grep -Fqx "version = \"$NEW\"" pyproject.toml
+          grep -Fqx "__version__ = \"$NEW\"" noclick/__init__.py
+          echo "VERSION=$NEW" >> "$GITHUB_ENV"
+
+      - name: Build and verify the Python distributions
+        working-directory: sdk/python
+        run: |
+          set -euo pipefail
+          rm -rf dist
+          python -m build
+          shopt -s nullglob
+          wheels=(dist/*.whl)
+          sdists=(dist/*.tar.gz)
+          if [ "${#wheels[@]}" -ne 1 ] || [ "${#sdists[@]}" -ne 1 ]; then
+            echo "::error::expected one wheel and one sdist"
+            exit 1
+          fi
+          SOURCE_DATE_EPOCH="$(git log -1 --format=%ct)"
+          export SOURCE_DATE_EPOCH
+          python ../../scripts/normalize_python_sdist.py "${sdists[0]}"
+          python -m twine check "${wheels[0]}" "${sdists[0]}"
+          (cd dist && sha256sum -- *.whl *.tar.gz > SHA256SUMS)
+          python -m pip install --force-reinstall "${wheels[0]}"
+          # Run outside the source tree so this imports the installed wheel,
+          # not the adjacent ./noclick package.
+          (cd "$RUNNER_TEMP" && python - <<'PY'
+          import os
+          import noclick
+
+          assert noclick.__version__ == os.environ["VERSION"]
+          PY
+          )
+          # Installing the exact rewritten sdist proves it still builds and
+          # imports, rather than checking only the independently-built wheel.
+          python -m pip install --force-reinstall "${sdists[0]}"
+          (cd "$RUNNER_TEMP" && python - <<'PY'
+          import os
+          import noclick
+
+          assert noclick.__version__ == os.environ["VERSION"]
+          PY
+          )
+
+      - name: Upload the reviewed Python artifacts
+        uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4.6.2
+        with:
+          name: noclick-python-${{ github.run_id }}-${{ github.run_attempt }}
+          path: |
+            sdk/python/dist/*.whl
+            sdk/python/dist/*.tar.gz
+            sdk/python/dist/SHA256SUMS
+          if-no-files-found: error
+          retention-days: 7
+
+  publish-npm:
+    needs: [detect-changes, build-npm, build-python]
+    if: >-
+      always() &&
+      needs.detect-changes.outputs.typescript == 'true' &&
+      needs.build-npm.result == 'success' &&
+      (needs.detect-changes.outputs.python != 'true' || needs.build-python.result == 'success')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment:
+      name: release
+    permissions:
+      id-token: write # mint the OIDC token for npm trusted publishing
+      contents: read
+    steps:
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "20"
+          registry-url: "https://registry.npmjs.org"
+
+      - name: Upgrade npm
+        # OIDC trusted publishing requires npm >= 11.5.1.
+        run: npm install -g npm@11.5.1
+
+      - name: Download the reviewed npm artifact
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: noclick-npm-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/npm-package
+
+      - name: Verify the downloaded npm artifact
+        env:
+          PACKAGE_DIR: ${{ runner.temp }}/npm-package
+        run: |
+          set -euo pipefail
+          cd "$PACKAGE_DIR"
+          sha256sum -c SHA256SUMS
+          shopt -s nullglob
+          packages=(*.tgz)
+          if [ "${#packages[@]}" -ne 1 ]; then
+            echo "::error::expected one npm tarball, found ${#packages[@]}"
+            exit 1
+          fi
+          echo "NPM_PACKAGE=$PACKAGE_DIR/${packages[0]}" >> "$GITHUB_ENV"
+
+      - name: Publish the exact tarball to npm
+        # No checkout, dependency install, build, or package script runs with
+        # OIDC authority. Trusted publishing receives only the reviewed tarball.
+        run: npm publish "$NPM_PACKAGE" --access public --ignore-scripts
+
+  publish-pypi:
+    needs: [detect-changes, build-npm, build-python]
+    if: >-
+      always() &&
+      needs.detect-changes.outputs.python == 'true' &&
+      needs.build-python.result == 'success' &&
+      (needs.detect-changes.outputs.typescript != 'true' || needs.build-npm.result == 'success')
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment:
+      name: release
+    permissions:
+      id-token: write # mint the OIDC token for PyPI trusted publishing
+      contents: read
+    steps:
+      - name: Download the reviewed Python artifacts
+        uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4.3.0
+        with:
+          name: noclick-python-${{ github.run_id }}-${{ github.run_attempt }}
+          path: ${{ runner.temp }}/python-package
+
+      - name: Verify the downloaded Python artifacts
+        env:
+          PACKAGE_DIR: ${{ runner.temp }}/python-package
+        run: |
+          set -euo pipefail
+          cd "$PACKAGE_DIR"
+          sha256sum -c SHA256SUMS
+          rm -f SHA256SUMS
+          shopt -s nullglob
+          wheels=(*.whl)
+          sdists=(*.tar.gz)
+          if [ "${#wheels[@]}" -ne 1 ] || [ "${#sdists[@]}" -ne 1 ]; then
+            echo "::error::expected one wheel and one sdist"
+            exit 1
+          fi
+
+      - name: Publish to PyPI
+        # No token: auth comes from the OIDC trusted publisher configured on PyPI
+        # (noclick project → Publishing → noclickapp/noclick / publish-sdk.yml).
+        uses: pypa/gh-action-pypi-publish@dc37677b2e1c63e2034f94d8a5b11f265b73ba33 # release/v1
+        with:
+          packages-dir: ${{ runner.temp }}/python-package

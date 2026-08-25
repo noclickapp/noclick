@@ -1,0 +1,2276 @@
+{
+  "$defs": {
+    "SupabaseApiKeyCredential": {
+      "description": "API Key credential for Supabase.\n\nGet your API keys at: https://supabase.com/dashboard/project/_/settings/api",
+      "properties": {
+        "credential_type": {
+          "const": "supabase_api_key",
+          "default": "supabase_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "project_url": {
+          "description": "Your Supabase project URL (e.g., https://xxxx.supabase.co)",
+          "title": "Project URL",
+          "type": "string"
+        },
+        "api_key": {
+          "description": "Your Supabase API key (anon key respects RLS, service_role bypasses RLS)",
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "project_url",
+        "api_key"
+      ],
+      "title": "SupabaseApiKeyCredential",
+      "type": "object",
+      "x-credential-url": "https://supabase.com/dashboard/project/_/settings/api"
+    },
+    "SupabaseAuthAdminCreateUserConfig": {
+      "description": "Create a new user (admin operation, requires service_role API key)",
+      "properties": {
+        "operation": {
+          "const": "admin_create_user",
+          "default": "admin_create_user",
+          "title": "Admin Create User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Auth User",
+          "x-display-name": "Admin Create User",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "admin create account",
+            "provision user",
+            "service role create user",
+            "admin new user"
+          ]
+        },
+        "email": {
+          "description": "User's email address",
+          "title": "Email",
+          "type": "string"
+        },
+        "password": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "User's password (if not set, send confirmation email)",
+          "title": "Password",
+          "ui:widget": "password"
+        },
+        "email_confirm": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Skip email confirmation",
+          "title": "Auto-confirm Email"
+        },
+        "user_metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "User metadata",
+          "title": "User Metadata"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "SupabaseAuthAdminCreateUserConfig",
+      "type": "object"
+    },
+    "SupabaseAuthAdminDeleteUserConfig": {
+      "description": "Delete a user by ID (admin operation, requires service_role API key)",
+      "properties": {
+        "operation": {
+          "const": "admin_delete_user",
+          "default": "admin_delete_user",
+          "title": "Admin Delete User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Auth User",
+          "x-display-name": "Admin Delete User",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "admin delete account",
+            "remove user",
+            "service role delete user",
+            "ban user"
+          ]
+        },
+        "user_id": {
+          "description": "UUID of the user to delete",
+          "title": "User ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "SupabaseAuthAdminDeleteUserConfig",
+      "type": "object"
+    },
+    "SupabaseAuthAdminListUsersConfig": {
+      "description": "List all users (requires service_role API key)",
+      "properties": {
+        "operation": {
+          "const": "admin_list_users",
+          "default": "admin_list_users",
+          "title": "Admin List Users",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Auth User",
+          "x-display-name": "Admin List Users",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "list all users",
+            "admin users",
+            "service role users",
+            "all accounts",
+            "user directory"
+          ]
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Page number for pagination",
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "description": "Number of users per page",
+          "title": "Per Page"
+        }
+      },
+      "title": "SupabaseAuthAdminListUsersConfig",
+      "type": "object"
+    },
+    "SupabaseAuthAdminUpdateUserConfig": {
+      "description": "Update a user by ID (admin operation, requires service_role API key)",
+      "properties": {
+        "operation": {
+          "const": "admin_update_user",
+          "default": "admin_update_user",
+          "title": "Admin Update User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Auth User",
+          "x-display-name": "Admin Update User",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "admin update account",
+            "service role edit user",
+            "set user role",
+            "admin modify user"
+          ]
+        },
+        "user_id": {
+          "description": "UUID of the user to update",
+          "title": "User ID",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New email address",
+          "title": "Email"
+        },
+        "password": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New password",
+          "title": "Password",
+          "ui:widget": "password"
+        },
+        "email_confirm": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Mark email as confirmed",
+          "title": "Email Confirmed"
+        },
+        "user_metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated user metadata",
+          "title": "User Metadata"
+        },
+        "app_metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated app metadata (provider, providers, etc.)",
+          "title": "App Metadata"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "SupabaseAuthAdminUpdateUserConfig",
+      "type": "object"
+    },
+    "SupabaseAuthGetUserConfig": {
+      "description": "Get current user details (requires user's access token)",
+      "properties": {
+        "operation": {
+          "const": "get_current_user",
+          "default": "get_current_user",
+          "title": "Get Current User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Auth User",
+          "x-display-name": "Get Current User",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "current user",
+            "whoami",
+            "logged in user",
+            "session user",
+            "my profile"
+          ]
+        },
+        "access_token": {
+          "description": "User's JWT access token",
+          "title": "Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "SupabaseAuthGetUserConfig",
+      "type": "object"
+    },
+    "SupabaseAuthRefreshTokenConfig": {
+      "description": "Refresh an expired access token using refresh token",
+      "properties": {
+        "operation": {
+          "const": "refresh_access_token",
+          "default": "refresh_access_token",
+          "title": "Refresh Access Token",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Auth",
+          "x-display-name": "Refresh Access Token",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "refresh token",
+            "renew token",
+            "refresh session",
+            "new access token",
+            "rotate token"
+          ]
+        },
+        "refresh_token": {
+          "description": "Refresh token from signin response",
+          "title": "Refresh Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "refresh_token"
+      ],
+      "title": "Auth Refresh Token",
+      "type": "object"
+    },
+    "SupabaseAuthResetPasswordConfig": {
+      "description": "Send password reset email to user",
+      "properties": {
+        "operation": {
+          "const": "send_password_reset_email",
+          "default": "send_password_reset_email",
+          "title": "Send Password Reset Email",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Auth",
+          "x-display-name": "Send Password Reset Email",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "reset password",
+            "forgot password",
+            "password recovery",
+            "recovery email",
+            "reset link"
+          ]
+        },
+        "email": {
+          "description": "User's email address",
+          "title": "Email",
+          "type": "string"
+        },
+        "redirect_to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL to redirect to after password reset",
+          "title": "Redirect URL"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "Auth Reset Password",
+      "type": "object"
+    },
+    "SupabaseAuthSignInMagicLinkConfig": {
+      "description": "Send a magic link to user's email for passwordless signin",
+      "properties": {
+        "operation": {
+          "const": "send_magic_link_signin",
+          "default": "send_magic_link_signin",
+          "title": "Send Magic Link Signin",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Auth Session",
+          "x-display-name": "Send Magic Link Signin",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "magic link",
+            "passwordless login",
+            "email login link",
+            "otp link",
+            "send login link"
+          ]
+        },
+        "email": {
+          "description": "User's email address",
+          "title": "Email",
+          "type": "string"
+        },
+        "email_redirect_to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL to redirect to after clicking the magic link",
+          "title": "Email Redirect URL"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "SupabaseAuthSignInMagicLinkConfig",
+      "type": "object"
+    },
+    "SupabaseAuthSignInPasswordConfig": {
+      "description": "Sign in with email and password",
+      "properties": {
+        "operation": {
+          "const": "sign_in_with_password",
+          "default": "sign_in_with_password",
+          "title": "Sign in with Password",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Auth Session",
+          "x-display-name": "Sign in with Password",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "login",
+            "log in",
+            "sign in",
+            "email password login",
+            "authenticate user"
+          ]
+        },
+        "email": {
+          "description": "User's email address",
+          "title": "Email",
+          "type": "string"
+        },
+        "password": {
+          "description": "User's password",
+          "title": "Password",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "email",
+        "password"
+      ],
+      "title": "SupabaseAuthSignInPasswordConfig",
+      "type": "object"
+    },
+    "SupabaseAuthSignOutConfig": {
+      "description": "Sign out the current user (requires user's access token)",
+      "properties": {
+        "operation": {
+          "const": "sign_out_user",
+          "default": "sign_out_user",
+          "title": "Sign Out User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Auth Session",
+          "x-display-name": "Sign Out User",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "logout",
+            "log out",
+            "sign out",
+            "end session",
+            "revoke session"
+          ]
+        },
+        "access_token": {
+          "description": "User's JWT access token from signin response",
+          "title": "Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "SupabaseAuthSignOutConfig",
+      "type": "object"
+    },
+    "SupabaseAuthSignUpConfig": {
+      "description": "Sign up a new user with email and password",
+      "properties": {
+        "operation": {
+          "const": "sign_up_user",
+          "default": "sign_up_user",
+          "title": "Sign Up User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Auth User",
+          "x-display-name": "Sign Up User",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "register user",
+            "create account",
+            "signup",
+            "new user",
+            "email signup"
+          ]
+        },
+        "email": {
+          "description": "User's email address",
+          "title": "Email",
+          "type": "string"
+        },
+        "password": {
+          "description": "User's password (min 6 characters)",
+          "title": "Password",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "user_metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Additional user metadata (name, avatar_url, etc.)",
+          "title": "User Metadata"
+        },
+        "email_redirect_to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL to redirect to after email confirmation",
+          "title": "Email Redirect URL"
+        }
+      },
+      "required": [
+        "email",
+        "password"
+      ],
+      "title": "SupabaseAuthSignUpConfig",
+      "type": "object"
+    },
+    "SupabaseAuthUpdateUserConfig": {
+      "description": "Update current user's email, password, or metadata",
+      "properties": {
+        "operation": {
+          "const": "update_current_user",
+          "default": "update_current_user",
+          "title": "Update Current User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Auth User",
+          "x-display-name": "Update Current User",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "update profile",
+            "change password",
+            "update email",
+            "edit my account",
+            "set user metadata"
+          ]
+        },
+        "access_token": {
+          "description": "User's JWT access token",
+          "title": "Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New email address (requires confirmation)",
+          "title": "New Email"
+        },
+        "password": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New password (min 6 characters)",
+          "title": "New Password",
+          "ui:widget": "password"
+        },
+        "user_metadata": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated user metadata",
+          "title": "User Metadata"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "Auth Update User",
+      "type": "object"
+    },
+    "SupabaseAuthVerifyOTPConfig": {
+      "description": "Verify OTP code sent via email or SMS",
+      "properties": {
+        "operation": {
+          "const": "verify_otp_code",
+          "default": "verify_otp_code",
+          "title": "Verify Otp Code",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Auth",
+          "x-display-name": "Verify Otp Code",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "verify otp",
+            "confirm code",
+            "verify code",
+            "validate otp",
+            "sms code"
+          ]
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "User's email (for email OTP)",
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "User's phone number (for SMS OTP)",
+          "title": "Phone"
+        },
+        "token": {
+          "description": "6-digit OTP code",
+          "title": "OTP Token",
+          "type": "string"
+        },
+        "type": {
+          "description": "Type of OTP verification",
+          "enum": [
+            "signup",
+            "magiclink",
+            "recovery",
+            "email_change",
+            "sms"
+          ],
+          "title": "OTP Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "token",
+        "type"
+      ],
+      "title": "Auth Verify OTP",
+      "type": "object"
+    },
+    "SupabaseDeleteConfig": {
+      "description": "Delete rows matching filter conditions",
+      "properties": {
+        "operation": {
+          "const": "delete_table_rows",
+          "default": "delete_table_rows",
+          "title": "Delete Table Rows",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Table",
+          "x-display-name": "Delete Table Rows",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "delete rows",
+            "remove records",
+            "drop rows",
+            "delete records"
+          ]
+        },
+        "table": {
+          "description": "Name of the table to delete from",
+          "title": "Table",
+          "type": "string"
+        },
+        "filters": {
+          "description": "Array of filter objects to identify rows: [{column: 'id', operator: 'eq', value: '123'}]",
+          "items": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "title": "Filters",
+          "type": "array"
+        },
+        "return_data": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "Return the deleted rows",
+          "title": "Return Data"
+        }
+      },
+      "required": [
+        "table",
+        "filters"
+      ],
+      "title": "SupabaseDeleteConfig",
+      "type": "object"
+    },
+    "SupabaseEdgeFunctionInvokeConfig": {
+      "description": "Invoke a Supabase Edge Function",
+      "properties": {
+        "operation": {
+          "const": "invoke_edge_function",
+          "default": "invoke_edge_function",
+          "title": "Invoke Edge Function",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Function",
+          "x-display-name": "Invoke Edge Function",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "invoke edge function",
+            "run edge function",
+            "call serverless",
+            "trigger function",
+            "deno function"
+          ]
+        },
+        "function_name": {
+          "description": "Name of the edge function to invoke",
+          "title": "Function Name",
+          "type": "string"
+        },
+        "method": {
+          "default": "POST",
+          "description": "HTTP method for the function invocation",
+          "enum": [
+            "GET",
+            "POST",
+            "PUT",
+            "PATCH",
+            "DELETE"
+          ],
+          "title": "HTTP Method",
+          "type": "string"
+        },
+        "body": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON body to send to the function",
+          "title": "Request Body"
+        },
+        "headers": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Additional headers to send with the request",
+          "title": "Custom Headers"
+        }
+      },
+      "required": [
+        "function_name"
+      ],
+      "title": "SupabaseEdgeFunctionInvokeConfig",
+      "type": "object"
+    },
+    "SupabaseInsertConfig": {
+      "description": "Insert one or more rows into a table",
+      "properties": {
+        "operation": {
+          "const": "insert_table_rows",
+          "default": "insert_table_rows",
+          "title": "Insert Table Rows",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Table",
+          "x-display-name": "Insert Table Rows",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "insert rows",
+            "add records",
+            "create rows",
+            "bulk insert",
+            "write rows"
+          ]
+        },
+        "table": {
+          "description": "Name of the table to insert into",
+          "title": "Table",
+          "type": "string"
+        },
+        "rows": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "items": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "array"
+            }
+          ],
+          "description": "Single row object or array of row objects to insert",
+          "title": "Rows"
+        },
+        "return_data": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "Return the inserted rows",
+          "title": "Return Data"
+        },
+        "on_conflict": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Column(s) for conflict resolution (enables upsert behavior)",
+          "title": "On Conflict"
+        },
+        "ignore_duplicates": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Skip rows that violate unique constraints instead of erroring",
+          "title": "Ignore Duplicates"
+        },
+        "default_to_null": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "Use NULL for missing columns (false uses column defaults)",
+          "title": "Default to Null"
+        }
+      },
+      "required": [
+        "table",
+        "rows"
+      ],
+      "title": "SupabaseInsertConfig",
+      "type": "object"
+    },
+    "SupabaseOAuthCredential": {
+      "description": "OAuth 2.0 credential for Supabase.\n\nObtained via the Supabase Management API OAuth flow. After connecting, the\nproject's anon and service_role keys are fetched once and cached here so\nworkflow node executions don't require additional Management API calls.\n\nRegister your OAuth app at: https://supabase.com/dashboard/account/tokens",
+      "properties": {
+        "credential_type": {
+          "const": "supabase_oauth",
+          "default": "supabase_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "project_url": {
+          "description": "Your Supabase project URL (e.g., https://xxxx.supabase.co)",
+          "title": "Project URL",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "Supabase Management API OAuth token",
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "OAuth refresh token for renewal",
+          "title": "Refresh Token"
+        },
+        "expires_at": {
+          "description": "ISO 8601 timestamp when access token expires",
+          "title": "Token Expiry",
+          "type": "string"
+        },
+        "anon_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cached project anon key",
+          "title": "Anon Key"
+        },
+        "service_role_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cached project service_role key",
+          "title": "Service Role Key"
+        }
+      },
+      "required": [
+        "project_url",
+        "access_token",
+        "expires_at"
+      ],
+      "title": "SupabaseOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-oauth-provider": "supabase",
+      "x-oauth-scopes": [
+        "database:read",
+        "database:write",
+        "auth:read",
+        "auth:write",
+        "storage:read",
+        "storage:write",
+        "edge_functions:read",
+        "edge_functions:write",
+        "secrets:read",
+        "projects:read"
+      ]
+    },
+    "SupabaseRealtimeBroadcastConfig": {
+      "description": "Send broadcast messages to a Realtime channel",
+      "properties": {
+        "operation": {
+          "const": "broadcast_realtime_message",
+          "default": "broadcast_realtime_message",
+          "title": "Broadcast Realtime Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Realtime",
+          "x-display-name": "Broadcast Realtime Message",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "broadcast message",
+            "realtime channel",
+            "send to subscribers",
+            "publish realtime",
+            "pubsub broadcast"
+          ]
+        },
+        "channel": {
+          "description": "Channel name/topic to broadcast to",
+          "title": "Channel",
+          "type": "string"
+        },
+        "event": {
+          "description": "Event name for the broadcast message",
+          "title": "Event",
+          "type": "string"
+        },
+        "payload": {
+          "additionalProperties": true,
+          "description": "Message payload to broadcast",
+          "title": "Payload",
+          "type": "object"
+        }
+      },
+      "required": [
+        "channel",
+        "event",
+        "payload"
+      ],
+      "title": "SupabaseRealtimeBroadcastConfig",
+      "type": "object"
+    },
+    "SupabaseRpcConfig": {
+      "description": "Call a database function (RPC)",
+      "properties": {
+        "operation": {
+          "const": "call_database_function",
+          "default": "call_database_function",
+          "title": "Call Database Function",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Function",
+          "x-display-name": "Call Database Function",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "call function",
+            "run rpc",
+            "stored procedure",
+            "invoke postgres function",
+            "execute function"
+          ]
+        },
+        "function_name": {
+          "description": "Name of the database function to call",
+          "title": "Function Name",
+          "type": "string"
+        },
+        "params": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Object with parameter names and values for the function",
+          "title": "Parameters"
+        },
+        "return_data": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "Return the function result",
+          "title": "Return Data"
+        },
+        "single": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Return a single object instead of an array",
+          "title": "Single Row"
+        },
+        "count": {
+          "anyOf": [
+            {
+              "enum": [
+                "exact",
+                "planned",
+                "estimated"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Include row count in response",
+          "title": "Count",
+          "enum": [
+            "exact",
+            "planned",
+            "estimated"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "function_name"
+      ],
+      "title": "SupabaseRpcConfig",
+      "type": "object"
+    },
+    "SupabaseSelectConfig": {
+      "description": "Select/query rows from a table with filtering, ordering, and pagination",
+      "properties": {
+        "operation": {
+          "const": "select_table_rows",
+          "default": "select_table_rows",
+          "title": "Select Table Rows",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Table",
+          "x-display-name": "Select Table Rows",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "query rows",
+            "select from table",
+            "read records",
+            "run select",
+            "paginate rows",
+            "filter table"
+          ]
+        },
+        "table": {
+          "description": "Name of the table to query",
+          "title": "Table",
+          "type": "string"
+        },
+        "columns": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "*",
+          "description": "Columns to select (comma-separated, * for all). Supports relations: 'id,name,posts(id,title)'",
+          "title": "Columns"
+        },
+        "filters": {
+          "anyOf": [
+            {
+              "items": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Array of filter objects: [{column: 'name', operator: 'eq', value: 'John'}]",
+          "title": "Filters"
+        },
+        "order_by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Column to order by (e.g., 'created_at.desc' or 'name.asc')",
+          "title": "Order By"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of rows to return",
+          "title": "Limit"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of rows to skip (for pagination)",
+          "title": "Offset"
+        },
+        "single": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Return a single object instead of an array (fails if not exactly one row)",
+          "title": "Single Row"
+        },
+        "count": {
+          "anyOf": [
+            {
+              "enum": [
+                "exact",
+                "planned",
+                "estimated"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Include row count in response headers",
+          "title": "Count",
+          "enum": [
+            "exact",
+            "planned",
+            "estimated"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "table"
+      ],
+      "title": "SupabaseSelectConfig",
+      "type": "object"
+    },
+    "SupabaseStorageCopyFileConfig": {
+      "description": "Copy a file within or between buckets",
+      "properties": {
+        "operation": {
+          "const": "copy_storage_file",
+          "default": "copy_storage_file",
+          "title": "Copy Storage File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Storage",
+          "x-display-name": "Copy Storage File",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "copy file",
+            "duplicate file",
+            "clone file"
+          ]
+        },
+        "bucket_name": {
+          "description": "Source bucket name",
+          "title": "Bucket Name",
+          "type": "string"
+        },
+        "from_path": {
+          "description": "Source file path",
+          "title": "From Path",
+          "type": "string"
+        },
+        "to_path": {
+          "description": "Destination file path",
+          "title": "To Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket_name",
+        "from_path",
+        "to_path"
+      ],
+      "title": "SupabaseStorageCopyFileConfig",
+      "type": "object"
+    },
+    "SupabaseStorageCreateBucketConfig": {
+      "description": "Create a new storage bucket",
+      "properties": {
+        "operation": {
+          "const": "create_storage_bucket",
+          "default": "create_storage_bucket",
+          "title": "Create Storage Bucket",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Storage",
+          "x-display-name": "Create Storage Bucket",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "create bucket",
+            "new bucket",
+            "make storage bucket",
+            "add bucket"
+          ]
+        },
+        "bucket_name": {
+          "description": "Name of the bucket (lowercase, no spaces)",
+          "title": "Bucket Name",
+          "type": "string"
+        },
+        "public": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Make bucket publicly accessible",
+          "title": "Public"
+        },
+        "file_size_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max file size in bytes (null for unlimited)",
+          "title": "File Size Limit"
+        },
+        "allowed_mime_types": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "List of allowed MIME types (null for all types)",
+          "title": "Allowed MIME Types"
+        }
+      },
+      "required": [
+        "bucket_name"
+      ],
+      "title": "SupabaseStorageCreateBucketConfig",
+      "type": "object"
+    },
+    "SupabaseStorageCreateSignedURLConfig": {
+      "description": "Create a signed URL for temporary file access",
+      "properties": {
+        "operation": {
+          "const": "create_file_signed_url",
+          "default": "create_file_signed_url",
+          "title": "Create File Signed Url",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Storage",
+          "x-display-name": "Create File Signed Url",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "signed url",
+            "temporary link",
+            "presigned url",
+            "private file link",
+            "expiring url"
+          ]
+        },
+        "bucket_name": {
+          "description": "Name of the bucket",
+          "title": "Bucket Name",
+          "type": "string"
+        },
+        "file_path": {
+          "description": "Path to the file",
+          "title": "File Path",
+          "type": "string"
+        },
+        "expires_in": {
+          "default": 3600,
+          "description": "Number of seconds until URL expires",
+          "maximum": 604800,
+          "minimum": 1,
+          "title": "Expires In (seconds)",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "bucket_name",
+        "file_path"
+      ],
+      "title": "SupabaseStorageCreateSignedURLConfig",
+      "type": "object"
+    },
+    "SupabaseStorageDeleteBucketConfig": {
+      "description": "Delete a storage bucket",
+      "properties": {
+        "operation": {
+          "const": "delete_storage_bucket",
+          "default": "delete_storage_bucket",
+          "title": "Delete Storage Bucket",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Storage",
+          "x-display-name": "Delete Storage Bucket",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "delete bucket",
+            "remove bucket",
+            "drop bucket"
+          ]
+        },
+        "bucket_name": {
+          "description": "Name of the bucket to delete",
+          "title": "Bucket Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket_name"
+      ],
+      "title": "SupabaseStorageDeleteBucketConfig",
+      "type": "object"
+    },
+    "SupabaseStorageDeleteFileConfig": {
+      "description": "Delete a file from storage",
+      "properties": {
+        "operation": {
+          "const": "delete_storage_file",
+          "default": "delete_storage_file",
+          "title": "Delete Storage File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Storage",
+          "x-display-name": "Delete Storage File",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "delete file",
+            "remove file",
+            "erase file"
+          ]
+        },
+        "bucket_name": {
+          "description": "Name of the bucket",
+          "title": "Bucket Name",
+          "type": "string"
+        },
+        "file_paths": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            }
+          ],
+          "description": "File path(s) to delete (string or array of strings)",
+          "title": "File Paths"
+        }
+      },
+      "required": [
+        "bucket_name",
+        "file_paths"
+      ],
+      "title": "SupabaseStorageDeleteFileConfig",
+      "type": "object"
+    },
+    "SupabaseStorageDownloadFileConfig": {
+      "description": "Download a file from storage",
+      "properties": {
+        "operation": {
+          "const": "download_storage_file",
+          "default": "download_storage_file",
+          "title": "Download Storage File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Storage",
+          "x-display-name": "Download Storage File",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "download file",
+            "fetch file",
+            "get file bytes",
+            "retrieve file"
+          ]
+        },
+        "bucket_name": {
+          "description": "Name of the bucket",
+          "title": "Bucket Name",
+          "type": "string"
+        },
+        "file_path": {
+          "description": "Path within bucket",
+          "title": "File Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket_name",
+        "file_path"
+      ],
+      "title": "SupabaseStorageDownloadFileConfig",
+      "type": "object"
+    },
+    "SupabaseStorageEmptyBucketConfig": {
+      "description": "Empty a storage bucket (delete all files)",
+      "properties": {
+        "operation": {
+          "const": "empty_storage_bucket",
+          "default": "empty_storage_bucket",
+          "title": "Empty Storage Bucket",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Storage",
+          "x-display-name": "Empty Storage Bucket",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "empty bucket",
+            "clear bucket",
+            "wipe bucket",
+            "delete all files"
+          ]
+        },
+        "bucket_name": {
+          "description": "Name of the bucket to empty",
+          "title": "Bucket Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket_name"
+      ],
+      "title": "SupabaseStorageEmptyBucketConfig",
+      "type": "object"
+    },
+    "SupabaseStorageGetBucketConfig": {
+      "description": "Get bucket details",
+      "properties": {
+        "operation": {
+          "const": "get_storage_bucket",
+          "default": "get_storage_bucket",
+          "title": "Get Storage Bucket",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Storage",
+          "x-display-name": "Get Storage Bucket",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "bucket details",
+            "get bucket",
+            "bucket info",
+            "inspect bucket"
+          ]
+        },
+        "bucket_name": {
+          "description": "Name of the bucket",
+          "title": "Bucket Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket_name"
+      ],
+      "title": "SupabaseStorageGetBucketConfig",
+      "type": "object"
+    },
+    "SupabaseStorageGetPublicURLConfig": {
+      "description": "Get public URL for a file in a public bucket",
+      "properties": {
+        "operation": {
+          "const": "get_file_public_url",
+          "default": "get_file_public_url",
+          "title": "Get File Public Url",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Storage",
+          "x-display-name": "Get File Public Url",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "public url",
+            "public link",
+            "file url",
+            "shareable link"
+          ]
+        },
+        "bucket_name": {
+          "description": "Name of the public bucket",
+          "title": "Bucket Name",
+          "type": "string"
+        },
+        "file_path": {
+          "description": "Path to the file",
+          "title": "File Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket_name",
+        "file_path"
+      ],
+      "title": "SupabaseStorageGetPublicURLConfig",
+      "type": "object"
+    },
+    "SupabaseStorageListBucketsConfig": {
+      "description": "List all storage buckets",
+      "properties": {
+        "operation": {
+          "const": "list_storage_buckets",
+          "default": "list_storage_buckets",
+          "title": "List Storage Buckets",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Storage",
+          "x-display-name": "List Storage Buckets",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "list buckets",
+            "all buckets",
+            "show buckets",
+            "get buckets"
+          ]
+        }
+      },
+      "title": "SupabaseStorageListBucketsConfig",
+      "type": "object"
+    },
+    "SupabaseStorageListFilesConfig": {
+      "description": "List files in a storage bucket folder",
+      "properties": {
+        "operation": {
+          "const": "list_bucket_files",
+          "default": "list_bucket_files",
+          "title": "List Bucket Files",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Storage",
+          "x-display-name": "List Bucket Files",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "list files",
+            "browse folder",
+            "files in bucket",
+            "list objects",
+            "folder contents"
+          ]
+        },
+        "bucket_name": {
+          "description": "Name of the bucket",
+          "title": "Bucket Name",
+          "type": "string"
+        },
+        "folder_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "",
+          "description": "Folder path within bucket (empty for root)",
+          "title": "Folder Path"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "description": "Maximum number of files to return",
+          "title": "Limit"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Number of files to skip",
+          "title": "Offset"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search query to filter files",
+          "title": "Search"
+        }
+      },
+      "required": [
+        "bucket_name"
+      ],
+      "title": "SupabaseStorageListFilesConfig",
+      "type": "object"
+    },
+    "SupabaseStorageMoveFileConfig": {
+      "description": "Move a file within or between buckets",
+      "properties": {
+        "operation": {
+          "const": "move_storage_file",
+          "default": "move_storage_file",
+          "title": "Move Storage File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Storage",
+          "x-display-name": "Move Storage File",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "move file",
+            "rename file",
+            "relocate file"
+          ]
+        },
+        "bucket_name": {
+          "description": "Source bucket name",
+          "title": "Bucket Name",
+          "type": "string"
+        },
+        "from_path": {
+          "description": "Current file path",
+          "title": "From Path",
+          "type": "string"
+        },
+        "to_path": {
+          "description": "New file path",
+          "title": "To Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket_name",
+        "from_path",
+        "to_path"
+      ],
+      "title": "SupabaseStorageMoveFileConfig",
+      "type": "object"
+    },
+    "SupabaseStorageUploadFileConfig": {
+      "description": "Upload a file to storage",
+      "properties": {
+        "operation": {
+          "const": "upload_storage_file",
+          "default": "upload_storage_file",
+          "title": "Upload Storage File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Storage",
+          "x-display-name": "Upload Storage File",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "upload file",
+            "put file",
+            "store file",
+            "save to storage"
+          ]
+        },
+        "bucket_name": {
+          "description": "Name of the bucket",
+          "title": "Bucket Name",
+          "type": "string"
+        },
+        "file_path": {
+          "description": "Path within bucket (e.g., 'folder/file.jpg')",
+          "title": "File Path",
+          "type": "string"
+        },
+        "file_content": {
+          "description": "The file to upload \u2014 plain text, or for binary: upload a file, paste a URL, reference an upstream file (e.g. {{http-1.response.url}}), a data: URI, or base64.",
+          "title": "File Content",
+          "type": "string"
+        },
+        "content_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "MIME type (e.g., 'image/jpeg', 'text/plain')",
+          "title": "Content Type"
+        },
+        "upsert": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Overwrite file if it exists",
+          "title": "Upsert"
+        }
+      },
+      "required": [
+        "bucket_name",
+        "file_path",
+        "file_content"
+      ],
+      "title": "SupabaseStorageUploadFileConfig",
+      "type": "object"
+    },
+    "SupabaseUpdateConfig": {
+      "description": "Update rows matching filter conditions",
+      "properties": {
+        "operation": {
+          "const": "update_table_rows",
+          "default": "update_table_rows",
+          "title": "Update Table Rows",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Table",
+          "x-display-name": "Update Table Rows",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "update rows",
+            "edit records",
+            "modify rows",
+            "change records",
+            "patch rows"
+          ]
+        },
+        "table": {
+          "description": "Name of the table to update",
+          "title": "Table",
+          "type": "string"
+        },
+        "values": {
+          "additionalProperties": true,
+          "description": "Object with column-value pairs to update",
+          "title": "Values",
+          "type": "object"
+        },
+        "filters": {
+          "description": "Array of filter objects to identify rows: [{column: 'id', operator: 'eq', value: '123'}]",
+          "items": {
+            "additionalProperties": {
+              "type": "string"
+            },
+            "type": "object"
+          },
+          "title": "Filters",
+          "type": "array"
+        },
+        "return_data": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "Return the updated rows",
+          "title": "Return Data"
+        }
+      },
+      "required": [
+        "table",
+        "values",
+        "filters"
+      ],
+      "title": "SupabaseUpdateConfig",
+      "type": "object"
+    },
+    "SupabaseUpsertConfig": {
+      "description": "Insert rows or update if they already exist (based on primary key or unique constraint)",
+      "properties": {
+        "operation": {
+          "const": "upsert_table_rows",
+          "default": "upsert_table_rows",
+          "title": "Upsert Table Rows",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Table",
+          "x-display-name": "Upsert Table Rows",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "upsert rows",
+            "insert or update",
+            "merge rows",
+            "on conflict",
+            "upsert records"
+          ]
+        },
+        "table": {
+          "description": "Name of the table",
+          "title": "Table",
+          "type": "string"
+        },
+        "rows": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "items": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "array"
+            }
+          ],
+          "description": "Single row object or array of row objects to upsert",
+          "title": "Rows"
+        },
+        "on_conflict": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Column(s) to determine conflicts (defaults to primary key)",
+          "title": "On Conflict Column"
+        },
+        "return_data": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "Return the upserted rows",
+          "title": "Return Data"
+        },
+        "ignore_duplicates": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Skip conflicting rows instead of updating them",
+          "title": "Ignore Duplicates"
+        },
+        "default_to_null": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "Use NULL for missing columns (false uses column defaults)",
+          "title": "Default to Null"
+        }
+      },
+      "required": [
+        "table",
+        "rows"
+      ],
+      "title": "SupabaseUpsertConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for Supabase node including credentials",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "admin_create_user": "#/$defs/SupabaseAuthAdminCreateUserConfig",
+          "admin_delete_user": "#/$defs/SupabaseAuthAdminDeleteUserConfig",
+          "admin_list_users": "#/$defs/SupabaseAuthAdminListUsersConfig",
+          "admin_update_user": "#/$defs/SupabaseAuthAdminUpdateUserConfig",
+          "broadcast_realtime_message": "#/$defs/SupabaseRealtimeBroadcastConfig",
+          "call_database_function": "#/$defs/SupabaseRpcConfig",
+          "copy_storage_file": "#/$defs/SupabaseStorageCopyFileConfig",
+          "create_file_signed_url": "#/$defs/SupabaseStorageCreateSignedURLConfig",
+          "create_storage_bucket": "#/$defs/SupabaseStorageCreateBucketConfig",
+          "delete_storage_bucket": "#/$defs/SupabaseStorageDeleteBucketConfig",
+          "delete_storage_file": "#/$defs/SupabaseStorageDeleteFileConfig",
+          "delete_table_rows": "#/$defs/SupabaseDeleteConfig",
+          "download_storage_file": "#/$defs/SupabaseStorageDownloadFileConfig",
+          "empty_storage_bucket": "#/$defs/SupabaseStorageEmptyBucketConfig",
+          "get_current_user": "#/$defs/SupabaseAuthGetUserConfig",
+          "get_file_public_url": "#/$defs/SupabaseStorageGetPublicURLConfig",
+          "get_storage_bucket": "#/$defs/SupabaseStorageGetBucketConfig",
+          "insert_table_rows": "#/$defs/SupabaseInsertConfig",
+          "invoke_edge_function": "#/$defs/SupabaseEdgeFunctionInvokeConfig",
+          "list_bucket_files": "#/$defs/SupabaseStorageListFilesConfig",
+          "list_storage_buckets": "#/$defs/SupabaseStorageListBucketsConfig",
+          "move_storage_file": "#/$defs/SupabaseStorageMoveFileConfig",
+          "refresh_access_token": "#/$defs/SupabaseAuthRefreshTokenConfig",
+          "select_table_rows": "#/$defs/SupabaseSelectConfig",
+          "send_magic_link_signin": "#/$defs/SupabaseAuthSignInMagicLinkConfig",
+          "send_password_reset_email": "#/$defs/SupabaseAuthResetPasswordConfig",
+          "sign_in_with_password": "#/$defs/SupabaseAuthSignInPasswordConfig",
+          "sign_out_user": "#/$defs/SupabaseAuthSignOutConfig",
+          "sign_up_user": "#/$defs/SupabaseAuthSignUpConfig",
+          "update_current_user": "#/$defs/SupabaseAuthUpdateUserConfig",
+          "update_table_rows": "#/$defs/SupabaseUpdateConfig",
+          "upload_storage_file": "#/$defs/SupabaseStorageUploadFileConfig",
+          "upsert_table_rows": "#/$defs/SupabaseUpsertConfig",
+          "verify_otp_code": "#/$defs/SupabaseAuthVerifyOTPConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/SupabaseSelectConfig"
+        },
+        {
+          "$ref": "#/$defs/SupabaseInsertConfig"
+        },
+        {
+          "$ref": "#/$defs/SupabaseUpdateConfig"
+        },
+        {
+          "$ref": "#/$defs/SupabaseDeleteConfig"
+        },
+        {
+          "$ref": "#/$defs/SupabaseUpsertConfig"
+        },
+        {
+          "$ref": "#/$defs/SupabaseRpcConfig"
+        },
+        {
+          "$ref": "#/$defs/SupabaseAuthSignUpConfig"
+        },
+        {
+          "$ref": "#/$defs/SupabaseAuthSignInPasswordConfig"
+        },
+        {
+          "$ref": "#/$defs/SupabaseAuthSignInMagicLinkConfig"
+        },
+        {
+          "$ref": "#/$defs/SupabaseAuthSignOutConfig"
+        },
+        {
+          "$ref": "#/$defs/SupabaseAuthGetUserConfig"
+        },
+        {
+          "$ref": "#/$defs/SupabaseAuthUpdateUserConfig"
+        },
+        {
+          "$ref": "#/$defs/SupabaseAuthResetPasswordConfig"
+        },
+        {
+          "$ref": "#/$defs/SupabaseAuthVerifyOTPConfig"
+        },
+        {
+          "$ref": "#/$defs/SupabaseAuthRefreshTokenConfig"
+        },
+        {
+          "$ref": "#/$defs/SupabaseAuthAdminListUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/SupabaseAuthAdminCreateUserConfig"
+        },
+        {
+          "$ref": "#/$defs/SupabaseAuthAdminDeleteUserConfig"
+        },
+        {
+          "$ref": "#/$defs/SupabaseAuthAdminUpdateUserConfig"
+        },
+        {
+          "$ref": "#/$defs/SupabaseStorageCreateBucketConfig"
+        },
+        {
+          "$ref": "#/$defs/SupabaseStorageListBucketsConfig"
+        },
+        {
+          "$ref": "#/$defs/SupabaseStorageGetBucketConfig"
+        },
+        {
+          "$ref": "#/$defs/SupabaseStorageDeleteBucketConfig"
+        },
+        {
+          "$ref": "#/$defs/SupabaseStorageEmptyBucketConfig"
+        },
+        {
+          "$ref": "#/$defs/SupabaseStorageUploadFileConfig"
+        },
+        {
+          "$ref": "#/$defs/SupabaseStorageDownloadFileConfig"
+        },
+        {
+          "$ref": "#/$defs/SupabaseStorageListFilesConfig"
+        },
+        {
+          "$ref": "#/$defs/SupabaseStorageDeleteFileConfig"
+        },
+        {
+          "$ref": "#/$defs/SupabaseStorageMoveFileConfig"
+        },
+        {
+          "$ref": "#/$defs/SupabaseStorageCopyFileConfig"
+        },
+        {
+          "$ref": "#/$defs/SupabaseStorageCreateSignedURLConfig"
+        },
+        {
+          "$ref": "#/$defs/SupabaseStorageGetPublicURLConfig"
+        },
+        {
+          "$ref": "#/$defs/SupabaseRealtimeBroadcastConfig"
+        },
+        {
+          "$ref": "#/$defs/SupabaseEdgeFunctionInvokeConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SupabaseOAuthCredential"
+        },
+        {
+          "$ref": "#/$defs/SupabaseApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Supabase Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Query the users table and filter by email",
+    "Insert a new record into the products table with SKU and price",
+    "Update user profile photo in storage bucket",
+    "Sign up a new user with email and password",
+    "Delete expired sessions from the auth_sessions table",
+    "Download a file from the documents storage bucket",
+    "Create a signed URL for a private PDF file"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

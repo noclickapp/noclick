@@ -1,0 +1,1113 @@
+{
+  "$defs": {
+    "FathomApiKeyCredential": {
+      "description": "API Key credential for Fathom (sent as the X-Api-Key header).",
+      "properties": {
+        "credential_type": {
+          "const": "fathom_api_key",
+          "default": "fathom_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Your Fathom API key from Settings. Sent as the X-Api-Key header.",
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "FathomApiKeyCredential",
+      "type": "object",
+      "x-credential-url": "https://fathom.video/settings"
+    },
+    "FathomBearerTokenCredential": {
+      "description": "Manual bearer token credential for Fathom.",
+      "properties": {
+        "credential_type": {
+          "const": "fathom_bearer_token",
+          "default": "fathom_bearer_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "bearer_token": {
+          "description": "A Fathom bearer token to send as Authorization: Bearer <token>.",
+          "title": "Bearer Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "bearer_token"
+      ],
+      "title": "FathomBearerTokenCredential",
+      "type": "object",
+      "x-credential-url": "https://developers.fathom.ai/sdks/authentication"
+    },
+    "FathomCreateWebhookConfig": {
+      "description": "Register a Fathom webhook that posts new-meeting content to a URL.",
+      "properties": {
+        "operation": {
+          "const": "create_webhook",
+          "default": "create_webhook",
+          "title": "Create Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Create Webhook",
+          "x-is-trigger": false
+        },
+        "destination_url": {
+          "description": "Where Fathom should POST new-meeting events",
+          "title": "Destination URL",
+          "type": "string"
+        },
+        "triggered_for": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "my_recordings",
+          "description": "Which recordings fire the webhook",
+          "enum": [
+            "my_recordings",
+            "shared_external_recordings",
+            "my_shared_with_team_recordings",
+            "shared_team_recordings"
+          ],
+          "enumNames": [
+            "My recordings",
+            "Shared external recordings",
+            "My recordings shared with team",
+            "Shared team recordings"
+          ],
+          "title": "Triggered For",
+          "x-enum-searchable": true
+        },
+        "include_transcript": {
+          "default": "false",
+          "description": "Include the transcript in the payload",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Transcript",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "include_summary": {
+          "default": "true",
+          "description": "Include the AI summary in the payload",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Summary",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "include_action_items": {
+          "default": "false",
+          "description": "Include action items in the payload",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Action Items",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "include_crm_matches": {
+          "default": "false",
+          "description": "Include CRM matches in the payload",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include CRM Matches",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "destination_url"
+      ],
+      "title": "FathomCreateWebhookConfig",
+      "type": "object"
+    },
+    "FathomDeleteWebhookConfig": {
+      "description": "Delete a previously registered Fathom webhook by id.",
+      "properties": {
+        "operation": {
+          "const": "delete_webhook",
+          "default": "delete_webhook",
+          "title": "Delete Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Delete Webhook",
+          "x-is-trigger": false
+        },
+        "webhook_id": {
+          "description": "The id of the webhook to delete",
+          "title": "Webhook ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "FathomDeleteWebhookConfig",
+      "type": "object"
+    },
+    "FathomGetSummaryConfig": {
+      "description": "Get the AI-generated summary for a recording.",
+      "properties": {
+        "operation": {
+          "const": "get_summary",
+          "default": "get_summary",
+          "title": "Get Recording Summary",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Recordings",
+          "x-display-name": "Get Recording Summary",
+          "x-is-trigger": false
+        },
+        "recording_id": {
+          "description": "The recording's integer id",
+          "title": "Recording ID",
+          "type": "string"
+        },
+        "destination_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional callback URL to receive the summary asynchronously",
+          "title": "Destination URL"
+        }
+      },
+      "required": [
+        "recording_id"
+      ],
+      "title": "FathomGetSummaryConfig",
+      "type": "object"
+    },
+    "FathomGetTranscriptConfig": {
+      "description": "Get the full speaker-attributed transcript for a recording.",
+      "properties": {
+        "operation": {
+          "const": "get_transcript",
+          "default": "get_transcript",
+          "title": "Get Recording Transcript",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Recordings",
+          "x-display-name": "Get Recording Transcript",
+          "x-is-trigger": false
+        },
+        "recording_id": {
+          "description": "The recording's integer id",
+          "title": "Recording ID",
+          "type": "string"
+        },
+        "destination_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional callback URL to receive the transcript asynchronously",
+          "title": "Destination URL"
+        }
+      },
+      "required": [
+        "recording_id"
+      ],
+      "title": "FathomGetTranscriptConfig",
+      "type": "object"
+    },
+    "FathomListExternalMeetingsConfig": {
+      "description": "List meetings that had at least one external attendee (preset of list_meetings).",
+      "properties": {
+        "operation": {
+          "const": "list_external_meetings",
+          "default": "list_external_meetings",
+          "title": "List External Meetings",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Meetings",
+          "x-display-name": "List External Meetings",
+          "x-is-trigger": false
+        },
+        "created_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 lower bound on meeting creation time",
+          "title": "Created After",
+          "ui:placeholder": "2026-01-01T00:00:00Z",
+          "ui:widget": "datetime"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor (next_cursor from a prior page)",
+          "title": "Cursor"
+        }
+      },
+      "title": "FathomListExternalMeetingsConfig",
+      "type": "object"
+    },
+    "FathomListMeetingTypesConfig": {
+      "description": "List the configured meeting types used to categorize meetings.",
+      "properties": {
+        "operation": {
+          "const": "list_meeting_types",
+          "default": "list_meeting_types",
+          "title": "List Meeting Types",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Meetings",
+          "x-display-name": "List Meeting Types",
+          "x-is-trigger": false
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor (next_cursor from a prior page)",
+          "title": "Cursor"
+        }
+      },
+      "title": "FathomListMeetingTypesConfig",
+      "type": "object"
+    },
+    "FathomListMeetingsByTypeConfig": {
+      "description": "List only meetings of a given configured type (preset of list_meetings).",
+      "properties": {
+        "operation": {
+          "const": "list_meetings_by_type",
+          "default": "list_meetings_by_type",
+          "title": "List Meetings By Type",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Meetings",
+          "x-display-name": "List Meetings By Type",
+          "x-is-trigger": false
+        },
+        "meeting_type": {
+          "description": "The configured meeting type to filter by",
+          "title": "Meeting Type",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a meeting type",
+            "field_name": "meeting_type",
+            "placeholder": "Select a meeting type...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor (next_cursor from a prior page)",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "meeting_type"
+      ],
+      "title": "FathomListMeetingsByTypeConfig",
+      "type": "object"
+    },
+    "FathomListMeetingsConfig": {
+      "description": "List meetings/recordings with optional filters and inline content includes.",
+      "properties": {
+        "operation": {
+          "const": "list_meetings",
+          "default": "list_meetings",
+          "title": "List Meetings",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Meetings",
+          "x-display-name": "List Meetings",
+          "x-is-trigger": false
+        },
+        "created_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 lower bound on meeting creation time",
+          "title": "Created After",
+          "ui:placeholder": "2026-01-01T00:00:00Z",
+          "ui:widget": "datetime"
+        },
+        "created_before": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 upper bound on meeting creation time",
+          "title": "Created Before",
+          "ui:placeholder": "2026-12-31T23:59:59Z",
+          "ui:widget": "datetime"
+        },
+        "meeting_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter to a single configured meeting type",
+          "title": "Meeting Type",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a meeting type",
+            "field_name": "meeting_type",
+            "placeholder": "Select a meeting type...",
+            "searchable": true
+          }
+        },
+        "recorded_by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by recorder email(s), comma-separated",
+          "title": "Recorded By"
+        },
+        "teams": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by team name(s), comma-separated",
+          "title": "Teams"
+        },
+        "calendar_invitees_domains": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by calendar invitee domain(s), comma-separated",
+          "title": "Invitee Domains"
+        },
+        "calendar_invitees_domains_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Scope the invitee-domain filter",
+          "enum": [
+            "",
+            "all",
+            "only_internal",
+            "one_or_more_external"
+          ],
+          "enumNames": [
+            "Any",
+            "All",
+            "Only internal",
+            "One or more external"
+          ],
+          "title": "Invitee Domain Type",
+          "x-enum-searchable": true
+        },
+        "include_summary": {
+          "default": "false",
+          "description": "Include the AI summary inline (heavy / rate-limited)",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Summary",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "include_transcript": {
+          "default": "false",
+          "description": "Include the full transcript inline (heavy / rate-limited)",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Transcript",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "include_action_items": {
+          "default": "false",
+          "description": "Include extracted action items inline",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Action Items",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "include_crm_matches": {
+          "default": "false",
+          "description": "Include matched CRM contacts/companies/deals inline",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include CRM Matches",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "include_highlights": {
+          "default": "false",
+          "description": "Include meeting highlights inline",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Highlights",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor (next_cursor from a prior page)",
+          "title": "Cursor"
+        }
+      },
+      "title": "FathomListMeetingsConfig",
+      "type": "object"
+    },
+    "FathomListMeetingsWithActionItemsConfig": {
+      "description": "List meetings with extracted action items inline (preset of list_meetings).",
+      "properties": {
+        "operation": {
+          "const": "list_meetings_with_action_items",
+          "default": "list_meetings_with_action_items",
+          "title": "List Meetings With Action Items",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Meetings",
+          "x-display-name": "List Meetings With Action Items",
+          "x-is-trigger": false
+        },
+        "created_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 lower bound on meeting creation time",
+          "title": "Created After",
+          "ui:placeholder": "2026-01-01T00:00:00Z",
+          "ui:widget": "datetime"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor (next_cursor from a prior page)",
+          "title": "Cursor"
+        }
+      },
+      "title": "FathomListMeetingsWithActionItemsConfig",
+      "type": "object"
+    },
+    "FathomListMeetingsWithCrmMatchesConfig": {
+      "description": "List meetings with matched CRM contacts/companies/deals inline (preset).",
+      "properties": {
+        "operation": {
+          "const": "list_meetings_with_crm_matches",
+          "default": "list_meetings_with_crm_matches",
+          "title": "List Meetings With CRM Matches",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Meetings",
+          "x-display-name": "List Meetings With CRM Matches",
+          "x-is-trigger": false
+        },
+        "created_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 lower bound on meeting creation time",
+          "title": "Created After",
+          "ui:placeholder": "2026-01-01T00:00:00Z",
+          "ui:widget": "datetime"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor (next_cursor from a prior page)",
+          "title": "Cursor"
+        }
+      },
+      "title": "FathomListMeetingsWithCrmMatchesConfig",
+      "type": "object"
+    },
+    "FathomListMeetingsWithSummariesConfig": {
+      "description": "List meetings with AI summaries inline (preset of list_meetings).",
+      "properties": {
+        "operation": {
+          "const": "list_meetings_with_summaries",
+          "default": "list_meetings_with_summaries",
+          "title": "List Meetings With Summaries",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Meetings",
+          "x-display-name": "List Meetings With Summaries",
+          "x-is-trigger": false
+        },
+        "created_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 lower bound on meeting creation time",
+          "title": "Created After",
+          "ui:placeholder": "2026-01-01T00:00:00Z",
+          "ui:widget": "datetime"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor (next_cursor from a prior page)",
+          "title": "Cursor"
+        }
+      },
+      "title": "FathomListMeetingsWithSummariesConfig",
+      "type": "object"
+    },
+    "FathomListTeamMembersConfig": {
+      "description": "List team members, optionally filtered to a single team.",
+      "properties": {
+        "operation": {
+          "const": "list_team_members",
+          "default": "list_team_members",
+          "title": "List Team Members",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Teams",
+          "x-display-name": "List Team Members",
+          "x-is-trigger": false
+        },
+        "team": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter to members of a specific team",
+          "title": "Team",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a team name",
+            "field_name": "team",
+            "placeholder": "Select a team...",
+            "searchable": true
+          }
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor (next_cursor from a prior page)",
+          "title": "Cursor"
+        }
+      },
+      "title": "FathomListTeamMembersConfig",
+      "type": "object"
+    },
+    "FathomListTeamsConfig": {
+      "description": "List teams in the Fathom account.",
+      "properties": {
+        "operation": {
+          "const": "list_teams",
+          "default": "list_teams",
+          "title": "List Teams",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Teams",
+          "x-display-name": "List Teams",
+          "x-is-trigger": false
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor (next_cursor from a prior page)",
+          "title": "Cursor"
+        }
+      },
+      "title": "FathomListTeamsConfig",
+      "type": "object"
+    },
+    "FathomNewMeetingTriggerConfig": {
+      "description": "Fire the workflow when a new meeting is processed (Fathom newMeeting webhook).",
+      "properties": {
+        "operation": {
+          "const": "on_new_meeting",
+          "default": "on_new_meeting",
+          "title": "On New Meeting",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On New Meeting",
+          "x-is-trigger": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fathom posts new-meeting events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        }
+      },
+      "title": "FathomNewMeetingTriggerConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "FathomOAuthCredential": {
+      "description": "OAuth credential for Fathom multi-user integrations.",
+      "properties": {
+        "credential_type": {
+          "const": "fathom_oauth",
+          "default": "fathom_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "OAuth access token issued by Fathom.",
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "OAuth refresh token used to renew the access token.",
+          "title": "Refresh Token"
+        },
+        "expires_at": {
+          "description": "ISO 8601 timestamp when the OAuth access token expires.",
+          "title": "Token Expiry",
+          "type": "string"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Granted OAuth scope string.",
+          "title": "Scope"
+        },
+        "token_type": {
+          "default": "Bearer",
+          "description": "OAuth token type.",
+          "title": "Token Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token",
+        "expires_at"
+      ],
+      "title": "FathomOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-oauth-provider": "fathom",
+      "x-oauth-scopes": [
+        "public_api"
+      ]
+    }
+  },
+  "description": "Full configuration for the Fathom node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_webhook": "#/$defs/FathomCreateWebhookConfig",
+          "delete_webhook": "#/$defs/FathomDeleteWebhookConfig",
+          "get_summary": "#/$defs/FathomGetSummaryConfig",
+          "get_transcript": "#/$defs/FathomGetTranscriptConfig",
+          "list_external_meetings": "#/$defs/FathomListExternalMeetingsConfig",
+          "list_meeting_types": "#/$defs/FathomListMeetingTypesConfig",
+          "list_meetings": "#/$defs/FathomListMeetingsConfig",
+          "list_meetings_by_type": "#/$defs/FathomListMeetingsByTypeConfig",
+          "list_meetings_with_action_items": "#/$defs/FathomListMeetingsWithActionItemsConfig",
+          "list_meetings_with_crm_matches": "#/$defs/FathomListMeetingsWithCrmMatchesConfig",
+          "list_meetings_with_summaries": "#/$defs/FathomListMeetingsWithSummariesConfig",
+          "list_team_members": "#/$defs/FathomListTeamMembersConfig",
+          "list_teams": "#/$defs/FathomListTeamsConfig",
+          "on_new_meeting": "#/$defs/FathomNewMeetingTriggerConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/FathomListMeetingsConfig"
+        },
+        {
+          "$ref": "#/$defs/FathomListMeetingsWithSummariesConfig"
+        },
+        {
+          "$ref": "#/$defs/FathomListMeetingsWithActionItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/FathomListMeetingsWithCrmMatchesConfig"
+        },
+        {
+          "$ref": "#/$defs/FathomListMeetingsByTypeConfig"
+        },
+        {
+          "$ref": "#/$defs/FathomListExternalMeetingsConfig"
+        },
+        {
+          "$ref": "#/$defs/FathomListMeetingTypesConfig"
+        },
+        {
+          "$ref": "#/$defs/FathomGetSummaryConfig"
+        },
+        {
+          "$ref": "#/$defs/FathomGetTranscriptConfig"
+        },
+        {
+          "$ref": "#/$defs/FathomListTeamsConfig"
+        },
+        {
+          "$ref": "#/$defs/FathomListTeamMembersConfig"
+        },
+        {
+          "$ref": "#/$defs/FathomCreateWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/FathomDeleteWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/FathomNewMeetingTriggerConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FathomOAuthCredential"
+        },
+        {
+          "$ref": "#/$defs/FathomBearerTokenCredential"
+        },
+        {
+          "$ref": "#/$defs/FathomApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Fathom Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "List my recent meetings with AI summaries",
+    "Get the transcript for a specific recording",
+    "List meetings that had at least one external attendee",
+    "List meetings with action items to create tasks from",
+    "Trigger a workflow whenever a new meeting is processed"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

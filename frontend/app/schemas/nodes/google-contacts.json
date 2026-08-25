@@ -1,0 +1,674 @@
+{
+  "$defs": {
+    "GoogleContactsCreateContactConfig": {
+      "description": "Configuration for creating a new contact",
+      "properties": {
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "description": "Create a new contact",
+          "title": "Create Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact",
+          "x-display-name": "Create Contact",
+          "x-is-trigger": false
+        },
+        "given_name": {
+          "description": "Contact's first/given name",
+          "placeholder": "John",
+          "title": "First Name",
+          "type": "string"
+        },
+        "family_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact's last/family name",
+          "placeholder": "Doe (optional)",
+          "title": "Last Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact's email address",
+          "placeholder": "john@example.com (optional)",
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact's phone number",
+          "placeholder": "+1 555-123-4567 (optional)",
+          "title": "Phone"
+        },
+        "organization": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact's company or organization",
+          "placeholder": "Acme Inc. (optional)",
+          "title": "Organization"
+        },
+        "job_title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact's job title",
+          "placeholder": "Software Engineer (optional)",
+          "title": "Job Title"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Additional notes about the contact",
+          "placeholder": "Notes about the contact... (optional)",
+          "title": "Notes",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "given_name"
+      ],
+      "title": "GoogleContactsCreateContactConfig",
+      "type": "object"
+    },
+    "GoogleContactsCreateContactGroupConfig": {
+      "description": "Configuration for creating a contact group",
+      "properties": {
+        "operation": {
+          "const": "create_contact_group",
+          "default": "create_contact_group",
+          "description": "Create a new contact group",
+          "title": "Create Contact Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact Group",
+          "x-display-name": "Create Contact Group",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Name for the new contact group",
+          "placeholder": "My Group",
+          "title": "Group Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "GoogleContactsCreateContactGroupConfig",
+      "type": "object"
+    },
+    "GoogleContactsDeleteContactConfig": {
+      "description": "Configuration for deleting a contact",
+      "properties": {
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "description": "Delete a contact",
+          "title": "Delete Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact",
+          "x-display-name": "Delete Contact",
+          "x-is-trigger": false
+        },
+        "resource_name": {
+          "description": "The resource name of the contact to delete",
+          "placeholder": "people/c1234567890",
+          "title": "Contact Resource Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resource_name"
+      ],
+      "title": "GoogleContactsDeleteContactConfig",
+      "type": "object"
+    },
+    "GoogleContactsDeleteContactGroupConfig": {
+      "description": "Configuration for deleting a contact group",
+      "properties": {
+        "operation": {
+          "const": "delete_contact_group",
+          "default": "delete_contact_group",
+          "description": "Delete a contact group",
+          "title": "Delete Contact Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact Group",
+          "x-display-name": "Delete Contact Group",
+          "x-is-trigger": false
+        },
+        "resource_name": {
+          "description": "The resource name of the contact group to delete",
+          "placeholder": "contactGroups/abc123",
+          "title": "Group Resource Name",
+          "type": "string"
+        },
+        "delete_contacts": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Also delete contacts in the group",
+          "title": "Delete Contacts"
+        }
+      },
+      "required": [
+        "resource_name"
+      ],
+      "title": "GoogleContactsDeleteContactGroupConfig",
+      "type": "object"
+    },
+    "GoogleContactsGetContactConfig": {
+      "description": "Configuration for getting a single contact",
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "description": "Get a specific contact",
+          "title": "Get Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact",
+          "x-display-name": "Get Contact",
+          "x-is-trigger": false
+        },
+        "resource_name": {
+          "description": "The resource name of the contact (e.g., 'people/c1234567890')",
+          "placeholder": "people/c1234567890",
+          "title": "Contact Resource Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resource_name"
+      ],
+      "title": "GoogleContactsGetContactConfig",
+      "type": "object"
+    },
+    "GoogleContactsGetContactGroupConfig": {
+      "description": "Configuration for getting a contact group",
+      "properties": {
+        "operation": {
+          "const": "get_contact_group",
+          "default": "get_contact_group",
+          "description": "Get a specific contact group",
+          "title": "Get Contact Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact Group",
+          "x-display-name": "Get Contact Group",
+          "x-is-trigger": false
+        },
+        "resource_name": {
+          "description": "The resource name of the contact group",
+          "placeholder": "contactGroups/abc123",
+          "title": "Group Resource Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resource_name"
+      ],
+      "title": "GoogleContactsGetContactGroupConfig",
+      "type": "object"
+    },
+    "GoogleContactsListContactGroupsConfig": {
+      "description": "Configuration for listing contact groups",
+      "properties": {
+        "operation": {
+          "const": "list_contact_groups",
+          "default": "list_contact_groups",
+          "description": "List all contact groups",
+          "title": "List Contact Groups",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact Group",
+          "x-display-name": "List Contact Groups",
+          "x-is-trigger": false
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "description": "Maximum number of groups to return (1-1000)",
+          "title": "Page Size"
+        }
+      },
+      "title": "GoogleContactsListContactGroupsConfig",
+      "type": "object"
+    },
+    "GoogleContactsListContactsConfig": {
+      "description": "Configuration for listing contacts",
+      "properties": {
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "description": "List all contacts",
+          "title": "List Contacts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact",
+          "x-display-name": "List Contacts",
+          "x-is-trigger": false
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "description": "Maximum number of contacts to return (1-1000)",
+          "title": "Page Size"
+        },
+        "sort_order": {
+          "anyOf": [
+            {
+              "enum": [
+                "LAST_MODIFIED_ASCENDING",
+                "LAST_MODIFIED_DESCENDING",
+                "FIRST_NAME_ASCENDING",
+                "LAST_NAME_ASCENDING"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "How to sort the contacts",
+          "title": "Sort Order",
+          "enum": [
+            "LAST_MODIFIED_ASCENDING",
+            "LAST_MODIFIED_DESCENDING",
+            "FIRST_NAME_ASCENDING",
+            "LAST_NAME_ASCENDING"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "GoogleContactsListContactsConfig",
+      "type": "object"
+    },
+    "GoogleContactsOAuthCredential": {
+      "description": "OAuth credential for Google Contacts access.\nTokens are obtained via OAuth flow, not entered manually.",
+      "properties": {
+        "credential_type": {
+          "const": "google_contacts_oauth",
+          "default": "google_contacts_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "OAuth 2.0 access token from Google",
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "description": "OAuth 2.0 refresh token for automatic renewal",
+          "title": "Refresh Token",
+          "type": "string"
+        },
+        "expires_at": {
+          "description": "ISO 8601 timestamp when access token expires",
+          "title": "Token Expiry",
+          "type": "string"
+        },
+        "email": {
+          "description": "Email address of the connected Google account",
+          "title": "Google Account",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "email"
+      ],
+      "title": "GoogleContactsOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-oauth-provider": "google",
+      "x-oauth-scopes": [
+        "https://www.googleapis.com/auth/contacts"
+      ]
+    },
+    "GoogleContactsSearchContactsConfig": {
+      "description": "Configuration for searching contacts",
+      "properties": {
+        "operation": {
+          "const": "search_contacts",
+          "default": "search_contacts",
+          "description": "Search contacts",
+          "title": "Search Contacts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact",
+          "x-display-name": "Search Contacts",
+          "x-is-trigger": false
+        },
+        "query": {
+          "description": "Search term to find contacts (searches names, email addresses, phone numbers)",
+          "placeholder": "John Doe or john@example.com",
+          "title": "Search Query",
+          "type": "string"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 30,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 30,
+          "description": "Maximum number of results to return (1-30)",
+          "title": "Page Size"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "GoogleContactsSearchContactsConfig",
+      "type": "object"
+    },
+    "GoogleContactsUpdateContactConfig": {
+      "description": "Configuration for updating a contact",
+      "properties": {
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "description": "Update a contact",
+          "title": "Update Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact",
+          "x-display-name": "Update Contact",
+          "x-is-trigger": false
+        },
+        "resource_name": {
+          "description": "The resource name of the contact to update",
+          "placeholder": "people/c1234567890",
+          "title": "Contact Resource Name",
+          "type": "string"
+        },
+        "given_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New first name (leave empty to keep current)",
+          "placeholder": "New first name (optional)",
+          "title": "First Name"
+        },
+        "family_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New last name (leave empty to keep current)",
+          "placeholder": "New last name (optional)",
+          "title": "Last Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New email address (leave empty to keep current)",
+          "placeholder": "new@example.com (optional)",
+          "title": "Email"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New phone number (leave empty to keep current)",
+          "placeholder": "+1 555-123-4567 (optional)",
+          "title": "Phone"
+        },
+        "organization": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New organization (leave empty to keep current)",
+          "placeholder": "New company (optional)",
+          "title": "Organization"
+        },
+        "job_title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New job title (leave empty to keep current)",
+          "placeholder": "New title (optional)",
+          "title": "Job Title"
+        }
+      },
+      "required": [
+        "resource_name"
+      ],
+      "title": "GoogleContactsUpdateContactConfig",
+      "type": "object"
+    },
+    "GoogleContactsUpdateContactGroupConfig": {
+      "description": "Configuration for updating a contact group",
+      "properties": {
+        "operation": {
+          "const": "update_contact_group",
+          "default": "update_contact_group",
+          "description": "Update a contact group",
+          "title": "Update Contact Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact Group",
+          "x-display-name": "Update Contact Group",
+          "x-is-trigger": false
+        },
+        "resource_name": {
+          "description": "The resource name of the contact group to update",
+          "placeholder": "contactGroups/abc123",
+          "title": "Group Resource Name",
+          "type": "string"
+        },
+        "name": {
+          "description": "New name for the contact group",
+          "placeholder": "Updated Group Name",
+          "title": "New Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "resource_name",
+        "name"
+      ],
+      "title": "GoogleContactsUpdateContactGroupConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for Google Contacts node including credentials",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_contact": "#/$defs/GoogleContactsCreateContactConfig",
+          "create_contact_group": "#/$defs/GoogleContactsCreateContactGroupConfig",
+          "delete_contact": "#/$defs/GoogleContactsDeleteContactConfig",
+          "delete_contact_group": "#/$defs/GoogleContactsDeleteContactGroupConfig",
+          "get_contact": "#/$defs/GoogleContactsGetContactConfig",
+          "get_contact_group": "#/$defs/GoogleContactsGetContactGroupConfig",
+          "list_contact_groups": "#/$defs/GoogleContactsListContactGroupsConfig",
+          "list_contacts": "#/$defs/GoogleContactsListContactsConfig",
+          "search_contacts": "#/$defs/GoogleContactsSearchContactsConfig",
+          "update_contact": "#/$defs/GoogleContactsUpdateContactConfig",
+          "update_contact_group": "#/$defs/GoogleContactsUpdateContactGroupConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GoogleContactsListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleContactsGetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleContactsCreateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleContactsUpdateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleContactsDeleteContactConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleContactsSearchContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleContactsListContactGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleContactsGetContactGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleContactsCreateContactGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleContactsUpdateContactGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleContactsDeleteContactGroupConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GoogleContactsOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Google-contacts Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Add new contact Sarah Chen from Acme Inc with phone and email",
+    "Search for all contacts in Sales department and get their details",
+    "Create a team contact group \"Q2 Partners\" with 15 vendor contacts",
+    "Update contact job title for everyone promoted this quarter",
+    "Get all contacts from the Engineering group and export their emails",
+    "Delete duplicate contacts and merge info into primary contact",
+    "List all contact groups and get member counts for organization chart"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -1,0 +1,2375 @@
+{
+  "$defs": {
+    "GoogleMapsAerialLookupVideoConfig": {
+      "description": "Aerial View: look up a previously requested aerial video by ID or address.",
+      "properties": {
+        "operation": {
+          "const": "aerial_lookup_video",
+          "default": "aerial_lookup_video",
+          "title": "Look Up Aerial Video",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Aerial View",
+          "x-display-name": "Look Up Aerial Video",
+          "x-is-trigger": false
+        },
+        "video_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The video ID returned by Render Aerial Video. Provide this OR an Address (one required).",
+          "title": "Video ID"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The US postal address used when rendering. Provide this OR a Video ID (one required).",
+          "title": "Address"
+        }
+      },
+      "title": "GoogleMapsAerialLookupVideoConfig",
+      "type": "object",
+      "x-require-one-of": [
+        [
+          [
+            "video_id"
+          ],
+          [
+            "address"
+          ]
+        ]
+      ]
+    },
+    "GoogleMapsAerialRenderVideoConfig": {
+      "description": "Aerial View: request rendering of an aerial video for an address (async).",
+      "properties": {
+        "operation": {
+          "const": "aerial_render_video",
+          "default": "aerial_render_video",
+          "title": "Render Aerial Video",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Aerial View",
+          "x-display-name": "Render Aerial Video",
+          "x-is-trigger": false
+        },
+        "address": {
+          "description": "A US postal address to render an aerial video for",
+          "title": "Address",
+          "type": "string"
+        }
+      },
+      "required": [
+        "address"
+      ],
+      "title": "GoogleMapsAerialRenderVideoConfig",
+      "type": "object"
+    },
+    "GoogleMapsAirQualityCurrentConfig": {
+      "description": "Air Quality: current air quality conditions for a location.",
+      "properties": {
+        "operation": {
+          "const": "air_quality_current",
+          "default": "air_quality_current",
+          "title": "Air Quality (Current)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Air Quality",
+          "x-display-name": "Air Quality (Current)",
+          "x-is-trigger": false
+        },
+        "latitude": {
+          "description": "Location latitude",
+          "title": "Latitude",
+          "type": "string"
+        },
+        "longitude": {
+          "description": "Location longitude",
+          "title": "Longitude",
+          "type": "string"
+        },
+        "universal_aqi": {
+          "default": "true",
+          "description": "Include the Universal AQI (0-100) in the response",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Universal AQI",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "extra_computations": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated extras: HEALTH_RECOMMENDATIONS, DOMINANT_POLLUTANT_CONCENTRATION, POLLUTANT_CONCENTRATION, LOCAL_AQI, POLLUTANT_ADDITIONAL_INFO",
+          "title": "Extra Computations"
+        },
+        "language_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Language code for results (e.g. en)",
+          "title": "Language"
+        }
+      },
+      "required": [
+        "latitude",
+        "longitude"
+      ],
+      "title": "GoogleMapsAirQualityCurrentConfig",
+      "type": "object"
+    },
+    "GoogleMapsAirQualityForecastConfig": {
+      "description": "Air Quality: hourly air quality forecast (up to 96 hours ahead).",
+      "properties": {
+        "operation": {
+          "const": "air_quality_forecast",
+          "default": "air_quality_forecast",
+          "title": "Air Quality (Forecast)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Air Quality",
+          "x-display-name": "Air Quality (Forecast)",
+          "x-is-trigger": false
+        },
+        "latitude": {
+          "description": "Location latitude",
+          "title": "Latitude",
+          "type": "string"
+        },
+        "longitude": {
+          "description": "Location longitude",
+          "title": "Longitude",
+          "type": "string"
+        },
+        "date_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC3339 timestamp for a single forecast hour (use this OR a period)",
+          "title": "Date Time"
+        },
+        "start_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC3339 start of a forecast period",
+          "title": "Period Start"
+        },
+        "end_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC3339 end of a forecast period (inclusive)",
+          "title": "Period End"
+        },
+        "extra_computations": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated extras (see Air Quality Current)",
+          "title": "Extra Computations"
+        },
+        "language_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Language code for results (e.g. en)",
+          "title": "Language"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of hourly records per page (default 24)",
+          "title": "Page Size"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token from a previous response for pagination",
+          "title": "Page Token"
+        }
+      },
+      "required": [
+        "latitude",
+        "longitude"
+      ],
+      "title": "GoogleMapsAirQualityForecastConfig",
+      "type": "object",
+      "x-require-one-of": [
+        [
+          [
+            "date_time"
+          ],
+          [
+            "start_time",
+            "end_time"
+          ]
+        ]
+      ]
+    },
+    "GoogleMapsAirQualityHistoryConfig": {
+      "description": "Air Quality: historical hourly air quality (past 30 days).",
+      "properties": {
+        "operation": {
+          "const": "air_quality_history",
+          "default": "air_quality_history",
+          "title": "Air Quality (History)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Air Quality",
+          "x-display-name": "Air Quality (History)",
+          "x-is-trigger": false
+        },
+        "latitude": {
+          "description": "Location latitude",
+          "title": "Latitude",
+          "type": "string"
+        },
+        "longitude": {
+          "description": "Location longitude",
+          "title": "Longitude",
+          "type": "string"
+        },
+        "hours": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of hours back from now (1-720). Use this OR a date/period.",
+          "title": "Hours"
+        },
+        "date_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC3339 timestamp for a single past hour",
+          "title": "Date Time"
+        },
+        "start_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC3339 start of a history period",
+          "title": "Period Start"
+        },
+        "end_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC3339 end of a history period (inclusive)",
+          "title": "Period End"
+        },
+        "extra_computations": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated extras",
+          "title": "Extra Computations"
+        },
+        "language_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Language code for results (e.g. en)",
+          "title": "Language"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Records per page (default 72, max 168)",
+          "title": "Page Size"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token from a previous response for pagination",
+          "title": "Page Token"
+        }
+      },
+      "required": [
+        "latitude",
+        "longitude"
+      ],
+      "title": "GoogleMapsAirQualityHistoryConfig",
+      "type": "object",
+      "x-require-one-of": [
+        [
+          [
+            "hours"
+          ],
+          [
+            "date_time"
+          ],
+          [
+            "start_time",
+            "end_time"
+          ]
+        ]
+      ]
+    },
+    "GoogleMapsApiKeyCredential": {
+      "description": "API key credential for Google Maps Platform.",
+      "properties": {
+        "credential_type": {
+          "const": "google_maps_api_key",
+          "default": "google_maps_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Your Google Maps Platform API key from the Google Cloud Console (Credentials page). Billing must be enabled and the relevant APIs turned on.",
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "GoogleMapsApiKeyCredential",
+      "type": "object",
+      "x-credential-url": "https://console.cloud.google.com/google/maps-apis/credentials"
+    },
+    "GoogleMapsAutocompleteConfig": {
+      "description": "Places (New) autocomplete: place/query predictions for a partial input.",
+      "properties": {
+        "operation": {
+          "const": "autocomplete",
+          "default": "autocomplete",
+          "title": "Place Autocomplete",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Places",
+          "x-display-name": "Place Autocomplete",
+          "x-is-trigger": false
+        },
+        "input_text": {
+          "description": "Partial text to get predictions for",
+          "title": "Input",
+          "type": "string"
+        },
+        "field_mask": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional X-Goog-FieldMask (autocomplete returns suggestions without one)",
+          "title": "Field Mask"
+        },
+        "language_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Language code for results (e.g. en)",
+          "title": "Language"
+        },
+        "region_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Region code to bias results (e.g. US)",
+          "title": "Region"
+        }
+      },
+      "required": [
+        "input_text"
+      ],
+      "title": "GoogleMapsAutocompleteConfig",
+      "type": "object"
+    },
+    "GoogleMapsComputeInsightsConfig": {
+      "description": "Places Aggregate: count or list places matching a location + type filter.",
+      "properties": {
+        "operation": {
+          "const": "compute_insights",
+          "default": "compute_insights",
+          "title": "Compute Insights",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Places Insights",
+          "x-display-name": "Compute Insights",
+          "x-is-trigger": false
+        },
+        "insights": {
+          "default": "INSIGHT_COUNT",
+          "description": "Comma-separated: INSIGHT_COUNT, INSIGHT_PLACES",
+          "title": "Insights",
+          "type": "string"
+        },
+        "included_types": {
+          "description": "Comma-separated place types to match (e.g. restaurant,cafe)",
+          "title": "Included Types",
+          "type": "string"
+        },
+        "region_place_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A place ID to use as the region filter (e.g. ChIJ...). Provide this OR a circle (latitude + longitude + radius) \u2014 one location filter is required.",
+          "title": "Region Place ID"
+        },
+        "latitude": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Center latitude for a circle filter (requires longitude + radius).",
+          "title": "Circle Latitude"
+        },
+        "longitude": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Center longitude for a circle filter (requires latitude + radius).",
+          "title": "Circle Longitude"
+        },
+        "radius": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Circle radius in meters (requires latitude + longitude).",
+          "title": "Circle Radius (m)"
+        },
+        "excluded_types": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated place types to exclude",
+          "title": "Excluded Types"
+        },
+        "min_rating": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum average rating (1.0-5.0)",
+          "title": "Min Rating"
+        },
+        "max_rating": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum average rating (1.0-5.0)",
+          "title": "Max Rating"
+        }
+      },
+      "required": [
+        "included_types"
+      ],
+      "title": "GoogleMapsComputeInsightsConfig",
+      "type": "object",
+      "x-require-one-of": [
+        [
+          [
+            "region_place_id"
+          ],
+          [
+            "latitude",
+            "longitude",
+            "radius"
+          ]
+        ]
+      ]
+    },
+    "GoogleMapsComputeRouteMatrixConfig": {
+      "description": "Routes API: compute route info for every origin-destination combination.",
+      "properties": {
+        "operation": {
+          "const": "compute_route_matrix",
+          "default": "compute_route_matrix",
+          "title": "Compute Route Matrix",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Routes",
+          "x-display-name": "Compute Route Matrix",
+          "x-is-trigger": false
+        },
+        "origins": {
+          "description": "Semicolon-separated origins, each 'lat,lng' or an address",
+          "title": "Origins",
+          "type": "string"
+        },
+        "destinations": {
+          "description": "Semicolon-separated destinations, each 'lat,lng' or an address",
+          "title": "Destinations",
+          "type": "string"
+        },
+        "travel_mode": {
+          "default": "DRIVE",
+          "description": "Travel mode",
+          "enum": [
+            "DRIVE",
+            "BICYCLE",
+            "WALK",
+            "TWO_WHEELER",
+            "TRANSIT"
+          ],
+          "title": "Travel Mode",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "field_mask": {
+          "default": "originIndex,destinationIndex,duration,distanceMeters,status,condition",
+          "description": "Comma-separated response fields (X-Goog-FieldMask). Required by the API.",
+          "title": "Field Mask",
+          "type": "string"
+        }
+      },
+      "required": [
+        "origins",
+        "destinations"
+      ],
+      "title": "GoogleMapsComputeRouteMatrixConfig",
+      "type": "object"
+    },
+    "GoogleMapsComputeRoutesConfig": {
+      "description": "Routes API: compute the primary route between origin and destination.",
+      "properties": {
+        "operation": {
+          "const": "compute_routes",
+          "default": "compute_routes",
+          "title": "Compute Routes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Routes",
+          "x-display-name": "Compute Routes",
+          "x-is-trigger": false
+        },
+        "origin": {
+          "description": "Origin as 'lat,lng' coordinates or an address string",
+          "title": "Origin",
+          "type": "string"
+        },
+        "destination": {
+          "description": "Destination as 'lat,lng' coordinates or an address string",
+          "title": "Destination",
+          "type": "string"
+        },
+        "travel_mode": {
+          "default": "DRIVE",
+          "description": "Travel mode",
+          "enum": [
+            "DRIVE",
+            "BICYCLE",
+            "WALK",
+            "TWO_WHEELER",
+            "TRANSIT"
+          ],
+          "title": "Travel Mode",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "routing_preference": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Routing preference (e.g. TRAFFIC_AWARE) \u2014 DRIVE/TWO_WHEELER only",
+          "enum": [
+            "",
+            "TRAFFIC_UNAWARE",
+            "TRAFFIC_AWARE",
+            "TRAFFIC_AWARE_OPTIMAL"
+          ],
+          "title": "Routing Preference",
+          "x-enum-searchable": true
+        },
+        "field_mask": {
+          "default": "routes.duration,routes.distanceMeters,routes.polyline.encodedPolyline",
+          "description": "Comma-separated response fields (X-Goog-FieldMask). Required by the API.",
+          "title": "Field Mask",
+          "type": "string"
+        }
+      },
+      "required": [
+        "origin",
+        "destination"
+      ],
+      "title": "GoogleMapsComputeRoutesConfig",
+      "type": "object"
+    },
+    "GoogleMapsDirectionsConfig": {
+      "description": "Legacy Directions: turn-by-turn directions between two points.",
+      "properties": {
+        "operation": {
+          "const": "directions",
+          "default": "directions",
+          "title": "Directions (Legacy)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Legacy Routing",
+          "x-display-name": "Directions (Legacy)",
+          "x-is-trigger": false
+        },
+        "origin": {
+          "description": "Origin as 'lat,lng' or an address string",
+          "title": "Origin",
+          "type": "string"
+        },
+        "destination": {
+          "description": "Destination as 'lat,lng' or an address string",
+          "title": "Destination",
+          "type": "string"
+        },
+        "mode": {
+          "default": "driving",
+          "description": "Travel mode",
+          "enum": [
+            "driving",
+            "walking",
+            "bicycling",
+            "transit"
+          ],
+          "title": "Mode",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "waypoints": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pipe-separated intermediate waypoints",
+          "title": "Waypoints"
+        }
+      },
+      "required": [
+        "origin",
+        "destination"
+      ],
+      "title": "GoogleMapsDirectionsConfig",
+      "type": "object"
+    },
+    "GoogleMapsDistanceMatrixConfig": {
+      "description": "Legacy Distance Matrix: travel distance/time between origins and destinations.",
+      "properties": {
+        "operation": {
+          "const": "distance_matrix",
+          "default": "distance_matrix",
+          "title": "Distance Matrix (Legacy)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Legacy Routing",
+          "x-display-name": "Distance Matrix (Legacy)",
+          "x-is-trigger": false
+        },
+        "origins": {
+          "description": "Pipe-separated origins, each 'lat,lng' or an address",
+          "title": "Origins",
+          "type": "string"
+        },
+        "destinations": {
+          "description": "Pipe-separated destinations, each 'lat,lng' or an address",
+          "title": "Destinations",
+          "type": "string"
+        },
+        "mode": {
+          "default": "driving",
+          "description": "Travel mode",
+          "enum": [
+            "driving",
+            "walking",
+            "bicycling",
+            "transit"
+          ],
+          "title": "Mode",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "origins",
+        "destinations"
+      ],
+      "title": "GoogleMapsDistanceMatrixConfig",
+      "type": "object"
+    },
+    "GoogleMapsElevationConfig": {
+      "description": "Elevation: elevation (meters above sea level) for points.",
+      "properties": {
+        "operation": {
+          "const": "elevation",
+          "default": "elevation",
+          "title": "Elevation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Utilities",
+          "x-display-name": "Elevation",
+          "x-is-trigger": false
+        },
+        "locations": {
+          "description": "Pipe-separated 'lat,lng' points, e.g. 39.7391,-104.9847|36.455,-116.866",
+          "title": "Locations",
+          "type": "string"
+        }
+      },
+      "required": [
+        "locations"
+      ],
+      "title": "GoogleMapsElevationConfig",
+      "type": "object"
+    },
+    "GoogleMapsFindPlaceConfig": {
+      "description": "Legacy Places find place: single best-match place from text input.",
+      "properties": {
+        "operation": {
+          "const": "find_place",
+          "default": "find_place",
+          "title": "Find Place (Legacy)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Legacy Places",
+          "x-display-name": "Find Place (Legacy)",
+          "x-is-trigger": false
+        },
+        "input_text": {
+          "description": "Text or phone number to look up",
+          "title": "Input",
+          "type": "string"
+        },
+        "input_type": {
+          "default": "textquery",
+          "description": "The type of input provided",
+          "enum": [
+            "textquery",
+            "phonenumber"
+          ],
+          "title": "Input Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated fields to return (e.g. place_id,name,formatted_address)",
+          "title": "Fields"
+        }
+      },
+      "required": [
+        "input_text"
+      ],
+      "title": "GoogleMapsFindPlaceConfig",
+      "type": "object"
+    },
+    "GoogleMapsGeocodeConfig": {
+      "description": "Forward geocode: convert an address into lat-lng coordinates and a place ID.",
+      "properties": {
+        "operation": {
+          "const": "geocode",
+          "default": "geocode",
+          "title": "Geocode Address",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Geocoding",
+          "x-display-name": "Geocode Address",
+          "x-is-trigger": false
+        },
+        "address": {
+          "description": "Street address or place to geocode (e.g. 1600 Amphitheatre Pkwy, Mountain View, CA)",
+          "title": "Address",
+          "type": "string"
+        },
+        "region": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ccTLD region code to bias results (e.g. us, uk)",
+          "title": "Region Bias"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Language for results (e.g. en, fr)",
+          "title": "Language"
+        }
+      },
+      "required": [
+        "address"
+      ],
+      "title": "GoogleMapsGeocodeConfig",
+      "type": "object"
+    },
+    "GoogleMapsGeocodeV4Config": {
+      "description": "Geocoding v4: resolve geographic info for a given place ID.",
+      "properties": {
+        "operation": {
+          "const": "geocode_v4_place",
+          "default": "geocode_v4_place",
+          "title": "Geocode Place ID (v4)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Geocoding",
+          "x-display-name": "Geocode Place ID (v4)",
+          "x-is-trigger": false
+        },
+        "place_id": {
+          "description": "The place ID to resolve (e.g. ChIJ...)",
+          "title": "Place ID",
+          "type": "string"
+        },
+        "field_mask": {
+          "default": "*",
+          "description": "Comma-separated response fields (X-Goog-FieldMask). Use * for all fields.",
+          "title": "Field Mask",
+          "type": "string"
+        }
+      },
+      "required": [
+        "place_id"
+      ],
+      "title": "GoogleMapsGeocodeV4Config",
+      "type": "object"
+    },
+    "GoogleMapsGeolocateConfig": {
+      "description": "Geolocation: estimate a location from cell towers / WiFi / caller IP.",
+      "properties": {
+        "operation": {
+          "const": "geolocate",
+          "default": "geolocate",
+          "title": "Geolocate",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Geolocation",
+          "x-display-name": "Geolocate",
+          "x-is-trigger": false
+        },
+        "consider_ip": {
+          "default": "true",
+          "description": "Fall back to caller-IP geolocation when no signals are supplied",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Consider IP",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "wifi_access_points": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON array of WiFi access points (e.g. [{\"macAddress\":\"...\"}])",
+          "title": "WiFi Access Points (JSON)",
+          "ui:widget": "textarea"
+        },
+        "cell_towers": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON array of cell towers (e.g. [{\"cellId\":..,\"locationAreaCode\":..}])",
+          "title": "Cell Towers (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "GoogleMapsGeolocateConfig",
+      "type": "object"
+    },
+    "GoogleMapsLegacyAutocompleteConfig": {
+      "description": "Legacy Places autocomplete: typeahead predictions for a partial query.",
+      "properties": {
+        "operation": {
+          "const": "legacy_autocomplete",
+          "default": "legacy_autocomplete",
+          "title": "Autocomplete (Legacy)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Legacy Places",
+          "x-display-name": "Autocomplete (Legacy)",
+          "x-is-trigger": false
+        },
+        "input_text": {
+          "description": "Partial query string to get predictions for",
+          "title": "Input",
+          "type": "string"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Language for results (e.g. en)",
+          "title": "Language"
+        },
+        "components": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Grouping of place restrictions (e.g. country:us)",
+          "title": "Components"
+        }
+      },
+      "required": [
+        "input_text"
+      ],
+      "title": "GoogleMapsLegacyAutocompleteConfig",
+      "type": "object"
+    },
+    "GoogleMapsNearbySearchConfig": {
+      "description": "Places (New) nearby search: find places within a circle around a location.",
+      "properties": {
+        "operation": {
+          "const": "nearby_search",
+          "default": "nearby_search",
+          "title": "Nearby Search",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Places",
+          "x-display-name": "Nearby Search",
+          "x-is-trigger": false
+        },
+        "latitude": {
+          "description": "Center latitude",
+          "title": "Latitude",
+          "type": "string"
+        },
+        "longitude": {
+          "description": "Center longitude",
+          "title": "Longitude",
+          "type": "string"
+        },
+        "radius": {
+          "default": "500",
+          "description": "Search radius in meters (max 50000)",
+          "title": "Radius (m)",
+          "type": "string"
+        },
+        "included_types": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated place types to include (e.g. restaurant,cafe)",
+          "title": "Included Types"
+        },
+        "field_mask": {
+          "default": "places.displayName,places.formattedAddress,places.id,places.location,places.types",
+          "description": "Comma-separated response fields (X-Goog-FieldMask). Required by the API.",
+          "title": "Field Mask",
+          "type": "string"
+        },
+        "max_result_count": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of places to return (1-20)",
+          "title": "Max Results"
+        }
+      },
+      "required": [
+        "latitude",
+        "longitude"
+      ],
+      "title": "GoogleMapsNearbySearchConfig",
+      "type": "object"
+    },
+    "GoogleMapsNearestRoadsConfig": {
+      "description": "Roads: nearest road segment(s) to a set of coordinates.",
+      "properties": {
+        "operation": {
+          "const": "nearest_roads",
+          "default": "nearest_roads",
+          "title": "Nearest Roads",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Roads",
+          "x-display-name": "Nearest Roads",
+          "x-is-trigger": false
+        },
+        "points": {
+          "description": "Pipe-separated 'lat,lng' points (up to 100), e.g. 60.170880,24.942795|60.170879,24.942796",
+          "title": "Points",
+          "type": "string"
+        }
+      },
+      "required": [
+        "points"
+      ],
+      "title": "GoogleMapsNearestRoadsConfig",
+      "type": "object"
+    },
+    "GoogleMapsPlaceDetailsConfig": {
+      "description": "Places (New) place details: full details for a place by ID.",
+      "properties": {
+        "operation": {
+          "const": "place_details",
+          "default": "place_details",
+          "title": "Place Details",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Places",
+          "x-display-name": "Place Details",
+          "x-is-trigger": false
+        },
+        "place_id": {
+          "description": "The place ID to retrieve details for",
+          "title": "Place ID",
+          "type": "string"
+        },
+        "field_mask": {
+          "default": "id,displayName,formattedAddress,location,rating,nationalPhoneNumber,regularOpeningHours,websiteUri",
+          "description": "Comma-separated response fields (X-Goog-FieldMask). Required by the API.",
+          "title": "Field Mask",
+          "type": "string"
+        },
+        "language_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Language code for results (e.g. en)",
+          "title": "Language"
+        }
+      },
+      "required": [
+        "place_id"
+      ],
+      "title": "GoogleMapsPlaceDetailsConfig",
+      "type": "object"
+    },
+    "GoogleMapsPlacePhotoConfig": {
+      "description": "Places (New) place photo: fetch metadata/redirect for a photo resource.",
+      "properties": {
+        "operation": {
+          "const": "place_photo",
+          "default": "place_photo",
+          "title": "Place Photo",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Places",
+          "x-display-name": "Place Photo",
+          "x-is-trigger": false
+        },
+        "photo_name": {
+          "description": "The photo resource name (e.g. places/PLACE_ID/photos/PHOTO_REF)",
+          "title": "Photo Resource Name",
+          "type": "string"
+        },
+        "max_width_px": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "800",
+          "description": "Maximum width of the returned image",
+          "title": "Max Width (px)"
+        },
+        "max_height_px": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum height of the returned image",
+          "title": "Max Height (px)"
+        }
+      },
+      "required": [
+        "photo_name"
+      ],
+      "title": "GoogleMapsPlacePhotoConfig",
+      "type": "object"
+    },
+    "GoogleMapsPollenForecastConfig": {
+      "description": "Pollen: daily pollen forecast (up to 5 days) for a location.",
+      "properties": {
+        "operation": {
+          "const": "pollen_forecast",
+          "default": "pollen_forecast",
+          "title": "Pollen Forecast",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pollen",
+          "x-display-name": "Pollen Forecast",
+          "x-is-trigger": false
+        },
+        "latitude": {
+          "description": "Location latitude",
+          "title": "Latitude",
+          "type": "string"
+        },
+        "longitude": {
+          "description": "Location longitude",
+          "title": "Longitude",
+          "type": "string"
+        },
+        "days": {
+          "default": "1",
+          "description": "Number of forecast days (1-5)",
+          "title": "Days",
+          "type": "string"
+        },
+        "plants_description": {
+          "default": "true",
+          "description": "Include detailed per-plant information in the response",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Plant Descriptions",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "language_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Language code for results (e.g. en)",
+          "title": "Language"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Records per page (default/max 5)",
+          "title": "Page Size"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token from a previous response for pagination",
+          "title": "Page Token"
+        }
+      },
+      "required": [
+        "latitude",
+        "longitude"
+      ],
+      "title": "GoogleMapsPollenForecastConfig",
+      "type": "object"
+    },
+    "GoogleMapsReverseGeocodeConfig": {
+      "description": "Reverse geocode: convert lat-lng coordinates into a formatted address.",
+      "properties": {
+        "operation": {
+          "const": "reverse_geocode",
+          "default": "reverse_geocode",
+          "title": "Reverse Geocode",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Geocoding",
+          "x-display-name": "Reverse Geocode",
+          "x-is-trigger": false
+        },
+        "latlng": {
+          "description": "Latitude,longitude pair (note the order), e.g. 37.4224,-122.0841",
+          "title": "Coordinates",
+          "type": "string"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Language for results (e.g. en, fr)",
+          "title": "Language"
+        }
+      },
+      "required": [
+        "latlng"
+      ],
+      "title": "GoogleMapsReverseGeocodeConfig",
+      "type": "object"
+    },
+    "GoogleMapsSnapToRoadsConfig": {
+      "description": "Roads: snap GPS points to the most likely road geometry.",
+      "properties": {
+        "operation": {
+          "const": "snap_to_roads",
+          "default": "snap_to_roads",
+          "title": "Snap to Roads",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Roads",
+          "x-display-name": "Snap to Roads",
+          "x-is-trigger": false
+        },
+        "path": {
+          "description": "Pipe-separated 'lat,lng' points (up to 100), e.g. -35.27801,149.12958|-35.28032,149.12907",
+          "title": "Path",
+          "type": "string"
+        },
+        "interpolate": {
+          "default": "false",
+          "description": "Interpolate the path to include all points forming the full road geometry",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Interpolate",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "title": "GoogleMapsSnapToRoadsConfig",
+      "type": "object"
+    },
+    "GoogleMapsSolarBuildingInsightsConfig": {
+      "description": "Solar: solar potential insights for the building closest to a location.",
+      "properties": {
+        "operation": {
+          "const": "solar_building_insights",
+          "default": "solar_building_insights",
+          "title": "Solar Building Insights",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Solar",
+          "x-display-name": "Solar Building Insights",
+          "x-is-trigger": false
+        },
+        "latitude": {
+          "description": "Location latitude",
+          "title": "Latitude",
+          "type": "string"
+        },
+        "longitude": {
+          "description": "Location longitude",
+          "title": "Longitude",
+          "type": "string"
+        },
+        "required_quality": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum acceptable imagery quality",
+          "enum": [
+            "",
+            "HIGH",
+            "MEDIUM",
+            "LOW"
+          ],
+          "title": "Required Quality",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "latitude",
+        "longitude"
+      ],
+      "title": "GoogleMapsSolarBuildingInsightsConfig",
+      "type": "object"
+    },
+    "GoogleMapsSolarDataLayersConfig": {
+      "description": "Solar: solar data layers (DSM, imagery, flux) around a location.",
+      "properties": {
+        "operation": {
+          "const": "solar_data_layers",
+          "default": "solar_data_layers",
+          "title": "Solar Data Layers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Solar",
+          "x-display-name": "Solar Data Layers",
+          "x-is-trigger": false
+        },
+        "latitude": {
+          "description": "Center latitude",
+          "title": "Latitude",
+          "type": "string"
+        },
+        "longitude": {
+          "description": "Center longitude",
+          "title": "Longitude",
+          "type": "string"
+        },
+        "radius_meters": {
+          "default": "100",
+          "description": "Region radius in meters",
+          "title": "Radius (m)",
+          "type": "string"
+        },
+        "view": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Which data subset to return",
+          "enum": [
+            "",
+            "DSM_LAYER",
+            "IMAGERY_LAYERS",
+            "IMAGERY_AND_ANNUAL_FLUX_LAYERS",
+            "IMAGERY_AND_ALL_FLUX_LAYERS",
+            "FULL_LAYERS"
+          ],
+          "title": "View",
+          "x-enum-searchable": true
+        },
+        "required_quality": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum acceptable imagery quality",
+          "enum": [
+            "",
+            "HIGH",
+            "MEDIUM",
+            "LOW"
+          ],
+          "title": "Required Quality",
+          "x-enum-searchable": true
+        },
+        "pixel_size_meters": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Meters per pixel (0.1, 0.25, 0.5, or 1.0)",
+          "title": "Pixel Size (m)"
+        }
+      },
+      "required": [
+        "latitude",
+        "longitude"
+      ],
+      "title": "GoogleMapsSolarDataLayersConfig",
+      "type": "object"
+    },
+    "GoogleMapsTextSearchConfig": {
+      "description": "Places (New) text search: find places from a free-text query.",
+      "properties": {
+        "operation": {
+          "const": "text_search",
+          "default": "text_search",
+          "title": "Text Search",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Places",
+          "x-display-name": "Text Search",
+          "x-is-trigger": false
+        },
+        "text_query": {
+          "description": "Free-text search query (e.g. \"pizza in Sydney\")",
+          "title": "Query",
+          "type": "string"
+        },
+        "field_mask": {
+          "default": "places.displayName,places.formattedAddress,places.id,places.location,places.rating",
+          "description": "Comma-separated response fields (X-Goog-FieldMask). Required by the API.",
+          "title": "Field Mask",
+          "type": "string"
+        },
+        "max_result_count": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of places to return (1-20)",
+          "title": "Max Results"
+        },
+        "language_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Language code for results (e.g. en)",
+          "title": "Language"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token from a previous response for pagination",
+          "title": "Page Token"
+        }
+      },
+      "required": [
+        "text_query"
+      ],
+      "title": "GoogleMapsTextSearchConfig",
+      "type": "object"
+    },
+    "GoogleMapsTimeZoneConfig": {
+      "description": "Time Zone: time zone for a location and timestamp.",
+      "properties": {
+        "operation": {
+          "const": "timezone",
+          "default": "timezone",
+          "title": "Time Zone",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Utilities",
+          "x-display-name": "Time Zone",
+          "x-is-trigger": false
+        },
+        "location": {
+          "description": "Latitude,longitude pair, e.g. 37.4224,-122.0841",
+          "title": "Location",
+          "type": "string"
+        },
+        "timestamp": {
+          "default": "0",
+          "description": "Unix timestamp (seconds since epoch) to resolve DST for. 0 = epoch.",
+          "title": "Timestamp",
+          "type": "string"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Language for the time zone name (e.g. en)",
+          "title": "Language"
+        }
+      },
+      "required": [
+        "location"
+      ],
+      "title": "GoogleMapsTimeZoneConfig",
+      "type": "object"
+    },
+    "GoogleMapsValidateAddressConfig": {
+      "description": "Address Validation: validate, correct, and standardize a postal address.",
+      "properties": {
+        "operation": {
+          "const": "validate_address",
+          "default": "validate_address",
+          "title": "Validate Address",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Address Validation",
+          "x-display-name": "Validate Address",
+          "x-is-trigger": false
+        },
+        "address_lines": {
+          "description": "Address lines (street). For multiple lines, separate with newlines.",
+          "title": "Address Lines",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "region_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "CLDR region/country code (e.g. US)",
+          "title": "Region Code"
+        },
+        "locality": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "City / locality (optional)",
+          "title": "Locality"
+        },
+        "enable_usps_cass": {
+          "default": "false",
+          "description": "Enable USPS CASS validation (US/PR only)",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Enable USPS CASS",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "address_lines"
+      ],
+      "title": "GoogleMapsValidateAddressConfig",
+      "type": "object"
+    },
+    "GoogleMapsWeatherCurrentConfig": {
+      "description": "Weather: current weather conditions for a location.",
+      "properties": {
+        "operation": {
+          "const": "weather_current",
+          "default": "weather_current",
+          "title": "Weather (Current)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Weather",
+          "x-display-name": "Weather (Current)",
+          "x-is-trigger": false
+        },
+        "latitude": {
+          "description": "Location latitude",
+          "title": "Latitude",
+          "type": "string"
+        },
+        "longitude": {
+          "description": "Location longitude",
+          "title": "Longitude",
+          "type": "string"
+        },
+        "units_system": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Measurement units",
+          "enum": [
+            "",
+            "METRIC",
+            "IMPERIAL"
+          ],
+          "title": "Units System",
+          "x-enum-searchable": true
+        },
+        "language_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Language code for results (e.g. en)",
+          "title": "Language"
+        }
+      },
+      "required": [
+        "latitude",
+        "longitude"
+      ],
+      "title": "GoogleMapsWeatherCurrentConfig",
+      "type": "object"
+    },
+    "GoogleMapsWeatherForecastDaysConfig": {
+      "description": "Weather: daily weather forecast (up to 10 days).",
+      "properties": {
+        "operation": {
+          "const": "weather_forecast_days",
+          "default": "weather_forecast_days",
+          "title": "Weather (Daily Forecast)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Weather",
+          "x-display-name": "Weather (Daily Forecast)",
+          "x-is-trigger": false
+        },
+        "latitude": {
+          "description": "Location latitude",
+          "title": "Latitude",
+          "type": "string"
+        },
+        "longitude": {
+          "description": "Location longitude",
+          "title": "Longitude",
+          "type": "string"
+        },
+        "days": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of forecast days (default/max 10)",
+          "title": "Days"
+        },
+        "units_system": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Measurement units",
+          "enum": [
+            "",
+            "METRIC",
+            "IMPERIAL"
+          ],
+          "title": "Units System",
+          "x-enum-searchable": true
+        },
+        "language_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Language code for results (e.g. en)",
+          "title": "Language"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Records per page (default 5)",
+          "title": "Page Size"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token from a previous response for pagination",
+          "title": "Page Token"
+        }
+      },
+      "required": [
+        "latitude",
+        "longitude"
+      ],
+      "title": "GoogleMapsWeatherForecastDaysConfig",
+      "type": "object"
+    },
+    "GoogleMapsWeatherForecastHoursConfig": {
+      "description": "Weather: hourly weather forecast (up to 240 hours).",
+      "properties": {
+        "operation": {
+          "const": "weather_forecast_hours",
+          "default": "weather_forecast_hours",
+          "title": "Weather (Hourly Forecast)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Weather",
+          "x-display-name": "Weather (Hourly Forecast)",
+          "x-is-trigger": false
+        },
+        "latitude": {
+          "description": "Location latitude",
+          "title": "Latitude",
+          "type": "string"
+        },
+        "longitude": {
+          "description": "Location longitude",
+          "title": "Longitude",
+          "type": "string"
+        },
+        "hours": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of forecast hours (default/max 240)",
+          "title": "Hours"
+        },
+        "units_system": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Measurement units",
+          "enum": [
+            "",
+            "METRIC",
+            "IMPERIAL"
+          ],
+          "title": "Units System",
+          "x-enum-searchable": true
+        },
+        "language_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Language code for results (e.g. en)",
+          "title": "Language"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Records per page (default 24)",
+          "title": "Page Size"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token from a previous response for pagination",
+          "title": "Page Token"
+        }
+      },
+      "required": [
+        "latitude",
+        "longitude"
+      ],
+      "title": "GoogleMapsWeatherForecastHoursConfig",
+      "type": "object"
+    },
+    "GoogleMapsWeatherHistoryHoursConfig": {
+      "description": "Weather: historical hourly weather (past 24 hours).",
+      "properties": {
+        "operation": {
+          "const": "weather_history_hours",
+          "default": "weather_history_hours",
+          "title": "Weather (Hourly History)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Weather",
+          "x-display-name": "Weather (Hourly History)",
+          "x-is-trigger": false
+        },
+        "latitude": {
+          "description": "Location latitude",
+          "title": "Latitude",
+          "type": "string"
+        },
+        "longitude": {
+          "description": "Location longitude",
+          "title": "Longitude",
+          "type": "string"
+        },
+        "hours": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of past hours (default/max 24)",
+          "title": "Hours"
+        },
+        "units_system": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Measurement units",
+          "enum": [
+            "",
+            "METRIC",
+            "IMPERIAL"
+          ],
+          "title": "Units System",
+          "x-enum-searchable": true
+        },
+        "language_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Language code for results (e.g. en)",
+          "title": "Language"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Records per page (default 24)",
+          "title": "Page Size"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token from a previous response for pagination",
+          "title": "Page Token"
+        }
+      },
+      "required": [
+        "latitude",
+        "longitude"
+      ],
+      "title": "GoogleMapsWeatherHistoryHoursConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the Google Maps node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "aerial_lookup_video": "#/$defs/GoogleMapsAerialLookupVideoConfig",
+          "aerial_render_video": "#/$defs/GoogleMapsAerialRenderVideoConfig",
+          "air_quality_current": "#/$defs/GoogleMapsAirQualityCurrentConfig",
+          "air_quality_forecast": "#/$defs/GoogleMapsAirQualityForecastConfig",
+          "air_quality_history": "#/$defs/GoogleMapsAirQualityHistoryConfig",
+          "autocomplete": "#/$defs/GoogleMapsAutocompleteConfig",
+          "compute_insights": "#/$defs/GoogleMapsComputeInsightsConfig",
+          "compute_route_matrix": "#/$defs/GoogleMapsComputeRouteMatrixConfig",
+          "compute_routes": "#/$defs/GoogleMapsComputeRoutesConfig",
+          "directions": "#/$defs/GoogleMapsDirectionsConfig",
+          "distance_matrix": "#/$defs/GoogleMapsDistanceMatrixConfig",
+          "elevation": "#/$defs/GoogleMapsElevationConfig",
+          "find_place": "#/$defs/GoogleMapsFindPlaceConfig",
+          "geocode": "#/$defs/GoogleMapsGeocodeConfig",
+          "geocode_v4_place": "#/$defs/GoogleMapsGeocodeV4Config",
+          "geolocate": "#/$defs/GoogleMapsGeolocateConfig",
+          "legacy_autocomplete": "#/$defs/GoogleMapsLegacyAutocompleteConfig",
+          "nearby_search": "#/$defs/GoogleMapsNearbySearchConfig",
+          "nearest_roads": "#/$defs/GoogleMapsNearestRoadsConfig",
+          "place_details": "#/$defs/GoogleMapsPlaceDetailsConfig",
+          "place_photo": "#/$defs/GoogleMapsPlacePhotoConfig",
+          "pollen_forecast": "#/$defs/GoogleMapsPollenForecastConfig",
+          "reverse_geocode": "#/$defs/GoogleMapsReverseGeocodeConfig",
+          "snap_to_roads": "#/$defs/GoogleMapsSnapToRoadsConfig",
+          "solar_building_insights": "#/$defs/GoogleMapsSolarBuildingInsightsConfig",
+          "solar_data_layers": "#/$defs/GoogleMapsSolarDataLayersConfig",
+          "text_search": "#/$defs/GoogleMapsTextSearchConfig",
+          "timezone": "#/$defs/GoogleMapsTimeZoneConfig",
+          "validate_address": "#/$defs/GoogleMapsValidateAddressConfig",
+          "weather_current": "#/$defs/GoogleMapsWeatherCurrentConfig",
+          "weather_forecast_days": "#/$defs/GoogleMapsWeatherForecastDaysConfig",
+          "weather_forecast_hours": "#/$defs/GoogleMapsWeatherForecastHoursConfig",
+          "weather_history_hours": "#/$defs/GoogleMapsWeatherHistoryHoursConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GoogleMapsGeocodeConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMapsReverseGeocodeConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMapsGeocodeV4Config"
+        },
+        {
+          "$ref": "#/$defs/GoogleMapsTextSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMapsNearbySearchConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMapsPlaceDetailsConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMapsAutocompleteConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMapsPlacePhotoConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMapsComputeRoutesConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMapsComputeRouteMatrixConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMapsDirectionsConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMapsDistanceMatrixConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMapsValidateAddressConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMapsTimeZoneConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMapsElevationConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMapsSnapToRoadsConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMapsNearestRoadsConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMapsLegacyAutocompleteConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMapsFindPlaceConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMapsAirQualityCurrentConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMapsAirQualityForecastConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMapsAirQualityHistoryConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMapsPollenForecastConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMapsWeatherCurrentConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMapsWeatherForecastDaysConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMapsWeatherForecastHoursConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMapsWeatherHistoryHoursConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMapsSolarBuildingInsightsConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMapsSolarDataLayersConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMapsGeolocateConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMapsAerialRenderVideoConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMapsAerialLookupVideoConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMapsComputeInsightsConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GoogleMapsApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Google-maps Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Geocode a street address into latitude and longitude",
+    "Search for coffee shops near a set of coordinates",
+    "Compute the driving route between two addresses with distance and time",
+    "Reverse geocode a lat-lng pair into a formatted address",
+    "Validate and standardize a postal address",
+    "Get the current air quality and pollen forecast for a city",
+    "Look up the current weather and 10-day forecast for a location",
+    "Get solar potential insights for a building at given coordinates",
+    "Count how many restaurants are within 200m of a point"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

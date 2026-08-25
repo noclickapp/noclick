@@ -1,0 +1,2399 @@
+{
+  "$defs": {
+    "MilvusAlterAliasConfig": {
+      "properties": {
+        "operation": {
+          "const": "alter_alias",
+          "default": "alter_alias",
+          "title": "Alter Alias",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alias",
+          "x-display-name": "Alter Alias",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "reassign alias",
+            "swap collection alias"
+          ]
+        },
+        "collection": {
+          "description": "The collection the alias should point to after the update",
+          "title": "New Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "milvus_collection"
+        },
+        "alias_name": {
+          "title": "Alias Name",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type alias name",
+            "field_name": "alias_name",
+            "placeholder": "Select an alias...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "milvus_alias"
+        },
+        "db_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Database Name"
+        }
+      },
+      "required": [
+        "collection",
+        "alias_name"
+      ],
+      "title": "MilvusAlterAliasConfig",
+      "type": "object"
+    },
+    "MilvusCompactConfig": {
+      "properties": {
+        "operation": {
+          "const": "compact",
+          "default": "compact",
+          "title": "Compact Collection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collection",
+          "x-display-name": "Compact Collection",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "compact",
+            "optimize",
+            "defrag"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "milvus_collection"
+        },
+        "db_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Database Name"
+        }
+      },
+      "required": [
+        "collection"
+      ],
+      "title": "MilvusCompactConfig",
+      "type": "object"
+    },
+    "MilvusCreateAliasConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_alias",
+          "default": "create_alias",
+          "title": "Create Alias",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alias",
+          "x-creates-resource": true,
+          "x-display-name": "Create Alias",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "alias",
+            "collection alias",
+            "zero downtime swap"
+          ],
+          "x-resource-type": "milvus_alias"
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "milvus_collection"
+        },
+        "alias_name": {
+          "title": "Alias Name",
+          "type": "string"
+        },
+        "db_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Database Name"
+        }
+      },
+      "required": [
+        "collection",
+        "alias_name"
+      ],
+      "title": "MilvusCreateAliasConfig",
+      "type": "object"
+    },
+    "MilvusCreateCollectionConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_collection",
+          "default": "create_collection",
+          "title": "Create Collection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collection",
+          "x-creates-resource": true,
+          "x-display-name": "Create Collection",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new collection",
+            "provision",
+            "setup"
+          ],
+          "x-resource-type": "milvus_collection"
+        },
+        "name": {
+          "description": "Collection name",
+          "title": "Name",
+          "type": "string"
+        },
+        "dimension": {
+          "default": "1536",
+          "description": "Vector dimensionality",
+          "enum": [
+            "64",
+            "128",
+            "256",
+            "384",
+            "512",
+            "768",
+            "1024",
+            "1536",
+            "2048",
+            "3072"
+          ],
+          "enumNames": [
+            "64",
+            "128",
+            "256",
+            "384 \u2014 all-MiniLM-L6-v2",
+            "512",
+            "768 \u2014 BERT base, many sentence-transformers",
+            "1024 \u2014 Cohere embed-v3 (English)",
+            "1536 \u2014 OpenAI text-embedding-3-small / ada-002 \u2605",
+            "2048",
+            "3072 \u2014 OpenAI text-embedding-3-large"
+          ],
+          "title": "Dimension",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "metric_type": {
+          "default": "COSINE",
+          "enum": [
+            "COSINE",
+            "L2",
+            "IP"
+          ],
+          "title": "Metric Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "db_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Database Name"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "MilvusCreateCollectionConfig",
+      "type": "object"
+    },
+    "MilvusCreateDatabaseConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_database",
+          "default": "create_database",
+          "title": "Create Database",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Database",
+          "x-creates-resource": true,
+          "x-display-name": "Create Database",
+          "x-is-trigger": false,
+          "x-resource-type": "milvus_database"
+        },
+        "db_name": {
+          "title": "Database Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "db_name"
+      ],
+      "title": "MilvusCreateDatabaseConfig",
+      "type": "object"
+    },
+    "MilvusCreateIndexConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_index",
+          "default": "create_index",
+          "title": "Create Index",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Index",
+          "x-creates-resource": true,
+          "x-display-name": "Create Index",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "build index",
+            "hnsw",
+            "ivf"
+          ],
+          "x-resource-type": "milvus_index"
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "milvus_collection"
+        },
+        "field_name": {
+          "description": "The field to create the index on",
+          "title": "Field Name",
+          "type": "string"
+        },
+        "index_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional custom name for the index (defaults to field name)",
+          "title": "Index Name"
+        },
+        "index_type": {
+          "default": "AUTOINDEX",
+          "enum": [
+            "AUTOINDEX",
+            "FLAT",
+            "IVF_FLAT",
+            "IVF_SQ8",
+            "IVF_PQ",
+            "HNSW",
+            "SCANN",
+            "BIN_FLAT",
+            "BIN_IVF_FLAT",
+            "SPARSE_INVERTED_INDEX"
+          ],
+          "title": "Index Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "metric_type": {
+          "default": "COSINE",
+          "enum": [
+            "COSINE",
+            "L2",
+            "IP",
+            "HAMMING",
+            "JACCARD"
+          ],
+          "title": "Metric Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "params": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object of index-specific params, e.g. {\"M\": 16, \"efConstruction\": 200}",
+          "title": "Index Params",
+          "ui:widget": "textarea"
+        },
+        "db_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Database Name"
+        }
+      },
+      "required": [
+        "collection",
+        "field_name"
+      ],
+      "title": "MilvusCreateIndexConfig",
+      "type": "object"
+    },
+    "MilvusCreatePartitionConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_partition",
+          "default": "create_partition",
+          "title": "Create Partition",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Partition",
+          "x-creates-resource": true,
+          "x-display-name": "Create Partition",
+          "x-is-trigger": false,
+          "x-resource-type": "milvus_partition"
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "milvus_collection"
+        },
+        "partition_name": {
+          "title": "Partition Name",
+          "type": "string"
+        },
+        "db_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Database Name"
+        }
+      },
+      "required": [
+        "collection",
+        "partition_name"
+      ],
+      "title": "MilvusCreatePartitionConfig",
+      "type": "object"
+    },
+    "MilvusCredential": {
+      "description": "Bearer token + cluster URI credential for Milvus / Zilliz Cloud.",
+      "properties": {
+        "credential_type": {
+          "const": "milvus_token",
+          "default": "milvus_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "uri": {
+          "description": "Your Milvus/Zilliz endpoint, e.g. https://in03-xxxx.api.gcp-us-west1.zillizcloud.com",
+          "title": "Cluster URI",
+          "type": "string"
+        },
+        "token": {
+          "description": "Zilliz API key, or a Milvus 'user:password' token",
+          "title": "Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "uri",
+        "token"
+      ],
+      "title": "MilvusCredential",
+      "type": "object",
+      "x-credential-url": "https://cloud.zilliz.com/"
+    },
+    "MilvusDeleteConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete",
+          "default": "delete",
+          "title": "Delete Entities",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Entities",
+          "x-display-name": "Delete Entities",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove",
+            "purge",
+            "clear"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "milvus_collection"
+        },
+        "filter": {
+          "description": "Boolean expression selecting rows to delete, e.g. id in [1, 2]",
+          "title": "Filter",
+          "type": "string"
+        },
+        "partition_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Partition Name",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type partition name",
+            "depends_on": "collection",
+            "field_name": "partition_name",
+            "placeholder": "Select a partition...",
+            "searchable": true
+          },
+          "x-resource-type": "milvus_partition"
+        },
+        "db_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Database Name"
+        }
+      },
+      "required": [
+        "collection",
+        "filter"
+      ],
+      "title": "MilvusDeleteConfig",
+      "type": "object"
+    },
+    "MilvusDescribeAliasConfig": {
+      "properties": {
+        "operation": {
+          "const": "describe_alias",
+          "default": "describe_alias",
+          "title": "Describe Alias",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alias",
+          "x-display-name": "Describe Alias",
+          "x-is-trigger": false
+        },
+        "alias_name": {
+          "title": "Alias Name",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type alias name",
+            "field_name": "alias_name",
+            "placeholder": "Select an alias...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "milvus_alias"
+        },
+        "db_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Database Name"
+        }
+      },
+      "required": [
+        "alias_name"
+      ],
+      "title": "MilvusDescribeAliasConfig",
+      "type": "object"
+    },
+    "MilvusDescribeCollectionConfig": {
+      "properties": {
+        "operation": {
+          "const": "describe_collection",
+          "default": "describe_collection",
+          "title": "Describe Collection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collection",
+          "x-display-name": "Describe Collection",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "schema",
+            "collection info",
+            "fields"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "milvus_collection"
+        },
+        "db_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Database Name"
+        }
+      },
+      "required": [
+        "collection"
+      ],
+      "title": "MilvusDescribeCollectionConfig",
+      "type": "object"
+    },
+    "MilvusDescribeDatabaseConfig": {
+      "properties": {
+        "operation": {
+          "const": "describe_database",
+          "default": "describe_database",
+          "title": "Describe Database",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Database",
+          "x-display-name": "Describe Database",
+          "x-is-trigger": false
+        },
+        "db_name": {
+          "title": "Database Name",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type database name",
+            "field_name": "db_name",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "milvus_database"
+        }
+      },
+      "required": [
+        "db_name"
+      ],
+      "title": "MilvusDescribeDatabaseConfig",
+      "type": "object"
+    },
+    "MilvusDescribeIndexConfig": {
+      "properties": {
+        "operation": {
+          "const": "describe_index",
+          "default": "describe_index",
+          "title": "Describe Index",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Index",
+          "x-display-name": "Describe Index",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "index info",
+            "index details"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "milvus_collection"
+        },
+        "index_name": {
+          "title": "Index Name",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type index name",
+            "depends_on": "collection",
+            "field_name": "index_name",
+            "placeholder": "Select an index...",
+            "searchable": true
+          },
+          "x-resource-type": "milvus_index"
+        },
+        "db_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Database Name"
+        }
+      },
+      "required": [
+        "collection",
+        "index_name"
+      ],
+      "title": "MilvusDescribeIndexConfig",
+      "type": "object"
+    },
+    "MilvusDropAliasConfig": {
+      "properties": {
+        "operation": {
+          "const": "drop_alias",
+          "default": "drop_alias",
+          "title": "Drop Alias",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alias",
+          "x-display-name": "Drop Alias",
+          "x-is-trigger": false
+        },
+        "alias_name": {
+          "title": "Alias Name",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type alias name",
+            "field_name": "alias_name",
+            "placeholder": "Select an alias...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "milvus_alias"
+        },
+        "db_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Database Name"
+        }
+      },
+      "required": [
+        "alias_name"
+      ],
+      "title": "MilvusDropAliasConfig",
+      "type": "object"
+    },
+    "MilvusDropCollectionConfig": {
+      "properties": {
+        "operation": {
+          "const": "drop_collection",
+          "default": "drop_collection",
+          "title": "Drop Collection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collection",
+          "x-display-name": "Drop Collection",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "delete collection",
+            "remove collection"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "milvus_collection"
+        },
+        "db_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Database Name"
+        }
+      },
+      "required": [
+        "collection"
+      ],
+      "title": "MilvusDropCollectionConfig",
+      "type": "object"
+    },
+    "MilvusDropDatabaseConfig": {
+      "properties": {
+        "operation": {
+          "const": "drop_database",
+          "default": "drop_database",
+          "title": "Drop Database",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Database",
+          "x-display-name": "Drop Database",
+          "x-is-trigger": false
+        },
+        "db_name": {
+          "title": "Database Name",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type database name",
+            "field_name": "db_name",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "milvus_database"
+        }
+      },
+      "required": [
+        "db_name"
+      ],
+      "title": "MilvusDropDatabaseConfig",
+      "type": "object"
+    },
+    "MilvusDropIndexConfig": {
+      "properties": {
+        "operation": {
+          "const": "drop_index",
+          "default": "drop_index",
+          "title": "Drop Index",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Index",
+          "x-display-name": "Drop Index",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "delete index",
+            "remove index"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "milvus_collection"
+        },
+        "index_name": {
+          "title": "Index Name",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type index name",
+            "depends_on": "collection",
+            "field_name": "index_name",
+            "placeholder": "Select an index...",
+            "searchable": true
+          },
+          "x-resource-type": "milvus_index"
+        },
+        "db_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Database Name"
+        }
+      },
+      "required": [
+        "collection",
+        "index_name"
+      ],
+      "title": "MilvusDropIndexConfig",
+      "type": "object"
+    },
+    "MilvusDropPartitionConfig": {
+      "properties": {
+        "operation": {
+          "const": "drop_partition",
+          "default": "drop_partition",
+          "title": "Drop Partition",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Partition",
+          "x-display-name": "Drop Partition",
+          "x-is-trigger": false
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "milvus_collection"
+        },
+        "partition_name": {
+          "title": "Partition Name",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type partition name",
+            "depends_on": "collection",
+            "field_name": "partition_name",
+            "placeholder": "Select a partition...",
+            "searchable": true
+          },
+          "x-resource-type": "milvus_partition"
+        },
+        "db_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Database Name"
+        }
+      },
+      "required": [
+        "collection",
+        "partition_name"
+      ],
+      "title": "MilvusDropPartitionConfig",
+      "type": "object"
+    },
+    "MilvusFlushConfig": {
+      "properties": {
+        "operation": {
+          "const": "flush",
+          "default": "flush",
+          "title": "Flush Collection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collection",
+          "x-display-name": "Flush Collection",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "flush",
+            "persist",
+            "durability"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "milvus_collection"
+        },
+        "db_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Database Name"
+        }
+      },
+      "required": [
+        "collection"
+      ],
+      "title": "MilvusFlushConfig",
+      "type": "object"
+    },
+    "MilvusGetCollectionStatsConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_collection_stats",
+          "default": "get_collection_stats",
+          "title": "Get Collection Stats",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collection",
+          "x-display-name": "Get Collection Stats",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "row count",
+            "entity count",
+            "statistics"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "milvus_collection"
+        },
+        "db_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Database Name"
+        }
+      },
+      "required": [
+        "collection"
+      ],
+      "title": "MilvusGetCollectionStatsConfig",
+      "type": "object"
+    },
+    "MilvusGetConfig": {
+      "properties": {
+        "operation": {
+          "const": "get",
+          "default": "get",
+          "title": "Get Entities",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Entities",
+          "x-display-name": "Get Entities",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "fetch by id",
+            "get by primary key"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "milvus_collection"
+        },
+        "ids": {
+          "description": "Comma-separated primary key values to fetch, e.g. 1,2,3 or id1,id2",
+          "title": "IDs",
+          "type": "string"
+        },
+        "output_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fields to return, comma-separated",
+          "title": "Output Fields"
+        },
+        "db_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Database Name"
+        }
+      },
+      "required": [
+        "collection",
+        "ids"
+      ],
+      "title": "MilvusGetConfig",
+      "type": "object"
+    },
+    "MilvusGetLoadStateConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_load_state",
+          "default": "get_load_state",
+          "title": "Get Load State",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collection",
+          "x-display-name": "Get Load State",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "load status",
+            "ready check",
+            "is loaded"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "milvus_collection"
+        },
+        "db_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Database Name"
+        }
+      },
+      "required": [
+        "collection"
+      ],
+      "title": "MilvusGetLoadStateConfig",
+      "type": "object"
+    },
+    "MilvusHasCollectionConfig": {
+      "properties": {
+        "operation": {
+          "const": "has_collection",
+          "default": "has_collection",
+          "title": "Has Collection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collection",
+          "x-display-name": "Has Collection",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "check collection exists",
+            "collection exists"
+          ]
+        },
+        "collection": {
+          "description": "Collection name to check for existence",
+          "title": "Collection Name",
+          "type": "string"
+        },
+        "db_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Database Name"
+        }
+      },
+      "required": [
+        "collection"
+      ],
+      "title": "MilvusHasCollectionConfig",
+      "type": "object"
+    },
+    "MilvusHasPartitionConfig": {
+      "properties": {
+        "operation": {
+          "const": "has_partition",
+          "default": "has_partition",
+          "title": "Has Partition",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Partition",
+          "x-display-name": "Has Partition",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "check partition exists"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "milvus_collection"
+        },
+        "partition_name": {
+          "title": "Partition Name",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type partition name",
+            "depends_on": "collection",
+            "field_name": "partition_name",
+            "placeholder": "Select a partition...",
+            "searchable": true
+          },
+          "x-resource-type": "milvus_partition"
+        },
+        "db_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Database Name"
+        }
+      },
+      "required": [
+        "collection",
+        "partition_name"
+      ],
+      "title": "MilvusHasPartitionConfig",
+      "type": "object"
+    },
+    "MilvusHybridSearchConfig": {
+      "properties": {
+        "operation": {
+          "const": "hybrid_search",
+          "default": "hybrid_search",
+          "title": "Hybrid Search",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Entities",
+          "x-display-name": "Hybrid Search",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "multi-vector",
+            "hybrid",
+            "rerank",
+            "sparse dense"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "milvus_collection"
+        },
+        "requests": {
+          "description": "JSON array of AnnSearchRequest objects, each with field, data, limit, and optional params/filter",
+          "title": "Search Requests",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "rerank": {
+          "default": "{\"strategy\": \"rrf\", \"params\": {\"k\": 60}}",
+          "description": "Reranker config, e.g. {\"strategy\": \"rrf\", \"params\": {\"k\": 60}} or {\"strategy\": \"weighted\", \"weights\": [0.4, 0.6]}",
+          "title": "Rerank Strategy",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "limit": {
+          "default": 10,
+          "description": "Number of final results",
+          "title": "Limit",
+          "type": "integer"
+        },
+        "output_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fields to return, comma-separated",
+          "title": "Output Fields"
+        },
+        "db_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Database Name"
+        }
+      },
+      "required": [
+        "collection",
+        "requests"
+      ],
+      "title": "MilvusHybridSearchConfig",
+      "type": "object"
+    },
+    "MilvusInsertConfig": {
+      "properties": {
+        "operation": {
+          "const": "insert",
+          "default": "insert",
+          "title": "Insert",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Entities",
+          "x-display-name": "Insert",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "add",
+            "index",
+            "store",
+            "write"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "milvus_collection"
+        },
+        "data": {
+          "description": "JSON array of entities, e.g. [{\"id\": 1, \"vector\": [0.1, ...], \"color\": \"red\"}]",
+          "title": "Data",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "partition_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Partition Name",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type partition name",
+            "depends_on": "collection",
+            "field_name": "partition_name",
+            "placeholder": "Select a partition...",
+            "searchable": true
+          },
+          "x-resource-type": "milvus_partition"
+        },
+        "db_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Database Name"
+        }
+      },
+      "required": [
+        "collection",
+        "data"
+      ],
+      "title": "MilvusInsertConfig",
+      "type": "object"
+    },
+    "MilvusListAliasesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_aliases",
+          "default": "list_aliases",
+          "title": "List Aliases",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alias",
+          "x-display-name": "List Aliases",
+          "x-is-trigger": false
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "milvus_collection"
+        },
+        "db_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Database Name"
+        }
+      },
+      "required": [
+        "collection"
+      ],
+      "title": "MilvusListAliasesConfig",
+      "type": "object"
+    },
+    "MilvusListCollectionsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_collections",
+          "default": "list_collections",
+          "title": "List Collections",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collection",
+          "x-display-name": "List Collections",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "list",
+            "show collections"
+          ]
+        },
+        "db_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Database Name"
+        }
+      },
+      "title": "MilvusListCollectionsConfig",
+      "type": "object"
+    },
+    "MilvusListDatabasesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_databases",
+          "default": "list_databases",
+          "title": "List Databases",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Database",
+          "x-display-name": "List Databases",
+          "x-is-trigger": false
+        }
+      },
+      "title": "MilvusListDatabasesConfig",
+      "type": "object"
+    },
+    "MilvusListIndexesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_indexes",
+          "default": "list_indexes",
+          "title": "List Indexes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Index",
+          "x-display-name": "List Indexes",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "list indexes",
+            "show indexes"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "milvus_collection"
+        },
+        "db_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Database Name"
+        }
+      },
+      "required": [
+        "collection"
+      ],
+      "title": "MilvusListIndexesConfig",
+      "type": "object"
+    },
+    "MilvusListPartitionsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_partitions",
+          "default": "list_partitions",
+          "title": "List Partitions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Partition",
+          "x-display-name": "List Partitions",
+          "x-is-trigger": false
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "milvus_collection"
+        },
+        "db_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Database Name"
+        }
+      },
+      "required": [
+        "collection"
+      ],
+      "title": "MilvusListPartitionsConfig",
+      "type": "object"
+    },
+    "MilvusLoadCollectionConfig": {
+      "properties": {
+        "operation": {
+          "const": "load_collection",
+          "default": "load_collection",
+          "title": "Load Collection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collection",
+          "x-display-name": "Load Collection",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "load into memory",
+            "ready"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "milvus_collection"
+        },
+        "db_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Database Name"
+        }
+      },
+      "required": [
+        "collection"
+      ],
+      "title": "MilvusLoadCollectionConfig",
+      "type": "object"
+    },
+    "MilvusQueryConfig": {
+      "properties": {
+        "operation": {
+          "const": "query",
+          "default": "query",
+          "title": "Query",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Entities",
+          "x-display-name": "Query",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "filter",
+            "scalar query",
+            "fetch by expression"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "milvus_collection"
+        },
+        "filter": {
+          "description": "Boolean expression, e.g. id in [1, 2, 3]",
+          "title": "Filter",
+          "type": "string"
+        },
+        "output_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fields to return, comma-separated",
+          "title": "Output Fields"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max entities to return",
+          "title": "Limit"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination offset",
+          "title": "Offset"
+        },
+        "partition_names": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated partition names to query",
+          "title": "Partition Names"
+        },
+        "db_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Database Name"
+        }
+      },
+      "required": [
+        "collection",
+        "filter"
+      ],
+      "title": "MilvusQueryConfig",
+      "type": "object"
+    },
+    "MilvusReleaseCollectionConfig": {
+      "properties": {
+        "operation": {
+          "const": "release_collection",
+          "default": "release_collection",
+          "title": "Release Collection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collection",
+          "x-display-name": "Release Collection",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "unload",
+            "free memory"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "milvus_collection"
+        },
+        "db_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Database Name"
+        }
+      },
+      "required": [
+        "collection"
+      ],
+      "title": "MilvusReleaseCollectionConfig",
+      "type": "object"
+    },
+    "MilvusRenameCollectionConfig": {
+      "properties": {
+        "operation": {
+          "const": "rename_collection",
+          "default": "rename_collection",
+          "title": "Rename Collection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collection",
+          "x-display-name": "Rename Collection",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "rename",
+            "move collection"
+          ]
+        },
+        "collection": {
+          "title": "Collection Name",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "milvus_collection"
+        },
+        "new_name": {
+          "title": "New Name",
+          "type": "string"
+        },
+        "db_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Database Name"
+        },
+        "new_db_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Move the collection to a different database (optional)",
+          "title": "New Database Name"
+        }
+      },
+      "required": [
+        "collection",
+        "new_name"
+      ],
+      "title": "MilvusRenameCollectionConfig",
+      "type": "object"
+    },
+    "MilvusSearchConfig": {
+      "properties": {
+        "operation": {
+          "const": "search",
+          "default": "search",
+          "title": "Search",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Entities",
+          "x-display-name": "Search",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "similarity search",
+            "nearest neighbors",
+            "vector search",
+            "rag",
+            "ann"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "milvus_collection"
+        },
+        "vector": {
+          "description": "Embedding to search with \u2014 a JSON array of numbers",
+          "title": "Query Vector",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "anns_field": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Name of the vector field to search (omit for single-vector collections)",
+          "title": "Vector Field"
+        },
+        "limit": {
+          "default": 10,
+          "description": "Number of matches to return (max 1024)",
+          "title": "Limit",
+          "type": "integer"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional boolean expression, e.g. color == \"red\"",
+          "title": "Filter"
+        },
+        "output_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fields to return, comma-separated",
+          "title": "Output Fields"
+        },
+        "partition_names": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated partition names to search within",
+          "title": "Partition Names"
+        },
+        "db_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Database name (for multi-DB Milvus; leave blank for default)",
+          "title": "Database Name"
+        }
+      },
+      "required": [
+        "collection",
+        "vector"
+      ],
+      "title": "MilvusSearchConfig",
+      "type": "object"
+    },
+    "MilvusUploadIndexConfig": {
+      "properties": {
+        "operation": {
+          "const": "upload_and_index",
+          "default": "upload_and_index",
+          "title": "Upload & Index Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Entities",
+          "x-display-name": "Upload & Index Document",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "upload",
+            "ingest",
+            "index document",
+            "rag",
+            "embed file",
+            "add pdf"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "milvus_collection"
+        },
+        "document": {
+          "description": "Upload a PDF/DOCX/TXT/MD/CSV file (or paste a URL / reference an upstream file). It's chunked, embedded with text-embedding-3-small, and upserted. source/chunk_index ride as dynamic fields.",
+          "title": "Document",
+          "type": "string",
+          "ui:accept": ".pdf,.docx,.txt,.md,.markdown,.csv,.json,.html,.htm",
+          "ui:widget": "media_upload"
+        },
+        "pk_field": {
+          "default": "id",
+          "description": "The collection's Int64 primary key field",
+          "title": "Primary Key Field",
+          "type": "string"
+        },
+        "vector_field": {
+          "default": "vector",
+          "description": "The collection's vector field name",
+          "title": "Vector Field",
+          "type": "string"
+        },
+        "text_field": {
+          "default": "text",
+          "description": "Field to store the chunk text",
+          "title": "Text Field",
+          "type": "string"
+        },
+        "chunk_size": {
+          "default": 1000,
+          "description": "Characters per chunk",
+          "title": "Chunk Size",
+          "type": "integer"
+        },
+        "chunk_overlap": {
+          "default": 200,
+          "description": "Overlapping characters between chunks",
+          "title": "Chunk Overlap",
+          "type": "integer"
+        },
+        "id_prefix": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional prefix for chunk IDs (defaults to the filename)",
+          "title": "ID Prefix"
+        },
+        "db_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Database Name"
+        }
+      },
+      "required": [
+        "collection",
+        "document"
+      ],
+      "title": "MilvusUploadIndexConfig",
+      "type": "object"
+    },
+    "MilvusUpsertConfig": {
+      "properties": {
+        "operation": {
+          "const": "upsert",
+          "default": "upsert",
+          "title": "Upsert",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Entities",
+          "x-display-name": "Upsert",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "insert or update",
+            "overwrite",
+            "store"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "milvus_collection"
+        },
+        "data": {
+          "description": "JSON array of entities to upsert",
+          "title": "Data",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "partition_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Partition Name",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type partition name",
+            "depends_on": "collection",
+            "field_name": "partition_name",
+            "placeholder": "Select a partition...",
+            "searchable": true
+          },
+          "x-resource-type": "milvus_partition"
+        },
+        "db_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Database Name"
+        }
+      },
+      "required": [
+        "collection",
+        "data"
+      ],
+      "title": "MilvusUpsertConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "alter_alias": "#/$defs/MilvusAlterAliasConfig",
+          "compact": "#/$defs/MilvusCompactConfig",
+          "create_alias": "#/$defs/MilvusCreateAliasConfig",
+          "create_collection": "#/$defs/MilvusCreateCollectionConfig",
+          "create_database": "#/$defs/MilvusCreateDatabaseConfig",
+          "create_index": "#/$defs/MilvusCreateIndexConfig",
+          "create_partition": "#/$defs/MilvusCreatePartitionConfig",
+          "delete": "#/$defs/MilvusDeleteConfig",
+          "describe_alias": "#/$defs/MilvusDescribeAliasConfig",
+          "describe_collection": "#/$defs/MilvusDescribeCollectionConfig",
+          "describe_database": "#/$defs/MilvusDescribeDatabaseConfig",
+          "describe_index": "#/$defs/MilvusDescribeIndexConfig",
+          "drop_alias": "#/$defs/MilvusDropAliasConfig",
+          "drop_collection": "#/$defs/MilvusDropCollectionConfig",
+          "drop_database": "#/$defs/MilvusDropDatabaseConfig",
+          "drop_index": "#/$defs/MilvusDropIndexConfig",
+          "drop_partition": "#/$defs/MilvusDropPartitionConfig",
+          "flush": "#/$defs/MilvusFlushConfig",
+          "get": "#/$defs/MilvusGetConfig",
+          "get_collection_stats": "#/$defs/MilvusGetCollectionStatsConfig",
+          "get_load_state": "#/$defs/MilvusGetLoadStateConfig",
+          "has_collection": "#/$defs/MilvusHasCollectionConfig",
+          "has_partition": "#/$defs/MilvusHasPartitionConfig",
+          "hybrid_search": "#/$defs/MilvusHybridSearchConfig",
+          "insert": "#/$defs/MilvusInsertConfig",
+          "list_aliases": "#/$defs/MilvusListAliasesConfig",
+          "list_collections": "#/$defs/MilvusListCollectionsConfig",
+          "list_databases": "#/$defs/MilvusListDatabasesConfig",
+          "list_indexes": "#/$defs/MilvusListIndexesConfig",
+          "list_partitions": "#/$defs/MilvusListPartitionsConfig",
+          "load_collection": "#/$defs/MilvusLoadCollectionConfig",
+          "query": "#/$defs/MilvusQueryConfig",
+          "release_collection": "#/$defs/MilvusReleaseCollectionConfig",
+          "rename_collection": "#/$defs/MilvusRenameCollectionConfig",
+          "search": "#/$defs/MilvusSearchConfig",
+          "upload_and_index": "#/$defs/MilvusUploadIndexConfig",
+          "upsert": "#/$defs/MilvusUpsertConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/MilvusSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/MilvusHybridSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/MilvusGetConfig"
+        },
+        {
+          "$ref": "#/$defs/MilvusInsertConfig"
+        },
+        {
+          "$ref": "#/$defs/MilvusUpsertConfig"
+        },
+        {
+          "$ref": "#/$defs/MilvusQueryConfig"
+        },
+        {
+          "$ref": "#/$defs/MilvusDeleteConfig"
+        },
+        {
+          "$ref": "#/$defs/MilvusUploadIndexConfig"
+        },
+        {
+          "$ref": "#/$defs/MilvusListCollectionsConfig"
+        },
+        {
+          "$ref": "#/$defs/MilvusCreateCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/MilvusDescribeCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/MilvusDropCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/MilvusRenameCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/MilvusLoadCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/MilvusReleaseCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/MilvusGetLoadStateConfig"
+        },
+        {
+          "$ref": "#/$defs/MilvusGetCollectionStatsConfig"
+        },
+        {
+          "$ref": "#/$defs/MilvusFlushConfig"
+        },
+        {
+          "$ref": "#/$defs/MilvusCompactConfig"
+        },
+        {
+          "$ref": "#/$defs/MilvusHasCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/MilvusListIndexesConfig"
+        },
+        {
+          "$ref": "#/$defs/MilvusCreateIndexConfig"
+        },
+        {
+          "$ref": "#/$defs/MilvusDropIndexConfig"
+        },
+        {
+          "$ref": "#/$defs/MilvusDescribeIndexConfig"
+        },
+        {
+          "$ref": "#/$defs/MilvusListPartitionsConfig"
+        },
+        {
+          "$ref": "#/$defs/MilvusCreatePartitionConfig"
+        },
+        {
+          "$ref": "#/$defs/MilvusDropPartitionConfig"
+        },
+        {
+          "$ref": "#/$defs/MilvusHasPartitionConfig"
+        },
+        {
+          "$ref": "#/$defs/MilvusListAliasesConfig"
+        },
+        {
+          "$ref": "#/$defs/MilvusCreateAliasConfig"
+        },
+        {
+          "$ref": "#/$defs/MilvusDropAliasConfig"
+        },
+        {
+          "$ref": "#/$defs/MilvusDescribeAliasConfig"
+        },
+        {
+          "$ref": "#/$defs/MilvusAlterAliasConfig"
+        },
+        {
+          "$ref": "#/$defs/MilvusListDatabasesConfig"
+        },
+        {
+          "$ref": "#/$defs/MilvusCreateDatabaseConfig"
+        },
+        {
+          "$ref": "#/$defs/MilvusDropDatabaseConfig"
+        },
+        {
+          "$ref": "#/$defs/MilvusDescribeDatabaseConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MilvusCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Milvus Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Search a Milvus collection for the entities most similar to a query embedding",
+    "Insert document embeddings into a Milvus collection",
+    "Query a Milvus collection with a boolean filter expression",
+    "Delete entities matching a filter from a Milvus collection",
+    "Create a new Milvus collection for a 1536-dimension embedding model",
+    "Hybrid-search across two vector fields with RRF reranking"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -1,0 +1,2667 @@
+{
+  "$defs": {
+    "AffinityAPIKeyCredential": {
+      "description": "API Key credential for Affinity CRM.\n\nGenerate your API key from Settings \u2192 API in your Affinity account.\nAPI access requires Premium, Scale, Advanced, or Enterprise tier.",
+      "properties": {
+        "credential_type": {
+          "const": "affinity_api_key",
+          "default": "affinity_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Your Affinity API key from Settings \u2192 API",
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "AffinityAPIKeyCredential",
+      "type": "object",
+      "x-credential-instructions": "Generate your API key from Settings \u2192 API in your Affinity account. API access requires Premium, Scale, Advanced, or Enterprise tier.",
+      "x-credential-url": "https://support.affinity.co/s/article/Getting-started-with-the-Affinity-API-FAQs"
+    },
+    "AffinityCreateFieldConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_custom_field",
+          "default": "create_custom_field",
+          "title": "Create Custom Field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Field",
+          "x-display-name": "Create Custom Field",
+          "x-is-trigger": false
+        },
+        "name": {
+          "title": "Field Name",
+          "type": "string"
+        },
+        "entity_type": {
+          "enum": [
+            "0",
+            "1",
+            "2"
+          ],
+          "enumNames": [
+            "Person",
+            "Organization",
+            "Opportunity"
+          ],
+          "title": "Entity Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "value_type": {
+          "enum": [
+            "0",
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8"
+          ],
+          "enumNames": [
+            "Person",
+            "Organization",
+            "Dropdown",
+            "Number",
+            "Date",
+            "Location",
+            "Text",
+            "Ranked Dropdown",
+            "Formula"
+          ],
+          "title": "Value Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "list_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If set, field is list-specific",
+          "title": "List ID"
+        },
+        "allows_multiple": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "true",
+            "false"
+          ],
+          "title": "Allows Multiple",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "name",
+        "entity_type",
+        "value_type"
+      ],
+      "title": "Create Field",
+      "type": "object"
+    },
+    "AffinityCreateFieldValueConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_field_value",
+          "default": "create_field_value",
+          "title": "Create Field Value",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Field",
+          "x-display-name": "Create Field Value",
+          "x-is-trigger": false
+        },
+        "field_id": {
+          "title": "Field ID",
+          "type": "integer"
+        },
+        "entity_id": {
+          "description": "Person, organization, or opportunity ID",
+          "title": "Entity ID",
+          "type": "integer"
+        },
+        "value": {
+          "description": "Value to set (use JSON for complex values)",
+          "title": "Value",
+          "type": "string"
+        },
+        "list_entry_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required for list-specific fields",
+          "title": "List Entry ID"
+        }
+      },
+      "required": [
+        "field_id",
+        "entity_id",
+        "value"
+      ],
+      "title": "Create Field Value",
+      "type": "object"
+    },
+    "AffinityCreateListConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_list",
+          "default": "create_list",
+          "title": "Create List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "List",
+          "x-display-name": "Create List",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Name for the new list",
+          "title": "Name",
+          "type": "string"
+        },
+        "type": {
+          "enum": [
+            "0",
+            "1",
+            "8"
+          ],
+          "enumNames": [
+            "Person",
+            "Organization",
+            "Opportunity"
+          ],
+          "title": "List Type",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "name",
+        "type"
+      ],
+      "title": "Create List",
+      "type": "object"
+    },
+    "AffinityCreateListEntryConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_list_entry",
+          "default": "create_list_entry",
+          "title": "Create List Entry",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "List Entry",
+          "x-display-name": "Create List Entry",
+          "x-is-trigger": false
+        },
+        "list_id": {
+          "title": "List ID",
+          "type": "integer"
+        },
+        "entity_id": {
+          "description": "ID of person, organization, or opportunity",
+          "title": "Entity ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "list_id",
+        "entity_id"
+      ],
+      "title": "Create List Entry",
+      "type": "object"
+    },
+    "AffinityCreateNoteConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_note",
+          "default": "create_note",
+          "title": "Create Note",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Note",
+          "x-display-name": "Create Note",
+          "x-is-trigger": false
+        },
+        "content": {
+          "description": "Text content of the note",
+          "title": "Content",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "person_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated person IDs",
+          "title": "Person IDs"
+        },
+        "organization_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated organization IDs",
+          "title": "Organization IDs"
+        },
+        "opportunity_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated opportunity IDs",
+          "title": "Opportunity IDs"
+        },
+        "gmail_address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Associate with a Gmail address",
+          "title": "Gmail Address"
+        }
+      },
+      "required": [
+        "content"
+      ],
+      "title": "Create Note",
+      "type": "object"
+    },
+    "AffinityCreateOpportunityConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_opportunity",
+          "default": "create_opportunity",
+          "title": "Create Opportunity",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Opportunity",
+          "x-display-name": "Create Opportunity",
+          "x-is-trigger": false
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "list_id": {
+          "description": "Opportunity list to create in",
+          "title": "List ID",
+          "type": "integer"
+        },
+        "person_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated person IDs",
+          "title": "Person IDs"
+        },
+        "organization_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated organization IDs",
+          "title": "Organization IDs"
+        }
+      },
+      "required": [
+        "name",
+        "list_id"
+      ],
+      "title": "Create Opportunity",
+      "type": "object"
+    },
+    "AffinityCreateOrganizationConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_organization",
+          "default": "create_organization",
+          "title": "Create Organization",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "Create Organization",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Organization name",
+          "title": "Name",
+          "type": "string"
+        },
+        "domain": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Website domain (e.g., affinity.co)",
+          "title": "Domain"
+        },
+        "person_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated person IDs to associate",
+          "title": "Person IDs"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "Create Organization",
+      "type": "object"
+    },
+    "AffinityCreatePersonConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_person",
+          "default": "create_person",
+          "title": "Create Person",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Person",
+          "x-display-name": "Create Person",
+          "x-is-trigger": false
+        },
+        "first_name": {
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "emails": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated email addresses",
+          "title": "Emails"
+        },
+        "organization_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated organization IDs to associate",
+          "title": "Organization IDs"
+        }
+      },
+      "required": [
+        "first_name"
+      ],
+      "title": "Create Person",
+      "type": "object"
+    },
+    "AffinityCreateReminderConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_reminder",
+          "default": "create_reminder",
+          "title": "Create Reminder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reminder",
+          "x-display-name": "Create Reminder",
+          "x-is-trigger": false
+        },
+        "content": {
+          "description": "Text content of the reminder",
+          "title": "Content",
+          "type": "string"
+        },
+        "due_date": {
+          "description": "ISO 8601 format (e.g., 2024-12-31T12:00:00Z)",
+          "title": "Due Date",
+          "type": "string"
+        },
+        "person_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated person IDs",
+          "title": "Person IDs"
+        },
+        "organization_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated organization IDs",
+          "title": "Organization IDs"
+        },
+        "opportunity_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated opportunity IDs",
+          "title": "Opportunity IDs"
+        },
+        "owner_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "User who owns this reminder",
+          "title": "Owner ID"
+        }
+      },
+      "required": [
+        "content",
+        "due_date"
+      ],
+      "title": "Create Reminder",
+      "type": "object"
+    },
+    "AffinityCreateWebhookConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_webhook",
+          "default": "create_webhook",
+          "title": "Create Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhook",
+          "x-display-name": "Create Webhook",
+          "x-is-trigger": false
+        },
+        "webhook_url": {
+          "description": "URL to receive webhook notifications",
+          "title": "Webhook URL",
+          "type": "string"
+        },
+        "subscriptions": {
+          "description": "JSON array of subscription objects, e.g. [{\"type\": 0, \"triggers\": [1]}]",
+          "title": "Subscriptions",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "webhook_url",
+        "subscriptions"
+      ],
+      "title": "Create Webhook",
+      "type": "object"
+    },
+    "AffinityDeleteFieldConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_custom_field",
+          "default": "delete_custom_field",
+          "title": "Delete Custom Field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Field",
+          "x-display-name": "Delete Custom Field",
+          "x-is-trigger": false
+        },
+        "field_id": {
+          "title": "Field ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "field_id"
+      ],
+      "title": "Delete Field",
+      "type": "object"
+    },
+    "AffinityDeleteFieldValueConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_field_value",
+          "default": "delete_field_value",
+          "title": "Delete Field Value",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Field",
+          "x-display-name": "Delete Field Value",
+          "x-is-trigger": false
+        },
+        "field_value_id": {
+          "title": "Field Value ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "field_value_id"
+      ],
+      "title": "Delete Field Value",
+      "type": "object"
+    },
+    "AffinityDeleteListEntryConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_list_entry",
+          "default": "delete_list_entry",
+          "title": "Delete List Entry",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "List Entry",
+          "x-display-name": "Delete List Entry",
+          "x-is-trigger": false
+        },
+        "list_id": {
+          "title": "List ID",
+          "type": "integer"
+        },
+        "entry_id": {
+          "title": "Entry ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "list_id",
+        "entry_id"
+      ],
+      "title": "Delete List Entry",
+      "type": "object"
+    },
+    "AffinityDeleteNoteConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_note",
+          "default": "delete_note",
+          "title": "Delete Note",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Note",
+          "x-display-name": "Delete Note",
+          "x-is-trigger": false
+        },
+        "note_id": {
+          "title": "Note ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "note_id"
+      ],
+      "title": "Delete Note",
+      "type": "object"
+    },
+    "AffinityDeleteOpportunityConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_opportunity",
+          "default": "delete_opportunity",
+          "title": "Delete Opportunity",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Opportunity",
+          "x-display-name": "Delete Opportunity",
+          "x-is-trigger": false
+        },
+        "opportunity_id": {
+          "title": "Opportunity ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "opportunity_id"
+      ],
+      "title": "Delete Opportunity",
+      "type": "object"
+    },
+    "AffinityDeleteOrganizationConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_organization",
+          "default": "delete_organization",
+          "title": "Delete Organization",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "Delete Organization",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "title": "Organization ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "Delete Organization",
+      "type": "object"
+    },
+    "AffinityDeletePersonConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_person",
+          "default": "delete_person",
+          "title": "Delete Person",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Person",
+          "x-display-name": "Delete Person",
+          "x-is-trigger": false
+        },
+        "person_id": {
+          "title": "Person ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "person_id"
+      ],
+      "title": "Delete Person",
+      "type": "object"
+    },
+    "AffinityDeleteReminderConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_reminder",
+          "default": "delete_reminder",
+          "title": "Delete Reminder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reminder",
+          "x-display-name": "Delete Reminder",
+          "x-is-trigger": false
+        },
+        "reminder_id": {
+          "title": "Reminder ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "reminder_id"
+      ],
+      "title": "Delete Reminder",
+      "type": "object"
+    },
+    "AffinityDeleteWebhookConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_webhook",
+          "default": "delete_webhook",
+          "title": "Delete Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhook",
+          "x-display-name": "Delete Webhook",
+          "x-is-trigger": false
+        },
+        "webhook_id": {
+          "title": "Webhook ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "Delete Webhook",
+      "type": "object"
+    },
+    "AffinityDownloadFileConfig": {
+      "properties": {
+        "operation": {
+          "const": "download_file",
+          "default": "download_file",
+          "title": "Download File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File",
+          "x-display-name": "Download File",
+          "x-is-trigger": false
+        },
+        "file_id": {
+          "title": "File ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "Download File",
+      "type": "object"
+    },
+    "AffinityGetCompanyV2Config": {
+      "properties": {
+        "operation": {
+          "const": "get_company_by_id",
+          "default": "get_company_by_id",
+          "title": "Get Company by Id",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "Get Company by Id",
+          "x-is-trigger": false
+        },
+        "company_id": {
+          "title": "Company ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "Get Company (v2)",
+      "type": "object"
+    },
+    "AffinityGetFileConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_file_by_id",
+          "default": "get_file_by_id",
+          "title": "Get File by Id",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File",
+          "x-display-name": "Get File by Id",
+          "x-is-trigger": false
+        },
+        "file_id": {
+          "title": "File ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "Get File",
+      "type": "object"
+    },
+    "AffinityGetListConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_list_by_id",
+          "default": "get_list_by_id",
+          "title": "Get List by Id",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "List",
+          "x-display-name": "Get List by Id",
+          "x-is-trigger": false
+        },
+        "list_id": {
+          "title": "List ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "Get List",
+      "type": "object"
+    },
+    "AffinityGetListEntryConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_list_entry",
+          "default": "get_list_entry",
+          "title": "Get List Entry",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "List Entry",
+          "x-display-name": "Get List Entry",
+          "x-is-trigger": false
+        },
+        "list_id": {
+          "title": "List ID",
+          "type": "integer"
+        },
+        "entry_id": {
+          "title": "Entry ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "list_id",
+        "entry_id"
+      ],
+      "title": "Get List Entry",
+      "type": "object"
+    },
+    "AffinityGetListEntryFieldsV2Config": {
+      "properties": {
+        "operation": {
+          "const": "get_list_entry_fields",
+          "default": "get_list_entry_fields",
+          "title": "Get List Entry Fields",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "List Entry",
+          "x-display-name": "Get List Entry Fields",
+          "x-is-trigger": false
+        },
+        "list_id": {
+          "title": "List ID",
+          "type": "integer"
+        },
+        "entry_id": {
+          "title": "Entry ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "list_id",
+        "entry_id"
+      ],
+      "title": "Get List Entry Fields (v2)",
+      "type": "object"
+    },
+    "AffinityGetNoteConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_note_by_id",
+          "default": "get_note_by_id",
+          "title": "Get Note by Id",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Note",
+          "x-display-name": "Get Note by Id",
+          "x-is-trigger": false
+        },
+        "note_id": {
+          "title": "Note ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "note_id"
+      ],
+      "title": "Get Note",
+      "type": "object"
+    },
+    "AffinityGetOpportunityConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_opportunity_by_id",
+          "default": "get_opportunity_by_id",
+          "title": "Get Opportunity by Id",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Opportunity",
+          "x-display-name": "Get Opportunity by Id",
+          "x-is-trigger": false
+        },
+        "opportunity_id": {
+          "title": "Opportunity ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "opportunity_id"
+      ],
+      "title": "Get Opportunity",
+      "type": "object"
+    },
+    "AffinityGetOrganizationConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_organization_by_id",
+          "default": "get_organization_by_id",
+          "title": "Get Organization by Id",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "Get Organization by Id",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "title": "Organization ID",
+          "type": "integer"
+        },
+        "with_interaction_dates": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "true",
+            "false"
+          ],
+          "title": "With Interaction Dates",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "Get Organization",
+      "type": "object"
+    },
+    "AffinityGetOrganizationFieldsConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_organization_fields",
+          "default": "get_organization_fields",
+          "title": "Get Organization Fields",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "Get Organization Fields",
+          "x-is-trigger": false
+        }
+      },
+      "title": "Get Organization Fields",
+      "type": "object"
+    },
+    "AffinityGetPersonConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_person_by_id",
+          "default": "get_person_by_id",
+          "title": "Get Person by Id",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Person",
+          "x-display-name": "Get Person by Id",
+          "x-is-trigger": false
+        },
+        "person_id": {
+          "title": "Person ID",
+          "type": "integer"
+        },
+        "with_interaction_dates": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "true",
+            "false"
+          ],
+          "title": "With Interaction Dates",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "person_id"
+      ],
+      "title": "Get Person",
+      "type": "object"
+    },
+    "AffinityGetPersonFieldsConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_person_fields",
+          "default": "get_person_fields",
+          "title": "Get Person Fields",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Person",
+          "x-display-name": "Get Person Fields",
+          "x-is-trigger": false
+        }
+      },
+      "title": "Get Person Fields",
+      "type": "object"
+    },
+    "AffinityGetRateLimitConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_rate_limit_info",
+          "default": "get_rate_limit_info",
+          "title": "Get Rate Limit Info",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Rate Limit Info",
+          "x-is-trigger": false
+        }
+      },
+      "title": "Get Rate Limit",
+      "type": "object"
+    },
+    "AffinityGetRelationshipStrengthsConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_relationship_strengths",
+          "default": "get_relationship_strengths",
+          "title": "Get Relationship Strengths",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Relationship Strengths",
+          "x-is-trigger": false
+        },
+        "internal_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter for a specific internal team member",
+          "title": "Internal User ID"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter for a specific external contact or organization",
+          "title": "External Person/Org ID"
+        }
+      },
+      "title": "Get Relationship Strengths",
+      "type": "object"
+    },
+    "AffinityGetReminderConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_reminder_by_id",
+          "default": "get_reminder_by_id",
+          "title": "Get Reminder by Id",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reminder",
+          "x-display-name": "Get Reminder by Id",
+          "x-is-trigger": false
+        },
+        "reminder_id": {
+          "title": "Reminder ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "reminder_id"
+      ],
+      "title": "Get Reminder",
+      "type": "object"
+    },
+    "AffinityGetWebhookConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_webhook_by_id",
+          "default": "get_webhook_by_id",
+          "title": "Get Webhook by Id",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhook",
+          "x-display-name": "Get Webhook by Id",
+          "x-is-trigger": false
+        },
+        "webhook_id": {
+          "title": "Webhook ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "Get Webhook",
+      "type": "object"
+    },
+    "AffinityGetWhoamiConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_authenticated_user_info",
+          "default": "get_authenticated_user_info",
+          "title": "Get Authenticated User Info",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Authenticated User Info",
+          "x-is-trigger": false
+        }
+      },
+      "title": "Get Current User",
+      "type": "object"
+    },
+    "AffinityListCompaniesV2Config": {
+      "properties": {
+        "operation": {
+          "const": "list_companies",
+          "default": "list_companies",
+          "title": "List Companies",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "List Companies",
+          "x-is-trigger": false
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from previous response",
+          "title": "Cursor"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results to return",
+          "title": "Limit"
+        }
+      },
+      "title": "List Companies (v2)",
+      "type": "object"
+    },
+    "AffinityListCompanyFieldsV2Config": {
+      "properties": {
+        "operation": {
+          "const": "list_company_fields",
+          "default": "list_company_fields",
+          "title": "List Company Fields",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "List Company Fields",
+          "x-is-trigger": false
+        },
+        "company_id": {
+          "title": "Company ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "List Company Fields (v2)",
+      "type": "object"
+    },
+    "AffinityListFieldValueChangesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_field_value_changes",
+          "default": "list_field_value_changes",
+          "title": "List Field Value Changes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Field",
+          "x-display-name": "List Field Value Changes",
+          "x-is-trigger": false
+        },
+        "field_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by field",
+          "title": "Field ID"
+        },
+        "entity_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by entity",
+          "title": "Entity ID"
+        },
+        "list_entry_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "List Entry ID"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 500,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Size"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Token"
+        }
+      },
+      "title": "List Field Value Changes",
+      "type": "object"
+    },
+    "AffinityListFieldValuesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_field_values",
+          "default": "list_field_values",
+          "title": "List Field Values",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Field",
+          "x-display-name": "List Field Values",
+          "x-is-trigger": false
+        },
+        "person_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Get field values for this person",
+          "title": "Person ID"
+        },
+        "organization_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Get field values for this organization",
+          "title": "Organization ID"
+        },
+        "opportunity_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Get field values for this opportunity",
+          "title": "Opportunity ID"
+        },
+        "list_entry_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Get field values for this list entry",
+          "title": "List Entry ID"
+        }
+      },
+      "title": "List Field Values",
+      "type": "object"
+    },
+    "AffinityListFieldsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_custom_fields",
+          "default": "list_custom_fields",
+          "title": "List Custom Fields",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Field",
+          "x-display-name": "List Custom Fields",
+          "x-is-trigger": false
+        },
+        "list_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by list",
+          "title": "List ID"
+        },
+        "value_type": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by field value type",
+          "title": "Value Type"
+        }
+      },
+      "title": "List Fields",
+      "type": "object"
+    },
+    "AffinityListFilesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_files",
+          "default": "list_files",
+          "title": "List Files",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File",
+          "x-display-name": "List Files",
+          "x-is-trigger": false
+        },
+        "person_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter files for this person",
+          "title": "Person ID"
+        },
+        "organization_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter files for this organization",
+          "title": "Organization ID"
+        },
+        "opportunity_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter files for this opportunity",
+          "title": "Opportunity ID"
+        }
+      },
+      "title": "List Files",
+      "type": "object"
+    },
+    "AffinityListListEntriesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_list_entries",
+          "default": "list_list_entries",
+          "title": "List List Entries",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "List Entry",
+          "x-display-name": "List List Entries",
+          "x-is-trigger": false
+        },
+        "list_id": {
+          "title": "List ID",
+          "type": "integer"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 500,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Size"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Token"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "List List Entries",
+      "type": "object"
+    },
+    "AffinityListListFieldsV2Config": {
+      "properties": {
+        "operation": {
+          "const": "list_list_fields",
+          "default": "list_list_fields",
+          "title": "List List Fields",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "List Entry",
+          "x-display-name": "List List Fields",
+          "x-is-trigger": false
+        },
+        "list_id": {
+          "title": "List ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "List List Fields (v2)",
+      "type": "object"
+    },
+    "AffinityListListsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_lists",
+          "default": "list_lists",
+          "title": "List Lists",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "List",
+          "x-display-name": "List Lists",
+          "x-is-trigger": false
+        }
+      },
+      "title": "List Lists",
+      "type": "object"
+    },
+    "AffinityListNotesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_notes",
+          "default": "list_notes",
+          "title": "List Notes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Note",
+          "x-display-name": "List Notes",
+          "x-is-trigger": false
+        },
+        "person_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter notes for this person",
+          "title": "Person ID"
+        },
+        "organization_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter notes for this organization",
+          "title": "Organization ID"
+        },
+        "opportunity_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter notes for this opportunity",
+          "title": "Opportunity ID"
+        }
+      },
+      "title": "List Notes",
+      "type": "object"
+    },
+    "AffinityListOpportunitiesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_opportunities",
+          "default": "list_opportunities",
+          "title": "List Opportunities",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Opportunity",
+          "x-display-name": "List Opportunities",
+          "x-is-trigger": false
+        },
+        "term": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by name",
+          "title": "Search Term"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 500,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Size"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Token"
+        }
+      },
+      "title": "List Opportunities",
+      "type": "object"
+    },
+    "AffinityListOrganizationsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_organizations",
+          "default": "list_organizations",
+          "title": "List Organizations",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "List Organizations",
+          "x-is-trigger": false
+        },
+        "term": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by name",
+          "title": "Search Term"
+        },
+        "with_interaction_dates": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "true",
+            "false"
+          ],
+          "title": "With Interaction Dates",
+          "x-enum-searchable": true
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 500,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Size"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Token"
+        }
+      },
+      "title": "List Organizations",
+      "type": "object"
+    },
+    "AffinityListPersonsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_persons",
+          "default": "list_persons",
+          "title": "List Persons",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Person",
+          "x-display-name": "List Persons",
+          "x-is-trigger": false
+        },
+        "term": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter persons by name or email",
+          "title": "Search Term"
+        },
+        "with_interaction_dates": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Include interaction dates in response",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "title": "With Interaction Dates",
+          "x-enum-searchable": true
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 500,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Results per page (max 500)",
+          "title": "Page Size"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination token from previous response",
+          "title": "Page Token"
+        }
+      },
+      "title": "List Persons",
+      "type": "object"
+    },
+    "AffinityListRemindersConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_reminders",
+          "default": "list_reminders",
+          "title": "List Reminders",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reminder",
+          "x-display-name": "List Reminders",
+          "x-is-trigger": false
+        },
+        "person_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter reminders for this person",
+          "title": "Person ID"
+        },
+        "organization_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter reminders for this organization",
+          "title": "Organization ID"
+        },
+        "opportunity_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter reminders for this opportunity",
+          "title": "Opportunity ID"
+        },
+        "owner_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by owner",
+          "title": "Owner ID"
+        }
+      },
+      "title": "List Reminders",
+      "type": "object"
+    },
+    "AffinityListWebhooksConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_webhooks",
+          "default": "list_webhooks",
+          "title": "List Webhooks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhook",
+          "x-display-name": "List Webhooks",
+          "x-is-trigger": false
+        }
+      },
+      "title": "List Webhooks",
+      "type": "object"
+    },
+    "AffinityUpdateFieldValueConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_field_value",
+          "default": "update_field_value",
+          "title": "Update Field Value",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Field",
+          "x-display-name": "Update Field Value",
+          "x-is-trigger": false
+        },
+        "field_value_id": {
+          "title": "Field Value ID",
+          "type": "integer"
+        },
+        "value": {
+          "description": "New value (use JSON for complex values)",
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "field_value_id",
+        "value"
+      ],
+      "title": "Update Field Value",
+      "type": "object"
+    },
+    "AffinityUpdateListEntryFieldsV2Config": {
+      "properties": {
+        "operation": {
+          "const": "update_list_entry_fields",
+          "default": "update_list_entry_fields",
+          "title": "Update List Entry Fields",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "List Entry",
+          "x-display-name": "Update List Entry Fields",
+          "x-is-trigger": false
+        },
+        "list_id": {
+          "title": "List ID",
+          "type": "integer"
+        },
+        "entry_id": {
+          "title": "Entry ID",
+          "type": "integer"
+        },
+        "fields": {
+          "description": "JSON array of field updates, e.g. [{\"id\": 123, \"value\": \"new_value\"}]",
+          "title": "Fields",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "list_id",
+        "entry_id",
+        "fields"
+      ],
+      "title": "Update List Entry Fields (v2)",
+      "type": "object"
+    },
+    "AffinityUpdateNoteConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_note",
+          "default": "update_note",
+          "title": "Update Note",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Note",
+          "x-display-name": "Update Note",
+          "x-is-trigger": false
+        },
+        "note_id": {
+          "title": "Note ID",
+          "type": "integer"
+        },
+        "content": {
+          "title": "Content",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "note_id",
+        "content"
+      ],
+      "title": "Update Note",
+      "type": "object"
+    },
+    "AffinityUpdateOpportunityConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_opportunity",
+          "default": "update_opportunity",
+          "title": "Update Opportunity",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Opportunity",
+          "x-display-name": "Update Opportunity",
+          "x-is-trigger": false
+        },
+        "opportunity_id": {
+          "title": "Opportunity ID",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        }
+      },
+      "required": [
+        "opportunity_id"
+      ],
+      "title": "Update Opportunity",
+      "type": "object"
+    },
+    "AffinityUpdateOrganizationConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_organization",
+          "default": "update_organization",
+          "title": "Update Organization",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "Update Organization",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "title": "Organization ID",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "domain": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Domain"
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "Update Organization",
+      "type": "object"
+    },
+    "AffinityUpdatePersonConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_person",
+          "default": "update_person",
+          "title": "Update Person",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Person",
+          "x-display-name": "Update Person",
+          "x-is-trigger": false
+        },
+        "person_id": {
+          "title": "Person ID",
+          "type": "integer"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "emails": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated email addresses (replaces existing)",
+          "title": "Emails"
+        }
+      },
+      "required": [
+        "person_id"
+      ],
+      "title": "Update Person",
+      "type": "object"
+    },
+    "AffinityUpdateReminderConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_reminder",
+          "default": "update_reminder",
+          "title": "Update Reminder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reminder",
+          "x-display-name": "Update Reminder",
+          "x-is-trigger": false
+        },
+        "reminder_id": {
+          "title": "Reminder ID",
+          "type": "integer"
+        },
+        "content": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Content"
+        },
+        "due_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 date",
+          "title": "Due Date"
+        },
+        "completed_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 timestamp when completed",
+          "title": "Completed At"
+        }
+      },
+      "required": [
+        "reminder_id"
+      ],
+      "title": "Update Reminder",
+      "type": "object"
+    },
+    "AffinityUpdateWebhookConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_webhook",
+          "default": "update_webhook",
+          "title": "Update Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhook",
+          "x-display-name": "Update Webhook",
+          "x-is-trigger": false
+        },
+        "webhook_id": {
+          "title": "Webhook ID",
+          "type": "integer"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL"
+        },
+        "subscriptions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array of subscription objects",
+          "title": "Subscriptions"
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "Update Webhook",
+      "type": "object"
+    },
+    "AffinityUploadFileConfig": {
+      "properties": {
+        "operation": {
+          "const": "upload_file",
+          "default": "upload_file",
+          "title": "Upload File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File",
+          "x-display-name": "Upload File",
+          "x-is-trigger": false
+        },
+        "file_url": {
+          "description": "The file to upload \u2014 upload a file, paste a URL, or reference an upstream file (e.g. {{http-1.response.url}}).",
+          "title": "File URL",
+          "type": "string",
+          "ui:widget": "media_upload"
+        },
+        "file_name": {
+          "description": "Name for the uploaded file",
+          "title": "File Name",
+          "type": "string"
+        },
+        "person_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Attach file to this person",
+          "title": "Person ID"
+        },
+        "organization_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Attach file to this organization",
+          "title": "Organization ID"
+        },
+        "opportunity_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Attach file to this opportunity",
+          "title": "Opportunity ID"
+        }
+      },
+      "required": [
+        "file_url",
+        "file_name"
+      ],
+      "title": "Upload File",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for Affinity CRM node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_custom_field": "#/$defs/AffinityCreateFieldConfig",
+          "create_field_value": "#/$defs/AffinityCreateFieldValueConfig",
+          "create_list": "#/$defs/AffinityCreateListConfig",
+          "create_list_entry": "#/$defs/AffinityCreateListEntryConfig",
+          "create_note": "#/$defs/AffinityCreateNoteConfig",
+          "create_opportunity": "#/$defs/AffinityCreateOpportunityConfig",
+          "create_organization": "#/$defs/AffinityCreateOrganizationConfig",
+          "create_person": "#/$defs/AffinityCreatePersonConfig",
+          "create_reminder": "#/$defs/AffinityCreateReminderConfig",
+          "create_webhook": "#/$defs/AffinityCreateWebhookConfig",
+          "delete_custom_field": "#/$defs/AffinityDeleteFieldConfig",
+          "delete_field_value": "#/$defs/AffinityDeleteFieldValueConfig",
+          "delete_list_entry": "#/$defs/AffinityDeleteListEntryConfig",
+          "delete_note": "#/$defs/AffinityDeleteNoteConfig",
+          "delete_opportunity": "#/$defs/AffinityDeleteOpportunityConfig",
+          "delete_organization": "#/$defs/AffinityDeleteOrganizationConfig",
+          "delete_person": "#/$defs/AffinityDeletePersonConfig",
+          "delete_reminder": "#/$defs/AffinityDeleteReminderConfig",
+          "delete_webhook": "#/$defs/AffinityDeleteWebhookConfig",
+          "download_file": "#/$defs/AffinityDownloadFileConfig",
+          "get_authenticated_user_info": "#/$defs/AffinityGetWhoamiConfig",
+          "get_company_by_id": "#/$defs/AffinityGetCompanyV2Config",
+          "get_file_by_id": "#/$defs/AffinityGetFileConfig",
+          "get_list_by_id": "#/$defs/AffinityGetListConfig",
+          "get_list_entry": "#/$defs/AffinityGetListEntryConfig",
+          "get_list_entry_fields": "#/$defs/AffinityGetListEntryFieldsV2Config",
+          "get_note_by_id": "#/$defs/AffinityGetNoteConfig",
+          "get_opportunity_by_id": "#/$defs/AffinityGetOpportunityConfig",
+          "get_organization_by_id": "#/$defs/AffinityGetOrganizationConfig",
+          "get_organization_fields": "#/$defs/AffinityGetOrganizationFieldsConfig",
+          "get_person_by_id": "#/$defs/AffinityGetPersonConfig",
+          "get_person_fields": "#/$defs/AffinityGetPersonFieldsConfig",
+          "get_rate_limit_info": "#/$defs/AffinityGetRateLimitConfig",
+          "get_relationship_strengths": "#/$defs/AffinityGetRelationshipStrengthsConfig",
+          "get_reminder_by_id": "#/$defs/AffinityGetReminderConfig",
+          "get_webhook_by_id": "#/$defs/AffinityGetWebhookConfig",
+          "list_companies": "#/$defs/AffinityListCompaniesV2Config",
+          "list_company_fields": "#/$defs/AffinityListCompanyFieldsV2Config",
+          "list_custom_fields": "#/$defs/AffinityListFieldsConfig",
+          "list_field_value_changes": "#/$defs/AffinityListFieldValueChangesConfig",
+          "list_field_values": "#/$defs/AffinityListFieldValuesConfig",
+          "list_files": "#/$defs/AffinityListFilesConfig",
+          "list_list_entries": "#/$defs/AffinityListListEntriesConfig",
+          "list_list_fields": "#/$defs/AffinityListListFieldsV2Config",
+          "list_lists": "#/$defs/AffinityListListsConfig",
+          "list_notes": "#/$defs/AffinityListNotesConfig",
+          "list_opportunities": "#/$defs/AffinityListOpportunitiesConfig",
+          "list_organizations": "#/$defs/AffinityListOrganizationsConfig",
+          "list_persons": "#/$defs/AffinityListPersonsConfig",
+          "list_reminders": "#/$defs/AffinityListRemindersConfig",
+          "list_webhooks": "#/$defs/AffinityListWebhooksConfig",
+          "update_field_value": "#/$defs/AffinityUpdateFieldValueConfig",
+          "update_list_entry_fields": "#/$defs/AffinityUpdateListEntryFieldsV2Config",
+          "update_note": "#/$defs/AffinityUpdateNoteConfig",
+          "update_opportunity": "#/$defs/AffinityUpdateOpportunityConfig",
+          "update_organization": "#/$defs/AffinityUpdateOrganizationConfig",
+          "update_person": "#/$defs/AffinityUpdatePersonConfig",
+          "update_reminder": "#/$defs/AffinityUpdateReminderConfig",
+          "update_webhook": "#/$defs/AffinityUpdateWebhookConfig",
+          "upload_file": "#/$defs/AffinityUploadFileConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/AffinityGetWhoamiConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityGetRateLimitConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityListPersonsConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityGetPersonConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityCreatePersonConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityUpdatePersonConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityDeletePersonConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityGetPersonFieldsConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityListOrganizationsConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityGetOrganizationConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityCreateOrganizationConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityUpdateOrganizationConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityDeleteOrganizationConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityGetOrganizationFieldsConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityListOpportunitiesConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityGetOpportunityConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityCreateOpportunityConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityUpdateOpportunityConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityDeleteOpportunityConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityListListsConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityGetListConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityCreateListConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityListListEntriesConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityGetListEntryConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityCreateListEntryConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityDeleteListEntryConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityListFieldsConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityCreateFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityDeleteFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityListFieldValuesConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityCreateFieldValueConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityUpdateFieldValueConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityDeleteFieldValueConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityListFieldValueChangesConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityListNotesConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityGetNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityCreateNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityUpdateNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityDeleteNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityListRemindersConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityGetReminderConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityCreateReminderConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityUpdateReminderConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityDeleteReminderConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityGetRelationshipStrengthsConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityListWebhooksConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityGetWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityCreateWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityUpdateWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityDeleteWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityListFilesConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityGetFileConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityDownloadFileConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityUploadFileConfig"
+        },
+        {
+          "$ref": "#/$defs/AffinityListCompaniesV2Config"
+        },
+        {
+          "$ref": "#/$defs/AffinityGetCompanyV2Config"
+        },
+        {
+          "$ref": "#/$defs/AffinityListCompanyFieldsV2Config"
+        },
+        {
+          "$ref": "#/$defs/AffinityListListFieldsV2Config"
+        },
+        {
+          "$ref": "#/$defs/AffinityGetListEntryFieldsV2Config"
+        },
+        {
+          "$ref": "#/$defs/AffinityUpdateListEntryFieldsV2Config"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "$ref": "#/$defs/AffinityAPIKeyCredential",
+      "description": "Affinity API key credentials"
+    }
+  },
+  "required": [
+    "config",
+    "credentials"
+  ],
+  "title": "Affinity Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Create a person record for jane@acme.com with title VP Sales",
+    "Find the organization Acme Corp and pull its full profile",
+    "Add a note to the OpenAI opportunity summarizing today's call",
+    "Schedule a follow-up reminder for the Stripe deal next Friday",
+    "Add a contact to the Q4 Outreach list with custom field values",
+    "Search opportunities where stage is 'Closed Won' this quarter",
+    "Subscribe a webhook for new list entries on the Targets list"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

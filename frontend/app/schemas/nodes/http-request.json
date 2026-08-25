@@ -1,0 +1,1529 @@
+{
+  "$defs": {
+    "ApiKeyCredential": {
+      "description": "API Key authentication \u2014 sent as a request header or a query parameter.\n\nAlso covers \"custom header auth\": set the name to any header an API expects\n(e.g. ``X-Auth-Token``) and keep the location as Header.",
+      "properties": {
+        "allowed_origin": {
+          "description": "Exact HTTPS origin this credential may be sent to, for example https://api.example.com. Requests and redirects to any other origin are blocked.",
+          "minLength": 1,
+          "title": "Allowed Resource Origin",
+          "type": "string",
+          "ui:placeholder": "https://api.example.com"
+        },
+        "credential_type": {
+          "const": "http_api_key",
+          "default": "http_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "auth_type": {
+          "const": "api_key",
+          "default": "api_key",
+          "title": "Auth Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "location": {
+          "default": "header",
+          "description": "Where to put the API key on the request.",
+          "enum": [
+            "header",
+            "query"
+          ],
+          "enumNames": [
+            "Request header",
+            "Query parameter"
+          ],
+          "title": "Send In",
+          "type": "string"
+        },
+        "header_name": {
+          "default": "X-API-Key",
+          "description": "The name to send the key under \u2014 e.g. X-API-Key or Authorization for a header, or a query-parameter name like api_key.",
+          "title": "Header / Parameter Name",
+          "type": "string",
+          "ui:placeholder": "X-API-Key"
+        },
+        "api_key": {
+          "description": "API key value",
+          "minLength": 1,
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "allowed_origin",
+        "api_key"
+      ],
+      "title": "ApiKeyCredential",
+      "type": "object"
+    },
+    "BasicAuthCredential": {
+      "description": "HTTP Basic authentication",
+      "properties": {
+        "allowed_origin": {
+          "description": "Exact HTTPS origin this credential may be sent to, for example https://api.example.com. Requests and redirects to any other origin are blocked.",
+          "minLength": 1,
+          "title": "Allowed Resource Origin",
+          "type": "string",
+          "ui:placeholder": "https://api.example.com"
+        },
+        "credential_type": {
+          "const": "http_basic_auth",
+          "default": "http_basic_auth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "auth_type": {
+          "const": "basic",
+          "default": "basic",
+          "title": "Auth Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "username": {
+          "description": "Username for basic authentication",
+          "minLength": 1,
+          "title": "Username",
+          "type": "string"
+        },
+        "password": {
+          "description": "Password for basic authentication",
+          "minLength": 1,
+          "title": "Password",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "allowed_origin",
+        "username",
+        "password"
+      ],
+      "title": "BasicAuthCredential",
+      "type": "object"
+    },
+    "BearerTokenCredential": {
+      "description": "Bearer token authentication",
+      "properties": {
+        "allowed_origin": {
+          "description": "Exact HTTPS origin this credential may be sent to, for example https://api.example.com. Requests and redirects to any other origin are blocked.",
+          "minLength": 1,
+          "title": "Allowed Resource Origin",
+          "type": "string",
+          "ui:placeholder": "https://api.example.com"
+        },
+        "credential_type": {
+          "const": "http_bearer_token",
+          "default": "http_bearer_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "auth_type": {
+          "const": "bearer",
+          "default": "bearer",
+          "title": "Auth Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "token": {
+          "description": "Token for Authorization header (Bearer <token>)",
+          "minLength": 1,
+          "title": "Bearer Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "allowed_origin",
+        "token"
+      ],
+      "title": "BearerTokenCredential",
+      "type": "object"
+    },
+    "HttpDeleteConfig": {
+      "description": "HTTP DELETE request configuration",
+      "properties": {
+        "url": {
+          "description": "The URL to send the request to",
+          "minLength": 1,
+          "title": "URL",
+          "type": "string",
+          "ui:placeholder": "https://api.example.com/v1/resource"
+        },
+        "query_params": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/HttpKeyValue"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Query-string parameters appended to the URL (URL-encoded for you).",
+          "title": "Query Parameters",
+          "ui:widget": "key_value"
+        },
+        "headers": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/HttpKeyValue"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Request headers. Drag in {{references}} on the value side.",
+          "title": "Headers",
+          "ui:widget": "key_value"
+        },
+        "body_type": {
+          "default": "none",
+          "description": "Body encoding. For json or raw, provide body; for form_urlencoded, provide body_form. Raw requests may also set content_type_override.",
+          "enum": [
+            "none",
+            "json",
+            "form_urlencoded",
+            "raw"
+          ],
+          "enumNames": [
+            "None",
+            "JSON",
+            "Form",
+            "Raw"
+          ],
+          "title": "Body",
+          "type": "string",
+          "ui:widget": "http_body"
+        },
+        "body": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Request body. Use {{nodeId.output.field}} to reference upstream data.",
+          "title": "Request Body",
+          "ui:hidden": true,
+          "x-agent-tool-visible": true
+        },
+        "body_form": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/HttpKeyValue"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fields sent as application/x-www-form-urlencoded.",
+          "title": "Form Fields",
+          "ui:hidden": true,
+          "x-agent-tool-visible": true
+        },
+        "content_type_override": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Content-Type for the raw body (e.g. application/xml). Defaults to text/plain.",
+          "title": "Content-Type",
+          "ui:hidden": true,
+          "x-agent-tool-visible": true
+        },
+        "never_error": {
+          "default": "false",
+          "description": "By default a 4xx/5xx response (or a network/timeout failure) makes the node fail loudly. Enable this to return the error response as data instead, so the workflow can branch on it.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Returns errors as data",
+            "Fails the run"
+          ],
+          "title": "Continue on HTTP Error",
+          "type": "string",
+          "ui:category": "Options",
+          "ui:widget": "toggle"
+        },
+        "timeout_seconds": {
+          "default": 30,
+          "description": "How long to wait for the request before giving up.",
+          "maximum": 300,
+          "minimum": 1,
+          "title": "Timeout (seconds)",
+          "type": "integer",
+          "ui:category": "Options"
+        },
+        "max_retries": {
+          "default": 0,
+          "description": "Retry transient failures (network errors, 429 and 5xx) with exponential backoff, honoring Retry-After. Note: retries can re-submit non-idempotent requests (POST/PATCH).",
+          "maximum": 10,
+          "minimum": 0,
+          "title": "Max Retries",
+          "type": "integer",
+          "ui:category": "Options"
+        },
+        "follow_redirects": {
+          "default": "true",
+          "description": "Follow 3xx redirects to the new location automatically.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "On",
+            "Off"
+          ],
+          "title": "Follow Redirects",
+          "type": "string",
+          "ui:category": "Options",
+          "ui:widget": "toggle"
+        },
+        "max_redirects": {
+          "default": 10,
+          "description": "Maximum redirects to follow (when Follow Redirects is on).",
+          "maximum": 50,
+          "minimum": 0,
+          "title": "Max Redirects",
+          "type": "integer",
+          "ui:category": "Options"
+        },
+        "verify_ssl": {
+          "default": "true",
+          "description": "Disable only for internal endpoints with self-signed certs. SSRF protection still applies regardless.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "On",
+            "Off"
+          ],
+          "title": "Verify SSL Certificate",
+          "type": "string",
+          "ui:category": "Options",
+          "ui:widget": "toggle"
+        },
+        "response_format": {
+          "default": "auto",
+          "description": "How to read the response body. Auto detects JSON / text / binary.",
+          "enum": [
+            "auto",
+            "json",
+            "text",
+            "binary"
+          ],
+          "enumNames": [
+            "Auto",
+            "JSON",
+            "Text",
+            "Binary"
+          ],
+          "title": "Response Format",
+          "type": "string",
+          "ui:category": "Options",
+          "ui:widget": "segmented"
+        },
+        "full_response": {
+          "default": "true",
+          "description": "On: return status code, headers and body. Off: return only the body.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Status + headers + body",
+            "Body only"
+          ],
+          "title": "Include Full Response",
+          "type": "string",
+          "ui:category": "Options",
+          "ui:widget": "toggle"
+        },
+        "operation": {
+          "const": "send_http_delete_request",
+          "default": "send_http_delete_request",
+          "title": "Send Http Delete Request",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "HTTP Request",
+          "x-display-name": "Send Http Delete Request",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "HttpDeleteConfig",
+      "type": "object"
+    },
+    "HttpGetConfig": {
+      "description": "HTTP GET request configuration",
+      "properties": {
+        "url": {
+          "description": "The URL to send the request to",
+          "minLength": 1,
+          "title": "URL",
+          "type": "string",
+          "ui:placeholder": "https://api.example.com/v1/resource"
+        },
+        "query_params": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/HttpKeyValue"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Query-string parameters appended to the URL (URL-encoded for you).",
+          "title": "Query Parameters",
+          "ui:widget": "key_value"
+        },
+        "headers": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/HttpKeyValue"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Request headers. Drag in {{references}} on the value side.",
+          "title": "Headers",
+          "ui:widget": "key_value"
+        },
+        "body_type": {
+          "default": "none",
+          "description": "Body encoding. For json or raw, provide body; for form_urlencoded, provide body_form. Raw requests may also set content_type_override.",
+          "enum": [
+            "none",
+            "json",
+            "form_urlencoded",
+            "raw"
+          ],
+          "enumNames": [
+            "None",
+            "JSON",
+            "Form",
+            "Raw"
+          ],
+          "title": "Body",
+          "type": "string",
+          "ui:widget": "http_body"
+        },
+        "body": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Request body. Use {{nodeId.output.field}} to reference upstream data.",
+          "title": "Request Body",
+          "ui:hidden": true,
+          "x-agent-tool-visible": true
+        },
+        "body_form": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/HttpKeyValue"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fields sent as application/x-www-form-urlencoded.",
+          "title": "Form Fields",
+          "ui:hidden": true,
+          "x-agent-tool-visible": true
+        },
+        "content_type_override": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Content-Type for the raw body (e.g. application/xml). Defaults to text/plain.",
+          "title": "Content-Type",
+          "ui:hidden": true,
+          "x-agent-tool-visible": true
+        },
+        "never_error": {
+          "default": "false",
+          "description": "By default a 4xx/5xx response (or a network/timeout failure) makes the node fail loudly. Enable this to return the error response as data instead, so the workflow can branch on it.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Returns errors as data",
+            "Fails the run"
+          ],
+          "title": "Continue on HTTP Error",
+          "type": "string",
+          "ui:category": "Options",
+          "ui:widget": "toggle"
+        },
+        "timeout_seconds": {
+          "default": 30,
+          "description": "How long to wait for the request before giving up.",
+          "maximum": 300,
+          "minimum": 1,
+          "title": "Timeout (seconds)",
+          "type": "integer",
+          "ui:category": "Options"
+        },
+        "max_retries": {
+          "default": 0,
+          "description": "Retry transient failures (network errors, 429 and 5xx) with exponential backoff, honoring Retry-After. Note: retries can re-submit non-idempotent requests (POST/PATCH).",
+          "maximum": 10,
+          "minimum": 0,
+          "title": "Max Retries",
+          "type": "integer",
+          "ui:category": "Options"
+        },
+        "follow_redirects": {
+          "default": "true",
+          "description": "Follow 3xx redirects to the new location automatically.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "On",
+            "Off"
+          ],
+          "title": "Follow Redirects",
+          "type": "string",
+          "ui:category": "Options",
+          "ui:widget": "toggle"
+        },
+        "max_redirects": {
+          "default": 10,
+          "description": "Maximum redirects to follow (when Follow Redirects is on).",
+          "maximum": 50,
+          "minimum": 0,
+          "title": "Max Redirects",
+          "type": "integer",
+          "ui:category": "Options"
+        },
+        "verify_ssl": {
+          "default": "true",
+          "description": "Disable only for internal endpoints with self-signed certs. SSRF protection still applies regardless.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "On",
+            "Off"
+          ],
+          "title": "Verify SSL Certificate",
+          "type": "string",
+          "ui:category": "Options",
+          "ui:widget": "toggle"
+        },
+        "response_format": {
+          "default": "auto",
+          "description": "How to read the response body. Auto detects JSON / text / binary.",
+          "enum": [
+            "auto",
+            "json",
+            "text",
+            "binary"
+          ],
+          "enumNames": [
+            "Auto",
+            "JSON",
+            "Text",
+            "Binary"
+          ],
+          "title": "Response Format",
+          "type": "string",
+          "ui:category": "Options",
+          "ui:widget": "segmented"
+        },
+        "full_response": {
+          "default": "true",
+          "description": "On: return status code, headers and body. Off: return only the body.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Status + headers + body",
+            "Body only"
+          ],
+          "title": "Include Full Response",
+          "type": "string",
+          "ui:category": "Options",
+          "ui:widget": "toggle"
+        },
+        "operation": {
+          "const": "send_http_get_request",
+          "default": "send_http_get_request",
+          "title": "Send Http Get Request",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "HTTP Request",
+          "x-display-name": "Send Http Get Request",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "HttpGetConfig",
+      "type": "object"
+    },
+    "HttpKeyValue": {
+      "description": "One row in a headers / query-parameter editor.\n\n`value` supports `{{node.output.field}}` references (resolved upstream before\nparsing). `enabled` lets a row be toggled off without deleting it.",
+      "properties": {
+        "key": {
+          "default": "",
+          "title": "Name",
+          "type": "string"
+        },
+        "value": {
+          "default": "",
+          "title": "Value",
+          "type": "string"
+        },
+        "enabled": {
+          "default": true,
+          "title": "Enabled",
+          "type": "boolean"
+        }
+      },
+      "title": "HttpKeyValue",
+      "type": "object"
+    },
+    "HttpPatchConfig": {
+      "description": "HTTP PATCH request configuration",
+      "properties": {
+        "url": {
+          "description": "The URL to send the request to",
+          "minLength": 1,
+          "title": "URL",
+          "type": "string",
+          "ui:placeholder": "https://api.example.com/v1/resource"
+        },
+        "query_params": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/HttpKeyValue"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Query-string parameters appended to the URL (URL-encoded for you).",
+          "title": "Query Parameters",
+          "ui:widget": "key_value"
+        },
+        "headers": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/HttpKeyValue"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Request headers. Drag in {{references}} on the value side.",
+          "title": "Headers",
+          "ui:widget": "key_value"
+        },
+        "body_type": {
+          "default": "none",
+          "description": "Body encoding. For json or raw, provide body; for form_urlencoded, provide body_form. Raw requests may also set content_type_override.",
+          "enum": [
+            "none",
+            "json",
+            "form_urlencoded",
+            "raw"
+          ],
+          "enumNames": [
+            "None",
+            "JSON",
+            "Form",
+            "Raw"
+          ],
+          "title": "Body",
+          "type": "string",
+          "ui:widget": "http_body"
+        },
+        "body": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Request body. Use {{nodeId.output.field}} to reference upstream data.",
+          "title": "Request Body",
+          "ui:hidden": true,
+          "x-agent-tool-visible": true
+        },
+        "body_form": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/HttpKeyValue"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fields sent as application/x-www-form-urlencoded.",
+          "title": "Form Fields",
+          "ui:hidden": true,
+          "x-agent-tool-visible": true
+        },
+        "content_type_override": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Content-Type for the raw body (e.g. application/xml). Defaults to text/plain.",
+          "title": "Content-Type",
+          "ui:hidden": true,
+          "x-agent-tool-visible": true
+        },
+        "never_error": {
+          "default": "false",
+          "description": "By default a 4xx/5xx response (or a network/timeout failure) makes the node fail loudly. Enable this to return the error response as data instead, so the workflow can branch on it.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Returns errors as data",
+            "Fails the run"
+          ],
+          "title": "Continue on HTTP Error",
+          "type": "string",
+          "ui:category": "Options",
+          "ui:widget": "toggle"
+        },
+        "timeout_seconds": {
+          "default": 30,
+          "description": "How long to wait for the request before giving up.",
+          "maximum": 300,
+          "minimum": 1,
+          "title": "Timeout (seconds)",
+          "type": "integer",
+          "ui:category": "Options"
+        },
+        "max_retries": {
+          "default": 0,
+          "description": "Retry transient failures (network errors, 429 and 5xx) with exponential backoff, honoring Retry-After. Note: retries can re-submit non-idempotent requests (POST/PATCH).",
+          "maximum": 10,
+          "minimum": 0,
+          "title": "Max Retries",
+          "type": "integer",
+          "ui:category": "Options"
+        },
+        "follow_redirects": {
+          "default": "true",
+          "description": "Follow 3xx redirects to the new location automatically.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "On",
+            "Off"
+          ],
+          "title": "Follow Redirects",
+          "type": "string",
+          "ui:category": "Options",
+          "ui:widget": "toggle"
+        },
+        "max_redirects": {
+          "default": 10,
+          "description": "Maximum redirects to follow (when Follow Redirects is on).",
+          "maximum": 50,
+          "minimum": 0,
+          "title": "Max Redirects",
+          "type": "integer",
+          "ui:category": "Options"
+        },
+        "verify_ssl": {
+          "default": "true",
+          "description": "Disable only for internal endpoints with self-signed certs. SSRF protection still applies regardless.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "On",
+            "Off"
+          ],
+          "title": "Verify SSL Certificate",
+          "type": "string",
+          "ui:category": "Options",
+          "ui:widget": "toggle"
+        },
+        "response_format": {
+          "default": "auto",
+          "description": "How to read the response body. Auto detects JSON / text / binary.",
+          "enum": [
+            "auto",
+            "json",
+            "text",
+            "binary"
+          ],
+          "enumNames": [
+            "Auto",
+            "JSON",
+            "Text",
+            "Binary"
+          ],
+          "title": "Response Format",
+          "type": "string",
+          "ui:category": "Options",
+          "ui:widget": "segmented"
+        },
+        "full_response": {
+          "default": "true",
+          "description": "On: return status code, headers and body. Off: return only the body.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Status + headers + body",
+            "Body only"
+          ],
+          "title": "Include Full Response",
+          "type": "string",
+          "ui:category": "Options",
+          "ui:widget": "toggle"
+        },
+        "operation": {
+          "const": "send_http_patch_request",
+          "default": "send_http_patch_request",
+          "title": "Send Http Patch Request",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "HTTP Request",
+          "x-display-name": "Send Http Patch Request",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "HttpPatchConfig",
+      "type": "object"
+    },
+    "HttpPostConfig": {
+      "description": "HTTP POST request configuration",
+      "properties": {
+        "url": {
+          "description": "The URL to send the request to",
+          "minLength": 1,
+          "title": "URL",
+          "type": "string",
+          "ui:placeholder": "https://api.example.com/v1/resource"
+        },
+        "query_params": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/HttpKeyValue"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Query-string parameters appended to the URL (URL-encoded for you).",
+          "title": "Query Parameters",
+          "ui:widget": "key_value"
+        },
+        "headers": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/HttpKeyValue"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Request headers. Drag in {{references}} on the value side.",
+          "title": "Headers",
+          "ui:widget": "key_value"
+        },
+        "body_type": {
+          "default": "none",
+          "description": "Body encoding. For json or raw, provide body; for form_urlencoded, provide body_form. Raw requests may also set content_type_override.",
+          "enum": [
+            "none",
+            "json",
+            "form_urlencoded",
+            "raw"
+          ],
+          "enumNames": [
+            "None",
+            "JSON",
+            "Form",
+            "Raw"
+          ],
+          "title": "Body",
+          "type": "string",
+          "ui:widget": "http_body"
+        },
+        "body": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Request body. Use {{nodeId.output.field}} to reference upstream data.",
+          "title": "Request Body",
+          "ui:hidden": true,
+          "x-agent-tool-visible": true
+        },
+        "body_form": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/HttpKeyValue"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fields sent as application/x-www-form-urlencoded.",
+          "title": "Form Fields",
+          "ui:hidden": true,
+          "x-agent-tool-visible": true
+        },
+        "content_type_override": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Content-Type for the raw body (e.g. application/xml). Defaults to text/plain.",
+          "title": "Content-Type",
+          "ui:hidden": true,
+          "x-agent-tool-visible": true
+        },
+        "never_error": {
+          "default": "false",
+          "description": "By default a 4xx/5xx response (or a network/timeout failure) makes the node fail loudly. Enable this to return the error response as data instead, so the workflow can branch on it.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Returns errors as data",
+            "Fails the run"
+          ],
+          "title": "Continue on HTTP Error",
+          "type": "string",
+          "ui:category": "Options",
+          "ui:widget": "toggle"
+        },
+        "timeout_seconds": {
+          "default": 30,
+          "description": "How long to wait for the request before giving up.",
+          "maximum": 300,
+          "minimum": 1,
+          "title": "Timeout (seconds)",
+          "type": "integer",
+          "ui:category": "Options"
+        },
+        "max_retries": {
+          "default": 0,
+          "description": "Retry transient failures (network errors, 429 and 5xx) with exponential backoff, honoring Retry-After. Note: retries can re-submit non-idempotent requests (POST/PATCH).",
+          "maximum": 10,
+          "minimum": 0,
+          "title": "Max Retries",
+          "type": "integer",
+          "ui:category": "Options"
+        },
+        "follow_redirects": {
+          "default": "true",
+          "description": "Follow 3xx redirects to the new location automatically.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "On",
+            "Off"
+          ],
+          "title": "Follow Redirects",
+          "type": "string",
+          "ui:category": "Options",
+          "ui:widget": "toggle"
+        },
+        "max_redirects": {
+          "default": 10,
+          "description": "Maximum redirects to follow (when Follow Redirects is on).",
+          "maximum": 50,
+          "minimum": 0,
+          "title": "Max Redirects",
+          "type": "integer",
+          "ui:category": "Options"
+        },
+        "verify_ssl": {
+          "default": "true",
+          "description": "Disable only for internal endpoints with self-signed certs. SSRF protection still applies regardless.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "On",
+            "Off"
+          ],
+          "title": "Verify SSL Certificate",
+          "type": "string",
+          "ui:category": "Options",
+          "ui:widget": "toggle"
+        },
+        "response_format": {
+          "default": "auto",
+          "description": "How to read the response body. Auto detects JSON / text / binary.",
+          "enum": [
+            "auto",
+            "json",
+            "text",
+            "binary"
+          ],
+          "enumNames": [
+            "Auto",
+            "JSON",
+            "Text",
+            "Binary"
+          ],
+          "title": "Response Format",
+          "type": "string",
+          "ui:category": "Options",
+          "ui:widget": "segmented"
+        },
+        "full_response": {
+          "default": "true",
+          "description": "On: return status code, headers and body. Off: return only the body.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Status + headers + body",
+            "Body only"
+          ],
+          "title": "Include Full Response",
+          "type": "string",
+          "ui:category": "Options",
+          "ui:widget": "toggle"
+        },
+        "operation": {
+          "const": "send_http_post_request",
+          "default": "send_http_post_request",
+          "title": "Send Http Post Request",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "HTTP Request",
+          "x-display-name": "Send Http Post Request",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "HttpPostConfig",
+      "type": "object"
+    },
+    "HttpPutConfig": {
+      "description": "HTTP PUT request configuration",
+      "properties": {
+        "url": {
+          "description": "The URL to send the request to",
+          "minLength": 1,
+          "title": "URL",
+          "type": "string",
+          "ui:placeholder": "https://api.example.com/v1/resource"
+        },
+        "query_params": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/HttpKeyValue"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Query-string parameters appended to the URL (URL-encoded for you).",
+          "title": "Query Parameters",
+          "ui:widget": "key_value"
+        },
+        "headers": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/HttpKeyValue"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Request headers. Drag in {{references}} on the value side.",
+          "title": "Headers",
+          "ui:widget": "key_value"
+        },
+        "body_type": {
+          "default": "none",
+          "description": "Body encoding. For json or raw, provide body; for form_urlencoded, provide body_form. Raw requests may also set content_type_override.",
+          "enum": [
+            "none",
+            "json",
+            "form_urlencoded",
+            "raw"
+          ],
+          "enumNames": [
+            "None",
+            "JSON",
+            "Form",
+            "Raw"
+          ],
+          "title": "Body",
+          "type": "string",
+          "ui:widget": "http_body"
+        },
+        "body": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Request body. Use {{nodeId.output.field}} to reference upstream data.",
+          "title": "Request Body",
+          "ui:hidden": true,
+          "x-agent-tool-visible": true
+        },
+        "body_form": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/HttpKeyValue"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fields sent as application/x-www-form-urlencoded.",
+          "title": "Form Fields",
+          "ui:hidden": true,
+          "x-agent-tool-visible": true
+        },
+        "content_type_override": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Content-Type for the raw body (e.g. application/xml). Defaults to text/plain.",
+          "title": "Content-Type",
+          "ui:hidden": true,
+          "x-agent-tool-visible": true
+        },
+        "never_error": {
+          "default": "false",
+          "description": "By default a 4xx/5xx response (or a network/timeout failure) makes the node fail loudly. Enable this to return the error response as data instead, so the workflow can branch on it.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Returns errors as data",
+            "Fails the run"
+          ],
+          "title": "Continue on HTTP Error",
+          "type": "string",
+          "ui:category": "Options",
+          "ui:widget": "toggle"
+        },
+        "timeout_seconds": {
+          "default": 30,
+          "description": "How long to wait for the request before giving up.",
+          "maximum": 300,
+          "minimum": 1,
+          "title": "Timeout (seconds)",
+          "type": "integer",
+          "ui:category": "Options"
+        },
+        "max_retries": {
+          "default": 0,
+          "description": "Retry transient failures (network errors, 429 and 5xx) with exponential backoff, honoring Retry-After. Note: retries can re-submit non-idempotent requests (POST/PATCH).",
+          "maximum": 10,
+          "minimum": 0,
+          "title": "Max Retries",
+          "type": "integer",
+          "ui:category": "Options"
+        },
+        "follow_redirects": {
+          "default": "true",
+          "description": "Follow 3xx redirects to the new location automatically.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "On",
+            "Off"
+          ],
+          "title": "Follow Redirects",
+          "type": "string",
+          "ui:category": "Options",
+          "ui:widget": "toggle"
+        },
+        "max_redirects": {
+          "default": 10,
+          "description": "Maximum redirects to follow (when Follow Redirects is on).",
+          "maximum": 50,
+          "minimum": 0,
+          "title": "Max Redirects",
+          "type": "integer",
+          "ui:category": "Options"
+        },
+        "verify_ssl": {
+          "default": "true",
+          "description": "Disable only for internal endpoints with self-signed certs. SSRF protection still applies regardless.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "On",
+            "Off"
+          ],
+          "title": "Verify SSL Certificate",
+          "type": "string",
+          "ui:category": "Options",
+          "ui:widget": "toggle"
+        },
+        "response_format": {
+          "default": "auto",
+          "description": "How to read the response body. Auto detects JSON / text / binary.",
+          "enum": [
+            "auto",
+            "json",
+            "text",
+            "binary"
+          ],
+          "enumNames": [
+            "Auto",
+            "JSON",
+            "Text",
+            "Binary"
+          ],
+          "title": "Response Format",
+          "type": "string",
+          "ui:category": "Options",
+          "ui:widget": "segmented"
+        },
+        "full_response": {
+          "default": "true",
+          "description": "On: return status code, headers and body. Off: return only the body.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Status + headers + body",
+            "Body only"
+          ],
+          "title": "Include Full Response",
+          "type": "string",
+          "ui:category": "Options",
+          "ui:widget": "toggle"
+        },
+        "operation": {
+          "const": "send_http_put_request",
+          "default": "send_http_put_request",
+          "title": "Send Http Put Request",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "HTTP Request",
+          "x-display-name": "Send Http Put Request",
+          "x-is-trigger": false
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "HttpPutConfig",
+      "type": "object"
+    },
+    "OAuth2ClientCredentials": {
+      "description": "Generic OAuth2 client-credentials grant.\n\nMachine-to-machine auth: the node POSTs to the token URL to mint a short-\nlived access token and sends it as ``Authorization: Bearer``. No browser\nredirect, so it's a plain credential the user fills in (token URL + client\nid/secret + scope), not an OAuth connect flow.",
+      "properties": {
+        "allowed_origin": {
+          "description": "Exact HTTPS origin this credential may be sent to, for example https://api.example.com. Requests and redirects to any other origin are blocked.",
+          "minLength": 1,
+          "title": "Allowed Resource Origin",
+          "type": "string",
+          "ui:placeholder": "https://api.example.com"
+        },
+        "credential_type": {
+          "const": "http_oauth2_client_credentials",
+          "default": "http_oauth2_client_credentials",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "auth_type": {
+          "const": "oauth2_client_credentials",
+          "default": "oauth2_client_credentials",
+          "title": "Auth Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "token_url": {
+          "description": "OAuth2 token endpoint (grant_type=client_credentials).",
+          "minLength": 1,
+          "title": "Token URL",
+          "type": "string",
+          "ui:placeholder": "https://auth.example.com/oauth/token"
+        },
+        "client_id": {
+          "minLength": 1,
+          "title": "Client ID",
+          "type": "string"
+        },
+        "client_secret": {
+          "minLength": 1,
+          "title": "Client Secret",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Space-separated scopes (optional).",
+          "title": "Scope"
+        },
+        "audience": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Audience parameter, if your provider requires it (e.g. Auth0).",
+          "title": "Audience"
+        },
+        "send_credentials_in_body": {
+          "default": "true",
+          "description": "Where to put client_id/secret on the token request.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Request body",
+            "Basic auth header"
+          ],
+          "title": "Send Client Credentials In",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "allowed_origin",
+        "token_url",
+        "client_id",
+        "client_secret"
+      ],
+      "title": "OAuth2ClientCredentials",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for HTTP Request node including credentials",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "send_http_delete_request": "#/$defs/HttpDeleteConfig",
+          "send_http_get_request": "#/$defs/HttpGetConfig",
+          "send_http_patch_request": "#/$defs/HttpPatchConfig",
+          "send_http_post_request": "#/$defs/HttpPostConfig",
+          "send_http_put_request": "#/$defs/HttpPutConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/HttpGetConfig"
+        },
+        {
+          "$ref": "#/$defs/HttpPostConfig"
+        },
+        {
+          "$ref": "#/$defs/HttpPutConfig"
+        },
+        {
+          "$ref": "#/$defs/HttpPatchConfig"
+        },
+        {
+          "$ref": "#/$defs/HttpDeleteConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BearerTokenCredential"
+        },
+        {
+          "$ref": "#/$defs/BasicAuthCredential"
+        },
+        {
+          "$ref": "#/$defs/ApiKeyCredential"
+        },
+        {
+          "$ref": "#/$defs/OAuth2ClientCredentials"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Http-request Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Send a GET request to the OpenWeather API with an API key",
+    "POST JSON data to https://api.example.com/webhooks with basic auth",
+    "Update a resource via PUT with a custom Authorization header",
+    "Delete a record by ID using Bearer token authentication",
+    "Fetch GitHub user repos via PATCH with custom headers"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

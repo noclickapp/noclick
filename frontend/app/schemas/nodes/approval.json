@@ -1,0 +1,115 @@
+{
+  "$defs": {
+    "ApprovalField": {
+      "description": "A field in the approval form. Like the form node's FormField but includes a value\nthat can contain references (e.g. {{upstream.amount}}) resolved at runtime.",
+      "properties": {
+        "name": {
+          "description": "Identifier used in references: {{nodeId.values.field_name}}",
+          "minLength": 1,
+          "pattern": "^[a-zA-Z_][a-zA-Z0-9_]*$",
+          "title": "Field Name",
+          "type": "string"
+        },
+        "type": {
+          "default": "string",
+          "description": "Data type: string, number, boolean, select, media",
+          "title": "Type",
+          "type": "string"
+        },
+        "label": {
+          "default": "",
+          "description": "Display label",
+          "title": "Label",
+          "type": "string"
+        },
+        "description": {
+          "default": "",
+          "description": "Help text",
+          "title": "Description",
+          "type": "string"
+        },
+        "required": {
+          "default": false,
+          "title": "Required",
+          "type": "boolean"
+        },
+        "options": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For select/dropdown fields",
+          "title": "Options"
+        },
+        "value": {
+          "default": "",
+          "description": "Pre-filled value. Supports references like {{node.field}}.",
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "ApprovalField",
+      "type": "object"
+    },
+    "ApprovalInnerConfig": {
+      "description": "Configuration for the approval node.",
+      "properties": {
+        "title": {
+          "default": "",
+          "description": "Short title shown in the approval feed card",
+          "placeholder": "Review new campaign",
+          "title": "Title",
+          "type": "string"
+        },
+        "fields": {
+          "description": "Fields shown in the approval card. Values can reference upstream nodes.",
+          "items": {
+            "$ref": "#/$defs/ApprovalField"
+          },
+          "title": "Form Fields",
+          "type": "array",
+          "ui:widget": "approval_fields"
+        }
+      },
+      "title": "ApprovalInnerConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for approval node (no credentials needed).",
+  "properties": {
+    "config": {
+      "$ref": "#/$defs/ApprovalInnerConfig",
+      "description": "Node-specific configuration"
+    },
+    "credentials": {
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials",
+      "type": "null"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Approval Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Add an approval field to show the computed total amount to reviewer",
+    "Change title to \"Review campaign before posting\" for clarity",
+    "Add a boolean confirmation field and set its value to {{email.status}}",
+    "Update field description to guide approver on decision criteria",
+    "Add textarea field for reviewer comments during approval decision"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

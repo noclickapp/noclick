@@ -1,0 +1,142 @@
+// Outlook automation node definition.
+// Comprehensive Microsoft 365 integration via Microsoft Graph API.
+// Supports Mail (send, read, reply, forward, attachments, rules, categories),
+// Calendar (events, meetings, schedules), and Contacts management.
+
+import { memo, forwardRef, SVGProps, useId } from 'react';
+import { NodeProps } from '@xyflow/react';
+import AutomationNode from './base/AutomationNode';
+import { NodeDefinition, SvgIconComponent } from './types';
+
+const DIMENSIONS = { width: 90, height: 90, iconSize: 60 };
+
+// Official Microsoft Outlook 2025 icon SVG
+const OutlookIcon: SvgIconComponent = forwardRef<SVGSVGElement, SVGProps<SVGSVGElement>>(
+    ({ className, style, ...props }, ref) => {
+        const id = useId();
+        // Generate unique IDs for all gradients
+        const gradients = {
+            linear0: `${id}-linear0`,
+            linear1: `${id}-linear1`,
+            linear2: `${id}-linear2`,
+            linear3: `${id}-linear3`,
+            linear4: `${id}-linear4`,
+            linear5: `${id}-linear5`,
+            linear6: `${id}-linear6`,
+            radial0: `${id}-radial0`,
+            radial1: `${id}-radial1`,
+            radial2: `${id}-radial2`,
+            radial3: `${id}-radial3`,
+            radial4: `${id}-radial4`,
+            radial5: `${id}-radial5`,
+        };
+
+        return (
+            <svg
+                ref={ref}
+                xmlns="http://www.w3.org/2000/svg"
+                viewBox="60 90.4 570.02 539.67"
+                className={className}
+                style={style}
+                {...props}
+            >
+                <defs>
+                    <linearGradient id={gradients.linear0} gradientUnits="userSpaceOnUse" x1="9.98908" y1="22.364901" x2="30.932199" y2="9.37495" gradientTransform="matrix(15,0,0,15,0,0)">
+                        <stop offset="0" stopColor="rgb(12.54902%,65.490196%,98.039216%)" stopOpacity="1"/>
+                        <stop offset="0.4" stopColor="rgb(23.137255%,83.529412%,100%)" stopOpacity="1"/>
+                        <stop offset="1" stopColor="rgb(76.862745%,69.019608%,100%)" stopOpacity="1"/>
+                    </linearGradient>
+                    <linearGradient id={gradients.linear1} gradientUnits="userSpaceOnUse" x1="17.197201" y1="26.7945" x2="28.856199" y2="8.12575" gradientTransform="matrix(15,0,0,15,0,0)">
+                        <stop offset="0" stopColor="rgb(8.627451%,35.294118%,85.098039%)" stopOpacity="1"/>
+                        <stop offset="0.5008" stopColor="rgb(9.411765%,50.196078%,89.803922%)" stopOpacity="1"/>
+                        <stop offset="1" stopColor="rgb(52.156863%,52.941176%,100%)" stopOpacity="1"/>
+                    </linearGradient>
+                    <linearGradient id={gradients.linear2} gradientUnits="userSpaceOnUse" x1="25.7005" y1="27.048401" x2="12.7563" y2="16.501301" gradientTransform="matrix(15,0,0,15,0,0)">
+                        <stop offset="0.236946" stopColor="rgb(26.666667%,54.117647%,100%)" stopOpacity="0"/>
+                        <stop offset="0.792113" stopColor="rgb(0%,19.607843%,69.411765%)" stopOpacity="0.2"/>
+                    </linearGradient>
+                    <linearGradient id={gradients.linear3} gradientUnits="userSpaceOnUse" x1="24.0534" y1="31.1099" x2="44.509998" y2="18.0177" gradientTransform="matrix(15,0,0,15,0,0)">
+                        <stop offset="0" stopColor="rgb(10.196078%,26.27451%,65.098039%)" stopOpacity="1"/>
+                        <stop offset="0.492267" stopColor="rgb(12.54902%,32.156863%,79.607843%)" stopOpacity="1"/>
+                        <stop offset="1" stopColor="rgb(37.254902%,12.54902%,79.607843%)" stopOpacity="1"/>
+                    </linearGradient>
+                    <linearGradient id={gradients.linear4} gradientUnits="userSpaceOnUse" x1="29.8281" y1="30.327299" x2="17.397499" y2="19.570801" gradientTransform="matrix(15,0,0,15,0,0)">
+                        <stop offset="0" stopColor="rgb(0%,27.058824%,72.54902%)" stopOpacity="0"/>
+                        <stop offset="0.669859" stopColor="rgb(5.098039%,12.156863%,41.176471%)" stopOpacity="0.2"/>
+                    </linearGradient>
+                    <radialGradient id={gradients.radial0} gradientUnits="userSpaceOnUse" cx="0" cy="0" fx="0" fy="0" r="1" gradientTransform="matrix(0.000000000000024802,-405.040512,438.393002,0.000000000000026844,360.027008,102.268202)">
+                        <stop offset="0.568182" stopColor="rgb(15.294118%,37.254902%,94.117647%)" stopOpacity="0"/>
+                        <stop offset="0.992424" stopColor="rgb(0%,12.941176%,46.666667%)" stopOpacity="1"/>
+                    </radialGradient>
+                    <linearGradient id={gradients.linear5} gradientUnits="userSpaceOnUse" x1="41.998001" y1="29.9431" x2="23.8517" y2="29.9431" gradientTransform="matrix(15,0,0,15,0,0)">
+                        <stop offset="0" stopColor="rgb(30.196078%,76.862745%,100%)" stopOpacity="1"/>
+                        <stop offset="0.196145" stopColor="rgb(5.882353%,68.627451%,100%)" stopOpacity="1"/>
+                    </linearGradient>
+                    <radialGradient id={gradients.radial1} gradientUnits="userSpaceOnUse" cx="0" cy="0" fx="0" fy="0" r="1" gradientTransform="matrix(122.73959,-122.73959,122.73959,122.73959,421.392002,568.675518)">
+                        <stop offset="0.259477" stopColor="rgb(0%,37.647059%,81.960784%)" stopOpacity="0.4"/>
+                        <stop offset="0.908166" stopColor="rgb(1.176471%,51.372549%,94.509804%)" stopOpacity="0"/>
+                    </radialGradient>
+                    <radialGradient id={gradients.radial2} gradientUnits="userSpaceOnUse" cx="0" cy="0" fx="0" fy="0" r="1" gradientTransform="matrix(357.407022,-468.445926,423.594568,323.187085,159.471002,697.080002)">
+                        <stop offset="0.732317" stopColor="rgb(95.686275%,65.490196%,96.862745%)" stopOpacity="0"/>
+                        <stop offset="1" stopColor="rgb(95.686275%,65.490196%,96.862745%)" stopOpacity="0.501961"/>
+                    </radialGradient>
+                    <radialGradient id={gradients.radial3} gradientUnits="userSpaceOnUse" cx="0" cy="0" fx="0" fy="0" r="1" gradientTransform="matrix(-170.860868,259.725406,-674.018133,-443.404152,278.562012,412.978506)">
+                        <stop offset="0" stopColor="rgb(28.627451%,87.058824%,100%)" stopOpacity="1"/>
+                        <stop offset="0.724349" stopColor="rgb(16.078431%,76.470588%,100%)" stopOpacity="1"/>
+                    </radialGradient>
+                    <linearGradient id={gradients.linear6} gradientUnits="userSpaceOnUse" x1="3.45756" y1="37.872299" x2="20.9291" y2="37.859699" gradientTransform="matrix(15,0,0,15,0,0)">
+                        <stop offset="0.205882" stopColor="rgb(42.352941%,87.843137%,100%)" stopOpacity="1"/>
+                        <stop offset="0.535" stopColor="rgb(31.372549%,83.529412%,100%)" stopOpacity="0"/>
+                    </linearGradient>
+                    <radialGradient id={gradients.radial4} gradientUnits="userSpaceOnUse" cx="0" cy="0" fx="0" fy="0" r="1" gradientTransform="matrix(215.76719,230.769125,-230.769125,215.76719,59.143649,354.231005)">
+                        <stop offset="0.038877" stopColor="rgb(0%,56.862745%,100%)" stopOpacity="1"/>
+                        <stop offset="0.919119" stopColor="rgb(9.411765%,23.921569%,67.843137%)" stopOpacity="1"/>
+                    </radialGradient>
+                    <radialGradient id={gradients.radial5} gradientUnits="userSpaceOnUse" cx="0" cy="0" fx="0" fy="0" r="1" gradientTransform="matrix(0.000000000000010287,167.999997,-193.782005,0.000000000000011866,180,491.158504)">
+                        <stop offset="0.557796" stopColor="rgb(5.882353%,64.705882%,96.862745%)" stopOpacity="0"/>
+                        <stop offset="1" stopColor="rgb(45.490196%,77.647059%,100%)" stopOpacity="0.501961"/>
+                    </radialGradient>
+                </defs>
+                <path fill={`url(#${gradients.linear0})`} d="M 463.984375 140.144531 L 119.636719 358.414062 L 90.023438 311.695312 L 90.023438 271.4375 C 90.023438 256.78125 97.445312 243.121094 109.742188 235.144531 L 309.910156 105.257812 C 340.40625 85.46875 379.6875 85.464844 410.1875 105.25 Z M 463.984375 140.144531"/>
+                <path fill={`url(#${gradients.linear1})`} d="M 407.101562 103.339844 C 408.136719 103.953125 409.164062 104.59375 410.183594 105.253906 L 566.398438 206.585938 L 179.0625 452.105469 L 119.625 358.335938 L 403.894531 177.800781 C 430.820312 160.699219 432 122.230469 407.101562 103.339844 Z M 407.101562 103.339844"/>
+                <path fill={`url(#${gradients.linear2})`} d="M 407.101562 103.339844 C 408.136719 103.953125 409.164062 104.59375 410.183594 105.253906 L 566.398438 206.585938 L 179.0625 452.105469 L 119.625 358.335938 L 403.894531 177.800781 C 430.820312 160.699219 432 122.230469 407.101562 103.339844 Z M 407.101562 103.339844"/>
+                <path fill={`url(#${gradients.linear3})`} d="M 333.601562 498.988281 L 179.066406 452.109375 L 507.628906 243.835938 C 535.300781 226.296875 535.230469 185.898438 507.496094 168.457031 L 506.015625 167.527344 L 510.277344 170.175781 L 610.273438 235.042969 C 622.574219 243.019531 629.996094 256.683594 629.996094 271.34375 L 629.996094 310.304688 Z M 333.601562 498.988281"/>
+                <path fill={`url(#${gradients.linear4})`} d="M 333.601562 498.988281 L 179.066406 452.109375 L 507.628906 243.835938 C 535.300781 226.296875 535.230469 185.898438 507.496094 168.457031 L 506.015625 167.527344 L 510.277344 170.175781 L 610.273438 235.042969 C 622.574219 243.019531 629.996094 256.683594 629.996094 271.34375 L 629.996094 310.304688 Z M 333.601562 498.988281"/>
+                <path fill={`url(#${gradients.radial0})`} d="M 410.1875 105.25 C 379.6875 85.464844 340.40625 85.46875 309.90625 105.257812 L 109.742188 235.144531 C 97.445312 243.121094 90.023438 256.78125 90.023438 271.4375 L 90.023438 273.40625 C 90.507812 288.121094 98.25 301.679688 110.757812 309.566406 L 359.644531 466.476562 L 609.160156 309.804688 C 622.121094 301.667969 629.984375 287.441406 629.984375 272.140625 L 629.984375 310.308594 L 629.992188 271.34375 C 629.992188 256.683594 622.566406 243.023438 610.269531 235.042969 Z M 410.1875 105.25"/>
+                <path fill={`url(#${gradients.linear5})`} d="M 315.769531 630.050781 L 536.21875 630.050781 C 587.996094 630.050781 629.96875 588.078125 629.96875 536.300781 L 629.96875 272.140625 C 629.96875 287.441406 622.105469 301.667969 609.148438 309.804688 L 281.242188 515.695312 C 263.554688 526.804688 252.820312 546.222656 252.820312 567.109375 C 252.824219 601.871094 281.003906 630.050781 315.769531 630.050781 Z M 315.769531 630.050781"/>
+                <path fill={`url(#${gradients.radial1})`} d="M 315.769531 630.050781 L 536.21875 630.050781 C 587.996094 630.050781 629.96875 588.078125 629.96875 536.300781 L 629.96875 272.140625 C 629.96875 287.441406 622.105469 301.667969 609.148438 309.804688 L 281.242188 515.695312 C 263.554688 526.804688 252.820312 546.222656 252.820312 567.109375 C 252.824219 601.871094 281.003906 630.050781 315.769531 630.050781 Z M 315.769531 630.050781"/>
+                <path fill={`url(#${gradients.radial2})`} d="M 315.769531 630.050781 L 536.21875 630.050781 C 587.996094 630.050781 629.96875 588.078125 629.96875 536.300781 L 629.96875 272.140625 C 629.96875 287.441406 622.105469 301.667969 609.148438 309.804688 L 281.242188 515.695312 C 263.554688 526.804688 252.820312 546.222656 252.820312 567.109375 C 252.824219 601.871094 281.003906 630.050781 315.769531 630.050781 Z M 315.769531 630.050781"/>
+                <path fill={`url(#${gradients.radial3})`} d="M 405.402344 630.035156 L 183.738281 630.035156 C 131.960938 630.035156 89.988281 588.0625 89.988281 536.285156 L 89.988281 271.945312 C 89.988281 287.21875 97.824219 301.421875 110.742188 309.566406 L 438.324219 516.085938 C 456.257812 527.390625 467.132812 547.113281 467.132812 568.3125 C 467.128906 602.402344 439.492188 630.035156 405.402344 630.035156 Z M 405.402344 630.035156"/>
+                <path fill={`url(#${gradients.linear6})`} d="M 405.402344 630.035156 L 183.738281 630.035156 C 131.960938 630.035156 89.988281 588.0625 89.988281 536.285156 L 89.988281 271.945312 C 89.988281 287.21875 97.824219 301.421875 110.742188 309.566406 L 438.324219 516.085938 C 456.257812 527.390625 467.132812 547.113281 467.132812 568.3125 C 467.128906 602.402344 439.492188 630.035156 405.402344 630.035156 Z M 405.402344 630.035156"/>
+                <path fill={`url(#${gradients.radial4})`} d="M 108.75 345 L 251.25 345 C 278.175781 345 300 366.824219 300 393.75 L 300 536.25 C 300 563.175781 278.175781 585 251.25 585 L 108.75 585 C 81.824219 585 60 563.175781 60 536.25 L 60 393.75 C 60 366.824219 81.824219 345 108.75 345 Z M 108.75 345"/>
+                <path fill={`url(#${gradients.radial5})`} d="M 108.75 345 L 251.25 345 C 278.175781 345 300 366.824219 300 393.75 L 300 536.25 C 300 563.175781 278.175781 585 251.25 585 L 108.75 585 C 81.824219 585 60 563.175781 60 536.25 L 60 393.75 C 60 366.824219 81.824219 345 108.75 345 Z M 108.75 345"/>
+                <path fill="rgb(100%,100%,100%)" fillOpacity="1" d="M 179.386719 534 C 159.539062 534 143.25 527.789062 130.511719 515.375 C 117.773438 502.960938 111.402344 486.757812 111.402344 466.769531 C 111.402344 445.660156 117.867188 428.589844 130.796875 415.550781 C 143.730469 402.515625 160.660156 396 181.59375 396 C 201.375 396 217.472656 402.238281 229.890625 414.714844 C 242.375 427.191406 248.617188 443.644531 248.617188 464.066406 C 248.617188 485.050781 242.148438 501.964844 229.21875 514.816406 C 216.351562 527.605469 199.742188 534 179.386719 534 Z M 179.960938 507.648438 C 190.777344 507.648438 199.484375 503.953125 206.078125 496.566406 C 212.671875 489.179688 215.96875 478.902344 215.96875 465.742188 C 215.96875 452.023438 212.765625 441.347656 206.367188 433.710938 C 199.964844 426.074219 191.417969 422.257812 180.730469 422.257812 C 169.71875 422.257812 160.851562 426.199219 154.132812 434.082031 C 147.410156 441.90625 144.050781 452.273438 144.050781 465.183594 C 144.050781 478.285156 147.410156 488.652344 154.132812 496.285156 C 160.851562 503.859375 169.460938 507.648438 179.960938 507.648438 Z M 179.960938 507.648438"/>
+                <path fill="rgb(100%,100%,100%)" fillOpacity="1" d="M 179.332031 535.847656 C 159.5625 535.847656 143.332031 529.472656 130.640625 516.71875 C 117.953125 503.964844 111.605469 487.320312 111.605469 466.789062 C 111.605469 445.105469 118.046875 427.570312 130.929688 414.179688 C 143.8125 400.785156 160.679688 394.089844 181.53125 394.089844 C 201.234375 394.089844 217.273438 400.5 229.644531 413.316406 C 242.082031 426.136719 248.296875 443.035156 248.296875 464.015625 C 248.296875 485.566406 241.855469 502.945312 228.976562 516.144531 C 216.15625 529.28125 199.609375 535.847656 179.332031 535.847656 Z M 179.902344 508.78125 C 190.679688 508.78125 199.355469 504.984375 205.921875 497.398438 C 212.492188 489.808594 215.773438 479.253906 215.773438 465.734375 C 215.773438 451.640625 212.585938 440.675781 206.210938 432.832031 C 199.832031 424.988281 191.320312 421.066406 180.671875 421.066406 C 169.699219 421.066406 160.867188 425.113281 154.171875 433.214844 C 147.476562 441.246094 144.128906 451.898438 144.128906 465.160156 C 144.128906 478.617188 147.476562 489.265625 154.171875 497.109375 C 160.867188 504.890625 169.445312 508.78125 179.902344 508.78125 Z M 179.902344 508.78125"/>
+            </svg>
+        );
+    }
+);
+OutlookIcon.displayName = 'OutlookIcon';
+
+const OutlookMailNodeComponent = (props: NodeProps) => {
+    return (
+        <AutomationNode
+            {...props}
+            Icon={OutlookIcon}
+            iconColor=""
+            width={DIMENSIONS.width}
+            height={DIMENSIONS.height}
+            iconSize={DIMENSIONS.iconSize}
+        />
+    );
+};
+
+export const OutlookMailNode: NodeDefinition = {
+    type: 'automation-outlook',
+    label: 'Outlook',
+    description: 'Outlook automation',
+    Icon: OutlookIcon,
+    iconColor: '',
+    dimensions: DIMENSIONS,
+    component: memo(OutlookMailNodeComponent),
+};

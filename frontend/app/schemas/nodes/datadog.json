@@ -1,0 +1,3253 @@
+{
+  "$defs": {
+    "DatadogAddHostTagsConfig": {
+      "description": "Add tags to a host.",
+      "properties": {
+        "operation": {
+          "const": "add_host_tags",
+          "default": "add_host_tags",
+          "title": "Add Host Tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "Add Host Tags",
+          "x-is-trigger": false
+        },
+        "host_name": {
+          "description": "The host to tag",
+          "title": "Hostname",
+          "type": "string"
+        },
+        "tags": {
+          "description": "Comma-separated tags to add (e.g. env:prod,team:infra)",
+          "title": "Tags",
+          "type": "string"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Tag source identifier. Optional.",
+          "title": "Source"
+        }
+      },
+      "required": [
+        "host_name",
+        "tags"
+      ],
+      "title": "DatadogAddHostTagsConfig",
+      "type": "object"
+    },
+    "DatadogAggregateLogsConfig": {
+      "description": "Aggregate/group log events.",
+      "properties": {
+        "operation": {
+          "const": "aggregate_logs",
+          "default": "aggregate_logs",
+          "title": "Aggregate Logs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Logs",
+          "x-display-name": "Aggregate Logs",
+          "x-is-trigger": false
+        },
+        "query": {
+          "description": "Log search query to aggregate over",
+          "title": "Query",
+          "type": "string"
+        },
+        "filter_from": {
+          "default": "now-15m",
+          "description": "Lower time bound (e.g. now-15m)",
+          "title": "From",
+          "type": "string"
+        },
+        "filter_to": {
+          "default": "now",
+          "description": "Upper time bound (e.g. now)",
+          "title": "To",
+          "type": "string"
+        },
+        "compute_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Aggregation spec as JSON list (e.g. [{\"aggregation\": \"count\"}]). Defaults to count.",
+          "title": "Compute (JSON)",
+          "ui:widget": "textarea"
+        },
+        "group_by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Facets to group by, comma-separated (e.g. service,status). Optional.",
+          "title": "Group By"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "DatadogAggregateLogsConfig",
+      "type": "object"
+    },
+    "DatadogApiKeyCredential": {
+      "description": "API key + Application key credential for Datadog.",
+      "properties": {
+        "credential_type": {
+          "const": "datadog_api_key",
+          "default": "datadog_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Your Datadog API key (DD-API-KEY) from Organization Settings -> API Keys",
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "app_key": {
+          "description": "Your Datadog Application key (DD-APPLICATION-KEY) from Organization Settings -> Application Keys. Required for read/query endpoints.",
+          "title": "Application Key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "site": {
+          "default": "datadoghq.com",
+          "description": "The Datadog site your org is on (US1, EU, etc.). Pick the one shown in your Datadog URL.",
+          "enum": [
+            "datadoghq.com",
+            "us3.datadoghq.com",
+            "us5.datadoghq.com",
+            "datadoghq.eu",
+            "ap1.datadoghq.com",
+            "ap2.datadoghq.com",
+            "ddog-gov.com"
+          ],
+          "enumNames": [
+            "US1 (datadoghq.com)",
+            "US3 (us3.datadoghq.com)",
+            "US5 (us5.datadoghq.com)",
+            "EU (datadoghq.eu)",
+            "AP1 (ap1.datadoghq.com)",
+            "AP2 (ap2.datadoghq.com)",
+            "GovCloud (ddog-gov.com)"
+          ],
+          "title": "Datadog Site",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "api_key",
+        "app_key"
+      ],
+      "title": "DatadogApiKeyCredential",
+      "type": "object",
+      "x-credential-url": "https://app.datadoghq.com/organization-settings/api-keys"
+    },
+    "DatadogCancelDowntimeConfig": {
+      "description": "Cancel a scheduled downtime.",
+      "properties": {
+        "operation": {
+          "const": "cancel_downtime",
+          "default": "cancel_downtime",
+          "title": "Cancel Downtime",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Downtimes",
+          "x-display-name": "Cancel Downtime",
+          "x-is-trigger": false
+        },
+        "downtime_id": {
+          "description": "The ID of the downtime to cancel",
+          "title": "Downtime ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "downtime_id"
+      ],
+      "title": "DatadogCancelDowntimeConfig",
+      "type": "object"
+    },
+    "DatadogCreateDashboardConfig": {
+      "description": "Create a dashboard.",
+      "properties": {
+        "operation": {
+          "const": "create_dashboard",
+          "default": "create_dashboard",
+          "title": "Create Dashboard",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Dashboards",
+          "x-creates-resource": true,
+          "x-display-name": "Create Dashboard",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "datadog_dashboard"
+        },
+        "title": {
+          "description": "Dashboard title",
+          "title": "Title",
+          "type": "string"
+        },
+        "layout_type": {
+          "default": "ordered",
+          "description": "Dashboard layout",
+          "enum": [
+            "ordered",
+            "free"
+          ],
+          "enumNames": [
+            "Ordered (timeboard)",
+            "Free (screenboard)"
+          ],
+          "title": "Layout Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "widgets_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Widget definitions as a JSON list. Defaults to empty (e.g. [{\"definition\": {...}}]).",
+          "title": "Widgets (JSON)",
+          "ui:widget": "textarea"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Dashboard description (optional)",
+          "title": "Description"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "DatadogCreateDashboardConfig",
+      "type": "object"
+    },
+    "DatadogCreateDowntimeConfig": {
+      "description": "Schedule a monitor downtime.",
+      "properties": {
+        "operation": {
+          "const": "create_downtime",
+          "default": "create_downtime",
+          "title": "Create Downtime",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Downtimes",
+          "x-display-name": "Create Downtime",
+          "x-is-trigger": false
+        },
+        "scope": {
+          "default": "*",
+          "description": "Host/environment scope to mute (e.g. env:staging, host:myhost). Use * for all.",
+          "title": "Scope",
+          "type": "string"
+        },
+        "monitor_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Silence only this specific monitor (leave blank for all monitors)",
+          "title": "Monitor ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste monitor ID",
+            "field_name": "monitor_id",
+            "placeholder": "Select a monitor...",
+            "searchable": true
+          },
+          "x-resource-type": "datadog_monitor"
+        },
+        "monitor_tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Silence only monitors matching these tags, comma-separated (e.g. env:prod,team:infra). Ignored when Monitor ID is set.",
+          "title": "Monitor Tags"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Message attached to the downtime (optional)",
+          "title": "Message"
+        },
+        "start": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "POSIX timestamp for when the downtime starts. Defaults to now.",
+          "title": "Start"
+        },
+        "end": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "POSIX timestamp for when the downtime ends. Omit for an indefinite downtime.",
+          "title": "End"
+        }
+      },
+      "title": "DatadogCreateDowntimeConfig",
+      "type": "object"
+    },
+    "DatadogCreateIncidentConfig": {
+      "description": "Open an incident.",
+      "properties": {
+        "operation": {
+          "const": "create_incident",
+          "default": "create_incident",
+          "title": "Create Incident",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Incidents",
+          "x-display-name": "Create Incident",
+          "x-is-trigger": false
+        },
+        "title": {
+          "description": "Incident title",
+          "title": "Title",
+          "type": "string"
+        },
+        "customer_impacted": {
+          "default": "false",
+          "description": "Whether customers are impacted",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Customer Impacted",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "DatadogCreateIncidentConfig",
+      "type": "object"
+    },
+    "DatadogCreateMonitorConfig": {
+      "description": "Create an alert/metric monitor.",
+      "properties": {
+        "operation": {
+          "const": "create_monitor",
+          "default": "create_monitor",
+          "title": "Create Monitor",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Monitors",
+          "x-creates-resource": true,
+          "x-display-name": "Create Monitor",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "datadog_monitor"
+        },
+        "name": {
+          "description": "Display name of the monitor",
+          "title": "Name",
+          "type": "string"
+        },
+        "type": {
+          "default": "metric alert",
+          "description": "Monitor type",
+          "enum": [
+            "metric alert",
+            "query alert",
+            "service check",
+            "event alert",
+            "log alert",
+            "process alert",
+            "trace-analytics alert",
+            "rum alert"
+          ],
+          "title": "Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "query": {
+          "description": "The monitor query (e.g. avg(last_5m):avg:system.cpu.user{*} > 80)",
+          "title": "Query",
+          "type": "string"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Notification message sent when the monitor triggers (supports @-notifications)",
+          "title": "Message",
+          "ui:widget": "textarea"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Monitor tags, comma-separated (e.g. env:prod,team:core)",
+          "title": "Tags"
+        },
+        "options_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional monitor options as JSON (e.g. {\"thresholds\": {\"critical\": 80}})",
+          "title": "Options (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "name",
+        "query"
+      ],
+      "title": "DatadogCreateMonitorConfig",
+      "type": "object"
+    },
+    "DatadogCreateSLOConfig": {
+      "description": "Create a Service Level Objective.",
+      "properties": {
+        "operation": {
+          "const": "create_slo",
+          "default": "create_slo",
+          "title": "Create SLO",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "SLOs",
+          "x-display-name": "Create SLO",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "SLO display name",
+          "title": "Name",
+          "type": "string"
+        },
+        "type": {
+          "default": "metric",
+          "description": "SLO type",
+          "enum": [
+            "metric",
+            "monitor"
+          ],
+          "enumNames": [
+            "Metric-based",
+            "Monitor-based"
+          ],
+          "title": "Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "target": {
+          "default": "99.9",
+          "description": "SLO target percentage (e.g. 99.9 for 99.9%)",
+          "title": "Target (%)",
+          "type": "string"
+        },
+        "timeframe": {
+          "default": "7d",
+          "description": "Evaluation window",
+          "enum": [
+            "7d",
+            "30d",
+            "90d"
+          ],
+          "enumNames": [
+            "7 days",
+            "30 days",
+            "90 days"
+          ],
+          "title": "Timeframe",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional description",
+          "title": "Description"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated tags",
+          "title": "Tags"
+        },
+        "query_numerator": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For metric SLOs: the good-events metric query",
+          "title": "Numerator Query"
+        },
+        "query_denominator": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For metric SLOs: the total-events metric query",
+          "title": "Denominator Query"
+        },
+        "monitor_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For monitor SLOs: comma-separated monitor IDs",
+          "title": "Monitor IDs"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "DatadogCreateSLOConfig",
+      "type": "object"
+    },
+    "DatadogDeleteDashboardConfig": {
+      "description": "Delete a dashboard.",
+      "properties": {
+        "operation": {
+          "const": "delete_dashboard",
+          "default": "delete_dashboard",
+          "title": "Delete Dashboard",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Dashboards",
+          "x-display-name": "Delete Dashboard",
+          "x-is-trigger": false
+        },
+        "dashboard_id": {
+          "description": "The dashboard to delete",
+          "title": "Dashboard",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste dashboard ID",
+            "field_name": "dashboard_id",
+            "placeholder": "Select a dashboard...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "datadog_dashboard"
+        }
+      },
+      "required": [
+        "dashboard_id"
+      ],
+      "title": "DatadogDeleteDashboardConfig",
+      "type": "object"
+    },
+    "DatadogDeleteHostTagsConfig": {
+      "description": "Remove all tags from a host.",
+      "properties": {
+        "operation": {
+          "const": "delete_host_tags",
+          "default": "delete_host_tags",
+          "title": "Delete Host Tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "Delete Host Tags",
+          "x-is-trigger": false
+        },
+        "host_name": {
+          "description": "The host to remove tags from",
+          "title": "Hostname",
+          "type": "string"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Tag source to remove. Optional.",
+          "title": "Source"
+        }
+      },
+      "required": [
+        "host_name"
+      ],
+      "title": "DatadogDeleteHostTagsConfig",
+      "type": "object"
+    },
+    "DatadogDeleteMonitorConfig": {
+      "description": "Delete a monitor.",
+      "properties": {
+        "operation": {
+          "const": "delete_monitor",
+          "default": "delete_monitor",
+          "title": "Delete Monitor",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Monitors",
+          "x-display-name": "Delete Monitor",
+          "x-is-trigger": false
+        },
+        "monitor_id": {
+          "description": "The monitor to delete",
+          "title": "Monitor",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste monitor ID",
+            "field_name": "monitor_id",
+            "placeholder": "Select a monitor...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "datadog_monitor"
+        }
+      },
+      "required": [
+        "monitor_id"
+      ],
+      "title": "DatadogDeleteMonitorConfig",
+      "type": "object"
+    },
+    "DatadogDeleteSLOConfig": {
+      "description": "Delete an SLO.",
+      "properties": {
+        "operation": {
+          "const": "delete_slo",
+          "default": "delete_slo",
+          "title": "Delete SLO",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "SLOs",
+          "x-display-name": "Delete SLO",
+          "x-is-trigger": false
+        },
+        "slo_id": {
+          "description": "The SLO to delete",
+          "title": "SLO ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "slo_id"
+      ],
+      "title": "DatadogDeleteSLOConfig",
+      "type": "object"
+    },
+    "DatadogGetDashboardConfig": {
+      "description": "Fetch a dashboard definition.",
+      "properties": {
+        "operation": {
+          "const": "get_dashboard",
+          "default": "get_dashboard",
+          "title": "Get Dashboard",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Dashboards",
+          "x-display-name": "Get Dashboard",
+          "x-is-trigger": false
+        },
+        "dashboard_id": {
+          "description": "The dashboard to retrieve",
+          "title": "Dashboard",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste dashboard ID",
+            "field_name": "dashboard_id",
+            "placeholder": "Select a dashboard...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "datadog_dashboard"
+        }
+      },
+      "required": [
+        "dashboard_id"
+      ],
+      "title": "DatadogGetDashboardConfig",
+      "type": "object"
+    },
+    "DatadogGetDowntimeConfig": {
+      "description": "Get a downtime by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_downtime",
+          "default": "get_downtime",
+          "title": "Get Downtime",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Downtimes",
+          "x-display-name": "Get Downtime",
+          "x-is-trigger": false
+        },
+        "downtime_id": {
+          "description": "The downtime ID to retrieve",
+          "title": "Downtime ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "downtime_id"
+      ],
+      "title": "DatadogGetDowntimeConfig",
+      "type": "object"
+    },
+    "DatadogGetEventConfig": {
+      "description": "Fetch a single event.",
+      "properties": {
+        "operation": {
+          "const": "get_event",
+          "default": "get_event",
+          "title": "Get Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "Get Event",
+          "x-is-trigger": false
+        },
+        "event_id": {
+          "description": "The ID of the event to retrieve",
+          "title": "Event ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "DatadogGetEventConfig",
+      "type": "object"
+    },
+    "DatadogGetHostTagsConfig": {
+      "description": "Get tags for a specific host.",
+      "properties": {
+        "operation": {
+          "const": "get_host_tags",
+          "default": "get_host_tags",
+          "title": "Get Host Tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "Get Host Tags",
+          "x-is-trigger": false
+        },
+        "host_name": {
+          "description": "The host to get tags for",
+          "title": "Hostname",
+          "type": "string"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Tag source filter (e.g. chef, puppet). Optional.",
+          "title": "Source"
+        }
+      },
+      "required": [
+        "host_name"
+      ],
+      "title": "DatadogGetHostTagsConfig",
+      "type": "object"
+    },
+    "DatadogGetHostTotalsConfig": {
+      "description": "Get total active host counts.",
+      "properties": {
+        "operation": {
+          "const": "get_host_totals",
+          "default": "get_host_totals",
+          "title": "Get Host Totals",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Hosts",
+          "x-display-name": "Get Host Totals",
+          "x-is-trigger": false
+        },
+        "from_ts": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return host count for a specific historical time. Defaults to now.",
+          "title": "From (POSIX)"
+        }
+      },
+      "title": "DatadogGetHostTotalsConfig",
+      "type": "object"
+    },
+    "DatadogGetMetricMetadataConfig": {
+      "description": "Fetch metadata for a metric.",
+      "properties": {
+        "operation": {
+          "const": "get_metric_metadata",
+          "default": "get_metric_metadata",
+          "title": "Get Metric Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metrics",
+          "x-display-name": "Get Metric Metadata",
+          "x-is-trigger": false
+        },
+        "metric_name": {
+          "description": "The metric to fetch metadata for",
+          "title": "Metric Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "metric_name"
+      ],
+      "title": "DatadogGetMetricMetadataConfig",
+      "type": "object"
+    },
+    "DatadogGetMonitorConfig": {
+      "description": "Fetch a single monitor's details.",
+      "properties": {
+        "operation": {
+          "const": "get_monitor",
+          "default": "get_monitor",
+          "title": "Get Monitor",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Monitors",
+          "x-display-name": "Get Monitor",
+          "x-is-trigger": false
+        },
+        "monitor_id": {
+          "description": "The monitor to retrieve",
+          "title": "Monitor",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste monitor ID",
+            "field_name": "monitor_id",
+            "placeholder": "Select a monitor...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "datadog_monitor"
+        }
+      },
+      "required": [
+        "monitor_id"
+      ],
+      "title": "DatadogGetMonitorConfig",
+      "type": "object"
+    },
+    "DatadogGetSLOConfig": {
+      "description": "Get an SLO by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_slo",
+          "default": "get_slo",
+          "title": "Get SLO",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "SLOs",
+          "x-display-name": "Get SLO",
+          "x-is-trigger": false
+        },
+        "slo_id": {
+          "description": "The SLO to retrieve",
+          "title": "SLO ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "slo_id"
+      ],
+      "title": "DatadogGetSLOConfig",
+      "type": "object"
+    },
+    "DatadogGetSLOHistoryConfig": {
+      "description": "Get SLO performance history.",
+      "properties": {
+        "operation": {
+          "const": "get_slo_history",
+          "default": "get_slo_history",
+          "title": "Get SLO History",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "SLOs",
+          "x-display-name": "Get SLO History",
+          "x-is-trigger": false
+        },
+        "slo_id": {
+          "description": "The SLO to fetch history for",
+          "title": "SLO ID",
+          "type": "string"
+        },
+        "from_ts": {
+          "description": "Start of range as POSIX timestamp",
+          "title": "From (POSIX)",
+          "type": "string"
+        },
+        "to_ts": {
+          "description": "End of range as POSIX timestamp",
+          "title": "To (POSIX)",
+          "type": "string"
+        }
+      },
+      "required": [
+        "slo_id",
+        "from_ts",
+        "to_ts"
+      ],
+      "title": "DatadogGetSLOHistoryConfig",
+      "type": "object"
+    },
+    "DatadogGetSyntheticsConfig": {
+      "description": "Get a synthetic test configuration.",
+      "properties": {
+        "operation": {
+          "const": "get_synthetics",
+          "default": "get_synthetics",
+          "title": "Get Synthetic Test",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Synthetics",
+          "x-display-name": "Get Synthetic Test",
+          "x-is-trigger": false
+        },
+        "public_id": {
+          "description": "The synthetic test public ID (e.g. abc-123-xyz)",
+          "title": "Test Public ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "public_id"
+      ],
+      "title": "DatadogGetSyntheticsConfig",
+      "type": "object"
+    },
+    "DatadogListDashboardsConfig": {
+      "description": "List all dashboards.",
+      "properties": {
+        "operation": {
+          "const": "list_dashboards",
+          "default": "list_dashboards",
+          "title": "List Dashboards",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Dashboards",
+          "x-display-name": "List Dashboards",
+          "x-is-trigger": false
+        },
+        "filter_shared": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only return shared dashboards",
+          "enum": [
+            "",
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Any",
+            "Shared only",
+            "Not shared"
+          ],
+          "title": "Shared Only",
+          "x-enum-searchable": true
+        }
+      },
+      "title": "DatadogListDashboardsConfig",
+      "type": "object"
+    },
+    "DatadogListDowntimesConfig": {
+      "description": "List scheduled downtimes.",
+      "properties": {
+        "operation": {
+          "const": "list_downtimes",
+          "default": "list_downtimes",
+          "title": "List Downtimes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Downtimes",
+          "x-display-name": "List Downtimes",
+          "x-is-trigger": false
+        },
+        "current_only": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter to only active downtimes (true/false)",
+          "enum": [
+            "",
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "All",
+            "Active only",
+            "All including ended"
+          ],
+          "title": "Current Only",
+          "x-enum-searchable": true
+        }
+      },
+      "title": "DatadogListDowntimesConfig",
+      "type": "object"
+    },
+    "DatadogListEventsConfig": {
+      "description": "List events in a time range.",
+      "properties": {
+        "operation": {
+          "const": "list_events",
+          "default": "list_events",
+          "title": "List Events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "List Events",
+          "x-is-trigger": false
+        },
+        "filter_from": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Lower time bound (e.g. now-1h, or ISO 8601 / epoch). Optional.",
+          "title": "From"
+        },
+        "filter_to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Upper time bound (e.g. now). Optional.",
+          "title": "To"
+        },
+        "filter_query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Event search query to filter results. Optional.",
+          "title": "Query"
+        },
+        "page_limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Max events to return (default 20)",
+          "title": "Limit"
+        }
+      },
+      "title": "DatadogListEventsConfig",
+      "type": "object"
+    },
+    "DatadogListHostsConfig": {
+      "description": "List infrastructure hosts.",
+      "properties": {
+        "operation": {
+          "const": "list_hosts",
+          "default": "list_hosts",
+          "title": "List Hosts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Hosts",
+          "x-display-name": "List Hosts",
+          "x-is-trigger": false
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter query (e.g. env:prod)",
+          "title": "Filter"
+        },
+        "count": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "100",
+          "description": "Max hosts to return",
+          "title": "Count"
+        },
+        "start": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination offset",
+          "title": "Start"
+        },
+        "from_ts": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only return hosts active since this timestamp",
+          "title": "From (POSIX)"
+        }
+      },
+      "title": "DatadogListHostsConfig",
+      "type": "object"
+    },
+    "DatadogListIncidentsConfig": {
+      "description": "List incidents.",
+      "properties": {
+        "operation": {
+          "const": "list_incidents",
+          "default": "list_incidents",
+          "title": "List Incidents",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Incidents",
+          "x-display-name": "List Incidents",
+          "x-is-trigger": false
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "10",
+          "description": "Max incidents per page (default 10)",
+          "title": "Limit"
+        },
+        "page_offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "0",
+          "description": "Result offset for pagination (default 0)",
+          "title": "Offset"
+        }
+      },
+      "title": "DatadogListIncidentsConfig",
+      "type": "object"
+    },
+    "DatadogListMetricsConfig": {
+      "description": "List metrics actively reporting since a timestamp.",
+      "properties": {
+        "operation": {
+          "const": "list_metrics",
+          "default": "list_metrics",
+          "title": "List Active Metrics",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metrics",
+          "x-display-name": "List Active Metrics",
+          "x-is-trigger": false
+        },
+        "from_ts": {
+          "description": "POSIX timestamp (seconds); only metrics reporting after this are returned",
+          "title": "From",
+          "type": "string"
+        },
+        "host": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter to metrics reported by this host (optional)",
+          "title": "Host"
+        }
+      },
+      "required": [
+        "from_ts"
+      ],
+      "title": "DatadogListMetricsConfig",
+      "type": "object"
+    },
+    "DatadogListMonitorsConfig": {
+      "description": "List all monitors, optionally filtered.",
+      "properties": {
+        "operation": {
+          "const": "list_monitors",
+          "default": "list_monitors",
+          "title": "List Monitors",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Monitors",
+          "x-display-name": "List Monitors",
+          "x-is-trigger": false
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by monitor tags, comma-separated",
+          "title": "Tags"
+        },
+        "monitor_tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by tags assigned via the UI, comma-separated",
+          "title": "Monitor Tags"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by monitor name substring",
+          "title": "Name"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "50",
+          "description": "Max monitors per page (default 50)",
+          "title": "Limit"
+        }
+      },
+      "title": "DatadogListMonitorsConfig",
+      "type": "object"
+    },
+    "DatadogListSLOsConfig": {
+      "description": "List all SLOs.",
+      "properties": {
+        "operation": {
+          "const": "list_slos",
+          "default": "list_slos",
+          "title": "List SLOs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "SLOs",
+          "x-display-name": "List SLOs",
+          "x-is-trigger": false
+        },
+        "tags_query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by tags (e.g. env:prod)",
+          "title": "Tags Filter"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max SLOs to return",
+          "title": "Limit"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination offset",
+          "title": "Offset"
+        }
+      },
+      "title": "DatadogListSLOsConfig",
+      "type": "object"
+    },
+    "DatadogListSyntheticsConfig": {
+      "description": "List synthetic tests.",
+      "properties": {
+        "operation": {
+          "const": "list_synthetics",
+          "default": "list_synthetics",
+          "title": "List Synthetic Tests",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Synthetics",
+          "x-display-name": "List Synthetic Tests",
+          "x-is-trigger": false
+        },
+        "location_names": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated location names to filter by. Optional.",
+          "title": "Locations"
+        }
+      },
+      "title": "DatadogListSyntheticsConfig",
+      "type": "object"
+    },
+    "DatadogMuteHostConfig": {
+      "description": "Mute a host to silence its alerts.",
+      "properties": {
+        "operation": {
+          "const": "mute_host",
+          "default": "mute_host",
+          "title": "Mute Host",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Hosts",
+          "x-display-name": "Mute Host",
+          "x-is-trigger": false
+        },
+        "host_name": {
+          "description": "The hostname to mute",
+          "title": "Hostname",
+          "type": "string"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reason for muting",
+          "title": "Message"
+        },
+        "end": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When to automatically unmute (POSIX timestamp)",
+          "title": "End (POSIX)"
+        },
+        "override": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "false",
+          "description": "Whether to override an existing mute",
+          "enum": [
+            "false",
+            "true"
+          ],
+          "enumNames": [
+            "No",
+            "Yes"
+          ],
+          "title": "Override",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "host_name"
+      ],
+      "title": "DatadogMuteHostConfig",
+      "type": "object"
+    },
+    "DatadogMuteMonitorConfig": {
+      "description": "Silence a monitor, optionally scoped and timed.",
+      "properties": {
+        "operation": {
+          "const": "mute_monitor",
+          "default": "mute_monitor",
+          "title": "Mute Monitor",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Monitors",
+          "x-display-name": "Mute Monitor",
+          "x-is-trigger": false
+        },
+        "monitor_id": {
+          "description": "The monitor to mute",
+          "title": "Monitor",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste monitor ID",
+            "field_name": "monitor_id",
+            "placeholder": "Select a monitor...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "datadog_monitor"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Scope to mute (e.g. host:myhost). Omit to mute everything.",
+          "title": "Scope"
+        },
+        "end": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "POSIX timestamp when the mute should end (optional)",
+          "title": "End"
+        }
+      },
+      "required": [
+        "monitor_id"
+      ],
+      "title": "DatadogMuteMonitorConfig",
+      "type": "object"
+    },
+    "DatadogOnNewEventConfig": {
+      "description": "Poll the Events API v2 for new events matching a query (poll-based trigger).\n\nDatadog has no consumer-facing webhook subscription API, so this trigger\npolls ``GET /api/v2/events`` on a schedule. New events are deduplicated via a\ncursor on the last-seen event id so already-emitted events never re-fire.",
+      "properties": {
+        "operation": {
+          "const": "on_new_event",
+          "default": "on_new_event",
+          "title": "On New Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New Event",
+          "x-is-trigger": true
+        },
+        "query": {
+          "default": "",
+          "description": "Event search query to filter which events trigger the workflow (e.g. 'status:error source:nagios'). Leave blank to match all events.",
+          "placeholder": "status:error (optional)",
+          "title": "Event Query",
+          "type": "string"
+        },
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": {
+            "frequency": "minutes",
+            "interval": 5,
+            "hour": 9,
+            "minute": 0,
+            "dayOfWeek": 1,
+            "dayOfMonth": 1
+          },
+          "description": "How often to poll Datadog for new events",
+          "title": "Check Frequency",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "max_results": {
+          "default": 25,
+          "description": "Maximum number of events to fetch per check (1-100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Max Events",
+          "type": "integer"
+        },
+        "last_seen_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Seen Id",
+          "ui:hidden": true
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:copyable": true,
+          "ui:hidden": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Check",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        }
+      },
+      "title": "DatadogOnNewEventConfig",
+      "type": "object"
+    },
+    "DatadogPauseSyntheticsConfig": {
+      "description": "Pause or resume a synthetic test.",
+      "properties": {
+        "operation": {
+          "const": "pause_synthetics",
+          "default": "pause_synthetics",
+          "title": "Pause/Resume Synthetic Test",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Synthetics",
+          "x-display-name": "Pause/Resume Synthetic Test",
+          "x-is-trigger": false
+        },
+        "public_id": {
+          "description": "The synthetic test to pause/resume",
+          "title": "Test Public ID",
+          "type": "string"
+        },
+        "new_status": {
+          "default": "paused",
+          "description": "Set the test status",
+          "enum": [
+            "paused",
+            "live"
+          ],
+          "enumNames": [
+            "Pause",
+            "Resume (live)"
+          ],
+          "title": "Action",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "public_id"
+      ],
+      "title": "DatadogPauseSyntheticsConfig",
+      "type": "object"
+    },
+    "DatadogPostEventConfig": {
+      "description": "Post an event to the event stream.",
+      "properties": {
+        "operation": {
+          "const": "post_event",
+          "default": "post_event",
+          "title": "Post Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "Post Event",
+          "x-is-trigger": false
+        },
+        "title": {
+          "description": "Event title",
+          "title": "Title",
+          "type": "string"
+        },
+        "text": {
+          "description": "Event body text (supports Markdown)",
+          "title": "Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Event tags, comma-separated (e.g. env:prod,service:api)",
+          "title": "Tags"
+        },
+        "alert_type": {
+          "default": "info",
+          "enum": [
+            "info",
+            "success",
+            "warning",
+            "error"
+          ],
+          "enumNames": [
+            "Info",
+            "Success",
+            "Warning",
+            "Error"
+          ],
+          "title": "Alert Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "priority": {
+          "default": "normal",
+          "enum": [
+            "normal",
+            "low"
+          ],
+          "enumNames": [
+            "Normal",
+            "Low"
+          ],
+          "title": "Priority",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "host": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Hostname to associate with the event. Optional.",
+          "title": "Host"
+        },
+        "aggregation_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Key to group related events together. Optional.",
+          "title": "Aggregation Key"
+        }
+      },
+      "required": [
+        "title",
+        "text"
+      ],
+      "title": "DatadogPostEventConfig",
+      "type": "object"
+    },
+    "DatadogQueryMetricsConfig": {
+      "description": "Query metric points over a time range (legacy v1).",
+      "properties": {
+        "operation": {
+          "const": "query_metrics",
+          "default": "query_metrics",
+          "title": "Query Metrics (Legacy)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metrics",
+          "x-display-name": "Query Metrics (Legacy)",
+          "x-is-trigger": false
+        },
+        "query": {
+          "description": "The metrics query (e.g. system.cpu.idle{*})",
+          "title": "Query",
+          "type": "string"
+        },
+        "from_ts": {
+          "description": "Start of the query window as a POSIX timestamp (seconds)",
+          "title": "From",
+          "type": "string"
+        },
+        "to_ts": {
+          "description": "End of the query window as a POSIX timestamp (seconds)",
+          "title": "To",
+          "type": "string"
+        }
+      },
+      "required": [
+        "query",
+        "from_ts",
+        "to_ts"
+      ],
+      "title": "DatadogQueryMetricsConfig",
+      "type": "object"
+    },
+    "DatadogQueryTimeseriesConfig": {
+      "description": "Cross-product timeseries data query (v2).",
+      "properties": {
+        "operation": {
+          "const": "query_timeseries",
+          "default": "query_timeseries",
+          "title": "Query Timeseries",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metrics",
+          "x-display-name": "Query Timeseries",
+          "x-is-trigger": false
+        },
+        "query": {
+          "description": "The metrics query (e.g. avg:system.cpu.user{*})",
+          "title": "Query",
+          "type": "string"
+        },
+        "from_ms": {
+          "description": "Start of the query window in epoch milliseconds",
+          "title": "From (ms)",
+          "type": "string"
+        },
+        "to_ms": {
+          "description": "End of the query window in epoch milliseconds",
+          "title": "To (ms)",
+          "type": "string"
+        }
+      },
+      "required": [
+        "query",
+        "from_ms",
+        "to_ms"
+      ],
+      "title": "DatadogQueryTimeseriesConfig",
+      "type": "object"
+    },
+    "DatadogSearchEventsConfig": {
+      "description": "Query events with a structured filter.",
+      "properties": {
+        "operation": {
+          "const": "search_events",
+          "default": "search_events",
+          "title": "Search Events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "Search Events",
+          "x-is-trigger": false
+        },
+        "query": {
+          "description": "Event search query (e.g. source:nagios status:error)",
+          "title": "Query",
+          "type": "string"
+        },
+        "filter_from": {
+          "default": "now-1h",
+          "description": "Lower time bound (e.g. now-1h)",
+          "title": "From",
+          "type": "string"
+        },
+        "filter_to": {
+          "default": "now",
+          "description": "Upper time bound (e.g. now)",
+          "title": "To",
+          "type": "string"
+        },
+        "page_limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Max events to return (default 20)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "DatadogSearchEventsConfig",
+      "type": "object"
+    },
+    "DatadogSearchLogsConfig": {
+      "description": "Search log events (v2 query).",
+      "properties": {
+        "operation": {
+          "const": "search_logs",
+          "default": "search_logs",
+          "title": "Search Logs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Logs",
+          "x-display-name": "Search Logs",
+          "x-is-trigger": false
+        },
+        "query": {
+          "description": "Log search query (e.g. service:api status:error)",
+          "title": "Query",
+          "type": "string"
+        },
+        "filter_from": {
+          "default": "now-15m",
+          "description": "Lower time bound (e.g. now-15m)",
+          "title": "From",
+          "type": "string"
+        },
+        "filter_to": {
+          "default": "now",
+          "description": "Upper time bound (e.g. now)",
+          "title": "To",
+          "type": "string"
+        },
+        "page_limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max log events to return (default 25)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "DatadogSearchLogsConfig",
+      "type": "object"
+    },
+    "DatadogSearchMonitorsConfig": {
+      "description": "Search monitors by query string.",
+      "properties": {
+        "operation": {
+          "const": "search_monitors",
+          "default": "search_monitors",
+          "title": "Search Monitors",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Monitors",
+          "x-display-name": "Search Monitors",
+          "x-is-trigger": false
+        },
+        "query": {
+          "description": "Search query (e.g. type:metric status:Alert). See Datadog monitor search syntax.",
+          "title": "Query",
+          "type": "string"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "0",
+          "description": "Page number (0-indexed)",
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "30",
+          "description": "Results per page (default 30)",
+          "title": "Per Page"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "DatadogSearchMonitorsConfig",
+      "type": "object"
+    },
+    "DatadogSendLogsConfig": {
+      "description": "Submit a log entry to the intake.",
+      "properties": {
+        "operation": {
+          "const": "send_logs",
+          "default": "send_logs",
+          "title": "Send Logs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Logs",
+          "x-display-name": "Send Logs",
+          "x-is-trigger": false
+        },
+        "message": {
+          "description": "The log message",
+          "title": "Message",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "ddsource": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Log source (e.g. python, nginx). Optional.",
+          "title": "Source"
+        },
+        "service": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Originating service name. Optional.",
+          "title": "Service"
+        },
+        "ddtags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Log tags, comma-separated (e.g. env:prod). Optional.",
+          "title": "Tags"
+        },
+        "hostname": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Originating hostname. Optional.",
+          "title": "Hostname"
+        }
+      },
+      "required": [
+        "message"
+      ],
+      "title": "DatadogSendLogsConfig",
+      "type": "object"
+    },
+    "DatadogSubmitMetricsConfig": {
+      "description": "Submit metric data points (time series).",
+      "properties": {
+        "operation": {
+          "const": "submit_metrics",
+          "default": "submit_metrics",
+          "title": "Submit Metrics",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metrics",
+          "x-display-name": "Submit Metrics",
+          "x-is-trigger": false
+        },
+        "metric": {
+          "description": "The metric name (e.g. my.app.requests)",
+          "title": "Metric Name",
+          "type": "string"
+        },
+        "value": {
+          "description": "The numeric metric value to submit",
+          "title": "Value",
+          "type": "string"
+        },
+        "timestamp": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "POSIX timestamp for the point. Defaults to now if omitted.",
+          "title": "Timestamp"
+        },
+        "metric_type": {
+          "default": "gauge",
+          "description": "Metric type",
+          "enum": [
+            "gauge",
+            "count",
+            "rate"
+          ],
+          "enumNames": [
+            "Gauge",
+            "Count",
+            "Rate"
+          ],
+          "title": "Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Metric tags, comma-separated (e.g. env:prod)",
+          "title": "Tags"
+        }
+      },
+      "required": [
+        "metric",
+        "value"
+      ],
+      "title": "DatadogSubmitMetricsConfig",
+      "type": "object"
+    },
+    "DatadogSubmitServiceCheckConfig": {
+      "description": "Post a service check run.",
+      "properties": {
+        "operation": {
+          "const": "submit_service_check",
+          "default": "submit_service_check",
+          "title": "Submit Service Check",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Service Checks",
+          "x-display-name": "Submit Service Check",
+          "x-is-trigger": false
+        },
+        "check": {
+          "description": "The service check name (e.g. app.is_healthy)",
+          "title": "Check Name",
+          "type": "string"
+        },
+        "host_name": {
+          "description": "The hostname submitting the check",
+          "title": "Hostname",
+          "type": "string"
+        },
+        "status": {
+          "default": "0",
+          "description": "Check status code",
+          "enum": [
+            "0",
+            "1",
+            "2",
+            "3"
+          ],
+          "enumNames": [
+            "OK (0)",
+            "Warning (1)",
+            "Critical (2)",
+            "Unknown (3)"
+          ],
+          "title": "Status",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Check message (max 500 chars; ignored for OK status)",
+          "title": "Message"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated tags",
+          "title": "Tags"
+        },
+        "timestamp": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "POSIX timestamp of the check. Defaults to now.",
+          "title": "Timestamp"
+        }
+      },
+      "required": [
+        "check",
+        "host_name"
+      ],
+      "title": "DatadogSubmitServiceCheckConfig",
+      "type": "object"
+    },
+    "DatadogTriggerSyntheticsConfig": {
+      "description": "Trigger one or more synthetic tests to run immediately.",
+      "properties": {
+        "operation": {
+          "const": "trigger_synthetics",
+          "default": "trigger_synthetics",
+          "title": "Trigger Synthetic Tests",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Synthetics",
+          "x-display-name": "Trigger Synthetic Tests",
+          "x-is-trigger": false
+        },
+        "public_ids": {
+          "description": "Comma-separated public IDs of tests to trigger (e.g. abc-123-xyz,def-456-uvw)",
+          "title": "Test IDs",
+          "type": "string"
+        }
+      },
+      "required": [
+        "public_ids"
+      ],
+      "title": "DatadogTriggerSyntheticsConfig",
+      "type": "object"
+    },
+    "DatadogUnmuteHostConfig": {
+      "description": "Unmute a host.",
+      "properties": {
+        "operation": {
+          "const": "unmute_host",
+          "default": "unmute_host",
+          "title": "Unmute Host",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Hosts",
+          "x-display-name": "Unmute Host",
+          "x-is-trigger": false
+        },
+        "host_name": {
+          "description": "The hostname to unmute",
+          "title": "Hostname",
+          "type": "string"
+        }
+      },
+      "required": [
+        "host_name"
+      ],
+      "title": "DatadogUnmuteHostConfig",
+      "type": "object"
+    },
+    "DatadogUnmuteMonitorConfig": {
+      "description": "Re-enable a muted monitor.",
+      "properties": {
+        "operation": {
+          "const": "unmute_monitor",
+          "default": "unmute_monitor",
+          "title": "Unmute Monitor",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Monitors",
+          "x-display-name": "Unmute Monitor",
+          "x-is-trigger": false
+        },
+        "monitor_id": {
+          "description": "The monitor to unmute",
+          "title": "Monitor",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste monitor ID",
+            "field_name": "monitor_id",
+            "placeholder": "Select a monitor...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "datadog_monitor"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Scope to unmute (e.g. host:myhost). Omit to unmute all.",
+          "title": "Scope"
+        }
+      },
+      "required": [
+        "monitor_id"
+      ],
+      "title": "DatadogUnmuteMonitorConfig",
+      "type": "object"
+    },
+    "DatadogUpdateDashboardConfig": {
+      "description": "Update a dashboard.",
+      "properties": {
+        "operation": {
+          "const": "update_dashboard",
+          "default": "update_dashboard",
+          "title": "Update Dashboard",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Dashboards",
+          "x-display-name": "Update Dashboard",
+          "x-is-trigger": false
+        },
+        "dashboard_id": {
+          "description": "The dashboard to update",
+          "title": "Dashboard",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste dashboard ID",
+            "field_name": "dashboard_id",
+            "placeholder": "Select a dashboard...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "datadog_dashboard"
+        },
+        "title": {
+          "description": "New dashboard title",
+          "title": "Title",
+          "type": "string"
+        },
+        "layout_type": {
+          "default": "ordered",
+          "description": "Dashboard layout",
+          "enum": [
+            "ordered",
+            "free"
+          ],
+          "enumNames": [
+            "Ordered (timeboard)",
+            "Free (screenboard)"
+          ],
+          "title": "Layout Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "widgets_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Widget definitions as a JSON list. Defaults to empty.",
+          "title": "Widgets (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "dashboard_id",
+        "title"
+      ],
+      "title": "DatadogUpdateDashboardConfig",
+      "type": "object"
+    },
+    "DatadogUpdateDowntimeConfig": {
+      "description": "Update an existing downtime.",
+      "properties": {
+        "operation": {
+          "const": "update_downtime",
+          "default": "update_downtime",
+          "title": "Update Downtime",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Downtimes",
+          "x-display-name": "Update Downtime",
+          "x-is-trigger": false
+        },
+        "downtime_id": {
+          "description": "The downtime to update",
+          "title": "Downtime ID",
+          "type": "string"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New scope (e.g. env:staging). Optional.",
+          "title": "Scope"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New message. Optional.",
+          "title": "Message"
+        },
+        "end": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New POSIX timestamp for the downtime end. Optional.",
+          "title": "End"
+        }
+      },
+      "required": [
+        "downtime_id"
+      ],
+      "title": "DatadogUpdateDowntimeConfig",
+      "type": "object"
+    },
+    "DatadogUpdateHostTagsConfig": {
+      "description": "Replace all tags on a host.",
+      "properties": {
+        "operation": {
+          "const": "update_host_tags",
+          "default": "update_host_tags",
+          "title": "Update Host Tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "Update Host Tags",
+          "x-is-trigger": false
+        },
+        "host_name": {
+          "description": "The host to update tags on",
+          "title": "Hostname",
+          "type": "string"
+        },
+        "tags": {
+          "description": "Comma-separated tags that will REPLACE all existing tags",
+          "title": "Tags",
+          "type": "string"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Tag source identifier. Optional.",
+          "title": "Source"
+        }
+      },
+      "required": [
+        "host_name",
+        "tags"
+      ],
+      "title": "DatadogUpdateHostTagsConfig",
+      "type": "object"
+    },
+    "DatadogUpdateIncidentConfig": {
+      "description": "Update incident fields/state.",
+      "properties": {
+        "operation": {
+          "const": "update_incident",
+          "default": "update_incident",
+          "title": "Update Incident",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Incidents",
+          "x-display-name": "Update Incident",
+          "x-is-trigger": false
+        },
+        "incident_id": {
+          "description": "The ID of the incident to update",
+          "title": "Incident ID",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New incident title",
+          "title": "Title"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New incident state",
+          "enum": [
+            "",
+            "active",
+            "stable",
+            "resolved"
+          ],
+          "enumNames": [
+            "No change",
+            "Active",
+            "Stable",
+            "Resolved"
+          ],
+          "title": "State",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "incident_id"
+      ],
+      "title": "DatadogUpdateIncidentConfig",
+      "type": "object"
+    },
+    "DatadogUpdateMonitorConfig": {
+      "description": "Edit an existing monitor.",
+      "properties": {
+        "operation": {
+          "const": "update_monitor",
+          "default": "update_monitor",
+          "title": "Update Monitor",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Monitors",
+          "x-display-name": "Update Monitor",
+          "x-is-trigger": false
+        },
+        "monitor_id": {
+          "description": "The monitor to update",
+          "title": "Monitor",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste monitor ID",
+            "field_name": "monitor_id",
+            "placeholder": "Select a monitor...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "datadog_monitor"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New display name",
+          "title": "Name"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New monitor query",
+          "title": "Query"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New notification message",
+          "title": "Message",
+          "ui:widget": "textarea"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New monitor tags, comma-separated",
+          "title": "Tags"
+        }
+      },
+      "required": [
+        "monitor_id"
+      ],
+      "title": "DatadogUpdateMonitorConfig",
+      "type": "object"
+    },
+    "DatadogUpdateSLOConfig": {
+      "description": "Update an existing SLO.",
+      "properties": {
+        "operation": {
+          "const": "update_slo",
+          "default": "update_slo",
+          "title": "Update SLO",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "SLOs",
+          "x-display-name": "Update SLO",
+          "x-is-trigger": false
+        },
+        "slo_id": {
+          "description": "The SLO to update",
+          "title": "SLO ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New display name. Optional.",
+          "title": "Name"
+        },
+        "target": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New target percentage. Optional.",
+          "title": "Target (%)"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New description. Optional.",
+          "title": "Description"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New tags, comma-separated. Optional.",
+          "title": "Tags"
+        }
+      },
+      "required": [
+        "slo_id"
+      ],
+      "title": "DatadogUpdateSLOConfig",
+      "type": "object"
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the Datadog node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_host_tags": "#/$defs/DatadogAddHostTagsConfig",
+          "aggregate_logs": "#/$defs/DatadogAggregateLogsConfig",
+          "cancel_downtime": "#/$defs/DatadogCancelDowntimeConfig",
+          "create_dashboard": "#/$defs/DatadogCreateDashboardConfig",
+          "create_downtime": "#/$defs/DatadogCreateDowntimeConfig",
+          "create_incident": "#/$defs/DatadogCreateIncidentConfig",
+          "create_monitor": "#/$defs/DatadogCreateMonitorConfig",
+          "create_slo": "#/$defs/DatadogCreateSLOConfig",
+          "delete_dashboard": "#/$defs/DatadogDeleteDashboardConfig",
+          "delete_host_tags": "#/$defs/DatadogDeleteHostTagsConfig",
+          "delete_monitor": "#/$defs/DatadogDeleteMonitorConfig",
+          "delete_slo": "#/$defs/DatadogDeleteSLOConfig",
+          "get_dashboard": "#/$defs/DatadogGetDashboardConfig",
+          "get_downtime": "#/$defs/DatadogGetDowntimeConfig",
+          "get_event": "#/$defs/DatadogGetEventConfig",
+          "get_host_tags": "#/$defs/DatadogGetHostTagsConfig",
+          "get_host_totals": "#/$defs/DatadogGetHostTotalsConfig",
+          "get_metric_metadata": "#/$defs/DatadogGetMetricMetadataConfig",
+          "get_monitor": "#/$defs/DatadogGetMonitorConfig",
+          "get_slo": "#/$defs/DatadogGetSLOConfig",
+          "get_slo_history": "#/$defs/DatadogGetSLOHistoryConfig",
+          "get_synthetics": "#/$defs/DatadogGetSyntheticsConfig",
+          "list_dashboards": "#/$defs/DatadogListDashboardsConfig",
+          "list_downtimes": "#/$defs/DatadogListDowntimesConfig",
+          "list_events": "#/$defs/DatadogListEventsConfig",
+          "list_hosts": "#/$defs/DatadogListHostsConfig",
+          "list_incidents": "#/$defs/DatadogListIncidentsConfig",
+          "list_metrics": "#/$defs/DatadogListMetricsConfig",
+          "list_monitors": "#/$defs/DatadogListMonitorsConfig",
+          "list_slos": "#/$defs/DatadogListSLOsConfig",
+          "list_synthetics": "#/$defs/DatadogListSyntheticsConfig",
+          "mute_host": "#/$defs/DatadogMuteHostConfig",
+          "mute_monitor": "#/$defs/DatadogMuteMonitorConfig",
+          "on_new_event": "#/$defs/DatadogOnNewEventConfig",
+          "pause_synthetics": "#/$defs/DatadogPauseSyntheticsConfig",
+          "post_event": "#/$defs/DatadogPostEventConfig",
+          "query_metrics": "#/$defs/DatadogQueryMetricsConfig",
+          "query_timeseries": "#/$defs/DatadogQueryTimeseriesConfig",
+          "search_events": "#/$defs/DatadogSearchEventsConfig",
+          "search_logs": "#/$defs/DatadogSearchLogsConfig",
+          "search_monitors": "#/$defs/DatadogSearchMonitorsConfig",
+          "send_logs": "#/$defs/DatadogSendLogsConfig",
+          "submit_metrics": "#/$defs/DatadogSubmitMetricsConfig",
+          "submit_service_check": "#/$defs/DatadogSubmitServiceCheckConfig",
+          "trigger_synthetics": "#/$defs/DatadogTriggerSyntheticsConfig",
+          "unmute_host": "#/$defs/DatadogUnmuteHostConfig",
+          "unmute_monitor": "#/$defs/DatadogUnmuteMonitorConfig",
+          "update_dashboard": "#/$defs/DatadogUpdateDashboardConfig",
+          "update_downtime": "#/$defs/DatadogUpdateDowntimeConfig",
+          "update_host_tags": "#/$defs/DatadogUpdateHostTagsConfig",
+          "update_incident": "#/$defs/DatadogUpdateIncidentConfig",
+          "update_monitor": "#/$defs/DatadogUpdateMonitorConfig",
+          "update_slo": "#/$defs/DatadogUpdateSLOConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/DatadogCreateMonitorConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogGetMonitorConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogListMonitorsConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogUpdateMonitorConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogDeleteMonitorConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogMuteMonitorConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogUnmuteMonitorConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogSearchMonitorsConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogPostEventConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogGetEventConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogListEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogSearchEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogOnNewEventConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogSubmitMetricsConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogQueryTimeseriesConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogQueryMetricsConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogListMetricsConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogGetMetricMetadataConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogSendLogsConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogSearchLogsConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogAggregateLogsConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogCreateDashboardConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogGetDashboardConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogListDashboardsConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogUpdateDashboardConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogDeleteDashboardConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogCreateIncidentConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogListIncidentsConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogUpdateIncidentConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogCreateDowntimeConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogCancelDowntimeConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogListDowntimesConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogGetDowntimeConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogUpdateDowntimeConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogCreateSLOConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogGetSLOConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogListSLOsConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogUpdateSLOConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogDeleteSLOConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogGetSLOHistoryConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogListHostsConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogGetHostTotalsConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogMuteHostConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogUnmuteHostConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogGetHostTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogAddHostTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogUpdateHostTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogDeleteHostTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogSubmitServiceCheckConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogListSyntheticsConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogGetSyntheticsConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogTriggerSyntheticsConfig"
+        },
+        {
+          "$ref": "#/$defs/DatadogPauseSyntheticsConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DatadogApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Datadog Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Create a CPU monitor that alerts when usage exceeds 80%",
+    "Post a deployment event to the Datadog event stream",
+    "Submit a custom metric value with tags",
+    "Search error logs from the last 15 minutes",
+    "Open an incident and mark customers as impacted",
+    "Mute a noisy monitor during a maintenance window"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

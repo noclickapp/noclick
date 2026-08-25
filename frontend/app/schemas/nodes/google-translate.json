@@ -1,0 +1,1244 @@
+{
+  "$defs": {
+    "GoogleTranslateApiKeyCredential": {
+      "description": "API key credential for Google Cloud Translation v2 (Basic).",
+      "properties": {
+        "credential_type": {
+          "const": "google_translate_api_key",
+          "default": "google_translate_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Google Cloud API key with the Cloud Translation API enabled. Works for v2 Basic operations only \u2014 v3 Advanced operations reject API keys (use an OAuth or service-account credential for v3).",
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "project_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Google Cloud project ID (not required for v2 Basic).",
+          "title": "GCP Project ID"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "GoogleTranslateApiKeyCredential",
+      "type": "object",
+      "x-credential-instructions": "API keys run v2 Basic operations only. v3 Advanced operations (romanize, document/batch translate, glossaries, operations) reject API keys \u2014 connect a Google account (OAuth) or add a service-account key for those.",
+      "x-credential-url": "https://console.cloud.google.com/apis/credentials"
+    },
+    "GoogleTranslateBatchTranslateTextConfig": {
+      "description": "Async bulk text translation from/to Cloud Storage (returns an LRO).",
+      "properties": {
+        "project_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Google Cloud project ID to run this v3 Advanced operation under. Required when using an OAuth credential (its token carries no project); service-account credentials fall back to the project in their key.",
+          "title": "GCP Project ID",
+          "ui:placeholder": "my-gcp-project"
+        },
+        "operation": {
+          "const": "v3_batch_translate_text",
+          "default": "v3_batch_translate_text",
+          "title": "Batch Translate Text",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Batch",
+          "x-display-name": "Batch Translate Text (v3)",
+          "x-is-trigger": false
+        },
+        "source_language": {
+          "description": "BCP-47 source language code",
+          "title": "Source Language",
+          "type": "string",
+          "x-dynamic-options": {
+            "field_name": "source_language",
+            "placeholder": "Select a language\u2026",
+            "searchable": true,
+            "allow_custom": true,
+            "custom_placeholder": "Or type an ISO code (e.g. es)",
+            "auto_select_sole_option": true
+          }
+        },
+        "target_languages": {
+          "description": "Comma-separated BCP-47 target language codes (e.g. es,fr,de)",
+          "title": "Target Languages",
+          "type": "string"
+        },
+        "input_gcs_uri": {
+          "description": "Cloud Storage input URI (e.g. gs://bucket/input.tsv)",
+          "title": "Input GCS URI",
+          "type": "string",
+          "ui:help": "The Cloud Translation service agent must have read access to this bucket, or the job fails with PERMISSION_DENIED. Grant roles/storage.objectViewer to service-<project-number>@gcp-sa-translation.iam.gserviceaccount.com."
+        },
+        "input_mime_type": {
+          "default": "text/plain",
+          "description": "MIME type of the input files (text/plain or text/html)",
+          "title": "Input MIME Type",
+          "type": "string"
+        },
+        "output_gcs_uri_prefix": {
+          "description": "Cloud Storage output prefix (e.g. gs://bucket/output/)",
+          "title": "Output GCS URI Prefix",
+          "type": "string",
+          "ui:help": "Must be empty. The Cloud Translation service agent needs roles/storage.objectAdmin on this bucket to write results."
+        },
+        "location": {
+          "default": "us-central1",
+          "description": "GCP region (batch requires a regional location)",
+          "title": "Location",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_language",
+        "target_languages",
+        "input_gcs_uri",
+        "output_gcs_uri_prefix"
+      ],
+      "title": "GoogleTranslateBatchTranslateTextConfig",
+      "type": "object"
+    },
+    "GoogleTranslateCreateGlossaryConfig": {
+      "description": "Create a glossary for custom terminology (returns an LRO).",
+      "properties": {
+        "project_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Google Cloud project ID to run this v3 Advanced operation under. Required when using an OAuth credential (its token carries no project); service-account credentials fall back to the project in their key.",
+          "title": "GCP Project ID",
+          "ui:placeholder": "my-gcp-project"
+        },
+        "operation": {
+          "const": "v3_create_glossary",
+          "default": "v3_create_glossary",
+          "title": "Create Glossary",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Glossaries",
+          "x-display-name": "Create Glossary (v3)",
+          "x-is-trigger": false
+        },
+        "glossary_id": {
+          "description": "Identifier for the new glossary",
+          "title": "Glossary ID",
+          "type": "string"
+        },
+        "source_language": {
+          "description": "BCP-47 source language code",
+          "title": "Source Language",
+          "type": "string",
+          "x-dynamic-options": {
+            "field_name": "source_language",
+            "placeholder": "Select a language\u2026",
+            "searchable": true,
+            "allow_custom": true,
+            "custom_placeholder": "Or type an ISO code (e.g. es)",
+            "auto_select_sole_option": true
+          }
+        },
+        "target_language": {
+          "description": "BCP-47 target language code",
+          "title": "Target Language",
+          "type": "string",
+          "x-dynamic-options": {
+            "field_name": "target_language",
+            "placeholder": "Select a language\u2026",
+            "searchable": true,
+            "allow_custom": true,
+            "custom_placeholder": "Or type an ISO code (e.g. es)",
+            "auto_select_sole_option": true
+          }
+        },
+        "input_gcs_uri": {
+          "description": "Cloud Storage URI of the glossary file (e.g. gs://bucket/glossary.csv)",
+          "title": "Input GCS URI",
+          "type": "string",
+          "ui:help": "The Cloud Translation service agent must have read access to this bucket, or the create job fails with PERMISSION_DENIED. Grant roles/storage.objectViewer to service-<project-number>@gcp-sa-translation.iam.gserviceaccount.com."
+        },
+        "location": {
+          "default": "us-central1",
+          "description": "GCP region for the glossary",
+          "title": "Location",
+          "type": "string"
+        }
+      },
+      "required": [
+        "glossary_id",
+        "source_language",
+        "target_language",
+        "input_gcs_uri"
+      ],
+      "title": "GoogleTranslateCreateGlossaryConfig",
+      "type": "object"
+    },
+    "GoogleTranslateGetOperationConfig": {
+      "description": "Poll the status of a long-running operation (batch/glossary jobs).",
+      "properties": {
+        "project_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Google Cloud project ID to run this v3 Advanced operation under. Required when using an OAuth credential (its token carries no project); service-account credentials fall back to the project in their key.",
+          "title": "GCP Project ID",
+          "ui:placeholder": "my-gcp-project"
+        },
+        "operation": {
+          "const": "v3_get_operation",
+          "default": "v3_get_operation",
+          "title": "Get Operation Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Operations",
+          "x-display-name": "Get Operation Status (v3)",
+          "x-is-trigger": false
+        },
+        "operation_name": {
+          "description": "Full LRO name (projects/.../locations/.../operations/...) or just the operation id",
+          "title": "Operation Name",
+          "type": "string"
+        },
+        "location": {
+          "default": "us-central1",
+          "description": "GCP region",
+          "title": "Location",
+          "type": "string"
+        }
+      },
+      "required": [
+        "operation_name"
+      ],
+      "title": "GoogleTranslateGetOperationConfig",
+      "type": "object"
+    },
+    "GoogleTranslateListGlossariesConfig": {
+      "description": "List glossaries in a project/location.",
+      "properties": {
+        "project_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Google Cloud project ID to run this v3 Advanced operation under. Required when using an OAuth credential (its token carries no project); service-account credentials fall back to the project in their key.",
+          "title": "GCP Project ID",
+          "ui:placeholder": "my-gcp-project"
+        },
+        "operation": {
+          "const": "v3_list_glossaries",
+          "default": "v3_list_glossaries",
+          "title": "List Glossaries",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Glossaries",
+          "x-display-name": "List Glossaries (v3)",
+          "x-is-trigger": false
+        },
+        "location": {
+          "default": "us-central1",
+          "description": "GCP region",
+          "title": "Location",
+          "type": "string"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "50",
+          "description": "Maximum number of glossaries to return",
+          "title": "Page Size"
+        }
+      },
+      "title": "GoogleTranslateListGlossariesConfig",
+      "type": "object"
+    },
+    "GoogleTranslateOAuthCredential": {
+      "description": "OAuth credential for Google Cloud Translation v3 (Advanced).\nTokens are obtained via the Google OAuth flow, not entered manually.",
+      "properties": {
+        "credential_type": {
+          "const": "google_translate_oauth",
+          "default": "google_translate_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "OAuth 2.0 access token from Google",
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "description": "OAuth 2.0 refresh token for automatic renewal",
+          "title": "Refresh Token",
+          "type": "string"
+        },
+        "expires_at": {
+          "description": "ISO 8601 timestamp when the access token expires",
+          "title": "Token Expiry",
+          "type": "string"
+        },
+        "email": {
+          "description": "Email address of the connected Google account",
+          "title": "Google Account",
+          "type": "string"
+        },
+        "project_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Google Cloud project ID to run v3 Advanced operations under (required for v3 \u2014 it scopes the request and is billed for the translation).",
+          "title": "GCP Project ID"
+        }
+      },
+      "required": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "email"
+      ],
+      "title": "GoogleTranslateOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://console.cloud.google.com/apis/credentials",
+      "x-oauth-provider": "google",
+      "x-oauth-scopes": [
+        "https://www.googleapis.com/auth/cloud-translation"
+      ]
+    },
+    "GoogleTranslateOnBatchCompletedConfig": {
+      "description": "Trigger when a long-running operation (batch translate, glossary, or\ncustom-model job) newly reaches ``done=true``.\n\nGoogle Cloud Translation ships no provider webhooks; async jobs are LROs\npolled via ``operations.list``/``operations.get``. This trigger polls the\nproject/location's operations on a schedule, emits operations that newly\ncompleted since the last poll, and dedupes by operation name.",
+      "properties": {
+        "project_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Google Cloud project ID to run this v3 Advanced operation under. Required when using an OAuth credential (its token carries no project); service-account credentials fall back to the project in their key.",
+          "title": "GCP Project ID",
+          "ui:placeholder": "my-gcp-project"
+        },
+        "operation": {
+          "const": "on_batch_completed",
+          "default": "on_batch_completed",
+          "description": "Trigger when a batch/glossary/model job finishes",
+          "title": "On Batch Operation Completed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Batch Operation Completed",
+          "x-is-trigger": true
+        },
+        "location": {
+          "default": "us-central1",
+          "description": "GCP region whose operations to watch (e.g. us-central1)",
+          "title": "Location",
+          "type": "string"
+        },
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": {
+            "frequency": "minutes",
+            "interval": 5,
+            "hour": 9,
+            "minute": 0,
+            "dayOfWeek": 1,
+            "dayOfMonth": 1
+          },
+          "description": "How often to poll for newly completed operations",
+          "title": "Check Frequency",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "max_results": {
+          "default": 25,
+          "description": "Maximum number of operations to fetch per poll (1-100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Max Operations",
+          "type": "integer"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:copyable": true,
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Check",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        }
+      },
+      "title": "GoogleTranslateOnBatchCompletedConfig",
+      "type": "object"
+    },
+    "GoogleTranslateRomanizeConfig": {
+      "description": "Transliterate non-Latin-script text into Latin (romanization).",
+      "properties": {
+        "project_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Google Cloud project ID to run this v3 Advanced operation under. Required when using an OAuth credential (its token carries no project); service-account credentials fall back to the project in their key.",
+          "title": "GCP Project ID",
+          "ui:placeholder": "my-gcp-project"
+        },
+        "operation": {
+          "const": "v3_romanize_text",
+          "default": "v3_romanize_text",
+          "title": "Romanize Text",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Translate",
+          "x-display-name": "Romanize Text (v3)",
+          "x-is-trigger": false
+        },
+        "text": {
+          "description": "The text to romanize",
+          "title": "Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "source_language": {
+          "description": "BCP-47 source language code of the text (e.g. hi, ja, ar)",
+          "title": "Source Language",
+          "type": "string",
+          "x-dynamic-options": {
+            "field_name": "source_language",
+            "placeholder": "Select a language\u2026",
+            "searchable": true,
+            "allow_custom": true,
+            "custom_placeholder": "Or type an ISO code (e.g. es)",
+            "auto_select_sole_option": true
+          }
+        },
+        "location": {
+          "default": "global",
+          "description": "GCP location",
+          "title": "Location",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text",
+        "source_language"
+      ],
+      "title": "GoogleTranslateRomanizeConfig",
+      "type": "object"
+    },
+    "GoogleTranslateServiceAccountCredential": {
+      "description": "Service-account credential for server-side v3 Advanced access.\n\nSigns a JWT with the service account's private key and exchanges it for a\nGoogle OAuth access token per run (cached until near expiry). The project is\ntaken from the JSON key. This is the recommended server-to-server auth for\nv3; v2 Basic still uses an API key.",
+      "properties": {
+        "credential_type": {
+          "const": "google_translate_service_account",
+          "default": "google_translate_service_account",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client_email": {
+          "description": "service account client_email from the JSON key",
+          "title": "Client Email",
+          "type": "string"
+        },
+        "private_key": {
+          "description": "The private_key PEM block from the JSON key",
+          "title": "Private Key",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "project_id": {
+          "description": "GCP project id from the JSON key (v3 requests run under this project)",
+          "title": "Project ID",
+          "type": "string"
+        },
+        "private_key_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional private_key_id from the JSON key",
+          "title": "Private Key ID"
+        },
+        "token_uri": {
+          "default": "https://oauth2.googleapis.com/token",
+          "description": "OAuth 2.0 token endpoint for the service account",
+          "title": "Token URI",
+          "type": "string"
+        }
+      },
+      "required": [
+        "client_email",
+        "private_key",
+        "project_id"
+      ],
+      "title": "GoogleTranslateServiceAccountCredential",
+      "type": "object",
+      "x-credential-instructions": "Create a service account with the 'Cloud Translation API User' role, download its JSON key, and paste client_email, private_key and project_id.",
+      "x-credential-url": "https://console.cloud.google.com/iam-admin/serviceaccounts"
+    },
+    "GoogleTranslateTranslateDocumentConfig": {
+      "description": "Translate a single document inline, preserving formatting (v3 Advanced).",
+      "properties": {
+        "project_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Google Cloud project ID to run this v3 Advanced operation under. Required when using an OAuth credential (its token carries no project); service-account credentials fall back to the project in their key.",
+          "title": "GCP Project ID",
+          "ui:placeholder": "my-gcp-project"
+        },
+        "operation": {
+          "const": "v3_translate_document",
+          "default": "v3_translate_document",
+          "title": "Translate Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Translate Document (v3)",
+          "x-is-trigger": false
+        },
+        "document_content": {
+          "description": "Base64-encoded document bytes to translate",
+          "title": "Document Content (base64)",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "document_mime_type": {
+          "default": "application/pdf",
+          "description": "MIME type of the document (e.g. application/pdf, application/vnd.openxmlformats-officedocument.wordprocessingml.document)",
+          "title": "Document MIME Type",
+          "type": "string"
+        },
+        "target_language": {
+          "description": "BCP-47 language code to translate into",
+          "title": "Target Language",
+          "type": "string",
+          "x-dynamic-options": {
+            "field_name": "target_language",
+            "placeholder": "Select a language\u2026",
+            "searchable": true,
+            "allow_custom": true,
+            "custom_placeholder": "Or type an ISO code (e.g. es)",
+            "auto_select_sole_option": true
+          }
+        },
+        "source_language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "BCP-47 source language code. Auto-detected if omitted.",
+          "title": "Source Language",
+          "x-dynamic-options": {
+            "field_name": "source_language",
+            "placeholder": "Select a language\u2026",
+            "searchable": true,
+            "allow_custom": true,
+            "custom_placeholder": "Or type an ISO code (e.g. es)"
+          }
+        },
+        "location": {
+          "default": "us-central1",
+          "description": "GCP region (document translation requires a regional location)",
+          "title": "Location",
+          "type": "string"
+        }
+      },
+      "required": [
+        "document_content",
+        "target_language"
+      ],
+      "title": "GoogleTranslateTranslateDocumentConfig",
+      "type": "object"
+    },
+    "GoogleTranslateV2DetectConfig": {
+      "description": "Detect the source language of text using the v2 Basic API (API key).",
+      "properties": {
+        "operation": {
+          "const": "v2_detect_language",
+          "default": "v2_detect_language",
+          "title": "Detect Language (Basic)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Translate (Basic)",
+          "x-display-name": "Detect Language (Basic)",
+          "x-is-trigger": false
+        },
+        "text": {
+          "description": "The text whose language should be detected",
+          "title": "Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "GoogleTranslateV2DetectConfig",
+      "type": "object"
+    },
+    "GoogleTranslateV2LanguagesConfig": {
+      "description": "List supported languages using the v2 Basic API (API key).",
+      "properties": {
+        "operation": {
+          "const": "v2_list_languages",
+          "default": "v2_list_languages",
+          "title": "List Languages (Basic)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Translate (Basic)",
+          "x-display-name": "List Languages (Basic)",
+          "x-is-trigger": false
+        },
+        "target_language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Language code to return language names in (e.g. en). Names omitted if blank.",
+          "title": "Display Language",
+          "x-dynamic-options": {
+            "field_name": "target_language",
+            "placeholder": "Select a language\u2026",
+            "searchable": true,
+            "allow_custom": true,
+            "custom_placeholder": "Or type an ISO code (e.g. es)"
+          }
+        }
+      },
+      "title": "GoogleTranslateV2LanguagesConfig",
+      "type": "object"
+    },
+    "GoogleTranslateV2TranslateConfig": {
+      "description": "Translate text using the v2 Basic API (API key).",
+      "properties": {
+        "operation": {
+          "const": "v2_translate_text",
+          "default": "v2_translate_text",
+          "title": "Translate Text (Basic)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Translate (Basic)",
+          "x-display-name": "Translate Text (Basic)",
+          "x-is-trigger": false
+        },
+        "text": {
+          "description": "The text to translate",
+          "title": "Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "target_language": {
+          "description": "ISO-639 language code to translate into (e.g. es, fr, de)",
+          "title": "Target Language",
+          "type": "string",
+          "x-dynamic-options": {
+            "field_name": "target_language",
+            "placeholder": "Select a language\u2026",
+            "searchable": true,
+            "allow_custom": true,
+            "custom_placeholder": "Or type an ISO code (e.g. es)",
+            "auto_select_sole_option": true
+          }
+        },
+        "source_language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO-639 source language code. Auto-detected if omitted.",
+          "title": "Source Language",
+          "x-dynamic-options": {
+            "field_name": "source_language",
+            "placeholder": "Select a language\u2026",
+            "searchable": true,
+            "allow_custom": true,
+            "custom_placeholder": "Or type an ISO code (e.g. es)"
+          }
+        },
+        "format": {
+          "default": "text",
+          "description": "Whether the text is plain text or HTML",
+          "enum": [
+            "text",
+            "html"
+          ],
+          "enumNames": [
+            "Plain text",
+            "HTML"
+          ],
+          "title": "Format",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "text",
+        "target_language"
+      ],
+      "title": "GoogleTranslateV2TranslateConfig",
+      "type": "object"
+    },
+    "GoogleTranslateV3DetectConfig": {
+      "description": "Detect the source language of input text (v3 Advanced).",
+      "properties": {
+        "project_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Google Cloud project ID to run this v3 Advanced operation under. Required when using an OAuth credential (its token carries no project); service-account credentials fall back to the project in their key.",
+          "title": "GCP Project ID",
+          "ui:placeholder": "my-gcp-project"
+        },
+        "operation": {
+          "const": "v3_detect_language",
+          "default": "v3_detect_language",
+          "title": "Detect Language",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Translate",
+          "x-display-name": "Detect Language (v3)",
+          "x-is-trigger": false
+        },
+        "text": {
+          "description": "The text whose language should be detected",
+          "title": "Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "location": {
+          "default": "global",
+          "description": "GCP location (use 'global' for online detection)",
+          "title": "Location",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "GoogleTranslateV3DetectConfig",
+      "type": "object"
+    },
+    "GoogleTranslateV3LanguagesConfig": {
+      "description": "List languages supported for translation/detection (v3 Advanced).",
+      "properties": {
+        "project_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Google Cloud project ID to run this v3 Advanced operation under. Required when using an OAuth credential (its token carries no project); service-account credentials fall back to the project in their key.",
+          "title": "GCP Project ID",
+          "ui:placeholder": "my-gcp-project"
+        },
+        "operation": {
+          "const": "v3_supported_languages",
+          "default": "v3_supported_languages",
+          "title": "Get Supported Languages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Translate",
+          "x-display-name": "Get Supported Languages (v3)",
+          "x-is-trigger": false
+        },
+        "display_language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Language code to return human-readable language names in (e.g. en)",
+          "title": "Display Language",
+          "x-dynamic-options": {
+            "field_name": "display_language",
+            "placeholder": "Select a language\u2026",
+            "searchable": true,
+            "allow_custom": true,
+            "custom_placeholder": "Or type an ISO code (e.g. es)"
+          }
+        },
+        "location": {
+          "default": "global",
+          "description": "GCP location",
+          "title": "Location",
+          "type": "string"
+        }
+      },
+      "title": "GoogleTranslateV3LanguagesConfig",
+      "type": "object"
+    },
+    "GoogleTranslateV3TranslateConfig": {
+      "description": "Translate one or more strings with the v3 Advanced API.",
+      "properties": {
+        "project_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Google Cloud project ID to run this v3 Advanced operation under. Required when using an OAuth credential (its token carries no project); service-account credentials fall back to the project in their key.",
+          "title": "GCP Project ID",
+          "ui:placeholder": "my-gcp-project"
+        },
+        "operation": {
+          "const": "v3_translate_text",
+          "default": "v3_translate_text",
+          "title": "Translate Text",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Translate",
+          "x-display-name": "Translate Text (v3)",
+          "x-is-trigger": false
+        },
+        "text": {
+          "description": "The text to translate (use newlines to translate multiple strings)",
+          "title": "Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "target_language": {
+          "description": "BCP-47 language code to translate into (e.g. es, fr-FR)",
+          "title": "Target Language",
+          "type": "string",
+          "x-dynamic-options": {
+            "field_name": "target_language",
+            "placeholder": "Select a language\u2026",
+            "searchable": true,
+            "allow_custom": true,
+            "custom_placeholder": "Or type an ISO code (e.g. es)",
+            "auto_select_sole_option": true
+          }
+        },
+        "source_language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "BCP-47 source language code. Auto-detected if omitted.",
+          "title": "Source Language",
+          "x-dynamic-options": {
+            "field_name": "source_language",
+            "placeholder": "Select a language\u2026",
+            "searchable": true,
+            "allow_custom": true,
+            "custom_placeholder": "Or type an ISO code (e.g. es)"
+          }
+        },
+        "mime_type": {
+          "default": "text/plain",
+          "description": "Content type of the input text",
+          "enum": [
+            "text/plain",
+            "text/html"
+          ],
+          "enumNames": [
+            "Plain text",
+            "HTML"
+          ],
+          "title": "MIME Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "location": {
+          "default": "global",
+          "description": "GCP location (use 'global' for online translation)",
+          "title": "Location",
+          "type": "string"
+        }
+      },
+      "required": [
+        "text",
+        "target_language"
+      ],
+      "title": "GoogleTranslateV3TranslateConfig",
+      "type": "object"
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the Google Translate node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "on_batch_completed": "#/$defs/GoogleTranslateOnBatchCompletedConfig",
+          "v2_detect_language": "#/$defs/GoogleTranslateV2DetectConfig",
+          "v2_list_languages": "#/$defs/GoogleTranslateV2LanguagesConfig",
+          "v2_translate_text": "#/$defs/GoogleTranslateV2TranslateConfig",
+          "v3_batch_translate_text": "#/$defs/GoogleTranslateBatchTranslateTextConfig",
+          "v3_create_glossary": "#/$defs/GoogleTranslateCreateGlossaryConfig",
+          "v3_detect_language": "#/$defs/GoogleTranslateV3DetectConfig",
+          "v3_get_operation": "#/$defs/GoogleTranslateGetOperationConfig",
+          "v3_list_glossaries": "#/$defs/GoogleTranslateListGlossariesConfig",
+          "v3_romanize_text": "#/$defs/GoogleTranslateRomanizeConfig",
+          "v3_supported_languages": "#/$defs/GoogleTranslateV3LanguagesConfig",
+          "v3_translate_document": "#/$defs/GoogleTranslateTranslateDocumentConfig",
+          "v3_translate_text": "#/$defs/GoogleTranslateV3TranslateConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GoogleTranslateV3TranslateConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleTranslateV3DetectConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleTranslateV3LanguagesConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleTranslateRomanizeConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleTranslateTranslateDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleTranslateBatchTranslateTextConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleTranslateCreateGlossaryConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleTranslateListGlossariesConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleTranslateGetOperationConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleTranslateV2TranslateConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleTranslateV2DetectConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleTranslateV2LanguagesConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleTranslateOnBatchCompletedConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GoogleTranslateOAuthCredential"
+        },
+        {
+          "$ref": "#/$defs/GoogleTranslateServiceAccountCredential"
+        },
+        {
+          "$ref": "#/$defs/GoogleTranslateApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Google-translate Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Translate text into Spanish",
+    "Detect the language of an incoming message",
+    "List the languages supported by Google Translate",
+    "Romanize Japanese text into the Latin alphabet",
+    "Translate a document while preserving its formatting"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

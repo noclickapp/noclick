@@ -1,0 +1,1799 @@
+{
+  "$defs": {
+    "FeedlyGetArticleConfig": {
+      "description": "Get a specific article by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_feedly_article",
+          "default": "get_feedly_article",
+          "title": "Get Feedly Article",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Feedly Article",
+          "x-display-name": "Get Feedly Article",
+          "x-is-trigger": false
+        },
+        "entry_id": {
+          "description": "Article entry ID",
+          "title": "Entry ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "entry_id"
+      ],
+      "title": "FeedlyGetArticleConfig",
+      "type": "object"
+    },
+    "FeedlyGetProfileConfig": {
+      "description": "Get user profile information.",
+      "properties": {
+        "operation": {
+          "const": "get_feedly_user_profile",
+          "default": "get_feedly_user_profile",
+          "title": "Get Feedly User Profile",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Feedly User",
+          "x-display-name": "Get Feedly User Profile",
+          "x-is-trigger": false
+        }
+      },
+      "title": "FeedlyGetProfileConfig",
+      "type": "object"
+    },
+    "FeedlyGetStreamContentsConfig": {
+      "description": "Get articles from a Feedly stream.",
+      "properties": {
+        "operation": {
+          "const": "get_feedly_stream_articles",
+          "default": "get_feedly_stream_articles",
+          "title": "Get Feedly Stream Articles",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Feedly Feed and Subscription",
+          "x-display-name": "Get Feedly Stream Articles",
+          "x-is-trigger": false
+        },
+        "stream_id": {
+          "description": "Stream ID (e.g., feed/https://example.com/feed.xml, user/xxx/category/tech)",
+          "placeholder": "feed/https://example.com/feed.xml",
+          "title": "Stream ID",
+          "type": "string"
+        },
+        "count": {
+          "default": 20,
+          "description": "Number of articles to retrieve",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        },
+        "unread_only": {
+          "default": false,
+          "description": "Return only unread articles",
+          "title": "Unread Only",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "stream_id"
+      ],
+      "title": "Feedly Get Stream Contents",
+      "type": "object"
+    },
+    "FeedlyGetSubscriptionsConfig": {
+      "description": "Get all feed subscriptions.",
+      "properties": {
+        "operation": {
+          "const": "get_feedly_subscriptions",
+          "default": "get_feedly_subscriptions",
+          "title": "Get Feedly Subscriptions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Feedly Feed and Subscription",
+          "x-display-name": "Get Feedly Subscriptions",
+          "x-is-trigger": false
+        }
+      },
+      "title": "Feedly Get Subscriptions",
+      "type": "object"
+    },
+    "FeedlyGetTagsConfig": {
+      "description": "Get all user tags.",
+      "properties": {
+        "operation": {
+          "const": "get_feedly_user_tags",
+          "default": "get_feedly_user_tags",
+          "title": "Get Feedly User Tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Feedly User",
+          "x-display-name": "Get Feedly User Tags",
+          "x-is-trigger": false
+        }
+      },
+      "title": "Feedly Get Tags",
+      "type": "object"
+    },
+    "FeedlyMarkArticlesReadConfig": {
+      "description": "Mark articles as read.",
+      "properties": {
+        "operation": {
+          "const": "mark_feedly_articles_read",
+          "default": "mark_feedly_articles_read",
+          "title": "Mark Feedly Articles Read",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Feedly Feed and Subscription",
+          "x-display-name": "Mark Feedly Articles Read",
+          "x-is-trigger": false
+        },
+        "entry_ids": {
+          "description": "List of article IDs to mark as read",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Entry IDs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "entry_ids"
+      ],
+      "title": "FeedlyMarkArticlesReadConfig",
+      "type": "object"
+    },
+    "FeedlySearchContentConfig": {
+      "description": "Search articles in Feedly.",
+      "properties": {
+        "operation": {
+          "const": "search_feedly_articles",
+          "default": "search_feedly_articles",
+          "title": "Search Feedly Articles",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Feedly Article",
+          "x-display-name": "Search Feedly Articles",
+          "x-is-trigger": false
+        },
+        "query": {
+          "description": "Search keywords",
+          "minLength": 1,
+          "title": "Search Query",
+          "type": "string"
+        },
+        "count": {
+          "default": 20,
+          "description": "Number of results",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "FeedlySearchContentConfig",
+      "type": "object"
+    },
+    "FeedlySearchFeedsConfig": {
+      "description": "Search for feeds by query.",
+      "properties": {
+        "operation": {
+          "const": "search_feedly_feeds",
+          "default": "search_feedly_feeds",
+          "title": "Search Feedly Feeds",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Feedly Feed and Subscription",
+          "x-display-name": "Search Feedly Feeds",
+          "x-is-trigger": false
+        },
+        "query": {
+          "description": "Search term or URL to find feeds",
+          "minLength": 1,
+          "title": "Search Query",
+          "type": "string"
+        },
+        "count": {
+          "default": 20,
+          "description": "Number of results to return",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "FeedlySearchFeedsConfig",
+      "type": "object"
+    },
+    "FeedlySubscribeFeedConfig": {
+      "description": "Subscribe to a feed.",
+      "properties": {
+        "operation": {
+          "const": "subscribe_to_feedly_feed",
+          "default": "subscribe_to_feedly_feed",
+          "title": "Subscribe to Feedly Feed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Feedly Feed and Subscription",
+          "x-display-name": "Subscribe to Feedly Feed",
+          "x-is-trigger": false
+        },
+        "feed_id": {
+          "description": "Feed ID to subscribe to (e.g., feed/https://example.com/feed.xml)",
+          "placeholder": "feed/https://example.com/feed.xml",
+          "title": "Feed ID",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom title for the subscription",
+          "title": "Title (Optional)"
+        },
+        "categories": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Category names to add the feed to",
+          "title": "Categories (Optional)"
+        }
+      },
+      "required": [
+        "feed_id"
+      ],
+      "title": "Feedly Subscribe to Feed",
+      "type": "object"
+    },
+    "FeedlyTagEntryConfig": {
+      "description": "Add tags to an article.",
+      "properties": {
+        "operation": {
+          "const": "add_tags_to_feedly_article",
+          "default": "add_tags_to_feedly_article",
+          "title": "Add Tags to Feedly Article",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Feedly Article",
+          "x-display-name": "Add Tags to Feedly Article",
+          "x-is-trigger": false
+        },
+        "entry_id": {
+          "description": "Article entry ID to tag",
+          "title": "Entry ID",
+          "type": "string"
+        },
+        "tags": {
+          "description": "Tag names to add",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Tags",
+          "type": "array"
+        }
+      },
+      "required": [
+        "entry_id",
+        "tags"
+      ],
+      "title": "FeedlyTagEntryConfig",
+      "type": "object"
+    },
+    "FeedlyUnsubscribeFeedConfig": {
+      "description": "Unsubscribe from a feed.",
+      "properties": {
+        "operation": {
+          "const": "unsubscribe_from_feedly_feed",
+          "default": "unsubscribe_from_feedly_feed",
+          "title": "Unsubscribe from Feedly Feed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Feedly Feed and Subscription",
+          "x-display-name": "Unsubscribe from Feedly Feed",
+          "x-is-trigger": false
+        },
+        "feed_id": {
+          "description": "Feed ID to unsubscribe from",
+          "title": "Feed ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "feed_id"
+      ],
+      "title": "Feedly Unsubscribe from Feed",
+      "type": "object"
+    },
+    "FreshRSSGetStreamContentsConfig": {
+      "description": "Get articles from a stream.",
+      "properties": {
+        "operation": {
+          "const": "get_freshrss_stream_articles",
+          "default": "get_freshrss_stream_articles",
+          "title": "Get Freshrss Stream Articles",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "FreshRSS Article",
+          "x-display-name": "Get Freshrss Stream Articles",
+          "x-is-trigger": false
+        },
+        "stream_id": {
+          "default": "user/-/state/com.google/reading-list",
+          "description": "Stream ID (user/-/state/com.google/reading-list for all, feed/... for specific feed)",
+          "title": "Stream ID",
+          "type": "string"
+        },
+        "count": {
+          "default": 20,
+          "description": "Number of articles to retrieve",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Count",
+          "type": "integer"
+        },
+        "exclude_read": {
+          "default": false,
+          "description": "Only return unread articles",
+          "title": "Exclude Read",
+          "type": "boolean"
+        }
+      },
+      "title": "FreshRSSGetStreamContentsConfig",
+      "type": "object"
+    },
+    "FreshRSSGetSubscriptionsConfig": {
+      "description": "Get all feed subscriptions.",
+      "properties": {
+        "operation": {
+          "const": "get_freshrss_subscriptions",
+          "default": "get_freshrss_subscriptions",
+          "title": "Get Freshrss Subscriptions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "FreshRSS Subscription",
+          "x-display-name": "Get Freshrss Subscriptions",
+          "x-is-trigger": false
+        }
+      },
+      "title": "FreshRSS Get Subscriptions",
+      "type": "object"
+    },
+    "FreshRSSGetTagsConfig": {
+      "description": "Get all tags/labels.",
+      "properties": {
+        "operation": {
+          "const": "get_freshrss_tags",
+          "default": "get_freshrss_tags",
+          "title": "Get Freshrss Tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "FreshRSS Tag",
+          "x-display-name": "Get Freshrss Tags",
+          "x-is-trigger": false
+        }
+      },
+      "title": "FreshRSS Get Tags",
+      "type": "object"
+    },
+    "FreshRSSGetUnreadCountConfig": {
+      "description": "Get unread article counts.",
+      "properties": {
+        "operation": {
+          "const": "get_freshrss_unread_counts",
+          "default": "get_freshrss_unread_counts",
+          "title": "Get Freshrss Unread Counts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "FreshRSS Article",
+          "x-display-name": "Get Freshrss Unread Counts",
+          "x-is-trigger": false
+        }
+      },
+      "title": "FreshRSSGetUnreadCountConfig",
+      "type": "object"
+    },
+    "FreshRSSMarkAsReadConfig": {
+      "description": "Mark articles as read.",
+      "properties": {
+        "operation": {
+          "const": "mark_freshrss_articles_read",
+          "default": "mark_freshrss_articles_read",
+          "title": "Mark Freshrss Articles Read",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "FreshRSS Article",
+          "x-display-name": "Mark Freshrss Articles Read",
+          "x-is-trigger": false
+        },
+        "item_ids": {
+          "description": "List of item IDs to mark as read",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "Item IDs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "item_ids"
+      ],
+      "title": "FreshRSSMarkAsReadConfig",
+      "type": "object"
+    },
+    "FreshRSSSubscribeFeedConfig": {
+      "description": "Subscribe to a feed.",
+      "properties": {
+        "operation": {
+          "const": "subscribe_to_freshrss_feed",
+          "default": "subscribe_to_freshrss_feed",
+          "title": "Subscribe to Freshrss Feed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "FreshRSS Subscription",
+          "x-display-name": "Subscribe to Freshrss Feed",
+          "x-is-trigger": false
+        },
+        "feed_url": {
+          "description": "URL of the feed to subscribe to",
+          "placeholder": "https://example.com/feed.xml",
+          "title": "Feed URL",
+          "type": "string"
+        }
+      },
+      "required": [
+        "feed_url"
+      ],
+      "title": "FreshRSSSubscribeFeedConfig",
+      "type": "object"
+    },
+    "FreshRSSUnsubscribeFeedConfig": {
+      "description": "Unsubscribe from a feed.",
+      "properties": {
+        "operation": {
+          "const": "unsubscribe_from_freshrss_feed",
+          "default": "unsubscribe_from_freshrss_feed",
+          "title": "Unsubscribe from Freshrss Feed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "FreshRSS Subscription",
+          "x-display-name": "Unsubscribe from Freshrss Feed",
+          "x-is-trigger": false
+        },
+        "feed_id": {
+          "description": "Feed ID to unsubscribe from",
+          "title": "Feed ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "feed_id"
+      ],
+      "title": "FreshRSSUnsubscribeFeedConfig",
+      "type": "object"
+    },
+    "MinifluxCreateAPIKeyConfig": {
+      "description": "Create a new API key.",
+      "properties": {
+        "operation": {
+          "const": "create_miniflux_api_key",
+          "default": "create_miniflux_api_key",
+          "title": "Create Miniflux Api Key",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Miniflux Account",
+          "x-display-name": "Create Miniflux Api Key",
+          "x-is-trigger": false
+        },
+        "label": {
+          "description": "Description for the API key",
+          "minLength": 1,
+          "title": "API Key Label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "label"
+      ],
+      "title": "MinifluxCreateAPIKeyConfig",
+      "type": "object"
+    },
+    "MinifluxCreateCategoryConfig": {
+      "description": "Create a new category.",
+      "properties": {
+        "operation": {
+          "const": "create_miniflux_category",
+          "default": "create_miniflux_category",
+          "title": "Create Miniflux Category",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Miniflux Category",
+          "x-display-name": "Create Miniflux Category",
+          "x-is-trigger": false
+        },
+        "title": {
+          "description": "Name of the category",
+          "minLength": 1,
+          "title": "Category Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "Miniflux Create Category",
+      "type": "object"
+    },
+    "MinifluxCreateFeedConfig": {
+      "description": "Create a new feed subscription in Miniflux.",
+      "properties": {
+        "operation": {
+          "const": "create_miniflux_feed_subscription",
+          "default": "create_miniflux_feed_subscription",
+          "title": "Create Miniflux Feed Subscription",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Miniflux Feed",
+          "x-display-name": "Create Miniflux Feed Subscription",
+          "x-is-trigger": false
+        },
+        "feed_url": {
+          "description": "URL of the RSS/Atom feed to subscribe to",
+          "placeholder": "https://example.com/feed.xml",
+          "title": "Feed URL",
+          "type": "string"
+        },
+        "category_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Category to add the feed to",
+          "title": "Category ID (Optional)"
+        }
+      },
+      "required": [
+        "feed_url"
+      ],
+      "title": "Miniflux Create Feed",
+      "type": "object"
+    },
+    "MinifluxDeleteCategoryConfig": {
+      "description": "Delete a category.",
+      "properties": {
+        "operation": {
+          "const": "delete_miniflux_category",
+          "default": "delete_miniflux_category",
+          "title": "Delete Miniflux Category",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Miniflux Category",
+          "x-display-name": "Delete Miniflux Category",
+          "x-is-trigger": false
+        },
+        "category_id": {
+          "description": "ID of the category to delete",
+          "title": "Category ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "category_id"
+      ],
+      "title": "Miniflux Delete Category",
+      "type": "object"
+    },
+    "MinifluxDeleteFeedConfig": {
+      "description": "Delete a feed subscription.",
+      "properties": {
+        "operation": {
+          "const": "delete_miniflux_feed_subscription",
+          "default": "delete_miniflux_feed_subscription",
+          "title": "Delete Miniflux Feed Subscription",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Miniflux Feed",
+          "x-display-name": "Delete Miniflux Feed Subscription",
+          "x-is-trigger": false
+        },
+        "feed_id": {
+          "description": "ID of the feed to delete",
+          "title": "Feed ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "feed_id"
+      ],
+      "title": "Miniflux Delete Feed",
+      "type": "object"
+    },
+    "MinifluxDiscoverFeedConfig": {
+      "description": "Discover RSS feeds from a website URL.",
+      "properties": {
+        "operation": {
+          "const": "discover_rss_feeds_from_website",
+          "default": "discover_rss_feeds_from_website",
+          "title": "Discover Rss Feeds from Website",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Miniflux Feed",
+          "x-display-name": "Discover Rss Feeds from Website",
+          "x-is-trigger": false
+        },
+        "website_url": {
+          "description": "URL of the website to discover feeds from",
+          "placeholder": "https://example.com",
+          "title": "Website URL",
+          "type": "string"
+        }
+      },
+      "required": [
+        "website_url"
+      ],
+      "title": "Miniflux Discover Feed",
+      "type": "object"
+    },
+    "MinifluxExportOPMLConfig": {
+      "description": "Export all subscriptions as OPML.",
+      "properties": {
+        "operation": {
+          "const": "export_miniflux_subscriptions_as_opml",
+          "default": "export_miniflux_subscriptions_as_opml",
+          "title": "Export Miniflux Subscriptions As Opml",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Miniflux Account",
+          "x-display-name": "Export Miniflux Subscriptions As Opml",
+          "x-is-trigger": false
+        }
+      },
+      "title": "Miniflux Export OPML",
+      "type": "object"
+    },
+    "MinifluxGetCategoriesConfig": {
+      "description": "Get all categories.",
+      "properties": {
+        "operation": {
+          "const": "get_miniflux_categories",
+          "default": "get_miniflux_categories",
+          "title": "Get Miniflux Categories",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Miniflux Category",
+          "x-display-name": "Get Miniflux Categories",
+          "x-is-trigger": false
+        }
+      },
+      "title": "Miniflux Get Categories",
+      "type": "object"
+    },
+    "MinifluxGetCurrentUserConfig": {
+      "description": "Get current user information.",
+      "properties": {
+        "operation": {
+          "const": "get_miniflux_current_user",
+          "default": "get_miniflux_current_user",
+          "title": "Get Miniflux Current User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Miniflux Account",
+          "x-display-name": "Get Miniflux Current User",
+          "x-is-trigger": false
+        }
+      },
+      "title": "MinifluxGetCurrentUserConfig",
+      "type": "object"
+    },
+    "MinifluxGetEntriesConfig": {
+      "description": "Get entries with filtering options.",
+      "properties": {
+        "operation": {
+          "const": "get_miniflux_entries",
+          "default": "get_miniflux_entries",
+          "title": "Get Miniflux Entries",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Miniflux Entry",
+          "x-display-name": "Get Miniflux Entries",
+          "x-is-trigger": false
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "unread",
+                "read",
+                "removed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter entries by read status",
+          "title": "Status Filter (Optional)",
+          "enum": [
+            "unread",
+            "read",
+            "removed"
+          ],
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "default": 100,
+          "description": "Maximum number of entries to return",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Number of entries to skip for pagination",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        },
+        "starred": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter to show only starred/bookmarked entries",
+          "title": "Starred Only (Optional)"
+        }
+      },
+      "title": "Miniflux Get Entries",
+      "type": "object"
+    },
+    "MinifluxGetEntryConfig": {
+      "description": "Get a specific entry by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_miniflux_entry",
+          "default": "get_miniflux_entry",
+          "title": "Get Miniflux Entry",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Miniflux Entry",
+          "x-display-name": "Get Miniflux Entry",
+          "x-is-trigger": false
+        },
+        "entry_id": {
+          "description": "ID of the entry to retrieve",
+          "title": "Entry ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "entry_id"
+      ],
+      "title": "Miniflux Get Entry",
+      "type": "object"
+    },
+    "MinifluxGetFeedConfig": {
+      "description": "Get a specific feed by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_miniflux_feed",
+          "default": "get_miniflux_feed",
+          "title": "Get Miniflux Feed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Miniflux Feed",
+          "x-display-name": "Get Miniflux Feed",
+          "x-is-trigger": false
+        },
+        "feed_id": {
+          "description": "ID of the feed to retrieve",
+          "title": "Feed ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "feed_id"
+      ],
+      "title": "Miniflux Get Feed",
+      "type": "object"
+    },
+    "MinifluxGetFeedEntriesConfig": {
+      "description": "Get entries from a specific feed.",
+      "properties": {
+        "operation": {
+          "const": "get_miniflux_feed_entries",
+          "default": "get_miniflux_feed_entries",
+          "title": "Get Miniflux Feed Entries",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Miniflux Feed",
+          "x-display-name": "Get Miniflux Feed Entries",
+          "x-is-trigger": false
+        },
+        "feed_id": {
+          "description": "ID of the feed",
+          "title": "Feed ID",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Maximum number of entries to return",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "feed_id"
+      ],
+      "title": "Miniflux Get Feed Entries",
+      "type": "object"
+    },
+    "MinifluxGetFeedsConfig": {
+      "description": "Get all feeds from Miniflux.",
+      "properties": {
+        "operation": {
+          "const": "get_miniflux_feeds",
+          "default": "get_miniflux_feeds",
+          "title": "Get Miniflux Feeds",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Miniflux Feed",
+          "x-display-name": "Get Miniflux Feeds",
+          "x-is-trigger": false
+        }
+      },
+      "title": "Miniflux Get Feeds",
+      "type": "object"
+    },
+    "MinifluxImportOPMLConfig": {
+      "description": "Import subscriptions from OPML file content.",
+      "properties": {
+        "operation": {
+          "const": "import_miniflux_subscriptions_from_opml",
+          "default": "import_miniflux_subscriptions_from_opml",
+          "title": "Import Miniflux Subscriptions from Opml",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Miniflux Account",
+          "x-display-name": "Import Miniflux Subscriptions from Opml",
+          "x-is-trigger": false
+        },
+        "opml_content": {
+          "description": "OPML XML file content to import",
+          "title": "OPML Content",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "opml_content"
+      ],
+      "title": "Miniflux Import OPML",
+      "type": "object"
+    },
+    "MinifluxMarkAllReadConfig": {
+      "description": "Mark all entries as read.",
+      "properties": {
+        "operation": {
+          "const": "mark_all_miniflux_entries_read",
+          "default": "mark_all_miniflux_entries_read",
+          "title": "Mark All Miniflux Entries Read",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Miniflux Entry",
+          "x-display-name": "Mark All Miniflux Entries Read",
+          "x-is-trigger": false
+        }
+      },
+      "title": "Miniflux Mark All as Read",
+      "type": "object"
+    },
+    "MinifluxMarkEntriesReadConfig": {
+      "description": "Mark specific entries as read.",
+      "properties": {
+        "operation": {
+          "const": "mark_miniflux_entries_read",
+          "default": "mark_miniflux_entries_read",
+          "title": "Mark Miniflux Entries Read",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Miniflux Entry",
+          "x-display-name": "Mark Miniflux Entries Read",
+          "x-is-trigger": false
+        },
+        "entry_ids": {
+          "description": "List of entry IDs to mark as read",
+          "items": {
+            "type": "integer"
+          },
+          "minItems": 1,
+          "title": "Entry IDs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "entry_ids"
+      ],
+      "title": "Miniflux Mark Entries as Read",
+      "type": "object"
+    },
+    "MinifluxRefreshAllFeedsConfig": {
+      "description": "Refresh all feeds to fetch new entries.",
+      "properties": {
+        "operation": {
+          "const": "refresh_all_miniflux_feeds",
+          "default": "refresh_all_miniflux_feeds",
+          "title": "Refresh All Miniflux Feeds",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Miniflux Account",
+          "x-display-name": "Refresh All Miniflux Feeds",
+          "x-is-trigger": false
+        }
+      },
+      "title": "Miniflux Refresh All Feeds",
+      "type": "object"
+    },
+    "MinifluxRefreshFeedConfig": {
+      "description": "Refresh a specific feed to fetch new entries.",
+      "properties": {
+        "operation": {
+          "const": "refresh_miniflux_feed",
+          "default": "refresh_miniflux_feed",
+          "title": "Refresh Miniflux Feed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Miniflux Feed",
+          "x-display-name": "Refresh Miniflux Feed",
+          "x-is-trigger": false
+        },
+        "feed_id": {
+          "description": "ID of the feed to refresh",
+          "title": "Feed ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "feed_id"
+      ],
+      "title": "Miniflux Refresh Feed",
+      "type": "object"
+    },
+    "MinifluxToggleBookmarkConfig": {
+      "description": "Toggle bookmark/starred status of an entry.",
+      "properties": {
+        "operation": {
+          "const": "toggle_miniflux_entry_bookmark",
+          "default": "toggle_miniflux_entry_bookmark",
+          "title": "Toggle Miniflux Entry Bookmark",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Miniflux Entry",
+          "x-display-name": "Toggle Miniflux Entry Bookmark",
+          "x-is-trigger": false
+        },
+        "entry_id": {
+          "description": "ID of the entry to bookmark/unbookmark",
+          "title": "Entry ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "entry_id"
+      ],
+      "title": "Miniflux Toggle Bookmark",
+      "type": "object"
+    },
+    "MinifluxUpdateCategoryConfig": {
+      "description": "Update a category.",
+      "properties": {
+        "operation": {
+          "const": "update_miniflux_category",
+          "default": "update_miniflux_category",
+          "title": "Update Miniflux Category",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Miniflux Category",
+          "x-display-name": "Update Miniflux Category",
+          "x-is-trigger": false
+        },
+        "category_id": {
+          "description": "ID of the category to update",
+          "title": "Category ID",
+          "type": "integer"
+        },
+        "title": {
+          "description": "New name for the category",
+          "minLength": 1,
+          "title": "New Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "category_id",
+        "title"
+      ],
+      "title": "Miniflux Update Category",
+      "type": "object"
+    },
+    "MinifluxUpdateFeedConfig": {
+      "description": "Update feed settings.",
+      "properties": {
+        "operation": {
+          "const": "update_miniflux_feed_settings",
+          "default": "update_miniflux_feed_settings",
+          "title": "Update Miniflux Feed Settings",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Miniflux Feed",
+          "x-display-name": "Update Miniflux Feed Settings",
+          "x-is-trigger": false
+        },
+        "feed_id": {
+          "description": "ID of the feed to update",
+          "title": "Feed ID",
+          "type": "integer"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New title for the feed",
+          "title": "Title (Optional)"
+        },
+        "category_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Move feed to this category",
+          "title": "Category ID (Optional)"
+        }
+      },
+      "required": [
+        "feed_id"
+      ],
+      "title": "Miniflux Update Feed",
+      "type": "object"
+    },
+    "RSSAppCreateFeedConfig": {
+      "description": "Create a new RSS feed from a URL.",
+      "properties": {
+        "operation": {
+          "const": "create_rssapp_feed",
+          "default": "create_rssapp_feed",
+          "title": "Create Rssapp Feed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "RSSApp Feed",
+          "x-display-name": "Create Rssapp Feed",
+          "x-is-trigger": false
+        },
+        "url": {
+          "description": "URL to generate RSS feed from",
+          "placeholder": "https://example.com",
+          "title": "Source URL",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom name for the feed",
+          "title": "Feed Name (Optional)"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "RSS.app Create Feed",
+      "type": "object"
+    },
+    "RSSAppCredential": {
+      "description": "RSS.app API credential.\n\nRSS.app is a service for generating and managing RSS feeds.\nGet API keys from: https://rss.app/dashboard",
+      "properties": {
+        "credential_type": {
+          "const": "rss_app",
+          "default": "rss_app",
+          "title": "Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Your RSS.app API key",
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password",
+          "x-credential-url": "https://rss.app/dashboard"
+        },
+        "secret_key": {
+          "description": "Your RSS.app secret key",
+          "title": "Secret Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key",
+        "secret_key"
+      ],
+      "title": "RSSAppCredential",
+      "type": "object"
+    },
+    "RSSAppDeleteFeedConfig": {
+      "description": "Delete a feed.",
+      "properties": {
+        "operation": {
+          "const": "delete_rssapp_feed",
+          "default": "delete_rssapp_feed",
+          "title": "Delete Rssapp Feed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "RSSApp Feed",
+          "x-display-name": "Delete Rssapp Feed",
+          "x-is-trigger": false
+        },
+        "feed_id": {
+          "description": "ID of the feed to delete",
+          "title": "Feed ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "feed_id"
+      ],
+      "title": "RSS.app Delete Feed",
+      "type": "object"
+    },
+    "RSSAppGetFeedConfig": {
+      "description": "Get a specific feed by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_rssapp_feed",
+          "default": "get_rssapp_feed",
+          "title": "Get Rssapp Feed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "RSSApp Feed",
+          "x-display-name": "Get Rssapp Feed",
+          "x-is-trigger": false
+        },
+        "feed_id": {
+          "description": "ID of the feed to retrieve",
+          "title": "Feed ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "feed_id"
+      ],
+      "title": "RSS.app Get Feed",
+      "type": "object"
+    },
+    "RSSAppGetFeedItemsConfig": {
+      "description": "Get items from a feed.",
+      "properties": {
+        "operation": {
+          "const": "get_rssapp_feed_items",
+          "default": "get_rssapp_feed_items",
+          "title": "Get Rssapp Feed Items",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "RSSApp Feed",
+          "x-display-name": "Get Rssapp Feed Items",
+          "x-is-trigger": false
+        },
+        "feed_id": {
+          "description": "ID of the feed",
+          "title": "Feed ID",
+          "type": "string"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Number of items to return",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "feed_id"
+      ],
+      "title": "RSSAppGetFeedItemsConfig",
+      "type": "object"
+    },
+    "RSSAppListFeedsConfig": {
+      "description": "List all feeds.",
+      "properties": {
+        "operation": {
+          "const": "list_rssapp_feeds",
+          "default": "list_rssapp_feeds",
+          "title": "List Rssapp Feeds",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "RSSApp Feed",
+          "x-display-name": "List Rssapp Feeds",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "default": 50,
+          "description": "Number of feeds to return",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Number of feeds to skip",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        }
+      },
+      "title": "RSS.app List Feeds",
+      "type": "object"
+    },
+    "RSSAppUpdateFeedConfig": {
+      "description": "Update a feed.",
+      "properties": {
+        "operation": {
+          "const": "update_rssapp_feed",
+          "default": "update_rssapp_feed",
+          "title": "Update Rssapp Feed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "RSSApp Feed",
+          "x-display-name": "Update Rssapp Feed",
+          "x-is-trigger": false
+        },
+        "feed_id": {
+          "description": "ID of the feed to update",
+          "title": "Feed ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New name for the feed",
+          "title": "New Name (Optional)"
+        }
+      },
+      "required": [
+        "feed_id"
+      ],
+      "title": "RSS.app Update Feed",
+      "type": "object"
+    },
+    "RSSDirectCredential": {
+      "description": "Credential for parsing RSS/Atom feeds directly.\n\nUse this for:\n- Public RSS feeds (no credentials needed)\n- Password-protected feeds (with basic auth)\n- Feeds requiring API keys in headers",
+      "properties": {
+        "credential_type": {
+          "const": "direct",
+          "default": "direct",
+          "title": "Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "username": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For Basic Auth protected feeds",
+          "title": "Username (Optional)"
+        },
+        "password": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For Basic Auth protected feeds",
+          "title": "Password (Optional)",
+          "ui:widget": "password"
+        },
+        "api_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For feeds requiring bearer token authentication",
+          "title": "API Key (Optional)",
+          "ui:widget": "password"
+        },
+        "custom_headers": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Additional headers as JSON object (e.g., {'X-API-Key': 'value'})",
+          "title": "Custom Headers (Optional)",
+          "ui:widget": "textarea"
+        },
+        "allowed_origin": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required when authentication is configured. Credentials are sent only to this exact HTTPS origin (for example https://feeds.example.com).",
+          "placeholder": "https://feeds.example.com",
+          "title": "Allowed Feed Origin"
+        }
+      },
+      "title": "RSSDirectCredential",
+      "type": "object"
+    },
+    "RSSFeedlyCredential": {
+      "description": "Feedly API credential.\n\nGet your developer access token from: https://feedly.com/i/team/developer\nNote: Enterprise accounts support OAuth 2.0",
+      "properties": {
+        "credential_type": {
+          "const": "feedly",
+          "default": "feedly",
+          "title": "Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "Personal access token from Feedly Developer settings",
+          "title": "Developer Access Token",
+          "type": "string",
+          "ui:widget": "password",
+          "x-credential-url": "https://feedly.com/i/team/developer"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "RSSFeedlyCredential",
+      "type": "object"
+    },
+    "RSSFreshRSSCredential": {
+      "description": "FreshRSS API credential (Google Reader API compatible).\n\nFreshRSS is a self-hosted RSS aggregator.\nEnable API access in: Profile > Authentication > Allow API access",
+      "properties": {
+        "credential_type": {
+          "const": "freshrss",
+          "default": "freshrss",
+          "title": "Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "server_url": {
+          "description": "Your FreshRSS instance URL (e.g., https://freshrss.example.com)",
+          "placeholder": "https://freshrss.example.com",
+          "title": "FreshRSS Server URL",
+          "type": "string"
+        },
+        "username": {
+          "description": "Your FreshRSS username",
+          "title": "Username",
+          "type": "string"
+        },
+        "api_password": {
+          "description": "API password from Profile settings (not your login password)",
+          "title": "API Password",
+          "type": "string",
+          "ui:widget": "password",
+          "x-credential-url": "Profile > API Password"
+        }
+      },
+      "required": [
+        "server_url",
+        "username",
+        "api_password"
+      ],
+      "title": "RSSFreshRSSCredential",
+      "type": "object"
+    },
+    "RSSMinifluxCredential": {
+      "description": "Miniflux API credential.\n\nMiniflux is a minimalist and opinionated feed reader.\nCreate API token at: https://your-miniflux-url/keys",
+      "properties": {
+        "credential_type": {
+          "const": "miniflux",
+          "default": "miniflux",
+          "title": "Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "server_url": {
+          "description": "Your Miniflux instance URL (e.g., https://miniflux.example.com)",
+          "placeholder": "https://miniflux.example.com",
+          "title": "Miniflux Server URL",
+          "type": "string"
+        },
+        "api_token": {
+          "description": "API token from Miniflux Settings > API Keys",
+          "title": "API Token",
+          "type": "string",
+          "ui:widget": "password",
+          "x-credential-url": "Settings > API Keys"
+        }
+      },
+      "required": [
+        "server_url",
+        "api_token"
+      ],
+      "title": "RSSMinifluxCredential",
+      "type": "object"
+    },
+    "RSSParseFeedConfig": {
+      "description": "Parse an RSS or Atom feed from a URL.",
+      "properties": {
+        "operation": {
+          "const": "parse_rss_atom_feed",
+          "default": "parse_rss_atom_feed",
+          "title": "Parse Rss Atom Feed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Generic Feed",
+          "x-display-name": "Parse Rss Atom Feed",
+          "x-is-trigger": false
+        },
+        "feed_url": {
+          "default": "",
+          "description": "URL of the RSS/Atom feed to parse. Accepts a single URL, comma-separated URLs, a JSON array, or a reference like {{nodeId.url}} or {{nodeId.rss_feeds}} that resolves to any of these formats.",
+          "placeholder": "https://example.com/feed.xml",
+          "title": "Feed URL(s)",
+          "type": "string"
+        },
+        "use_credentials": {
+          "default": false,
+          "description": "Enable if the feed requires authentication",
+          "title": "Use Credentials",
+          "type": "boolean"
+        },
+        "only_new_items": {
+          "default": "false",
+          "description": "Only return items not seen in previous executions. Useful for cron-triggered workflows to avoid processing duplicates.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes \u2014 only new items",
+            "No \u2014 all items"
+          ],
+          "title": "Only New Items",
+          "type": "string",
+          "ui:category": "filtering",
+          "x-enum-searchable": true
+        }
+      },
+      "title": "Parse RSS Feed",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for RSS node including credentials",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_tags_to_feedly_article": "#/$defs/FeedlyTagEntryConfig",
+          "create_miniflux_api_key": "#/$defs/MinifluxCreateAPIKeyConfig",
+          "create_miniflux_category": "#/$defs/MinifluxCreateCategoryConfig",
+          "create_miniflux_feed_subscription": "#/$defs/MinifluxCreateFeedConfig",
+          "create_rssapp_feed": "#/$defs/RSSAppCreateFeedConfig",
+          "delete_miniflux_category": "#/$defs/MinifluxDeleteCategoryConfig",
+          "delete_miniflux_feed_subscription": "#/$defs/MinifluxDeleteFeedConfig",
+          "delete_rssapp_feed": "#/$defs/RSSAppDeleteFeedConfig",
+          "discover_rss_feeds_from_website": "#/$defs/MinifluxDiscoverFeedConfig",
+          "export_miniflux_subscriptions_as_opml": "#/$defs/MinifluxExportOPMLConfig",
+          "get_feedly_article": "#/$defs/FeedlyGetArticleConfig",
+          "get_feedly_stream_articles": "#/$defs/FeedlyGetStreamContentsConfig",
+          "get_feedly_subscriptions": "#/$defs/FeedlyGetSubscriptionsConfig",
+          "get_feedly_user_profile": "#/$defs/FeedlyGetProfileConfig",
+          "get_feedly_user_tags": "#/$defs/FeedlyGetTagsConfig",
+          "get_freshrss_stream_articles": "#/$defs/FreshRSSGetStreamContentsConfig",
+          "get_freshrss_subscriptions": "#/$defs/FreshRSSGetSubscriptionsConfig",
+          "get_freshrss_tags": "#/$defs/FreshRSSGetTagsConfig",
+          "get_freshrss_unread_counts": "#/$defs/FreshRSSGetUnreadCountConfig",
+          "get_miniflux_categories": "#/$defs/MinifluxGetCategoriesConfig",
+          "get_miniflux_current_user": "#/$defs/MinifluxGetCurrentUserConfig",
+          "get_miniflux_entries": "#/$defs/MinifluxGetEntriesConfig",
+          "get_miniflux_entry": "#/$defs/MinifluxGetEntryConfig",
+          "get_miniflux_feed": "#/$defs/MinifluxGetFeedConfig",
+          "get_miniflux_feed_entries": "#/$defs/MinifluxGetFeedEntriesConfig",
+          "get_miniflux_feeds": "#/$defs/MinifluxGetFeedsConfig",
+          "get_rssapp_feed": "#/$defs/RSSAppGetFeedConfig",
+          "get_rssapp_feed_items": "#/$defs/RSSAppGetFeedItemsConfig",
+          "import_miniflux_subscriptions_from_opml": "#/$defs/MinifluxImportOPMLConfig",
+          "list_rssapp_feeds": "#/$defs/RSSAppListFeedsConfig",
+          "mark_all_miniflux_entries_read": "#/$defs/MinifluxMarkAllReadConfig",
+          "mark_feedly_articles_read": "#/$defs/FeedlyMarkArticlesReadConfig",
+          "mark_freshrss_articles_read": "#/$defs/FreshRSSMarkAsReadConfig",
+          "mark_miniflux_entries_read": "#/$defs/MinifluxMarkEntriesReadConfig",
+          "parse_rss_atom_feed": "#/$defs/RSSParseFeedConfig",
+          "refresh_all_miniflux_feeds": "#/$defs/MinifluxRefreshAllFeedsConfig",
+          "refresh_miniflux_feed": "#/$defs/MinifluxRefreshFeedConfig",
+          "search_feedly_articles": "#/$defs/FeedlySearchContentConfig",
+          "search_feedly_feeds": "#/$defs/FeedlySearchFeedsConfig",
+          "subscribe_to_feedly_feed": "#/$defs/FeedlySubscribeFeedConfig",
+          "subscribe_to_freshrss_feed": "#/$defs/FreshRSSSubscribeFeedConfig",
+          "toggle_miniflux_entry_bookmark": "#/$defs/MinifluxToggleBookmarkConfig",
+          "unsubscribe_from_feedly_feed": "#/$defs/FeedlyUnsubscribeFeedConfig",
+          "unsubscribe_from_freshrss_feed": "#/$defs/FreshRSSUnsubscribeFeedConfig",
+          "update_miniflux_category": "#/$defs/MinifluxUpdateCategoryConfig",
+          "update_miniflux_feed_settings": "#/$defs/MinifluxUpdateFeedConfig",
+          "update_rssapp_feed": "#/$defs/RSSAppUpdateFeedConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/RSSParseFeedConfig"
+        },
+        {
+          "$ref": "#/$defs/MinifluxDiscoverFeedConfig"
+        },
+        {
+          "$ref": "#/$defs/MinifluxCreateFeedConfig"
+        },
+        {
+          "$ref": "#/$defs/MinifluxGetFeedsConfig"
+        },
+        {
+          "$ref": "#/$defs/MinifluxGetFeedConfig"
+        },
+        {
+          "$ref": "#/$defs/MinifluxUpdateFeedConfig"
+        },
+        {
+          "$ref": "#/$defs/MinifluxDeleteFeedConfig"
+        },
+        {
+          "$ref": "#/$defs/MinifluxRefreshFeedConfig"
+        },
+        {
+          "$ref": "#/$defs/MinifluxRefreshAllFeedsConfig"
+        },
+        {
+          "$ref": "#/$defs/MinifluxGetEntriesConfig"
+        },
+        {
+          "$ref": "#/$defs/MinifluxGetFeedEntriesConfig"
+        },
+        {
+          "$ref": "#/$defs/MinifluxGetEntryConfig"
+        },
+        {
+          "$ref": "#/$defs/MinifluxToggleBookmarkConfig"
+        },
+        {
+          "$ref": "#/$defs/MinifluxMarkEntriesReadConfig"
+        },
+        {
+          "$ref": "#/$defs/MinifluxMarkAllReadConfig"
+        },
+        {
+          "$ref": "#/$defs/MinifluxCreateCategoryConfig"
+        },
+        {
+          "$ref": "#/$defs/MinifluxGetCategoriesConfig"
+        },
+        {
+          "$ref": "#/$defs/MinifluxUpdateCategoryConfig"
+        },
+        {
+          "$ref": "#/$defs/MinifluxDeleteCategoryConfig"
+        },
+        {
+          "$ref": "#/$defs/MinifluxExportOPMLConfig"
+        },
+        {
+          "$ref": "#/$defs/MinifluxImportOPMLConfig"
+        },
+        {
+          "$ref": "#/$defs/MinifluxGetCurrentUserConfig"
+        },
+        {
+          "$ref": "#/$defs/MinifluxCreateAPIKeyConfig"
+        },
+        {
+          "$ref": "#/$defs/FeedlyGetStreamContentsConfig"
+        },
+        {
+          "$ref": "#/$defs/FeedlySearchFeedsConfig"
+        },
+        {
+          "$ref": "#/$defs/FeedlyGetSubscriptionsConfig"
+        },
+        {
+          "$ref": "#/$defs/FeedlySubscribeFeedConfig"
+        },
+        {
+          "$ref": "#/$defs/FeedlyUnsubscribeFeedConfig"
+        },
+        {
+          "$ref": "#/$defs/FeedlyGetArticleConfig"
+        },
+        {
+          "$ref": "#/$defs/FeedlyMarkArticlesReadConfig"
+        },
+        {
+          "$ref": "#/$defs/FeedlyGetProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/FeedlyGetTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/FeedlyTagEntryConfig"
+        },
+        {
+          "$ref": "#/$defs/FeedlySearchContentConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshRSSGetSubscriptionsConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshRSSSubscribeFeedConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshRSSUnsubscribeFeedConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshRSSGetUnreadCountConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshRSSGetStreamContentsConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshRSSMarkAsReadConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshRSSGetTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/RSSAppCreateFeedConfig"
+        },
+        {
+          "$ref": "#/$defs/RSSAppGetFeedConfig"
+        },
+        {
+          "$ref": "#/$defs/RSSAppListFeedsConfig"
+        },
+        {
+          "$ref": "#/$defs/RSSAppUpdateFeedConfig"
+        },
+        {
+          "$ref": "#/$defs/RSSAppDeleteFeedConfig"
+        },
+        {
+          "$ref": "#/$defs/RSSAppGetFeedItemsConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RSSDirectCredential"
+        },
+        {
+          "$ref": "#/$defs/RSSMinifluxCredential"
+        },
+        {
+          "$ref": "#/$defs/RSSFeedlyCredential"
+        },
+        {
+          "$ref": "#/$defs/RSSFreshRSSCredential"
+        },
+        {
+          "$ref": "#/$defs/RSSAppCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Rss Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Parse a feed from TechCrunch and only return new articles",
+    "Get all feeds from Miniflux and list them by creation date",
+    "Subscribe to a Feedly stream for AI news and retrieve recent articles",
+    "Export all RSS subscriptions from Miniflux as OPML backup",
+    "Mark unread entries as read in FreshRSS from this month",
+    "Create new RSS feeds from multiple URLs in Miniflux",
+    "Get trending topics from RSS feeds and search by tags"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

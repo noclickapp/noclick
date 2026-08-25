@@ -1,0 +1,2072 @@
+{
+  "$defs": {
+    "GmailCreateDraftConfig": {
+      "description": "Configuration for creating a draft",
+      "properties": {
+        "operation": {
+          "const": "create_email_draft",
+          "default": "create_email_draft",
+          "description": "Create a draft email",
+          "title": "Create Email Draft",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Draft",
+          "x-display-name": "Create Email Draft",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "save draft",
+            "draft email",
+            "new draft",
+            "compose draft",
+            "start draft"
+          ]
+        },
+        "to": {
+          "description": "Recipient email address(es)",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "placeholder": "recipient@example.com",
+          "title": "To",
+          "type": "array",
+          "ui:widget": "list"
+        },
+        "subject": {
+          "description": "Email subject line",
+          "placeholder": "Enter subject...",
+          "title": "Subject",
+          "type": "string"
+        },
+        "body": {
+          "description": "Email body content (HTML supported)",
+          "placeholder": "Enter email body...",
+          "title": "Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "cc": {
+          "description": "CC recipients",
+          "items": {
+            "type": "string"
+          },
+          "placeholder": "cc@example.com",
+          "title": "CC",
+          "type": "array",
+          "ui:widget": "list"
+        },
+        "bcc": {
+          "description": "BCC recipients",
+          "items": {
+            "type": "string"
+          },
+          "placeholder": "bcc@example.com",
+          "title": "BCC",
+          "type": "array",
+          "ui:widget": "list"
+        },
+        "inline_images": {
+          "description": "Image URLs to embed directly in the email. Images are downloaded and attached, preventing URL expiration.",
+          "items": {
+            "type": "string"
+          },
+          "placeholder": "{{node.image_url}}",
+          "title": "Inline Images",
+          "type": "array",
+          "ui:widget": "list"
+        },
+        "attachments": {
+          "description": "Files to attach: workflow resource ids or URLs (max 10MB per file, 20MB total).",
+          "items": {
+            "type": "string"
+          },
+          "placeholder": "{{node.resource_id}}",
+          "title": "Attachments",
+          "type": "array",
+          "ui:widget": "list"
+        }
+      },
+      "required": [
+        "to",
+        "subject",
+        "body"
+      ],
+      "title": "GmailCreateDraftConfig",
+      "type": "object"
+    },
+    "GmailCreateLabelConfig": {
+      "description": "Configuration for creating a label",
+      "properties": {
+        "operation": {
+          "const": "create_email_label",
+          "default": "create_email_label",
+          "description": "Create a new label",
+          "title": "Create Email Label",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Label",
+          "x-display-name": "Create Email Label",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new label",
+            "make label",
+            "add tag",
+            "create folder"
+          ]
+        },
+        "name": {
+          "description": "Name for the new label",
+          "placeholder": "My Label",
+          "title": "Label Name",
+          "type": "string"
+        },
+        "label_list_visibility": {
+          "default": "labelShow",
+          "description": "Visibility in label list",
+          "enum": [
+            "labelShow",
+            "labelShowIfUnread",
+            "labelHide"
+          ],
+          "enumNames": [
+            "Show",
+            "Show if Unread",
+            "Hide"
+          ],
+          "title": "List Visibility",
+          "type": "string"
+        },
+        "message_list_visibility": {
+          "default": "show",
+          "description": "Visibility in message list",
+          "enum": [
+            "show",
+            "hide"
+          ],
+          "enumNames": [
+            "Show",
+            "Hide"
+          ],
+          "title": "Message Visibility",
+          "type": "string"
+        },
+        "background_color": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Background color hex code (e.g., #4285f4)",
+          "placeholder": "#4285f4",
+          "title": "Background Color"
+        },
+        "text_color": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Text color hex code (e.g., #ffffff)",
+          "placeholder": "#ffffff",
+          "title": "Text Color"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "GmailCreateLabelConfig",
+      "type": "object"
+    },
+    "GmailDeleteDraftConfig": {
+      "description": "Configuration for deleting a draft",
+      "properties": {
+        "operation": {
+          "const": "delete_email_draft",
+          "default": "delete_email_draft",
+          "description": "Delete a draft",
+          "title": "Delete Email Draft",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Draft",
+          "x-display-name": "Delete Email Draft",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "discard draft",
+            "remove draft",
+            "trash draft",
+            "throw away draft"
+          ]
+        },
+        "draft_id": {
+          "description": "The ID of the draft to delete",
+          "placeholder": "Enter draft ID...",
+          "title": "Draft ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "draft_id"
+      ],
+      "title": "GmailDeleteDraftConfig",
+      "type": "object"
+    },
+    "GmailDeleteLabelConfig": {
+      "description": "Configuration for deleting a label",
+      "properties": {
+        "operation": {
+          "const": "delete_email_label",
+          "default": "delete_email_label",
+          "description": "Delete a label",
+          "title": "Delete Email Label",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Label",
+          "x-display-name": "Delete Email Label",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove label",
+            "delete tag",
+            "drop label",
+            "trash label"
+          ]
+        },
+        "label_id": {
+          "description": "The ID of the label to delete",
+          "placeholder": "Label_123",
+          "title": "Label ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "label_id"
+      ],
+      "title": "GmailDeleteLabelConfig",
+      "type": "object"
+    },
+    "GmailDeleteMessageConfig": {
+      "description": "Configuration for permanently deleting a message",
+      "properties": {
+        "operation": {
+          "const": "permanently_delete_message",
+          "default": "permanently_delete_message",
+          "description": "Permanently delete a message (cannot be undone)",
+          "title": "Permanently Delete Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Permanently Delete Message",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "delete forever",
+            "purge message",
+            "hard delete email",
+            "wipe message",
+            "destroy email"
+          ]
+        },
+        "message_id": {
+          "description": "The ID of the message to delete permanently",
+          "placeholder": "Enter message ID...",
+          "title": "Message ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message_id"
+      ],
+      "title": "GmailDeleteMessageConfig",
+      "type": "object"
+    },
+    "GmailDeleteThreadConfig": {
+      "description": "Configuration for permanently deleting a thread",
+      "properties": {
+        "operation": {
+          "const": "permanently_delete_thread",
+          "default": "permanently_delete_thread",
+          "description": "Permanently delete a thread (cannot be undone)",
+          "title": "Permanently Delete Thread",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Thread",
+          "x-display-name": "Permanently Delete Thread",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "delete thread forever",
+            "purge conversation",
+            "hard delete thread",
+            "wipe conversation"
+          ]
+        },
+        "thread_id": {
+          "description": "The ID of the thread to delete permanently",
+          "placeholder": "Enter thread ID...",
+          "title": "Thread ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "thread_id"
+      ],
+      "title": "GmailDeleteThreadConfig",
+      "type": "object"
+    },
+    "GmailForwardConfig": {
+      "description": "Configuration for forwarding an email",
+      "properties": {
+        "operation": {
+          "const": "forward_email_message",
+          "default": "forward_email_message",
+          "description": "Forward an email",
+          "title": "Forward Email Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Forward Email Message",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "forward email",
+            "send along",
+            "pass on email",
+            "fwd message",
+            "forward to someone"
+          ]
+        },
+        "message_id": {
+          "description": "The ID of the message to forward",
+          "placeholder": "Enter message ID...",
+          "title": "Message ID",
+          "type": "string"
+        },
+        "to": {
+          "description": "Email address(es) to forward to",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "placeholder": "recipient@example.com",
+          "title": "Forward To",
+          "type": "array",
+          "ui:widget": "list"
+        },
+        "additional_message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional message to include before forwarded content",
+          "placeholder": "Add a message (optional)...",
+          "title": "Additional Message",
+          "ui:widget": "textarea"
+        },
+        "inline_images": {
+          "description": "Image URLs to embed directly in the email. Images are downloaded and attached, preventing URL expiration.",
+          "items": {
+            "type": "string"
+          },
+          "placeholder": "{{node.image_url}}",
+          "title": "Inline Images",
+          "type": "array",
+          "ui:widget": "list"
+        },
+        "attachments": {
+          "description": "Files to attach: workflow resource ids or URLs (max 10MB per file, 20MB total).",
+          "items": {
+            "type": "string"
+          },
+          "placeholder": "{{node.resource_id}}",
+          "title": "Attachments",
+          "type": "array",
+          "ui:widget": "list"
+        }
+      },
+      "required": [
+        "message_id",
+        "to"
+      ],
+      "title": "GmailForwardConfig",
+      "type": "object"
+    },
+    "GmailGetAttachmentConfig": {
+      "description": "Configuration for fetching a message attachment",
+      "properties": {
+        "operation": {
+          "const": "fetch_email_attachment",
+          "default": "fetch_email_attachment",
+          "description": "Download a message attachment and extract its content",
+          "title": "Fetch Email Attachment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Fetch Email Attachment",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "attachment",
+            "download attachment",
+            "read pdf",
+            "attached file",
+            "invoice pdf",
+            "document in email"
+          ]
+        },
+        "message_id": {
+          "description": "The ID of the message containing the attachment",
+          "placeholder": "Enter message ID...",
+          "title": "Message ID",
+          "type": "string"
+        },
+        "attachment_id": {
+          "default": "",
+          "description": "Attachment ID from the message's attachments list (or select by filename below)",
+          "placeholder": "Enter attachment ID...",
+          "title": "Attachment ID",
+          "type": "string"
+        },
+        "filename": {
+          "default": "",
+          "description": "Select the attachment by filename instead of ID",
+          "title": "Filename",
+          "type": "string"
+        },
+        "mode": {
+          "default": "extract_text",
+          "description": "Extract readable text, or save the raw file as a workflow resource",
+          "enum": [
+            "extract_text",
+            "save_as_resource"
+          ],
+          "enumNames": [
+            "Extract Text",
+            "Save as Resource"
+          ],
+          "title": "Mode",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "allow_ai_ocr": {
+          "default": "true",
+          "description": "OCR scanned PDFs with a vision model when there is no text layer (billed per page)",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Allow AI OCR",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "message_id"
+      ],
+      "title": "GmailGetAttachmentConfig",
+      "type": "object"
+    },
+    "GmailGetDraftConfig": {
+      "description": "Configuration for getting a specific draft",
+      "properties": {
+        "operation": {
+          "const": "fetch_email_draft",
+          "default": "fetch_email_draft",
+          "description": "Get a specific draft by ID",
+          "title": "Fetch Email Draft",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Draft",
+          "x-display-name": "Fetch Email Draft",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "open draft",
+            "get one draft",
+            "single draft",
+            "draft contents",
+            "view draft"
+          ]
+        },
+        "draft_id": {
+          "description": "The ID of the draft to retrieve",
+          "placeholder": "Enter draft ID...",
+          "title": "Draft ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "draft_id"
+      ],
+      "title": "GmailGetDraftConfig",
+      "type": "object"
+    },
+    "GmailGetLabelConfig": {
+      "description": "Configuration for getting a label",
+      "properties": {
+        "operation": {
+          "const": "fetch_email_label",
+          "default": "fetch_email_label",
+          "description": "Get details of a specific label",
+          "title": "Fetch Email Label",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Label",
+          "x-display-name": "Fetch Email Label",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "open label",
+            "get one label",
+            "single label",
+            "label details"
+          ]
+        },
+        "label_id": {
+          "description": "The ID of the label to retrieve",
+          "placeholder": "Label_123 or INBOX",
+          "title": "Label ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "label_id"
+      ],
+      "title": "GmailGetLabelConfig",
+      "type": "object"
+    },
+    "GmailGetMessageConfig": {
+      "description": "Configuration for getting a specific message",
+      "properties": {
+        "operation": {
+          "const": "fetch_email_message",
+          "default": "fetch_email_message",
+          "description": "Get a specific email by ID",
+          "title": "Fetch Email Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Fetch Email Message",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "open email",
+            "read this email",
+            "get message by id",
+            "single message",
+            "email contents",
+            "view one message"
+          ]
+        },
+        "message_id": {
+          "description": "The ID of the message to retrieve",
+          "placeholder": "Enter message ID...",
+          "title": "Message ID",
+          "type": "string"
+        },
+        "format": {
+          "default": "full",
+          "description": "The format to return the message in",
+          "enum": [
+            "minimal",
+            "full",
+            "raw",
+            "metadata"
+          ],
+          "enumNames": [
+            "Minimal",
+            "Full",
+            "Raw",
+            "Metadata Only"
+          ],
+          "title": "Format",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message_id"
+      ],
+      "title": "GmailGetMessageConfig",
+      "type": "object"
+    },
+    "GmailGetProfileConfig": {
+      "description": "Configuration for getting user profile",
+      "properties": {
+        "operation": {
+          "const": "fetch_user_profile",
+          "default": "fetch_user_profile",
+          "description": "Get the current user's Gmail profile",
+          "title": "Fetch User Profile",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Profile",
+          "x-display-name": "Fetch User Profile",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "my account",
+            "mailbox info",
+            "email address",
+            "account details",
+            "whoami"
+          ]
+        }
+      },
+      "title": "GmailGetProfileConfig",
+      "type": "object"
+    },
+    "GmailGetThreadConfig": {
+      "description": "Configuration for getting a specific thread",
+      "properties": {
+        "operation": {
+          "const": "fetch_email_thread",
+          "default": "fetch_email_thread",
+          "description": "Get a specific email thread",
+          "title": "Fetch Email Thread",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Thread",
+          "x-display-name": "Fetch Email Thread",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "open thread",
+            "get one thread",
+            "single conversation",
+            "thread messages",
+            "view conversation"
+          ]
+        },
+        "thread_id": {
+          "description": "The ID of the thread to retrieve",
+          "placeholder": "Enter thread ID...",
+          "title": "Thread ID",
+          "type": "string"
+        },
+        "format": {
+          "default": "full",
+          "description": "The format to return messages in",
+          "enum": [
+            "minimal",
+            "full",
+            "metadata"
+          ],
+          "enumNames": [
+            "Minimal",
+            "Full",
+            "Metadata Only"
+          ],
+          "title": "Format",
+          "type": "string"
+        }
+      },
+      "required": [
+        "thread_id"
+      ],
+      "title": "GmailGetThreadConfig",
+      "type": "object"
+    },
+    "GmailListDraftsConfig": {
+      "description": "Configuration for listing drafts",
+      "properties": {
+        "operation": {
+          "const": "list_email_drafts",
+          "default": "list_email_drafts",
+          "description": "List all draft emails",
+          "title": "List Email Drafts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Draft",
+          "x-display-name": "List Email Drafts",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "show drafts",
+            "all drafts",
+            "my drafts",
+            "unsent emails",
+            "view drafts"
+          ]
+        },
+        "max_results": {
+          "default": 10,
+          "description": "Maximum number of drafts to retrieve (1-500)",
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Max Results",
+          "type": "integer"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional search query to filter drafts",
+          "placeholder": "subject:report (optional)",
+          "title": "Search Query"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token for fetching the next page of results",
+          "placeholder": "Leave empty for first page",
+          "title": "Page Token"
+        }
+      },
+      "title": "GmailListDraftsConfig",
+      "type": "object"
+    },
+    "GmailListLabelsConfig": {
+      "description": "Configuration for listing all labels",
+      "properties": {
+        "operation": {
+          "const": "list_email_labels",
+          "default": "list_email_labels",
+          "description": "List all labels in the mailbox",
+          "title": "List Email Labels",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Label",
+          "x-display-name": "List Email Labels",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "show labels",
+            "all labels",
+            "my labels",
+            "list tags",
+            "view folders"
+          ]
+        }
+      },
+      "title": "GmailListLabelsConfig",
+      "type": "object"
+    },
+    "GmailListThreadsConfig": {
+      "description": "Configuration for listing threads",
+      "properties": {
+        "operation": {
+          "const": "list_email_threads",
+          "default": "list_email_threads",
+          "description": "List email threads",
+          "title": "List Email Threads",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Thread",
+          "x-display-name": "List Email Threads",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "show threads",
+            "all conversations",
+            "email threads",
+            "list conversations"
+          ]
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Gmail search query to filter threads",
+          "placeholder": "is:unread (optional)",
+          "title": "Search Query"
+        },
+        "max_results": {
+          "default": 10,
+          "description": "Maximum number of threads to retrieve (1-500)",
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Max Results",
+          "type": "integer"
+        },
+        "label_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by label IDs (comma-separated)",
+          "placeholder": "INBOX,UNREAD",
+          "title": "Label IDs"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token for fetching the next page of results",
+          "placeholder": "Leave empty for first page",
+          "title": "Page Token"
+        }
+      },
+      "title": "GmailListThreadsConfig",
+      "type": "object"
+    },
+    "GmailModifyMessageConfig": {
+      "description": "Configuration for modifying message labels",
+      "properties": {
+        "operation": {
+          "const": "update_message_labels",
+          "default": "update_message_labels",
+          "description": "Add or remove labels from a message",
+          "title": "Update Message Labels",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Update Message Labels",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "label email",
+            "tag message",
+            "mark as read",
+            "archive email",
+            "star email",
+            "apply label"
+          ]
+        },
+        "message_id": {
+          "description": "The ID of the message to modify",
+          "placeholder": "Enter message ID...",
+          "title": "Message ID",
+          "type": "string"
+        },
+        "add_label_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Label IDs to add (comma-separated, e.g., 'STARRED,IMPORTANT')",
+          "placeholder": "STARRED,IMPORTANT",
+          "title": "Add Labels"
+        },
+        "remove_label_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Label IDs to remove (comma-separated, e.g., 'UNREAD,INBOX')",
+          "placeholder": "UNREAD",
+          "title": "Remove Labels"
+        }
+      },
+      "required": [
+        "message_id"
+      ],
+      "title": "GmailModifyMessageConfig",
+      "type": "object"
+    },
+    "GmailModifyThreadConfig": {
+      "description": "Configuration for modifying thread labels",
+      "properties": {
+        "operation": {
+          "const": "update_thread_labels",
+          "default": "update_thread_labels",
+          "description": "Add or remove labels from a thread",
+          "title": "Update Thread Labels",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Thread",
+          "x-display-name": "Update Thread Labels",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "label thread",
+            "tag conversation",
+            "archive thread",
+            "mark thread read",
+            "apply label to thread"
+          ]
+        },
+        "thread_id": {
+          "description": "The ID of the thread to modify",
+          "placeholder": "Enter thread ID...",
+          "title": "Thread ID",
+          "type": "string"
+        },
+        "add_label_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Label IDs to add (comma-separated)",
+          "placeholder": "STARRED,IMPORTANT",
+          "title": "Add Labels"
+        },
+        "remove_label_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Label IDs to remove (comma-separated)",
+          "placeholder": "UNREAD",
+          "title": "Remove Labels"
+        }
+      },
+      "required": [
+        "thread_id"
+      ],
+      "title": "GmailModifyThreadConfig",
+      "type": "object"
+    },
+    "GmailOAuthCredential": {
+      "description": "OAuth credential for Gmail access.\nTokens are obtained via OAuth flow, not entered manually.",
+      "properties": {
+        "credential_type": {
+          "const": "google_gmail_oauth",
+          "default": "google_gmail_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "OAuth 2.0 access token from Google",
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "description": "OAuth 2.0 refresh token for automatic renewal",
+          "title": "Refresh Token",
+          "type": "string"
+        },
+        "expires_at": {
+          "description": "ISO 8601 timestamp when access token expires",
+          "title": "Token Expiry",
+          "type": "string"
+        },
+        "email": {
+          "description": "Email address of the connected Google account",
+          "title": "Google Account",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "email"
+      ],
+      "title": "GmailOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-oauth-provider": "google",
+      "x-oauth-scopes": [
+        "https://www.googleapis.com/auth/gmail.modify",
+        "https://www.googleapis.com/auth/gmail.compose",
+        "https://www.googleapis.com/auth/gmail.labels",
+        "https://www.googleapis.com/auth/gmail.settings.basic"
+      ]
+    },
+    "GmailReadConfig": {
+      "description": "Configuration for reading emails from inbox",
+      "properties": {
+        "operation": {
+          "const": "fetch_emails_from_inbox",
+          "default": "fetch_emails_from_inbox",
+          "description": "Read emails from inbox",
+          "title": "Fetch Emails from Inbox",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inbox",
+          "x-display-name": "Fetch Emails from Inbox",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "check inbox",
+            "read inbox",
+            "unread emails",
+            "search emails",
+            "inbox messages",
+            "scan mailbox"
+          ]
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Gmail search query (e.g., 'from:someone@example.com', 'is:unread', 'subject:hello')",
+          "placeholder": "is:unread (optional)",
+          "title": "Search Query"
+        },
+        "max_results": {
+          "default": 10,
+          "description": "Maximum number of emails to retrieve (1-500)",
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Max Results",
+          "type": "integer"
+        },
+        "include_body": {
+          "default": true,
+          "description": "Include email body content in results",
+          "title": "Include Body",
+          "type": "boolean"
+        },
+        "label_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by label IDs (comma-separated, e.g., 'INBOX,UNREAD')",
+          "placeholder": "INBOX,UNREAD (optional)",
+          "title": "Label IDs"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token for fetching the next page of results (from previous response)",
+          "placeholder": "Leave empty for first page",
+          "title": "Page Token"
+        }
+      },
+      "title": "GmailReadConfig",
+      "type": "object"
+    },
+    "GmailReplyConfig": {
+      "description": "Configuration for replying to an email",
+      "properties": {
+        "operation": {
+          "const": "reply_to_email_message",
+          "default": "reply_to_email_message",
+          "description": "Reply to an email",
+          "title": "Reply to Email Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Reply to Email Message",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "reply email",
+            "respond to mail",
+            "answer email",
+            "send reply",
+            "write back"
+          ]
+        },
+        "message_id": {
+          "description": "The ID of the message to reply to",
+          "placeholder": "Enter message ID...",
+          "title": "Message ID",
+          "type": "string"
+        },
+        "body": {
+          "description": "Reply body content (HTML supported)",
+          "placeholder": "Enter reply...",
+          "title": "Reply Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "reply_all": {
+          "default": false,
+          "description": "Reply to all recipients instead of just the sender",
+          "title": "Reply All",
+          "type": "boolean"
+        },
+        "inline_images": {
+          "description": "Image URLs to embed directly in the email. Images are downloaded and attached, preventing URL expiration.",
+          "items": {
+            "type": "string"
+          },
+          "placeholder": "{{node.image_url}}",
+          "title": "Inline Images",
+          "type": "array",
+          "ui:widget": "list"
+        },
+        "attachments": {
+          "description": "Files to attach: workflow resource ids or URLs (max 10MB per file, 20MB total).",
+          "items": {
+            "type": "string"
+          },
+          "placeholder": "{{node.resource_id}}",
+          "title": "Attachments",
+          "type": "array",
+          "ui:widget": "list"
+        }
+      },
+      "required": [
+        "message_id",
+        "body"
+      ],
+      "title": "GmailReplyConfig",
+      "type": "object"
+    },
+    "GmailSendConfig": {
+      "description": "Configuration for sending an email",
+      "properties": {
+        "operation": {
+          "const": "send_email_message",
+          "default": "send_email_message",
+          "description": "Send an email",
+          "title": "Send Email Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Send Email Message",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "compose email",
+            "email someone",
+            "send mail",
+            "write email",
+            "shoot an email",
+            "send new message"
+          ]
+        },
+        "to": {
+          "description": "Recipient email address(es)",
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "placeholder": "recipient@example.com",
+          "title": "To",
+          "type": "array",
+          "ui:widget": "list"
+        },
+        "subject": {
+          "description": "Email subject line",
+          "placeholder": "Enter subject...",
+          "title": "Subject",
+          "type": "string"
+        },
+        "body": {
+          "description": "Email body content (HTML supported)",
+          "placeholder": "Enter email body...",
+          "title": "Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "cc": {
+          "description": "CC recipients",
+          "items": {
+            "type": "string"
+          },
+          "placeholder": "cc@example.com",
+          "title": "CC",
+          "type": "array",
+          "ui:widget": "list"
+        },
+        "bcc": {
+          "description": "BCC recipients",
+          "items": {
+            "type": "string"
+          },
+          "placeholder": "bcc@example.com",
+          "title": "BCC",
+          "type": "array",
+          "ui:widget": "list"
+        },
+        "inline_images": {
+          "description": "Image URLs to embed directly in the email. Images are downloaded and attached, preventing URL expiration.",
+          "items": {
+            "type": "string"
+          },
+          "placeholder": "{{node.image_url}}",
+          "title": "Inline Images",
+          "type": "array",
+          "ui:widget": "list"
+        },
+        "attachments": {
+          "description": "Files to attach: workflow resource ids or URLs (max 10MB per file, 20MB total).",
+          "items": {
+            "type": "string"
+          },
+          "placeholder": "{{node.resource_id}}",
+          "title": "Attachments",
+          "type": "array",
+          "ui:widget": "list"
+        }
+      },
+      "required": [
+        "to",
+        "subject",
+        "body"
+      ],
+      "title": "GmailSendConfig",
+      "type": "object"
+    },
+    "GmailSendDraftConfig": {
+      "description": "Configuration for sending a draft",
+      "properties": {
+        "operation": {
+          "const": "send_email_draft",
+          "default": "send_email_draft",
+          "description": "Send an existing draft",
+          "title": "Send Email Draft",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Draft",
+          "x-display-name": "Send Email Draft",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "send draft",
+            "send saved draft",
+            "dispatch draft",
+            "mail the draft",
+            "send unsent email"
+          ]
+        },
+        "draft_id": {
+          "description": "The ID of the draft to send",
+          "placeholder": "Enter draft ID...",
+          "title": "Draft ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "draft_id"
+      ],
+      "title": "GmailSendDraftConfig",
+      "type": "object"
+    },
+    "GmailTrashMessageConfig": {
+      "description": "Configuration for moving a message to trash",
+      "properties": {
+        "operation": {
+          "const": "move_message_to_trash",
+          "default": "move_message_to_trash",
+          "description": "Move a message to trash",
+          "title": "Move Message to Trash",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Move Message to Trash",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "trash email",
+            "bin message",
+            "discard email",
+            "throw away message",
+            "delete to trash"
+          ]
+        },
+        "message_id": {
+          "description": "The ID of the message to move to trash",
+          "placeholder": "Enter message ID...",
+          "title": "Message ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message_id"
+      ],
+      "title": "GmailTrashMessageConfig",
+      "type": "object"
+    },
+    "GmailTrashThreadConfig": {
+      "description": "Configuration for moving a thread to trash",
+      "properties": {
+        "operation": {
+          "const": "move_thread_to_trash",
+          "default": "move_thread_to_trash",
+          "description": "Move an entire thread to trash",
+          "title": "Move Thread to Trash",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Thread",
+          "x-display-name": "Move Thread to Trash",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "trash thread",
+            "bin conversation",
+            "discard thread",
+            "delete conversation"
+          ]
+        },
+        "thread_id": {
+          "description": "The ID of the thread to trash",
+          "placeholder": "Enter thread ID...",
+          "title": "Thread ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "thread_id"
+      ],
+      "title": "GmailTrashThreadConfig",
+      "type": "object"
+    },
+    "GmailTriggerListenConfig": {
+      "description": "Configuration for the Gmail trigger operation (polls for new emails on a schedule).",
+      "properties": {
+        "operation": {
+          "const": "poll_for_new_emails",
+          "default": "poll_for_new_emails",
+          "description": "Trigger workflow on new emails",
+          "title": "Poll for New Emails",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "Poll for New Emails",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "when new email",
+            "on email received",
+            "watch inbox",
+            "new mail arrives",
+            "incoming email",
+            "email trigger"
+          ]
+        },
+        "query": {
+          "default": "",
+          "description": "Optional Gmail search to narrow which new emails trigger the workflow (e.g. 'from:boss@company.com', 'subject:urgent', 'is:unread'). Leave empty to fire on every new inbox email, including replies. New emails are detected by arrival time, so no filter is needed to avoid re-triggering on old mail.",
+          "placeholder": "from:boss@company.com",
+          "title": "Search Query",
+          "type": "string"
+        },
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": {
+            "frequency": "minutes",
+            "interval": 5,
+            "hour": 9,
+            "minute": 0,
+            "dayOfWeek": 1,
+            "dayOfMonth": 1
+          },
+          "description": "How often to check for new emails",
+          "title": "Check Frequency",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "max_results": {
+          "default": 10,
+          "description": "Deprecated \u2014 the trigger fires for every new email; this is no longer used.",
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Max Emails",
+          "type": "integer",
+          "ui:hidden": true
+        },
+        "mark_as_read": {
+          "default": "false",
+          "description": "Optionally mark triggered emails as read. Dedup no longer depends on this \u2014 new emails are tracked by arrival time \u2014 so leave it off to avoid mutating the mailbox.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Mark as Read",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "label_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated label IDs to filter (e.g., 'INBOX,IMPORTANT')",
+          "title": "Label IDs",
+          "ui:hidden": true
+        },
+        "include_body": {
+          "default": "true",
+          "description": "Whether to include the full email body",
+          "title": "Include Body",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Check",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "last_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Run",
+          "ui:hidden": true,
+          "ui:widget": "readonly"
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        }
+      },
+      "title": "GmailTriggerListenConfig",
+      "type": "object"
+    },
+    "GmailUntrashMessageConfig": {
+      "description": "Configuration for removing a message from trash",
+      "properties": {
+        "operation": {
+          "const": "restore_message_from_trash",
+          "default": "restore_message_from_trash",
+          "description": "Remove a message from trash",
+          "title": "Restore Message from Trash",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Restore Message from Trash",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "untrash email",
+            "recover message",
+            "restore email",
+            "undelete message",
+            "bring back email"
+          ]
+        },
+        "message_id": {
+          "description": "The ID of the message to restore from trash",
+          "placeholder": "Enter message ID...",
+          "title": "Message ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message_id"
+      ],
+      "title": "GmailUntrashMessageConfig",
+      "type": "object"
+    },
+    "GmailUntrashThreadConfig": {
+      "description": "Configuration for restoring a thread from trash",
+      "properties": {
+        "operation": {
+          "const": "restore_thread_from_trash",
+          "default": "restore_thread_from_trash",
+          "description": "Restore a thread from trash",
+          "title": "Restore Thread from Trash",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Thread",
+          "x-display-name": "Restore Thread from Trash",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "untrash thread",
+            "recover conversation",
+            "restore thread",
+            "undelete conversation"
+          ]
+        },
+        "thread_id": {
+          "description": "The ID of the thread to restore",
+          "placeholder": "Enter thread ID...",
+          "title": "Thread ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "thread_id"
+      ],
+      "title": "GmailUntrashThreadConfig",
+      "type": "object"
+    },
+    "GmailUpdateDraftConfig": {
+      "description": "Configuration for updating a draft",
+      "properties": {
+        "operation": {
+          "const": "update_email_draft",
+          "default": "update_email_draft",
+          "description": "Update an existing draft",
+          "title": "Update Email Draft",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Draft",
+          "x-display-name": "Update Email Draft",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "edit draft",
+            "modify draft",
+            "change draft",
+            "revise draft",
+            "rewrite draft"
+          ]
+        },
+        "draft_id": {
+          "description": "The ID of the draft to update",
+          "placeholder": "Enter draft ID...",
+          "title": "Draft ID",
+          "type": "string"
+        },
+        "to": {
+          "description": "Recipient email address(es)",
+          "placeholder": "recipient@example.com",
+          "title": "To",
+          "type": "string"
+        },
+        "subject": {
+          "description": "Email subject line",
+          "title": "Subject",
+          "type": "string"
+        },
+        "body": {
+          "description": "Email body content (HTML supported)",
+          "title": "Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "cc": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "CC"
+        },
+        "bcc": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "BCC"
+        }
+      },
+      "required": [
+        "draft_id",
+        "to",
+        "subject",
+        "body"
+      ],
+      "title": "GmailUpdateDraftConfig",
+      "type": "object"
+    },
+    "GmailUpdateLabelConfig": {
+      "description": "Configuration for updating a label",
+      "properties": {
+        "operation": {
+          "const": "update_email_label",
+          "default": "update_email_label",
+          "description": "Update an existing label",
+          "title": "Update Email Label",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Label",
+          "x-display-name": "Update Email Label",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "rename label",
+            "edit label",
+            "modify tag",
+            "recolor label"
+          ]
+        },
+        "label_id": {
+          "description": "The ID of the label to update",
+          "placeholder": "Label_123",
+          "title": "Label ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New name for the label",
+          "placeholder": "New Label Name",
+          "title": "New Name"
+        },
+        "label_list_visibility": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Visibility in label list",
+          "enum": [
+            "labelShow",
+            "labelShowIfUnread",
+            "labelHide"
+          ],
+          "enumNames": [
+            "Show",
+            "Show if Unread",
+            "Hide"
+          ],
+          "title": "List Visibility"
+        },
+        "message_list_visibility": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Visibility in message list",
+          "enum": [
+            "show",
+            "hide"
+          ],
+          "enumNames": [
+            "Show",
+            "Hide"
+          ],
+          "title": "Message Visibility"
+        },
+        "background_color": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Background color hex code",
+          "title": "Background Color"
+        },
+        "text_color": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Text color hex code",
+          "title": "Text Color"
+        }
+      },
+      "required": [
+        "label_id"
+      ],
+      "title": "GmailUpdateLabelConfig",
+      "type": "object"
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for Gmail node including credentials",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_email_draft": "#/$defs/GmailCreateDraftConfig",
+          "create_email_label": "#/$defs/GmailCreateLabelConfig",
+          "delete_email_draft": "#/$defs/GmailDeleteDraftConfig",
+          "delete_email_label": "#/$defs/GmailDeleteLabelConfig",
+          "fetch_email_attachment": "#/$defs/GmailGetAttachmentConfig",
+          "fetch_email_draft": "#/$defs/GmailGetDraftConfig",
+          "fetch_email_label": "#/$defs/GmailGetLabelConfig",
+          "fetch_email_message": "#/$defs/GmailGetMessageConfig",
+          "fetch_email_thread": "#/$defs/GmailGetThreadConfig",
+          "fetch_emails_from_inbox": "#/$defs/GmailReadConfig",
+          "fetch_user_profile": "#/$defs/GmailGetProfileConfig",
+          "forward_email_message": "#/$defs/GmailForwardConfig",
+          "list_email_drafts": "#/$defs/GmailListDraftsConfig",
+          "list_email_labels": "#/$defs/GmailListLabelsConfig",
+          "list_email_threads": "#/$defs/GmailListThreadsConfig",
+          "move_message_to_trash": "#/$defs/GmailTrashMessageConfig",
+          "move_thread_to_trash": "#/$defs/GmailTrashThreadConfig",
+          "permanently_delete_message": "#/$defs/GmailDeleteMessageConfig",
+          "permanently_delete_thread": "#/$defs/GmailDeleteThreadConfig",
+          "poll_for_new_emails": "#/$defs/GmailTriggerListenConfig",
+          "reply_to_email_message": "#/$defs/GmailReplyConfig",
+          "restore_message_from_trash": "#/$defs/GmailUntrashMessageConfig",
+          "restore_thread_from_trash": "#/$defs/GmailUntrashThreadConfig",
+          "send_email_draft": "#/$defs/GmailSendDraftConfig",
+          "send_email_message": "#/$defs/GmailSendConfig",
+          "update_email_draft": "#/$defs/GmailUpdateDraftConfig",
+          "update_email_label": "#/$defs/GmailUpdateLabelConfig",
+          "update_message_labels": "#/$defs/GmailModifyMessageConfig",
+          "update_thread_labels": "#/$defs/GmailModifyThreadConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GmailSendConfig"
+        },
+        {
+          "$ref": "#/$defs/GmailReadConfig"
+        },
+        {
+          "$ref": "#/$defs/GmailGetMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/GmailGetAttachmentConfig"
+        },
+        {
+          "$ref": "#/$defs/GmailDeleteMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/GmailTrashMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/GmailUntrashMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/GmailModifyMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/GmailReplyConfig"
+        },
+        {
+          "$ref": "#/$defs/GmailForwardConfig"
+        },
+        {
+          "$ref": "#/$defs/GmailCreateDraftConfig"
+        },
+        {
+          "$ref": "#/$defs/GmailListDraftsConfig"
+        },
+        {
+          "$ref": "#/$defs/GmailGetDraftConfig"
+        },
+        {
+          "$ref": "#/$defs/GmailUpdateDraftConfig"
+        },
+        {
+          "$ref": "#/$defs/GmailDeleteDraftConfig"
+        },
+        {
+          "$ref": "#/$defs/GmailSendDraftConfig"
+        },
+        {
+          "$ref": "#/$defs/GmailListLabelsConfig"
+        },
+        {
+          "$ref": "#/$defs/GmailCreateLabelConfig"
+        },
+        {
+          "$ref": "#/$defs/GmailGetLabelConfig"
+        },
+        {
+          "$ref": "#/$defs/GmailUpdateLabelConfig"
+        },
+        {
+          "$ref": "#/$defs/GmailDeleteLabelConfig"
+        },
+        {
+          "$ref": "#/$defs/GmailListThreadsConfig"
+        },
+        {
+          "$ref": "#/$defs/GmailGetThreadConfig"
+        },
+        {
+          "$ref": "#/$defs/GmailTrashThreadConfig"
+        },
+        {
+          "$ref": "#/$defs/GmailUntrashThreadConfig"
+        },
+        {
+          "$ref": "#/$defs/GmailModifyThreadConfig"
+        },
+        {
+          "$ref": "#/$defs/GmailDeleteThreadConfig"
+        },
+        {
+          "$ref": "#/$defs/GmailGetProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/GmailTriggerListenConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GmailOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Gmail Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Send meeting notes to the team with project status and next steps",
+    "Read all unread emails from managers and create a summary report",
+    "Create a draft reply with template for customer inquiries from support",
+    "Delete spam emails and move important client messages to VIP label",
+    "Forward the invoice from billing@vendor.com to accounting team",
+    "Get email threads from the Contracts label and extract all attachments",
+    "Create a new label \"Q2 Reviews\" and organize employee feedback emails"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

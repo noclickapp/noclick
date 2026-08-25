@@ -1,0 +1,2405 @@
+{
+  "$defs": {
+    "TrelloAddAttachmentConfig": {
+      "description": "Attach a URL to a card.",
+      "properties": {
+        "operation": {
+          "const": "add_attachment",
+          "default": "add_attachment",
+          "title": "Add Attachment to Card",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Cards",
+          "x-display-name": "Add Attachment to Card",
+          "x-is-trigger": false
+        },
+        "card_id": {
+          "description": "The card to attach to",
+          "title": "Card ID",
+          "type": "string"
+        },
+        "url": {
+          "description": "URL of the attachment",
+          "format": "uri",
+          "title": "URL",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Display name for the attachment",
+          "title": "Name"
+        }
+      },
+      "required": [
+        "card_id",
+        "url"
+      ],
+      "title": "TrelloAddAttachmentConfig",
+      "type": "object"
+    },
+    "TrelloAddChecklistItemConfig": {
+      "description": "Add an item to a checklist.",
+      "properties": {
+        "operation": {
+          "const": "add_checklist_item",
+          "default": "add_checklist_item",
+          "title": "Add Checklist Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Checklists",
+          "x-display-name": "Add Checklist Item",
+          "x-is-trigger": false
+        },
+        "checklist_id": {
+          "description": "The checklist to add an item to",
+          "title": "Checklist ID",
+          "type": "string"
+        },
+        "name": {
+          "description": "Text of the checklist item",
+          "title": "Item",
+          "type": "string"
+        },
+        "checked": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "false",
+          "description": "Whether the item starts checked",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Checked",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "checklist_id",
+        "name"
+      ],
+      "title": "TrelloAddChecklistItemConfig",
+      "type": "object"
+    },
+    "TrelloAddCommentConfig": {
+      "description": "Post a comment on a card.",
+      "properties": {
+        "operation": {
+          "const": "add_comment",
+          "default": "add_comment",
+          "title": "Add Comment to Card",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Cards",
+          "x-display-name": "Add Comment to Card",
+          "x-is-trigger": false
+        },
+        "card_id": {
+          "description": "The card to comment on",
+          "title": "Card ID",
+          "type": "string"
+        },
+        "text": {
+          "description": "Comment text (markdown)",
+          "title": "Comment",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "card_id",
+        "text"
+      ],
+      "title": "TrelloAddCommentConfig",
+      "type": "object"
+    },
+    "TrelloAddLabelConfig": {
+      "description": "Add an existing label to a card.",
+      "properties": {
+        "operation": {
+          "const": "add_label",
+          "default": "add_label",
+          "title": "Add Label to Card",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Cards",
+          "x-display-name": "Add Label to Card",
+          "x-is-trigger": false
+        },
+        "card_id": {
+          "description": "The card to label",
+          "title": "Card ID",
+          "type": "string"
+        },
+        "value": {
+          "description": "ID of the label to add",
+          "title": "Label ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "card_id",
+        "value"
+      ],
+      "title": "TrelloAddLabelConfig",
+      "type": "object"
+    },
+    "TrelloAddMemberConfig": {
+      "description": "Assign a member to a card.",
+      "properties": {
+        "operation": {
+          "const": "add_member",
+          "default": "add_member",
+          "title": "Add Member to Card",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Cards",
+          "x-display-name": "Add Member to Card",
+          "x-is-trigger": false
+        },
+        "card_id": {
+          "description": "The card to assign a member to",
+          "title": "Card ID",
+          "type": "string"
+        },
+        "value": {
+          "description": "ID of the member to assign",
+          "title": "Member ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "card_id",
+        "value"
+      ],
+      "title": "TrelloAddMemberConfig",
+      "type": "object"
+    },
+    "TrelloAddMemberToBoardConfig": {
+      "description": "Add or update a member's role on a board.",
+      "properties": {
+        "operation": {
+          "const": "add_member_to_board",
+          "default": "add_member_to_board",
+          "title": "Add Member to Board",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards",
+          "x-display-name": "Add Member to Board",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "description": "The board to add the member to",
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "trello_board"
+        },
+        "id_member": {
+          "description": "ID or username of the member to add",
+          "title": "Member ID",
+          "type": "string"
+        },
+        "member_type": {
+          "default": "normal",
+          "description": "Member role on the board",
+          "enum": [
+            "admin",
+            "normal",
+            "observer"
+          ],
+          "enumNames": [
+            "Admin",
+            "Normal",
+            "Observer"
+          ],
+          "title": "Role",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "board_id",
+        "id_member"
+      ],
+      "title": "TrelloAddMemberToBoardConfig",
+      "type": "object"
+    },
+    "TrelloApiKeyCredential": {
+      "description": "API key + token credential for Trello.\n\nThe API key is public; the token is secret and grants account access. The\noptional API secret is only needed to verify inbound webhook signatures.",
+      "properties": {
+        "credential_type": {
+          "const": "trello_api_key",
+          "default": "trello_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Trello API key from a Power-Up at trello.com/power-ups/admin -> API Key tab",
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "api_token": {
+          "description": "User token generated via trello.com/1/authorize (scope read,write,account)",
+          "title": "API Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "api_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Power-Up OAuth secret. Only required to verify webhook trigger signatures.",
+          "title": "API Secret (optional)",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key",
+        "api_token"
+      ],
+      "title": "TrelloApiKeyCredential",
+      "type": "object",
+      "x-credential-url": "https://trello.com/power-ups/admin"
+    },
+    "TrelloArchiveListConfig": {
+      "description": "Archive or unarchive a list.",
+      "properties": {
+        "operation": {
+          "const": "archive_list",
+          "default": "archive_list",
+          "title": "Archive List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lists",
+          "x-display-name": "Archive List",
+          "x-is-trigger": false
+        },
+        "list_id": {
+          "description": "The list to archive or unarchive",
+          "title": "List ID",
+          "type": "string"
+        },
+        "value": {
+          "default": "true",
+          "description": "Archive (true) or unarchive (false)",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Archive",
+            "Unarchive"
+          ],
+          "title": "Archived",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "TrelloArchiveListConfig",
+      "type": "object"
+    },
+    "TrelloBoardChangeTriggerConfig": {
+      "description": "Fire the workflow when anything changes on a Trello board.\n\nWatches the entire board model \u2014 fires on card creation/updates/comments,\nlist changes, board membership changes, and more. Use On Card Change instead\nif you only care about a specific card.",
+      "properties": {
+        "operation": {
+          "const": "on_board_change",
+          "default": "on_board_change",
+          "title": "On Board Change",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Board Change",
+          "x-is-trigger": true
+        },
+        "board_id": {
+          "description": "The board to watch for changes",
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "trello_board"
+        },
+        "event_types": {
+          "default": "*",
+          "description": "Which event fires the workflow. Trello delivers every board change to this webhook; this filters by the payload's action.type. Choose 'Any change on the board' to fire on everything.",
+          "enum": [
+            "*",
+            "createCard",
+            "updateCard",
+            "deleteCard",
+            "moveCardToBoard",
+            "moveCardFromBoard",
+            "copyCard",
+            "emailCard",
+            "commentCard",
+            "addAttachmentToCard",
+            "deleteAttachmentFromCard",
+            "addMemberToCard",
+            "removeMemberFromCard",
+            "addChecklistToCard",
+            "removeChecklistFromCard",
+            "updateCheckItemStateOnCard",
+            "createList",
+            "updateList",
+            "moveListToBoard",
+            "moveListFromBoard",
+            "updateBoard",
+            "addMemberToBoard"
+          ],
+          "enumNames": [
+            "Any change on the board",
+            "Card created",
+            "Card updated (moved, renamed, due date, archived)",
+            "Card deleted",
+            "Card moved to this board",
+            "Card moved off this board",
+            "Card copied",
+            "Card created via email",
+            "Comment added to card",
+            "Attachment added to card",
+            "Attachment removed from card",
+            "Member added to card",
+            "Member removed from card",
+            "Checklist added to card",
+            "Checklist removed from card",
+            "Checklist item checked/unchecked",
+            "List created",
+            "List updated (renamed, archived)",
+            "List moved to this board",
+            "List moved off this board",
+            "Board updated (name, description, settings)",
+            "Member added to board"
+          ],
+          "title": "Trigger On",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Trello posts board changes here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "callback_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Callback Url",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "board_id"
+      ],
+      "title": "TrelloBoardChangeTriggerConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "TrelloCardChangeTriggerConfig": {
+      "description": "Fire the workflow when a specific Trello card changes.\n\nWatches a single card model \u2014 fires only on changes to that card (comments,\nmember assignments, checklist updates, etc.). Use On Board Change instead\nif you want to react to any card activity on a board.",
+      "properties": {
+        "operation": {
+          "const": "on_card_change",
+          "default": "on_card_change",
+          "title": "On Card Change",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Card Change",
+          "x-is-trigger": true
+        },
+        "card_id": {
+          "description": "ID of the specific Trello card to watch for changes",
+          "title": "Card ID",
+          "type": "string"
+        },
+        "event_types": {
+          "default": "*",
+          "description": "Which card event fires the workflow. Trello delivers all card changes to this webhook; this filters by the payload's action.type.",
+          "enum": [
+            "*",
+            "updateCard",
+            "deleteCard",
+            "copyCard",
+            "commentCard",
+            "addAttachmentToCard",
+            "deleteAttachmentFromCard",
+            "addMemberToCard",
+            "removeMemberFromCard",
+            "addChecklistToCard",
+            "removeChecklistFromCard",
+            "updateCheckItemStateOnCard"
+          ],
+          "enumNames": [
+            "Any card change",
+            "Card updated (renamed, moved, due date, archived)",
+            "Card deleted",
+            "Card copied",
+            "Comment added",
+            "Attachment added",
+            "Attachment removed",
+            "Member added to card",
+            "Member removed from card",
+            "Checklist added",
+            "Checklist removed",
+            "Checklist item checked/unchecked"
+          ],
+          "title": "Trigger On",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Trello posts card changes here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "callback_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Callback Url",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "card_id"
+      ],
+      "title": "TrelloCardChangeTriggerConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "TrelloCreateBoardConfig": {
+      "description": "Create a new board.",
+      "properties": {
+        "operation": {
+          "const": "create_board",
+          "default": "create_board",
+          "title": "Create Board",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards",
+          "x-creates-resource": true,
+          "x-display-name": "Create Board",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "trello_board"
+        },
+        "name": {
+          "description": "Name of the new board",
+          "title": "Name",
+          "type": "string"
+        },
+        "id_organization": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Workspace/organization to create the board in",
+          "title": "Organization ID"
+        },
+        "default_lists": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "true",
+          "description": "Create the default To Do / Doing / Done lists",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Default Lists",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "TrelloCreateBoardConfig",
+      "type": "object"
+    },
+    "TrelloCreateCardConfig": {
+      "description": "Create a new card in a list.",
+      "properties": {
+        "operation": {
+          "const": "create_card",
+          "default": "create_card",
+          "title": "Create Card",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Cards",
+          "x-display-name": "Create Card",
+          "x-is-trigger": false
+        },
+        "id_list": {
+          "description": "The list to add the card to",
+          "title": "List ID",
+          "type": "string"
+        },
+        "name": {
+          "description": "Card title",
+          "title": "Name",
+          "type": "string"
+        },
+        "desc": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Card description (markdown)",
+          "title": "Description",
+          "ui:widget": "textarea"
+        },
+        "pos": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Position: 'top', 'bottom', or a positive number",
+          "title": "Position"
+        },
+        "due": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Due date in ISO 8601 (e.g. 2026-07-01T17:00:00Z)",
+          "title": "Due Date"
+        },
+        "id_members": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated member IDs to assign",
+          "title": "Member IDs"
+        },
+        "id_labels": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated label IDs to apply",
+          "title": "Label IDs"
+        }
+      },
+      "required": [
+        "id_list",
+        "name"
+      ],
+      "title": "TrelloCreateCardConfig",
+      "type": "object"
+    },
+    "TrelloCreateChecklistConfig": {
+      "description": "Add a checklist to a card.",
+      "properties": {
+        "operation": {
+          "const": "create_checklist",
+          "default": "create_checklist",
+          "title": "Create Checklist on Card",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Checklists",
+          "x-display-name": "Create Checklist on Card",
+          "x-is-trigger": false
+        },
+        "card_id": {
+          "description": "The card to add a checklist to",
+          "title": "Card ID",
+          "type": "string"
+        },
+        "name": {
+          "description": "Name of the checklist",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "card_id",
+        "name"
+      ],
+      "title": "TrelloCreateChecklistConfig",
+      "type": "object"
+    },
+    "TrelloCreateLabelConfig": {
+      "description": "Create a new label on a board.",
+      "properties": {
+        "operation": {
+          "const": "create_label",
+          "default": "create_label",
+          "title": "Create Label",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Labels",
+          "x-display-name": "Create Label",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "description": "The board to create the label on",
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "trello_board"
+        },
+        "name": {
+          "description": "Name of the label",
+          "title": "Name",
+          "type": "string"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Label color",
+          "enum": [
+            "",
+            "green",
+            "yellow",
+            "orange",
+            "red",
+            "purple",
+            "blue",
+            "sky",
+            "lime",
+            "pink",
+            "black"
+          ],
+          "enumNames": [
+            "None",
+            "Green",
+            "Yellow",
+            "Orange",
+            "Red",
+            "Purple",
+            "Blue",
+            "Sky",
+            "Lime",
+            "Pink",
+            "Black"
+          ],
+          "title": "Color",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "board_id",
+        "name"
+      ],
+      "title": "TrelloCreateLabelConfig",
+      "type": "object"
+    },
+    "TrelloCreateListConfig": {
+      "description": "Create a new list (column) on a board.",
+      "properties": {
+        "operation": {
+          "const": "create_list",
+          "default": "create_list",
+          "title": "Create List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lists",
+          "x-display-name": "Create List",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Name of the new list",
+          "title": "Name",
+          "type": "string"
+        },
+        "board_id": {
+          "description": "The board to add the list to",
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "trello_board"
+        },
+        "pos": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Position: 'top', 'bottom', or a positive number",
+          "title": "Position"
+        }
+      },
+      "required": [
+        "name",
+        "board_id"
+      ],
+      "title": "TrelloCreateListConfig",
+      "type": "object"
+    },
+    "TrelloDeleteBoardConfig": {
+      "description": "Permanently delete a board.",
+      "properties": {
+        "operation": {
+          "const": "delete_board",
+          "default": "delete_board",
+          "title": "Delete Board",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards",
+          "x-display-name": "Delete Board",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "description": "The board to permanently delete",
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "trello_board"
+        }
+      },
+      "required": [
+        "board_id"
+      ],
+      "title": "TrelloDeleteBoardConfig",
+      "type": "object"
+    },
+    "TrelloDeleteCardConfig": {
+      "description": "Permanently delete a card.",
+      "properties": {
+        "operation": {
+          "const": "delete_card",
+          "default": "delete_card",
+          "title": "Delete Card",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Cards",
+          "x-display-name": "Delete Card",
+          "x-is-trigger": false
+        },
+        "card_id": {
+          "description": "The card to permanently delete",
+          "title": "Card ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "card_id"
+      ],
+      "title": "TrelloDeleteCardConfig",
+      "type": "object"
+    },
+    "TrelloDeleteChecklistConfig": {
+      "description": "Delete a checklist from a card.",
+      "properties": {
+        "operation": {
+          "const": "delete_checklist",
+          "default": "delete_checklist",
+          "title": "Delete Checklist",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Checklists",
+          "x-display-name": "Delete Checklist",
+          "x-is-trigger": false
+        },
+        "checklist_id": {
+          "description": "The checklist to delete",
+          "title": "Checklist ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "checklist_id"
+      ],
+      "title": "TrelloDeleteChecklistConfig",
+      "type": "object"
+    },
+    "TrelloDeleteChecklistItemConfig": {
+      "description": "Delete an item from a checklist.",
+      "properties": {
+        "operation": {
+          "const": "delete_checklist_item",
+          "default": "delete_checklist_item",
+          "title": "Delete Checklist Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Checklists",
+          "x-display-name": "Delete Checklist Item",
+          "x-is-trigger": false
+        },
+        "checklist_id": {
+          "description": "The checklist containing the item",
+          "title": "Checklist ID",
+          "type": "string"
+        },
+        "check_item_id": {
+          "description": "The checklist item to delete",
+          "title": "Check Item ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "checklist_id",
+        "check_item_id"
+      ],
+      "title": "TrelloDeleteChecklistItemConfig",
+      "type": "object"
+    },
+    "TrelloDeleteLabelConfig": {
+      "description": "Delete a label from a board.",
+      "properties": {
+        "operation": {
+          "const": "delete_label",
+          "default": "delete_label",
+          "title": "Delete Label",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Labels",
+          "x-display-name": "Delete Label",
+          "x-is-trigger": false
+        },
+        "label_id": {
+          "description": "The label to delete",
+          "title": "Label ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "label_id"
+      ],
+      "title": "TrelloDeleteLabelConfig",
+      "type": "object"
+    },
+    "TrelloGetBoardActionsConfig": {
+      "description": "Get the activity feed (actions) for a board.",
+      "properties": {
+        "operation": {
+          "const": "get_board_actions",
+          "default": "get_board_actions",
+          "title": "Get Board Actions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards",
+          "x-display-name": "Get Board Actions",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "description": "The board whose actions to retrieve",
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "trello_board"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated action types to include (e.g. createCard,commentCard). Leave blank for all.",
+          "title": "Filter"
+        }
+      },
+      "required": [
+        "board_id"
+      ],
+      "title": "TrelloGetBoardActionsConfig",
+      "type": "object"
+    },
+    "TrelloGetBoardCardsConfig": {
+      "description": "Get all cards on a board.",
+      "properties": {
+        "operation": {
+          "const": "get_board_cards",
+          "default": "get_board_cards",
+          "title": "Get Cards on a Board",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards",
+          "x-display-name": "Get Cards on a Board",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "description": "The board whose cards to retrieve",
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "trello_board"
+        }
+      },
+      "required": [
+        "board_id"
+      ],
+      "title": "TrelloGetBoardCardsConfig",
+      "type": "object"
+    },
+    "TrelloGetBoardConfig": {
+      "description": "Retrieve a single board's details.",
+      "properties": {
+        "operation": {
+          "const": "get_board",
+          "default": "get_board",
+          "title": "Get Board",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards",
+          "x-display-name": "Get Board",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "description": "The board to retrieve",
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "trello_board"
+        }
+      },
+      "required": [
+        "board_id"
+      ],
+      "title": "TrelloGetBoardConfig",
+      "type": "object"
+    },
+    "TrelloGetBoardLabelsConfig": {
+      "description": "List labels available on a board.",
+      "properties": {
+        "operation": {
+          "const": "get_board_labels",
+          "default": "get_board_labels",
+          "title": "Get Board Labels",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards",
+          "x-display-name": "Get Board Labels",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "description": "The board whose labels to retrieve",
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "trello_board"
+        }
+      },
+      "required": [
+        "board_id"
+      ],
+      "title": "TrelloGetBoardLabelsConfig",
+      "type": "object"
+    },
+    "TrelloGetBoardListsConfig": {
+      "description": "Get all lists (columns) on a board.",
+      "properties": {
+        "operation": {
+          "const": "get_board_lists",
+          "default": "get_board_lists",
+          "title": "Get Lists on a Board",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards",
+          "x-display-name": "Get Lists on a Board",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "description": "The board whose lists to retrieve",
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "trello_board"
+        }
+      },
+      "required": [
+        "board_id"
+      ],
+      "title": "TrelloGetBoardListsConfig",
+      "type": "object"
+    },
+    "TrelloGetBoardMembersConfig": {
+      "description": "List members of a board.",
+      "properties": {
+        "operation": {
+          "const": "get_board_members",
+          "default": "get_board_members",
+          "title": "Get Board Members",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards",
+          "x-display-name": "Get Board Members",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "description": "The board whose members to retrieve",
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "trello_board"
+        }
+      },
+      "required": [
+        "board_id"
+      ],
+      "title": "TrelloGetBoardMembersConfig",
+      "type": "object"
+    },
+    "TrelloGetCardActionsConfig": {
+      "description": "Get the activity feed (actions) for a card.",
+      "properties": {
+        "operation": {
+          "const": "get_card_actions",
+          "default": "get_card_actions",
+          "title": "Get Card Actions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Cards",
+          "x-display-name": "Get Card Actions",
+          "x-is-trigger": false
+        },
+        "card_id": {
+          "description": "The card whose actions to retrieve",
+          "title": "Card ID",
+          "type": "string"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated action types to include (e.g. commentCard,updateCard). Leave blank for all.",
+          "title": "Filter"
+        }
+      },
+      "required": [
+        "card_id"
+      ],
+      "title": "TrelloGetCardActionsConfig",
+      "type": "object"
+    },
+    "TrelloGetCardChecklistsConfig": {
+      "description": "Get all checklists on a card.",
+      "properties": {
+        "operation": {
+          "const": "get_card_checklists",
+          "default": "get_card_checklists",
+          "title": "Get Card Checklists",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Checklists",
+          "x-display-name": "Get Card Checklists",
+          "x-is-trigger": false
+        },
+        "card_id": {
+          "description": "The card whose checklists to retrieve",
+          "title": "Card ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "card_id"
+      ],
+      "title": "TrelloGetCardChecklistsConfig",
+      "type": "object"
+    },
+    "TrelloGetCardConfig": {
+      "description": "Retrieve a single card.",
+      "properties": {
+        "operation": {
+          "const": "get_card",
+          "default": "get_card",
+          "title": "Get Card",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Cards",
+          "x-display-name": "Get Card",
+          "x-is-trigger": false
+        },
+        "card_id": {
+          "description": "The card to retrieve",
+          "title": "Card ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "card_id"
+      ],
+      "title": "TrelloGetCardConfig",
+      "type": "object"
+    },
+    "TrelloGetListCardsConfig": {
+      "description": "Get all cards within a list.",
+      "properties": {
+        "operation": {
+          "const": "get_list_cards",
+          "default": "get_list_cards",
+          "title": "Get Cards in a List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lists",
+          "x-display-name": "Get Cards in a List",
+          "x-is-trigger": false
+        },
+        "list_id": {
+          "description": "The list whose cards to retrieve",
+          "title": "List ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "TrelloGetListCardsConfig",
+      "type": "object"
+    },
+    "TrelloGetMeConfig": {
+      "description": "Get the authenticated member's profile.",
+      "properties": {
+        "operation": {
+          "const": "get_me",
+          "default": "get_me",
+          "title": "Get Authenticated Member",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Members",
+          "x-display-name": "Get Authenticated Member",
+          "x-is-trigger": false
+        }
+      },
+      "title": "TrelloGetMeConfig",
+      "type": "object"
+    },
+    "TrelloGetMemberBoardsConfig": {
+      "description": "List boards belonging to a member.",
+      "properties": {
+        "operation": {
+          "const": "get_member_boards",
+          "default": "get_member_boards",
+          "title": "Get Member's Boards",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Members",
+          "x-display-name": "Get Member's Boards",
+          "x-is-trigger": false
+        },
+        "member_id": {
+          "default": "me",
+          "description": "Member ID or 'me' for the current user",
+          "title": "Member ID",
+          "type": "string"
+        }
+      },
+      "title": "TrelloGetMemberBoardsConfig",
+      "type": "object"
+    },
+    "TrelloGetMemberCardsConfig": {
+      "description": "Get all cards assigned to a member.",
+      "properties": {
+        "operation": {
+          "const": "get_member_cards",
+          "default": "get_member_cards",
+          "title": "Get Member's Cards",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Members",
+          "x-display-name": "Get Member's Cards",
+          "x-is-trigger": false
+        },
+        "member_id": {
+          "default": "me",
+          "description": "Member ID or 'me' for the current user",
+          "title": "Member ID",
+          "type": "string"
+        }
+      },
+      "title": "TrelloGetMemberCardsConfig",
+      "type": "object"
+    },
+    "TrelloMoveAllCardsConfig": {
+      "description": "Move every card in a list to another list.",
+      "properties": {
+        "operation": {
+          "const": "move_all_cards",
+          "default": "move_all_cards",
+          "title": "Move All Cards in a List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lists",
+          "x-display-name": "Move All Cards in a List",
+          "x-is-trigger": false
+        },
+        "list_id": {
+          "description": "The list to move cards from",
+          "title": "Source List ID",
+          "type": "string"
+        },
+        "id_board": {
+          "description": "Board that the destination list belongs to",
+          "title": "Destination Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste board ID",
+            "field_name": "id_board",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "trello_board"
+        },
+        "id_list": {
+          "description": "The list to move cards into",
+          "title": "Destination List ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id",
+        "id_board",
+        "id_list"
+      ],
+      "title": "TrelloMoveAllCardsConfig",
+      "type": "object"
+    },
+    "TrelloRemoveLabelConfig": {
+      "description": "Remove a label from a card.",
+      "properties": {
+        "operation": {
+          "const": "remove_label",
+          "default": "remove_label",
+          "title": "Remove Label from Card",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Cards",
+          "x-display-name": "Remove Label from Card",
+          "x-is-trigger": false
+        },
+        "card_id": {
+          "description": "The card to remove the label from",
+          "title": "Card ID",
+          "type": "string"
+        },
+        "id_label": {
+          "description": "ID of the label to remove",
+          "title": "Label ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "card_id",
+        "id_label"
+      ],
+      "title": "TrelloRemoveLabelConfig",
+      "type": "object"
+    },
+    "TrelloRemoveMemberConfig": {
+      "description": "Unassign a member from a card.",
+      "properties": {
+        "operation": {
+          "const": "remove_member",
+          "default": "remove_member",
+          "title": "Remove Member from Card",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Cards",
+          "x-display-name": "Remove Member from Card",
+          "x-is-trigger": false
+        },
+        "card_id": {
+          "description": "The card to unassign from",
+          "title": "Card ID",
+          "type": "string"
+        },
+        "id_member": {
+          "description": "ID of the member to remove",
+          "title": "Member ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "card_id",
+        "id_member"
+      ],
+      "title": "TrelloRemoveMemberConfig",
+      "type": "object"
+    },
+    "TrelloRemoveMemberFromBoardConfig": {
+      "description": "Remove a member from a board.",
+      "properties": {
+        "operation": {
+          "const": "remove_member_from_board",
+          "default": "remove_member_from_board",
+          "title": "Remove Member from Board",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards",
+          "x-display-name": "Remove Member from Board",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "description": "The board to remove the member from",
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "trello_board"
+        },
+        "id_member": {
+          "description": "ID of the member to remove",
+          "title": "Member ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "board_id",
+        "id_member"
+      ],
+      "title": "TrelloRemoveMemberFromBoardConfig",
+      "type": "object"
+    },
+    "TrelloSearchConfig": {
+      "description": "Search across boards, cards, and members.",
+      "properties": {
+        "operation": {
+          "const": "search",
+          "default": "search",
+          "title": "Search",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Search",
+          "x-display-name": "Search",
+          "x-is-trigger": false
+        },
+        "query": {
+          "description": "Search text (e.g. a card name or keyword)",
+          "title": "Query",
+          "type": "string"
+        },
+        "model_types": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "all",
+          "description": "Comma-separated model types to search",
+          "enum": [
+            "all",
+            "actions",
+            "boards",
+            "cards",
+            "members",
+            "organizations"
+          ],
+          "enumNames": [
+            "All",
+            "Actions",
+            "Boards",
+            "Cards",
+            "Members",
+            "Organizations"
+          ],
+          "title": "Types",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "TrelloSearchConfig",
+      "type": "object"
+    },
+    "TrelloUpdateBoardConfig": {
+      "description": "Update an existing board.",
+      "properties": {
+        "operation": {
+          "const": "update_board",
+          "default": "update_board",
+          "title": "Update Board",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards",
+          "x-display-name": "Update Board",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "description": "The board to update",
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "trello_board"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New board name",
+          "title": "Name"
+        },
+        "desc": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New board description",
+          "title": "Description",
+          "ui:widget": "textarea"
+        },
+        "closed": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Archive (true) or unarchive (false) the board",
+          "enum": [
+            "",
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Unchanged",
+            "Archive",
+            "Unarchive"
+          ],
+          "title": "Closed",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "board_id"
+      ],
+      "title": "TrelloUpdateBoardConfig",
+      "type": "object"
+    },
+    "TrelloUpdateCardConfig": {
+      "description": "Update a card (rename, move, set due date, archive).",
+      "properties": {
+        "operation": {
+          "const": "update_card",
+          "default": "update_card",
+          "title": "Update Card",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Cards",
+          "x-display-name": "Update Card",
+          "x-is-trigger": false
+        },
+        "card_id": {
+          "description": "The card to update",
+          "title": "Card ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New card title",
+          "title": "Name"
+        },
+        "desc": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New card description",
+          "title": "Description",
+          "ui:widget": "textarea"
+        },
+        "id_list": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Move the card to this list",
+          "title": "Move to List ID"
+        },
+        "due": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New due date in ISO 8601",
+          "title": "Due Date"
+        },
+        "closed": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Archive (true) or unarchive (false) the card",
+          "enum": [
+            "",
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Unchanged",
+            "Archive",
+            "Unarchive"
+          ],
+          "title": "Closed",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "card_id"
+      ],
+      "title": "TrelloUpdateCardConfig",
+      "type": "object"
+    },
+    "TrelloUpdateChecklistItemConfig": {
+      "description": "Check or uncheck a checklist item (check item state).",
+      "properties": {
+        "operation": {
+          "const": "update_checklist_item",
+          "default": "update_checklist_item",
+          "title": "Update Checklist Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Checklists",
+          "x-display-name": "Update Checklist Item",
+          "x-is-trigger": false
+        },
+        "card_id": {
+          "description": "The card that owns the checklist item",
+          "title": "Card ID",
+          "type": "string"
+        },
+        "check_item_id": {
+          "description": "The checklist item to update",
+          "title": "Check Item ID",
+          "type": "string"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Mark the item complete or incomplete",
+          "enum": [
+            "",
+            "complete",
+            "incomplete"
+          ],
+          "enumNames": [
+            "Unchanged",
+            "Complete",
+            "Incomplete"
+          ],
+          "title": "State",
+          "x-enum-searchable": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New text for the checklist item",
+          "title": "Name"
+        }
+      },
+      "required": [
+        "card_id",
+        "check_item_id"
+      ],
+      "title": "TrelloUpdateChecklistItemConfig",
+      "type": "object"
+    },
+    "TrelloUpdateLabelConfig": {
+      "description": "Rename or recolor a board label.",
+      "properties": {
+        "operation": {
+          "const": "update_label",
+          "default": "update_label",
+          "title": "Update Label",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Labels",
+          "x-display-name": "Update Label",
+          "x-is-trigger": false
+        },
+        "label_id": {
+          "description": "The label to update",
+          "title": "Label ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New name for the label",
+          "title": "Name"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New label color",
+          "enum": [
+            "",
+            "green",
+            "yellow",
+            "orange",
+            "red",
+            "purple",
+            "blue",
+            "sky",
+            "lime",
+            "pink",
+            "black"
+          ],
+          "enumNames": [
+            "None",
+            "Green",
+            "Yellow",
+            "Orange",
+            "Red",
+            "Purple",
+            "Blue",
+            "Sky",
+            "Lime",
+            "Pink",
+            "Black"
+          ],
+          "title": "Color",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "label_id"
+      ],
+      "title": "TrelloUpdateLabelConfig",
+      "type": "object"
+    },
+    "TrelloUpdateListConfig": {
+      "description": "Rename or modify a list.",
+      "properties": {
+        "operation": {
+          "const": "update_list",
+          "default": "update_list",
+          "title": "Update List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lists",
+          "x-display-name": "Update List",
+          "x-is-trigger": false
+        },
+        "list_id": {
+          "description": "The list to update",
+          "title": "List ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New name for the list",
+          "title": "Name"
+        },
+        "pos": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New position: 'top', 'bottom', or a positive number",
+          "title": "Position"
+        },
+        "subscribed": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Subscribe (true) or unsubscribe (false) from the list",
+          "enum": [
+            "",
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Unchanged",
+            "Subscribe",
+            "Unsubscribe"
+          ],
+          "title": "Subscribed",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "TrelloUpdateListConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the Trello node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_attachment": "#/$defs/TrelloAddAttachmentConfig",
+          "add_checklist_item": "#/$defs/TrelloAddChecklistItemConfig",
+          "add_comment": "#/$defs/TrelloAddCommentConfig",
+          "add_label": "#/$defs/TrelloAddLabelConfig",
+          "add_member": "#/$defs/TrelloAddMemberConfig",
+          "add_member_to_board": "#/$defs/TrelloAddMemberToBoardConfig",
+          "archive_list": "#/$defs/TrelloArchiveListConfig",
+          "create_board": "#/$defs/TrelloCreateBoardConfig",
+          "create_card": "#/$defs/TrelloCreateCardConfig",
+          "create_checklist": "#/$defs/TrelloCreateChecklistConfig",
+          "create_label": "#/$defs/TrelloCreateLabelConfig",
+          "create_list": "#/$defs/TrelloCreateListConfig",
+          "delete_board": "#/$defs/TrelloDeleteBoardConfig",
+          "delete_card": "#/$defs/TrelloDeleteCardConfig",
+          "delete_checklist": "#/$defs/TrelloDeleteChecklistConfig",
+          "delete_checklist_item": "#/$defs/TrelloDeleteChecklistItemConfig",
+          "delete_label": "#/$defs/TrelloDeleteLabelConfig",
+          "get_board": "#/$defs/TrelloGetBoardConfig",
+          "get_board_actions": "#/$defs/TrelloGetBoardActionsConfig",
+          "get_board_cards": "#/$defs/TrelloGetBoardCardsConfig",
+          "get_board_labels": "#/$defs/TrelloGetBoardLabelsConfig",
+          "get_board_lists": "#/$defs/TrelloGetBoardListsConfig",
+          "get_board_members": "#/$defs/TrelloGetBoardMembersConfig",
+          "get_card": "#/$defs/TrelloGetCardConfig",
+          "get_card_actions": "#/$defs/TrelloGetCardActionsConfig",
+          "get_card_checklists": "#/$defs/TrelloGetCardChecklistsConfig",
+          "get_list_cards": "#/$defs/TrelloGetListCardsConfig",
+          "get_me": "#/$defs/TrelloGetMeConfig",
+          "get_member_boards": "#/$defs/TrelloGetMemberBoardsConfig",
+          "get_member_cards": "#/$defs/TrelloGetMemberCardsConfig",
+          "move_all_cards": "#/$defs/TrelloMoveAllCardsConfig",
+          "on_board_change": "#/$defs/TrelloBoardChangeTriggerConfig",
+          "on_card_change": "#/$defs/TrelloCardChangeTriggerConfig",
+          "remove_label": "#/$defs/TrelloRemoveLabelConfig",
+          "remove_member": "#/$defs/TrelloRemoveMemberConfig",
+          "remove_member_from_board": "#/$defs/TrelloRemoveMemberFromBoardConfig",
+          "search": "#/$defs/TrelloSearchConfig",
+          "update_board": "#/$defs/TrelloUpdateBoardConfig",
+          "update_card": "#/$defs/TrelloUpdateCardConfig",
+          "update_checklist_item": "#/$defs/TrelloUpdateChecklistItemConfig",
+          "update_label": "#/$defs/TrelloUpdateLabelConfig",
+          "update_list": "#/$defs/TrelloUpdateListConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/TrelloSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/TrelloGetMeConfig"
+        },
+        {
+          "$ref": "#/$defs/TrelloGetMemberBoardsConfig"
+        },
+        {
+          "$ref": "#/$defs/TrelloGetMemberCardsConfig"
+        },
+        {
+          "$ref": "#/$defs/TrelloGetBoardConfig"
+        },
+        {
+          "$ref": "#/$defs/TrelloCreateBoardConfig"
+        },
+        {
+          "$ref": "#/$defs/TrelloUpdateBoardConfig"
+        },
+        {
+          "$ref": "#/$defs/TrelloDeleteBoardConfig"
+        },
+        {
+          "$ref": "#/$defs/TrelloGetBoardListsConfig"
+        },
+        {
+          "$ref": "#/$defs/TrelloGetBoardCardsConfig"
+        },
+        {
+          "$ref": "#/$defs/TrelloGetBoardLabelsConfig"
+        },
+        {
+          "$ref": "#/$defs/TrelloGetBoardMembersConfig"
+        },
+        {
+          "$ref": "#/$defs/TrelloGetBoardActionsConfig"
+        },
+        {
+          "$ref": "#/$defs/TrelloAddMemberToBoardConfig"
+        },
+        {
+          "$ref": "#/$defs/TrelloRemoveMemberFromBoardConfig"
+        },
+        {
+          "$ref": "#/$defs/TrelloCreateListConfig"
+        },
+        {
+          "$ref": "#/$defs/TrelloUpdateListConfig"
+        },
+        {
+          "$ref": "#/$defs/TrelloGetListCardsConfig"
+        },
+        {
+          "$ref": "#/$defs/TrelloArchiveListConfig"
+        },
+        {
+          "$ref": "#/$defs/TrelloMoveAllCardsConfig"
+        },
+        {
+          "$ref": "#/$defs/TrelloGetCardConfig"
+        },
+        {
+          "$ref": "#/$defs/TrelloCreateCardConfig"
+        },
+        {
+          "$ref": "#/$defs/TrelloUpdateCardConfig"
+        },
+        {
+          "$ref": "#/$defs/TrelloDeleteCardConfig"
+        },
+        {
+          "$ref": "#/$defs/TrelloAddCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/TrelloAddAttachmentConfig"
+        },
+        {
+          "$ref": "#/$defs/TrelloAddMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/TrelloRemoveMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/TrelloAddLabelConfig"
+        },
+        {
+          "$ref": "#/$defs/TrelloRemoveLabelConfig"
+        },
+        {
+          "$ref": "#/$defs/TrelloGetCardActionsConfig"
+        },
+        {
+          "$ref": "#/$defs/TrelloGetCardChecklistsConfig"
+        },
+        {
+          "$ref": "#/$defs/TrelloCreateChecklistConfig"
+        },
+        {
+          "$ref": "#/$defs/TrelloAddChecklistItemConfig"
+        },
+        {
+          "$ref": "#/$defs/TrelloUpdateChecklistItemConfig"
+        },
+        {
+          "$ref": "#/$defs/TrelloDeleteChecklistConfig"
+        },
+        {
+          "$ref": "#/$defs/TrelloDeleteChecklistItemConfig"
+        },
+        {
+          "$ref": "#/$defs/TrelloCreateLabelConfig"
+        },
+        {
+          "$ref": "#/$defs/TrelloUpdateLabelConfig"
+        },
+        {
+          "$ref": "#/$defs/TrelloDeleteLabelConfig"
+        },
+        {
+          "$ref": "#/$defs/TrelloBoardChangeTriggerConfig"
+        },
+        {
+          "$ref": "#/$defs/TrelloCardChangeTriggerConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TrelloApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Trello Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Create a card in the To Do list when a form is submitted",
+    "Add a comment to a Trello card when a deal closes",
+    "Move all cards from Doing to Done at the end of a sprint",
+    "List every card on a board for a weekly status report",
+    "Trigger a workflow whenever a card on a board changes"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

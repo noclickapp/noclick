@@ -1,0 +1,1788 @@
+{
+  "$defs": {
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    },
+    "SigmaAddTeamMembersConfig": {
+      "description": "Add one or more members to a team.",
+      "properties": {
+        "operation": {
+          "const": "add_team_members",
+          "default": "add_team_members",
+          "title": "Add Members to Team",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Teams",
+          "x-display-name": "Add Members to Team",
+          "x-is-trigger": false
+        },
+        "team_id": {
+          "description": "The team to add members to",
+          "title": "Team ID",
+          "type": "string"
+        },
+        "member_ids": {
+          "description": "Member IDs to add, comma-separated",
+          "title": "Member IDs",
+          "type": "string"
+        }
+      },
+      "required": [
+        "team_id",
+        "member_ids"
+      ],
+      "title": "SigmaAddTeamMembersConfig",
+      "type": "object"
+    },
+    "SigmaAddWorkspaceGrantConfig": {
+      "description": "Grant a user or team access to a workspace.",
+      "properties": {
+        "operation": {
+          "const": "add_workspace_grant",
+          "default": "add_workspace_grant",
+          "title": "Add Workspace Grant",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspaces",
+          "x-display-name": "Add Workspace Grant",
+          "x-is-trigger": false
+        },
+        "workspace_id": {
+          "description": "The workspace to grant access to",
+          "title": "Workspace ID",
+          "type": "string"
+        },
+        "grantee_id": {
+          "description": "Member or team ID receiving the grant",
+          "title": "Grantee ID",
+          "type": "string"
+        },
+        "grantee_type": {
+          "default": "member",
+          "description": "Whether the grant is for a member or a team",
+          "enum": [
+            "member",
+            "team"
+          ],
+          "enumNames": [
+            "Member",
+            "Team"
+          ],
+          "title": "Grantee Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "permission": {
+          "default": "view",
+          "description": "Access level to grant",
+          "enum": [
+            "view",
+            "edit",
+            "explore"
+          ],
+          "enumNames": [
+            "View",
+            "Edit",
+            "Explore"
+          ],
+          "title": "Permission",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "workspace_id",
+        "grantee_id"
+      ],
+      "title": "SigmaAddWorkspaceGrantConfig",
+      "type": "object"
+    },
+    "SigmaApiKeyCredential": {
+      "description": "Sigma API client-credentials (Client ID + Client Secret).",
+      "properties": {
+        "credential_type": {
+          "const": "sigma_api_key",
+          "default": "sigma_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client_id": {
+          "description": "Sigma API Client ID from Administration -> Developer Access -> Create New",
+          "title": "Client ID",
+          "type": "string"
+        },
+        "client_secret": {
+          "description": "Sigma API Client Secret paired with the Client ID",
+          "title": "Client Secret",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "region": {
+          "default": "aws-us-west",
+          "description": "Cloud region your Sigma org runs in (fixed at org creation)",
+          "enum": [
+            "aws-us-west",
+            "aws-us-east",
+            "aws-canada",
+            "aws-europe",
+            "aws-uk",
+            "aws-ap-sydney",
+            "azure-us",
+            "azure-eu",
+            "azure-canada",
+            "azure-uk",
+            "gcp-us",
+            "gcp-saudi-arabia"
+          ],
+          "enumNames": [
+            "AWS US West (Oregon)",
+            "AWS US East (Virginia)",
+            "AWS Canada",
+            "AWS Europe (Frankfurt)",
+            "AWS UK (London)",
+            "AWS Asia-Pacific (Sydney)",
+            "Azure US",
+            "Azure EU",
+            "Azure Canada",
+            "Azure UK",
+            "GCP US (Iowa)",
+            "GCP Saudi Arabia"
+          ],
+          "title": "Region",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "client_id",
+        "client_secret"
+      ],
+      "title": "SigmaApiKeyCredential",
+      "type": "object",
+      "x-credential-url": "https://help.sigmacomputing.com/reference/get-started-sigma-api"
+    },
+    "SigmaCreateConnectionConfig": {
+      "description": "Create a connection to a cloud data warehouse.",
+      "properties": {
+        "operation": {
+          "const": "create_connection",
+          "default": "create_connection",
+          "title": "Create Connection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Connections",
+          "x-display-name": "Create Connection",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Name of the connection",
+          "title": "Name",
+          "type": "string"
+        },
+        "connection_type": {
+          "description": "Warehouse type (e.g. snowflake, bigquery, redshift, postgres)",
+          "title": "Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "connection_type"
+      ],
+      "title": "SigmaCreateConnectionConfig",
+      "type": "object"
+    },
+    "SigmaCreateMemberConfig": {
+      "description": "Invite/provision a new member.",
+      "properties": {
+        "operation": {
+          "const": "create_member",
+          "default": "create_member",
+          "title": "Create Member",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Members",
+          "x-display-name": "Create Member",
+          "x-is-trigger": false
+        },
+        "email": {
+          "description": "Email address of the new member",
+          "title": "Email",
+          "type": "string"
+        },
+        "first_name": {
+          "description": "Member's first name",
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "description": "Member's last name",
+          "title": "Last Name",
+          "type": "string"
+        },
+        "member_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Account type / license tier name (e.g. Admin, Creator, Viewer)",
+          "title": "Account Type"
+        }
+      },
+      "required": [
+        "email",
+        "first_name",
+        "last_name"
+      ],
+      "title": "SigmaCreateMemberConfig",
+      "type": "object"
+    },
+    "SigmaCreateTeamConfig": {
+      "description": "Create a team.",
+      "properties": {
+        "operation": {
+          "const": "create_team",
+          "default": "create_team",
+          "title": "Create Team",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Teams",
+          "x-display-name": "Create Team",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Name of the new team",
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional team description",
+          "title": "Description"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "SigmaCreateTeamConfig",
+      "type": "object"
+    },
+    "SigmaCreateWorkbookConfig": {
+      "description": "Create a new workbook.",
+      "properties": {
+        "operation": {
+          "const": "create_workbook",
+          "default": "create_workbook",
+          "title": "Create Workbook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workbooks",
+          "x-creates-resource": true,
+          "x-display-name": "Create Workbook",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.workbookId",
+          "x-resource-type": "sigma_workbook"
+        },
+        "name": {
+          "description": "Name of the new workbook",
+          "title": "Name",
+          "type": "string"
+        },
+        "folder_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of the folder to create the workbook in",
+          "title": "Folder ID"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "SigmaCreateWorkbookConfig",
+      "type": "object"
+    },
+    "SigmaCreateWorkspaceConfig": {
+      "description": "Create a workspace.",
+      "properties": {
+        "operation": {
+          "const": "create_workspace",
+          "default": "create_workspace",
+          "title": "Create Workspace",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspaces",
+          "x-display-name": "Create Workspace",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Name of the new workspace",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "SigmaCreateWorkspaceConfig",
+      "type": "object"
+    },
+    "SigmaDeleteConnectionConfig": {
+      "description": "Delete a connection.",
+      "properties": {
+        "operation": {
+          "const": "delete_connection",
+          "default": "delete_connection",
+          "title": "Delete Connection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Connections",
+          "x-display-name": "Delete Connection",
+          "x-is-trigger": false
+        },
+        "connection_id": {
+          "description": "The connection to delete",
+          "title": "Connection ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "connection_id"
+      ],
+      "title": "SigmaDeleteConnectionConfig",
+      "type": "object"
+    },
+    "SigmaDeleteMemberConfig": {
+      "description": "Deactivate/delete a member.",
+      "properties": {
+        "operation": {
+          "const": "delete_member",
+          "default": "delete_member",
+          "title": "Delete Member",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Members",
+          "x-display-name": "Delete Member",
+          "x-is-trigger": false
+        },
+        "member_id": {
+          "description": "The member to delete",
+          "title": "Member ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "member_id"
+      ],
+      "title": "SigmaDeleteMemberConfig",
+      "type": "object"
+    },
+    "SigmaDeleteTeamConfig": {
+      "description": "Delete a team.",
+      "properties": {
+        "operation": {
+          "const": "delete_team",
+          "default": "delete_team",
+          "title": "Delete Team",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Teams",
+          "x-display-name": "Delete Team",
+          "x-is-trigger": false
+        },
+        "team_id": {
+          "description": "The team to delete",
+          "title": "Team ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "team_id"
+      ],
+      "title": "SigmaDeleteTeamConfig",
+      "type": "object"
+    },
+    "SigmaDeleteWorkbookConfig": {
+      "description": "Delete a workbook.",
+      "properties": {
+        "operation": {
+          "const": "delete_workbook",
+          "default": "delete_workbook",
+          "title": "Delete Workbook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workbooks",
+          "x-display-name": "Delete Workbook",
+          "x-is-trigger": false
+        },
+        "workbook_id": {
+          "description": "The workbook to delete",
+          "title": "Workbook ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workbook_id"
+      ],
+      "title": "SigmaDeleteWorkbookConfig",
+      "type": "object"
+    },
+    "SigmaDeleteWorkspaceConfig": {
+      "description": "Permanently delete a workspace.",
+      "properties": {
+        "operation": {
+          "const": "delete_workspace",
+          "default": "delete_workspace",
+          "title": "Delete Workspace",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspaces",
+          "x-display-name": "Delete Workspace",
+          "x-is-trigger": false
+        },
+        "workspace_id": {
+          "description": "The workspace to delete",
+          "title": "Workspace ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace_id"
+      ],
+      "title": "SigmaDeleteWorkspaceConfig",
+      "type": "object"
+    },
+    "SigmaDownloadExportConfig": {
+      "description": "Download the file produced by an export once ready.",
+      "properties": {
+        "operation": {
+          "const": "download_export",
+          "default": "download_export",
+          "title": "Download Export",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workbooks",
+          "x-display-name": "Download Export",
+          "x-is-trigger": false
+        },
+        "query_id": {
+          "description": "The queryId returned by an export request",
+          "title": "Query ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "query_id"
+      ],
+      "title": "SigmaDownloadExportConfig",
+      "type": "object"
+    },
+    "SigmaExportWorkbookConfig": {
+      "description": "Trigger an async export of a workbook (returns a queryId).",
+      "properties": {
+        "operation": {
+          "const": "export_workbook",
+          "default": "export_workbook",
+          "title": "Export Workbook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workbooks",
+          "x-display-name": "Export Workbook",
+          "x-is-trigger": false
+        },
+        "workbook_id": {
+          "description": "The workbook to export",
+          "title": "Workbook ID",
+          "type": "string"
+        },
+        "export_format": {
+          "default": "pdf",
+          "description": "Export file format. CSV/JSON/JSONL/PNG require an Element ID. Whole-workbook exports support PDF and XLSX only.",
+          "enum": [
+            "pdf",
+            "xlsx",
+            "csv",
+            "json",
+            "jsonl",
+            "png"
+          ],
+          "enumNames": [
+            "PDF (whole workbook)",
+            "XLSX (whole workbook)",
+            "CSV (element only)",
+            "JSON (element only)",
+            "JSONL (element only)",
+            "PNG (element only)"
+          ],
+          "title": "Format",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "element_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specific workbook element to export (required for CSV/JSON/JSONL/PNG formats)",
+          "title": "Element ID"
+        }
+      },
+      "required": [
+        "workbook_id"
+      ],
+      "title": "SigmaExportWorkbookConfig",
+      "type": "object"
+    },
+    "SigmaGetConnectionConfig": {
+      "description": "Get details of a single connection.",
+      "properties": {
+        "operation": {
+          "const": "get_connection",
+          "default": "get_connection",
+          "title": "Get Connection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Connections",
+          "x-display-name": "Get Connection",
+          "x-is-trigger": false
+        },
+        "connection_id": {
+          "description": "The connection to retrieve",
+          "title": "Connection ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "connection_id"
+      ],
+      "title": "SigmaGetConnectionConfig",
+      "type": "object"
+    },
+    "SigmaGetDataModelSpecConfig": {
+      "description": "Get the as-code representation of a data model.",
+      "properties": {
+        "operation": {
+          "const": "get_data_model_spec",
+          "default": "get_data_model_spec",
+          "title": "Get Data Model Spec",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Catalog",
+          "x-display-name": "Get Data Model Spec",
+          "x-is-trigger": false
+        },
+        "data_model_id": {
+          "description": "The data model to inspect",
+          "title": "Data Model ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "data_model_id"
+      ],
+      "title": "SigmaGetDataModelSpecConfig",
+      "type": "object"
+    },
+    "SigmaGetMemberConfig": {
+      "description": "Get a single member's profile.",
+      "properties": {
+        "operation": {
+          "const": "get_member",
+          "default": "get_member",
+          "title": "Get Member",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Members",
+          "x-display-name": "Get Member",
+          "x-is-trigger": false
+        },
+        "member_id": {
+          "description": "The member to retrieve",
+          "title": "Member ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "member_id"
+      ],
+      "title": "SigmaGetMemberConfig",
+      "type": "object"
+    },
+    "SigmaGetTeamConfig": {
+      "description": "Get details of a single team.",
+      "properties": {
+        "operation": {
+          "const": "get_team",
+          "default": "get_team",
+          "title": "Get Team",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Teams",
+          "x-display-name": "Get Team",
+          "x-is-trigger": false
+        },
+        "team_id": {
+          "description": "The team to retrieve",
+          "title": "Team ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "team_id"
+      ],
+      "title": "SigmaGetTeamConfig",
+      "type": "object"
+    },
+    "SigmaGetWorkbookConfig": {
+      "description": "Get metadata for a single workbook.",
+      "properties": {
+        "operation": {
+          "const": "get_workbook",
+          "default": "get_workbook",
+          "title": "Get Workbook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workbooks",
+          "x-display-name": "Get Workbook",
+          "x-is-trigger": false
+        },
+        "workbook_id": {
+          "description": "The workbook to retrieve",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a workbook ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "sigma_workbook"
+        }
+      },
+      "required": [
+        "workbook_id"
+      ],
+      "title": "SigmaGetWorkbookConfig",
+      "type": "object"
+    },
+    "SigmaGetWorkbookSourcesConfig": {
+      "description": "List the data sources a workbook depends on.",
+      "properties": {
+        "operation": {
+          "const": "get_workbook_sources",
+          "default": "get_workbook_sources",
+          "title": "Get Workbook Sources",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workbooks",
+          "x-display-name": "Get Workbook Sources",
+          "x-is-trigger": false
+        },
+        "workbook_id": {
+          "description": "The workbook to inspect",
+          "title": "Workbook ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workbook_id"
+      ],
+      "title": "SigmaGetWorkbookSourcesConfig",
+      "type": "object"
+    },
+    "SigmaGetWorkspaceConfig": {
+      "description": "Get a single workspace.",
+      "properties": {
+        "operation": {
+          "const": "get_workspace",
+          "default": "get_workspace",
+          "title": "Get Workspace",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspaces",
+          "x-display-name": "Get Workspace",
+          "x-is-trigger": false
+        },
+        "workspace_id": {
+          "description": "The workspace to retrieve",
+          "title": "Workspace ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace_id"
+      ],
+      "title": "SigmaGetWorkspaceConfig",
+      "type": "object"
+    },
+    "SigmaListAccountTypesConfig": {
+      "description": "List available account types (license/permission tiers).",
+      "properties": {
+        "operation": {
+          "const": "list_account_types",
+          "default": "list_account_types",
+          "title": "List Account Types",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Catalog",
+          "x-display-name": "List Account Types",
+          "x-is-trigger": false
+        }
+      },
+      "title": "SigmaListAccountTypesConfig",
+      "type": "object"
+    },
+    "SigmaListApiCredentialsConfig": {
+      "description": "List the org's API credentials (non-sensitive metadata).",
+      "properties": {
+        "operation": {
+          "const": "list_api_credentials",
+          "default": "list_api_credentials",
+          "title": "List API Credentials",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Catalog",
+          "x-display-name": "List API Credentials",
+          "x-is-trigger": false
+        }
+      },
+      "title": "SigmaListApiCredentialsConfig",
+      "type": "object"
+    },
+    "SigmaListConnectionsConfig": {
+      "description": "List data-warehouse connections.",
+      "properties": {
+        "operation": {
+          "const": "list_connections",
+          "default": "list_connections",
+          "title": "List Connections",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Connections",
+          "x-display-name": "List Connections",
+          "x-is-trigger": false
+        }
+      },
+      "title": "SigmaListConnectionsConfig",
+      "type": "object"
+    },
+    "SigmaListDataModelsConfig": {
+      "description": "List data models.",
+      "properties": {
+        "operation": {
+          "const": "list_data_models",
+          "default": "list_data_models",
+          "title": "List Data Models",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Catalog",
+          "x-display-name": "List Data Models",
+          "x-is-trigger": false
+        }
+      },
+      "title": "SigmaListDataModelsConfig",
+      "type": "object"
+    },
+    "SigmaListFilesConfig": {
+      "description": "List folders/documents in the file tree.",
+      "properties": {
+        "operation": {
+          "const": "list_files",
+          "default": "list_files",
+          "title": "List Files",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Catalog",
+          "x-display-name": "List Files",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "50",
+          "description": "Max files to return (1-1000)",
+          "title": "Limit"
+        }
+      },
+      "title": "SigmaListFilesConfig",
+      "type": "object"
+    },
+    "SigmaListMembersConfig": {
+      "description": "List organization members/users.",
+      "properties": {
+        "operation": {
+          "const": "list_members",
+          "default": "list_members",
+          "title": "List Members",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Members",
+          "x-display-name": "List Members",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "50",
+          "description": "Max members to return (1-1000)",
+          "title": "Limit"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor (nextPage value) for pagination",
+          "title": "Page"
+        }
+      },
+      "title": "SigmaListMembersConfig",
+      "type": "object"
+    },
+    "SigmaListTeamMembersConfig": {
+      "description": "List members of a team.",
+      "properties": {
+        "operation": {
+          "const": "list_team_members",
+          "default": "list_team_members",
+          "title": "List Team Members",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Teams",
+          "x-display-name": "List Team Members",
+          "x-is-trigger": false
+        },
+        "team_id": {
+          "description": "The team whose members to list",
+          "title": "Team ID",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "50",
+          "description": "Max members to return",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "team_id"
+      ],
+      "title": "SigmaListTeamMembersConfig",
+      "type": "object"
+    },
+    "SigmaListTeamsConfig": {
+      "description": "List teams in the organization.",
+      "properties": {
+        "operation": {
+          "const": "list_teams",
+          "default": "list_teams",
+          "title": "List Teams",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Teams",
+          "x-display-name": "List Teams",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "50",
+          "description": "Max teams to return (1-1000)",
+          "title": "Limit"
+        }
+      },
+      "title": "SigmaListTeamsConfig",
+      "type": "object"
+    },
+    "SigmaListWorkbooksConfig": {
+      "description": "List workbooks the credential can access.",
+      "properties": {
+        "operation": {
+          "const": "list_workbooks",
+          "default": "list_workbooks",
+          "title": "List Workbooks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workbooks",
+          "x-display-name": "List Workbooks",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "50",
+          "description": "Max workbooks to return (1-1000)",
+          "title": "Limit"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor (nextPage value) for pagination",
+          "title": "Page"
+        }
+      },
+      "title": "SigmaListWorkbooksConfig",
+      "type": "object"
+    },
+    "SigmaListWorkspacesConfig": {
+      "description": "List workspaces.",
+      "properties": {
+        "operation": {
+          "const": "list_workspaces",
+          "default": "list_workspaces",
+          "title": "List Workspaces",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspaces",
+          "x-display-name": "List Workspaces",
+          "x-is-trigger": false
+        }
+      },
+      "title": "SigmaListWorkspacesConfig",
+      "type": "object"
+    },
+    "SigmaMaterializeWorkbookConfig": {
+      "description": "Trigger a materialization job for a workbook element.",
+      "properties": {
+        "operation": {
+          "const": "materialize_workbook",
+          "default": "materialize_workbook",
+          "title": "Materialize Workbook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workbooks",
+          "x-display-name": "Materialize Workbook",
+          "x-is-trigger": false
+        },
+        "workbook_id": {
+          "description": "The workbook to materialize",
+          "title": "Workbook ID",
+          "type": "string"
+        },
+        "sheet_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specific sheet/element ID to materialize (from materialization-schedules)",
+          "title": "Sheet ID"
+        }
+      },
+      "required": [
+        "workbook_id"
+      ],
+      "title": "SigmaMaterializeWorkbookConfig",
+      "type": "object"
+    },
+    "SigmaOnExportCompletedConfig": {
+      "description": "Poll-based trigger: fires when a workbook materialization/export newly\ncompletes. Sigma has no outbound webhooks, so a cron tick wakes the node and\nexecute() polls the materializations endpoint, deduping on materialization id.",
+      "properties": {
+        "operation": {
+          "const": "on_export_completed",
+          "default": "on_export_completed",
+          "description": "Trigger when a workbook export/materialization finishes",
+          "title": "On Export Completed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Export Completed",
+          "x-is-trigger": true
+        },
+        "workbook_id": {
+          "description": "The workbook whose exports/materializations to watch",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a workbook ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "sigma_workbook"
+        },
+        "status_filter": {
+          "default": "ready",
+          "description": "Only emit materializations that reached this status",
+          "enum": [
+            "ready",
+            "completed",
+            "failed",
+            "any"
+          ],
+          "enumNames": [
+            "Ready",
+            "Completed",
+            "Failed",
+            "Any"
+          ],
+          "title": "Status",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": {
+            "frequency": "minutes",
+            "interval": 5,
+            "hour": 9,
+            "minute": 0,
+            "dayOfWeek": 1,
+            "dayOfMonth": 1
+          },
+          "description": "How often to check for newly completed exports",
+          "title": "Check Frequency",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "last_seen_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Seen Id",
+          "ui:hidden": true
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:copyable": true,
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Check",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "workbook_id"
+      ],
+      "title": "SigmaOnExportCompletedConfig",
+      "type": "object"
+    },
+    "SigmaRemoveTeamMemberConfig": {
+      "description": "Remove a member from a team.",
+      "properties": {
+        "operation": {
+          "const": "remove_team_member",
+          "default": "remove_team_member",
+          "title": "Remove Member from Team",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Teams",
+          "x-display-name": "Remove Member from Team",
+          "x-is-trigger": false
+        },
+        "team_id": {
+          "description": "The team to remove the member from",
+          "title": "Team ID",
+          "type": "string"
+        },
+        "member_id": {
+          "description": "The member to remove",
+          "title": "Member ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "team_id",
+        "member_id"
+      ],
+      "title": "SigmaRemoveTeamMemberConfig",
+      "type": "object"
+    },
+    "SigmaSyncConnectionConfig": {
+      "description": "Sync a connection (refresh its schema in Sigma).",
+      "properties": {
+        "operation": {
+          "const": "sync_connection",
+          "default": "sync_connection",
+          "title": "Sync Connection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Connections",
+          "x-display-name": "Sync Connection",
+          "x-is-trigger": false
+        },
+        "connection_id": {
+          "description": "The connection to sync",
+          "title": "Connection ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "connection_id"
+      ],
+      "title": "SigmaSyncConnectionConfig",
+      "type": "object"
+    },
+    "SigmaTestConnectionConfig": {
+      "description": "Test read/write access of an existing connection.",
+      "properties": {
+        "operation": {
+          "const": "test_connection",
+          "default": "test_connection",
+          "title": "Test Connection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Connections",
+          "x-display-name": "Test Connection",
+          "x-is-trigger": false
+        },
+        "connection_id": {
+          "description": "The connection to test",
+          "title": "Connection ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "connection_id"
+      ],
+      "title": "SigmaTestConnectionConfig",
+      "type": "object"
+    },
+    "SigmaUpdateMemberConfig": {
+      "description": "Update a member's account type, name, or status.",
+      "properties": {
+        "operation": {
+          "const": "update_member",
+          "default": "update_member",
+          "title": "Update Member",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Members",
+          "x-display-name": "Update Member",
+          "x-is-trigger": false
+        },
+        "member_id": {
+          "description": "The member to update",
+          "title": "Member ID",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New first name",
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New last name",
+          "title": "Last Name"
+        },
+        "member_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New account type / license tier name",
+          "title": "Account Type"
+        }
+      },
+      "required": [
+        "member_id"
+      ],
+      "title": "SigmaUpdateMemberConfig",
+      "type": "object"
+    },
+    "SigmaUpdateTeamConfig": {
+      "description": "Update a team's name or description.",
+      "properties": {
+        "operation": {
+          "const": "update_team",
+          "default": "update_team",
+          "title": "Update Team",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Teams",
+          "x-display-name": "Update Team",
+          "x-is-trigger": false
+        },
+        "team_id": {
+          "description": "The team to update",
+          "title": "Team ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New team name",
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New team description",
+          "title": "Description"
+        }
+      },
+      "required": [
+        "team_id"
+      ],
+      "title": "SigmaUpdateTeamConfig",
+      "type": "object"
+    },
+    "SigmaUpdateWorkbookConfig": {
+      "description": "Update a workbook's metadata.",
+      "properties": {
+        "operation": {
+          "const": "update_workbook",
+          "default": "update_workbook",
+          "title": "Update Workbook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workbooks",
+          "x-display-name": "Update Workbook",
+          "x-is-trigger": false
+        },
+        "workbook_id": {
+          "description": "The workbook to update",
+          "title": "Workbook ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New workbook name",
+          "title": "Name"
+        }
+      },
+      "required": [
+        "workbook_id"
+      ],
+      "title": "SigmaUpdateWorkbookConfig",
+      "type": "object"
+    },
+    "SigmaUpdateWorkspaceConfig": {
+      "description": "Rename a workspace.",
+      "properties": {
+        "operation": {
+          "const": "update_workspace",
+          "default": "update_workspace",
+          "title": "Update Workspace",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspaces",
+          "x-display-name": "Update Workspace",
+          "x-is-trigger": false
+        },
+        "workspace_id": {
+          "description": "The workspace to update",
+          "title": "Workspace ID",
+          "type": "string"
+        },
+        "name": {
+          "description": "New name for the workspace",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "name"
+      ],
+      "title": "SigmaUpdateWorkspaceConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the Sigma node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_team_members": "#/$defs/SigmaAddTeamMembersConfig",
+          "add_workspace_grant": "#/$defs/SigmaAddWorkspaceGrantConfig",
+          "create_connection": "#/$defs/SigmaCreateConnectionConfig",
+          "create_member": "#/$defs/SigmaCreateMemberConfig",
+          "create_team": "#/$defs/SigmaCreateTeamConfig",
+          "create_workbook": "#/$defs/SigmaCreateWorkbookConfig",
+          "create_workspace": "#/$defs/SigmaCreateWorkspaceConfig",
+          "delete_connection": "#/$defs/SigmaDeleteConnectionConfig",
+          "delete_member": "#/$defs/SigmaDeleteMemberConfig",
+          "delete_team": "#/$defs/SigmaDeleteTeamConfig",
+          "delete_workbook": "#/$defs/SigmaDeleteWorkbookConfig",
+          "delete_workspace": "#/$defs/SigmaDeleteWorkspaceConfig",
+          "download_export": "#/$defs/SigmaDownloadExportConfig",
+          "export_workbook": "#/$defs/SigmaExportWorkbookConfig",
+          "get_connection": "#/$defs/SigmaGetConnectionConfig",
+          "get_data_model_spec": "#/$defs/SigmaGetDataModelSpecConfig",
+          "get_member": "#/$defs/SigmaGetMemberConfig",
+          "get_team": "#/$defs/SigmaGetTeamConfig",
+          "get_workbook": "#/$defs/SigmaGetWorkbookConfig",
+          "get_workbook_sources": "#/$defs/SigmaGetWorkbookSourcesConfig",
+          "get_workspace": "#/$defs/SigmaGetWorkspaceConfig",
+          "list_account_types": "#/$defs/SigmaListAccountTypesConfig",
+          "list_api_credentials": "#/$defs/SigmaListApiCredentialsConfig",
+          "list_connections": "#/$defs/SigmaListConnectionsConfig",
+          "list_data_models": "#/$defs/SigmaListDataModelsConfig",
+          "list_files": "#/$defs/SigmaListFilesConfig",
+          "list_members": "#/$defs/SigmaListMembersConfig",
+          "list_team_members": "#/$defs/SigmaListTeamMembersConfig",
+          "list_teams": "#/$defs/SigmaListTeamsConfig",
+          "list_workbooks": "#/$defs/SigmaListWorkbooksConfig",
+          "list_workspaces": "#/$defs/SigmaListWorkspacesConfig",
+          "materialize_workbook": "#/$defs/SigmaMaterializeWorkbookConfig",
+          "on_export_completed": "#/$defs/SigmaOnExportCompletedConfig",
+          "remove_team_member": "#/$defs/SigmaRemoveTeamMemberConfig",
+          "sync_connection": "#/$defs/SigmaSyncConnectionConfig",
+          "test_connection": "#/$defs/SigmaTestConnectionConfig",
+          "update_member": "#/$defs/SigmaUpdateMemberConfig",
+          "update_team": "#/$defs/SigmaUpdateTeamConfig",
+          "update_workbook": "#/$defs/SigmaUpdateWorkbookConfig",
+          "update_workspace": "#/$defs/SigmaUpdateWorkspaceConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/SigmaListWorkbooksConfig"
+        },
+        {
+          "$ref": "#/$defs/SigmaGetWorkbookConfig"
+        },
+        {
+          "$ref": "#/$defs/SigmaCreateWorkbookConfig"
+        },
+        {
+          "$ref": "#/$defs/SigmaUpdateWorkbookConfig"
+        },
+        {
+          "$ref": "#/$defs/SigmaDeleteWorkbookConfig"
+        },
+        {
+          "$ref": "#/$defs/SigmaExportWorkbookConfig"
+        },
+        {
+          "$ref": "#/$defs/SigmaDownloadExportConfig"
+        },
+        {
+          "$ref": "#/$defs/SigmaMaterializeWorkbookConfig"
+        },
+        {
+          "$ref": "#/$defs/SigmaGetWorkbookSourcesConfig"
+        },
+        {
+          "$ref": "#/$defs/SigmaListMembersConfig"
+        },
+        {
+          "$ref": "#/$defs/SigmaGetMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/SigmaCreateMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/SigmaUpdateMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/SigmaDeleteMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/SigmaListTeamsConfig"
+        },
+        {
+          "$ref": "#/$defs/SigmaGetTeamConfig"
+        },
+        {
+          "$ref": "#/$defs/SigmaCreateTeamConfig"
+        },
+        {
+          "$ref": "#/$defs/SigmaUpdateTeamConfig"
+        },
+        {
+          "$ref": "#/$defs/SigmaDeleteTeamConfig"
+        },
+        {
+          "$ref": "#/$defs/SigmaAddTeamMembersConfig"
+        },
+        {
+          "$ref": "#/$defs/SigmaRemoveTeamMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/SigmaListTeamMembersConfig"
+        },
+        {
+          "$ref": "#/$defs/SigmaListConnectionsConfig"
+        },
+        {
+          "$ref": "#/$defs/SigmaGetConnectionConfig"
+        },
+        {
+          "$ref": "#/$defs/SigmaCreateConnectionConfig"
+        },
+        {
+          "$ref": "#/$defs/SigmaTestConnectionConfig"
+        },
+        {
+          "$ref": "#/$defs/SigmaDeleteConnectionConfig"
+        },
+        {
+          "$ref": "#/$defs/SigmaSyncConnectionConfig"
+        },
+        {
+          "$ref": "#/$defs/SigmaListWorkspacesConfig"
+        },
+        {
+          "$ref": "#/$defs/SigmaGetWorkspaceConfig"
+        },
+        {
+          "$ref": "#/$defs/SigmaCreateWorkspaceConfig"
+        },
+        {
+          "$ref": "#/$defs/SigmaUpdateWorkspaceConfig"
+        },
+        {
+          "$ref": "#/$defs/SigmaDeleteWorkspaceConfig"
+        },
+        {
+          "$ref": "#/$defs/SigmaAddWorkspaceGrantConfig"
+        },
+        {
+          "$ref": "#/$defs/SigmaListFilesConfig"
+        },
+        {
+          "$ref": "#/$defs/SigmaListDataModelsConfig"
+        },
+        {
+          "$ref": "#/$defs/SigmaGetDataModelSpecConfig"
+        },
+        {
+          "$ref": "#/$defs/SigmaListAccountTypesConfig"
+        },
+        {
+          "$ref": "#/$defs/SigmaListApiCredentialsConfig"
+        },
+        {
+          "$ref": "#/$defs/SigmaOnExportCompletedConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SigmaApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Sigma Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "List all workbooks in my Sigma org",
+    "Export a workbook to CSV and download the result",
+    "Invite a new member as a Viewer",
+    "Create a team and add members to it",
+    "Materialize a workbook element on a schedule"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

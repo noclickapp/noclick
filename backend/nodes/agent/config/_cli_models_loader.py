@@ -7,11 +7,9 @@ for the extraction.
 Three kinds of data per harness:
   • Model lists/aliases (codex, claude-code) — extracted from the binary, which
     bakes them as static literals; the dropdowns render from these.
-  • Version pins (codex, claude-code, opencode, openclaw, hermes) — the version
-    each harness's isolated runtime image installs. Embedding the pin in the
-    image's install command means a bump (landed by the daily refresh PR)
-    invalidates the cached layer, so the sandbox binary upgrades in lockstep
-    instead of being frozen to whatever `latest` was at first build.
+  • Version pins (codex, claude-code, opencode, openclaw, hermes) — the tested
+    CLI version for each harness. A daily refresh PR keeps packaging and model
+    metadata aligned instead of silently drifting with `latest`.
   • `default_model` — the preselected model for every harness, human-owned in
     the JSON (the refresh script carries it through and fails if a model-list
     refresh drops it). `harness_default_model()` is the ONE code path for
@@ -73,27 +71,27 @@ def codex_models() -> List[str]:
 
 
 def codex_version() -> str:
-    """Pinned @openai/codex version for the isolated runtime image."""
+    """Pinned @openai/codex CLI version."""
     return _pin("codex")
 
 
 def claude_code_version() -> str:
-    """Pinned @anthropic-ai/claude-code version for the isolated runtime image."""
+    """Pinned @anthropic-ai/claude-code CLI version."""
     return _pin("claude_code")
 
 
 def opencode_version() -> str:
-    """Pinned opencode-ai version for the isolated runtime image."""
+    """Pinned opencode-ai CLI version."""
     return _pin("opencode")
 
 
 def openclaw_version() -> str:
-    """Pinned openclaw version for the isolated runtime image."""
+    """Pinned openclaw CLI version."""
     return _pin("openclaw")
 
 
 def hermes_ref() -> str:
-    """Pinned hermes-agent git tag for the isolated runtime image clone."""
+    """Pinned hermes-agent git tag."""
     return _pin("hermes", "ref")
 
 

@@ -1,0 +1,1905 @@
+{
+  "$defs": {
+    "InstagramBusinessDiscoveryConfig": {
+      "description": "Discover public business/creator account information",
+      "properties": {
+        "operation": {
+          "const": "discover_business_account",
+          "default": "discover_business_account",
+          "title": "Discover Business Account",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Profile",
+          "x-display-name": "Discover Business Account",
+          "x-is-trigger": false,
+          "x-requires-login": "facebook"
+        },
+        "username": {
+          "description": "The Instagram username to look up",
+          "title": "Username",
+          "type": "string"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "id,username,name,biography,followers_count,follows_count,media_count,profile_picture_url,website",
+          "description": "Comma-separated list of fields to retrieve",
+          "title": "Fields"
+        }
+      },
+      "required": [
+        "username"
+      ],
+      "title": "InstagramBusinessDiscoveryConfig",
+      "type": "object"
+    },
+    "InstagramCreateCommentConfig": {
+      "description": "Create a comment on a media item",
+      "properties": {
+        "operation": {
+          "const": "create_media_comment",
+          "default": "create_media_comment",
+          "title": "Create Media Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment",
+          "x-display-name": "Create Media Comment",
+          "x-is-trigger": false
+        },
+        "media_id": {
+          "description": "The ID of the media to comment on",
+          "title": "Media ID",
+          "type": "string"
+        },
+        "message": {
+          "description": "The comment text",
+          "title": "Comment Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "media_id",
+        "message"
+      ],
+      "title": "InstagramCreateCommentConfig",
+      "type": "object"
+    },
+    "InstagramDeleteCommentConfig": {
+      "description": "Delete a comment",
+      "properties": {
+        "operation": {
+          "const": "delete_comment",
+          "default": "delete_comment",
+          "title": "Delete Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment",
+          "x-display-name": "Delete Comment",
+          "x-is-trigger": false
+        },
+        "comment_id": {
+          "description": "The ID of the comment to delete (must be your own comment)",
+          "title": "Comment ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "comment_id"
+      ],
+      "title": "InstagramDeleteCommentConfig",
+      "type": "object"
+    },
+    "InstagramDeleteProductTagsConfig": {
+      "description": "Delete product tags from a media post",
+      "properties": {
+        "operation": {
+          "const": "delete_product_tags_from_media",
+          "default": "delete_product_tags_from_media",
+          "title": "Delete Product Tags from Media",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Media",
+          "x-display-name": "Delete Product Tags from Media",
+          "x-is-trigger": false,
+          "x-requires-login": "facebook"
+        },
+        "media_id": {
+          "description": "The ID of the media to delete product tags from",
+          "title": "Media ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "media_id"
+      ],
+      "title": "InstagramDeleteProductTagsConfig",
+      "type": "object"
+    },
+    "InstagramGetAccountInsightsConfig": {
+      "description": "Get insights for the Instagram account",
+      "properties": {
+        "operation": {
+          "const": "get_account_insights",
+          "default": "get_account_insights",
+          "title": "Get Account Insights",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Profile",
+          "x-display-name": "Get Account Insights",
+          "x-is-trigger": false
+        },
+        "metrics": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "reach,follower_count,profile_views",
+          "description": "Comma-separated metrics: reach, follower_count, profile_views, website_clicks (impressions was deprecated by Meta and 400s on graph.instagram.com).",
+          "title": "Metrics"
+        },
+        "period": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "day",
+          "description": "Time aggregation period",
+          "enum": [
+            "day",
+            "week",
+            "days_28",
+            "lifetime"
+          ],
+          "title": "Period"
+        },
+        "since": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start date (YYYY-MM-DD) for time-based metrics",
+          "title": "Since"
+        },
+        "until": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End date (YYYY-MM-DD) for time-based metrics",
+          "title": "Until"
+        }
+      },
+      "title": "InstagramGetAccountInsightsConfig",
+      "type": "object"
+    },
+    "InstagramGetConversationConfig": {
+      "description": "Get a conversation and its messages",
+      "properties": {
+        "operation": {
+          "const": "get_conversation",
+          "default": "get_conversation",
+          "title": "Get Conversation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messaging",
+          "x-display-name": "Get Conversation",
+          "x-is-trigger": false
+        },
+        "conversation_id": {
+          "description": "The id of the conversation to retrieve",
+          "title": "Conversation ID",
+          "type": "string"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "messages{id,from,to,message,created_time}",
+          "description": "Comma-separated list of fields to retrieve",
+          "title": "Fields"
+        }
+      },
+      "required": [
+        "conversation_id"
+      ],
+      "title": "InstagramGetConversationConfig",
+      "type": "object"
+    },
+    "InstagramGetDMMessageConfig": {
+      "description": "Get a single direct message",
+      "properties": {
+        "operation": {
+          "const": "get_dm_message",
+          "default": "get_dm_message",
+          "title": "Get DM Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messaging",
+          "x-display-name": "Get DM Message",
+          "x-is-trigger": false
+        },
+        "message_id": {
+          "description": "The id of the message to retrieve",
+          "title": "Message ID",
+          "type": "string"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "id,from,to,message,created_time,attachments",
+          "description": "Comma-separated list of fields to retrieve",
+          "title": "Fields"
+        }
+      },
+      "required": [
+        "message_id"
+      ],
+      "title": "InstagramGetDMMessageConfig",
+      "type": "object"
+    },
+    "InstagramGetHashtagMediaConfig": {
+      "description": "Get top or recent media for a hashtag",
+      "properties": {
+        "operation": {
+          "const": "get_hashtag_media",
+          "default": "get_hashtag_media",
+          "title": "Get Hashtag Media",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Hashtag",
+          "x-display-name": "Get Hashtag Media",
+          "x-is-trigger": false,
+          "x-requires-login": "facebook"
+        },
+        "hashtag_id": {
+          "description": "The ID of the hashtag (from search_hashtag)",
+          "title": "Hashtag ID",
+          "type": "string"
+        },
+        "media_type": {
+          "default": "top_media",
+          "description": "Which media to retrieve",
+          "enum": [
+            "top_media",
+            "recent_media"
+          ],
+          "title": "Media Type",
+          "type": "string"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "id,caption,media_type,media_url,permalink,timestamp",
+          "description": "Comma-separated list of fields",
+          "title": "Fields"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 50,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "description": "Number of media items to retrieve",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "hashtag_id"
+      ],
+      "title": "InstagramGetHashtagMediaConfig",
+      "type": "object"
+    },
+    "InstagramGetMediaConfig": {
+      "description": "Get details of a specific media item",
+      "properties": {
+        "operation": {
+          "const": "get_media_details",
+          "default": "get_media_details",
+          "title": "Get Media Details",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Media",
+          "x-display-name": "Get Media Details",
+          "x-is-trigger": false
+        },
+        "media_id": {
+          "description": "The ID of the media to retrieve",
+          "title": "Media ID",
+          "type": "string"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "id,caption,media_type,media_url,permalink,thumbnail_url,timestamp,username,like_count,comments_count",
+          "description": "Comma-separated list of fields to retrieve",
+          "title": "Fields"
+        }
+      },
+      "required": [
+        "media_id"
+      ],
+      "title": "InstagramGetMediaConfig",
+      "type": "object"
+    },
+    "InstagramGetMediaInsightsConfig": {
+      "description": "Get insights for a specific media item",
+      "properties": {
+        "operation": {
+          "const": "get_media_insights",
+          "default": "get_media_insights",
+          "title": "Get Media Insights",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Media",
+          "x-display-name": "Get Media Insights",
+          "x-is-trigger": false
+        },
+        "media_id": {
+          "description": "The ID of the media to get insights for",
+          "title": "Media ID",
+          "type": "string"
+        },
+        "metrics": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "reach,likes,comments,shares,saved",
+          "description": "Comma-separated metrics: reach, likes, comments, shares, saved, views (impressions/engagement were deprecated by Meta and 400 on graph.instagram.com).",
+          "title": "Metrics"
+        }
+      },
+      "required": [
+        "media_id"
+      ],
+      "title": "InstagramGetMediaInsightsConfig",
+      "type": "object"
+    },
+    "InstagramGetMentionedCommentsConfig": {
+      "description": "Get comments where the account is @mentioned",
+      "properties": {
+        "operation": {
+          "const": "get_mentioned_comments",
+          "default": "get_mentioned_comments",
+          "title": "Get Mentioned Comments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment",
+          "x-display-name": "Get Mentioned Comments",
+          "x-is-trigger": false
+        },
+        "comment_id": {
+          "description": "ID of the comment you were @mentioned in (delivered by the Instagram 'mentions' webhook). The API has no list edge for mentions \u2014 you look up one mention at a time by its id.",
+          "title": "Comment ID",
+          "type": "string"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "id,text,username,timestamp,media{id,caption,media_type}",
+          "description": "Comma-separated list of fields to retrieve for the mentioned comment",
+          "title": "Fields"
+        }
+      },
+      "required": [
+        "comment_id"
+      ],
+      "title": "InstagramGetMentionedCommentsConfig",
+      "type": "object"
+    },
+    "InstagramGetMentionedMediaConfig": {
+      "description": "Get media where the account is @mentioned",
+      "properties": {
+        "operation": {
+          "const": "get_mentioned_media",
+          "default": "get_mentioned_media",
+          "title": "Get Mentioned Media",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Media",
+          "x-display-name": "Get Mentioned Media",
+          "x-is-trigger": false
+        },
+        "media_id": {
+          "description": "ID of the media you were @mentioned in (delivered by the Instagram 'mentions' webhook). The API has no list edge for mentions \u2014 you look up one mention at a time by its id.",
+          "title": "Media ID",
+          "type": "string"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "id,caption,media_type,media_url,permalink,timestamp,username",
+          "description": "Comma-separated list of fields to retrieve for the mentioned media",
+          "title": "Fields"
+        }
+      },
+      "required": [
+        "media_id"
+      ],
+      "title": "InstagramGetMentionedMediaConfig",
+      "type": "object"
+    },
+    "InstagramGetProductTagsConfig": {
+      "description": "Get product tags on a media post",
+      "properties": {
+        "operation": {
+          "const": "get_media_product_tags",
+          "default": "get_media_product_tags",
+          "title": "Get Media Product Tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Media",
+          "x-display-name": "Get Media Product Tags",
+          "x-is-trigger": false,
+          "x-requires-login": "facebook"
+        },
+        "media_id": {
+          "description": "The ID of the media to get product tags from",
+          "title": "Media ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "media_id"
+      ],
+      "title": "InstagramGetProductTagsConfig",
+      "type": "object"
+    },
+    "InstagramGetProfileConfig": {
+      "description": "Get the authenticated user's Instagram profile",
+      "properties": {
+        "operation": {
+          "const": "get_user_profile",
+          "default": "get_user_profile",
+          "title": "Get User Profile",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Profile",
+          "x-display-name": "Get User Profile",
+          "x-is-trigger": false
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "id,username,name,biography,followers_count,follows_count,media_count,profile_picture_url,website",
+          "description": "Comma-separated list of fields to retrieve",
+          "title": "Fields"
+        }
+      },
+      "title": "InstagramGetProfileConfig",
+      "type": "object"
+    },
+    "InstagramHideCommentConfig": {
+      "description": "Hide or unhide a comment",
+      "properties": {
+        "operation": {
+          "const": "hide_or_unhide_comment",
+          "default": "hide_or_unhide_comment",
+          "title": "Hide or Unhide Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment",
+          "x-display-name": "Hide or Unhide Comment",
+          "x-is-trigger": false
+        },
+        "comment_id": {
+          "description": "The ID of the comment to hide/unhide",
+          "title": "Comment ID",
+          "type": "string"
+        },
+        "hide": {
+          "default": true,
+          "description": "True to hide, False to unhide",
+          "title": "Hide",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "comment_id"
+      ],
+      "title": "InstagramHideCommentConfig",
+      "type": "object"
+    },
+    "InstagramListCommentsConfig": {
+      "description": "List comments on a media item",
+      "properties": {
+        "operation": {
+          "const": "list_media_comments",
+          "default": "list_media_comments",
+          "title": "List Media Comments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment",
+          "x-display-name": "List Media Comments",
+          "x-is-trigger": false
+        },
+        "media_id": {
+          "description": "The ID of the media to get comments for",
+          "title": "Media ID",
+          "type": "string"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "id,text,username,timestamp,like_count,replies{id,text,username,timestamp}",
+          "description": "Comma-separated list of fields to retrieve for each comment",
+          "title": "Fields"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 50,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "description": "Number of comments to retrieve",
+          "title": "Limit"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor for next page",
+          "title": "After Cursor"
+        }
+      },
+      "required": [
+        "media_id"
+      ],
+      "title": "InstagramListCommentsConfig",
+      "type": "object"
+    },
+    "InstagramListConversationsConfig": {
+      "description": "List Instagram DM conversations",
+      "properties": {
+        "operation": {
+          "const": "list_conversations",
+          "default": "list_conversations",
+          "title": "List Conversations",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messaging",
+          "x-display-name": "List Conversations",
+          "x-is-trigger": false
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "id,participants,updated_time",
+          "description": "Comma-separated list of fields to retrieve for each conversation",
+          "title": "Fields"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "description": "Number of conversations to retrieve",
+          "title": "Limit"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor for next page",
+          "title": "After Cursor"
+        }
+      },
+      "title": "InstagramListConversationsConfig",
+      "type": "object"
+    },
+    "InstagramListMediaConfig": {
+      "description": "List media from the authenticated user's account",
+      "properties": {
+        "operation": {
+          "const": "list_user_media",
+          "default": "list_user_media",
+          "title": "List User Media",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Media",
+          "x-display-name": "List User Media",
+          "x-is-trigger": false
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "id,caption,media_type,media_url,permalink,thumbnail_url,timestamp,username",
+          "description": "Comma-separated list of fields to retrieve for each media",
+          "title": "Fields"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "description": "Number of media items to retrieve (max 100)",
+          "title": "Limit"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor for next page",
+          "title": "After Cursor"
+        }
+      },
+      "title": "InstagramListMediaConfig",
+      "type": "object"
+    },
+    "InstagramLoginCredential": {
+      "description": "Instagram Login credential (Instagram API *with Instagram Login*).\n\nThe Meta-recommended flow where the user logs in with their Instagram\naccount directly \u2014 NO Facebook Page required. Served from\ngraph.instagram.com with the instagram_business_* scope family. Distinct\nfrom InstagramOAuthCredential, which is Instagram *with Facebook Login*\n(graph.facebook.com, needs a linked Page).",
+      "properties": {
+        "credential_type": {
+          "const": "instagram_login",
+          "default": "instagram_login",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "Long-lived Instagram user access token (60-day, refreshable)",
+          "title": "Access Token",
+          "type": "string"
+        },
+        "instagram_user_id": {
+          "description": "The Instagram professional account ID (graph.instagram.com)",
+          "title": "Instagram User ID",
+          "type": "string"
+        },
+        "expires_at": {
+          "description": "ISO 8601 timestamp when the access token expires",
+          "title": "Token Expiry",
+          "type": "string"
+        },
+        "instagram_username": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Username of the connected Instagram account",
+          "title": "Instagram Username"
+        }
+      },
+      "required": [
+        "access_token",
+        "instagram_user_id",
+        "expires_at"
+      ],
+      "title": "InstagramLoginCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-oauth-provider": "instagram_login",
+      "x-oauth-scopes": [
+        "instagram_business_basic",
+        "instagram_business_content_publish",
+        "instagram_business_manage_comments",
+        "instagram_business_manage_messages"
+      ]
+    },
+    "InstagramMarkDMSeenConfig": {
+      "description": "Mark direct messages from a sender as seen",
+      "properties": {
+        "operation": {
+          "const": "mark_dm_seen",
+          "default": "mark_dm_seen",
+          "title": "Mark DM Seen",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messaging",
+          "x-display-name": "Mark DM Seen",
+          "x-is-trigger": false
+        },
+        "recipient_id": {
+          "description": "The Instagram-scoped user id (IGSID) whose messages to mark seen",
+          "title": "Recipient ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "recipient_id"
+      ],
+      "title": "InstagramMarkDMSeenConfig",
+      "type": "object"
+    },
+    "InstagramOAuthCredential": {
+      "description": "OAuth 2.0 credential for Instagram via Facebook Login.\nTokens are obtained via Facebook OAuth flow, not entered manually.\n\nRegister OAuth app at: https://developers.facebook.com/apps/",
+      "properties": {
+        "credential_type": {
+          "const": "instagram_oauth",
+          "default": "instagram_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "Long-lived OAuth 2.0 access token from Facebook",
+          "title": "Access Token",
+          "type": "string"
+        },
+        "instagram_user_id": {
+          "description": "The Instagram Business/Creator account ID",
+          "title": "Instagram User ID",
+          "type": "string"
+        },
+        "expires_at": {
+          "description": "ISO 8601 timestamp when access token expires",
+          "title": "Token Expiry",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Email address of the connected Facebook account",
+          "title": "Account Email"
+        },
+        "instagram_username": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Username of the connected Instagram account",
+          "title": "Instagram Username"
+        }
+      },
+      "required": [
+        "access_token",
+        "instagram_user_id",
+        "expires_at"
+      ],
+      "title": "InstagramOAuthCredential",
+      "type": "object",
+      "x-credential-hidden": true,
+      "x-credential-preview-flag": "meta-oauth-preview",
+      "x-credential-type": "oauth",
+      "x-oauth-provider": "facebook",
+      "x-oauth-scopes": [
+        "instagram_basic",
+        "instagram_content_publish",
+        "instagram_manage_comments",
+        "instagram_manage_messages",
+        "pages_show_list",
+        "pages_read_engagement"
+      ]
+    },
+    "InstagramPageAccessTokenCredential": {
+      "description": "Page Access Token credential (can be made permanent).\nSuitable for Facebook Page-based Instagram integrations.\n\nGenerate at: Graph API Explorer or via Facebook Login",
+      "properties": {
+        "credential_type": {
+          "const": "instagram_page_access_token",
+          "default": "instagram_page_access_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "Long-lived or permanent Page Access Token",
+          "title": "Page Access Token",
+          "type": "string"
+        },
+        "instagram_user_id": {
+          "description": "The Instagram Business account ID connected to the Facebook Page",
+          "title": "Instagram User ID",
+          "type": "string"
+        },
+        "page_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The Facebook Page ID that owns this Instagram account",
+          "title": "Facebook Page ID"
+        },
+        "instagram_username": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Username of the connected Instagram account",
+          "title": "Instagram Username"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 timestamp when token expires (None if permanent)",
+          "title": "Token Expiry"
+        }
+      },
+      "required": [
+        "access_token",
+        "instagram_user_id"
+      ],
+      "title": "InstagramPageAccessTokenCredential",
+      "type": "object",
+      "x-credential-url": "https://developers.facebook.com/tools/explorer/"
+    },
+    "InstagramPublishCarouselConfig": {
+      "description": "Publish a carousel (multiple images/videos) to Instagram",
+      "properties": {
+        "operation": {
+          "const": "publish_carousel_post",
+          "default": "publish_carousel_post",
+          "title": "Publish Carousel Post",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Media",
+          "x-display-name": "Publish Carousel Post",
+          "x-is-trigger": false
+        },
+        "media_urls": {
+          "description": "JSON array of media URLs (2-10 items): [{type: 'IMAGE', url: '...'}, {type: 'VIDEO', url: '...'}]",
+          "title": "Media URLs",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "caption": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Caption for the carousel post",
+          "title": "Caption",
+          "ui:widget": "textarea"
+        },
+        "location_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Facebook Page ID of a location to tag",
+          "title": "Location ID"
+        }
+      },
+      "required": [
+        "media_urls"
+      ],
+      "title": "InstagramPublishCarouselConfig",
+      "type": "object"
+    },
+    "InstagramPublishPhotoConfig": {
+      "description": "Publish a photo to Instagram",
+      "properties": {
+        "operation": {
+          "const": "publish_photo_post",
+          "default": "publish_photo_post",
+          "title": "Publish Photo Post",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Media",
+          "x-display-name": "Publish Photo Post",
+          "x-is-trigger": false
+        },
+        "image_url": {
+          "description": "The image to publish \u2014 upload a file, paste a URL, or reference an upstream file (e.g. {{http-1.response.url}}). JPEG only; must be reachable by Instagram's servers.",
+          "title": "Image URL",
+          "type": "string",
+          "ui:accept": "image/*",
+          "ui:widget": "media_upload"
+        },
+        "caption": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Caption for the post (hashtags should be included here)",
+          "title": "Caption",
+          "ui:widget": "textarea"
+        },
+        "location_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Facebook Page ID of a location to tag",
+          "title": "Location ID"
+        },
+        "user_tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array of user tags: [{username: 'user', x: 0.5, y: 0.5}]",
+          "title": "User Tags"
+        }
+      },
+      "required": [
+        "image_url"
+      ],
+      "title": "InstagramPublishPhotoConfig",
+      "type": "object"
+    },
+    "InstagramPublishStoryPhotoConfig": {
+      "description": "Publish a photo story to Instagram",
+      "properties": {
+        "operation": {
+          "const": "publish_photo_story",
+          "default": "publish_photo_story",
+          "title": "Publish Photo Story",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Story",
+          "x-display-name": "Publish Photo Story",
+          "x-is-trigger": false
+        },
+        "image_url": {
+          "description": "The image to publish \u2014 upload a file, paste a URL, or reference an upstream file (e.g. {{http-1.response.url}}). JPEG only; 1080x1920 recommended.",
+          "title": "Image URL",
+          "type": "string",
+          "ui:accept": "image/*",
+          "ui:widget": "media_upload"
+        },
+        "caption": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional caption for the story",
+          "title": "Caption",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "image_url"
+      ],
+      "title": "InstagramPublishStoryPhotoConfig",
+      "type": "object"
+    },
+    "InstagramPublishStoryVideoConfig": {
+      "description": "Publish a video story to Instagram",
+      "properties": {
+        "operation": {
+          "const": "publish_video_story",
+          "default": "publish_video_story",
+          "title": "Publish Video Story",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Story",
+          "x-display-name": "Publish Video Story",
+          "x-is-trigger": false
+        },
+        "video_url": {
+          "description": "The video to publish \u2014 upload a file, paste a URL, or reference an upstream file (e.g. {{http-1.response.url}}). MP4 recommended; max 15 seconds.",
+          "title": "Video URL",
+          "type": "string",
+          "ui:accept": "video/*",
+          "ui:widget": "media_upload"
+        },
+        "caption": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional caption for the story",
+          "title": "Caption",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "video_url"
+      ],
+      "title": "InstagramPublishStoryVideoConfig",
+      "type": "object"
+    },
+    "InstagramPublishVideoConfig": {
+      "description": "Publish a video (Reel) to Instagram",
+      "properties": {
+        "operation": {
+          "const": "publish_video_reel",
+          "default": "publish_video_reel",
+          "title": "Publish Video Reel",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Media",
+          "x-display-name": "Publish Video Reel",
+          "x-is-trigger": false
+        },
+        "video_url": {
+          "description": "The video to publish \u2014 upload a file, paste a URL, or reference an upstream file (e.g. {{http-1.response.url}}). MP4 recommended.",
+          "title": "Video URL",
+          "type": "string",
+          "ui:accept": "video/*",
+          "ui:widget": "media_upload"
+        },
+        "caption": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Caption for the reel",
+          "title": "Caption",
+          "ui:widget": "textarea"
+        },
+        "cover_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The cover image to send \u2014 upload a file, paste a URL, or reference an upstream file (e.g. {{http-1.response.url}}). JPEG.",
+          "title": "Cover Image URL",
+          "ui:accept": "image/*",
+          "ui:widget": "media_upload"
+        },
+        "share_to_feed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "Whether to also share the reel to the main feed",
+          "title": "Share to Feed"
+        },
+        "location_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Facebook Page ID of a location to tag",
+          "title": "Location ID"
+        }
+      },
+      "required": [
+        "video_url"
+      ],
+      "title": "InstagramPublishVideoConfig",
+      "type": "object"
+    },
+    "InstagramReplyToCommentConfig": {
+      "description": "Reply to a comment",
+      "properties": {
+        "operation": {
+          "const": "reply_to_comment",
+          "default": "reply_to_comment",
+          "title": "Reply to Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment",
+          "x-display-name": "Reply to Comment",
+          "x-is-trigger": false
+        },
+        "comment_id": {
+          "description": "The ID of the comment to reply to",
+          "title": "Comment ID",
+          "type": "string"
+        },
+        "message": {
+          "description": "The reply text",
+          "title": "Reply Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "comment_id",
+        "message"
+      ],
+      "title": "InstagramReplyToCommentConfig",
+      "type": "object"
+    },
+    "InstagramScrapeCommentsConfig": {
+      "description": "Scrape comments from Instagram posts or reels via Apify ($1\u2013$1.50/1k comments).",
+      "properties": {
+        "operation": {
+          "const": "scrape_post_comments",
+          "default": "scrape_post_comments",
+          "title": "Scrape Post Comments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment",
+          "x-display-name": "Scrape Post Comments",
+          "x-is-trigger": false
+        },
+        "post_urls": {
+          "description": "One Instagram post or reel URL per line. Example: https://www.instagram.com/p/ABC123/",
+          "title": "Post or Reel URLs",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "max_results": {
+          "default": 50,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Max Comments Per Post",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "post_urls"
+      ],
+      "title": "Scrape Comments",
+      "type": "object",
+      "x-credentials-optional": true
+    },
+    "InstagramScrapeHashtagConfig": {
+      "description": "Scrape recent posts for a hashtag via Apify ($1.50/1k results).",
+      "properties": {
+        "operation": {
+          "const": "scrape_hashtag_posts",
+          "default": "scrape_hashtag_posts",
+          "title": "Scrape Hashtag Posts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Hashtag",
+          "x-display-name": "Scrape Hashtag Posts",
+          "x-is-trigger": false
+        },
+        "hashtags": {
+          "description": "One hashtag per line (without #). Example: photography",
+          "title": "Hashtags",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "max_results": {
+          "default": 30,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Max Posts Per Hashtag",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "hashtags"
+      ],
+      "title": "Scrape Hashtag Feed",
+      "type": "object",
+      "x-credentials-optional": true
+    },
+    "InstagramScrapePostConfig": {
+      "description": "Scrape a specific Instagram post or reel by URL via Apify ($1.50/1k results).",
+      "properties": {
+        "operation": {
+          "const": "scrape_individual_post",
+          "default": "scrape_individual_post",
+          "title": "Scrape Individual Post",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Media",
+          "x-display-name": "Scrape Individual Post",
+          "x-is-trigger": false
+        },
+        "post_urls": {
+          "description": "One Instagram post or reel URL per line. Example: https://www.instagram.com/p/ABC123/",
+          "title": "Post URLs",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "post_urls"
+      ],
+      "title": "Scrape Post by URL",
+      "type": "object",
+      "x-credentials-optional": true
+    },
+    "InstagramScrapePostsConfig": {
+      "description": "Scrape recent posts from one or more public Instagram profiles via Apify ($1/1k posts).",
+      "properties": {
+        "operation": {
+          "const": "scrape_profile_posts",
+          "default": "scrape_profile_posts",
+          "title": "Scrape Profile Posts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Profile",
+          "x-display-name": "Scrape Profile Posts",
+          "x-is-trigger": false
+        },
+        "usernames": {
+          "description": "One Instagram username per line (without @).",
+          "title": "Usernames",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "max_results": {
+          "default": 30,
+          "description": "Maximum number of posts to return per username.",
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Max Posts Per Profile",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "usernames"
+      ],
+      "title": "Scrape Posts from Profile",
+      "type": "object",
+      "x-credentials-optional": true
+    },
+    "InstagramScrapeProfileConfig": {
+      "description": "Scrape public Instagram profile metadata via Apify ($1.60/1k profiles).",
+      "properties": {
+        "operation": {
+          "const": "scrape_profile_metadata",
+          "default": "scrape_profile_metadata",
+          "title": "Scrape Profile Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Profile",
+          "x-display-name": "Scrape Profile Metadata",
+          "x-is-trigger": false
+        },
+        "usernames": {
+          "description": "One Instagram username per line (without @). Example: natgeo",
+          "title": "Usernames",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "max_results": {
+          "default": 10,
+          "description": "Maximum number of profiles to return.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Max Profiles",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "usernames"
+      ],
+      "title": "Scrape Profile",
+      "type": "object",
+      "x-credentials-optional": true
+    },
+    "InstagramScrapeReelsConfig": {
+      "description": "Scrape reels from public Instagram profiles via Apify ($1/1k reels).",
+      "properties": {
+        "operation": {
+          "const": "scrape_profile_reels",
+          "default": "scrape_profile_reels",
+          "title": "Scrape Profile Reels",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Profile",
+          "x-display-name": "Scrape Profile Reels",
+          "x-is-trigger": false
+        },
+        "profile_urls": {
+          "description": "One Instagram profile URL or reel URL per line. Example: https://www.instagram.com/natgeo/",
+          "title": "Profile URLs or Reel URLs",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "max_results": {
+          "default": 30,
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Max Reels",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "profile_urls"
+      ],
+      "title": "Scrape Reels from Profile",
+      "type": "object",
+      "x-credentials-optional": true
+    },
+    "InstagramSearchHashtagConfig": {
+      "description": "Search for a hashtag ID",
+      "properties": {
+        "operation": {
+          "const": "search_hashtag_id",
+          "default": "search_hashtag_id",
+          "title": "Search Hashtag Id",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Hashtag",
+          "x-display-name": "Search Hashtag Id",
+          "x-is-trigger": false,
+          "x-requires-login": "facebook"
+        },
+        "hashtag": {
+          "description": "The hashtag to search for (without #)",
+          "title": "Hashtag",
+          "type": "string"
+        }
+      },
+      "required": [
+        "hashtag"
+      ],
+      "title": "InstagramSearchHashtagConfig",
+      "type": "object"
+    },
+    "InstagramSendDMAttachmentConfig": {
+      "description": "Send a media attachment (image/video/audio) as a direct message",
+      "properties": {
+        "operation": {
+          "const": "send_dm_attachment",
+          "default": "send_dm_attachment",
+          "title": "Send DM Attachment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messaging",
+          "x-display-name": "Send DM Attachment",
+          "x-is-trigger": false
+        },
+        "recipient_id": {
+          "description": "The Instagram-scoped user id (IGSID) of the recipient",
+          "title": "Recipient ID",
+          "type": "string"
+        },
+        "attachment_type": {
+          "default": "image",
+          "description": "Type of media attachment to send",
+          "enum": [
+            "image",
+            "video",
+            "audio"
+          ],
+          "title": "Attachment Type",
+          "type": "string"
+        },
+        "attachment_url": {
+          "description": "Public URL of the media to send",
+          "title": "Attachment URL",
+          "type": "string"
+        }
+      },
+      "required": [
+        "recipient_id",
+        "attachment_url"
+      ],
+      "title": "InstagramSendDMAttachmentConfig",
+      "type": "object"
+    },
+    "InstagramSendDMConfig": {
+      "description": "Send a text direct message",
+      "properties": {
+        "operation": {
+          "const": "send_dm",
+          "default": "send_dm",
+          "title": "Send DM",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messaging",
+          "x-display-name": "Send DM",
+          "x-is-trigger": false
+        },
+        "recipient_id": {
+          "description": "The Instagram-scoped user id (IGSID) of the recipient",
+          "title": "Recipient ID",
+          "type": "string"
+        },
+        "text": {
+          "description": "The text of the direct message",
+          "title": "Message Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "recipient_id",
+        "text"
+      ],
+      "title": "InstagramSendDMConfig",
+      "type": "object"
+    },
+    "InstagramSendDMReactionConfig": {
+      "description": "React to a direct message",
+      "properties": {
+        "operation": {
+          "const": "send_dm_reaction",
+          "default": "send_dm_reaction",
+          "title": "Send DM Reaction",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messaging",
+          "x-display-name": "Send DM Reaction",
+          "x-is-trigger": false
+        },
+        "recipient_id": {
+          "description": "The Instagram-scoped user id (IGSID) of the recipient",
+          "title": "Recipient ID",
+          "type": "string"
+        },
+        "message_id": {
+          "description": "The id of the message to react to",
+          "title": "Message ID",
+          "type": "string"
+        },
+        "reaction": {
+          "default": "love",
+          "description": "The reaction to apply to the message",
+          "title": "Reaction",
+          "type": "string"
+        }
+      },
+      "required": [
+        "recipient_id",
+        "message_id"
+      ],
+      "title": "InstagramSendDMReactionConfig",
+      "type": "object"
+    },
+    "InstagramSystemUserTokenCredential": {
+      "description": "System User Token credential for server-side automation.\nNon-expiring token suitable for long-running background tasks.\n\nCreate at: https://business.facebook.com/settings/system-users",
+      "properties": {
+        "credential_type": {
+          "const": "instagram_system_user_token",
+          "default": "instagram_system_user_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "Non-expiring access token from Facebook Business Manager System User",
+          "title": "System User Access Token",
+          "type": "string"
+        },
+        "instagram_user_id": {
+          "description": "The Instagram Business/Creator account ID",
+          "title": "Instagram User ID",
+          "type": "string"
+        },
+        "instagram_username": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Username of the connected Instagram account",
+          "title": "Instagram Username"
+        }
+      },
+      "required": [
+        "access_token",
+        "instagram_user_id"
+      ],
+      "title": "InstagramSystemUserTokenCredential",
+      "type": "object",
+      "x-credential-url": "https://business.facebook.com/settings/system-users"
+    },
+    "InstagramTagProductsConfig": {
+      "description": "Tag products in a media post for Instagram Shopping",
+      "properties": {
+        "operation": {
+          "const": "tag_products_in_media",
+          "default": "tag_products_in_media",
+          "title": "Tag Products in Media",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Media",
+          "x-display-name": "Tag Products in Media",
+          "x-is-trigger": false,
+          "x-requires-login": "facebook"
+        },
+        "media_id": {
+          "description": "The ID of the media to tag products in",
+          "title": "Media ID",
+          "type": "string"
+        },
+        "product_tags": {
+          "description": "JSON array of product tags: [{product_id: '123', x: 0.5, y: 0.5}]",
+          "title": "Product Tags",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "media_id",
+        "product_tags"
+      ],
+      "title": "InstagramTagProductsConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for Instagram node including credentials",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_media_comment": "#/$defs/InstagramCreateCommentConfig",
+          "delete_comment": "#/$defs/InstagramDeleteCommentConfig",
+          "delete_product_tags_from_media": "#/$defs/InstagramDeleteProductTagsConfig",
+          "discover_business_account": "#/$defs/InstagramBusinessDiscoveryConfig",
+          "get_account_insights": "#/$defs/InstagramGetAccountInsightsConfig",
+          "get_conversation": "#/$defs/InstagramGetConversationConfig",
+          "get_dm_message": "#/$defs/InstagramGetDMMessageConfig",
+          "get_hashtag_media": "#/$defs/InstagramGetHashtagMediaConfig",
+          "get_media_details": "#/$defs/InstagramGetMediaConfig",
+          "get_media_insights": "#/$defs/InstagramGetMediaInsightsConfig",
+          "get_media_product_tags": "#/$defs/InstagramGetProductTagsConfig",
+          "get_mentioned_comments": "#/$defs/InstagramGetMentionedCommentsConfig",
+          "get_mentioned_media": "#/$defs/InstagramGetMentionedMediaConfig",
+          "get_user_profile": "#/$defs/InstagramGetProfileConfig",
+          "hide_or_unhide_comment": "#/$defs/InstagramHideCommentConfig",
+          "list_conversations": "#/$defs/InstagramListConversationsConfig",
+          "list_media_comments": "#/$defs/InstagramListCommentsConfig",
+          "list_user_media": "#/$defs/InstagramListMediaConfig",
+          "mark_dm_seen": "#/$defs/InstagramMarkDMSeenConfig",
+          "publish_carousel_post": "#/$defs/InstagramPublishCarouselConfig",
+          "publish_photo_post": "#/$defs/InstagramPublishPhotoConfig",
+          "publish_photo_story": "#/$defs/InstagramPublishStoryPhotoConfig",
+          "publish_video_reel": "#/$defs/InstagramPublishVideoConfig",
+          "publish_video_story": "#/$defs/InstagramPublishStoryVideoConfig",
+          "reply_to_comment": "#/$defs/InstagramReplyToCommentConfig",
+          "scrape_hashtag_posts": "#/$defs/InstagramScrapeHashtagConfig",
+          "scrape_individual_post": "#/$defs/InstagramScrapePostConfig",
+          "scrape_post_comments": "#/$defs/InstagramScrapeCommentsConfig",
+          "scrape_profile_metadata": "#/$defs/InstagramScrapeProfileConfig",
+          "scrape_profile_posts": "#/$defs/InstagramScrapePostsConfig",
+          "scrape_profile_reels": "#/$defs/InstagramScrapeReelsConfig",
+          "search_hashtag_id": "#/$defs/InstagramSearchHashtagConfig",
+          "send_dm": "#/$defs/InstagramSendDMConfig",
+          "send_dm_attachment": "#/$defs/InstagramSendDMAttachmentConfig",
+          "send_dm_reaction": "#/$defs/InstagramSendDMReactionConfig",
+          "tag_products_in_media": "#/$defs/InstagramTagProductsConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/InstagramGetProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/InstagramListMediaConfig"
+        },
+        {
+          "$ref": "#/$defs/InstagramGetMediaConfig"
+        },
+        {
+          "$ref": "#/$defs/InstagramPublishPhotoConfig"
+        },
+        {
+          "$ref": "#/$defs/InstagramPublishVideoConfig"
+        },
+        {
+          "$ref": "#/$defs/InstagramPublishCarouselConfig"
+        },
+        {
+          "$ref": "#/$defs/InstagramListCommentsConfig"
+        },
+        {
+          "$ref": "#/$defs/InstagramCreateCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/InstagramReplyToCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/InstagramHideCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/InstagramDeleteCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/InstagramGetMediaInsightsConfig"
+        },
+        {
+          "$ref": "#/$defs/InstagramGetAccountInsightsConfig"
+        },
+        {
+          "$ref": "#/$defs/InstagramSearchHashtagConfig"
+        },
+        {
+          "$ref": "#/$defs/InstagramGetHashtagMediaConfig"
+        },
+        {
+          "$ref": "#/$defs/InstagramBusinessDiscoveryConfig"
+        },
+        {
+          "$ref": "#/$defs/InstagramPublishStoryPhotoConfig"
+        },
+        {
+          "$ref": "#/$defs/InstagramPublishStoryVideoConfig"
+        },
+        {
+          "$ref": "#/$defs/InstagramGetMentionedMediaConfig"
+        },
+        {
+          "$ref": "#/$defs/InstagramGetMentionedCommentsConfig"
+        },
+        {
+          "$ref": "#/$defs/InstagramTagProductsConfig"
+        },
+        {
+          "$ref": "#/$defs/InstagramGetProductTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/InstagramDeleteProductTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/InstagramSendDMConfig"
+        },
+        {
+          "$ref": "#/$defs/InstagramSendDMAttachmentConfig"
+        },
+        {
+          "$ref": "#/$defs/InstagramSendDMReactionConfig"
+        },
+        {
+          "$ref": "#/$defs/InstagramMarkDMSeenConfig"
+        },
+        {
+          "$ref": "#/$defs/InstagramListConversationsConfig"
+        },
+        {
+          "$ref": "#/$defs/InstagramGetConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/InstagramGetDMMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/InstagramScrapeProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/InstagramScrapePostsConfig"
+        },
+        {
+          "$ref": "#/$defs/InstagramScrapePostConfig"
+        },
+        {
+          "$ref": "#/$defs/InstagramScrapeHashtagConfig"
+        },
+        {
+          "$ref": "#/$defs/InstagramScrapeReelsConfig"
+        },
+        {
+          "$ref": "#/$defs/InstagramScrapeCommentsConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/InstagramOAuthCredential"
+        },
+        {
+          "$ref": "#/$defs/InstagramLoginCredential"
+        },
+        {
+          "$ref": "#/$defs/InstagramSystemUserTokenCredential"
+        },
+        {
+          "$ref": "#/$defs/InstagramPageAccessTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Instagram Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Publish photo with caption and tag products for Instagram Shop",
+    "Get last 20 media items and retrieve insights like reach/engagement",
+    "Create comment reply to customer question on latest post",
+    "Search hashtag #ProductLaunch and get top media from that hashtag",
+    "List mentions where account was tagged and hide spam comments",
+    "Publish carousel with 3 product images and publish story photo",
+    "Get account followers/engagement stats and discover @competitor profile"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

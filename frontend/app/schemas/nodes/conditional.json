@@ -1,0 +1,159 @@
+{
+  "$defs": {
+    "ConditionalInnerConfig": {
+      "description": "Configuration for the conditional (if/else) node.",
+      "properties": {
+        "input_data": {
+          "description": "Reference to the data to evaluate (e.g., {{trigger.data}})",
+          "placeholder": "{{node-id.field}}",
+          "title": "Input Data",
+          "ui:widget": "textarea"
+        },
+        "condition_field": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to the field to evaluate (e.g., 'status' or 'data.user.role'). Leave empty to evaluate the entire input.",
+          "placeholder": "field_name",
+          "title": "Field to Evaluate"
+        },
+        "condition_operator": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ConditionalOperator"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "equals",
+          "description": "Comparison operator for the condition",
+          "enum": [
+            "equals",
+            "not_equals",
+            "contains",
+            "not_contains",
+            "starts_with",
+            "ends_with",
+            "greater_than",
+            "greater_than_or_equal",
+            "less_than",
+            "less_than_or_equal",
+            "is_empty",
+            "is_not_empty",
+            "is_true",
+            "is_false",
+            "regex_match"
+          ],
+          "enumNames": [
+            "Equals",
+            "Not equals",
+            "Contains",
+            "Does not contain",
+            "Starts with",
+            "Ends with",
+            "Greater than",
+            "Greater than or equal",
+            "Less than",
+            "Less than or equal",
+            "Is empty",
+            "Is not empty",
+            "Is true",
+            "Is false",
+            "Regex match"
+          ],
+          "title": "Operator",
+          "x-enum-searchable": true
+        },
+        "condition_value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Value to compare against (not needed for is_empty, is_true, etc.)",
+          "placeholder": "value",
+          "title": "Comparison Value"
+        },
+        "case_sensitive": {
+          "default": "false",
+          "description": "Whether string comparisons should be case sensitive",
+          "enum": [
+            "false",
+            "true"
+          ],
+          "enumNames": [
+            "No",
+            "Yes"
+          ],
+          "title": "Case Sensitive",
+          "type": "string"
+        }
+      },
+      "required": [
+        "input_data"
+      ],
+      "title": "ConditionalInnerConfig",
+      "type": "object"
+    },
+    "ConditionalOperator": {
+      "description": "Comparison operators for conditions.",
+      "enum": [
+        "equals",
+        "not_equals",
+        "contains",
+        "not_contains",
+        "starts_with",
+        "ends_with",
+        "greater_than",
+        "greater_than_or_equal",
+        "less_than",
+        "less_than_or_equal",
+        "is_empty",
+        "is_not_empty",
+        "is_true",
+        "is_false",
+        "regex_match"
+      ],
+      "title": "ConditionalOperator",
+      "type": "string"
+    }
+  },
+  "description": "Full configuration for conditional node (no credentials needed).",
+  "properties": {
+    "config": {
+      "$ref": "#/$defs/ConditionalInnerConfig",
+      "description": "Node-specific configuration"
+    },
+    "credentials": {
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials",
+      "type": "null"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Conditional Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Route by user tier (send pro users to premium path)",
+    "Check if email is empty before sending",
+    "Only process if the status is not failed",
+    "Route based on a number exceeding a threshold",
+    "Branch if response contains a specific keyword",
+    "Check if a field matches a regex pattern"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

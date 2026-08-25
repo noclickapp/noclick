@@ -1,0 +1,2107 @@
+{
+  "$defs": {
+    "AgentCredentials": {
+      "description": "Flexible credential storage for AI providers.\n\nCredentials are stored as environment variable name -> value pairs.\nThe frontend determines which fields to show based on the selected model/provider.",
+      "properties": {
+        "credential_type": {
+          "const": "agent_api_key",
+          "default": "agent_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "credentials": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Provider credentials. The frontend renders fields dynamically based on selected model.",
+          "title": "API Credentials",
+          "ui:widget": "agent_credentials"
+        }
+      },
+      "title": "AgentCredentials",
+      "type": "object"
+    },
+    "ClaudeCodeConfig": {
+      "description": "Configuration for Anthropic Claude Code CLI agent.",
+      "properties": {
+        "system_prompt": {
+          "default": "You are a helpful assistant.",
+          "description": "Instructions defining how the AI agent should behave",
+          "title": "System Prompt",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "message": {
+          "description": "The task or question to send to the agent",
+          "minLength": 1,
+          "title": "Message",
+          "type": "string",
+          "ui:help": "When a trigger is wired into this agent, the fired event is delivered alongside this message \u2014 write standing instructions here, not the event itself.",
+          "ui:widget": "textarea"
+        },
+        "temperature": {
+          "default": 0.7,
+          "description": "Creativity level (0.0 = focused, 2.0 = creative)",
+          "maximum": 2.0,
+          "minimum": 0.0,
+          "title": "Temperature",
+          "type": "number"
+        },
+        "message_attachments": {
+          "anyOf": [
+            {},
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Files attached to this chat message (set by the chat composer, not manually).",
+          "title": "Message Attachments",
+          "ui:hidden": true
+        },
+        "conversation_key": {
+          "anyOf": [
+            {},
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unique key for tracking conversation history. Same key = same conversation. Channel triggers wired into the agent (Telegram, Slack, alarms) supply their chat/thread id automatically \u2014 only set this to override.",
+          "title": "Conversation Key",
+          "type": "string",
+          "ui:category": "Advanced",
+          "ui:help": "When set, the agent maintains separate chat histories per key value. Use references like {{nodeId.field}} to pull from upstream data. A wired channel trigger's key takes priority when it fires.",
+          "ui:widget": "textarea"
+        },
+        "enable_prompt_builder": {
+          "default": "true",
+          "description": "Give this agent a prompt_builder tool to propose changes to this workflow via the AI builder.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Allow Workflow Edits",
+          "type": "string",
+          "ui:category": "Advanced",
+          "ui:help": "In the interface chat, proposals ask for your approval before the builder runs. Background runs (triggers, schedules) apply edits headlessly.",
+          "x-enum-searchable": true
+        },
+        "enable_email_updates": {
+          "default": "true",
+          "description": "Give this agent an email_user tool to email you updates, questions, and links when you're away. Replying to the email talks back to the agent.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Allow Email Updates",
+          "type": "string",
+          "ui:category": "Advanced",
+          "ui:help": "Emails come from a reply-able per-conversation address and carry a one-click unsubscribe scoped to this agent only. Capped per day and charged like the send-email node.",
+          "x-enum-searchable": true
+        },
+        "show_in_interface": {
+          "default": "true",
+          "description": "Show this agent as a fullscreen chat in the Interface tab.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Show in Interface",
+          "type": "string",
+          "ui:category": "Advanced",
+          "x-enum-searchable": true
+        },
+        "model_type": {
+          "const": "claude_code",
+          "default": "claude_code",
+          "title": "Model Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "model": {
+          "default": "claude-code",
+          "title": "Model",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "claude_code_model": {
+          "default": "haiku",
+          "title": "Claude Code Model",
+          "type": "string",
+          "ui:show-if": {
+            "contains": "claude-code",
+            "field": "model"
+          },
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter a pinned model id",
+            "field_name": "claude_code_model",
+            "placeholder": "Search Claude Code models...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "message"
+      ],
+      "title": "ClaudeCodeConfig",
+      "type": "object",
+      "x-flatten-union": true
+    },
+    "CodexConfig": {
+      "description": "Configuration for OpenAI Codex CLI agent.",
+      "properties": {
+        "system_prompt": {
+          "default": "You are a helpful assistant.",
+          "description": "Instructions defining how the AI agent should behave",
+          "title": "System Prompt",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "message": {
+          "description": "The task or question to send to the agent",
+          "minLength": 1,
+          "title": "Message",
+          "type": "string",
+          "ui:help": "When a trigger is wired into this agent, the fired event is delivered alongside this message \u2014 write standing instructions here, not the event itself.",
+          "ui:widget": "textarea"
+        },
+        "temperature": {
+          "default": 0.7,
+          "description": "Creativity level (0.0 = focused, 2.0 = creative)",
+          "maximum": 2.0,
+          "minimum": 0.0,
+          "title": "Temperature",
+          "type": "number"
+        },
+        "message_attachments": {
+          "anyOf": [
+            {},
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Files attached to this chat message (set by the chat composer, not manually).",
+          "title": "Message Attachments",
+          "ui:hidden": true
+        },
+        "conversation_key": {
+          "anyOf": [
+            {},
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unique key for tracking conversation history. Same key = same conversation. Channel triggers wired into the agent (Telegram, Slack, alarms) supply their chat/thread id automatically \u2014 only set this to override.",
+          "title": "Conversation Key",
+          "type": "string",
+          "ui:category": "Advanced",
+          "ui:help": "When set, the agent maintains separate chat histories per key value. Use references like {{nodeId.field}} to pull from upstream data. A wired channel trigger's key takes priority when it fires.",
+          "ui:widget": "textarea"
+        },
+        "enable_prompt_builder": {
+          "default": "true",
+          "description": "Give this agent a prompt_builder tool to propose changes to this workflow via the AI builder.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Allow Workflow Edits",
+          "type": "string",
+          "ui:category": "Advanced",
+          "ui:help": "In the interface chat, proposals ask for your approval before the builder runs. Background runs (triggers, schedules) apply edits headlessly.",
+          "x-enum-searchable": true
+        },
+        "enable_email_updates": {
+          "default": "true",
+          "description": "Give this agent an email_user tool to email you updates, questions, and links when you're away. Replying to the email talks back to the agent.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Allow Email Updates",
+          "type": "string",
+          "ui:category": "Advanced",
+          "ui:help": "Emails come from a reply-able per-conversation address and carry a one-click unsubscribe scoped to this agent only. Capped per day and charged like the send-email node.",
+          "x-enum-searchable": true
+        },
+        "show_in_interface": {
+          "default": "true",
+          "description": "Show this agent as a fullscreen chat in the Interface tab.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Show in Interface",
+          "type": "string",
+          "ui:category": "Advanced",
+          "x-enum-searchable": true
+        },
+        "model_type": {
+          "const": "codex",
+          "default": "codex",
+          "title": "Model Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "model": {
+          "default": "codex",
+          "title": "Model",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "codex_model": {
+          "default": "gpt-5.4-mini",
+          "title": "Codex Model",
+          "type": "string",
+          "ui:show-if": {
+            "contains": "codex",
+            "field": "model"
+          },
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter a model id",
+            "field_name": "codex_model",
+            "placeholder": "Search Codex models...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "message"
+      ],
+      "title": "CodexConfig",
+      "type": "object",
+      "x-flatten-union": true
+    },
+    "HermesAgentConfig": {
+      "description": "Configuration for NousResearch Hermes Agent CLI sandbox.",
+      "properties": {
+        "system_prompt": {
+          "default": "You are a helpful assistant.",
+          "description": "Instructions defining how the AI agent should behave",
+          "title": "System Prompt",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "message": {
+          "description": "The task or question to send to the agent",
+          "minLength": 1,
+          "title": "Message",
+          "type": "string",
+          "ui:help": "When a trigger is wired into this agent, the fired event is delivered alongside this message \u2014 write standing instructions here, not the event itself.",
+          "ui:widget": "textarea"
+        },
+        "temperature": {
+          "default": 0.7,
+          "description": "Creativity level (0.0 = focused, 2.0 = creative)",
+          "maximum": 2.0,
+          "minimum": 0.0,
+          "title": "Temperature",
+          "type": "number"
+        },
+        "message_attachments": {
+          "anyOf": [
+            {},
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Files attached to this chat message (set by the chat composer, not manually).",
+          "title": "Message Attachments",
+          "ui:hidden": true
+        },
+        "conversation_key": {
+          "anyOf": [
+            {},
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unique key for tracking conversation history. Same key = same conversation. Channel triggers wired into the agent (Telegram, Slack, alarms) supply their chat/thread id automatically \u2014 only set this to override.",
+          "title": "Conversation Key",
+          "type": "string",
+          "ui:category": "Advanced",
+          "ui:help": "When set, the agent maintains separate chat histories per key value. Use references like {{nodeId.field}} to pull from upstream data. A wired channel trigger's key takes priority when it fires.",
+          "ui:widget": "textarea"
+        },
+        "enable_prompt_builder": {
+          "default": "true",
+          "description": "Give this agent a prompt_builder tool to propose changes to this workflow via the AI builder.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Allow Workflow Edits",
+          "type": "string",
+          "ui:category": "Advanced",
+          "ui:help": "In the interface chat, proposals ask for your approval before the builder runs. Background runs (triggers, schedules) apply edits headlessly.",
+          "x-enum-searchable": true
+        },
+        "enable_email_updates": {
+          "default": "true",
+          "description": "Give this agent an email_user tool to email you updates, questions, and links when you're away. Replying to the email talks back to the agent.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Allow Email Updates",
+          "type": "string",
+          "ui:category": "Advanced",
+          "ui:help": "Emails come from a reply-able per-conversation address and carry a one-click unsubscribe scoped to this agent only. Capped per day and charged like the send-email node.",
+          "x-enum-searchable": true
+        },
+        "show_in_interface": {
+          "default": "true",
+          "description": "Show this agent as a fullscreen chat in the Interface tab.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Show in Interface",
+          "type": "string",
+          "ui:category": "Advanced",
+          "x-enum-searchable": true
+        },
+        "model_type": {
+          "const": "hermes_agent",
+          "default": "hermes_agent",
+          "title": "Model Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "model": {
+          "default": "hermes",
+          "title": "Model",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "hermes_agent_model": {
+          "default": "openrouter/openai/gpt-5.6-luna",
+          "description": "LLM to run inside Hermes Agent. Must support tool/function calling. Use chat models (e.g. claude-3.5-sonnet, gpt-4o, hermes-3-70b) \u2014 reasoning models like DeepSeek R1 do not support tool use.",
+          "title": "Model",
+          "type": "string",
+          "ui:show-if": {
+            "contains": "hermes",
+            "field": "model"
+          },
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "e.g. openrouter/nousresearch/hermes-4-70b",
+            "field_name": "hermes_agent_model",
+            "placeholder": "Search models...",
+            "searchable": true
+          }
+        },
+        "max_iterations": {
+          "default": 50,
+          "description": "Maximum number of tool-calling iterations per run.",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Max Iterations",
+          "type": "integer",
+          "ui:category": "Advanced",
+          "ui:show-if": {
+            "contains": "hermes",
+            "field": "model"
+          }
+        },
+        "enable_browser": {
+          "default": "false",
+          "description": "Enable Playwright browser automation (browser_navigate, browser_click, etc.). Requires a larger container build.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes \u2014 enable Playwright browser",
+            "No \u2014 text/code tools only"
+          ],
+          "title": "Enable Browser Tools",
+          "type": "string",
+          "ui:category": "Advanced",
+          "ui:show-if": {
+            "contains": "hermes",
+            "field": "model"
+          },
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "message"
+      ],
+      "title": "HermesAgentConfig",
+      "type": "object",
+      "x-flatten-union": true
+    },
+    "ImageConfig": {
+      "description": "Configuration for image generation models.",
+      "properties": {
+        "system_prompt": {
+          "default": "You are a helpful assistant.",
+          "description": "Instructions defining how the AI agent should behave",
+          "title": "System Prompt",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "message": {
+          "description": "The task or question to send to the agent",
+          "minLength": 1,
+          "title": "Message",
+          "type": "string",
+          "ui:help": "When a trigger is wired into this agent, the fired event is delivered alongside this message \u2014 write standing instructions here, not the event itself.",
+          "ui:widget": "textarea"
+        },
+        "temperature": {
+          "default": 0.7,
+          "description": "Creativity level (0.0 = focused, 2.0 = creative)",
+          "maximum": 2.0,
+          "minimum": 0.0,
+          "title": "Temperature",
+          "type": "number"
+        },
+        "message_attachments": {
+          "anyOf": [
+            {},
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Files attached to this chat message (set by the chat composer, not manually).",
+          "title": "Message Attachments",
+          "ui:hidden": true
+        },
+        "conversation_key": {
+          "anyOf": [
+            {},
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unique key for tracking conversation history. Same key = same conversation. Channel triggers wired into the agent (Telegram, Slack, alarms) supply their chat/thread id automatically \u2014 only set this to override.",
+          "title": "Conversation Key",
+          "type": "string",
+          "ui:category": "Advanced",
+          "ui:help": "When set, the agent maintains separate chat histories per key value. Use references like {{nodeId.field}} to pull from upstream data. A wired channel trigger's key takes priority when it fires.",
+          "ui:widget": "textarea"
+        },
+        "enable_prompt_builder": {
+          "default": "true",
+          "description": "Give this agent a prompt_builder tool to propose changes to this workflow via the AI builder.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Allow Workflow Edits",
+          "type": "string",
+          "ui:category": "Advanced",
+          "ui:help": "In the interface chat, proposals ask for your approval before the builder runs. Background runs (triggers, schedules) apply edits headlessly.",
+          "x-enum-searchable": true
+        },
+        "enable_email_updates": {
+          "default": "true",
+          "description": "Give this agent an email_user tool to email you updates, questions, and links when you're away. Replying to the email talks back to the agent.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Allow Email Updates",
+          "type": "string",
+          "ui:category": "Advanced",
+          "ui:help": "Emails come from a reply-able per-conversation address and carry a one-click unsubscribe scoped to this agent only. Capped per day and charged like the send-email node.",
+          "x-enum-searchable": true
+        },
+        "show_in_interface": {
+          "default": "true",
+          "description": "Show this agent as a fullscreen chat in the Interface tab.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Show in Interface",
+          "type": "string",
+          "ui:category": "Advanced",
+          "x-enum-searchable": true
+        },
+        "model_type": {
+          "const": "image",
+          "default": "image",
+          "title": "Model Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "model": {
+          "default": "openrouter/openai/dall-e-3",
+          "description": "Image generation model",
+          "title": "Model",
+          "type": "string",
+          "x-enum-hint": "LiteLLM identifier for an image-generation model. Fuzzy input is auto-resolved to the closest registered id.",
+          "x-queryable-enum": "models"
+        },
+        "openrouter_image_aspect_ratio": {
+          "default": "1:1",
+          "enum": [
+            "1:1",
+            "3:4",
+            "4:3",
+            "9:16",
+            "16:9",
+            "2:3",
+            "3:2",
+            "4:5",
+            "5:4",
+            "21:9"
+          ],
+          "enumNames": [
+            "1:1 (Square)",
+            "3:4 (Portrait)",
+            "4:3 (Landscape)",
+            "9:16 (Vertical)",
+            "16:9 (Widescreen)",
+            "2:3",
+            "3:2",
+            "4:5 (Instagram)",
+            "5:4",
+            "21:9 (Ultrawide)"
+          ],
+          "title": "Aspect Ratio",
+          "type": "string",
+          "ui:category": "OpenRouter Image Settings",
+          "ui:help": "Controls the generated image shape. Use this field instead of relying on prompt text like 'make it 16:9'.",
+          "ui:show-if": {
+            "containsAll": [
+              "gpt",
+              "image"
+            ],
+            "field": "model"
+          },
+          "x-enum-searchable": true
+        },
+        "openrouter_image_size": {
+          "default": "1K",
+          "enum": [
+            "1K",
+            "2K"
+          ],
+          "enumNames": [
+            "1K (standard)",
+            "2K (higher resolution)"
+          ],
+          "title": "Image Size",
+          "type": "string",
+          "ui:category": "OpenRouter Image Settings",
+          "ui:show-if": {
+            "containsAll": [
+              "gpt",
+              "image"
+            ],
+            "field": "model"
+          },
+          "x-enum-searchable": true
+        },
+        "openrouter_seed": {
+          "default": "",
+          "title": "Seed",
+          "type": "string",
+          "ui:category": "OpenRouter Image Settings",
+          "ui:help": "Optional integer seed for more reproducible GPT image generations when supported by the selected OpenRouter model.",
+          "ui:show-if": {
+            "containsAll": [
+              "gpt",
+              "image"
+            ],
+            "field": "model"
+          }
+        },
+        "gemini_aspect_ratio": {
+          "default": "1:1",
+          "enum": [
+            "1:1",
+            "3:4",
+            "4:3",
+            "9:16",
+            "16:9",
+            "2:3",
+            "3:2",
+            "4:5",
+            "5:4",
+            "21:9"
+          ],
+          "enumNames": [
+            "1:1 (Square)",
+            "3:4 (Portrait)",
+            "4:3 (Landscape)",
+            "9:16 (Vertical)",
+            "16:9 (Widescreen)",
+            "2:3",
+            "3:2",
+            "4:5 (Instagram)",
+            "5:4",
+            "21:9 (Ultrawide)"
+          ],
+          "title": "Aspect Ratio",
+          "type": "string",
+          "ui:category": "Google Image Settings",
+          "ui:show-if": {
+            "containsAny": [
+              "gemini-2.0-flash-preview-image",
+              "gemini-2.5-flash-image",
+              "gemini-3.1-flash-image",
+              "gemini-3-pro-image",
+              "imagen-3",
+              "imagen-4"
+            ],
+            "field": "model"
+          },
+          "x-enum-searchable": true
+        },
+        "gemini_image_size": {
+          "default": "1K",
+          "enum": [
+            "0.5K",
+            "1K",
+            "2K",
+            "4K"
+          ],
+          "enumNames": [
+            "0.5K (~512px, Flash only)",
+            "1K (~1024px)",
+            "2K (~2048px)",
+            "4K (~4096px, Pro only)"
+          ],
+          "title": "Image Size",
+          "type": "string",
+          "ui:category": "Google Image Settings",
+          "ui:show-if": {
+            "containsAny": [
+              "gemini-2.0-flash-preview-image",
+              "gemini-2.5-flash-image",
+              "gemini-3.1-flash-image",
+              "gemini-3-pro-image"
+            ],
+            "field": "model"
+          },
+          "x-enum-searchable": true
+        },
+        "gemini_reference_image_url": {
+          "default": "",
+          "title": "Reference Images",
+          "type": "string",
+          "ui:category": "Image Settings",
+          "ui:help": "Optional images for the model to edit, use as style references, or build upon. Supports JPEG, PNG, WebP. Add multiple images for multi-image prompts.",
+          "ui:show-if": {
+            "anyOf": [
+              {
+                "containsAny": [
+                  "gemini-2.0-flash-preview-image",
+                  "gemini-2.5-flash-image",
+                  "gemini-3.1-flash-image",
+                  "gemini-3-pro-image"
+                ],
+                "field": "model"
+              },
+              {
+                "containsAll": [
+                  "gpt",
+                  "image"
+                ],
+                "field": "model"
+              }
+            ]
+          },
+          "ui:widget": "gemini_multi_image_upload"
+        },
+        "gemini_num_images": {
+          "default": "1",
+          "enum": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "enumNames": [
+            "1",
+            "2",
+            "3",
+            "4"
+          ],
+          "title": "Number of Images",
+          "type": "string",
+          "ui:category": "Google Image Settings",
+          "ui:show-if": {
+            "containsAny": [
+              "imagen-3",
+              "imagen-4"
+            ],
+            "field": "model"
+          },
+          "x-enum-searchable": true
+        },
+        "imagen_negative_prompt": {
+          "default": "",
+          "title": "Negative Prompt",
+          "type": "string",
+          "ui:category": "Google Image Settings",
+          "ui:help": "Describe what to exclude from the generated image.",
+          "ui:show-if": {
+            "containsAny": [
+              "imagen-3",
+              "imagen-4"
+            ],
+            "field": "model"
+          },
+          "ui:widget": "textarea"
+        },
+        "imagen_guidance_scale": {
+          "default": "",
+          "title": "Guidance Scale",
+          "type": "string",
+          "ui:category": "Google Image Settings",
+          "ui:help": "Controls how closely the image follows the prompt (0\u201330). Higher = more faithful to prompt.",
+          "ui:show-if": {
+            "containsAny": [
+              "imagen-3",
+              "imagen-4"
+            ],
+            "field": "model"
+          }
+        },
+        "imagen_seed": {
+          "default": "",
+          "title": "Seed",
+          "type": "string",
+          "ui:category": "Google Image Settings",
+          "ui:help": "Seed for reproducible results. Requires 'Add Watermark' to be disabled.",
+          "ui:show-if": {
+            "containsAny": [
+              "imagen-3",
+              "imagen-4"
+            ],
+            "field": "model"
+          }
+        },
+        "imagen_person_generation": {
+          "default": "allow_adult",
+          "enum": [
+            "dont_allow",
+            "allow_adult",
+            "allow_all"
+          ],
+          "enumNames": [
+            "Don't Allow",
+            "Allow Adults Only",
+            "Allow All Ages"
+          ],
+          "title": "Person Generation",
+          "type": "string",
+          "ui:category": "Google Image Settings",
+          "ui:help": "Controls whether people can appear in generated images. 'Allow All' blocked in some regions.",
+          "ui:show-if": {
+            "containsAny": [
+              "imagen-3",
+              "imagen-4"
+            ],
+            "field": "model"
+          },
+          "x-enum-searchable": true
+        },
+        "imagen_safety_setting": {
+          "default": "block_medium_and_above",
+          "enum": [
+            "block_low_and_above",
+            "block_medium_and_above",
+            "block_only_high"
+          ],
+          "enumNames": [
+            "Strict (block low+)",
+            "Standard (block medium+)",
+            "Permissive (block high only)"
+          ],
+          "title": "Safety Filter",
+          "type": "string",
+          "ui:category": "Google Image Settings",
+          "ui:show-if": {
+            "containsAny": [
+              "imagen-3",
+              "imagen-4"
+            ],
+            "field": "model"
+          },
+          "x-enum-searchable": true
+        },
+        "imagen_enhance_prompt": {
+          "default": "true",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes (recommended)",
+            "No"
+          ],
+          "title": "Enhance Prompt",
+          "type": "string",
+          "ui:category": "Google Image Settings",
+          "ui:help": "Automatically rewrites your prompt for better image quality.",
+          "ui:show-if": {
+            "containsAny": [
+              "imagen-4"
+            ],
+            "field": "model"
+          },
+          "x-enum-searchable": true
+        },
+        "imagen_add_watermark": {
+          "default": "true",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No (required for seed to work)"
+          ],
+          "title": "Add SynthID Watermark",
+          "type": "string",
+          "ui:category": "Google Image Settings",
+          "ui:show-if": {
+            "containsAny": [
+              "imagen-3",
+              "imagen-4"
+            ],
+            "field": "model"
+          },
+          "x-enum-searchable": true
+        },
+        "imagen_output_mime_type": {
+          "default": "image/png",
+          "enum": [
+            "image/png",
+            "image/jpeg"
+          ],
+          "enumNames": [
+            "PNG",
+            "JPEG"
+          ],
+          "title": "Output Format",
+          "type": "string",
+          "ui:category": "Google Image Settings",
+          "ui:show-if": {
+            "containsAny": [
+              "imagen-3",
+              "imagen-4"
+            ],
+            "field": "model"
+          },
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "message"
+      ],
+      "title": "ImageConfig",
+      "type": "object",
+      "x-flatten-union": true
+    },
+    "KlingConfig": {
+      "description": "Configuration for ByteDance Kling video/image generation.",
+      "properties": {
+        "system_prompt": {
+          "default": "You are a helpful assistant.",
+          "description": "Instructions defining how the AI agent should behave",
+          "title": "System Prompt",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "message": {
+          "description": "The task or question to send to the agent",
+          "minLength": 1,
+          "title": "Message",
+          "type": "string",
+          "ui:help": "When a trigger is wired into this agent, the fired event is delivered alongside this message \u2014 write standing instructions here, not the event itself.",
+          "ui:widget": "textarea"
+        },
+        "temperature": {
+          "default": 0.7,
+          "description": "Creativity level (0.0 = focused, 2.0 = creative)",
+          "maximum": 2.0,
+          "minimum": 0.0,
+          "title": "Temperature",
+          "type": "number"
+        },
+        "message_attachments": {
+          "anyOf": [
+            {},
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Files attached to this chat message (set by the chat composer, not manually).",
+          "title": "Message Attachments",
+          "ui:hidden": true
+        },
+        "conversation_key": {
+          "anyOf": [
+            {},
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unique key for tracking conversation history. Same key = same conversation. Channel triggers wired into the agent (Telegram, Slack, alarms) supply their chat/thread id automatically \u2014 only set this to override.",
+          "title": "Conversation Key",
+          "type": "string",
+          "ui:category": "Advanced",
+          "ui:help": "When set, the agent maintains separate chat histories per key value. Use references like {{nodeId.field}} to pull from upstream data. A wired channel trigger's key takes priority when it fires.",
+          "ui:widget": "textarea"
+        },
+        "enable_prompt_builder": {
+          "default": "true",
+          "description": "Give this agent a prompt_builder tool to propose changes to this workflow via the AI builder.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Allow Workflow Edits",
+          "type": "string",
+          "ui:category": "Advanced",
+          "ui:help": "In the interface chat, proposals ask for your approval before the builder runs. Background runs (triggers, schedules) apply edits headlessly.",
+          "x-enum-searchable": true
+        },
+        "enable_email_updates": {
+          "default": "true",
+          "description": "Give this agent an email_user tool to email you updates, questions, and links when you're away. Replying to the email talks back to the agent.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Allow Email Updates",
+          "type": "string",
+          "ui:category": "Advanced",
+          "ui:help": "Emails come from a reply-able per-conversation address and carry a one-click unsubscribe scoped to this agent only. Capped per day and charged like the send-email node.",
+          "x-enum-searchable": true
+        },
+        "show_in_interface": {
+          "default": "true",
+          "description": "Show this agent as a fullscreen chat in the Interface tab.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Show in Interface",
+          "type": "string",
+          "ui:category": "Advanced",
+          "x-enum-searchable": true
+        },
+        "model_type": {
+          "const": "kling",
+          "default": "kling",
+          "title": "Model Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "model": {
+          "default": "kling/kling-v2-master",
+          "description": "Kling model variant",
+          "title": "Model",
+          "type": "string",
+          "x-enum-hint": "Kling model identifier (kling/...). Fuzzy input is auto-resolved to the closest registered id.",
+          "x-queryable-enum": "models"
+        },
+        "kling_mode": {
+          "default": "std",
+          "enum": [
+            "std",
+            "pro"
+          ],
+          "enumNames": [
+            "Standard (~30s generation)",
+            "Professional (~60s, higher quality)"
+          ],
+          "title": "Quality Mode",
+          "type": "string",
+          "ui:category": "Kling Settings",
+          "ui:show-if": {
+            "contains": "kling",
+            "field": "model",
+            "notContains": "image"
+          },
+          "x-enum-searchable": true
+        },
+        "kling_duration": {
+          "default": "5",
+          "enum": [
+            "5",
+            "10"
+          ],
+          "enumNames": [
+            "5 seconds",
+            "10 seconds"
+          ],
+          "title": "Duration (seconds)",
+          "type": "string",
+          "ui:category": "Kling Settings",
+          "ui:show-if": {
+            "contains": "kling",
+            "field": "model",
+            "notContains": "image"
+          },
+          "x-enum-searchable": true
+        },
+        "kling_aspect_ratio": {
+          "default": "16:9",
+          "enum": [
+            "16:9",
+            "9:16",
+            "1:1"
+          ],
+          "enumNames": [
+            "16:9 (Landscape)",
+            "9:16 (Portrait)",
+            "1:1 (Square)"
+          ],
+          "title": "Aspect Ratio",
+          "type": "string",
+          "ui:category": "Kling Settings",
+          "ui:show-if": {
+            "contains": "kling",
+            "field": "model"
+          },
+          "x-enum-searchable": true
+        },
+        "kling_negative_prompt": {
+          "default": "",
+          "title": "Negative Prompt",
+          "type": "string",
+          "ui:category": "Kling Settings",
+          "ui:help": "Content to exclude from the generated video/image (max 2500 chars).",
+          "ui:show-if": {
+            "containsAny": [
+              "kling-v1-6",
+              "kling-v1-5",
+              "kling/kling-v1",
+              "kling-v2-5-turbo",
+              "kling-v2-6",
+              "kling-v3",
+              "kling-v3-omni",
+              "kling-image"
+            ],
+            "field": "model"
+          },
+          "ui:widget": "textarea"
+        },
+        "kling_image_url": {
+          "default": "",
+          "title": "Image (First Frame)",
+          "type": "string",
+          "ui:category": "Kling Settings",
+          "ui:help": "Optional image to animate as the first frame (image-to-video). JPEG, PNG, or WebP.",
+          "ui:show-if": {
+            "contains": "kling",
+            "field": "model"
+          },
+          "ui:widget": "veo_image_upload"
+        },
+        "kling_image_tail_url": {
+          "default": "",
+          "title": "Image (Last Frame)",
+          "type": "string",
+          "ui:category": "Kling Settings",
+          "ui:help": "End-frame image for image-to-video (pro mode). Controls where the video ends.",
+          "ui:show-if": {
+            "containsAny": [
+              "kling-v1-6",
+              "kling-v2-1",
+              "kling-v2-6",
+              "kling-v3",
+              "kling-v3-omni",
+              "kling-video-o1"
+            ],
+            "field": "model"
+          },
+          "ui:widget": "veo_image_upload"
+        },
+        "kling_cfg_scale": {
+          "default": "0.5",
+          "enum": [
+            "0",
+            "0.25",
+            "0.5",
+            "0.75",
+            "1"
+          ],
+          "enumNames": [
+            "0 (Max creativity)",
+            "0.25",
+            "0.5 (Balanced)",
+            "0.75",
+            "1 (Strict prompt)"
+          ],
+          "title": "Creativity (cfg_scale)",
+          "type": "string",
+          "ui:category": "Kling Settings",
+          "ui:help": "Controls how closely the output follows the prompt. Lower = more creative.",
+          "ui:show-if": {
+            "containsAny": [
+              "kling/kling-v1",
+              "kling-v1-5",
+              "kling-v1-6",
+              "kling-v3",
+              "kling-video-o1"
+            ],
+            "field": "model"
+          },
+          "x-enum-searchable": true
+        },
+        "kling_seed": {
+          "default": "",
+          "title": "Seed",
+          "type": "string",
+          "ui:category": "Kling Settings",
+          "ui:help": "Optional seed for reproducible results. Leave empty for random.",
+          "ui:show-if": {
+            "contains": "kling",
+            "field": "model"
+          }
+        },
+        "kling_sound": {
+          "default": "off",
+          "enum": [
+            "off",
+            "on"
+          ],
+          "enumNames": [
+            "Off",
+            "On"
+          ],
+          "title": "Sound Generation",
+          "type": "string",
+          "ui:category": "Kling Settings",
+          "ui:help": "Generate synchronized audio.",
+          "ui:show-if": {
+            "containsAny": [
+              "kling-v2-5-turbo",
+              "kling-v2-6",
+              "kling-v3",
+              "kling-v3-omni",
+              "kling-video-o1"
+            ],
+            "field": "model"
+          },
+          "x-enum-searchable": true
+        },
+        "kling_camera_type": {
+          "default": "",
+          "enum": [
+            "",
+            "simple",
+            "down_back",
+            "forward_up",
+            "right_turn_forward",
+            "left_turn_forward"
+          ],
+          "enumNames": [
+            "None",
+            "Simple (manual control)",
+            "Down & Back",
+            "Forward & Up",
+            "Right Turn Forward",
+            "Left Turn Forward"
+          ],
+          "title": "Camera Movement",
+          "type": "string",
+          "ui:category": "Kling Settings",
+          "ui:help": "Camera movement preset. 'Simple' allows manual horizontal/vertical/zoom/pan/tilt/roll.",
+          "ui:show-if": {
+            "contains": "kling-v1-6",
+            "field": "model"
+          },
+          "x-enum-searchable": true
+        },
+        "kling_camera_horizontal": {
+          "default": "0",
+          "title": "Camera Horizontal",
+          "type": "string",
+          "ui:category": "Kling Settings",
+          "ui:help": "Horizontal camera movement (-10 to 10). Only used when camera is 'Simple'.",
+          "ui:show-if": {
+            "contains": "kling-v1-6",
+            "field": "model"
+          }
+        },
+        "kling_camera_vertical": {
+          "default": "0",
+          "title": "Camera Vertical",
+          "type": "string",
+          "ui:category": "Kling Settings",
+          "ui:help": "Vertical camera movement (-10 to 10). Only used when camera is 'Simple'.",
+          "ui:show-if": {
+            "contains": "kling-v1-6",
+            "field": "model"
+          }
+        },
+        "kling_camera_zoom": {
+          "default": "0",
+          "title": "Camera Zoom",
+          "type": "string",
+          "ui:category": "Kling Settings",
+          "ui:help": "Zoom level (-10 to 10). Positive = zoom in, negative = zoom out.",
+          "ui:show-if": {
+            "contains": "kling-v1-6",
+            "field": "model"
+          }
+        },
+        "kling_camera_pan": {
+          "default": "0",
+          "title": "Camera Pan",
+          "type": "string",
+          "ui:category": "Kling Settings",
+          "ui:help": "Pan rotation (-10 to 10). Only used when camera is 'Simple'.",
+          "ui:show-if": {
+            "contains": "kling-v1-6",
+            "field": "model"
+          }
+        },
+        "kling_camera_tilt": {
+          "default": "0",
+          "title": "Camera Tilt",
+          "type": "string",
+          "ui:category": "Kling Settings",
+          "ui:help": "Tilt rotation (-10 to 10). Only used when camera is 'Simple'.",
+          "ui:show-if": {
+            "contains": "kling-v1-6",
+            "field": "model"
+          }
+        },
+        "kling_camera_roll": {
+          "default": "0",
+          "title": "Camera Roll",
+          "type": "string",
+          "ui:category": "Kling Settings",
+          "ui:help": "Roll rotation (-10 to 10). Only used when camera is 'Simple'.",
+          "ui:show-if": {
+            "contains": "kling-v1-6",
+            "field": "model"
+          }
+        },
+        "kling_image_count": {
+          "default": "1",
+          "enum": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9"
+          ],
+          "enumNames": [
+            "1",
+            "2",
+            "3",
+            "4",
+            "5",
+            "6",
+            "7",
+            "8",
+            "9"
+          ],
+          "title": "Number of Images",
+          "type": "string",
+          "ui:category": "Kling Settings",
+          "ui:help": "Number of images to generate (1-9). Only applies to image generation models.",
+          "ui:show-if": {
+            "contains": "kling-image",
+            "field": "model"
+          },
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "message"
+      ],
+      "title": "KlingConfig",
+      "type": "object",
+      "x-flatten-union": true
+    },
+    "LLMAgentConfig": {
+      "description": "Configuration for standard LLM models via the in-process LiteLLM-backed agent.",
+      "properties": {
+        "system_prompt": {
+          "default": "You are a helpful assistant.",
+          "description": "Instructions defining how the AI agent should behave",
+          "title": "System Prompt",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "message": {
+          "description": "The task or question to send to the agent",
+          "minLength": 1,
+          "title": "Message",
+          "type": "string",
+          "ui:help": "When a trigger is wired into this agent, the fired event is delivered alongside this message \u2014 write standing instructions here, not the event itself.",
+          "ui:widget": "textarea"
+        },
+        "temperature": {
+          "default": 0.7,
+          "description": "Creativity level (0.0 = focused, 2.0 = creative)",
+          "maximum": 2.0,
+          "minimum": 0.0,
+          "title": "Temperature",
+          "type": "number"
+        },
+        "message_attachments": {
+          "anyOf": [
+            {},
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Files attached to this chat message (set by the chat composer, not manually).",
+          "title": "Message Attachments",
+          "ui:hidden": true
+        },
+        "conversation_key": {
+          "anyOf": [
+            {},
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unique key for tracking conversation history. Same key = same conversation. Channel triggers wired into the agent (Telegram, Slack, alarms) supply their chat/thread id automatically \u2014 only set this to override.",
+          "title": "Conversation Key",
+          "type": "string",
+          "ui:category": "Advanced",
+          "ui:help": "When set, the agent maintains separate chat histories per key value. Use references like {{nodeId.field}} to pull from upstream data. A wired channel trigger's key takes priority when it fires.",
+          "ui:widget": "textarea"
+        },
+        "enable_prompt_builder": {
+          "default": "true",
+          "description": "Give this agent a prompt_builder tool to propose changes to this workflow via the AI builder.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Allow Workflow Edits",
+          "type": "string",
+          "ui:category": "Advanced",
+          "ui:help": "In the interface chat, proposals ask for your approval before the builder runs. Background runs (triggers, schedules) apply edits headlessly.",
+          "x-enum-searchable": true
+        },
+        "enable_email_updates": {
+          "default": "true",
+          "description": "Give this agent an email_user tool to email you updates, questions, and links when you're away. Replying to the email talks back to the agent.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Allow Email Updates",
+          "type": "string",
+          "ui:category": "Advanced",
+          "ui:help": "Emails come from a reply-able per-conversation address and carry a one-click unsubscribe scoped to this agent only. Capped per day and charged like the send-email node.",
+          "x-enum-searchable": true
+        },
+        "show_in_interface": {
+          "default": "true",
+          "description": "Show this agent as a fullscreen chat in the Interface tab.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Show in Interface",
+          "type": "string",
+          "ui:category": "Advanced",
+          "x-enum-searchable": true
+        },
+        "model_type": {
+          "const": "llm",
+          "default": "llm",
+          "title": "Model Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "model": {
+          "default": "openrouter/openai/gpt-5.6-luna",
+          "description": "LLM model to use for processing",
+          "title": "Model",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a model id (e.g. openrouter/openai/gpt-5.6-luna)",
+            "field_name": "model",
+            "placeholder": "Select a model...",
+            "searchable": true
+          },
+          "x-enum-hint": "LiteLLM identifier (provider/model). Fuzzy input is auto-resolved to the closest registered model id.",
+          "x-queryable-enum": "models"
+        }
+      },
+      "required": [
+        "message"
+      ],
+      "title": "LLMAgentConfig",
+      "type": "object",
+      "x-flatten-union": true
+    },
+    "OpenClawConfig": {
+      "description": "Configuration for the OpenClaw local CLI runtime.",
+      "properties": {
+        "system_prompt": {
+          "default": "You are a helpful assistant.",
+          "description": "Instructions defining how the AI agent should behave",
+          "title": "System Prompt",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "message": {
+          "description": "The task or question to send to the agent",
+          "minLength": 1,
+          "title": "Message",
+          "type": "string",
+          "ui:help": "When a trigger is wired into this agent, the fired event is delivered alongside this message \u2014 write standing instructions here, not the event itself.",
+          "ui:widget": "textarea"
+        },
+        "temperature": {
+          "default": 0.7,
+          "description": "Creativity level (0.0 = focused, 2.0 = creative)",
+          "maximum": 2.0,
+          "minimum": 0.0,
+          "title": "Temperature",
+          "type": "number"
+        },
+        "message_attachments": {
+          "anyOf": [
+            {},
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Files attached to this chat message (set by the chat composer, not manually).",
+          "title": "Message Attachments",
+          "ui:hidden": true
+        },
+        "conversation_key": {
+          "anyOf": [
+            {},
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unique key for tracking conversation history. Same key = same conversation. Channel triggers wired into the agent (Telegram, Slack, alarms) supply their chat/thread id automatically \u2014 only set this to override.",
+          "title": "Conversation Key",
+          "type": "string",
+          "ui:category": "Advanced",
+          "ui:help": "When set, the agent maintains separate chat histories per key value. Use references like {{nodeId.field}} to pull from upstream data. A wired channel trigger's key takes priority when it fires.",
+          "ui:widget": "textarea"
+        },
+        "enable_prompt_builder": {
+          "default": "true",
+          "description": "Give this agent a prompt_builder tool to propose changes to this workflow via the AI builder.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Allow Workflow Edits",
+          "type": "string",
+          "ui:category": "Advanced",
+          "ui:help": "In the interface chat, proposals ask for your approval before the builder runs. Background runs (triggers, schedules) apply edits headlessly.",
+          "x-enum-searchable": true
+        },
+        "enable_email_updates": {
+          "default": "true",
+          "description": "Give this agent an email_user tool to email you updates, questions, and links when you're away. Replying to the email talks back to the agent.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Allow Email Updates",
+          "type": "string",
+          "ui:category": "Advanced",
+          "ui:help": "Emails come from a reply-able per-conversation address and carry a one-click unsubscribe scoped to this agent only. Capped per day and charged like the send-email node.",
+          "x-enum-searchable": true
+        },
+        "show_in_interface": {
+          "default": "true",
+          "description": "Show this agent as a fullscreen chat in the Interface tab.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Show in Interface",
+          "type": "string",
+          "ui:category": "Advanced",
+          "x-enum-searchable": true
+        },
+        "model_type": {
+          "const": "openclaw",
+          "default": "openclaw",
+          "title": "Model Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "model": {
+          "default": "openclaw",
+          "title": "Model",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "openclaw_model": {
+          "default": "openrouter/openai/gpt-5.6-luna",
+          "description": "LLM to run inside OpenClaw. Use a tool-capable chat model in provider/model format, for example openrouter/anthropic/claude-sonnet-4-5.",
+          "title": "Model",
+          "type": "string",
+          "ui:show-if": {
+            "contains": "openclaw",
+            "field": "model"
+          },
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "e.g. openrouter/openai/gpt-5.4-mini",
+            "field_name": "openclaw_model",
+            "placeholder": "Search models...",
+            "searchable": true
+          }
+        },
+        "timeout_seconds": {
+          "default": 600,
+          "description": "Per-run OpenClaw timeout. Set 0 to disable the CLI timeout.",
+          "maximum": 3600,
+          "minimum": 0,
+          "title": "Timeout Seconds",
+          "type": "integer",
+          "ui:category": "Advanced",
+          "ui:show-if": {
+            "contains": "openclaw",
+            "field": "model"
+          }
+        }
+      },
+      "required": [
+        "message"
+      ],
+      "title": "OpenClawConfig",
+      "type": "object",
+      "x-flatten-union": true
+    },
+    "OpenCodeConfig": {
+      "description": "Configuration for OpenCode multi-provider CLI agent.",
+      "properties": {
+        "system_prompt": {
+          "default": "You are a helpful assistant.",
+          "description": "Instructions defining how the AI agent should behave",
+          "title": "System Prompt",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "message": {
+          "description": "The task or question to send to the agent",
+          "minLength": 1,
+          "title": "Message",
+          "type": "string",
+          "ui:help": "When a trigger is wired into this agent, the fired event is delivered alongside this message \u2014 write standing instructions here, not the event itself.",
+          "ui:widget": "textarea"
+        },
+        "temperature": {
+          "default": 0.7,
+          "description": "Creativity level (0.0 = focused, 2.0 = creative)",
+          "maximum": 2.0,
+          "minimum": 0.0,
+          "title": "Temperature",
+          "type": "number"
+        },
+        "message_attachments": {
+          "anyOf": [
+            {},
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Files attached to this chat message (set by the chat composer, not manually).",
+          "title": "Message Attachments",
+          "ui:hidden": true
+        },
+        "conversation_key": {
+          "anyOf": [
+            {},
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unique key for tracking conversation history. Same key = same conversation. Channel triggers wired into the agent (Telegram, Slack, alarms) supply their chat/thread id automatically \u2014 only set this to override.",
+          "title": "Conversation Key",
+          "type": "string",
+          "ui:category": "Advanced",
+          "ui:help": "When set, the agent maintains separate chat histories per key value. Use references like {{nodeId.field}} to pull from upstream data. A wired channel trigger's key takes priority when it fires.",
+          "ui:widget": "textarea"
+        },
+        "enable_prompt_builder": {
+          "default": "true",
+          "description": "Give this agent a prompt_builder tool to propose changes to this workflow via the AI builder.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Allow Workflow Edits",
+          "type": "string",
+          "ui:category": "Advanced",
+          "ui:help": "In the interface chat, proposals ask for your approval before the builder runs. Background runs (triggers, schedules) apply edits headlessly.",
+          "x-enum-searchable": true
+        },
+        "enable_email_updates": {
+          "default": "true",
+          "description": "Give this agent an email_user tool to email you updates, questions, and links when you're away. Replying to the email talks back to the agent.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Allow Email Updates",
+          "type": "string",
+          "ui:category": "Advanced",
+          "ui:help": "Emails come from a reply-able per-conversation address and carry a one-click unsubscribe scoped to this agent only. Capped per day and charged like the send-email node.",
+          "x-enum-searchable": true
+        },
+        "show_in_interface": {
+          "default": "true",
+          "description": "Show this agent as a fullscreen chat in the Interface tab.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Show in Interface",
+          "type": "string",
+          "ui:category": "Advanced",
+          "x-enum-searchable": true
+        },
+        "model_type": {
+          "const": "opencode",
+          "default": "opencode",
+          "title": "Model Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "model": {
+          "default": "opencode",
+          "title": "Model",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "opencode_model": {
+          "default": "opencode/deepseek-v4-flash-free",
+          "title": "OpenCode Model",
+          "type": "string",
+          "ui:show-if": {
+            "contains": "opencode",
+            "field": "model"
+          },
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter provider/model ID",
+            "field_name": "opencode_model",
+            "placeholder": "Search models...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "message"
+      ],
+      "title": "OpenCodeConfig",
+      "type": "object",
+      "x-flatten-union": true
+    },
+    "VideoConfig": {
+      "description": "Configuration for video generation models (Veo, Sora, RunwayML).",
+      "properties": {
+        "system_prompt": {
+          "default": "You are a helpful assistant.",
+          "description": "Instructions defining how the AI agent should behave",
+          "title": "System Prompt",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "message": {
+          "description": "The task or question to send to the agent",
+          "minLength": 1,
+          "title": "Message",
+          "type": "string",
+          "ui:help": "When a trigger is wired into this agent, the fired event is delivered alongside this message \u2014 write standing instructions here, not the event itself.",
+          "ui:widget": "textarea"
+        },
+        "temperature": {
+          "default": 0.7,
+          "description": "Creativity level (0.0 = focused, 2.0 = creative)",
+          "maximum": 2.0,
+          "minimum": 0.0,
+          "title": "Temperature",
+          "type": "number"
+        },
+        "message_attachments": {
+          "anyOf": [
+            {},
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Files attached to this chat message (set by the chat composer, not manually).",
+          "title": "Message Attachments",
+          "ui:hidden": true
+        },
+        "conversation_key": {
+          "anyOf": [
+            {},
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unique key for tracking conversation history. Same key = same conversation. Channel triggers wired into the agent (Telegram, Slack, alarms) supply their chat/thread id automatically \u2014 only set this to override.",
+          "title": "Conversation Key",
+          "type": "string",
+          "ui:category": "Advanced",
+          "ui:help": "When set, the agent maintains separate chat histories per key value. Use references like {{nodeId.field}} to pull from upstream data. A wired channel trigger's key takes priority when it fires.",
+          "ui:widget": "textarea"
+        },
+        "enable_prompt_builder": {
+          "default": "true",
+          "description": "Give this agent a prompt_builder tool to propose changes to this workflow via the AI builder.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Allow Workflow Edits",
+          "type": "string",
+          "ui:category": "Advanced",
+          "ui:help": "In the interface chat, proposals ask for your approval before the builder runs. Background runs (triggers, schedules) apply edits headlessly.",
+          "x-enum-searchable": true
+        },
+        "enable_email_updates": {
+          "default": "true",
+          "description": "Give this agent an email_user tool to email you updates, questions, and links when you're away. Replying to the email talks back to the agent.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Allow Email Updates",
+          "type": "string",
+          "ui:category": "Advanced",
+          "ui:help": "Emails come from a reply-able per-conversation address and carry a one-click unsubscribe scoped to this agent only. Capped per day and charged like the send-email node.",
+          "x-enum-searchable": true
+        },
+        "show_in_interface": {
+          "default": "true",
+          "description": "Show this agent as a fullscreen chat in the Interface tab.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Show in Interface",
+          "type": "string",
+          "ui:category": "Advanced",
+          "x-enum-searchable": true
+        },
+        "model_type": {
+          "const": "video",
+          "default": "video",
+          "title": "Model Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "model": {
+          "default": "veo-3",
+          "description": "Video generation model",
+          "title": "Model",
+          "type": "string",
+          "x-enum-hint": "LiteLLM identifier for a video-generation model. Fuzzy input is auto-resolved to the closest registered id.",
+          "x-queryable-enum": "models"
+        },
+        "veo_aspect_ratio": {
+          "default": "16:9",
+          "enum": [
+            "16:9",
+            "9:16"
+          ],
+          "enumNames": [
+            "16:9 (Landscape)",
+            "9:16 (Portrait)"
+          ],
+          "title": "Aspect Ratio",
+          "type": "string",
+          "ui:category": "Video Settings",
+          "ui:show-if": {
+            "contains": "veo",
+            "field": "model"
+          },
+          "x-enum-searchable": true
+        },
+        "veo_duration_seconds": {
+          "default": "8",
+          "enum": [
+            "4",
+            "6",
+            "8"
+          ],
+          "enumNames": [
+            "4s (Veo 3+ only)",
+            "6s",
+            "8s"
+          ],
+          "title": "Duration (seconds)",
+          "type": "string",
+          "ui:category": "Video Settings",
+          "ui:help": "Veo 3/3.1: 4, 6, or 8s. Veo 2: min 5s (4s is clamped to 5s).",
+          "ui:show-if": {
+            "contains": "veo",
+            "field": "model"
+          },
+          "x-enum-searchable": true
+        },
+        "veo_resolution": {
+          "default": "720p",
+          "enum": [
+            "720p",
+            "1080p"
+          ],
+          "enumNames": [
+            "720p (HD)",
+            "1080p (Full HD)"
+          ],
+          "title": "Resolution",
+          "type": "string",
+          "ui:category": "Video Settings",
+          "ui:show-if": {
+            "contains": "veo",
+            "field": "model"
+          },
+          "x-enum-searchable": true
+        },
+        "veo_negative_prompt": {
+          "default": "",
+          "title": "Negative Prompt",
+          "type": "string",
+          "ui:category": "Video Settings",
+          "ui:help": "Content to exclude from the generated video.",
+          "ui:show-if": {
+            "contains": "veo",
+            "field": "model"
+          },
+          "ui:widget": "textarea"
+        },
+        "veo_image_url": {
+          "default": "",
+          "title": "Image (First Frame)",
+          "type": "string",
+          "ui:category": "Video Settings",
+          "ui:help": "Optional image to animate as the first frame (image-to-video). JPEG, PNG, or WebP.",
+          "ui:show-if": {
+            "contains": "veo",
+            "field": "model"
+          },
+          "ui:widget": "veo_image_upload"
+        }
+      },
+      "required": [
+        "message"
+      ],
+      "title": "VideoConfig",
+      "type": "object",
+      "x-flatten-union": true
+    }
+  },
+  "description": "Full configuration for Agent node including optional credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "oneOf": [
+        {
+          "$ref": "#/$defs/LLMAgentConfig"
+        },
+        {
+          "$ref": "#/$defs/ImageConfig"
+        },
+        {
+          "$ref": "#/$defs/VideoConfig"
+        },
+        {
+          "$ref": "#/$defs/CodexConfig"
+        },
+        {
+          "$ref": "#/$defs/ClaudeCodeConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenCodeConfig"
+        },
+        {
+          "$ref": "#/$defs/OpenClawConfig"
+        },
+        {
+          "$ref": "#/$defs/KlingConfig"
+        },
+        {
+          "$ref": "#/$defs/HermesAgentConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AgentCredentials"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Agent Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Change model harness to OpenCode",
+    "Set temperature to 0.7 for more randomness",
+    "Enable conversation memory to resume chat",
+    "Switch to Claude Code for code generation",
+    "Disable streaming for faster responses",
+    "Add system prompt guidance"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

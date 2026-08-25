@@ -1,0 +1,5193 @@
+{
+  "$defs": {
+    "HoneycombApiKeyCredential": {
+      "description": "v1 API key (X-Honeycomb-Team). Use a Configuration key for CRUD.",
+      "properties": {
+        "credential_type": {
+          "const": "honeycomb_api_key",
+          "default": "honeycomb_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Honeycomb Configuration or Ingest key (sent as X-Honeycomb-Team).",
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "region": {
+          "default": "us",
+          "description": "Honeycomb region (US or EU) \u2014 selects the API base URL.",
+          "enum": [
+            "us",
+            "eu"
+          ],
+          "enumNames": [
+            "US",
+            "EU"
+          ],
+          "title": "Region",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "HoneycombApiKeyCredential",
+      "type": "object",
+      "x-credential-url": "https://docs.honeycomb.io/configure/environments/manage-api-keys",
+      "x-help-text": "Environment Settings \u2192 API Keys. A Configuration key is needed for resource CRUD."
+    },
+    "HoneycombCreateApiKeyConfig": {
+      "description": "Create an API key (v2 JSON:API: data.type=api-keys, attributes + environment relationship).",
+      "properties": {
+        "operation": {
+          "const": "create_api_key",
+          "default": "create_api_key",
+          "title": "Create API Key",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Management (v2)",
+          "x-display-name": "Create API Key",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "api keys",
+            "new key",
+            "create ingest key",
+            "create configuration key"
+          ]
+        },
+        "team_slug": {
+          "description": "Your Honeycomb team slug (from GET /2/auth `included[].attributes.slug`, or the UI URL).",
+          "title": "Team Slug",
+          "type": "string"
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "JSON:API body, e.g. {\"data\": {\"type\": \"api-keys\", \"attributes\": {\"name\": \"...\", \"key_type\": \"ingest\", \"permissions\": {\"create_datasets\": true}}, \"relationships\": {\"environment\": {\"data\": {\"type\": \"environments\", \"id\": \"<env-id>\"}}}}}",
+          "title": "Body (JSON)",
+          "type": "string",
+          "ui:rows": 8,
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "team_slug"
+      ],
+      "title": "HoneycombCreateApiKeyConfig",
+      "type": "object"
+    },
+    "HoneycombCreateBoardConfig": {
+      "description": "Create a new Board.\n\nProvide the full Board object as JSON (``type`` and ``name`` are required;\n``description``, ``panels``, ``layout_generation``, ``tags``,\n``preset_filters`` are optional).",
+      "properties": {
+        "operation": {
+          "const": "create_board",
+          "default": "create_board",
+          "title": "Create Board",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards",
+          "x-display-name": "Create Board",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "boards",
+            "create board",
+            "new dashboard"
+          ]
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "Board object as JSON (requires type + name).",
+          "title": "Body (JSON)",
+          "type": "string",
+          "ui:rows": 8,
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "HoneycombCreateBoardConfig",
+      "type": "object"
+    },
+    "HoneycombCreateBoardViewConfig": {
+      "description": "Create a saved filter view on a board.",
+      "properties": {
+        "operation": {
+          "const": "create_board_view",
+          "default": "create_board_view",
+          "title": "Create Board View",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards",
+          "x-display-name": "Create Board View",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "board view",
+            "create view",
+            "saved filter view"
+          ]
+        },
+        "board_id": {
+          "description": "The Board identifier.",
+          "title": "Board ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an id",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "Board view object as JSON (name + filters).",
+          "title": "Body (JSON)",
+          "type": "string",
+          "ui:rows": 8,
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id"
+      ],
+      "title": "HoneycombCreateBoardViewConfig",
+      "type": "object"
+    },
+    "HoneycombCreateBurnAlertConfig": {
+      "description": "Create a burn alert for an SLO.",
+      "properties": {
+        "operation": {
+          "const": "create_burn_alert",
+          "default": "create_burn_alert",
+          "title": "Create Burn Alert",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "SLOs & Burn Alerts",
+          "x-display-name": "Create Burn Alert",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "burn alert",
+            "slo alert",
+            "create burn alert",
+            "exhaustion",
+            "budget rate"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "Burn alert object as JSON. Required: slo_id, alert_type ('exhaustion_time' or 'budget_rate'). For exhaustion_time: exhaustion_minutes. For budget_rate: budget_rate_window_minutes, budget_rate_decrease_threshold_per_million. Optional: description, recipients.",
+          "title": "Body (JSON)",
+          "type": "string",
+          "ui:rows": 8,
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "dataset"
+      ],
+      "title": "HoneycombCreateBurnAlertConfig",
+      "type": "object"
+    },
+    "HoneycombCreateColumnConfig": {
+      "description": "Create a new column in a dataset.",
+      "properties": {
+        "operation": {
+          "const": "create_column",
+          "default": "create_column",
+          "title": "Create Column",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Datasets & Columns",
+          "x-display-name": "Create Column",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new column",
+            "add column",
+            "add field"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "key_name": {
+          "description": "The column's key name (1-255 characters).",
+          "title": "Key Name",
+          "type": "string"
+        },
+        "type": {
+          "default": "string",
+          "description": "Column data type.",
+          "enum": [
+            "string",
+            "float",
+            "integer",
+            "boolean"
+          ],
+          "title": "Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Column description (max 255 chars).",
+          "title": "Description"
+        },
+        "hidden": {
+          "anyOf": [
+            {
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether the column is hidden.",
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Hidden",
+          "x-enum-searchable": true,
+          "enum": [
+            "true",
+            "false"
+          ]
+        }
+      },
+      "required": [
+        "dataset",
+        "key_name"
+      ],
+      "title": "HoneycombCreateColumnConfig",
+      "type": "object"
+    },
+    "HoneycombCreateDatasetConfig": {
+      "description": "Create a new dataset.",
+      "properties": {
+        "operation": {
+          "const": "create_dataset",
+          "default": "create_dataset",
+          "title": "Create Dataset",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Datasets & Columns",
+          "x-display-name": "Create Dataset",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new dataset",
+            "add dataset"
+          ]
+        },
+        "name": {
+          "description": "Name of the new dataset.",
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Description of the dataset.",
+          "title": "Description"
+        },
+        "expand_json_depth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Depth to which nested JSON fields are unpacked (0-10).",
+          "title": "Expand JSON Depth"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "HoneycombCreateDatasetConfig",
+      "type": "object"
+    },
+    "HoneycombCreateDerivedColumnConfig": {
+      "description": "Create a derived column in a dataset (or __all__ for environment-wide).",
+      "properties": {
+        "operation": {
+          "const": "create_derived_column",
+          "default": "create_derived_column",
+          "title": "Create Derived Column",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Datasets & Columns",
+          "x-display-name": "Create Derived Column",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "calculated field",
+            "create derived column",
+            "add derived column"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "alias": {
+          "description": "Human-readable name used in queries (1-255 chars).",
+          "title": "Alias",
+          "type": "string"
+        },
+        "expression": {
+          "description": "The derived-column formula (1-4095 chars).",
+          "title": "Expression",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional UI description (max 255 chars).",
+          "title": "Description"
+        }
+      },
+      "required": [
+        "dataset",
+        "alias",
+        "expression"
+      ],
+      "title": "HoneycombCreateDerivedColumnConfig",
+      "type": "object"
+    },
+    "HoneycombCreateEnvironmentConfig": {
+      "description": "Create an environment (v2 JSON:API envelope: data.type=environments).",
+      "properties": {
+        "operation": {
+          "const": "create_environment",
+          "default": "create_environment",
+          "title": "Create Environment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Management (v2)",
+          "x-display-name": "Create Environment",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "environments",
+            "new environment",
+            "add env"
+          ]
+        },
+        "team_slug": {
+          "description": "Your Honeycomb team slug (from GET /2/auth `included[].attributes.slug`, or the UI URL).",
+          "title": "Team Slug",
+          "type": "string"
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "JSON:API body, e.g. {\"data\": {\"type\": \"environments\", \"attributes\": {\"name\": \"...\", \"description\": \"...\", \"color\": \"blue\"}}}",
+          "title": "Body (JSON)",
+          "type": "string",
+          "ui:rows": 8,
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "team_slug"
+      ],
+      "title": "HoneycombCreateEnvironmentConfig",
+      "type": "object"
+    },
+    "HoneycombCreateMapDependencyRequestConfig": {
+      "description": "Create a service-map dependency request (async computation of service dependencies).",
+      "properties": {
+        "operation": {
+          "const": "create_map_dependency_request",
+          "default": "create_map_dependency_request",
+          "title": "Create Map Dependency Request",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Queries",
+          "x-display-name": "Create Map Dependency Request",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "service map",
+            "dependencies",
+            "map request"
+          ]
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "Request body as JSON (start_time, end_time, time_range, filters \u2014 all optional).",
+          "title": "Body (JSON)",
+          "type": "string",
+          "ui:rows": 8,
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max number of dependencies.",
+          "title": "Limit"
+        }
+      },
+      "title": "HoneycombCreateMapDependencyRequestConfig",
+      "type": "object"
+    },
+    "HoneycombCreateMarkerConfig": {
+      "description": "Create a marker on a dataset (or __all__ for the environment).",
+      "properties": {
+        "operation": {
+          "const": "create_marker",
+          "default": "create_marker",
+          "title": "Create Marker",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Markers",
+          "x-display-name": "Create Marker",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "add marker",
+            "deploy marker",
+            "annotate"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Description shown on the marker.",
+          "title": "Message"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Groups markers; shared type shares a color.",
+          "title": "Type"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Clickable link associated with the marker.",
+          "title": "URL"
+        },
+        "start_time": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Marker placement time (Unix seconds).",
+          "title": "Start Time"
+        },
+        "end_time": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional end time for a time range (Unix seconds).",
+          "title": "End Time"
+        }
+      },
+      "required": [
+        "dataset"
+      ],
+      "title": "HoneycombCreateMarkerConfig",
+      "type": "object"
+    },
+    "HoneycombCreateMarkerSettingConfig": {
+      "description": "Create a marker setting (color for a marker type) on a dataset.",
+      "properties": {
+        "operation": {
+          "const": "create_marker_setting",
+          "default": "create_marker_setting",
+          "title": "Create Marker Setting",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Markers",
+          "x-display-name": "Create Marker Setting",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "marker color",
+            "marker type color"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "type": {
+          "description": "Marker type this setting applies to (required).",
+          "title": "Type",
+          "type": "string"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Hex color for markers of this type (e.g. #7b1fa2).",
+          "title": "Color"
+        }
+      },
+      "required": [
+        "dataset",
+        "type"
+      ],
+      "title": "HoneycombCreateMarkerSettingConfig",
+      "type": "object"
+    },
+    "HoneycombCreateQueryAnnotationConfig": {
+      "description": "Create a query annotation (name/description for a saved query).",
+      "properties": {
+        "operation": {
+          "const": "create_query_annotation",
+          "default": "create_query_annotation",
+          "title": "Create Query Annotation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Queries",
+          "x-display-name": "Create Query Annotation",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "name query",
+            "annotate query",
+            "create query annotation"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "name": {
+          "description": "Display name for the annotated query.",
+          "title": "Name",
+          "type": "string"
+        },
+        "query_id": {
+          "description": "ID of the query to annotate.",
+          "title": "Query ID",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional description.",
+          "title": "Description"
+        }
+      },
+      "required": [
+        "dataset",
+        "name",
+        "query_id"
+      ],
+      "title": "HoneycombCreateQueryAnnotationConfig",
+      "type": "object"
+    },
+    "HoneycombCreateQueryConfig": {
+      "description": "Create a query specification in a dataset (returns a reusable query id).",
+      "properties": {
+        "operation": {
+          "const": "create_query",
+          "default": "create_query",
+          "title": "Create Query",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Queries",
+          "x-display-name": "Create Query",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "run query",
+            "query spec",
+            "calculations",
+            "create query"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "Query spec JSON (calculations required; breakdowns, filters, orders, time_range, start_time, end_time, limit optional).",
+          "title": "Body (JSON)",
+          "type": "string",
+          "ui:rows": 8,
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "dataset"
+      ],
+      "title": "HoneycombCreateQueryConfig",
+      "type": "object"
+    },
+    "HoneycombCreateQueryResultConfig": {
+      "description": "Kick off asynchronous execution of a query and get a query result id.",
+      "properties": {
+        "operation": {
+          "const": "create_query_result",
+          "default": "create_query_result",
+          "title": "Create Query Result",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Queries",
+          "x-display-name": "Create Query Result",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "run query",
+            "execute query",
+            "query data",
+            "create query result"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "Request body JSON, e.g. {\"query_id\": \"...\"} or {\"query\": {...}}. Time range limited to the last 7 days.",
+          "title": "Body (JSON)",
+          "type": "string",
+          "ui:rows": 8,
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "dataset"
+      ],
+      "title": "HoneycombCreateQueryResultConfig",
+      "type": "object"
+    },
+    "HoneycombCreateRecipientConfig": {
+      "description": "Create a recipient (notification target).\n\nBody carries ``type`` (email, slack, pagerduty, webhook, msteams_workflow)\nand a type-specific ``details`` object, so it is supplied as JSON.",
+      "properties": {
+        "operation": {
+          "const": "create_recipient",
+          "default": "create_recipient",
+          "title": "Create Recipient",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Recipients",
+          "x-display-name": "Create Recipient",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "recipients",
+            "add recipient",
+            "create notification target",
+            "new alert destination"
+          ]
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "Recipient body: {\"type\": \"email\", \"details\": {\"email_address\": \"...\"}}",
+          "title": "Body (JSON)",
+          "type": "string",
+          "ui:rows": 8,
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "HoneycombCreateRecipientConfig",
+      "type": "object"
+    },
+    "HoneycombCreateSloConfig": {
+      "description": "Create an SLO in a dataset.",
+      "properties": {
+        "operation": {
+          "const": "create_slo",
+          "default": "create_slo",
+          "title": "Create SLO",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "SLOs & Burn Alerts",
+          "x-display-name": "Create SLO",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "slo",
+            "service level objective",
+            "create slo"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "SLO object as JSON. Required: name, sli ({\"alias\": \"...\"}), time_period_days, target_per_million. Optional: description, dataset_slugs.",
+          "title": "Body (JSON)",
+          "type": "string",
+          "ui:rows": 8,
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "dataset"
+      ],
+      "title": "HoneycombCreateSloConfig",
+      "type": "object"
+    },
+    "HoneycombCreateTriggerConfig": {
+      "description": "Create a trigger (alert) in a dataset.",
+      "properties": {
+        "operation": {
+          "const": "create_trigger",
+          "default": "create_trigger",
+          "title": "Create Trigger",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers (Alerts)",
+          "x-display-name": "Create Trigger",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "alert",
+            "create trigger",
+            "new alert"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "Trigger definition JSON (name, query/query_id, threshold, frequency, recipients, ...).",
+          "title": "Body (JSON)",
+          "type": "string",
+          "ui:rows": 8,
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "dataset"
+      ],
+      "title": "HoneycombCreateTriggerConfig",
+      "type": "object"
+    },
+    "HoneycombDeleteApiKeyConfig": {
+      "description": "Delete an API key by id (v2 Management API).",
+      "properties": {
+        "operation": {
+          "const": "delete_api_key",
+          "default": "delete_api_key",
+          "title": "Delete API Key",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Management (v2)",
+          "x-display-name": "Delete API Key",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "api keys",
+            "delete key",
+            "revoke key",
+            "remove key"
+          ]
+        },
+        "team_slug": {
+          "description": "Your Honeycomb team slug (from GET /2/auth `included[].attributes.slug`, or the UI URL).",
+          "title": "Team Slug",
+          "type": "string"
+        },
+        "api_key_id": {
+          "description": "The API key id.",
+          "title": "API Key ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an id",
+            "depends_on": "team_slug",
+            "field_name": "api_key_id",
+            "placeholder": "Select a API key...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "team_slug",
+        "api_key_id"
+      ],
+      "title": "HoneycombDeleteApiKeyConfig",
+      "type": "object"
+    },
+    "HoneycombDeleteBoardConfig": {
+      "description": "Delete a Board by id.",
+      "properties": {
+        "operation": {
+          "const": "delete_board",
+          "default": "delete_board",
+          "title": "Delete Board",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards",
+          "x-display-name": "Delete Board",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "boards",
+            "delete board",
+            "remove dashboard"
+          ]
+        },
+        "board_id": {
+          "description": "The Board identifier.",
+          "title": "Board ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an id",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "board_id"
+      ],
+      "title": "HoneycombDeleteBoardConfig",
+      "type": "object"
+    },
+    "HoneycombDeleteBoardViewConfig": {
+      "description": "Delete a board view.",
+      "properties": {
+        "operation": {
+          "const": "delete_board_view",
+          "default": "delete_board_view",
+          "title": "Delete Board View",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards",
+          "x-display-name": "Delete Board View",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "board view",
+            "delete view",
+            "remove view"
+          ]
+        },
+        "board_id": {
+          "description": "The Board identifier.",
+          "title": "Board ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an id",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "view_id": {
+          "description": "The board view identifier.",
+          "title": "View ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an id",
+            "depends_on": "board_id",
+            "field_name": "view_id",
+            "placeholder": "Select a view...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "board_id",
+        "view_id"
+      ],
+      "title": "HoneycombDeleteBoardViewConfig",
+      "type": "object"
+    },
+    "HoneycombDeleteBurnAlertConfig": {
+      "description": "Delete a burn alert from a dataset.",
+      "properties": {
+        "operation": {
+          "const": "delete_burn_alert",
+          "default": "delete_burn_alert",
+          "title": "Delete Burn Alert",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "SLOs & Burn Alerts",
+          "x-display-name": "Delete Burn Alert",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "burn alert",
+            "slo alert",
+            "delete burn alert",
+            "remove burn alert"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "burn_alert_id": {
+          "description": "ID of the burn alert to delete.",
+          "title": "Burn Alert ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dataset",
+        "burn_alert_id"
+      ],
+      "title": "HoneycombDeleteBurnAlertConfig",
+      "type": "object"
+    },
+    "HoneycombDeleteColumnConfig": {
+      "description": "Delete a column by id.",
+      "properties": {
+        "operation": {
+          "const": "delete_column",
+          "default": "delete_column",
+          "title": "Delete Column",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Datasets & Columns",
+          "x-display-name": "Delete Column",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove column",
+            "drop column"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "column_id": {
+          "description": "The id of the column to delete.",
+          "title": "Column ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an id",
+            "depends_on": "dataset",
+            "field_name": "column_id",
+            "placeholder": "Select a column...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "dataset",
+        "column_id"
+      ],
+      "title": "HoneycombDeleteColumnConfig",
+      "type": "object"
+    },
+    "HoneycombDeleteDatasetConfig": {
+      "description": "Delete a dataset by slug (must not be delete-protected).",
+      "properties": {
+        "operation": {
+          "const": "delete_dataset",
+          "default": "delete_dataset",
+          "title": "Delete Dataset",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Datasets & Columns",
+          "x-display-name": "Delete Dataset",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove dataset",
+            "drop dataset"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "dataset"
+      ],
+      "title": "HoneycombDeleteDatasetConfig",
+      "type": "object"
+    },
+    "HoneycombDeleteDerivedColumnConfig": {
+      "description": "Delete a derived column by id.",
+      "properties": {
+        "operation": {
+          "const": "delete_derived_column",
+          "default": "delete_derived_column",
+          "title": "Delete Derived Column",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Datasets & Columns",
+          "x-display-name": "Delete Derived Column",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "calculated field",
+            "delete derived column",
+            "remove derived column"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "derived_column_id": {
+          "description": "The derived column's unique id.",
+          "title": "Derived Column ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an id",
+            "depends_on": "dataset",
+            "field_name": "derived_column_id",
+            "placeholder": "Select a derived column...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "dataset",
+        "derived_column_id"
+      ],
+      "title": "HoneycombDeleteDerivedColumnConfig",
+      "type": "object"
+    },
+    "HoneycombDeleteEnvironmentConfig": {
+      "description": "Delete an environment by id (v2 Management API).",
+      "properties": {
+        "operation": {
+          "const": "delete_environment",
+          "default": "delete_environment",
+          "title": "Delete Environment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Management (v2)",
+          "x-display-name": "Delete Environment",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "environments",
+            "delete environment",
+            "remove env"
+          ]
+        },
+        "team_slug": {
+          "description": "Your Honeycomb team slug (from GET /2/auth `included[].attributes.slug`, or the UI URL).",
+          "title": "Team Slug",
+          "type": "string"
+        },
+        "environment_id": {
+          "description": "The environment id.",
+          "title": "Environment ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an id",
+            "depends_on": "team_slug",
+            "field_name": "environment_id",
+            "placeholder": "Select a environment...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "team_slug",
+        "environment_id"
+      ],
+      "title": "HoneycombDeleteEnvironmentConfig",
+      "type": "object"
+    },
+    "HoneycombDeleteMarkerConfig": {
+      "description": "Delete a marker by id.",
+      "properties": {
+        "operation": {
+          "const": "delete_marker",
+          "default": "delete_marker",
+          "title": "Delete Marker",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Markers",
+          "x-display-name": "Delete Marker",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove marker"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "marker_id": {
+          "description": "Id of the marker to delete.",
+          "title": "Marker ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an id",
+            "depends_on": "dataset",
+            "field_name": "marker_id",
+            "placeholder": "Select a marker...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "dataset",
+        "marker_id"
+      ],
+      "title": "HoneycombDeleteMarkerConfig",
+      "type": "object"
+    },
+    "HoneycombDeleteMarkerSettingConfig": {
+      "description": "Delete a marker setting by id.",
+      "properties": {
+        "operation": {
+          "const": "delete_marker_setting",
+          "default": "delete_marker_setting",
+          "title": "Delete Marker Setting",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Markers",
+          "x-display-name": "Delete Marker Setting",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove marker color"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "marker_setting_id": {
+          "description": "Id of the marker setting to delete.",
+          "title": "Marker Setting ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an id",
+            "depends_on": "dataset",
+            "field_name": "marker_setting_id",
+            "placeholder": "Select a marker setting...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "dataset",
+        "marker_setting_id"
+      ],
+      "title": "HoneycombDeleteMarkerSettingConfig",
+      "type": "object"
+    },
+    "HoneycombDeleteQueryAnnotationConfig": {
+      "description": "Delete a query annotation.",
+      "properties": {
+        "operation": {
+          "const": "delete_query_annotation",
+          "default": "delete_query_annotation",
+          "title": "Delete Query Annotation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Queries",
+          "x-display-name": "Delete Query Annotation",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove query annotation",
+            "delete query annotation"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "annotation_id": {
+          "description": "ID of the query annotation to delete.",
+          "title": "Annotation ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an id",
+            "depends_on": "dataset",
+            "field_name": "annotation_id",
+            "placeholder": "Select a annotation...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "dataset",
+        "annotation_id"
+      ],
+      "title": "HoneycombDeleteQueryAnnotationConfig",
+      "type": "object"
+    },
+    "HoneycombDeleteRecipientConfig": {
+      "description": "Delete a recipient by ID.",
+      "properties": {
+        "operation": {
+          "const": "delete_recipient",
+          "default": "delete_recipient",
+          "title": "Delete Recipient",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Recipients",
+          "x-display-name": "Delete Recipient",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "recipients",
+            "delete recipient",
+            "remove notification target"
+          ]
+        },
+        "recipient_id": {
+          "description": "The recipient's unique ID.",
+          "title": "Recipient ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an id",
+            "field_name": "recipient_id",
+            "placeholder": "Select a recipient...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "recipient_id"
+      ],
+      "title": "HoneycombDeleteRecipientConfig",
+      "type": "object"
+    },
+    "HoneycombDeleteSloConfig": {
+      "description": "Delete an SLO from a dataset.",
+      "properties": {
+        "operation": {
+          "const": "delete_slo",
+          "default": "delete_slo",
+          "title": "Delete SLO",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "SLOs & Burn Alerts",
+          "x-display-name": "Delete SLO",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "slo",
+            "service level objective",
+            "delete slo",
+            "remove slo"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "slo_id": {
+          "description": "ID of the SLO to delete.",
+          "title": "SLO ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an id",
+            "depends_on": "dataset",
+            "field_name": "slo_id",
+            "placeholder": "Select a SLO...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "dataset",
+        "slo_id"
+      ],
+      "title": "HoneycombDeleteSloConfig",
+      "type": "object"
+    },
+    "HoneycombDeleteTriggerConfig": {
+      "description": "Delete a trigger by ID.",
+      "properties": {
+        "operation": {
+          "const": "delete_trigger",
+          "default": "delete_trigger",
+          "title": "Delete Trigger",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers (Alerts)",
+          "x-display-name": "Delete Trigger",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "alert",
+            "delete trigger",
+            "remove alert"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "trigger_id": {
+          "description": "The ID of the trigger.",
+          "title": "Trigger ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an id",
+            "depends_on": "dataset",
+            "field_name": "trigger_id",
+            "placeholder": "Select a trigger...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "dataset",
+        "trigger_id"
+      ],
+      "title": "HoneycombDeleteTriggerConfig",
+      "type": "object"
+    },
+    "HoneycombGetApiKeyConfig": {
+      "description": "Get a single API key by id (v2 Management API).",
+      "properties": {
+        "operation": {
+          "const": "get_api_key",
+          "default": "get_api_key",
+          "title": "Get API Key",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Management (v2)",
+          "x-display-name": "Get API Key",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "api keys",
+            "get key",
+            "read key"
+          ]
+        },
+        "team_slug": {
+          "description": "Your Honeycomb team slug (from GET /2/auth `included[].attributes.slug`, or the UI URL).",
+          "title": "Team Slug",
+          "type": "string"
+        },
+        "api_key_id": {
+          "description": "The API key id.",
+          "title": "API Key ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an id",
+            "depends_on": "team_slug",
+            "field_name": "api_key_id",
+            "placeholder": "Select a API key...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "team_slug",
+        "api_key_id"
+      ],
+      "title": "HoneycombGetApiKeyConfig",
+      "type": "object"
+    },
+    "HoneycombGetAuthConfig": {
+      "description": "Return metadata about the v1 API key in use (X-Honeycomb-Team).",
+      "properties": {
+        "operation": {
+          "const": "get_auth",
+          "default": "get_auth",
+          "title": "Get Auth (v1)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Management (v2)",
+          "x-display-name": "Get Auth (v1)",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "whoami",
+            "auth",
+            "api key info",
+            "team"
+          ]
+        }
+      },
+      "title": "HoneycombGetAuthConfig",
+      "type": "object"
+    },
+    "HoneycombGetAuthV2Config": {
+      "description": "Return metadata about the v2 Management key in use (Bearer key_id:secret).",
+      "properties": {
+        "operation": {
+          "const": "get_auth_v2",
+          "default": "get_auth_v2",
+          "title": "Get Auth (v2)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Management (v2)",
+          "x-display-name": "Get Auth (v2)",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "whoami",
+            "management key info",
+            "auth v2",
+            "team slug"
+          ]
+        }
+      },
+      "title": "HoneycombGetAuthV2Config",
+      "type": "object"
+    },
+    "HoneycombGetBoardConfig": {
+      "description": "Get a single Board by id.",
+      "properties": {
+        "operation": {
+          "const": "get_board",
+          "default": "get_board",
+          "title": "Get Board",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards",
+          "x-display-name": "Get Board",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "boards",
+            "get board",
+            "read dashboard"
+          ]
+        },
+        "board_id": {
+          "description": "The Board identifier.",
+          "title": "Board ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an id",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "board_id"
+      ],
+      "title": "HoneycombGetBoardConfig",
+      "type": "object"
+    },
+    "HoneycombGetBoardViewConfig": {
+      "description": "Get a single board view by id.",
+      "properties": {
+        "operation": {
+          "const": "get_board_view",
+          "default": "get_board_view",
+          "title": "Get Board View",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards",
+          "x-display-name": "Get Board View",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "board view",
+            "get view",
+            "read view"
+          ]
+        },
+        "board_id": {
+          "description": "The Board identifier.",
+          "title": "Board ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an id",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "view_id": {
+          "description": "The board view identifier.",
+          "title": "View ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an id",
+            "depends_on": "board_id",
+            "field_name": "view_id",
+            "placeholder": "Select a view...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "board_id",
+        "view_id"
+      ],
+      "title": "HoneycombGetBoardViewConfig",
+      "type": "object"
+    },
+    "HoneycombGetBurnAlertConfig": {
+      "description": "Get a single burn alert.",
+      "properties": {
+        "operation": {
+          "const": "get_burn_alert",
+          "default": "get_burn_alert",
+          "title": "Get Burn Alert",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "SLOs & Burn Alerts",
+          "x-display-name": "Get Burn Alert",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "burn alert",
+            "slo alert",
+            "get burn alert"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "burn_alert_id": {
+          "description": "ID of the burn alert to fetch.",
+          "title": "Burn Alert ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dataset",
+        "burn_alert_id"
+      ],
+      "title": "HoneycombGetBurnAlertConfig",
+      "type": "object"
+    },
+    "HoneycombGetColumnConfig": {
+      "description": "Get a single column by key name (query) or by column id (path).",
+      "properties": {
+        "operation": {
+          "const": "get_column",
+          "default": "get_column",
+          "title": "Get Column",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Datasets & Columns",
+          "x-display-name": "Get Column",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "column details",
+            "fetch column",
+            "get field"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "key_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Look up the column by key name (leave Column ID blank).",
+          "title": "Key Name"
+        },
+        "column_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Look up the column by its id (takes precedence over Key Name).",
+          "title": "Column ID"
+        }
+      },
+      "required": [
+        "dataset"
+      ],
+      "title": "HoneycombGetColumnConfig",
+      "type": "object"
+    },
+    "HoneycombGetDatasetConfig": {
+      "description": "Get a single dataset by slug.",
+      "properties": {
+        "operation": {
+          "const": "get_dataset",
+          "default": "get_dataset",
+          "title": "Get Dataset",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Datasets & Columns",
+          "x-display-name": "Get Dataset",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "dataset details",
+            "fetch dataset"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "dataset"
+      ],
+      "title": "HoneycombGetDatasetConfig",
+      "type": "object"
+    },
+    "HoneycombGetDatasetDefinitionsConfig": {
+      "description": "Get the definition mappings (trace id, span name, etc.) for a dataset.",
+      "properties": {
+        "operation": {
+          "const": "get_dataset_definitions",
+          "default": "get_dataset_definitions",
+          "title": "Get Dataset Definitions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Datasets & Columns",
+          "x-display-name": "Get Dataset Definitions",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "definitions",
+            "dataset definitions",
+            "trace fields"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "dataset"
+      ],
+      "title": "HoneycombGetDatasetDefinitionsConfig",
+      "type": "object"
+    },
+    "HoneycombGetDerivedColumnConfig": {
+      "description": "Get a single derived column by id.",
+      "properties": {
+        "operation": {
+          "const": "get_derived_column",
+          "default": "get_derived_column",
+          "title": "Get Derived Column",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Datasets & Columns",
+          "x-display-name": "Get Derived Column",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "calculated field",
+            "get derived column"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "derived_column_id": {
+          "description": "The derived column's unique id.",
+          "title": "Derived Column ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an id",
+            "depends_on": "dataset",
+            "field_name": "derived_column_id",
+            "placeholder": "Select a derived column...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "dataset",
+        "derived_column_id"
+      ],
+      "title": "HoneycombGetDerivedColumnConfig",
+      "type": "object"
+    },
+    "HoneycombGetEnvironmentConfig": {
+      "description": "Get a single environment by id (v2 Management API).",
+      "properties": {
+        "operation": {
+          "const": "get_environment",
+          "default": "get_environment",
+          "title": "Get Environment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Management (v2)",
+          "x-display-name": "Get Environment",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "environments",
+            "get environment",
+            "read env"
+          ]
+        },
+        "team_slug": {
+          "description": "Your Honeycomb team slug (from GET /2/auth `included[].attributes.slug`, or the UI URL).",
+          "title": "Team Slug",
+          "type": "string"
+        },
+        "environment_id": {
+          "description": "The environment id.",
+          "title": "Environment ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an id",
+            "depends_on": "team_slug",
+            "field_name": "environment_id",
+            "placeholder": "Select a environment...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "team_slug",
+        "environment_id"
+      ],
+      "title": "HoneycombGetEnvironmentConfig",
+      "type": "object"
+    },
+    "HoneycombGetMapDependenciesConfig": {
+      "description": "Get results of a service-map dependency request (paginated dependencies).",
+      "properties": {
+        "operation": {
+          "const": "get_map_dependencies",
+          "default": "get_map_dependencies",
+          "title": "Get Map Dependencies",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Queries",
+          "x-display-name": "Get Map Dependencies",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "service map",
+            "dependencies",
+            "map results"
+          ]
+        },
+        "request_id": {
+          "description": "The dependency request identifier.",
+          "title": "Request ID",
+          "type": "string"
+        },
+        "page_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor (page[after]).",
+          "title": "Page After"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page size (page[size]).",
+          "title": "Page Size"
+        }
+      },
+      "required": [
+        "request_id"
+      ],
+      "title": "HoneycombGetMapDependenciesConfig",
+      "type": "object"
+    },
+    "HoneycombGetQueryAnnotationConfig": {
+      "description": "Retrieve a single query annotation by id.",
+      "properties": {
+        "operation": {
+          "const": "get_query_annotation",
+          "default": "get_query_annotation",
+          "title": "Get Query Annotation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Queries",
+          "x-display-name": "Get Query Annotation",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "fetch query annotation",
+            "get query annotation"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "annotation_id": {
+          "description": "ID of the query annotation.",
+          "title": "Annotation ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an id",
+            "depends_on": "dataset",
+            "field_name": "annotation_id",
+            "placeholder": "Select a annotation...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "dataset",
+        "annotation_id"
+      ],
+      "title": "HoneycombGetQueryAnnotationConfig",
+      "type": "object"
+    },
+    "HoneycombGetQueryConfig": {
+      "description": "Retrieve a query specification by id.",
+      "properties": {
+        "operation": {
+          "const": "get_query",
+          "default": "get_query",
+          "title": "Get Query",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Queries",
+          "x-display-name": "Get Query",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "fetch query",
+            "get query"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "query_id": {
+          "description": "ID of the query to retrieve.",
+          "title": "Query ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dataset",
+        "query_id"
+      ],
+      "title": "HoneycombGetQueryConfig",
+      "type": "object"
+    },
+    "HoneycombGetQueryResultConfig": {
+      "description": "Poll for the result of a previously created query result.",
+      "properties": {
+        "operation": {
+          "const": "get_query_result",
+          "default": "get_query_result",
+          "title": "Get Query Result",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Queries",
+          "x-display-name": "Get Query Result",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "poll query",
+            "query results",
+            "get query result"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "query_result_id": {
+          "description": "ID of the query result to poll.",
+          "title": "Query Result ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dataset",
+        "query_result_id"
+      ],
+      "title": "HoneycombGetQueryResultConfig",
+      "type": "object"
+    },
+    "HoneycombGetRecipientConfig": {
+      "description": "Get a single recipient by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_recipient",
+          "default": "get_recipient",
+          "title": "Get Recipient",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Recipients",
+          "x-display-name": "Get Recipient",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "recipients",
+            "get recipient",
+            "read notification target"
+          ]
+        },
+        "recipient_id": {
+          "description": "The recipient's unique ID.",
+          "title": "Recipient ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an id",
+            "field_name": "recipient_id",
+            "placeholder": "Select a recipient...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "recipient_id"
+      ],
+      "title": "HoneycombGetRecipientConfig",
+      "type": "object"
+    },
+    "HoneycombGetSloConfig": {
+      "description": "Get a single SLO, optionally with budget/compliance detail.",
+      "properties": {
+        "operation": {
+          "const": "get_slo",
+          "default": "get_slo",
+          "title": "Get SLO",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "SLOs & Burn Alerts",
+          "x-display-name": "Get SLO",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "slo",
+            "service level objective",
+            "get slo",
+            "budget remaining",
+            "compliance"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "slo_id": {
+          "description": "ID of the SLO to fetch.",
+          "title": "SLO ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an id",
+            "depends_on": "dataset",
+            "field_name": "slo_id",
+            "placeholder": "Select a SLO...",
+            "searchable": true
+          }
+        },
+        "detailed": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set to 'true' to include budget_remaining and compliance.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "title": "Detailed",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "dataset",
+        "slo_id"
+      ],
+      "title": "HoneycombGetSloConfig",
+      "type": "object"
+    },
+    "HoneycombGetSloHistoryConfig": {
+      "description": "Get a weekly breakdown of historical data for a list of SLOs (up to 24 ids).",
+      "properties": {
+        "operation": {
+          "const": "get_slo_history",
+          "default": "get_slo_history",
+          "title": "Get SLO History",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "SLOs & Burn Alerts",
+          "x-display-name": "Get SLO History",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "slo history",
+            "historical slo",
+            "slo report",
+            "weekly slo"
+          ]
+        },
+        "ids": {
+          "description": "Comma-separated SLO ids (up to 24), or a JSON array of ids.",
+          "title": "SLO IDs",
+          "type": "string"
+        },
+        "start_time": {
+          "description": "Unix timestamp (seconds).",
+          "title": "Start Time",
+          "type": "integer"
+        },
+        "end_time": {
+          "description": "Unix timestamp (seconds).",
+          "title": "End Time",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "ids",
+        "start_time",
+        "end_time"
+      ],
+      "title": "HoneycombGetSloHistoryConfig",
+      "type": "object"
+    },
+    "HoneycombGetSloHourlyCountsHistoryConfig": {
+      "description": "Get hourly-bucketed total and error event counts for an SLO over a time range.",
+      "properties": {
+        "operation": {
+          "const": "get_slo_hourly_counts_history",
+          "default": "get_slo_hourly_counts_history",
+          "title": "Get SLO Hourly Counts History",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "SLOs & Burn Alerts",
+          "x-display-name": "Get SLO Hourly Counts History",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "slo counts",
+            "hourly counts",
+            "slo history counts"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "slo_id": {
+          "description": "The SLO identifier.",
+          "title": "SLO ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an id",
+            "depends_on": "dataset",
+            "field_name": "slo_id",
+            "placeholder": "Select a SLO...",
+            "searchable": true
+          }
+        },
+        "start_time": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unix timestamp (seconds).",
+          "title": "Start Time"
+        },
+        "end_time": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unix timestamp (seconds).",
+          "title": "End Time"
+        }
+      },
+      "required": [
+        "dataset",
+        "slo_id"
+      ],
+      "title": "HoneycombGetSloHourlyCountsHistoryConfig",
+      "type": "object"
+    },
+    "HoneycombGetSloRealtimeCountsConfig": {
+      "description": "Get per-minute success/failure event counts for an SLO from a rolling 24h window.",
+      "properties": {
+        "operation": {
+          "const": "get_slo_realtime_counts",
+          "default": "get_slo_realtime_counts",
+          "title": "Get SLO Realtime Counts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "SLOs & Burn Alerts",
+          "x-display-name": "Get SLO Realtime Counts",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "slo counts",
+            "realtime counts",
+            "per-minute counts"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "slo_id": {
+          "description": "The SLO identifier.",
+          "title": "SLO ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an id",
+            "depends_on": "dataset",
+            "field_name": "slo_id",
+            "placeholder": "Select a SLO...",
+            "searchable": true
+          }
+        },
+        "start_time": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unix timestamp (seconds).",
+          "title": "Start Time"
+        },
+        "end_time": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unix timestamp (seconds).",
+          "title": "End Time"
+        }
+      },
+      "required": [
+        "dataset",
+        "slo_id"
+      ],
+      "title": "HoneycombGetSloRealtimeCountsConfig",
+      "type": "object"
+    },
+    "HoneycombGetTriggerConfig": {
+      "description": "Get a single trigger by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_trigger",
+          "default": "get_trigger",
+          "title": "Get Trigger",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers (Alerts)",
+          "x-display-name": "Get Trigger",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "alert",
+            "get trigger"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "trigger_id": {
+          "description": "The ID of the trigger.",
+          "title": "Trigger ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an id",
+            "depends_on": "dataset",
+            "field_name": "trigger_id",
+            "placeholder": "Select a trigger...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "dataset",
+        "trigger_id"
+      ],
+      "title": "HoneycombGetTriggerConfig",
+      "type": "object"
+    },
+    "HoneycombGetTriggersAssociatedWithRecipientConfig": {
+      "description": "List all triggers that notify a given recipient.",
+      "properties": {
+        "operation": {
+          "const": "get_triggers_associated_with_recipient",
+          "default": "get_triggers_associated_with_recipient",
+          "title": "Get Triggers For Recipient",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Recipients",
+          "x-display-name": "Get Triggers For Recipient",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "recipient triggers",
+            "triggers for recipient",
+            "recipient alerts"
+          ]
+        },
+        "recipient_id": {
+          "description": "The recipient identifier.",
+          "title": "Recipient ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "recipient_id"
+      ],
+      "title": "HoneycombGetTriggersAssociatedWithRecipientConfig",
+      "type": "object"
+    },
+    "HoneycombListApiKeysConfig": {
+      "description": "List API keys for the team (v2 Management API).",
+      "properties": {
+        "operation": {
+          "const": "list_api_keys",
+          "default": "list_api_keys",
+          "title": "List API Keys",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Management (v2)",
+          "x-display-name": "List API Keys",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "api keys",
+            "list keys",
+            "ingest key",
+            "configuration key"
+          ]
+        },
+        "team_slug": {
+          "description": "Your Honeycomb team slug (from GET /2/auth `included[].attributes.slug`, or the UI URL).",
+          "title": "Team Slug",
+          "type": "string"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Entries per page (1-100).",
+          "title": "Page Size"
+        },
+        "page_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from a previous response.",
+          "title": "Page After"
+        }
+      },
+      "required": [
+        "team_slug"
+      ],
+      "title": "HoneycombListApiKeysConfig",
+      "type": "object"
+    },
+    "HoneycombListBoardViewsConfig": {
+      "description": "List all saved views for a board (max 50 per board).",
+      "properties": {
+        "operation": {
+          "const": "list_board_views",
+          "default": "list_board_views",
+          "title": "List Board Views",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards",
+          "x-display-name": "List Board Views",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "board views",
+            "list views",
+            "saved views"
+          ]
+        },
+        "board_id": {
+          "description": "The Board identifier.",
+          "title": "Board ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an id",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "board_id"
+      ],
+      "title": "HoneycombListBoardViewsConfig",
+      "type": "object"
+    },
+    "HoneycombListBoardsConfig": {
+      "description": "List all non-secret Boards in the environment.",
+      "properties": {
+        "operation": {
+          "const": "list_boards",
+          "default": "list_boards",
+          "title": "List Boards",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards",
+          "x-display-name": "List Boards",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "boards",
+            "list boards",
+            "dashboards"
+          ]
+        }
+      },
+      "title": "HoneycombListBoardsConfig",
+      "type": "object"
+    },
+    "HoneycombListBurnAlertsConfig": {
+      "description": "List burn alerts for a specific SLO in a dataset.",
+      "properties": {
+        "operation": {
+          "const": "list_burn_alerts",
+          "default": "list_burn_alerts",
+          "title": "List Burn Alerts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "SLOs & Burn Alerts",
+          "x-display-name": "List Burn Alerts",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "burn alert",
+            "slo alert",
+            "list burn alerts"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "slo_id": {
+          "description": "Filter burn alerts by this SLO ID.",
+          "title": "SLO ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an id",
+            "depends_on": "dataset",
+            "field_name": "slo_id",
+            "placeholder": "Select a SLO...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "dataset",
+        "slo_id"
+      ],
+      "title": "HoneycombListBurnAlertsConfig",
+      "type": "object"
+    },
+    "HoneycombListColumnsConfig": {
+      "description": "List all columns in a dataset (or across all datasets with __all__).",
+      "properties": {
+        "operation": {
+          "const": "list_columns",
+          "default": "list_columns",
+          "title": "List Columns",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Datasets & Columns",
+          "x-display-name": "List Columns",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "columns",
+            "list columns",
+            "fields"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "dataset"
+      ],
+      "title": "HoneycombListColumnsConfig",
+      "type": "object"
+    },
+    "HoneycombListDatasetsConfig": {
+      "description": "List all datasets in the environment.",
+      "properties": {
+        "operation": {
+          "const": "list_datasets",
+          "default": "list_datasets",
+          "title": "List Datasets",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Datasets & Columns",
+          "x-display-name": "List Datasets",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "datasets",
+            "list datasets"
+          ]
+        }
+      },
+      "title": "HoneycombListDatasetsConfig",
+      "type": "object"
+    },
+    "HoneycombListDerivedColumnsConfig": {
+      "description": "List all derived columns in a dataset (or __all__ for environment-wide).",
+      "properties": {
+        "operation": {
+          "const": "list_derived_columns",
+          "default": "list_derived_columns",
+          "title": "List Derived Columns",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Datasets & Columns",
+          "x-display-name": "List Derived Columns",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "calculated fields",
+            "list derived columns",
+            "derived columns"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "alias": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional exact alias to filter the returned derived columns.",
+          "title": "Alias filter"
+        }
+      },
+      "required": [
+        "dataset"
+      ],
+      "title": "HoneycombListDerivedColumnsConfig",
+      "type": "object"
+    },
+    "HoneycombListEnvironmentsConfig": {
+      "description": "List environments for the team (v2 Management API).",
+      "properties": {
+        "operation": {
+          "const": "list_environments",
+          "default": "list_environments",
+          "title": "List Environments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Management (v2)",
+          "x-display-name": "List Environments",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "environments",
+            "list environments",
+            "envs"
+          ]
+        },
+        "team_slug": {
+          "description": "Your Honeycomb team slug (from GET /2/auth `included[].attributes.slug`, or the UI URL).",
+          "title": "Team Slug",
+          "type": "string"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Entries per page (1-100).",
+          "title": "Page Size"
+        },
+        "page_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from a previous response.",
+          "title": "Page After"
+        }
+      },
+      "required": [
+        "team_slug"
+      ],
+      "title": "HoneycombListEnvironmentsConfig",
+      "type": "object"
+    },
+    "HoneycombListMarkerSettingsConfig": {
+      "description": "List all marker settings on a dataset.",
+      "properties": {
+        "operation": {
+          "const": "list_marker_settings",
+          "default": "list_marker_settings",
+          "title": "List Marker Settings",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Markers",
+          "x-display-name": "List Marker Settings",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "get marker settings",
+            "marker colors"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "dataset"
+      ],
+      "title": "HoneycombListMarkerSettingsConfig",
+      "type": "object"
+    },
+    "HoneycombListMarkersConfig": {
+      "description": "List all markers on a dataset (or __all__ for the environment).",
+      "properties": {
+        "operation": {
+          "const": "list_markers",
+          "default": "list_markers",
+          "title": "List Markers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Markers",
+          "x-display-name": "List Markers",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "get markers",
+            "list markers"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "dataset"
+      ],
+      "title": "HoneycombListMarkersConfig",
+      "type": "object"
+    },
+    "HoneycombListQueryAnnotationsConfig": {
+      "description": "List all query annotations in a dataset.",
+      "properties": {
+        "operation": {
+          "const": "list_query_annotations",
+          "default": "list_query_annotations",
+          "title": "List Query Annotations",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Queries",
+          "x-display-name": "List Query Annotations",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "query annotations",
+            "list query annotations"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "dataset"
+      ],
+      "title": "HoneycombListQueryAnnotationsConfig",
+      "type": "object"
+    },
+    "HoneycombListRecipientsConfig": {
+      "description": "List all recipients for the team/environment.",
+      "properties": {
+        "operation": {
+          "const": "list_recipients",
+          "default": "list_recipients",
+          "title": "List Recipients",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Recipients",
+          "x-display-name": "List Recipients",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "recipients",
+            "notification targets",
+            "list recipients",
+            "alert destinations"
+          ]
+        }
+      },
+      "title": "HoneycombListRecipientsConfig",
+      "type": "object"
+    },
+    "HoneycombListSlosConfig": {
+      "description": "List all SLOs in a dataset.",
+      "properties": {
+        "operation": {
+          "const": "list_slos",
+          "default": "list_slos",
+          "title": "List SLOs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "SLOs & Burn Alerts",
+          "x-display-name": "List SLOs",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "slo",
+            "service level objective",
+            "list slos"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "dataset"
+      ],
+      "title": "HoneycombListSlosConfig",
+      "type": "object"
+    },
+    "HoneycombListTriggersConfig": {
+      "description": "List all triggers in a dataset.",
+      "properties": {
+        "operation": {
+          "const": "list_triggers",
+          "default": "list_triggers",
+          "title": "List Triggers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers (Alerts)",
+          "x-display-name": "List Triggers",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "alerts",
+            "list triggers"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "dataset"
+      ],
+      "title": "HoneycombListTriggersConfig",
+      "type": "object"
+    },
+    "HoneycombManagementKeyCredential": {
+      "description": "v2 Management key (Authorization: Bearer <key_id>:<secret>).",
+      "properties": {
+        "credential_type": {
+          "const": "honeycomb_management_key",
+          "default": "honeycomb_management_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "key_id": {
+          "description": "Honeycomb Management key ID.",
+          "title": "Management Key ID",
+          "type": "string"
+        },
+        "secret": {
+          "description": "Honeycomb Management key secret (shown once at creation).",
+          "title": "Management Key Secret",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "region": {
+          "default": "us",
+          "description": "Honeycomb region (US or EU) \u2014 selects the API base URL.",
+          "enum": [
+            "us",
+            "eu"
+          ],
+          "enumNames": [
+            "US",
+            "EU"
+          ],
+          "title": "Region",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "key_id",
+        "secret"
+      ],
+      "title": "HoneycombManagementKeyCredential",
+      "type": "object",
+      "x-credential-url": "https://docs.honeycomb.io/configure/teams/manage-api-keys",
+      "x-help-text": "Team Settings \u2192 Manage Team API Keys. Needed only for the v2 Management API."
+    },
+    "HoneycombOnBurnAlertConfig": {
+      "description": "Fires when a Honeycomb SLO Burn Alert notifies this webhook recipient.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Register this URL as a Honeycomb webhook recipient (done automatically).",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "attach_dataset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If set with 'Attach to ID', auto-attach the recipient to that Honeycomb trigger/burn alert.",
+          "title": "Attach to Dataset (optional)"
+        },
+        "attach_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An existing Honeycomb trigger id (or burn alert id) to attach this recipient to.",
+          "title": "Attach to Trigger/Burn Alert ID (optional)"
+        },
+        "operation": {
+          "const": "on_burn_alert",
+          "default": "on_burn_alert",
+          "title": "On Burn Alert",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Burn Alert",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "slo burn",
+            "burn alert",
+            "error budget"
+          ]
+        }
+      },
+      "title": "HoneycombOnBurnAlertConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "HoneycombOnTriggerFiredConfig": {
+      "description": "Fires when a Honeycomb Trigger notifies this webhook recipient.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Register this URL as a Honeycomb webhook recipient (done automatically).",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "attach_dataset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If set with 'Attach to ID', auto-attach the recipient to that Honeycomb trigger/burn alert.",
+          "title": "Attach to Dataset (optional)"
+        },
+        "attach_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An existing Honeycomb trigger id (or burn alert id) to attach this recipient to.",
+          "title": "Attach to Trigger/Burn Alert ID (optional)"
+        },
+        "operation": {
+          "const": "on_trigger_fired",
+          "default": "on_trigger_fired",
+          "title": "On Trigger Fired",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Trigger Fired",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "alert fired",
+            "trigger fired",
+            "honeycomb alert"
+          ]
+        }
+      },
+      "title": "HoneycombOnTriggerFiredConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "HoneycombRestRequestConfig": {
+      "description": "Make an arbitrary Honeycomb REST request (v1 or v2).",
+      "properties": {
+        "operation": {
+          "const": "rest_request",
+          "default": "rest_request",
+          "title": "REST Request (Raw)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Advanced",
+          "x-display-name": "REST Request (Raw)",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "raw",
+            "custom request",
+            "passthrough",
+            "any endpoint"
+          ]
+        },
+        "method": {
+          "default": "GET",
+          "enum": [
+            "GET",
+            "POST",
+            "PUT",
+            "PATCH",
+            "DELETE"
+          ],
+          "title": "Method",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "path": {
+          "description": "e.g. /1/triggers/my-dataset  or  /2/environments",
+          "title": "Path",
+          "type": "string"
+        },
+        "version": {
+          "default": "1",
+          "enum": [
+            "1",
+            "2"
+          ],
+          "enumNames": [
+            "v1",
+            "v2 (Management)"
+          ],
+          "title": "API Version",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "params_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Query Params (JSON)",
+          "ui:rows": 3,
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Body (JSON)",
+          "ui:rows": 6,
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "title": "HoneycombRestRequestConfig",
+      "type": "object"
+    },
+    "HoneycombSendBatchEventsConfig": {
+      "description": "Send a batch of events to a dataset (a JSON array of event wrappers).",
+      "properties": {
+        "operation": {
+          "const": "send_batch_events",
+          "default": "send_batch_events",
+          "title": "Send Batch Events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "Send Batch Events",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "batch events",
+            "bulk ingest",
+            "send events",
+            "create events"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "A JSON array of event wrappers, each {\"time\": <rfc3339>?, \"samplerate\": <int>?, \"data\": {<event fields>}}.",
+          "title": "Events (JSON array)",
+          "type": "string",
+          "ui:rows": 8,
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "dataset"
+      ],
+      "title": "HoneycombSendBatchEventsConfig",
+      "type": "object"
+    },
+    "HoneycombSendEventConfig": {
+      "description": "Send a single event to a dataset (arbitrary fields as a JSON object).",
+      "properties": {
+        "operation": {
+          "const": "send_event",
+          "default": "send_event",
+          "title": "Send Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "Send Event",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "send event",
+            "ingest",
+            "create event",
+            "post event"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "A single event as a JSON object of arbitrary fields (e.g. {\"method\": \"GET\", \"duration_ms\": 32}).",
+          "title": "Event (JSON)",
+          "type": "string",
+          "ui:rows": 8,
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "event_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "RFC3339 timestamp for the event (X-Honeycomb-Event-Time). Defaults to server time.",
+          "title": "Event Time"
+        },
+        "samplerate": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sample rate for the event (X-Honeycomb-Samplerate). Defaults to 1.",
+          "title": "Sample Rate"
+        }
+      },
+      "required": [
+        "dataset"
+      ],
+      "title": "HoneycombSendEventConfig",
+      "type": "object"
+    },
+    "HoneycombSendKinesisEventsConfig": {
+      "description": "Send events via an AWS Kinesis Firehose payload to a dataset.",
+      "properties": {
+        "operation": {
+          "const": "send_kinesis_events",
+          "default": "send_kinesis_events",
+          "title": "Send Kinesis Events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "Send Kinesis Events",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "kinesis",
+            "firehose",
+            "stream events",
+            "cloudwatch"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "AWS Kinesis Firehose payload as a JSON object with base64-encoded record data (e.g. {\"requestId\": ..., \"records\": [{\"data\": \"<base64>\"}]}).",
+          "title": "Kinesis Firehose Payload (JSON)",
+          "type": "string",
+          "ui:rows": 8,
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "firehose_request_id": {
+          "description": "AWS Firehose request id (X-Amz-Firehose-Request-Id header).",
+          "title": "Firehose Request Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dataset",
+        "firehose_request_id"
+      ],
+      "title": "HoneycombSendKinesisEventsConfig",
+      "type": "object"
+    },
+    "HoneycombUpdateApiKeyConfig": {
+      "description": "Update an API key by id (v2 JSON:API envelope; PATCH; e.g. disable/rename).",
+      "properties": {
+        "operation": {
+          "const": "update_api_key",
+          "default": "update_api_key",
+          "title": "Update API Key",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Management (v2)",
+          "x-display-name": "Update API Key",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "api keys",
+            "edit key",
+            "disable key",
+            "rename key"
+          ]
+        },
+        "team_slug": {
+          "description": "Your Honeycomb team slug (from GET /2/auth `included[].attributes.slug`, or the UI URL).",
+          "title": "Team Slug",
+          "type": "string"
+        },
+        "api_key_id": {
+          "description": "The API key id.",
+          "title": "API Key ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an id",
+            "depends_on": "team_slug",
+            "field_name": "api_key_id",
+            "placeholder": "Select a API key...",
+            "searchable": true
+          }
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "JSON:API body, e.g. {\"data\": {\"type\": \"api-keys\", \"id\": \"<id>\", \"attributes\": {\"disabled\": true}}}",
+          "title": "Body (JSON)",
+          "type": "string",
+          "ui:rows": 8,
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "team_slug",
+        "api_key_id"
+      ],
+      "title": "HoneycombUpdateApiKeyConfig",
+      "type": "object"
+    },
+    "HoneycombUpdateBoardConfig": {
+      "description": "Update an existing Board by id (full replacement).",
+      "properties": {
+        "operation": {
+          "const": "update_board",
+          "default": "update_board",
+          "title": "Update Board",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards",
+          "x-display-name": "Update Board",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "boards",
+            "update board",
+            "edit dashboard"
+          ]
+        },
+        "board_id": {
+          "description": "The Board identifier.",
+          "title": "Board ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an id",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "Full Board object as JSON (requires type + name).",
+          "title": "Body (JSON)",
+          "type": "string",
+          "ui:rows": 8,
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id"
+      ],
+      "title": "HoneycombUpdateBoardConfig",
+      "type": "object"
+    },
+    "HoneycombUpdateBoardViewConfig": {
+      "description": "Update a board view's name and filters.",
+      "properties": {
+        "operation": {
+          "const": "update_board_view",
+          "default": "update_board_view",
+          "title": "Update Board View",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards",
+          "x-display-name": "Update Board View",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "board view",
+            "update view",
+            "edit view"
+          ]
+        },
+        "board_id": {
+          "description": "The Board identifier.",
+          "title": "Board ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an id",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "view_id": {
+          "description": "The board view identifier.",
+          "title": "View ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an id",
+            "depends_on": "board_id",
+            "field_name": "view_id",
+            "placeholder": "Select a view...",
+            "searchable": true
+          }
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "Board view object as JSON (name + filters).",
+          "title": "Body (JSON)",
+          "type": "string",
+          "ui:rows": 8,
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "board_id",
+        "view_id"
+      ],
+      "title": "HoneycombUpdateBoardViewConfig",
+      "type": "object"
+    },
+    "HoneycombUpdateBurnAlertConfig": {
+      "description": "Update a burn alert (full replace \u2014 send all fields).",
+      "properties": {
+        "operation": {
+          "const": "update_burn_alert",
+          "default": "update_burn_alert",
+          "title": "Update Burn Alert",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "SLOs & Burn Alerts",
+          "x-display-name": "Update Burn Alert",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "burn alert",
+            "slo alert",
+            "update burn alert",
+            "edit burn alert"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "burn_alert_id": {
+          "description": "ID of the burn alert to update.",
+          "title": "Burn Alert ID",
+          "type": "string"
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "Full burn alert object as JSON (same fields as create): slo_id, alert_type, and the alert_type-specific threshold fields.",
+          "title": "Body (JSON)",
+          "type": "string",
+          "ui:rows": 8,
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "dataset",
+        "burn_alert_id"
+      ],
+      "title": "HoneycombUpdateBurnAlertConfig",
+      "type": "object"
+    },
+    "HoneycombUpdateColumnConfig": {
+      "description": "Update an existing column by id.",
+      "properties": {
+        "operation": {
+          "const": "update_column",
+          "default": "update_column",
+          "title": "Update Column",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Datasets & Columns",
+          "x-display-name": "Update Column",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "edit column",
+            "modify column"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "column_id": {
+          "description": "The id of the column to update.",
+          "title": "Column ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an id",
+            "depends_on": "dataset",
+            "field_name": "column_id",
+            "placeholder": "Select a column...",
+            "searchable": true
+          }
+        },
+        "key_name": {
+          "description": "The column's key name (1-255 characters).",
+          "title": "Key Name",
+          "type": "string"
+        },
+        "type": {
+          "default": "string",
+          "description": "Column data type.",
+          "enum": [
+            "string",
+            "float",
+            "integer",
+            "boolean"
+          ],
+          "title": "Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Column description (max 255 chars).",
+          "title": "Description"
+        },
+        "hidden": {
+          "anyOf": [
+            {
+              "enum": [
+                "true",
+                "false"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether the column is hidden.",
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Hidden",
+          "x-enum-searchable": true,
+          "enum": [
+            "true",
+            "false"
+          ]
+        }
+      },
+      "required": [
+        "dataset",
+        "column_id",
+        "key_name"
+      ],
+      "title": "HoneycombUpdateColumnConfig",
+      "type": "object"
+    },
+    "HoneycombUpdateDatasetConfig": {
+      "description": "Update a dataset's settings. Complex settings go in the JSON body.",
+      "properties": {
+        "operation": {
+          "const": "update_dataset",
+          "default": "update_dataset",
+          "title": "Update Dataset",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Datasets & Columns",
+          "x-display-name": "Update Dataset",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "edit dataset",
+            "modify dataset"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "Update fields, e.g. {\"description\": \"...\", \"expand_json_depth\": 3, \"settings\": {\"delete_protected\": true}}.",
+          "title": "Body (JSON)",
+          "type": "string",
+          "ui:rows": 8,
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "dataset"
+      ],
+      "title": "HoneycombUpdateDatasetConfig",
+      "type": "object"
+    },
+    "HoneycombUpdateDatasetDefinitionsConfig": {
+      "description": "Update dataset definition mappings. Body maps definition types to {name}.",
+      "properties": {
+        "operation": {
+          "const": "update_dataset_definitions",
+          "default": "update_dataset_definitions",
+          "title": "Update Dataset Definitions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Datasets & Columns",
+          "x-display-name": "Update Dataset Definitions",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "set definitions",
+            "map trace fields"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "Definition map, e.g. {\"duration_ms\": {\"name\": \"duration_ms\"}, \"error\": {\"name\": \"\"}}.",
+          "title": "Body (JSON)",
+          "type": "string",
+          "ui:rows": 8,
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "dataset"
+      ],
+      "title": "HoneycombUpdateDatasetDefinitionsConfig",
+      "type": "object"
+    },
+    "HoneycombUpdateDerivedColumnConfig": {
+      "description": "Update an existing derived column by id.",
+      "properties": {
+        "operation": {
+          "const": "update_derived_column",
+          "default": "update_derived_column",
+          "title": "Update Derived Column",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Datasets & Columns",
+          "x-display-name": "Update Derived Column",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "calculated field",
+            "update derived column",
+            "edit derived column"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "derived_column_id": {
+          "description": "The derived column's unique id.",
+          "title": "Derived Column ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an id",
+            "depends_on": "dataset",
+            "field_name": "derived_column_id",
+            "placeholder": "Select a derived column...",
+            "searchable": true
+          }
+        },
+        "alias": {
+          "description": "Human-readable name used in queries (1-255 chars).",
+          "title": "Alias",
+          "type": "string"
+        },
+        "expression": {
+          "description": "The derived-column formula (1-4095 chars).",
+          "title": "Expression",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional UI description (max 255 chars).",
+          "title": "Description"
+        }
+      },
+      "required": [
+        "dataset",
+        "derived_column_id",
+        "alias",
+        "expression"
+      ],
+      "title": "HoneycombUpdateDerivedColumnConfig",
+      "type": "object"
+    },
+    "HoneycombUpdateEnvironmentConfig": {
+      "description": "Update an environment by id (v2 JSON:API envelope; PATCH).",
+      "properties": {
+        "operation": {
+          "const": "update_environment",
+          "default": "update_environment",
+          "title": "Update Environment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Management (v2)",
+          "x-display-name": "Update Environment",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "environments",
+            "edit environment",
+            "modify env"
+          ]
+        },
+        "team_slug": {
+          "description": "Your Honeycomb team slug (from GET /2/auth `included[].attributes.slug`, or the UI URL).",
+          "title": "Team Slug",
+          "type": "string"
+        },
+        "environment_id": {
+          "description": "The environment id.",
+          "title": "Environment ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an id",
+            "depends_on": "team_slug",
+            "field_name": "environment_id",
+            "placeholder": "Select a environment...",
+            "searchable": true
+          }
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "JSON:API body, e.g. {\"data\": {\"type\": \"environments\", \"id\": \"<id>\", \"attributes\": {\"description\": \"...\", \"settings\": {\"delete_protected\": false}}}}",
+          "title": "Body (JSON)",
+          "type": "string",
+          "ui:rows": 8,
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "team_slug",
+        "environment_id"
+      ],
+      "title": "HoneycombUpdateEnvironmentConfig",
+      "type": "object"
+    },
+    "HoneycombUpdateMarkerConfig": {
+      "description": "Update an existing marker by id.",
+      "properties": {
+        "operation": {
+          "const": "update_marker",
+          "default": "update_marker",
+          "title": "Update Marker",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Markers",
+          "x-display-name": "Update Marker",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "edit marker",
+            "modify marker"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "marker_id": {
+          "description": "Id of the marker to update.",
+          "title": "Marker ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an id",
+            "depends_on": "dataset",
+            "field_name": "marker_id",
+            "placeholder": "Select a marker...",
+            "searchable": true
+          }
+        },
+        "message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Description shown on the marker.",
+          "title": "Message"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Groups markers; shared type shares a color.",
+          "title": "Type"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Clickable link associated with the marker.",
+          "title": "URL"
+        },
+        "start_time": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Marker placement time (Unix seconds).",
+          "title": "Start Time"
+        },
+        "end_time": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional end time for a time range (Unix seconds).",
+          "title": "End Time"
+        }
+      },
+      "required": [
+        "dataset",
+        "marker_id"
+      ],
+      "title": "HoneycombUpdateMarkerConfig",
+      "type": "object"
+    },
+    "HoneycombUpdateMarkerSettingConfig": {
+      "description": "Update a marker setting by id (type cannot be changed after creation).",
+      "properties": {
+        "operation": {
+          "const": "update_marker_setting",
+          "default": "update_marker_setting",
+          "title": "Update Marker Setting",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Markers",
+          "x-display-name": "Update Marker Setting",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "edit marker color",
+            "change marker color"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "marker_setting_id": {
+          "description": "Id of the marker setting to update.",
+          "title": "Marker Setting ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an id",
+            "depends_on": "dataset",
+            "field_name": "marker_setting_id",
+            "placeholder": "Select a marker setting...",
+            "searchable": true
+          }
+        },
+        "type": {
+          "description": "Marker type (required; cannot change after creation).",
+          "title": "Type",
+          "type": "string"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Hex color for markers of this type (e.g. #7b1fa2).",
+          "title": "Color"
+        }
+      },
+      "required": [
+        "dataset",
+        "marker_setting_id",
+        "type"
+      ],
+      "title": "HoneycombUpdateMarkerSettingConfig",
+      "type": "object"
+    },
+    "HoneycombUpdateQueryAnnotationConfig": {
+      "description": "Update a query annotation's name/description.",
+      "properties": {
+        "operation": {
+          "const": "update_query_annotation",
+          "default": "update_query_annotation",
+          "title": "Update Query Annotation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Queries",
+          "x-display-name": "Update Query Annotation",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "edit query annotation",
+            "rename query",
+            "update query annotation"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "annotation_id": {
+          "description": "ID of the query annotation to update.",
+          "title": "Annotation ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an id",
+            "depends_on": "dataset",
+            "field_name": "annotation_id",
+            "placeholder": "Select a annotation...",
+            "searchable": true
+          }
+        },
+        "name": {
+          "description": "Updated display name.",
+          "title": "Name",
+          "type": "string"
+        },
+        "query_id": {
+          "description": "ID of the annotated query (cannot be changed).",
+          "title": "Query ID",
+          "type": "string"
+        },
+        "description": {
+          "description": "Updated description.",
+          "title": "Description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dataset",
+        "annotation_id",
+        "name",
+        "query_id",
+        "description"
+      ],
+      "title": "HoneycombUpdateQueryAnnotationConfig",
+      "type": "object"
+    },
+    "HoneycombUpdateRecipientConfig": {
+      "description": "Update a recipient (full object replace).",
+      "properties": {
+        "operation": {
+          "const": "update_recipient",
+          "default": "update_recipient",
+          "title": "Update Recipient",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Recipients",
+          "x-display-name": "Update Recipient",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "recipients",
+            "update recipient",
+            "edit notification target"
+          ]
+        },
+        "recipient_id": {
+          "description": "The recipient's unique ID.",
+          "title": "Recipient ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an id",
+            "field_name": "recipient_id",
+            "placeholder": "Select a recipient...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "Full recipient body: {\"type\": \"email\", \"details\": {\"email_address\": \"...\"}}",
+          "title": "Body (JSON)",
+          "type": "string",
+          "ui:rows": 8,
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "recipient_id"
+      ],
+      "title": "HoneycombUpdateRecipientConfig",
+      "type": "object"
+    },
+    "HoneycombUpdateSloConfig": {
+      "description": "Update an SLO (full replace \u2014 send all fields).",
+      "properties": {
+        "operation": {
+          "const": "update_slo",
+          "default": "update_slo",
+          "title": "Update SLO",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "SLOs & Burn Alerts",
+          "x-display-name": "Update SLO",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "slo",
+            "service level objective",
+            "update slo",
+            "edit slo"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "slo_id": {
+          "description": "ID of the SLO to update.",
+          "title": "SLO ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an id",
+            "depends_on": "dataset",
+            "field_name": "slo_id",
+            "placeholder": "Select a SLO...",
+            "searchable": true
+          }
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "Full SLO object as JSON (partial updates not supported). Include name, sli, time_period_days, target_per_million.",
+          "title": "Body (JSON)",
+          "type": "string",
+          "ui:rows": 8,
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "dataset",
+        "slo_id"
+      ],
+      "title": "HoneycombUpdateSloConfig",
+      "type": "object"
+    },
+    "HoneycombUpdateTriggerConfig": {
+      "description": "Update a trigger by ID (full replacement of trigger fields).",
+      "properties": {
+        "operation": {
+          "const": "update_trigger",
+          "default": "update_trigger",
+          "title": "Update Trigger",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers (Alerts)",
+          "x-display-name": "Update Trigger",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "alert",
+            "update trigger",
+            "edit alert"
+          ]
+        },
+        "dataset": {
+          "description": "Dataset slug (or __all__).",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a dataset slug (__all__ for all)",
+            "field_name": "dataset",
+            "placeholder": "Select a dataset...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "trigger_id": {
+          "description": "The ID of the trigger.",
+          "title": "Trigger ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an id",
+            "depends_on": "dataset",
+            "field_name": "trigger_id",
+            "placeholder": "Select a trigger...",
+            "searchable": true
+          }
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "Full trigger definition JSON (same fields used to create the trigger).",
+          "title": "Body (JSON)",
+          "type": "string",
+          "ui:rows": 8,
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "dataset",
+        "trigger_id"
+      ],
+      "title": "HoneycombUpdateTriggerConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the Honeycomb node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_api_key": "#/$defs/HoneycombCreateApiKeyConfig",
+          "create_board": "#/$defs/HoneycombCreateBoardConfig",
+          "create_board_view": "#/$defs/HoneycombCreateBoardViewConfig",
+          "create_burn_alert": "#/$defs/HoneycombCreateBurnAlertConfig",
+          "create_column": "#/$defs/HoneycombCreateColumnConfig",
+          "create_dataset": "#/$defs/HoneycombCreateDatasetConfig",
+          "create_derived_column": "#/$defs/HoneycombCreateDerivedColumnConfig",
+          "create_environment": "#/$defs/HoneycombCreateEnvironmentConfig",
+          "create_map_dependency_request": "#/$defs/HoneycombCreateMapDependencyRequestConfig",
+          "create_marker": "#/$defs/HoneycombCreateMarkerConfig",
+          "create_marker_setting": "#/$defs/HoneycombCreateMarkerSettingConfig",
+          "create_query": "#/$defs/HoneycombCreateQueryConfig",
+          "create_query_annotation": "#/$defs/HoneycombCreateQueryAnnotationConfig",
+          "create_query_result": "#/$defs/HoneycombCreateQueryResultConfig",
+          "create_recipient": "#/$defs/HoneycombCreateRecipientConfig",
+          "create_slo": "#/$defs/HoneycombCreateSloConfig",
+          "create_trigger": "#/$defs/HoneycombCreateTriggerConfig",
+          "delete_api_key": "#/$defs/HoneycombDeleteApiKeyConfig",
+          "delete_board": "#/$defs/HoneycombDeleteBoardConfig",
+          "delete_board_view": "#/$defs/HoneycombDeleteBoardViewConfig",
+          "delete_burn_alert": "#/$defs/HoneycombDeleteBurnAlertConfig",
+          "delete_column": "#/$defs/HoneycombDeleteColumnConfig",
+          "delete_dataset": "#/$defs/HoneycombDeleteDatasetConfig",
+          "delete_derived_column": "#/$defs/HoneycombDeleteDerivedColumnConfig",
+          "delete_environment": "#/$defs/HoneycombDeleteEnvironmentConfig",
+          "delete_marker": "#/$defs/HoneycombDeleteMarkerConfig",
+          "delete_marker_setting": "#/$defs/HoneycombDeleteMarkerSettingConfig",
+          "delete_query_annotation": "#/$defs/HoneycombDeleteQueryAnnotationConfig",
+          "delete_recipient": "#/$defs/HoneycombDeleteRecipientConfig",
+          "delete_slo": "#/$defs/HoneycombDeleteSloConfig",
+          "delete_trigger": "#/$defs/HoneycombDeleteTriggerConfig",
+          "get_api_key": "#/$defs/HoneycombGetApiKeyConfig",
+          "get_auth": "#/$defs/HoneycombGetAuthConfig",
+          "get_auth_v2": "#/$defs/HoneycombGetAuthV2Config",
+          "get_board": "#/$defs/HoneycombGetBoardConfig",
+          "get_board_view": "#/$defs/HoneycombGetBoardViewConfig",
+          "get_burn_alert": "#/$defs/HoneycombGetBurnAlertConfig",
+          "get_column": "#/$defs/HoneycombGetColumnConfig",
+          "get_dataset": "#/$defs/HoneycombGetDatasetConfig",
+          "get_dataset_definitions": "#/$defs/HoneycombGetDatasetDefinitionsConfig",
+          "get_derived_column": "#/$defs/HoneycombGetDerivedColumnConfig",
+          "get_environment": "#/$defs/HoneycombGetEnvironmentConfig",
+          "get_map_dependencies": "#/$defs/HoneycombGetMapDependenciesConfig",
+          "get_query": "#/$defs/HoneycombGetQueryConfig",
+          "get_query_annotation": "#/$defs/HoneycombGetQueryAnnotationConfig",
+          "get_query_result": "#/$defs/HoneycombGetQueryResultConfig",
+          "get_recipient": "#/$defs/HoneycombGetRecipientConfig",
+          "get_slo": "#/$defs/HoneycombGetSloConfig",
+          "get_slo_history": "#/$defs/HoneycombGetSloHistoryConfig",
+          "get_slo_hourly_counts_history": "#/$defs/HoneycombGetSloHourlyCountsHistoryConfig",
+          "get_slo_realtime_counts": "#/$defs/HoneycombGetSloRealtimeCountsConfig",
+          "get_trigger": "#/$defs/HoneycombGetTriggerConfig",
+          "get_triggers_associated_with_recipient": "#/$defs/HoneycombGetTriggersAssociatedWithRecipientConfig",
+          "list_api_keys": "#/$defs/HoneycombListApiKeysConfig",
+          "list_board_views": "#/$defs/HoneycombListBoardViewsConfig",
+          "list_boards": "#/$defs/HoneycombListBoardsConfig",
+          "list_burn_alerts": "#/$defs/HoneycombListBurnAlertsConfig",
+          "list_columns": "#/$defs/HoneycombListColumnsConfig",
+          "list_datasets": "#/$defs/HoneycombListDatasetsConfig",
+          "list_derived_columns": "#/$defs/HoneycombListDerivedColumnsConfig",
+          "list_environments": "#/$defs/HoneycombListEnvironmentsConfig",
+          "list_marker_settings": "#/$defs/HoneycombListMarkerSettingsConfig",
+          "list_markers": "#/$defs/HoneycombListMarkersConfig",
+          "list_query_annotations": "#/$defs/HoneycombListQueryAnnotationsConfig",
+          "list_recipients": "#/$defs/HoneycombListRecipientsConfig",
+          "list_slos": "#/$defs/HoneycombListSlosConfig",
+          "list_triggers": "#/$defs/HoneycombListTriggersConfig",
+          "on_burn_alert": "#/$defs/HoneycombOnBurnAlertConfig",
+          "on_trigger_fired": "#/$defs/HoneycombOnTriggerFiredConfig",
+          "rest_request": "#/$defs/HoneycombRestRequestConfig",
+          "send_batch_events": "#/$defs/HoneycombSendBatchEventsConfig",
+          "send_event": "#/$defs/HoneycombSendEventConfig",
+          "send_kinesis_events": "#/$defs/HoneycombSendKinesisEventsConfig",
+          "update_api_key": "#/$defs/HoneycombUpdateApiKeyConfig",
+          "update_board": "#/$defs/HoneycombUpdateBoardConfig",
+          "update_board_view": "#/$defs/HoneycombUpdateBoardViewConfig",
+          "update_burn_alert": "#/$defs/HoneycombUpdateBurnAlertConfig",
+          "update_column": "#/$defs/HoneycombUpdateColumnConfig",
+          "update_dataset": "#/$defs/HoneycombUpdateDatasetConfig",
+          "update_dataset_definitions": "#/$defs/HoneycombUpdateDatasetDefinitionsConfig",
+          "update_derived_column": "#/$defs/HoneycombUpdateDerivedColumnConfig",
+          "update_environment": "#/$defs/HoneycombUpdateEnvironmentConfig",
+          "update_marker": "#/$defs/HoneycombUpdateMarkerConfig",
+          "update_marker_setting": "#/$defs/HoneycombUpdateMarkerSettingConfig",
+          "update_query_annotation": "#/$defs/HoneycombUpdateQueryAnnotationConfig",
+          "update_recipient": "#/$defs/HoneycombUpdateRecipientConfig",
+          "update_slo": "#/$defs/HoneycombUpdateSloConfig",
+          "update_trigger": "#/$defs/HoneycombUpdateTriggerConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/HoneycombSendEventConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombSendBatchEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombSendKinesisEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombListDatasetsConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombCreateDatasetConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombGetDatasetConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombUpdateDatasetConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombDeleteDatasetConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombGetDatasetDefinitionsConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombUpdateDatasetDefinitionsConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombListColumnsConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombCreateColumnConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombGetColumnConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombUpdateColumnConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombDeleteColumnConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombListDerivedColumnsConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombCreateDerivedColumnConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombGetDerivedColumnConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombUpdateDerivedColumnConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombDeleteDerivedColumnConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombListBoardsConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombCreateBoardConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombGetBoardConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombUpdateBoardConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombDeleteBoardConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombCreateQueryConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombGetQueryConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombCreateQueryResultConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombGetQueryResultConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombCreateQueryAnnotationConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombListQueryAnnotationsConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombGetQueryAnnotationConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombUpdateQueryAnnotationConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombDeleteQueryAnnotationConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombCreateMarkerConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombListMarkersConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombUpdateMarkerConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombDeleteMarkerConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombCreateMarkerSettingConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombListMarkerSettingsConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombUpdateMarkerSettingConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombDeleteMarkerSettingConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombCreateTriggerConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombListTriggersConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombGetTriggerConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombUpdateTriggerConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombDeleteTriggerConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombCreateSloConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombListSlosConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombGetSloConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombUpdateSloConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombDeleteSloConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombCreateBurnAlertConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombListBurnAlertsConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombGetBurnAlertConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombUpdateBurnAlertConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombDeleteBurnAlertConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombListRecipientsConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombCreateRecipientConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombGetRecipientConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombUpdateRecipientConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombDeleteRecipientConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombGetAuthConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombGetAuthV2Config"
+        },
+        {
+          "$ref": "#/$defs/HoneycombListEnvironmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombCreateEnvironmentConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombGetEnvironmentConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombUpdateEnvironmentConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombDeleteEnvironmentConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombListApiKeysConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombCreateApiKeyConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombGetApiKeyConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombUpdateApiKeyConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombDeleteApiKeyConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombListBoardViewsConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombCreateBoardViewConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombGetBoardViewConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombUpdateBoardViewConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombDeleteBoardViewConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombGetSloHistoryConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombGetSloHourlyCountsHistoryConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombGetSloRealtimeCountsConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombCreateMapDependencyRequestConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombGetMapDependenciesConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombGetTriggersAssociatedWithRecipientConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombRestRequestConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombOnTriggerFiredConfig"
+        },
+        {
+          "$ref": "#/$defs/HoneycombOnBurnAlertConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/HoneycombApiKeyCredential"
+        },
+        {
+          "$ref": "#/$defs/HoneycombManagementKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Honeycomb Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Create a Honeycomb marker when a deploy finishes",
+    "List the triggers in my dataset",
+    "Run a Honeycomb query and get the results",
+    "Create an SLO burn alert",
+    "When a Honeycomb trigger fires, notify my team"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

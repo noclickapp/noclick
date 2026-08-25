@@ -1,0 +1,2044 @@
+{
+  "$defs": {
+    "ThreadsAccessTokenCredential": {
+      "description": "Manually supplied Threads user access token (no OAuth popup).",
+      "properties": {
+        "credential_type": {
+          "const": "threads_access_token",
+          "default": "threads_access_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "Threads user access token from the Graph API Explorer / your own OAuth",
+          "title": "Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 expiry, if the token expires",
+          "title": "Token Expiry"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "ThreadsAccessTokenCredential",
+      "type": "object",
+      "x-credential-url": "https://developers.facebook.com/docs/threads/get-started"
+    },
+    "ThreadsAccountInsightsConfig": {
+      "description": "Get account/user-level Threads insights.",
+      "properties": {
+        "operation": {
+          "const": "account_insights",
+          "default": "account_insights",
+          "title": "Account Insights",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Insights",
+          "x-display-name": "Account Insights",
+          "x-is-trigger": false
+        },
+        "user_id": {
+          "default": "me",
+          "description": "Threads user ID, or 'me'.",
+          "title": "Threads User",
+          "type": "string"
+        },
+        "metric": {
+          "default": "views,likes,replies,reposts,quotes,followers_count",
+          "description": "Comma-separated metrics.",
+          "title": "Metric",
+          "type": "string"
+        },
+        "since": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unix timestamp (>= 1712991600).",
+          "title": "Since"
+        },
+        "until": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unix timestamp.",
+          "title": "Until"
+        },
+        "breakdown": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required for follower_demographics.",
+          "enum": [
+            "country",
+            "city",
+            "age",
+            "gender"
+          ],
+          "title": "Breakdown",
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ThreadsAccountInsightsConfig",
+      "type": "object"
+    },
+    "ThreadsContainerStatusConfig": {
+      "description": "Check the processing status of a media container before publishing.",
+      "properties": {
+        "operation": {
+          "const": "get_container_status",
+          "default": "get_container_status",
+          "title": "Get Container Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Publishing",
+          "x-display-name": "Get Container Status",
+          "x-is-trigger": false
+        },
+        "creation_id": {
+          "description": "The media container ID.",
+          "title": "Creation ID",
+          "type": "string"
+        },
+        "fields": {
+          "default": "status,error_message",
+          "description": "Comma-separated fields to return.",
+          "title": "Fields",
+          "type": "string"
+        }
+      },
+      "required": [
+        "creation_id"
+      ],
+      "title": "ThreadsContainerStatusConfig",
+      "type": "object"
+    },
+    "ThreadsConversationConfig": {
+      "description": "Get the full (flattened, nested) conversation for a Threads post.",
+      "properties": {
+        "operation": {
+          "const": "get_conversation",
+          "default": "get_conversation",
+          "title": "Get Conversation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Replies",
+          "x-display-name": "Get Conversation",
+          "x-is-trigger": false
+        },
+        "media_id": {
+          "description": "The root post ID.",
+          "title": "Media ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Threads post ID",
+            "field_name": "media_id",
+            "placeholder": "Select one of your posts...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "fields": {
+          "default": "id,text,username,permalink,timestamp,media_type,media_url,shortcode,has_replies,root_post,replied_to,is_reply,is_reply_owned_by_me,hide_status,reply_audience",
+          "description": "Comma-separated fields to return.",
+          "title": "Fields",
+          "type": "string"
+        },
+        "reverse": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set to 'true' for reverse-chronological order.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "title": "Reverse",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "media_id"
+      ],
+      "title": "ThreadsConversationConfig",
+      "type": "object"
+    },
+    "ThreadsCreatePostConfig": {
+      "description": "Create a Threads media container (step 1 of publishing).",
+      "properties": {
+        "operation": {
+          "const": "create_post",
+          "default": "create_post",
+          "title": "Create Post Container",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Publishing",
+          "x-display-name": "Create Post Container",
+          "x-is-trigger": false
+        },
+        "user_id": {
+          "default": "me",
+          "description": "Threads user ID, or 'me'.",
+          "title": "Threads User",
+          "type": "string"
+        },
+        "media_type": {
+          "default": "TEXT",
+          "description": "Type of post to create.",
+          "enum": [
+            "TEXT",
+            "IMAGE",
+            "VIDEO",
+            "CAROUSEL"
+          ],
+          "title": "Media Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Post text (<=500 chars). Required for TEXT.",
+          "title": "Text"
+        },
+        "image_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Publicly reachable image URL (IMAGE).",
+          "title": "Image URL"
+        },
+        "video_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Publicly reachable video URL (VIDEO).",
+          "title": "Video URL"
+        },
+        "is_carousel_item": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set to 'true' when creating a carousel child item.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "title": "Is Carousel Item",
+          "x-enum-searchable": true
+        },
+        "children": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated child container IDs (CAROUSEL, 2-20).",
+          "title": "Children"
+        },
+        "reply_to_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Post ID being replied to.",
+          "title": "Reply To ID"
+        },
+        "quote_post_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Post ID to quote.",
+          "title": "Quote Post ID"
+        },
+        "reply_control": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Who can reply.",
+          "enum": [
+            "everyone",
+            "accounts_you_follow",
+            "mentioned_only",
+            "parent_post_author_only",
+            "followers_only"
+          ],
+          "title": "Reply Control",
+          "x-enum-searchable": true
+        },
+        "link_attachment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL to attach to a text post.",
+          "title": "Link Attachment"
+        },
+        "alt_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Accessibility text (<=1000 chars).",
+          "title": "Alt Text"
+        },
+        "location_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Location ID to tag (needs location tagging scope).",
+          "title": "Location ID"
+        },
+        "topic_tag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Single topic tag (no periods/ampersands).",
+          "title": "Topic Tag"
+        },
+        "allowlisted_country_codes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated ISO country codes to geo-restrict.",
+          "title": "Allowlisted Country Codes"
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "Extra container fields merged into the request (poll_attachment, etc.).",
+          "title": "Additional Fields (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "ThreadsCreatePostConfig",
+      "type": "object"
+    },
+    "ThreadsDeletePostConfig": {
+      "description": "Delete one of the authenticated user's own Threads posts.",
+      "properties": {
+        "operation": {
+          "const": "delete_post",
+          "default": "delete_post",
+          "title": "Delete Post",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Publishing",
+          "x-display-name": "Delete Post",
+          "x-is-trigger": false
+        },
+        "media_id": {
+          "description": "The Threads post ID to delete.",
+          "title": "Media ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Threads post ID",
+            "field_name": "media_id",
+            "placeholder": "Select one of your posts...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "media_id"
+      ],
+      "title": "ThreadsDeletePostConfig",
+      "type": "object"
+    },
+    "ThreadsGetLocationConfig": {
+      "description": "Get a Threads location object by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_location",
+          "default": "get_location",
+          "title": "Get Location",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Discovery",
+          "x-display-name": "Get Location",
+          "x-is-trigger": false
+        },
+        "location_id": {
+          "description": "The Threads location object ID.",
+          "title": "Location ID",
+          "type": "string"
+        },
+        "fields": {
+          "default": "id,name,address,city,country,latitude,longitude,postal_code",
+          "description": "Comma-separated fields to return.",
+          "title": "Fields",
+          "type": "string"
+        }
+      },
+      "required": [
+        "location_id"
+      ],
+      "title": "ThreadsGetLocationConfig",
+      "type": "object"
+    },
+    "ThreadsGetMeConfig": {
+      "description": "Get the authenticated Threads user's profile.",
+      "properties": {
+        "operation": {
+          "const": "get_me",
+          "default": "get_me",
+          "title": "Get My Profile",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Profile",
+          "x-display-name": "Get My Profile",
+          "x-is-trigger": false
+        },
+        "fields": {
+          "default": "id,username,name,threads_profile_picture_url,threads_biography,is_verified",
+          "description": "Comma-separated profile fields to return.",
+          "title": "Fields",
+          "type": "string"
+        }
+      },
+      "title": "ThreadsGetMeConfig",
+      "type": "object"
+    },
+    "ThreadsGetPostConfig": {
+      "description": "Get a single Threads post (media object) by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_post",
+          "default": "get_post",
+          "title": "Get Post",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Posts",
+          "x-display-name": "Get Post",
+          "x-is-trigger": false
+        },
+        "media_id": {
+          "description": "The Threads post ID.",
+          "title": "Media ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Threads post ID",
+            "field_name": "media_id",
+            "placeholder": "Select one of your posts...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "fields": {
+          "default": "id,media_product_type,media_type,media_url,permalink,owner,username,text,timestamp,shortcode,thumbnail_url,children,is_quote_post,has_replies,is_reply,reply_audience,alt_text,link_attachment_url,quoted_post,reposted_post",
+          "description": "Comma-separated media fields.",
+          "title": "Fields",
+          "type": "string"
+        }
+      },
+      "required": [
+        "media_id"
+      ],
+      "title": "ThreadsGetPostConfig",
+      "type": "object"
+    },
+    "ThreadsGetRepliesConfig": {
+      "description": "Get the top-level replies to a Threads post.",
+      "properties": {
+        "operation": {
+          "const": "get_replies",
+          "default": "get_replies",
+          "title": "Get Replies",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Replies",
+          "x-display-name": "Get Replies",
+          "x-is-trigger": false
+        },
+        "media_id": {
+          "description": "The post ID whose replies to list.",
+          "title": "Media ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Threads post ID",
+            "field_name": "media_id",
+            "placeholder": "Select one of your posts...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "fields": {
+          "default": "id,text,username,permalink,timestamp,media_type,media_url,shortcode,has_replies,root_post,replied_to,is_reply,is_reply_owned_by_me,hide_status,reply_audience",
+          "description": "Comma-separated fields to return.",
+          "title": "Fields",
+          "type": "string"
+        },
+        "reverse": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "'true' for reverse-chronological.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "title": "Reverse",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "media_id"
+      ],
+      "title": "ThreadsGetRepliesConfig",
+      "type": "object"
+    },
+    "ThreadsGhostPostsConfig": {
+      "description": "List the authenticated user's ghost (ephemeral) posts.",
+      "properties": {
+        "operation": {
+          "const": "list_ghost_posts",
+          "default": "list_ghost_posts",
+          "title": "List Ghost Posts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Posts",
+          "x-display-name": "List Ghost Posts",
+          "x-is-trigger": false
+        },
+        "user_id": {
+          "default": "me",
+          "description": "Threads user ID, or 'me'.",
+          "title": "Threads User",
+          "type": "string"
+        },
+        "fields": {
+          "default": "id,media_product_type,media_type,media_url,permalink,owner,username,text,timestamp,shortcode,thumbnail_url,children,is_quote_post,has_replies,is_reply,reply_audience,alt_text,link_attachment_url,quoted_post,reposted_post",
+          "description": "Comma-separated fields to return.",
+          "title": "Fields",
+          "type": "string"
+        },
+        "since": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start date (YYYY-MM-DD or Unix timestamp).",
+          "title": "Since"
+        },
+        "until": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End date (YYYY-MM-DD or Unix timestamp).",
+          "title": "Until"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max results per page (1-100).",
+          "title": "Limit"
+        }
+      },
+      "title": "ThreadsGhostPostsConfig",
+      "type": "object"
+    },
+    "ThreadsHideReplyConfig": {
+      "description": "Hide or unhide a reply on one of the user's posts.",
+      "properties": {
+        "operation": {
+          "const": "hide_reply",
+          "default": "hide_reply",
+          "title": "Hide / Unhide Reply",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Replies",
+          "x-display-name": "Hide / Unhide Reply",
+          "x-is-trigger": false
+        },
+        "reply_id": {
+          "description": "The reply ID to hide/unhide.",
+          "title": "Reply ID",
+          "type": "string"
+        },
+        "hide": {
+          "default": "true",
+          "description": "'true' to hide, 'false' to unhide.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "title": "Hide",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "reply_id"
+      ],
+      "title": "ThreadsHideReplyConfig",
+      "type": "object"
+    },
+    "ThreadsKeywordSearchConfig": {
+      "description": "Search public Threads posts by keyword or tag.",
+      "properties": {
+        "operation": {
+          "const": "keyword_search",
+          "default": "keyword_search",
+          "title": "Keyword Search",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Discovery",
+          "x-display-name": "Keyword Search",
+          "x-is-trigger": false
+        },
+        "q": {
+          "description": "Search keyword or tag.",
+          "title": "Query",
+          "type": "string"
+        },
+        "search_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Ranking of results.",
+          "enum": [
+            "TOP",
+            "RECENT"
+          ],
+          "title": "Search Type",
+          "x-enum-searchable": true
+        },
+        "search_mode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search by keyword or by hashtag.",
+          "enum": [
+            "KEYWORD",
+            "TAG"
+          ],
+          "title": "Search Mode",
+          "x-enum-searchable": true
+        },
+        "media_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter results by media type.",
+          "enum": [
+            "TEXT",
+            "IMAGE",
+            "VIDEO"
+          ],
+          "title": "Media Type",
+          "x-enum-searchable": true
+        },
+        "author_username": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter to posts by this exact username.",
+          "title": "Author Username"
+        },
+        "since": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start date (YYYY-MM-DD or Unix timestamp).",
+          "title": "Since"
+        },
+        "until": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End date (YYYY-MM-DD or Unix timestamp).",
+          "title": "Until"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "1-100.",
+          "title": "Limit"
+        },
+        "fields": {
+          "default": "id,text,username,permalink,timestamp,media_type",
+          "description": "Comma-separated fields to return.",
+          "title": "Fields",
+          "type": "string"
+        }
+      },
+      "required": [
+        "q"
+      ],
+      "title": "ThreadsKeywordSearchConfig",
+      "type": "object"
+    },
+    "ThreadsListPostsConfig": {
+      "description": "List the authenticated user's Threads posts.",
+      "properties": {
+        "operation": {
+          "const": "list_posts",
+          "default": "list_posts",
+          "title": "List My Posts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Posts",
+          "x-display-name": "List My Posts",
+          "x-is-trigger": false
+        },
+        "user_id": {
+          "default": "me",
+          "description": "Threads user ID, or 'me'.",
+          "title": "Threads User",
+          "type": "string"
+        },
+        "fields": {
+          "default": "id,media_product_type,media_type,media_url,permalink,owner,username,text,timestamp,shortcode,thumbnail_url,children,is_quote_post,has_replies,is_reply,reply_audience,alt_text,link_attachment_url,quoted_post,reposted_post",
+          "description": "Comma-separated fields to return.",
+          "title": "Fields",
+          "type": "string"
+        },
+        "since": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start date (YYYY-MM-DD or Unix).",
+          "title": "Since"
+        },
+        "until": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End date (YYYY-MM-DD or Unix).",
+          "title": "Until"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max results per page (1-100).",
+          "title": "Limit"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor for the previous page.",
+          "title": "Before Cursor"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor for the next page.",
+          "title": "After Cursor"
+        }
+      },
+      "title": "ThreadsListPostsConfig",
+      "type": "object"
+    },
+    "ThreadsLocationSearchConfig": {
+      "description": "Search for a location to tag on a post.",
+      "properties": {
+        "operation": {
+          "const": "location_search",
+          "default": "location_search",
+          "title": "Location Search",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Discovery",
+          "x-display-name": "Location Search",
+          "x-is-trigger": false
+        },
+        "q": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Location search text.",
+          "title": "Query"
+        },
+        "latitude": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Latitude to bias the location search.",
+          "title": "Latitude"
+        },
+        "longitude": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Longitude to bias the location search.",
+          "title": "Longitude"
+        },
+        "fields": {
+          "default": "id,name,address,city,country,latitude,longitude",
+          "description": "Comma-separated fields to return.",
+          "title": "Fields",
+          "type": "string"
+        }
+      },
+      "title": "ThreadsLocationSearchConfig",
+      "type": "object"
+    },
+    "ThreadsLookupProfileConfig": {
+      "description": "Look up a public Threads profile by username (>=100 followers).",
+      "properties": {
+        "operation": {
+          "const": "lookup_profile",
+          "default": "lookup_profile",
+          "title": "Look Up Public Profile",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Profile",
+          "x-display-name": "Look Up Public Profile",
+          "x-is-trigger": false
+        },
+        "username": {
+          "description": "Exact Threads username to look up.",
+          "title": "Username",
+          "type": "string"
+        },
+        "fields": {
+          "default": "username,name,profile_picture_url,biography,follower_count,likes_count,is_verified",
+          "description": "Comma-separated public profile fields.",
+          "title": "Fields",
+          "type": "string"
+        }
+      },
+      "required": [
+        "username"
+      ],
+      "title": "ThreadsLookupProfileConfig",
+      "type": "object"
+    },
+    "ThreadsManagePendingReplyConfig": {
+      "description": "Approve or ignore a pending reply.",
+      "properties": {
+        "operation": {
+          "const": "manage_pending_reply",
+          "default": "manage_pending_reply",
+          "title": "Approve / Ignore Pending Reply",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Replies",
+          "x-display-name": "Approve / Ignore Pending Reply",
+          "x-is-trigger": false
+        },
+        "reply_id": {
+          "description": "The pending reply ID.",
+          "title": "Reply ID",
+          "type": "string"
+        },
+        "approve": {
+          "default": "true",
+          "description": "'true' to approve, 'false' to ignore.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "title": "Approve",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "reply_id"
+      ],
+      "title": "ThreadsManagePendingReplyConfig",
+      "type": "object"
+    },
+    "ThreadsMentionsConfig": {
+      "description": "List public Threads posts that mention the authenticated user.",
+      "properties": {
+        "operation": {
+          "const": "get_mentions",
+          "default": "get_mentions",
+          "title": "Get Mentions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Discovery",
+          "x-display-name": "Get Mentions",
+          "x-is-trigger": false
+        },
+        "user_id": {
+          "default": "me",
+          "description": "Threads user ID, or 'me'.",
+          "title": "Threads User",
+          "type": "string"
+        },
+        "fields": {
+          "default": "id,text,username,permalink,timestamp,media_type",
+          "description": "Comma-separated fields to return.",
+          "title": "Fields",
+          "type": "string"
+        },
+        "since": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start date (YYYY-MM-DD or Unix timestamp).",
+          "title": "Since"
+        },
+        "until": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End date (YYYY-MM-DD or Unix timestamp).",
+          "title": "Until"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max results per page (1-100).",
+          "title": "Limit"
+        }
+      },
+      "title": "ThreadsMentionsConfig",
+      "type": "object"
+    },
+    "ThreadsMyRepliesConfig": {
+      "description": "List replies authored by the authenticated user.",
+      "properties": {
+        "operation": {
+          "const": "list_my_replies",
+          "default": "list_my_replies",
+          "title": "List My Replies",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Replies",
+          "x-display-name": "List My Replies",
+          "x-is-trigger": false
+        },
+        "user_id": {
+          "default": "me",
+          "description": "Threads user ID, or 'me'.",
+          "title": "Threads User",
+          "type": "string"
+        },
+        "fields": {
+          "default": "id,text,username,permalink,timestamp,media_type,media_url,shortcode,has_replies,root_post,replied_to,is_reply,is_reply_owned_by_me,hide_status,reply_audience",
+          "description": "Comma-separated fields to return.",
+          "title": "Fields",
+          "type": "string"
+        },
+        "since": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start date (YYYY-MM-DD or Unix timestamp).",
+          "title": "Since"
+        },
+        "until": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End date (YYYY-MM-DD or Unix timestamp).",
+          "title": "Until"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max results per page (1-100).",
+          "title": "Limit"
+        }
+      },
+      "title": "ThreadsMyRepliesConfig",
+      "type": "object"
+    },
+    "ThreadsOAuthCredential": {
+      "description": "OAuth 2.0 long-lived Threads user access token (via Threads Login).",
+      "properties": {
+        "credential_type": {
+          "const": "threads_oauth",
+          "default": "threads_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "Long-lived Threads user access token",
+          "title": "Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 timestamp when the token expires",
+          "title": "Token Expiry"
+        },
+        "threads_user_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Connected Threads user ID",
+          "title": "Threads User ID"
+        },
+        "username": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Connected Threads username",
+          "title": "Username"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "ThreadsOAuthCredential",
+      "type": "object",
+      "x-credential-hidden": true,
+      "x-credential-preview-flag": "meta-oauth-preview",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://developers.facebook.com/apps/",
+      "x-oauth-provider": "threads",
+      "x-oauth-scopes": [
+        "threads_basic",
+        "threads_content_publish",
+        "threads_read_replies",
+        "threads_manage_replies",
+        "threads_manage_insights",
+        "threads_manage_mentions",
+        "threads_keyword_search",
+        "threads_location_tagging",
+        "threads_delete",
+        "threads_profile_discovery"
+      ]
+    },
+    "ThreadsPendingRepliesConfig": {
+      "description": "List pending (approval-gated) replies on the user's posts.",
+      "properties": {
+        "operation": {
+          "const": "get_pending_replies",
+          "default": "get_pending_replies",
+          "title": "Get Pending Replies",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Replies",
+          "x-display-name": "Get Pending Replies",
+          "x-is-trigger": false
+        },
+        "media_id": {
+          "description": "The post ID whose pending replies to list.",
+          "title": "Media ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Threads post ID",
+            "field_name": "media_id",
+            "placeholder": "Select one of your posts...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "approval_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by status.",
+          "enum": [
+            "pending",
+            "ignored"
+          ],
+          "title": "Approval Status",
+          "x-enum-searchable": true
+        },
+        "fields": {
+          "default": "id,text,username,permalink,timestamp,media_type,media_url,shortcode,has_replies,root_post,replied_to,is_reply,is_reply_owned_by_me,hide_status,reply_audience,reply_approval_status",
+          "description": "Comma-separated fields to return.",
+          "title": "Fields",
+          "type": "string"
+        },
+        "reverse": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set to 'true' for reverse-chronological order.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "title": "Reverse",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "media_id"
+      ],
+      "title": "ThreadsPendingRepliesConfig",
+      "type": "object"
+    },
+    "ThreadsPostInsightsConfig": {
+      "description": "Get insights for a single Threads post.",
+      "properties": {
+        "operation": {
+          "const": "post_insights",
+          "default": "post_insights",
+          "title": "Post Insights",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Insights",
+          "x-display-name": "Post Insights",
+          "x-is-trigger": false
+        },
+        "media_id": {
+          "description": "The post ID.",
+          "title": "Media ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Threads post ID",
+            "field_name": "media_id",
+            "placeholder": "Select one of your posts...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "metric": {
+          "default": "views,likes,replies,reposts,quotes,shares",
+          "description": "Comma-separated metrics.",
+          "title": "Metric",
+          "type": "string"
+        }
+      },
+      "required": [
+        "media_id"
+      ],
+      "title": "ThreadsPostInsightsConfig",
+      "type": "object"
+    },
+    "ThreadsPublicPostsConfig": {
+      "description": "List a public Threads profile's posts by username (>=100 followers).",
+      "properties": {
+        "operation": {
+          "const": "list_public_posts",
+          "default": "list_public_posts",
+          "title": "List Public Profile Posts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Profile",
+          "x-display-name": "List Public Profile Posts",
+          "x-is-trigger": false
+        },
+        "username": {
+          "description": "Exact Threads username.",
+          "title": "Username",
+          "type": "string"
+        },
+        "fields": {
+          "default": "id,text,permalink,timestamp,media_type",
+          "description": "Comma-separated fields to return.",
+          "title": "Fields",
+          "type": "string"
+        },
+        "since": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start date (YYYY-MM-DD or Unix).",
+          "title": "Since"
+        },
+        "until": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End date (YYYY-MM-DD or Unix).",
+          "title": "Until"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max posts per page.",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "username"
+      ],
+      "title": "ThreadsPublicPostsConfig",
+      "type": "object"
+    },
+    "ThreadsPublishPostConfig": {
+      "description": "Publish a previously-created Threads media container (step 2).",
+      "properties": {
+        "operation": {
+          "const": "publish_post",
+          "default": "publish_post",
+          "title": "Publish Post",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Publishing",
+          "x-display-name": "Publish Post",
+          "x-is-trigger": false
+        },
+        "user_id": {
+          "default": "me",
+          "description": "Threads user ID, or 'me'.",
+          "title": "Threads User",
+          "type": "string"
+        },
+        "creation_id": {
+          "description": "The container ID returned by Create Post Container.",
+          "title": "Creation ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "creation_id"
+      ],
+      "title": "ThreadsPublishPostConfig",
+      "type": "object"
+    },
+    "ThreadsPublishingLimitConfig": {
+      "description": "Get the user's remaining publishing / reply / delete quota (per 24h).",
+      "properties": {
+        "operation": {
+          "const": "get_publishing_limit",
+          "default": "get_publishing_limit",
+          "title": "Get Publishing Limit",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Publishing",
+          "x-display-name": "Get Publishing Limit",
+          "x-is-trigger": false
+        },
+        "user_id": {
+          "default": "me",
+          "description": "Threads user ID, or 'me'.",
+          "title": "Threads User",
+          "type": "string"
+        },
+        "fields": {
+          "default": "quota_usage,config,reply_quota_usage,reply_config,delete_quota_usage,delete_config",
+          "description": "Comma-separated fields to return.",
+          "title": "Fields",
+          "type": "string"
+        }
+      },
+      "title": "ThreadsPublishingLimitConfig",
+      "type": "object"
+    },
+    "ThreadsRequestConfig": {
+      "description": "Make an arbitrary Threads Graph API request (escape hatch).",
+      "properties": {
+        "operation": {
+          "const": "threads_request",
+          "default": "threads_request",
+          "title": "Custom Threads Request",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Advanced",
+          "x-display-name": "Custom Threads Request",
+          "x-is-trigger": false
+        },
+        "endpoint": {
+          "description": "Path after the version, e.g. /me/threads.",
+          "title": "Endpoint",
+          "type": "string"
+        },
+        "method": {
+          "default": "GET",
+          "description": "HTTP method for the request.",
+          "enum": [
+            "GET",
+            "POST",
+            "DELETE"
+          ],
+          "title": "Method",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "params_json": {
+          "default": "{}",
+          "description": "Query parameters as a JSON object, e.g. {\"limit\": 5}.",
+          "title": "Query Params (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "data_json": {
+          "default": "{}",
+          "description": "Request body as a JSON object.",
+          "title": "Body (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "endpoint"
+      ],
+      "title": "ThreadsRequestConfig",
+      "type": "object"
+    },
+    "ThreadsTrigger_on_any_threads_event": {
+      "properties": {
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Paste this into your app's Threads webhook config.",
+          "title": "Callback URL",
+          "ui:copyable": true,
+          "ui:widget": "webhook"
+        },
+        "verify_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token Meta echoes during the subscription handshake.",
+          "title": "Verify Token"
+        },
+        "app_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Threads app secret for X-Hub-Signature-256 verification.",
+          "title": "App Secret",
+          "ui:widget": "password"
+        },
+        "operation": {
+          "const": "on_any_threads_event",
+          "default": "on_any_threads_event",
+          "title": "On Any Threads Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Any Threads Event",
+          "x-is-trigger": true,
+          "x-webhook-topic": "*"
+        }
+      },
+      "title": "ThreadsTrigger_on_any_threads_event",
+      "type": "object"
+    },
+    "ThreadsTrigger_on_delete": {
+      "properties": {
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Paste this into your app's Threads webhook config.",
+          "title": "Callback URL",
+          "ui:copyable": true,
+          "ui:widget": "webhook"
+        },
+        "verify_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token Meta echoes during the subscription handshake.",
+          "title": "Verify Token"
+        },
+        "app_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Threads app secret for X-Hub-Signature-256 verification.",
+          "title": "App Secret",
+          "ui:widget": "password"
+        },
+        "operation": {
+          "const": "on_delete",
+          "default": "on_delete",
+          "title": "On Delete",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Delete",
+          "x-is-trigger": true,
+          "x-webhook-topic": "delete"
+        }
+      },
+      "title": "ThreadsTrigger_on_delete",
+      "type": "object"
+    },
+    "ThreadsTrigger_on_mentions": {
+      "properties": {
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Paste this into your app's Threads webhook config.",
+          "title": "Callback URL",
+          "ui:copyable": true,
+          "ui:widget": "webhook"
+        },
+        "verify_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token Meta echoes during the subscription handshake.",
+          "title": "Verify Token"
+        },
+        "app_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Threads app secret for X-Hub-Signature-256 verification.",
+          "title": "App Secret",
+          "ui:widget": "password"
+        },
+        "operation": {
+          "const": "on_mentions",
+          "default": "on_mentions",
+          "title": "On Mention",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Mention",
+          "x-is-trigger": true,
+          "x-webhook-topic": "mentions"
+        }
+      },
+      "title": "ThreadsTrigger_on_mentions",
+      "type": "object"
+    },
+    "ThreadsTrigger_on_publish": {
+      "properties": {
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Paste this into your app's Threads webhook config.",
+          "title": "Callback URL",
+          "ui:copyable": true,
+          "ui:widget": "webhook"
+        },
+        "verify_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token Meta echoes during the subscription handshake.",
+          "title": "Verify Token"
+        },
+        "app_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Threads app secret for X-Hub-Signature-256 verification.",
+          "title": "App Secret",
+          "ui:widget": "password"
+        },
+        "operation": {
+          "const": "on_publish",
+          "default": "on_publish",
+          "title": "On Publish",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Publish",
+          "x-is-trigger": true,
+          "x-webhook-topic": "publish"
+        }
+      },
+      "title": "ThreadsTrigger_on_publish",
+      "type": "object"
+    },
+    "ThreadsTrigger_on_replies": {
+      "properties": {
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Paste this into your app's Threads webhook config.",
+          "title": "Callback URL",
+          "ui:copyable": true,
+          "ui:widget": "webhook"
+        },
+        "verify_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token Meta echoes during the subscription handshake.",
+          "title": "Verify Token"
+        },
+        "app_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Threads app secret for X-Hub-Signature-256 verification.",
+          "title": "App Secret",
+          "ui:widget": "password"
+        },
+        "operation": {
+          "const": "on_replies",
+          "default": "on_replies",
+          "title": "On Reply",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Reply",
+          "x-is-trigger": true,
+          "x-webhook-topic": "replies"
+        }
+      },
+      "title": "ThreadsTrigger_on_replies",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "account_insights": "#/$defs/ThreadsAccountInsightsConfig",
+          "create_post": "#/$defs/ThreadsCreatePostConfig",
+          "delete_post": "#/$defs/ThreadsDeletePostConfig",
+          "get_container_status": "#/$defs/ThreadsContainerStatusConfig",
+          "get_conversation": "#/$defs/ThreadsConversationConfig",
+          "get_location": "#/$defs/ThreadsGetLocationConfig",
+          "get_me": "#/$defs/ThreadsGetMeConfig",
+          "get_mentions": "#/$defs/ThreadsMentionsConfig",
+          "get_pending_replies": "#/$defs/ThreadsPendingRepliesConfig",
+          "get_post": "#/$defs/ThreadsGetPostConfig",
+          "get_publishing_limit": "#/$defs/ThreadsPublishingLimitConfig",
+          "get_replies": "#/$defs/ThreadsGetRepliesConfig",
+          "hide_reply": "#/$defs/ThreadsHideReplyConfig",
+          "keyword_search": "#/$defs/ThreadsKeywordSearchConfig",
+          "list_ghost_posts": "#/$defs/ThreadsGhostPostsConfig",
+          "list_my_replies": "#/$defs/ThreadsMyRepliesConfig",
+          "list_posts": "#/$defs/ThreadsListPostsConfig",
+          "list_public_posts": "#/$defs/ThreadsPublicPostsConfig",
+          "location_search": "#/$defs/ThreadsLocationSearchConfig",
+          "lookup_profile": "#/$defs/ThreadsLookupProfileConfig",
+          "manage_pending_reply": "#/$defs/ThreadsManagePendingReplyConfig",
+          "on_any_threads_event": "#/$defs/ThreadsTrigger_on_any_threads_event",
+          "on_delete": "#/$defs/ThreadsTrigger_on_delete",
+          "on_mentions": "#/$defs/ThreadsTrigger_on_mentions",
+          "on_publish": "#/$defs/ThreadsTrigger_on_publish",
+          "on_replies": "#/$defs/ThreadsTrigger_on_replies",
+          "post_insights": "#/$defs/ThreadsPostInsightsConfig",
+          "publish_post": "#/$defs/ThreadsPublishPostConfig",
+          "threads_request": "#/$defs/ThreadsRequestConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ThreadsTrigger_on_replies"
+        },
+        {
+          "$ref": "#/$defs/ThreadsTrigger_on_mentions"
+        },
+        {
+          "$ref": "#/$defs/ThreadsTrigger_on_publish"
+        },
+        {
+          "$ref": "#/$defs/ThreadsTrigger_on_delete"
+        },
+        {
+          "$ref": "#/$defs/ThreadsTrigger_on_any_threads_event"
+        },
+        {
+          "$ref": "#/$defs/ThreadsGetMeConfig"
+        },
+        {
+          "$ref": "#/$defs/ThreadsLookupProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/ThreadsPublicPostsConfig"
+        },
+        {
+          "$ref": "#/$defs/ThreadsCreatePostConfig"
+        },
+        {
+          "$ref": "#/$defs/ThreadsPublishPostConfig"
+        },
+        {
+          "$ref": "#/$defs/ThreadsContainerStatusConfig"
+        },
+        {
+          "$ref": "#/$defs/ThreadsDeletePostConfig"
+        },
+        {
+          "$ref": "#/$defs/ThreadsPublishingLimitConfig"
+        },
+        {
+          "$ref": "#/$defs/ThreadsGetPostConfig"
+        },
+        {
+          "$ref": "#/$defs/ThreadsListPostsConfig"
+        },
+        {
+          "$ref": "#/$defs/ThreadsGhostPostsConfig"
+        },
+        {
+          "$ref": "#/$defs/ThreadsGetRepliesConfig"
+        },
+        {
+          "$ref": "#/$defs/ThreadsConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/ThreadsMyRepliesConfig"
+        },
+        {
+          "$ref": "#/$defs/ThreadsHideReplyConfig"
+        },
+        {
+          "$ref": "#/$defs/ThreadsPendingRepliesConfig"
+        },
+        {
+          "$ref": "#/$defs/ThreadsManagePendingReplyConfig"
+        },
+        {
+          "$ref": "#/$defs/ThreadsPostInsightsConfig"
+        },
+        {
+          "$ref": "#/$defs/ThreadsAccountInsightsConfig"
+        },
+        {
+          "$ref": "#/$defs/ThreadsKeywordSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/ThreadsMentionsConfig"
+        },
+        {
+          "$ref": "#/$defs/ThreadsLocationSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/ThreadsGetLocationConfig"
+        },
+        {
+          "$ref": "#/$defs/ThreadsRequestConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ThreadsOAuthCredential"
+        },
+        {
+          "$ref": "#/$defs/ThreadsAccessTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Threads Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Publish a text post to Threads",
+    "Reply to a Threads post",
+    "Pull the insights for my latest Threads post",
+    "Search Threads for a keyword",
+    "Trigger a workflow when someone replies to my Threads post"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

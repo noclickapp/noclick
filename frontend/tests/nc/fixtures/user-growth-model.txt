@@ -1,0 +1,260 @@
+import React, { useMemo, useState } from 'react';
+
+const ITEMS = [
+    {
+        id: 1,
+        title: 'Amber Atlas',
+        category: 'Maps',
+        year: 1924,
+        featured: true,
+    },
+    {
+        id: 2,
+        title: 'Blue Comet',
+        category: 'Posters',
+        year: 1962,
+        featured: false,
+    },
+    {
+        id: 3,
+        title: 'Copper Finch',
+        category: 'Sculptures',
+        year: 1981,
+        featured: true,
+    },
+    {
+        id: 4,
+        title: 'Dawn Archive',
+        category: 'Maps',
+        year: 2004,
+        featured: false,
+    },
+    {
+        id: 5,
+        title: 'Echo Garden',
+        category: 'Posters',
+        year: 2017,
+        featured: true,
+    },
+    {
+        id: 6,
+        title: 'Field Notes',
+        category: 'Sculptures',
+        year: 2023,
+        featured: false,
+    },
+];
+
+const palette = {
+    page: '#f5f1e8',
+    card: '#fffdf8',
+    ink: '#24211d',
+    muted: '#756d61',
+    line: '#d9d0c2',
+    accent: '#a44a3f',
+};
+
+export default function CollectionBoard() {
+    const [query, setQuery] = useState('');
+    const [category, setCategory] = useState('All');
+    const [featuredOnly, setFeaturedOnly] = useState(false);
+
+    const categories = useMemo(
+        () => [
+            'All',
+            ...Array.from(new Set(ITEMS.map((item) => item.category))),
+        ],
+        []
+    );
+
+    const visibleItems = useMemo(() => {
+        const normalizedQuery = query.trim().toLowerCase();
+        return ITEMS.filter((item) => {
+            const matchesQuery =
+                !normalizedQuery ||
+                item.title.toLowerCase().includes(normalizedQuery);
+            const matchesCategory =
+                category === 'All' || item.category === category;
+            const matchesFeatured = !featuredOnly || item.featured;
+            return matchesQuery && matchesCategory && matchesFeatured;
+        }).sort((left, right) => left.title.localeCompare(right.title));
+    }, [category, featuredOnly, query]);
+
+    return (
+        <main
+            style={{
+                minHeight: '100%',
+                padding: 28,
+                color: palette.ink,
+                background: palette.page,
+                fontFamily: 'ui-sans-serif, system-ui, sans-serif',
+            }}
+        >
+            <header style={{ marginBottom: 24 }}>
+                <p
+                    style={{
+                        margin: '0 0 8px',
+                        color: palette.accent,
+                        fontSize: 12,
+                        fontWeight: 700,
+                        letterSpacing: 1.6,
+                        textTransform: 'uppercase',
+                    }}
+                >
+                    Synthetic interface fixture
+                </p>
+                <h1
+                    style={{
+                        margin: 0,
+                        fontFamily: 'Georgia, serif',
+                        fontSize: 36,
+                    }}
+                >
+                    Small Collection Board
+                </h1>
+                <p
+                    style={{
+                        maxWidth: 620,
+                        color: palette.muted,
+                        lineHeight: 1.6,
+                    }}
+                >
+                    Filter a fictional set of catalog items. The component is
+                    deliberately substantial enough to exercise pasted React
+                    code and default-export host mounting while remaining
+                    deterministic and reusable.
+                </p>
+            </header>
+
+            <section
+                aria-label="Collection filters"
+                style={{
+                    display: 'flex',
+                    flexWrap: 'wrap',
+                    gap: 12,
+                    marginBottom: 22,
+                    padding: 16,
+                    border: `1px solid ${palette.line}`,
+                    borderRadius: 12,
+                    background: palette.card,
+                }}
+            >
+                <input
+                    aria-label="Search collection"
+                    value={query}
+                    onChange={(event) => setQuery(event.target.value)}
+                    placeholder="Search titles"
+                    style={{
+                        minWidth: 220,
+                        flex: '1 1 220px',
+                        padding: '10px 12px',
+                        border: `1px solid ${palette.line}`,
+                        borderRadius: 8,
+                        background: 'white',
+                    }}
+                />
+                <select
+                    aria-label="Category"
+                    value={category}
+                    onChange={(event) => setCategory(event.target.value)}
+                    style={{
+                        padding: '10px 12px',
+                        border: `1px solid ${palette.line}`,
+                        borderRadius: 8,
+                    }}
+                >
+                    {categories.map((value) => (
+                        <option key={value} value={value}>
+                            {value}
+                        </option>
+                    ))}
+                </select>
+                <label
+                    style={{
+                        display: 'flex',
+                        alignItems: 'center',
+                        gap: 8,
+                        color: palette.muted,
+                    }}
+                >
+                    <input
+                        type="checkbox"
+                        checked={featuredOnly}
+                        onChange={(event) =>
+                            setFeaturedOnly(event.target.checked)
+                        }
+                    />
+                    Featured only
+                </label>
+            </section>
+
+            <div
+                style={{
+                    display: 'grid',
+                    gridTemplateColumns: 'repeat(auto-fit, minmax(210px, 1fr))',
+                    gap: 14,
+                }}
+            >
+                {visibleItems.map((item) => (
+                    <article
+                        key={item.id}
+                        style={{
+                            minHeight: 130,
+                            padding: 18,
+                            border: `1px solid ${palette.line}`,
+                            borderRadius: 12,
+                            background: palette.card,
+                            boxShadow: '0 8px 24px rgba(60, 45, 25, 0.06)',
+                        }}
+                    >
+                        <div
+                            style={{
+                                display: 'flex',
+                                justifyContent: 'space-between',
+                                gap: 12,
+                            }}
+                        >
+                            <span
+                                style={{
+                                    color: palette.accent,
+                                    fontSize: 12,
+                                    fontWeight: 700,
+                                }}
+                            >
+                                {item.category}
+                            </span>
+                            {item.featured && (
+                                <span aria-label="Featured item">★</span>
+                            )}
+                        </div>
+                        <h2
+                            style={{
+                                margin: '18px 0 6px',
+                                fontFamily: 'Georgia, serif',
+                                fontSize: 22,
+                            }}
+                        >
+                            {item.title}
+                        </h2>
+                        <p style={{ margin: 0, color: palette.muted }}>
+                            Catalog year {item.year}
+                        </p>
+                    </article>
+                ))}
+            </div>
+
+            {visibleItems.length === 0 && (
+                <p
+                    role="status"
+                    style={{
+                        padding: 32,
+                        color: palette.muted,
+                        textAlign: 'center',
+                    }}
+                >
+                    No fictional catalog items match those filters.
+                </p>
+            )}
+        </main>
+    );
+}

@@ -1,0 +1,721 @@
+{
+  "$defs": {
+    "LinkedInCreateArticlePostConfig": {
+      "description": "Create an article/link post on LinkedIn",
+      "properties": {
+        "operation": {
+          "const": "create_article_post",
+          "default": "create_article_post",
+          "title": "Create Article Post",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Create Article Post",
+          "x-is-trigger": false
+        },
+        "commentary": {
+          "description": "The text content to accompany the article",
+          "title": "Post Content",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "article_url": {
+          "description": "URL of the article to share",
+          "title": "Article URL",
+          "type": "string"
+        },
+        "article_title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom title for the article (optional)",
+          "title": "Article Title"
+        },
+        "article_description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom description for the article (optional)",
+          "title": "Article Description"
+        },
+        "visibility": {
+          "default": "PUBLIC",
+          "description": "Who can see this post",
+          "enum": [
+            "PUBLIC",
+            "CONNECTIONS"
+          ],
+          "enumNames": [
+            "Public",
+            "Connections Only"
+          ],
+          "title": "Visibility",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "commentary",
+        "article_url"
+      ],
+      "title": "Share Article / Link",
+      "type": "object"
+    },
+    "LinkedInCreateTextPostConfig": {
+      "description": "Create a text post on LinkedIn",
+      "properties": {
+        "operation": {
+          "const": "create_text_post",
+          "default": "create_text_post",
+          "title": "Create Text Post",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Create Text Post",
+          "x-is-trigger": false
+        },
+        "commentary": {
+          "description": "The text content of your LinkedIn post",
+          "title": "Post Content",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "visibility": {
+          "default": "PUBLIC",
+          "description": "Who can see this post",
+          "enum": [
+            "PUBLIC",
+            "CONNECTIONS"
+          ],
+          "enumNames": [
+            "Public",
+            "Connections Only"
+          ],
+          "title": "Visibility",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "commentary"
+      ],
+      "title": "Create Text Post",
+      "type": "object"
+    },
+    "LinkedInDeletePostConfig": {
+      "description": "Delete a LinkedIn post",
+      "properties": {
+        "operation": {
+          "const": "delete_post",
+          "default": "delete_post",
+          "title": "Delete Post",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Delete Post",
+          "x-is-trigger": false
+        },
+        "post_urn": {
+          "description": "The URN of the post to delete (e.g., urn:li:share:123456)",
+          "title": "Post URN",
+          "type": "string"
+        }
+      },
+      "required": [
+        "post_urn"
+      ],
+      "title": "Delete Post",
+      "type": "object"
+    },
+    "LinkedInGetProfileConfig": {
+      "description": "Get the authenticated user's profile information",
+      "properties": {
+        "operation": {
+          "const": "get_authenticated_profile",
+          "default": "get_authenticated_profile",
+          "title": "Get Authenticated Profile",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Profile",
+          "x-display-name": "Get Authenticated Profile",
+          "x-is-trigger": false
+        }
+      },
+      "title": "Get My Profile",
+      "type": "object"
+    },
+    "LinkedInOAuthCredential": {
+      "description": "OAuth 2.0 credential for LinkedIn.\nTokens are obtained via OAuth flow, not entered manually.\n\nRegister OAuth app at: https://www.linkedin.com/developers/apps\n\nNote: scraping operations (scrape_profile, search_companies, search_jobs, etc.)\ndo not use this credential \u2014 they run through NoClick's Apify integration and\nare billed against the user's NoClick balance.",
+      "properties": {
+        "credential_type": {
+          "const": "linkedin_oauth",
+          "default": "linkedin_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refresh Token"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Expiry"
+        },
+        "sub": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "LinkedIn Member ID"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Email"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Display Name"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "LinkedInOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-oauth-provider": "linkedin",
+      "x-oauth-scopes": [
+        "openid",
+        "profile",
+        "email",
+        "w_member_social"
+      ]
+    },
+    "LinkedInScrapeCompanyEmployeesConfig": {
+      "description": "Scrape employees of a LinkedIn company via Apify (harvestapi/linkedin-company-employees).",
+      "properties": {
+        "operation": {
+          "const": "scrape_company_employees",
+          "default": "scrape_company_employees",
+          "title": "Scrape Company Employees",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Company",
+          "x-display-name": "Scrape Company Employees",
+          "x-is-trigger": false
+        },
+        "companies": {
+          "description": "One LinkedIn company URL or name per line",
+          "title": "Companies",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "job_titles": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Job Titles Filter (comma-separated)"
+        },
+        "locations": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Locations (comma-separated)"
+        },
+        "profile_mode": {
+          "default": "Short ($4 per 1k)",
+          "enum": [
+            "Short ($4 per 1k)",
+            "Full ($8 per 1k)",
+            "Full + email search ($12 per 1k)"
+          ],
+          "title": "Scrape Mode",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "max_items": {
+          "default": 50,
+          "maximum": 2500,
+          "minimum": 1,
+          "title": "Max Employees",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "companies"
+      ],
+      "title": "Scrape Company Employees",
+      "type": "object",
+      "x-credentials-optional": true
+    },
+    "LinkedInScrapeProfileConfig": {
+      "description": "Scrape LinkedIn profiles by URL/handle/ID via Apify (harvestapi).",
+      "properties": {
+        "operation": {
+          "const": "scrape_user_profiles",
+          "default": "scrape_user_profiles",
+          "title": "Scrape User Profiles",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Profile",
+          "x-display-name": "Scrape User Profiles",
+          "x-is-trigger": false
+        },
+        "profile_inputs": {
+          "description": "One profile URL, handle, or LinkedIn ID per line. Examples: https://www.linkedin.com/in/williamhgates, williamhgates",
+          "title": "Profile URLs / Handles",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "profile_mode": {
+          "default": "Profile details no email ($4 per 1k)",
+          "description": "Whether to also resolve email addresses (more expensive).",
+          "enum": [
+            "Profile details no email ($4 per 1k)",
+            "Profile details + email search ($10 per 1k)"
+          ],
+          "enumNames": [
+            "Basic \u2014 no email ($4/1k)",
+            "With email search ($10/1k)"
+          ],
+          "title": "Scrape Mode",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "profile_inputs"
+      ],
+      "title": "Scrape Profiles",
+      "type": "object",
+      "x-credentials-optional": true
+    },
+    "LinkedInSearchCompaniesConfig": {
+      "description": "Search LinkedIn companies via Apify (harvestapi/linkedin-company-search).",
+      "properties": {
+        "operation": {
+          "const": "search_companies",
+          "default": "search_companies",
+          "title": "Search Companies",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Company",
+          "x-display-name": "Search Companies",
+          "x-is-trigger": false
+        },
+        "search_query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Company keyword search (e.g., 'fintech', 'AI infrastructure')",
+          "title": "Search Query"
+        },
+        "locations": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by location names, comma-separated",
+          "title": "Locations (comma-separated)"
+        },
+        "scraper_mode": {
+          "default": "short",
+          "description": "Short = listing pages only. Full = also visit each company page.",
+          "enum": [
+            "short",
+            "full"
+          ],
+          "enumNames": [
+            "Short (listing only)",
+            "Full (visit each page)"
+          ],
+          "title": "Scraper Mode",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "max_items": {
+          "default": 50,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Max Results",
+          "type": "integer"
+        }
+      },
+      "title": "Search Companies",
+      "type": "object",
+      "x-credentials-optional": true
+    },
+    "LinkedInSearchJobsConfig": {
+      "description": "Search LinkedIn job listings via Apify (harvestapi/linkedin-job-search).",
+      "properties": {
+        "operation": {
+          "const": "search_job_listings",
+          "default": "search_job_listings",
+          "title": "Search Job Listings",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Job",
+          "x-display-name": "Search Job Listings",
+          "x-is-trigger": false
+        },
+        "search_queries": {
+          "description": "One search query per line (e.g., 'Software Engineer')",
+          "title": "Job Titles / Keywords",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "locations": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Geographic filter (e.g., 'San Francisco, CA, Remote')",
+          "title": "Locations (comma-separated)"
+        },
+        "workplace_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "remote",
+                "hybrid",
+                "office"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "remote",
+            "hybrid",
+            "office"
+          ],
+          "enumNames": [
+            "Remote",
+            "Hybrid",
+            "On-site"
+          ],
+          "title": "Workplace Type",
+          "x-enum-searchable": true
+        },
+        "max_items": {
+          "default": 50,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Max Jobs Per Query",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "search_queries"
+      ],
+      "title": "Search Jobs",
+      "type": "object",
+      "x-credentials-optional": true
+    },
+    "LinkedInSearchPostsConfig": {
+      "description": "Search LinkedIn posts via Apify (harvestapi/linkedin-post-search). $2 per 1k posts.",
+      "properties": {
+        "operation": {
+          "const": "search_posts",
+          "default": "search_posts",
+          "title": "Search Posts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Search Posts",
+          "x-is-trigger": false
+        },
+        "search_query": {
+          "description": "Post text keywords (LinkedIn caps at 85 chars)",
+          "title": "Search Query",
+          "type": "string"
+        },
+        "target_urls": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "One LinkedIn profile or company URL per line to restrict the search to",
+          "title": "Target Profiles / Companies (optional)",
+          "ui:widget": "textarea"
+        },
+        "max_items": {
+          "default": 50,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Max Posts",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "search_query"
+      ],
+      "title": "Search Posts",
+      "type": "object",
+      "x-credentials-optional": true
+    },
+    "LinkedInSearchProfilesConfig": {
+      "description": "Search LinkedIn profiles via Apify (harvestapi/linkedin-profile-search).",
+      "properties": {
+        "operation": {
+          "const": "search_user_profiles",
+          "default": "search_user_profiles",
+          "title": "Search User Profiles",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Profile",
+          "x-display-name": "Search User Profiles",
+          "x-is-trigger": false
+        },
+        "search_query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Free-text search (e.g., 'CTO fintech', 'product manager AI')",
+          "title": "Search Query"
+        },
+        "current_job_titles": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Current Job Titles (comma-separated)"
+        },
+        "current_companies": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Company names or LinkedIn company URLs",
+          "title": "Current Companies (comma-separated)"
+        },
+        "locations": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Locations (comma-separated)"
+        },
+        "profile_mode": {
+          "default": "Short",
+          "description": "How much detail to fetch per profile (more = more expensive).",
+          "enum": [
+            "Short",
+            "Full",
+            "Full + email search"
+          ],
+          "enumNames": [
+            "Short ($4 per 1k)",
+            "Full ($8 per 1k)",
+            "Full + email search ($12 per 1k)"
+          ],
+          "title": "Scrape Mode",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "max_items": {
+          "default": 50,
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Max Profiles",
+          "type": "integer"
+        }
+      },
+      "title": "Search People",
+      "type": "object",
+      "x-credentials-optional": true
+    }
+  },
+  "description": "Full configuration for LinkedIn node including credentials",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_article_post": "#/$defs/LinkedInCreateArticlePostConfig",
+          "create_text_post": "#/$defs/LinkedInCreateTextPostConfig",
+          "delete_post": "#/$defs/LinkedInDeletePostConfig",
+          "get_authenticated_profile": "#/$defs/LinkedInGetProfileConfig",
+          "scrape_company_employees": "#/$defs/LinkedInScrapeCompanyEmployeesConfig",
+          "scrape_user_profiles": "#/$defs/LinkedInScrapeProfileConfig",
+          "search_companies": "#/$defs/LinkedInSearchCompaniesConfig",
+          "search_job_listings": "#/$defs/LinkedInSearchJobsConfig",
+          "search_posts": "#/$defs/LinkedInSearchPostsConfig",
+          "search_user_profiles": "#/$defs/LinkedInSearchProfilesConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/LinkedInGetProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/LinkedInCreateTextPostConfig"
+        },
+        {
+          "$ref": "#/$defs/LinkedInCreateArticlePostConfig"
+        },
+        {
+          "$ref": "#/$defs/LinkedInDeletePostConfig"
+        },
+        {
+          "$ref": "#/$defs/LinkedInScrapeProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/LinkedInSearchCompaniesConfig"
+        },
+        {
+          "$ref": "#/$defs/LinkedInSearchJobsConfig"
+        },
+        {
+          "$ref": "#/$defs/LinkedInSearchProfilesConfig"
+        },
+        {
+          "$ref": "#/$defs/LinkedInScrapeCompanyEmployeesConfig"
+        },
+        {
+          "$ref": "#/$defs/LinkedInSearchPostsConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/LinkedInOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Linkedin Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Post career tip article to feed with custom commentary",
+    "Share job opening link on LinkedIn and set to PUBLIC",
+    "Get authenticated user profile with name and headline",
+    "Post thought leadership article with external link preview",
+    "Delete outdated job posting from LinkedIn feed",
+    "Share industry news with company mention to CONNECTIONS only"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

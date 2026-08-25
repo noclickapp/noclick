@@ -1,0 +1,301 @@
+{
+  "$defs": {
+    "CronTriggerConfig": {
+      "description": "Configuration for cron trigger node.\nSupports multiple schedule entries \u2014 each becomes a separate Cloudflare cron schedule.",
+      "properties": {
+        "schedules": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "$ref": "#/$defs/ScheduleConfig"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": [
+            {
+              "frequency": "hours",
+              "interval": null,
+              "hour": 9,
+              "minute": 0,
+              "dayOfWeek": 1,
+              "dayOfMonth": 1
+            }
+          ],
+          "description": "When to run this workflow (supports multiple schedule entries). Entries can be schedule config objects or {{nodeId.values.field}} references.",
+          "title": "Schedules",
+          "ui:widget": "schedules"
+        },
+        "timezone": {
+          "default": "UTC",
+          "description": "Timezone for the cron schedule",
+          "enum": [
+            "UTC",
+            "US/Eastern",
+            "US/Central",
+            "US/Mountain",
+            "US/Pacific",
+            "America/New_York",
+            "America/Chicago",
+            "America/Denver",
+            "America/Los_Angeles",
+            "America/Sao_Paulo",
+            "America/Toronto",
+            "America/Vancouver",
+            "Europe/London",
+            "Europe/Paris",
+            "Europe/Berlin",
+            "Europe/Amsterdam",
+            "Europe/Rome",
+            "Europe/Madrid",
+            "Europe/Moscow",
+            "Asia/Tokyo",
+            "Asia/Shanghai",
+            "Asia/Hong_Kong",
+            "Asia/Singapore",
+            "Asia/Kolkata",
+            "Asia/Dubai",
+            "Asia/Seoul",
+            "Australia/Sydney",
+            "Australia/Melbourne",
+            "Pacific/Auckland",
+            "Pacific/Honolulu"
+          ],
+          "title": "Timezone",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Auto-generated webhook ID (read-only)",
+          "title": "Webhook ID",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The URL that will be called when the cron fires (auto-generated)",
+          "title": "Webhook URL",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "IDs of the cron schedules in Cloudflare",
+          "title": "Schedule IDs",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Next scheduled run time (earliest across all schedules)",
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "last_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Last execution time",
+          "title": "Last Run",
+          "ui:hidden": true,
+          "ui:widget": "readonly"
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        }
+      },
+      "title": "CronTriggerConfig",
+      "type": "object"
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for cron trigger node (no credentials needed)",
+  "properties": {
+    "config": {
+      "$ref": "#/$defs/CronTriggerConfig",
+      "description": "Node-specific configuration"
+    },
+    "credentials": {
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials",
+      "type": "null"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Trigger-cron Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Run this workflow every Monday at 9am EST",
+    "Trigger this every 30 minutes throughout the day",
+    "Schedule daily execution at 6pm in my timezone",
+    "Add a cron schedule to run every week on Friday",
+    "Set up multiple schedules with different frequencies",
+    "Change the timezone and adjust the run time accordingly",
+    "Monitor when the next scheduled run will execute"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

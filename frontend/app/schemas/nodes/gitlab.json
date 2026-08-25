@@ -1,0 +1,4993 @@
+{
+  "$defs": {
+    "GitLabAccessTokenCredential": {
+      "description": "Personal / Project / Group Access Token credential for GitLab.",
+      "properties": {
+        "credential_type": {
+          "const": "gitlab_token",
+          "default": "gitlab_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "GitLab Personal/Project/Group access token with the 'api' scope, from User Settings -> Access Tokens",
+          "title": "Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "host": {
+          "default": "https://gitlab.com",
+          "description": "Base URL of your GitLab instance. Use https://gitlab.com for SaaS, or your self-managed host.",
+          "title": "GitLab Host",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "GitLabAccessTokenCredential",
+      "type": "object",
+      "x-credential-url": "https://gitlab.com/-/user_settings/personal_access_tokens"
+    },
+    "GitLabAddMemberConfig": {
+      "description": "Add a user as a project member.",
+      "properties": {
+        "operation": {
+          "const": "add_member",
+          "default": "add_member",
+          "title": "Add Member",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Members",
+          "x-display-name": "Add Member",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "user_id": {
+          "description": "Numeric ID of the user to add",
+          "title": "User ID",
+          "type": "string"
+        },
+        "access_level": {
+          "default": "30",
+          "description": "Member role",
+          "enum": [
+            "10",
+            "20",
+            "30",
+            "40",
+            "50"
+          ],
+          "enumNames": [
+            "Guest",
+            "Reporter",
+            "Developer",
+            "Maintainer",
+            "Owner"
+          ],
+          "title": "Access Level",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "project_id",
+        "user_id"
+      ],
+      "title": "GitLabAddMemberConfig",
+      "type": "object"
+    },
+    "GitLabApproveMergeRequestConfig": {
+      "description": "Approve a merge request.",
+      "properties": {
+        "operation": {
+          "const": "approve_merge_request",
+          "default": "approve_merge_request",
+          "title": "Approve Merge Request",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Merge Requests",
+          "x-display-name": "Approve Merge Request",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "merge_request_iid": {
+          "description": "Internal ID of the merge request",
+          "title": "MR IID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "merge_request_iid"
+      ],
+      "title": "GitLabApproveMergeRequestConfig",
+      "type": "object"
+    },
+    "GitLabCancelJobConfig": {
+      "description": "Cancel a single job.",
+      "properties": {
+        "operation": {
+          "const": "cancel_job",
+          "default": "cancel_job",
+          "title": "Cancel Job",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "CI/CD",
+          "x-display-name": "Cancel Job",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "job_id": {
+          "description": "ID of the job",
+          "title": "Job ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "job_id"
+      ],
+      "title": "GitLabCancelJobConfig",
+      "type": "object"
+    },
+    "GitLabCancelPipelineConfig": {
+      "description": "Cancel a pipeline's running jobs.",
+      "properties": {
+        "operation": {
+          "const": "cancel_pipeline",
+          "default": "cancel_pipeline",
+          "title": "Cancel Pipeline",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "CI/CD",
+          "x-display-name": "Cancel Pipeline",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "pipeline_id": {
+          "description": "ID of the pipeline",
+          "title": "Pipeline ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "pipeline_id"
+      ],
+      "title": "GitLabCancelPipelineConfig",
+      "type": "object"
+    },
+    "GitLabCreateBranchConfig": {
+      "description": "Create a repository branch.",
+      "properties": {
+        "operation": {
+          "const": "create_branch",
+          "default": "create_branch",
+          "title": "Create Branch",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Repository",
+          "x-display-name": "Create Branch",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "branch": {
+          "description": "Name of the new branch",
+          "title": "Branch Name",
+          "type": "string"
+        },
+        "ref": {
+          "description": "Branch name or commit SHA to branch from",
+          "title": "Ref",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "branch",
+        "ref"
+      ],
+      "title": "GitLabCreateBranchConfig",
+      "type": "object"
+    },
+    "GitLabCreateCommitConfig": {
+      "description": "Create a commit with file actions in one call.",
+      "properties": {
+        "operation": {
+          "const": "create_commit",
+          "default": "create_commit",
+          "title": "Create Commit",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Repository",
+          "x-display-name": "Create Commit",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "branch": {
+          "description": "Branch to commit to",
+          "title": "Branch",
+          "type": "string"
+        },
+        "commit_message": {
+          "description": "Commit message",
+          "title": "Commit Message",
+          "type": "string"
+        },
+        "file_path": {
+          "description": "Path of the file to create/update",
+          "title": "File Path",
+          "type": "string"
+        },
+        "content": {
+          "description": "New file content",
+          "title": "Content",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "action": {
+          "default": "create",
+          "description": "File action to perform",
+          "enum": [
+            "create",
+            "update",
+            "delete"
+          ],
+          "enumNames": [
+            "Create",
+            "Update",
+            "Delete"
+          ],
+          "title": "Action",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "project_id",
+        "branch",
+        "commit_message",
+        "file_path",
+        "content"
+      ],
+      "title": "GitLabCreateCommitConfig",
+      "type": "object"
+    },
+    "GitLabCreateDeploymentConfig": {
+      "description": "Create a deployment record.",
+      "properties": {
+        "operation": {
+          "const": "create_deployment",
+          "default": "create_deployment",
+          "title": "Create Deployment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Deployments",
+          "x-display-name": "Create Deployment",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "environment": {
+          "description": "Target environment name",
+          "title": "Environment",
+          "type": "string"
+        },
+        "sha": {
+          "description": "Commit SHA being deployed",
+          "title": "SHA",
+          "type": "string"
+        },
+        "ref": {
+          "description": "Branch or tag deployed",
+          "title": "Ref",
+          "type": "string"
+        },
+        "status": {
+          "default": "success",
+          "description": "Deployment status",
+          "enum": [
+            "running",
+            "success",
+            "failed",
+            "canceled"
+          ],
+          "title": "Status",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "project_id",
+        "environment",
+        "sha",
+        "ref"
+      ],
+      "title": "GitLabCreateDeploymentConfig",
+      "type": "object"
+    },
+    "GitLabCreateEnvironmentConfig": {
+      "description": "Create an environment.",
+      "properties": {
+        "operation": {
+          "const": "create_environment",
+          "default": "create_environment",
+          "title": "Create Environment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Environments",
+          "x-display-name": "Create Environment",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "name": {
+          "description": "Environment name (e.g. production)",
+          "title": "Name",
+          "type": "string"
+        },
+        "external_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Public URL of the environment",
+          "title": "External URL"
+        }
+      },
+      "required": [
+        "project_id",
+        "name"
+      ],
+      "title": "GitLabCreateEnvironmentConfig",
+      "type": "object"
+    },
+    "GitLabCreateEpicConfig": {
+      "description": "Create an epic in a group (Premium).",
+      "properties": {
+        "operation": {
+          "const": "create_epic",
+          "default": "create_epic",
+          "title": "Create Epic",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Epics",
+          "x-display-name": "Create Epic",
+          "x-is-trigger": false
+        },
+        "group_id": {
+          "description": "Numeric group ID or group path",
+          "title": "Group",
+          "type": "string"
+        },
+        "title": {
+          "description": "Epic title",
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Epic description",
+          "title": "Description",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "group_id",
+        "title"
+      ],
+      "title": "GitLabCreateEpicConfig",
+      "type": "object"
+    },
+    "GitLabCreateHookConfig": {
+      "description": "Create a project webhook.",
+      "properties": {
+        "operation": {
+          "const": "create_hook",
+          "default": "create_hook",
+          "title": "Create Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Create Webhook",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "url": {
+          "description": "Webhook target URL",
+          "title": "URL",
+          "type": "string"
+        },
+        "token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sent as X-Gitlab-Token on deliveries",
+          "title": "Secret Token"
+        },
+        "push_events": {
+          "default": "true",
+          "description": "Trigger on push events",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Push Events",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "project_id",
+        "url"
+      ],
+      "title": "GitLabCreateHookConfig",
+      "type": "object"
+    },
+    "GitLabCreateIssueConfig": {
+      "description": "Create an issue in a project.",
+      "properties": {
+        "operation": {
+          "const": "create_issue",
+          "default": "create_issue",
+          "title": "Create Issue",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Issues",
+          "x-display-name": "Create Issue",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "title": {
+          "description": "Issue title",
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Issue description (Markdown)",
+          "title": "Description",
+          "ui:widget": "textarea"
+        },
+        "labels": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated label names",
+          "title": "Labels"
+        },
+        "assignee_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated user IDs to assign",
+          "title": "Assignee IDs"
+        }
+      },
+      "required": [
+        "project_id",
+        "title"
+      ],
+      "title": "GitLabCreateIssueConfig",
+      "type": "object"
+    },
+    "GitLabCreateLabelConfig": {
+      "description": "Create a project label.",
+      "properties": {
+        "operation": {
+          "const": "create_label",
+          "default": "create_label",
+          "title": "Create Label",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Labels",
+          "x-display-name": "Create Label",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "name": {
+          "description": "Label name",
+          "title": "Name",
+          "type": "string"
+        },
+        "color": {
+          "default": "#428BCA",
+          "description": "Hex color (e.g. #FF0000) or a CSS color name",
+          "title": "Color",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Label description",
+          "title": "Description"
+        }
+      },
+      "required": [
+        "project_id",
+        "name"
+      ],
+      "title": "GitLabCreateLabelConfig",
+      "type": "object"
+    },
+    "GitLabCreateMergeRequestConfig": {
+      "description": "Open a merge request.",
+      "properties": {
+        "operation": {
+          "const": "create_merge_request",
+          "default": "create_merge_request",
+          "title": "Create Merge Request",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Merge Requests",
+          "x-display-name": "Create Merge Request",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "source_branch": {
+          "description": "Branch to merge from",
+          "title": "Source Branch",
+          "type": "string"
+        },
+        "target_branch": {
+          "description": "Branch to merge into",
+          "title": "Target Branch",
+          "type": "string"
+        },
+        "title": {
+          "description": "Merge request title",
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Merge request description (Markdown)",
+          "title": "Description",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "project_id",
+        "source_branch",
+        "target_branch",
+        "title"
+      ],
+      "title": "GitLabCreateMergeRequestConfig",
+      "type": "object"
+    },
+    "GitLabCreateMilestoneConfig": {
+      "description": "Create a project milestone.",
+      "properties": {
+        "operation": {
+          "const": "create_milestone",
+          "default": "create_milestone",
+          "title": "Create Milestone",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Milestones",
+          "x-display-name": "Create Milestone",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "title": {
+          "description": "Milestone title",
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Milestone description",
+          "title": "Description"
+        },
+        "due_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Due date (YYYY-MM-DD)",
+          "title": "Due Date"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start date (YYYY-MM-DD)",
+          "title": "Start Date"
+        }
+      },
+      "required": [
+        "project_id",
+        "title"
+      ],
+      "title": "GitLabCreateMilestoneConfig",
+      "type": "object"
+    },
+    "GitLabCreateNoteConfig": {
+      "description": "Add a comment (note) to an issue or merge request.",
+      "properties": {
+        "operation": {
+          "const": "create_note",
+          "default": "create_note",
+          "title": "Add Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Issues",
+          "x-display-name": "Add Comment",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "noteable_type": {
+          "default": "issues",
+          "description": "Whether to comment on an issue or a merge request",
+          "enum": [
+            "issues",
+            "merge_requests"
+          ],
+          "enumNames": [
+            "Issue",
+            "Merge Request"
+          ],
+          "title": "Comment On",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "noteable_iid": {
+          "description": "Project-scoped IID of the issue or MR",
+          "title": "Issue/MR IID",
+          "type": "string"
+        },
+        "body": {
+          "description": "Comment text (Markdown)",
+          "title": "Comment Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "project_id",
+        "noteable_iid",
+        "body"
+      ],
+      "title": "GitLabCreateNoteConfig",
+      "type": "object"
+    },
+    "GitLabCreatePipelineConfig": {
+      "description": "Trigger a new pipeline on a ref.",
+      "properties": {
+        "operation": {
+          "const": "create_pipeline",
+          "default": "create_pipeline",
+          "title": "Create Pipeline",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "CI/CD",
+          "x-display-name": "Create Pipeline",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "ref": {
+          "description": "Branch or tag to run the pipeline on",
+          "title": "Ref",
+          "type": "string"
+        },
+        "variables": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "CI/CD variables passed to the pipeline, one KEY=VALUE per line",
+          "title": "Variables",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "project_id",
+        "ref"
+      ],
+      "title": "GitLabCreatePipelineConfig",
+      "type": "object"
+    },
+    "GitLabCreateProjectConfig": {
+      "description": "Create a new project (repository).",
+      "properties": {
+        "operation": {
+          "const": "create_project",
+          "default": "create_project",
+          "title": "Create Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-creates-resource": true,
+          "x-display-name": "Create Project",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "gitlab_project"
+        },
+        "name": {
+          "description": "Name of the new project",
+          "title": "Name",
+          "type": "string"
+        },
+        "namespace_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Namespace (group/user) ID to create the project in (defaults to current user)",
+          "title": "Namespace ID"
+        },
+        "visibility": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "private",
+          "description": "Project visibility",
+          "enum": [
+            "private",
+            "internal",
+            "public"
+          ],
+          "enumNames": [
+            "Private",
+            "Internal",
+            "Public"
+          ],
+          "title": "Visibility",
+          "x-enum-searchable": true
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Project description",
+          "title": "Description",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "GitLabCreateProjectConfig",
+      "type": "object"
+    },
+    "GitLabCreateReleaseConfig": {
+      "description": "Create a release tied to a tag.",
+      "properties": {
+        "operation": {
+          "const": "create_release",
+          "default": "create_release",
+          "title": "Create Release",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Releases",
+          "x-display-name": "Create Release",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "tag_name": {
+          "description": "Tag the release is tied to",
+          "title": "Tag Name",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Release name",
+          "title": "Name"
+        },
+        "ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Branch/commit to create the tag from if it does not exist",
+          "title": "Ref"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Release notes (Markdown)",
+          "title": "Description",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "project_id",
+        "tag_name"
+      ],
+      "title": "GitLabCreateReleaseConfig",
+      "type": "object"
+    },
+    "GitLabCreateTagConfig": {
+      "description": "Create a git tag.",
+      "properties": {
+        "operation": {
+          "const": "create_tag",
+          "default": "create_tag",
+          "title": "Create Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Repository",
+          "x-display-name": "Create Tag",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "tag_name": {
+          "description": "Name of the new tag",
+          "title": "Tag Name",
+          "type": "string"
+        },
+        "ref": {
+          "description": "Branch name or commit SHA to tag",
+          "title": "Ref",
+          "type": "string"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional annotated tag message",
+          "title": "Message"
+        }
+      },
+      "required": [
+        "project_id",
+        "tag_name",
+        "ref"
+      ],
+      "title": "GitLabCreateTagConfig",
+      "type": "object"
+    },
+    "GitLabCreateVariableConfig": {
+      "description": "Create a project CI/CD variable.",
+      "properties": {
+        "operation": {
+          "const": "create_variable",
+          "default": "create_variable",
+          "title": "Create Variable",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "CI/CD Variables",
+          "x-display-name": "Create Variable",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "key": {
+          "description": "Variable key (A-Z, 0-9, _)",
+          "title": "Key",
+          "type": "string"
+        },
+        "value": {
+          "description": "Variable value",
+          "title": "Value",
+          "type": "string"
+        },
+        "variable_type": {
+          "default": "env_var",
+          "description": "Variable type",
+          "enum": [
+            "env_var",
+            "file"
+          ],
+          "enumNames": [
+            "Environment variable",
+            "File"
+          ],
+          "title": "Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "protected": {
+          "default": "false",
+          "description": "Only expose on protected branches/tags",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Protected",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "masked": {
+          "default": "false",
+          "description": "Mask the value in job logs",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Masked",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "project_id",
+        "key",
+        "value"
+      ],
+      "title": "GitLabCreateVariableConfig",
+      "type": "object"
+    },
+    "GitLabCreateWikiConfig": {
+      "description": "Create a wiki page.",
+      "properties": {
+        "operation": {
+          "const": "create_wiki",
+          "default": "create_wiki",
+          "title": "Create Wiki Page",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Wikis",
+          "x-display-name": "Create Wiki Page",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "title": {
+          "description": "Wiki page title",
+          "title": "Title",
+          "type": "string"
+        },
+        "content": {
+          "description": "Page content",
+          "title": "Content",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "project_id",
+        "title",
+        "content"
+      ],
+      "title": "GitLabCreateWikiConfig",
+      "type": "object"
+    },
+    "GitLabDeleteBranchConfig": {
+      "description": "Delete a repository branch.",
+      "properties": {
+        "operation": {
+          "const": "delete_branch",
+          "default": "delete_branch",
+          "title": "Delete Branch",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Repository",
+          "x-display-name": "Delete Branch",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "branch": {
+          "description": "Name of the branch to delete",
+          "title": "Branch Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "branch"
+      ],
+      "title": "GitLabDeleteBranchConfig",
+      "type": "object"
+    },
+    "GitLabDeleteEnvironmentConfig": {
+      "description": "Delete a stopped environment.",
+      "properties": {
+        "operation": {
+          "const": "delete_environment",
+          "default": "delete_environment",
+          "title": "Delete Environment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Environments",
+          "x-display-name": "Delete Environment",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "environment_id": {
+          "description": "Numeric environment ID",
+          "title": "Environment ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "environment_id"
+      ],
+      "title": "GitLabDeleteEnvironmentConfig",
+      "type": "object"
+    },
+    "GitLabDeleteHookConfig": {
+      "description": "Delete a project webhook.",
+      "properties": {
+        "operation": {
+          "const": "delete_hook",
+          "default": "delete_hook",
+          "title": "Delete Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Delete Webhook",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "hook_id": {
+          "description": "Numeric webhook ID",
+          "title": "Hook ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "hook_id"
+      ],
+      "title": "GitLabDeleteHookConfig",
+      "type": "object"
+    },
+    "GitLabDeleteIssueConfig": {
+      "description": "Delete an issue.",
+      "properties": {
+        "operation": {
+          "const": "delete_issue",
+          "default": "delete_issue",
+          "title": "Delete Issue",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Issues",
+          "x-display-name": "Delete Issue",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "issue_iid": {
+          "description": "Internal ID of the issue",
+          "title": "Issue IID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "issue_iid"
+      ],
+      "title": "GitLabDeleteIssueConfig",
+      "type": "object"
+    },
+    "GitLabDeleteLabelConfig": {
+      "description": "Delete a project label.",
+      "properties": {
+        "operation": {
+          "const": "delete_label",
+          "default": "delete_label",
+          "title": "Delete Label",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Labels",
+          "x-display-name": "Delete Label",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "label_id": {
+          "description": "Numeric label ID or label name",
+          "title": "Label ID or Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "label_id"
+      ],
+      "title": "GitLabDeleteLabelConfig",
+      "type": "object"
+    },
+    "GitLabDeleteReleaseConfig": {
+      "description": "Delete a release (the tag is kept).",
+      "properties": {
+        "operation": {
+          "const": "delete_release",
+          "default": "delete_release",
+          "title": "Delete Release",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Releases",
+          "x-display-name": "Delete Release",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "tag_name": {
+          "description": "Tag of the release to delete",
+          "title": "Tag Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "tag_name"
+      ],
+      "title": "GitLabDeleteReleaseConfig",
+      "type": "object"
+    },
+    "GitLabDeleteVariableConfig": {
+      "description": "Delete a project CI/CD variable.",
+      "properties": {
+        "operation": {
+          "const": "delete_variable",
+          "default": "delete_variable",
+          "title": "Delete Variable",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "CI/CD Variables",
+          "x-display-name": "Delete Variable",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "key": {
+          "description": "Variable key to delete",
+          "title": "Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "key"
+      ],
+      "title": "GitLabDeleteVariableConfig",
+      "type": "object"
+    },
+    "GitLabDeleteWikiConfig": {
+      "description": "Delete a wiki page.",
+      "properties": {
+        "operation": {
+          "const": "delete_wiki",
+          "default": "delete_wiki",
+          "title": "Delete Wiki Page",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Wikis",
+          "x-display-name": "Delete Wiki Page",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "slug": {
+          "description": "Slug of the page to delete",
+          "title": "Slug",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "slug"
+      ],
+      "title": "GitLabDeleteWikiConfig",
+      "type": "object"
+    },
+    "GitLabGetDeploymentConfig": {
+      "description": "Get a single deployment.",
+      "properties": {
+        "operation": {
+          "const": "get_deployment",
+          "default": "get_deployment",
+          "title": "Get Deployment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Deployments",
+          "x-display-name": "Get Deployment",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "deployment_id": {
+          "description": "Numeric deployment ID",
+          "title": "Deployment ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "deployment_id"
+      ],
+      "title": "GitLabGetDeploymentConfig",
+      "type": "object"
+    },
+    "GitLabGetFileConfig": {
+      "description": "Get a repository file's content and metadata.",
+      "properties": {
+        "operation": {
+          "const": "get_file",
+          "default": "get_file",
+          "title": "Get File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Repository",
+          "x-display-name": "Get File",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "file_path": {
+          "description": "Path of the file in the repo",
+          "title": "File Path",
+          "type": "string"
+        },
+        "ref": {
+          "default": "main",
+          "description": "Branch, tag, or commit SHA to read from",
+          "title": "Ref",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "file_path"
+      ],
+      "title": "GitLabGetFileConfig",
+      "type": "object"
+    },
+    "GitLabGetIssueConfig": {
+      "description": "Get a single issue by its project-scoped IID.",
+      "properties": {
+        "operation": {
+          "const": "get_issue",
+          "default": "get_issue",
+          "title": "Get Issue",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Issues",
+          "x-display-name": "Get Issue",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "issue_iid": {
+          "description": "Project-scoped issue IID",
+          "title": "Issue IID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "issue_iid"
+      ],
+      "title": "GitLabGetIssueConfig",
+      "type": "object"
+    },
+    "GitLabGetJobConfig": {
+      "description": "Get a single job.",
+      "properties": {
+        "operation": {
+          "const": "get_job",
+          "default": "get_job",
+          "title": "Get Job",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "CI/CD",
+          "x-display-name": "Get Job",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "job_id": {
+          "description": "ID of the job",
+          "title": "Job ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "job_id"
+      ],
+      "title": "GitLabGetJobConfig",
+      "type": "object"
+    },
+    "GitLabGetJobLogConfig": {
+      "description": "Get a job's log/trace (plain text).",
+      "properties": {
+        "operation": {
+          "const": "get_job_log",
+          "default": "get_job_log",
+          "title": "Get Job Log",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "CI/CD",
+          "x-display-name": "Get Job Log",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "job_id": {
+          "description": "ID of the job",
+          "title": "Job ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "job_id"
+      ],
+      "title": "GitLabGetJobLogConfig",
+      "type": "object"
+    },
+    "GitLabGetMergeRequestConfig": {
+      "description": "Get a single merge request by IID.",
+      "properties": {
+        "operation": {
+          "const": "get_merge_request",
+          "default": "get_merge_request",
+          "title": "Get Merge Request",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Merge Requests",
+          "x-display-name": "Get Merge Request",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "merge_request_iid": {
+          "description": "Project-scoped MR IID",
+          "title": "Merge Request IID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "merge_request_iid"
+      ],
+      "title": "GitLabGetMergeRequestConfig",
+      "type": "object"
+    },
+    "GitLabGetPipelineConfig": {
+      "description": "Get a single pipeline.",
+      "properties": {
+        "operation": {
+          "const": "get_pipeline",
+          "default": "get_pipeline",
+          "title": "Get Pipeline",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "CI/CD",
+          "x-display-name": "Get Pipeline",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "pipeline_id": {
+          "description": "ID of the pipeline",
+          "title": "Pipeline ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "pipeline_id"
+      ],
+      "title": "GitLabGetPipelineConfig",
+      "type": "object"
+    },
+    "GitLabGetProjectConfig": {
+      "description": "Retrieve a single project by ID or namespace/path.",
+      "properties": {
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "title": "Get Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Get Project",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path (e.g. mygroup/myrepo)",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "GitLabGetProjectConfig",
+      "type": "object"
+    },
+    "GitLabGetReleaseConfig": {
+      "description": "Get a release by tag name.",
+      "properties": {
+        "operation": {
+          "const": "get_release",
+          "default": "get_release",
+          "title": "Get Release",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Releases",
+          "x-display-name": "Get Release",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "tag_name": {
+          "description": "Tag the release is tied to",
+          "title": "Tag Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "tag_name"
+      ],
+      "title": "GitLabGetReleaseConfig",
+      "type": "object"
+    },
+    "GitLabGetUserConfig": {
+      "description": "Return the authenticated user (token validity check).",
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Get Current User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Get Current User",
+          "x-is-trigger": false
+        }
+      },
+      "title": "GitLabGetUserConfig",
+      "type": "object"
+    },
+    "GitLabGetWikiConfig": {
+      "description": "Get a wiki page by slug.",
+      "properties": {
+        "operation": {
+          "const": "get_wiki",
+          "default": "get_wiki",
+          "title": "Get Wiki Page",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Wikis",
+          "x-display-name": "Get Wiki Page",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "slug": {
+          "description": "Wiki page slug (URL-encoded path)",
+          "title": "Slug",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "slug"
+      ],
+      "title": "GitLabGetWikiConfig",
+      "type": "object"
+    },
+    "GitLabGroupHookTriggerConfig": {
+      "description": "Fire the workflow when a GROUP hook event arrives (across all the group's\nprojects, plus group-level member/subgroup/project events).\n\nNOTE: Group webhooks are a GitLab Premium/Ultimate feature. On a free-tier\ngroup the hook can be created but GitLab never delivers events to it.",
+      "properties": {
+        "operation": {
+          "const": "on_group_event",
+          "default": "on_group_event",
+          "title": "On Group Event (Premium)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Group Event (Premium)",
+          "x-is-trigger": true
+        },
+        "group_id": {
+          "description": "Group whose events (across all its projects) trigger this workflow. Numeric group ID or group path. Requires GitLab Premium/Ultimate \u2014 group webhooks do not fire on free-tier groups.",
+          "title": "Group",
+          "type": "string"
+        },
+        "event_types": {
+          "default": "*",
+          "description": "Which GitLab group event fires this workflow. Group hooks fire for events across every project in the group, plus group-level Member (user added/removed), Subgroup (created/removed), and Project (created/removed/transferred) events. GitLab delivers every subscribed event to one URL; non-matching deliveries are skipped.",
+          "enum": [
+            "*",
+            "push",
+            "tag_push",
+            "issue",
+            "merge_request",
+            "note",
+            "pipeline",
+            "job",
+            "deployment",
+            "release",
+            "wiki_page",
+            "feature_flag",
+            "emoji",
+            "member",
+            "subgroup",
+            "project"
+          ],
+          "enumNames": [
+            "All Events",
+            "Push",
+            "Tag Push",
+            "Issue",
+            "Merge Request",
+            "Comment",
+            "Pipeline",
+            "Job",
+            "Deployment",
+            "Release",
+            "Wiki Page",
+            "Feature Flag",
+            "Emoji",
+            "Member",
+            "Subgroup",
+            "Project"
+          ],
+          "title": "Trigger On",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "GitLab posts group hook events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "GitLabGroupHookTriggerConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "GitLabHookTriggerConfig": {
+      "description": "Fire the workflow when a project hook event arrives.",
+      "properties": {
+        "operation": {
+          "const": "on_project_event",
+          "default": "on_project_event",
+          "title": "On Project Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Project Event",
+          "x-is-trigger": true
+        },
+        "project_id": {
+          "description": "Project whose events should trigger this workflow",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "event_types": {
+          "default": "*",
+          "description": "Which GitLab event fires this workflow. GitLab delivers every subscribed event to one URL; non-matching deliveries are skipped. Options: All Events (default), Push (commits pushed), Tag Push (tags pushed), Issue (issue created/updated/closed), Merge Request (MR opened/updated/merged), Comment (note on issue/MR/commit/code), Pipeline (CI/CD pipeline status change), Job (CI job status change), Deployment (environment deploy status), Release (release created/updated), Wiki Page (wiki page created/updated).",
+          "enum": [
+            "*",
+            "push",
+            "tag_push",
+            "issue",
+            "merge_request",
+            "note",
+            "pipeline",
+            "job",
+            "deployment",
+            "release",
+            "wiki_page",
+            "feature_flag",
+            "emoji"
+          ],
+          "enumNames": [
+            "All Events",
+            "Push",
+            "Tag Push",
+            "Issue",
+            "Merge Request",
+            "Comment",
+            "Pipeline",
+            "Job",
+            "Deployment",
+            "Release",
+            "Wiki Page",
+            "Feature Flag",
+            "Emoji"
+          ],
+          "title": "Trigger On",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "GitLab posts project hook events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "GitLabHookTriggerConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "GitLabListBranchesConfig": {
+      "description": "List repository branches.",
+      "properties": {
+        "operation": {
+          "const": "list_branches",
+          "default": "list_branches",
+          "title": "List Branches",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Repository",
+          "x-display-name": "List Branches",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter branches by name",
+          "title": "Search"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "GitLabListBranchesConfig",
+      "type": "object"
+    },
+    "GitLabListCommitsConfig": {
+      "description": "List repository commits.",
+      "properties": {
+        "operation": {
+          "const": "list_commits",
+          "default": "list_commits",
+          "title": "List Commits",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Repository",
+          "x-display-name": "List Commits",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "ref_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Branch or tag name to list commits from",
+          "title": "Ref"
+        },
+        "since": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 lower bound for commit date",
+          "title": "Since"
+        },
+        "until": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 upper bound for commit date",
+          "title": "Until"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "GitLabListCommitsConfig",
+      "type": "object"
+    },
+    "GitLabListDeploymentsConfig": {
+      "description": "List a project's deployments.",
+      "properties": {
+        "operation": {
+          "const": "list_deployments",
+          "default": "list_deployments",
+          "title": "List Deployments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Deployments",
+          "x-display-name": "List Deployments",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "environment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by environment name",
+          "title": "Environment"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "GitLabListDeploymentsConfig",
+      "type": "object"
+    },
+    "GitLabListEnvironmentsConfig": {
+      "description": "List a project's environments.",
+      "properties": {
+        "operation": {
+          "const": "list_environments",
+          "default": "list_environments",
+          "title": "List Environments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Environments",
+          "x-display-name": "List Environments",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "GitLabListEnvironmentsConfig",
+      "type": "object"
+    },
+    "GitLabListEpicsConfig": {
+      "description": "List a group's epics (Premium).",
+      "properties": {
+        "operation": {
+          "const": "list_epics",
+          "default": "list_epics",
+          "title": "List Epics",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Epics",
+          "x-display-name": "List Epics",
+          "x-is-trigger": false
+        },
+        "group_id": {
+          "description": "Numeric group ID or group path",
+          "title": "Group",
+          "type": "string"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by state",
+          "enum": [
+            "",
+            "opened",
+            "closed"
+          ],
+          "enumNames": [
+            "Any",
+            "Opened",
+            "Closed"
+          ],
+          "title": "State",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "GitLabListEpicsConfig",
+      "type": "object"
+    },
+    "GitLabListGroupsConfig": {
+      "description": "List groups visible to the token.",
+      "properties": {
+        "operation": {
+          "const": "list_groups",
+          "default": "list_groups",
+          "title": "List Groups",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "List Groups",
+          "x-is-trigger": false
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter groups by name",
+          "title": "Search"
+        }
+      },
+      "title": "GitLabListGroupsConfig",
+      "type": "object"
+    },
+    "GitLabListHooksConfig": {
+      "description": "List a project's webhooks.",
+      "properties": {
+        "operation": {
+          "const": "list_hooks",
+          "default": "list_hooks",
+          "title": "List Webhooks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "List Webhooks",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "GitLabListHooksConfig",
+      "type": "object"
+    },
+    "GitLabListIssuesConfig": {
+      "description": "List issues in a project.",
+      "properties": {
+        "operation": {
+          "const": "list_issues",
+          "default": "list_issues",
+          "title": "List Issues",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Issues",
+          "x-display-name": "List Issues",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "opened",
+          "description": "Filter issues by state",
+          "enum": [
+            "opened",
+            "closed",
+            "all"
+          ],
+          "enumNames": [
+            "Open",
+            "Closed",
+            "All"
+          ],
+          "title": "State",
+          "x-enum-searchable": true
+        },
+        "labels": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated label names to filter by",
+          "title": "Labels"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "GitLabListIssuesConfig",
+      "type": "object"
+    },
+    "GitLabListLabelsConfig": {
+      "description": "List a project's labels.",
+      "properties": {
+        "operation": {
+          "const": "list_labels",
+          "default": "list_labels",
+          "title": "List Labels",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Labels",
+          "x-display-name": "List Labels",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "GitLabListLabelsConfig",
+      "type": "object"
+    },
+    "GitLabListMembersConfig": {
+      "description": "List members of a project.",
+      "properties": {
+        "operation": {
+          "const": "list_members",
+          "default": "list_members",
+          "title": "List Project Members",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "List Project Members",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "GitLabListMembersConfig",
+      "type": "object"
+    },
+    "GitLabListMergeRequestsConfig": {
+      "description": "List merge requests in a project.",
+      "properties": {
+        "operation": {
+          "const": "list_merge_requests",
+          "default": "list_merge_requests",
+          "title": "List Merge Requests",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Merge Requests",
+          "x-display-name": "List Merge Requests",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "opened",
+          "description": "Filter MRs by state",
+          "enum": [
+            "opened",
+            "closed",
+            "merged",
+            "all"
+          ],
+          "enumNames": [
+            "Open",
+            "Closed",
+            "Merged",
+            "All"
+          ],
+          "title": "State",
+          "x-enum-searchable": true
+        },
+        "target_branch": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by target branch name",
+          "title": "Target Branch"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "GitLabListMergeRequestsConfig",
+      "type": "object"
+    },
+    "GitLabListMilestonesConfig": {
+      "description": "List a project's milestones.",
+      "properties": {
+        "operation": {
+          "const": "list_milestones",
+          "default": "list_milestones",
+          "title": "List Milestones",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Milestones",
+          "x-display-name": "List Milestones",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by state",
+          "enum": [
+            "",
+            "active",
+            "closed"
+          ],
+          "enumNames": [
+            "Any",
+            "Active",
+            "Closed"
+          ],
+          "title": "State",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "GitLabListMilestonesConfig",
+      "type": "object"
+    },
+    "GitLabListNotesConfig": {
+      "description": "List comments (notes) on an issue or merge request.",
+      "properties": {
+        "operation": {
+          "const": "list_notes",
+          "default": "list_notes",
+          "title": "List Notes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Issues",
+          "x-display-name": "List Notes",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "noteable_type": {
+          "default": "issues",
+          "description": "Whether the notes belong to an issue or a merge request",
+          "enum": [
+            "issues",
+            "merge_requests"
+          ],
+          "enumNames": [
+            "Issue",
+            "Merge Request"
+          ],
+          "title": "Noteable Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "noteable_iid": {
+          "description": "Internal ID of the issue or merge request",
+          "title": "IID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "noteable_iid"
+      ],
+      "title": "GitLabListNotesConfig",
+      "type": "object"
+    },
+    "GitLabListPipelineJobsConfig": {
+      "description": "List jobs for a pipeline.",
+      "properties": {
+        "operation": {
+          "const": "list_pipeline_jobs",
+          "default": "list_pipeline_jobs",
+          "title": "List Pipeline Jobs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "CI/CD",
+          "x-display-name": "List Pipeline Jobs",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "pipeline_id": {
+          "description": "ID of the pipeline",
+          "title": "Pipeline ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "pipeline_id"
+      ],
+      "title": "GitLabListPipelineJobsConfig",
+      "type": "object"
+    },
+    "GitLabListPipelinesConfig": {
+      "description": "List CI/CD pipelines.",
+      "properties": {
+        "operation": {
+          "const": "list_pipelines",
+          "default": "list_pipelines",
+          "title": "List Pipelines",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "CI/CD",
+          "x-display-name": "List Pipelines",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter pipelines by status",
+          "enum": [
+            "",
+            "running",
+            "pending",
+            "success",
+            "failed",
+            "canceled",
+            "skipped"
+          ],
+          "enumNames": [
+            "Any",
+            "Running",
+            "Pending",
+            "Success",
+            "Failed",
+            "Canceled",
+            "Skipped"
+          ],
+          "title": "Status",
+          "x-enum-searchable": true
+        },
+        "ref": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by branch or tag name",
+          "title": "Ref"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "GitLabListPipelinesConfig",
+      "type": "object"
+    },
+    "GitLabListProjectsConfig": {
+      "description": "List projects accessible to the token.",
+      "properties": {
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "title": "List Projects",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "List Projects",
+          "x-is-trigger": false
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter projects by name",
+          "title": "Search"
+        },
+        "membership": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "true",
+          "description": "Only return projects the user is a member of",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Member Of",
+          "x-enum-searchable": true
+        },
+        "owned": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "false",
+          "description": "Only return projects the user owns",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Owned Only",
+          "x-enum-searchable": true
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Max projects to return (1-100)",
+          "title": "Limit"
+        }
+      },
+      "title": "GitLabListProjectsConfig",
+      "type": "object"
+    },
+    "GitLabListProtectedBranchesConfig": {
+      "description": "List protected branches.",
+      "properties": {
+        "operation": {
+          "const": "list_protected_branches",
+          "default": "list_protected_branches",
+          "title": "List Protected Branches",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Protected Branches",
+          "x-display-name": "List Protected Branches",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "GitLabListProtectedBranchesConfig",
+      "type": "object"
+    },
+    "GitLabListReleasesConfig": {
+      "description": "List a project's releases.",
+      "properties": {
+        "operation": {
+          "const": "list_releases",
+          "default": "list_releases",
+          "title": "List Releases",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Releases",
+          "x-display-name": "List Releases",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "GitLabListReleasesConfig",
+      "type": "object"
+    },
+    "GitLabListTodosConfig": {
+      "description": "List the current user's todos.",
+      "properties": {
+        "operation": {
+          "const": "list_todos",
+          "default": "list_todos",
+          "title": "List Todos",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Todos",
+          "x-display-name": "List Todos",
+          "x-is-trigger": false
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by state",
+          "enum": [
+            "",
+            "pending",
+            "done"
+          ],
+          "enumNames": [
+            "Any",
+            "Pending",
+            "Done"
+          ],
+          "title": "State",
+          "x-enum-searchable": true
+        }
+      },
+      "title": "GitLabListTodosConfig",
+      "type": "object"
+    },
+    "GitLabListVariablesConfig": {
+      "description": "List a project's CI/CD variables.",
+      "properties": {
+        "operation": {
+          "const": "list_variables",
+          "default": "list_variables",
+          "title": "List Variables",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "CI/CD Variables",
+          "x-display-name": "List Variables",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "GitLabListVariablesConfig",
+      "type": "object"
+    },
+    "GitLabListWikisConfig": {
+      "description": "List a project's wiki pages.",
+      "properties": {
+        "operation": {
+          "const": "list_wikis",
+          "default": "list_wikis",
+          "title": "List Wiki Pages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Wikis",
+          "x-display-name": "List Wiki Pages",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "GitLabListWikisConfig",
+      "type": "object"
+    },
+    "GitLabMarkAllTodosDoneConfig": {
+      "description": "Mark all of the current user's todos as done.",
+      "properties": {
+        "operation": {
+          "const": "mark_all_todos_done",
+          "default": "mark_all_todos_done",
+          "title": "Mark All Todos Done",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Todos",
+          "x-display-name": "Mark All Todos Done",
+          "x-is-trigger": false
+        }
+      },
+      "title": "GitLabMarkAllTodosDoneConfig",
+      "type": "object"
+    },
+    "GitLabMarkTodoDoneConfig": {
+      "description": "Mark a single todo as done.",
+      "properties": {
+        "operation": {
+          "const": "mark_todo_done",
+          "default": "mark_todo_done",
+          "title": "Mark Todo Done",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Todos",
+          "x-display-name": "Mark Todo Done",
+          "x-is-trigger": false
+        },
+        "todo_id": {
+          "description": "ID of the todo to mark done",
+          "title": "Todo ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "todo_id"
+      ],
+      "title": "GitLabMarkTodoDoneConfig",
+      "type": "object"
+    },
+    "GitLabMergeMergeRequestConfig": {
+      "description": "Accept/merge a merge request.",
+      "properties": {
+        "operation": {
+          "const": "merge_merge_request",
+          "default": "merge_merge_request",
+          "title": "Merge Merge Request",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Merge Requests",
+          "x-display-name": "Merge Merge Request",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "merge_request_iid": {
+          "description": "Project-scoped MR IID",
+          "title": "Merge Request IID",
+          "type": "string"
+        },
+        "squash": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "false",
+          "description": "Squash commits into a single commit on merge",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Squash Commits",
+          "x-enum-searchable": true
+        },
+        "merge_commit_message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom merge commit message",
+          "title": "Merge Commit Message"
+        }
+      },
+      "required": [
+        "project_id",
+        "merge_request_iid"
+      ],
+      "title": "GitLabMergeMergeRequestConfig",
+      "type": "object"
+    },
+    "GitLabOAuthCredential": {
+      "description": "OAuth 2.0 credential for GitLab (authorization_code grant).\n\nTokens are obtained via the OAuth flow, not entered manually. GitLab access\ntokens expire after 2 hours and are auto-refreshed via the rotating refresh\ntoken.\n\nRegister an OAuth app at: https://gitlab.com/-/user_settings/applications",
+      "properties": {
+        "credential_type": {
+          "const": "gitlab_oauth",
+          "default": "gitlab_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "GitLab OAuth access token (Bearer).",
+          "title": "Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refresh Token"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Expiry"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Email"
+        },
+        "host": {
+          "default": "https://gitlab.com",
+          "description": "Base URL of your GitLab instance.",
+          "title": "GitLab Host",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "GitLabOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://gitlab.com/-/user_settings/applications",
+      "x-oauth-provider": "gitlab",
+      "x-oauth-scopes": [
+        "api",
+        "read_user"
+      ]
+    },
+    "GitLabPlayJobConfig": {
+      "description": "Run a manual job.",
+      "properties": {
+        "operation": {
+          "const": "play_job",
+          "default": "play_job",
+          "title": "Play Job",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "CI/CD",
+          "x-display-name": "Play Job",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "job_id": {
+          "description": "ID of the manual job to run",
+          "title": "Job ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "job_id"
+      ],
+      "title": "GitLabPlayJobConfig",
+      "type": "object"
+    },
+    "GitLabProtectBranchConfig": {
+      "description": "Protect a branch (or wildcard).",
+      "properties": {
+        "operation": {
+          "const": "protect_branch",
+          "default": "protect_branch",
+          "title": "Protect Branch",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Protected Branches",
+          "x-display-name": "Protect Branch",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "name": {
+          "description": "Branch name or wildcard (e.g. main, release/*)",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "name"
+      ],
+      "title": "GitLabProtectBranchConfig",
+      "type": "object"
+    },
+    "GitLabRemoveMemberConfig": {
+      "description": "Remove a project member.",
+      "properties": {
+        "operation": {
+          "const": "remove_member",
+          "default": "remove_member",
+          "title": "Remove Member",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Members",
+          "x-display-name": "Remove Member",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "user_id": {
+          "description": "Numeric ID of the user to remove",
+          "title": "User ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "user_id"
+      ],
+      "title": "GitLabRemoveMemberConfig",
+      "type": "object"
+    },
+    "GitLabRetryJobConfig": {
+      "description": "Retry a single job.",
+      "properties": {
+        "operation": {
+          "const": "retry_job",
+          "default": "retry_job",
+          "title": "Retry Job",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "CI/CD",
+          "x-display-name": "Retry Job",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "job_id": {
+          "description": "ID of the job",
+          "title": "Job ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "job_id"
+      ],
+      "title": "GitLabRetryJobConfig",
+      "type": "object"
+    },
+    "GitLabRetryPipelineConfig": {
+      "description": "Retry the failed/canceled jobs of a pipeline.",
+      "properties": {
+        "operation": {
+          "const": "retry_pipeline",
+          "default": "retry_pipeline",
+          "title": "Retry Pipeline",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "CI/CD",
+          "x-display-name": "Retry Pipeline",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "pipeline_id": {
+          "description": "ID of the pipeline",
+          "title": "Pipeline ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "pipeline_id"
+      ],
+      "title": "GitLabRetryPipelineConfig",
+      "type": "object"
+    },
+    "GitLabSearchConfig": {
+      "description": "Global search across GitLab.",
+      "properties": {
+        "operation": {
+          "const": "search",
+          "default": "search",
+          "title": "Global Search",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Search",
+          "x-display-name": "Global Search",
+          "x-is-trigger": false
+        },
+        "scope": {
+          "default": "projects",
+          "description": "What to search for",
+          "enum": [
+            "projects",
+            "issues",
+            "merge_requests",
+            "milestones",
+            "blobs",
+            "users"
+          ],
+          "enumNames": [
+            "Projects",
+            "Issues",
+            "Merge Requests",
+            "Milestones",
+            "Code",
+            "Users"
+          ],
+          "title": "Scope",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "search_term": {
+          "description": "Search query string",
+          "title": "Query",
+          "type": "string"
+        }
+      },
+      "required": [
+        "search_term"
+      ],
+      "title": "GitLabSearchConfig",
+      "type": "object"
+    },
+    "GitLabSetCommitStatusConfig": {
+      "description": "Post a build/commit status onto a commit SHA.",
+      "properties": {
+        "operation": {
+          "const": "set_commit_status",
+          "default": "set_commit_status",
+          "title": "Set Commit Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Repository",
+          "x-display-name": "Set Commit Status",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "sha": {
+          "description": "The commit SHA to attach the status to",
+          "title": "Commit SHA",
+          "type": "string"
+        },
+        "state": {
+          "default": "success",
+          "description": "Status state",
+          "enum": [
+            "pending",
+            "running",
+            "success",
+            "failed",
+            "canceled"
+          ],
+          "title": "State",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Label/context for the status (e.g. ci/external)",
+          "title": "Context"
+        },
+        "target_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL to link the status to",
+          "title": "Target URL"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Short status description",
+          "title": "Description"
+        }
+      },
+      "required": [
+        "project_id",
+        "sha"
+      ],
+      "title": "GitLabSetCommitStatusConfig",
+      "type": "object"
+    },
+    "GitLabStopEnvironmentConfig": {
+      "description": "Stop an environment.",
+      "properties": {
+        "operation": {
+          "const": "stop_environment",
+          "default": "stop_environment",
+          "title": "Stop Environment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Environments",
+          "x-display-name": "Stop Environment",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "environment_id": {
+          "description": "Numeric environment ID",
+          "title": "Environment ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "environment_id"
+      ],
+      "title": "GitLabStopEnvironmentConfig",
+      "type": "object"
+    },
+    "GitLabUnapproveMergeRequestConfig": {
+      "description": "Remove your approval from a merge request.",
+      "properties": {
+        "operation": {
+          "const": "unapprove_merge_request",
+          "default": "unapprove_merge_request",
+          "title": "Unapprove Merge Request",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Merge Requests",
+          "x-display-name": "Unapprove Merge Request",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "merge_request_iid": {
+          "description": "Internal ID of the merge request",
+          "title": "MR IID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "merge_request_iid"
+      ],
+      "title": "GitLabUnapproveMergeRequestConfig",
+      "type": "object"
+    },
+    "GitLabUnprotectBranchConfig": {
+      "description": "Unprotect a branch.",
+      "properties": {
+        "operation": {
+          "const": "unprotect_branch",
+          "default": "unprotect_branch",
+          "title": "Unprotect Branch",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Protected Branches",
+          "x-display-name": "Unprotect Branch",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "name": {
+          "description": "Protected branch name to remove",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "name"
+      ],
+      "title": "GitLabUnprotectBranchConfig",
+      "type": "object"
+    },
+    "GitLabUpdateEpicConfig": {
+      "description": "Update an epic (Premium).",
+      "properties": {
+        "operation": {
+          "const": "update_epic",
+          "default": "update_epic",
+          "title": "Update Epic",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Epics",
+          "x-display-name": "Update Epic",
+          "x-is-trigger": false
+        },
+        "group_id": {
+          "description": "Numeric group ID or group path",
+          "title": "Group",
+          "type": "string"
+        },
+        "epic_iid": {
+          "description": "Internal ID of the epic",
+          "title": "Epic IID",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New title",
+          "title": "Title"
+        },
+        "state_event": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Close or reopen",
+          "enum": [
+            "",
+            "close",
+            "reopen"
+          ],
+          "enumNames": [
+            "\u2014",
+            "Close",
+            "Reopen"
+          ],
+          "title": "State Event",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "group_id",
+        "epic_iid"
+      ],
+      "title": "GitLabUpdateEpicConfig",
+      "type": "object"
+    },
+    "GitLabUpdateIssueConfig": {
+      "description": "Edit issue fields or change its state.",
+      "properties": {
+        "operation": {
+          "const": "update_issue",
+          "default": "update_issue",
+          "title": "Update Issue",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Issues",
+          "x-display-name": "Update Issue",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "issue_iid": {
+          "description": "Project-scoped issue IID",
+          "title": "Issue IID",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New issue title",
+          "title": "Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New issue description",
+          "title": "Description",
+          "ui:widget": "textarea"
+        },
+        "state_event": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Change issue state",
+          "enum": [
+            "",
+            "close",
+            "reopen"
+          ],
+          "enumNames": [
+            "No change",
+            "Close",
+            "Reopen"
+          ],
+          "title": "State Event",
+          "x-enum-searchable": true
+        },
+        "labels": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated label names (replaces existing)",
+          "title": "Labels"
+        }
+      },
+      "required": [
+        "project_id",
+        "issue_iid"
+      ],
+      "title": "GitLabUpdateIssueConfig",
+      "type": "object"
+    },
+    "GitLabUpdateMergeRequestConfig": {
+      "description": "Edit a merge request or change its state.",
+      "properties": {
+        "operation": {
+          "const": "update_merge_request",
+          "default": "update_merge_request",
+          "title": "Update Merge Request",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Merge Requests",
+          "x-display-name": "Update Merge Request",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "merge_request_iid": {
+          "description": "Project-scoped MR IID",
+          "title": "Merge Request IID",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New MR title",
+          "title": "Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New MR description",
+          "title": "Description",
+          "ui:widget": "textarea"
+        },
+        "state_event": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Change MR state",
+          "enum": [
+            "",
+            "close",
+            "reopen"
+          ],
+          "enumNames": [
+            "No change",
+            "Close",
+            "Reopen"
+          ],
+          "title": "State Event",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "project_id",
+        "merge_request_iid"
+      ],
+      "title": "GitLabUpdateMergeRequestConfig",
+      "type": "object"
+    },
+    "GitLabUpdateReleaseConfig": {
+      "description": "Update a release's name/notes.",
+      "properties": {
+        "operation": {
+          "const": "update_release",
+          "default": "update_release",
+          "title": "Update Release",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Releases",
+          "x-display-name": "Update Release",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "tag_name": {
+          "description": "Tag of the release to update",
+          "title": "Tag Name",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New release name",
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New notes (Markdown)",
+          "title": "Description",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "project_id",
+        "tag_name"
+      ],
+      "title": "GitLabUpdateReleaseConfig",
+      "type": "object"
+    },
+    "GitLabUpdateVariableConfig": {
+      "description": "Update a project CI/CD variable's value.",
+      "properties": {
+        "operation": {
+          "const": "update_variable",
+          "default": "update_variable",
+          "title": "Update Variable",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "CI/CD Variables",
+          "x-display-name": "Update Variable",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "key": {
+          "description": "Variable key to update",
+          "title": "Key",
+          "type": "string"
+        },
+        "value": {
+          "description": "New value",
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "key",
+        "value"
+      ],
+      "title": "GitLabUpdateVariableConfig",
+      "type": "object"
+    },
+    "GitLabUpdateWikiConfig": {
+      "description": "Update a wiki page.",
+      "properties": {
+        "operation": {
+          "const": "update_wiki",
+          "default": "update_wiki",
+          "title": "Update Wiki Page",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Wikis",
+          "x-display-name": "Update Wiki Page",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "slug": {
+          "description": "Slug of the page to update",
+          "title": "Slug",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New title",
+          "title": "Title"
+        },
+        "content": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New content",
+          "title": "Content",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "project_id",
+        "slug"
+      ],
+      "title": "GitLabUpdateWikiConfig",
+      "type": "object"
+    },
+    "GitLabUpsertFileConfig": {
+      "description": "Create or update a single repository file.",
+      "properties": {
+        "operation": {
+          "const": "upsert_file",
+          "default": "upsert_file",
+          "title": "Create/Update File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Repository",
+          "x-display-name": "Create/Update File",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Numeric project ID or namespace/path",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID / path",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "gitlab_project"
+        },
+        "file_path": {
+          "description": "Path of the file in the repo",
+          "title": "File Path",
+          "type": "string"
+        },
+        "branch": {
+          "description": "Branch to commit to",
+          "title": "Branch",
+          "type": "string"
+        },
+        "content": {
+          "description": "File content",
+          "title": "Content",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "commit_message": {
+          "description": "Commit message",
+          "title": "Commit Message",
+          "type": "string"
+        },
+        "mode": {
+          "default": "create",
+          "description": "Create a new file (POST) or update an existing one (PUT)",
+          "enum": [
+            "create",
+            "update"
+          ],
+          "enumNames": [
+            "Create",
+            "Update"
+          ],
+          "title": "Mode",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "project_id",
+        "file_path",
+        "branch",
+        "content",
+        "commit_message"
+      ],
+      "title": "GitLabUpsertFileConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the GitLab node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_member": "#/$defs/GitLabAddMemberConfig",
+          "approve_merge_request": "#/$defs/GitLabApproveMergeRequestConfig",
+          "cancel_job": "#/$defs/GitLabCancelJobConfig",
+          "cancel_pipeline": "#/$defs/GitLabCancelPipelineConfig",
+          "create_branch": "#/$defs/GitLabCreateBranchConfig",
+          "create_commit": "#/$defs/GitLabCreateCommitConfig",
+          "create_deployment": "#/$defs/GitLabCreateDeploymentConfig",
+          "create_environment": "#/$defs/GitLabCreateEnvironmentConfig",
+          "create_epic": "#/$defs/GitLabCreateEpicConfig",
+          "create_hook": "#/$defs/GitLabCreateHookConfig",
+          "create_issue": "#/$defs/GitLabCreateIssueConfig",
+          "create_label": "#/$defs/GitLabCreateLabelConfig",
+          "create_merge_request": "#/$defs/GitLabCreateMergeRequestConfig",
+          "create_milestone": "#/$defs/GitLabCreateMilestoneConfig",
+          "create_note": "#/$defs/GitLabCreateNoteConfig",
+          "create_pipeline": "#/$defs/GitLabCreatePipelineConfig",
+          "create_project": "#/$defs/GitLabCreateProjectConfig",
+          "create_release": "#/$defs/GitLabCreateReleaseConfig",
+          "create_tag": "#/$defs/GitLabCreateTagConfig",
+          "create_variable": "#/$defs/GitLabCreateVariableConfig",
+          "create_wiki": "#/$defs/GitLabCreateWikiConfig",
+          "delete_branch": "#/$defs/GitLabDeleteBranchConfig",
+          "delete_environment": "#/$defs/GitLabDeleteEnvironmentConfig",
+          "delete_hook": "#/$defs/GitLabDeleteHookConfig",
+          "delete_issue": "#/$defs/GitLabDeleteIssueConfig",
+          "delete_label": "#/$defs/GitLabDeleteLabelConfig",
+          "delete_release": "#/$defs/GitLabDeleteReleaseConfig",
+          "delete_variable": "#/$defs/GitLabDeleteVariableConfig",
+          "delete_wiki": "#/$defs/GitLabDeleteWikiConfig",
+          "get_deployment": "#/$defs/GitLabGetDeploymentConfig",
+          "get_file": "#/$defs/GitLabGetFileConfig",
+          "get_issue": "#/$defs/GitLabGetIssueConfig",
+          "get_job": "#/$defs/GitLabGetJobConfig",
+          "get_job_log": "#/$defs/GitLabGetJobLogConfig",
+          "get_merge_request": "#/$defs/GitLabGetMergeRequestConfig",
+          "get_pipeline": "#/$defs/GitLabGetPipelineConfig",
+          "get_project": "#/$defs/GitLabGetProjectConfig",
+          "get_release": "#/$defs/GitLabGetReleaseConfig",
+          "get_user": "#/$defs/GitLabGetUserConfig",
+          "get_wiki": "#/$defs/GitLabGetWikiConfig",
+          "list_branches": "#/$defs/GitLabListBranchesConfig",
+          "list_commits": "#/$defs/GitLabListCommitsConfig",
+          "list_deployments": "#/$defs/GitLabListDeploymentsConfig",
+          "list_environments": "#/$defs/GitLabListEnvironmentsConfig",
+          "list_epics": "#/$defs/GitLabListEpicsConfig",
+          "list_groups": "#/$defs/GitLabListGroupsConfig",
+          "list_hooks": "#/$defs/GitLabListHooksConfig",
+          "list_issues": "#/$defs/GitLabListIssuesConfig",
+          "list_labels": "#/$defs/GitLabListLabelsConfig",
+          "list_members": "#/$defs/GitLabListMembersConfig",
+          "list_merge_requests": "#/$defs/GitLabListMergeRequestsConfig",
+          "list_milestones": "#/$defs/GitLabListMilestonesConfig",
+          "list_notes": "#/$defs/GitLabListNotesConfig",
+          "list_pipeline_jobs": "#/$defs/GitLabListPipelineJobsConfig",
+          "list_pipelines": "#/$defs/GitLabListPipelinesConfig",
+          "list_projects": "#/$defs/GitLabListProjectsConfig",
+          "list_protected_branches": "#/$defs/GitLabListProtectedBranchesConfig",
+          "list_releases": "#/$defs/GitLabListReleasesConfig",
+          "list_todos": "#/$defs/GitLabListTodosConfig",
+          "list_variables": "#/$defs/GitLabListVariablesConfig",
+          "list_wikis": "#/$defs/GitLabListWikisConfig",
+          "mark_all_todos_done": "#/$defs/GitLabMarkAllTodosDoneConfig",
+          "mark_todo_done": "#/$defs/GitLabMarkTodoDoneConfig",
+          "merge_merge_request": "#/$defs/GitLabMergeMergeRequestConfig",
+          "on_group_event": "#/$defs/GitLabGroupHookTriggerConfig",
+          "on_project_event": "#/$defs/GitLabHookTriggerConfig",
+          "play_job": "#/$defs/GitLabPlayJobConfig",
+          "protect_branch": "#/$defs/GitLabProtectBranchConfig",
+          "remove_member": "#/$defs/GitLabRemoveMemberConfig",
+          "retry_job": "#/$defs/GitLabRetryJobConfig",
+          "retry_pipeline": "#/$defs/GitLabRetryPipelineConfig",
+          "search": "#/$defs/GitLabSearchConfig",
+          "set_commit_status": "#/$defs/GitLabSetCommitStatusConfig",
+          "stop_environment": "#/$defs/GitLabStopEnvironmentConfig",
+          "unapprove_merge_request": "#/$defs/GitLabUnapproveMergeRequestConfig",
+          "unprotect_branch": "#/$defs/GitLabUnprotectBranchConfig",
+          "update_epic": "#/$defs/GitLabUpdateEpicConfig",
+          "update_issue": "#/$defs/GitLabUpdateIssueConfig",
+          "update_merge_request": "#/$defs/GitLabUpdateMergeRequestConfig",
+          "update_release": "#/$defs/GitLabUpdateReleaseConfig",
+          "update_variable": "#/$defs/GitLabUpdateVariableConfig",
+          "update_wiki": "#/$defs/GitLabUpdateWikiConfig",
+          "upsert_file": "#/$defs/GitLabUpsertFileConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GitLabListProjectsConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabGetProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabCreateProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabListMembersConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabListIssuesConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabGetIssueConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabCreateIssueConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabUpdateIssueConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabCreateNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabListMergeRequestsConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabGetMergeRequestConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabCreateMergeRequestConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabUpdateMergeRequestConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabMergeMergeRequestConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabListBranchesConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabCreateBranchConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabDeleteBranchConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabListCommitsConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabCreateCommitConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabGetFileConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabUpsertFileConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabCreateTagConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabListPipelinesConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabCreatePipelineConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabListPipelineJobsConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabCreateReleaseConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabListGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabGetUserConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabGetPipelineConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabRetryPipelineConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabCancelPipelineConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabGetJobConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabGetJobLogConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabRetryJobConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabPlayJobConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabCancelJobConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabListVariablesConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabCreateVariableConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabUpdateVariableConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabDeleteVariableConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabApproveMergeRequestConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabUnapproveMergeRequestConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabListNotesConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabDeleteIssueConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabListLabelsConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabCreateLabelConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabDeleteLabelConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabListMilestonesConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabCreateMilestoneConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabAddMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabRemoveMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabListReleasesConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabGetReleaseConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabSetCommitStatusConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabListEnvironmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabCreateEnvironmentConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabStopEnvironmentConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabDeleteEnvironmentConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabListDeploymentsConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabGetDeploymentConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabCreateDeploymentConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabListWikisConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabGetWikiConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabCreateWikiConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabUpdateWikiConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabDeleteWikiConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabListProtectedBranchesConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabProtectBranchConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabUnprotectBranchConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabListTodosConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabMarkTodoDoneConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabMarkAllTodosDoneConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabListHooksConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabCreateHookConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabDeleteHookConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabUpdateReleaseConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabDeleteReleaseConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabListEpicsConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabCreateEpicConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabUpdateEpicConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabHookTriggerConfig"
+        },
+        {
+          "$ref": "#/$defs/GitLabGroupHookTriggerConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GitLabOAuthCredential"
+        },
+        {
+          "$ref": "#/$defs/GitLabAccessTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Gitlab Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "List open issues in a project",
+    "Create an issue when a customer reports a bug",
+    "Open a merge request from a feature branch",
+    "Merge an approved merge request",
+    "Trigger a workflow whenever a merge request is opened"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

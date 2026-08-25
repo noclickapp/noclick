@@ -1,0 +1,3075 @@
+{
+  "$defs": {
+    "ConfluenceAddLabelConfig": {
+      "description": "Add a label to content (page or blog post). Uses the v1 API.",
+      "properties": {
+        "operation": {
+          "const": "add_label",
+          "default": "add_label",
+          "title": "Add Label",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Labels",
+          "x-display-name": "Add Label",
+          "x-is-trigger": false
+        },
+        "content_id": {
+          "description": "The page or blog post ID to label",
+          "title": "Content ID",
+          "type": "string"
+        },
+        "label": {
+          "description": "The label name to add",
+          "title": "Label",
+          "type": "string"
+        },
+        "prefix": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "global",
+          "description": "Label prefix namespace",
+          "enum": [
+            "global",
+            "my",
+            "team"
+          ],
+          "enumNames": [
+            "Global",
+            "My (personal)",
+            "Team"
+          ],
+          "title": "Prefix",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "content_id",
+        "label"
+      ],
+      "title": "ConfluenceAddLabelConfig",
+      "type": "object"
+    },
+    "ConfluenceApiTokenCredential": {
+      "description": "Basic-auth credential for Confluence Cloud (Atlassian email + API token).\n\nCreate an API token at https://id.atlassian.com/manage-profile/security/api-tokens",
+      "properties": {
+        "credential_type": {
+          "const": "confluence_api_token",
+          "default": "confluence_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "email": {
+          "description": "Email address associated with your Atlassian account",
+          "title": "Email",
+          "type": "string"
+        },
+        "api_token": {
+          "description": "Your Atlassian API token",
+          "title": "API Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "domain": {
+          "description": "Your Confluence Cloud domain (e.g., yourcompany.atlassian.net)",
+          "placeholder": "yourcompany.atlassian.net",
+          "title": "Confluence Domain",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email",
+        "api_token",
+        "domain"
+      ],
+      "title": "ConfluenceApiTokenCredential",
+      "type": "object",
+      "x-credential-url": "https://id.atlassian.com/manage-profile/security/api-tokens"
+    },
+    "ConfluenceCreateBlogPostConfig": {
+      "description": "Create a blog post in a space.",
+      "properties": {
+        "operation": {
+          "const": "create_blog_post",
+          "default": "create_blog_post",
+          "title": "Create Blog Post",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Blog Posts",
+          "x-display-name": "Create Blog Post",
+          "x-is-trigger": false
+        },
+        "space_id": {
+          "description": "The space to create the blog post in",
+          "title": "Space",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a space ID",
+            "field_name": "space_id",
+            "placeholder": "Select a space...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "confluence_space"
+        },
+        "title": {
+          "description": "The blog post title",
+          "title": "Title",
+          "type": "string"
+        },
+        "body": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Blog post body content",
+          "title": "Body",
+          "ui:widget": "textarea"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "current",
+          "description": "Initial status",
+          "enum": [
+            "current",
+            "draft"
+          ],
+          "enumNames": [
+            "Current (published)",
+            "Draft"
+          ],
+          "title": "Status",
+          "x-enum-searchable": true
+        },
+        "representation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "storage",
+          "description": "Format of the supplied body",
+          "enum": [
+            "storage",
+            "atlas_doc_format",
+            "wiki"
+          ],
+          "enumNames": [
+            "Storage (XHTML)",
+            "Atlas Doc Format (ADF)",
+            "Wiki markup"
+          ],
+          "title": "Body Representation",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "space_id",
+        "title"
+      ],
+      "title": "ConfluenceCreateBlogPostConfig",
+      "type": "object"
+    },
+    "ConfluenceCreateContentPropertyConfig": {
+      "description": "Set a custom content property on a page.",
+      "properties": {
+        "operation": {
+          "const": "create_content_property",
+          "default": "create_content_property",
+          "title": "Create Content Property",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Properties",
+          "x-display-name": "Create Content Property",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The page to set the property on",
+          "title": "Page ID",
+          "type": "string"
+        },
+        "property_key": {
+          "description": "The property key (name)",
+          "title": "Property Key",
+          "type": "string"
+        },
+        "property_value": {
+          "description": "The property value as a JSON literal (e.g. \"text\", 42, {\"a\":1})",
+          "title": "Property Value",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "page_id",
+        "property_key",
+        "property_value"
+      ],
+      "title": "ConfluenceCreateContentPropertyConfig",
+      "type": "object"
+    },
+    "ConfluenceCreateFooterCommentConfig": {
+      "description": "Add a footer comment to a page or blog post.",
+      "properties": {
+        "operation": {
+          "const": "create_footer_comment",
+          "default": "create_footer_comment",
+          "title": "Create Footer Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comments",
+          "x-display-name": "Create Footer Comment",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The page to comment on (or use Blog Post ID)",
+          "title": "Page ID"
+        },
+        "blog_post_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The blog post to comment on (or use Page ID)",
+          "title": "Blog Post ID"
+        },
+        "body": {
+          "description": "The comment content",
+          "title": "Comment Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "representation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "storage",
+          "description": "Format of the supplied body",
+          "enum": [
+            "storage",
+            "atlas_doc_format",
+            "wiki"
+          ],
+          "enumNames": [
+            "Storage (XHTML)",
+            "Atlas Doc Format (ADF)",
+            "Wiki markup"
+          ],
+          "title": "Body Representation",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "body"
+      ],
+      "title": "ConfluenceCreateFooterCommentConfig",
+      "type": "object"
+    },
+    "ConfluenceCreateInlineCommentConfig": {
+      "description": "Create an inline comment anchored to selected text on a page or blog post.",
+      "properties": {
+        "operation": {
+          "const": "create_inline_comment",
+          "default": "create_inline_comment",
+          "title": "Create Inline Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comments",
+          "x-display-name": "Create Inline Comment",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The page to comment on (or use Blog Post ID)",
+          "title": "Page ID"
+        },
+        "blog_post_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The blog post to comment on (or use Page ID)",
+          "title": "Blog Post ID"
+        },
+        "body": {
+          "description": "The comment content",
+          "title": "Comment Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "selection_text": {
+          "description": "The exact text the inline comment anchors to",
+          "title": "Highlighted Text",
+          "type": "string"
+        },
+        "match_index": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "0",
+          "description": "Which occurrence of the highlighted text to anchor to when it appears more than once (0 = first occurrence)",
+          "title": "Match Index"
+        },
+        "representation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "storage",
+          "description": "Format of the supplied body",
+          "enum": [
+            "storage",
+            "atlas_doc_format",
+            "wiki"
+          ],
+          "enumNames": [
+            "Storage (XHTML)",
+            "Atlas Doc Format (ADF)",
+            "Wiki markup"
+          ],
+          "title": "Body Representation",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "body",
+        "selection_text"
+      ],
+      "title": "ConfluenceCreateInlineCommentConfig",
+      "type": "object"
+    },
+    "ConfluenceCreatePageConfig": {
+      "description": "Create a page in a space.",
+      "properties": {
+        "operation": {
+          "const": "create_page",
+          "default": "create_page",
+          "title": "Create Page",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pages",
+          "x-display-name": "Create Page",
+          "x-is-trigger": false
+        },
+        "space_id": {
+          "description": "The space to create the page in",
+          "title": "Space",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a space ID",
+            "field_name": "space_id",
+            "placeholder": "Select a space...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "confluence_space"
+        },
+        "title": {
+          "description": "The page title",
+          "title": "Title",
+          "type": "string"
+        },
+        "body": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page body content (Confluence storage XHTML by default)",
+          "title": "Body",
+          "ui:widget": "textarea"
+        },
+        "parent_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Create as a child of this page",
+          "title": "Parent Page ID"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "current",
+          "description": "Initial page status",
+          "enum": [
+            "current",
+            "draft"
+          ],
+          "enumNames": [
+            "Current (published)",
+            "Draft"
+          ],
+          "title": "Status",
+          "x-enum-searchable": true
+        },
+        "representation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "storage",
+          "description": "Format of the supplied body",
+          "enum": [
+            "storage",
+            "atlas_doc_format",
+            "wiki"
+          ],
+          "enumNames": [
+            "Storage (XHTML)",
+            "Atlas Doc Format (ADF)",
+            "Wiki markup"
+          ],
+          "title": "Body Representation",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "space_id",
+        "title"
+      ],
+      "title": "ConfluenceCreatePageConfig",
+      "type": "object"
+    },
+    "ConfluenceCreateSpaceConfig": {
+      "description": "Create a new Confluence space.",
+      "properties": {
+        "operation": {
+          "const": "create_space",
+          "default": "create_space",
+          "title": "Create Space",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Spaces",
+          "x-creates-resource": true,
+          "x-display-name": "Create Space",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "confluence_space"
+        },
+        "name": {
+          "description": "The space name",
+          "title": "Name",
+          "type": "string"
+        },
+        "key": {
+          "description": "Unique space key (alphanumeric, e.g. MYPROJECT)",
+          "title": "Key",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional space description",
+          "title": "Description",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "name",
+        "key"
+      ],
+      "title": "ConfluenceCreateSpaceConfig",
+      "type": "object"
+    },
+    "ConfluenceDeleteAttachmentConfig": {
+      "description": "Delete an attachment.",
+      "properties": {
+        "operation": {
+          "const": "delete_attachment",
+          "default": "delete_attachment",
+          "title": "Delete Attachment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Attachments",
+          "x-display-name": "Delete Attachment",
+          "x-is-trigger": false
+        },
+        "attachment_id": {
+          "description": "The ID of the attachment to delete",
+          "title": "Attachment ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "attachment_id"
+      ],
+      "title": "ConfluenceDeleteAttachmentConfig",
+      "type": "object"
+    },
+    "ConfluenceDeleteBlogPostConfig": {
+      "description": "Delete a blog post.",
+      "properties": {
+        "operation": {
+          "const": "delete_blog_post",
+          "default": "delete_blog_post",
+          "title": "Delete Blog Post",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Blog Posts",
+          "x-display-name": "Delete Blog Post",
+          "x-is-trigger": false
+        },
+        "blog_post_id": {
+          "description": "The ID of the blog post to delete",
+          "title": "Blog Post ID",
+          "type": "string"
+        },
+        "purge": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "false",
+          "description": "Permanently delete (only works on already-trashed posts)",
+          "enum": [
+            "false",
+            "true"
+          ],
+          "enumNames": [
+            "No (move to trash)",
+            "Yes (purge permanently)"
+          ],
+          "title": "Purge Permanently",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "blog_post_id"
+      ],
+      "title": "ConfluenceDeleteBlogPostConfig",
+      "type": "object"
+    },
+    "ConfluenceDeleteContentPropertyConfig": {
+      "description": "Delete a content property from a page.",
+      "properties": {
+        "operation": {
+          "const": "delete_content_property",
+          "default": "delete_content_property",
+          "title": "Delete Content Property",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Properties",
+          "x-display-name": "Delete Content Property",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The page that owns the property",
+          "title": "Page ID",
+          "type": "string"
+        },
+        "property_id": {
+          "description": "The numeric property ID to delete",
+          "title": "Property ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "page_id",
+        "property_id"
+      ],
+      "title": "ConfluenceDeleteContentPropertyConfig",
+      "type": "object"
+    },
+    "ConfluenceDeleteFooterCommentConfig": {
+      "description": "Delete a footer comment.",
+      "properties": {
+        "operation": {
+          "const": "delete_footer_comment",
+          "default": "delete_footer_comment",
+          "title": "Delete Footer Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comments",
+          "x-display-name": "Delete Footer Comment",
+          "x-is-trigger": false
+        },
+        "comment_id": {
+          "description": "The ID of the footer comment to delete",
+          "title": "Comment ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "comment_id"
+      ],
+      "title": "ConfluenceDeleteFooterCommentConfig",
+      "type": "object"
+    },
+    "ConfluenceDeleteInlineCommentConfig": {
+      "description": "Delete an inline comment.",
+      "properties": {
+        "operation": {
+          "const": "delete_inline_comment",
+          "default": "delete_inline_comment",
+          "title": "Delete Inline Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comments",
+          "x-display-name": "Delete Inline Comment",
+          "x-is-trigger": false
+        },
+        "comment_id": {
+          "description": "The ID of the inline comment to delete",
+          "title": "Comment ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "comment_id"
+      ],
+      "title": "ConfluenceDeleteInlineCommentConfig",
+      "type": "object"
+    },
+    "ConfluenceDeletePageConfig": {
+      "description": "Trash (or permanently purge) a page.",
+      "properties": {
+        "operation": {
+          "const": "delete_page",
+          "default": "delete_page",
+          "title": "Delete Page",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pages",
+          "x-display-name": "Delete Page",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The ID of the page to delete",
+          "title": "Page ID",
+          "type": "string"
+        },
+        "purge": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "false",
+          "description": "Permanently delete (only works on already-trashed pages)",
+          "enum": [
+            "false",
+            "true"
+          ],
+          "enumNames": [
+            "No (move to trash)",
+            "Yes (purge permanently)"
+          ],
+          "title": "Purge Permanently",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "ConfluenceDeletePageConfig",
+      "type": "object"
+    },
+    "ConfluenceGetAttachmentConfig": {
+      "description": "Get attachment metadata, including its download link.",
+      "properties": {
+        "operation": {
+          "const": "get_attachment",
+          "default": "get_attachment",
+          "title": "Get Attachment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Attachments",
+          "x-display-name": "Get Attachment",
+          "x-is-trigger": false
+        },
+        "attachment_id": {
+          "description": "The ID of the attachment",
+          "title": "Attachment ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "attachment_id"
+      ],
+      "title": "ConfluenceGetAttachmentConfig",
+      "type": "object"
+    },
+    "ConfluenceGetBlogPostConfig": {
+      "description": "Get a single blog post by ID, optionally including its body.",
+      "properties": {
+        "operation": {
+          "const": "get_blog_post",
+          "default": "get_blog_post",
+          "title": "Get Blog Post",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Blog Posts",
+          "x-display-name": "Get Blog Post",
+          "x-is-trigger": false
+        },
+        "blog_post_id": {
+          "description": "The numeric ID of the blog post",
+          "title": "Blog Post ID",
+          "type": "string"
+        },
+        "body_format": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "storage",
+          "description": "Representation to return the body in",
+          "enum": [
+            "storage",
+            "atlas_doc_format",
+            "view",
+            ""
+          ],
+          "enumNames": [
+            "Storage (XHTML)",
+            "Atlas Doc Format (ADF)",
+            "View (HTML)",
+            "None"
+          ],
+          "title": "Body Format",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "blog_post_id"
+      ],
+      "title": "ConfluenceGetBlogPostConfig",
+      "type": "object"
+    },
+    "ConfluenceGetCurrentUserConfig": {
+      "description": "Get the authenticated user's account info (v1).",
+      "properties": {
+        "operation": {
+          "const": "get_current_user",
+          "default": "get_current_user",
+          "title": "Get Current User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Get Current User",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ConfluenceGetCurrentUserConfig",
+      "type": "object"
+    },
+    "ConfluenceGetPageAncestorsConfig": {
+      "description": "Get the ancestor pages (breadcrumb path) of a page.",
+      "properties": {
+        "operation": {
+          "const": "get_page_ancestors",
+          "default": "get_page_ancestors",
+          "title": "Get Page Ancestors",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pages",
+          "x-display-name": "Get Page Ancestors",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The page whose ancestor chain to retrieve",
+          "title": "Page ID",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max number of ancestors to return (1-250)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "ConfluenceGetPageAncestorsConfig",
+      "type": "object"
+    },
+    "ConfluenceGetPageConfig": {
+      "description": "Get a single page by ID, optionally including its body.",
+      "properties": {
+        "operation": {
+          "const": "get_page",
+          "default": "get_page",
+          "title": "Get Page",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pages",
+          "x-display-name": "Get Page",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The numeric ID of the page",
+          "title": "Page ID",
+          "type": "string"
+        },
+        "body_format": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "storage",
+          "description": "Representation to return the page body in",
+          "enum": [
+            "storage",
+            "atlas_doc_format",
+            "view",
+            ""
+          ],
+          "enumNames": [
+            "Storage (XHTML)",
+            "Atlas Doc Format (ADF)",
+            "View (HTML)",
+            "None"
+          ],
+          "title": "Body Format",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "ConfluenceGetPageConfig",
+      "type": "object"
+    },
+    "ConfluenceGetPageVersionsConfig": {
+      "description": "List the version history of a page.",
+      "properties": {
+        "operation": {
+          "const": "get_page_versions",
+          "default": "get_page_versions",
+          "title": "Get Page Versions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pages",
+          "x-display-name": "Get Page Versions",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The page whose versions to list",
+          "title": "Page ID",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max number of versions to return (1-250)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "ConfluenceGetPageVersionsConfig",
+      "type": "object"
+    },
+    "ConfluenceGetSpaceConfig": {
+      "description": "Get a single space by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_space",
+          "default": "get_space",
+          "title": "Get Space",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Spaces",
+          "x-display-name": "Get Space",
+          "x-is-trigger": false
+        },
+        "space_id": {
+          "description": "The space to retrieve",
+          "title": "Space",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a space ID",
+            "field_name": "space_id",
+            "placeholder": "Select a space...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "confluence_space"
+        }
+      },
+      "required": [
+        "space_id"
+      ],
+      "title": "ConfluenceGetSpaceConfig",
+      "type": "object"
+    },
+    "ConfluenceGetTaskConfig": {
+      "description": "Get a single inline task by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_task",
+          "default": "get_task",
+          "title": "Get Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Get Task",
+          "x-is-trigger": false
+        },
+        "task_id": {
+          "description": "The numeric ID of the task",
+          "title": "Task ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "ConfluenceGetTaskConfig",
+      "type": "object"
+    },
+    "ConfluenceListAttachmentsConfig": {
+      "description": "List attachments on a page.",
+      "properties": {
+        "operation": {
+          "const": "list_attachments",
+          "default": "list_attachments",
+          "title": "List Attachments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Attachments",
+          "x-display-name": "List Attachments",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The page whose attachments to list",
+          "title": "Page ID",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max number of attachments to return (1-250)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "ConfluenceListAttachmentsConfig",
+      "type": "object"
+    },
+    "ConfluenceListBlogPostFooterCommentsConfig": {
+      "description": "List footer comments on a blog post.",
+      "properties": {
+        "operation": {
+          "const": "list_blog_post_footer_comments",
+          "default": "list_blog_post_footer_comments",
+          "title": "List Blog Post Footer Comments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comments",
+          "x-display-name": "List Blog Post Footer Comments",
+          "x-is-trigger": false
+        },
+        "blog_post_id": {
+          "description": "The blog post whose footer comments to list",
+          "title": "Blog Post ID",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max number of comments to return (1-250)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "blog_post_id"
+      ],
+      "title": "ConfluenceListBlogPostFooterCommentsConfig",
+      "type": "object"
+    },
+    "ConfluenceListBlogPostInlineCommentsConfig": {
+      "description": "List inline comments on a blog post.",
+      "properties": {
+        "operation": {
+          "const": "list_blog_post_inline_comments",
+          "default": "list_blog_post_inline_comments",
+          "title": "List Blog Post Inline Comments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comments",
+          "x-display-name": "List Blog Post Inline Comments",
+          "x-is-trigger": false
+        },
+        "blog_post_id": {
+          "description": "The blog post whose inline comments to list",
+          "title": "Blog Post ID",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max number of comments to return (1-250)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "blog_post_id"
+      ],
+      "title": "ConfluenceListBlogPostInlineCommentsConfig",
+      "type": "object"
+    },
+    "ConfluenceListBlogPostsConfig": {
+      "description": "List blog posts, optionally filtered by space or status.",
+      "properties": {
+        "operation": {
+          "const": "list_blog_posts",
+          "default": "list_blog_posts",
+          "title": "List Blog Posts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Blog Posts",
+          "x-display-name": "List Blog Posts",
+          "x-is-trigger": false
+        },
+        "space_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter to a single space",
+          "title": "Space",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a space ID",
+            "field_name": "space_id",
+            "placeholder": "Select a space...",
+            "searchable": true
+          },
+          "x-resource-type": "confluence_space"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by blog post status",
+          "enum": [
+            "",
+            "current",
+            "archived",
+            "trashed",
+            "deleted"
+          ],
+          "enumNames": [
+            "Any",
+            "Current",
+            "Archived",
+            "Trashed",
+            "Deleted"
+          ],
+          "title": "Status",
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max number of blog posts to return (1-250)",
+          "title": "Limit"
+        }
+      },
+      "title": "ConfluenceListBlogPostsConfig",
+      "type": "object"
+    },
+    "ConfluenceListChildPagesConfig": {
+      "description": "List the direct child pages of a page.",
+      "properties": {
+        "operation": {
+          "const": "list_child_pages",
+          "default": "list_child_pages",
+          "title": "List Child Pages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pages",
+          "x-display-name": "List Child Pages",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The parent page ID",
+          "title": "Page ID",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max number of children to return (1-250)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "ConfluenceListChildPagesConfig",
+      "type": "object"
+    },
+    "ConfluenceListContentPropertiesConfig": {
+      "description": "List custom content properties (key/value metadata) on a page.",
+      "properties": {
+        "operation": {
+          "const": "list_content_properties",
+          "default": "list_content_properties",
+          "title": "List Content Properties",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Properties",
+          "x-display-name": "List Content Properties",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The page whose properties to list",
+          "title": "Page ID",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max number of properties to return (1-250)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "ConfluenceListContentPropertiesConfig",
+      "type": "object"
+    },
+    "ConfluenceListFooterCommentsConfig": {
+      "description": "List footer comments on a page.",
+      "properties": {
+        "operation": {
+          "const": "list_footer_comments",
+          "default": "list_footer_comments",
+          "title": "List Footer Comments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comments",
+          "x-display-name": "List Footer Comments",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The page whose footer comments to list",
+          "title": "Page ID",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max number of comments to return (1-250)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "ConfluenceListFooterCommentsConfig",
+      "type": "object"
+    },
+    "ConfluenceListInlineCommentsConfig": {
+      "description": "List inline (highlight) comments on a page.",
+      "properties": {
+        "operation": {
+          "const": "list_inline_comments",
+          "default": "list_inline_comments",
+          "title": "List Inline Comments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comments",
+          "x-display-name": "List Inline Comments",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The page whose inline comments to list",
+          "title": "Page ID",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max number of comments to return (1-250)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "ConfluenceListInlineCommentsConfig",
+      "type": "object"
+    },
+    "ConfluenceListPageLabelsConfig": {
+      "description": "List labels attached to a page.",
+      "properties": {
+        "operation": {
+          "const": "list_page_labels",
+          "default": "list_page_labels",
+          "title": "List Page Labels",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Labels",
+          "x-display-name": "List Page Labels",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The page whose labels to list",
+          "title": "Page ID",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max number of labels to return (1-250)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "ConfluenceListPageLabelsConfig",
+      "type": "object"
+    },
+    "ConfluenceListPagesConfig": {
+      "description": "List pages, optionally filtered by space, status, or title.",
+      "properties": {
+        "operation": {
+          "const": "list_pages",
+          "default": "list_pages",
+          "title": "List Pages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pages",
+          "x-display-name": "List Pages",
+          "x-is-trigger": false
+        },
+        "space_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter to a single space",
+          "title": "Space",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a space ID",
+            "field_name": "space_id",
+            "placeholder": "Select a space...",
+            "searchable": true
+          },
+          "x-resource-type": "confluence_space"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by page status",
+          "enum": [
+            "",
+            "current",
+            "archived",
+            "deleted",
+            "trashed"
+          ],
+          "enumNames": [
+            "Any",
+            "Current",
+            "Archived",
+            "Deleted",
+            "Trashed"
+          ],
+          "title": "Status",
+          "x-enum-searchable": true
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter to pages with this exact title",
+          "title": "Title"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max number of pages to return (1-250)",
+          "title": "Limit"
+        }
+      },
+      "title": "ConfluenceListPagesConfig",
+      "type": "object"
+    },
+    "ConfluenceListPagesInSpaceConfig": {
+      "description": "List all pages within a given space.",
+      "properties": {
+        "operation": {
+          "const": "list_pages_in_space",
+          "default": "list_pages_in_space",
+          "title": "List Pages in Space",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pages",
+          "x-display-name": "List Pages in Space",
+          "x-is-trigger": false
+        },
+        "space_id": {
+          "description": "The space whose pages to list",
+          "title": "Space",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a space ID",
+            "field_name": "space_id",
+            "placeholder": "Select a space...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "confluence_space"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by page status",
+          "enum": [
+            "",
+            "current",
+            "archived",
+            "trashed"
+          ],
+          "enumNames": [
+            "Any",
+            "Current",
+            "Archived",
+            "Trashed"
+          ],
+          "title": "Status",
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max number of pages to return (1-250)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "space_id"
+      ],
+      "title": "ConfluenceListPagesInSpaceConfig",
+      "type": "object"
+    },
+    "ConfluenceListSpaceLabelsConfig": {
+      "description": "List labels applied to a space.",
+      "properties": {
+        "operation": {
+          "const": "list_space_labels",
+          "default": "list_space_labels",
+          "title": "List Space Labels",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Spaces",
+          "x-display-name": "List Space Labels",
+          "x-is-trigger": false
+        },
+        "space_id": {
+          "description": "The space whose labels to list",
+          "title": "Space",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a space ID",
+            "field_name": "space_id",
+            "placeholder": "Select a space...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "confluence_space"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max number of labels to return (1-250)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "space_id"
+      ],
+      "title": "ConfluenceListSpaceLabelsConfig",
+      "type": "object"
+    },
+    "ConfluenceListSpacesConfig": {
+      "description": "List spaces, optionally filtered by key, type, or status.",
+      "properties": {
+        "operation": {
+          "const": "list_spaces",
+          "default": "list_spaces",
+          "title": "List Spaces",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Spaces",
+          "x-display-name": "List Spaces",
+          "x-is-trigger": false
+        },
+        "keys": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter to these space keys, comma-separated",
+          "title": "Keys"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by space type",
+          "enum": [
+            "",
+            "global",
+            "personal",
+            "collaboration",
+            "knowledge_base"
+          ],
+          "enumNames": [
+            "Any",
+            "Global",
+            "Personal",
+            "Collaboration",
+            "Knowledge Base"
+          ],
+          "title": "Type",
+          "x-enum-searchable": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by space status",
+          "enum": [
+            "",
+            "current",
+            "archived"
+          ],
+          "enumNames": [
+            "Any",
+            "Current",
+            "Archived"
+          ],
+          "title": "Status",
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max number of spaces to return (1-250)",
+          "title": "Limit"
+        }
+      },
+      "title": "ConfluenceListSpacesConfig",
+      "type": "object"
+    },
+    "ConfluenceListTasksConfig": {
+      "description": "List inline tasks (checkboxes) across the site or filtered by space/page.",
+      "properties": {
+        "operation": {
+          "const": "list_tasks",
+          "default": "list_tasks",
+          "title": "List Tasks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "List Tasks",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter to tasks on this page",
+          "title": "Page ID"
+        },
+        "space_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter to tasks in this space",
+          "title": "Space",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a space ID",
+            "field_name": "space_id",
+            "placeholder": "Select a space...",
+            "searchable": true
+          },
+          "x-resource-type": "confluence_space"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by task status",
+          "enum": [
+            "",
+            "incomplete",
+            "complete"
+          ],
+          "enumNames": [
+            "Any",
+            "Incomplete",
+            "Complete"
+          ],
+          "title": "Status",
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max number of tasks to return (1-250)",
+          "title": "Limit"
+        }
+      },
+      "title": "ConfluenceListTasksConfig",
+      "type": "object"
+    },
+    "ConfluenceOAuthCredential": {
+      "description": "OAuth 2.0 (3LO) credential for Confluence Cloud.\n\nTokens are obtained via the Atlassian OAuth flow, not entered manually.\nRegister an app at https://developer.atlassian.com/console/myapps/",
+      "properties": {
+        "credential_type": {
+          "const": "confluence_oauth",
+          "default": "confluence_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "title": "Refresh Token",
+          "type": "string"
+        },
+        "expires_at": {
+          "title": "Token Expiry",
+          "type": "string"
+        },
+        "cloud_id": {
+          "description": "Atlassian Cloud ID for API requests",
+          "title": "Cloud ID",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Email"
+        },
+        "site_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Confluence site name for display",
+          "title": "Site Name"
+        },
+        "site_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Confluence site URL for display",
+          "title": "Site URL"
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "OAuth scopes currently granted to this Confluence credential",
+          "title": "Granted Scopes"
+        }
+      },
+      "required": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "cloud_id"
+      ],
+      "title": "ConfluenceOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-oauth-provider": "atlassian",
+      "x-oauth-scopes": [
+        "read:confluence-content.all",
+        "read:confluence-content.summary",
+        "write:confluence-content",
+        "read:confluence-space.summary",
+        "write:confluence-space",
+        "write:confluence-file",
+        "readonly:content.attachment:confluence",
+        "read:confluence-props",
+        "write:confluence-props",
+        "search:confluence",
+        "read:confluence-user",
+        "read:confluence-groups",
+        "read:space:confluence",
+        "write:space:confluence",
+        "read:page:confluence",
+        "write:page:confluence",
+        "delete:page:confluence",
+        "read:blogpost:confluence",
+        "write:blogpost:confluence",
+        "delete:blogpost:confluence",
+        "read:comment:confluence",
+        "write:comment:confluence",
+        "delete:comment:confluence",
+        "read:attachment:confluence",
+        "write:attachment:confluence",
+        "delete:attachment:confluence",
+        "read:label:confluence",
+        "write:label:confluence",
+        "read:content-details:confluence",
+        "write:content-details:confluence",
+        "delete:content-details:confluence",
+        "read:user:confluence",
+        "read:group:confluence",
+        "read:inlinetask:confluence",
+        "write:inlinetask:confluence",
+        "read:task:confluence",
+        "write:task:confluence",
+        "offline_access"
+      ]
+    },
+    "ConfluenceOnNewContentConfig": {
+      "description": "Poll-based trigger: fire when new pages/blogposts/comments are created.\n\nConfluence has no general inbound webhook for REST/Basic-auth clients, so we\npoll the v1 CQL search (``type IN (page, blogpost, comment) order by created\ndesc``) on a schedule and emit only content created since the last poll,\ndeduped on the most-recent content id.",
+      "properties": {
+        "operation": {
+          "const": "on_new_content",
+          "default": "on_new_content",
+          "title": "On New Content",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On New Content",
+          "x-is-trigger": true
+        },
+        "space_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only watch a single space (optional; watches all spaces if blank)",
+          "title": "Space",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a numeric space ID",
+            "field_name": "space_id",
+            "placeholder": "Select a space...",
+            "searchable": true
+          },
+          "x-resource-type": "confluence_space"
+        },
+        "content_type": {
+          "default": "page",
+          "description": "Which kind of newly-created content to watch",
+          "enum": [
+            "page",
+            "blogpost",
+            "comment",
+            "all"
+          ],
+          "enumNames": [
+            "Pages",
+            "Blog posts",
+            "Comments",
+            "Any (page/blogpost/comment)"
+          ],
+          "title": "Content Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": {
+            "frequency": "minutes",
+            "interval": 5,
+            "hour": 9,
+            "minute": 0,
+            "dayOfWeek": 1,
+            "dayOfMonth": 1
+          },
+          "description": "How often to check for new content",
+          "title": "Check Frequency",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "max_results": {
+          "default": "25",
+          "description": "Maximum number of new items to fetch per check (1-100)",
+          "title": "Max Items",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "last_seen_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Seen Id",
+          "ui:hidden": true
+        },
+        "last_polled_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Polled At",
+          "ui:hidden": true
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:copyable": true,
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Check",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        }
+      },
+      "title": "ConfluenceOnNewContentConfig",
+      "type": "object"
+    },
+    "ConfluenceRemoveLabelConfig": {
+      "description": "Remove a label from content (page or blog post). Uses the v1 API.",
+      "properties": {
+        "operation": {
+          "const": "remove_label",
+          "default": "remove_label",
+          "title": "Remove Label",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Labels",
+          "x-display-name": "Remove Label",
+          "x-is-trigger": false
+        },
+        "content_id": {
+          "description": "The page or blog post ID",
+          "title": "Content ID",
+          "type": "string"
+        },
+        "label": {
+          "description": "The label name to remove",
+          "title": "Label",
+          "type": "string"
+        }
+      },
+      "required": [
+        "content_id",
+        "label"
+      ],
+      "title": "ConfluenceRemoveLabelConfig",
+      "type": "object"
+    },
+    "ConfluenceSearchConfig": {
+      "description": "Full-text / structured search via CQL (v1). Returns search results.",
+      "properties": {
+        "operation": {
+          "const": "search",
+          "default": "search",
+          "title": "Search (CQL)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Search",
+          "x-display-name": "Search (CQL)",
+          "x-is-trigger": false
+        },
+        "cql": {
+          "description": "Confluence Query Language (e.g. type=page AND space=DEV AND text~\"release notes\")",
+          "placeholder": "type=page AND text~\"release notes\"",
+          "title": "CQL Query",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max number of results to return (1-100)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "cql"
+      ],
+      "title": "ConfluenceSearchConfig",
+      "type": "object"
+    },
+    "ConfluenceSearchContentConfig": {
+      "description": "CQL search returning content objects only (v1).",
+      "properties": {
+        "operation": {
+          "const": "search_content",
+          "default": "search_content",
+          "title": "Search Content (CQL)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Search",
+          "x-display-name": "Search Content (CQL)",
+          "x-is-trigger": false
+        },
+        "cql": {
+          "description": "Confluence Query Language (e.g. type=page AND space=DEV)",
+          "placeholder": "type=page AND space=DEV",
+          "title": "CQL Query",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max number of results to return (1-100)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "cql"
+      ],
+      "title": "ConfluenceSearchContentConfig",
+      "type": "object"
+    },
+    "ConfluenceUpdateBlogPostConfig": {
+      "description": "Update a blog post. Requires the new version number (current + 1).",
+      "properties": {
+        "operation": {
+          "const": "update_blog_post",
+          "default": "update_blog_post",
+          "title": "Update Blog Post",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Blog Posts",
+          "x-display-name": "Update Blog Post",
+          "x-is-trigger": false
+        },
+        "blog_post_id": {
+          "description": "The ID of the blog post to update",
+          "title": "Blog Post ID",
+          "type": "string"
+        },
+        "version_number": {
+          "description": "The current version number plus one",
+          "title": "New Version Number",
+          "type": "string"
+        },
+        "title": {
+          "description": "The blog post title",
+          "title": "Title",
+          "type": "string"
+        },
+        "body": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated blog post body content",
+          "title": "Body",
+          "ui:widget": "textarea"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "current",
+          "description": "Status",
+          "enum": [
+            "current",
+            "draft",
+            "archived"
+          ],
+          "enumNames": [
+            "Current",
+            "Draft",
+            "Archived"
+          ],
+          "title": "Status",
+          "x-enum-searchable": true
+        },
+        "representation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "storage",
+          "description": "Format of the supplied body",
+          "enum": [
+            "storage",
+            "atlas_doc_format",
+            "wiki"
+          ],
+          "enumNames": [
+            "Storage (XHTML)",
+            "Atlas Doc Format (ADF)",
+            "Wiki markup"
+          ],
+          "title": "Body Representation",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "blog_post_id",
+        "version_number",
+        "title"
+      ],
+      "title": "ConfluenceUpdateBlogPostConfig",
+      "type": "object"
+    },
+    "ConfluenceUpdateContentPropertyConfig": {
+      "description": "Update an existing content property on a page (requires the property ID and current version).",
+      "properties": {
+        "operation": {
+          "const": "update_content_property",
+          "default": "update_content_property",
+          "title": "Update Content Property",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Properties",
+          "x-display-name": "Update Content Property",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The page that owns the property",
+          "title": "Page ID",
+          "type": "string"
+        },
+        "property_id": {
+          "description": "The numeric property ID to update",
+          "title": "Property ID",
+          "type": "string"
+        },
+        "property_key": {
+          "description": "The property key (name)",
+          "title": "Property Key",
+          "type": "string"
+        },
+        "property_value": {
+          "description": "The new property value as a JSON literal (e.g. \"text\", 42, {\"a\":1})",
+          "title": "Property Value",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "version_number": {
+          "description": "Current version + 1",
+          "title": "Version Number",
+          "type": "string"
+        }
+      },
+      "required": [
+        "page_id",
+        "property_id",
+        "property_key",
+        "property_value",
+        "version_number"
+      ],
+      "title": "ConfluenceUpdateContentPropertyConfig",
+      "type": "object"
+    },
+    "ConfluenceUpdateFooterCommentConfig": {
+      "description": "Update the body of a footer comment.",
+      "properties": {
+        "operation": {
+          "const": "update_footer_comment",
+          "default": "update_footer_comment",
+          "title": "Update Footer Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comments",
+          "x-display-name": "Update Footer Comment",
+          "x-is-trigger": false
+        },
+        "comment_id": {
+          "description": "The ID of the footer comment to update",
+          "title": "Comment ID",
+          "type": "string"
+        },
+        "version_number": {
+          "description": "Current version + 1",
+          "title": "New Version Number",
+          "type": "string"
+        },
+        "body": {
+          "description": "Updated comment body",
+          "title": "Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "representation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "storage",
+          "enum": [
+            "storage",
+            "atlas_doc_format",
+            "wiki"
+          ],
+          "enumNames": [
+            "Storage (XHTML)",
+            "Atlas Doc Format (ADF)",
+            "Wiki markup"
+          ],
+          "title": "Body Representation",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "comment_id",
+        "version_number",
+        "body"
+      ],
+      "title": "ConfluenceUpdateFooterCommentConfig",
+      "type": "object"
+    },
+    "ConfluenceUpdateInlineCommentConfig": {
+      "description": "Update the body of an inline comment.",
+      "properties": {
+        "operation": {
+          "const": "update_inline_comment",
+          "default": "update_inline_comment",
+          "title": "Update Inline Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comments",
+          "x-display-name": "Update Inline Comment",
+          "x-is-trigger": false
+        },
+        "comment_id": {
+          "description": "The ID of the inline comment to update",
+          "title": "Comment ID",
+          "type": "string"
+        },
+        "version_number": {
+          "description": "Current version + 1",
+          "title": "New Version Number",
+          "type": "string"
+        },
+        "body": {
+          "description": "Updated comment body",
+          "title": "Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "representation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "storage",
+          "enum": [
+            "storage",
+            "atlas_doc_format",
+            "wiki"
+          ],
+          "enumNames": [
+            "Storage (XHTML)",
+            "Atlas Doc Format (ADF)",
+            "Wiki markup"
+          ],
+          "title": "Body Representation",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "comment_id",
+        "version_number",
+        "body"
+      ],
+      "title": "ConfluenceUpdateInlineCommentConfig",
+      "type": "object"
+    },
+    "ConfluenceUpdatePageConfig": {
+      "description": "Update a page. Requires the new version number (current + 1).",
+      "properties": {
+        "operation": {
+          "const": "update_page",
+          "default": "update_page",
+          "title": "Update Page",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pages",
+          "x-display-name": "Update Page",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The ID of the page to update",
+          "title": "Page ID",
+          "type": "string"
+        },
+        "version_number": {
+          "description": "The page's current version number plus one",
+          "title": "New Version Number",
+          "type": "string"
+        },
+        "title": {
+          "description": "The page title (required by the API)",
+          "title": "Title",
+          "type": "string"
+        },
+        "body": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated page body content",
+          "title": "Body",
+          "ui:widget": "textarea"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "current",
+          "description": "Page status",
+          "enum": [
+            "current",
+            "draft",
+            "archived"
+          ],
+          "enumNames": [
+            "Current",
+            "Draft",
+            "Archived"
+          ],
+          "title": "Status",
+          "x-enum-searchable": true
+        },
+        "representation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "storage",
+          "description": "Format of the supplied body",
+          "enum": [
+            "storage",
+            "atlas_doc_format",
+            "wiki"
+          ],
+          "enumNames": [
+            "Storage (XHTML)",
+            "Atlas Doc Format (ADF)",
+            "Wiki markup"
+          ],
+          "title": "Body Representation",
+          "x-enum-searchable": true
+        },
+        "version_message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional note describing this change",
+          "title": "Version Message"
+        }
+      },
+      "required": [
+        "page_id",
+        "version_number",
+        "title"
+      ],
+      "title": "ConfluenceUpdatePageConfig",
+      "type": "object"
+    },
+    "ConfluenceUpdateTaskConfig": {
+      "description": "Update an inline task (e.g., mark as complete or incomplete).",
+      "properties": {
+        "operation": {
+          "const": "update_task",
+          "default": "update_task",
+          "title": "Update Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Update Task",
+          "x-is-trigger": false
+        },
+        "task_id": {
+          "description": "The numeric ID of the task to update",
+          "title": "Task ID",
+          "type": "string"
+        },
+        "status": {
+          "default": "complete",
+          "description": "New task status",
+          "enum": [
+            "complete",
+            "incomplete"
+          ],
+          "enumNames": [
+            "Complete",
+            "Incomplete"
+          ],
+          "title": "Status",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "ConfluenceUpdateTaskConfig",
+      "type": "object"
+    },
+    "ConfluenceUploadAttachmentConfig": {
+      "description": "Upload a file as an attachment to a page (v1 multipart API).",
+      "properties": {
+        "operation": {
+          "const": "upload_attachment",
+          "default": "upload_attachment",
+          "title": "Upload Attachment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Attachments",
+          "x-display-name": "Upload Attachment",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The page to attach the file to",
+          "title": "Page ID",
+          "type": "string"
+        },
+        "filename": {
+          "description": "Name of the file (e.g. report.pdf)",
+          "title": "Filename",
+          "type": "string"
+        },
+        "file_content_base64": {
+          "description": "Base64-encoded file content",
+          "title": "File Content (base64)",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "mime_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "application/octet-stream",
+          "description": "Content type of the file (e.g. application/pdf, image/png)",
+          "title": "MIME Type"
+        },
+        "comment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional version comment for the attachment",
+          "title": "Comment"
+        }
+      },
+      "required": [
+        "page_id",
+        "filename",
+        "file_content_base64"
+      ],
+      "title": "ConfluenceUploadAttachmentConfig",
+      "type": "object"
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the Confluence node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_label": "#/$defs/ConfluenceAddLabelConfig",
+          "create_blog_post": "#/$defs/ConfluenceCreateBlogPostConfig",
+          "create_content_property": "#/$defs/ConfluenceCreateContentPropertyConfig",
+          "create_footer_comment": "#/$defs/ConfluenceCreateFooterCommentConfig",
+          "create_inline_comment": "#/$defs/ConfluenceCreateInlineCommentConfig",
+          "create_page": "#/$defs/ConfluenceCreatePageConfig",
+          "create_space": "#/$defs/ConfluenceCreateSpaceConfig",
+          "delete_attachment": "#/$defs/ConfluenceDeleteAttachmentConfig",
+          "delete_blog_post": "#/$defs/ConfluenceDeleteBlogPostConfig",
+          "delete_content_property": "#/$defs/ConfluenceDeleteContentPropertyConfig",
+          "delete_footer_comment": "#/$defs/ConfluenceDeleteFooterCommentConfig",
+          "delete_inline_comment": "#/$defs/ConfluenceDeleteInlineCommentConfig",
+          "delete_page": "#/$defs/ConfluenceDeletePageConfig",
+          "get_attachment": "#/$defs/ConfluenceGetAttachmentConfig",
+          "get_blog_post": "#/$defs/ConfluenceGetBlogPostConfig",
+          "get_current_user": "#/$defs/ConfluenceGetCurrentUserConfig",
+          "get_page": "#/$defs/ConfluenceGetPageConfig",
+          "get_page_ancestors": "#/$defs/ConfluenceGetPageAncestorsConfig",
+          "get_page_versions": "#/$defs/ConfluenceGetPageVersionsConfig",
+          "get_space": "#/$defs/ConfluenceGetSpaceConfig",
+          "get_task": "#/$defs/ConfluenceGetTaskConfig",
+          "list_attachments": "#/$defs/ConfluenceListAttachmentsConfig",
+          "list_blog_post_footer_comments": "#/$defs/ConfluenceListBlogPostFooterCommentsConfig",
+          "list_blog_post_inline_comments": "#/$defs/ConfluenceListBlogPostInlineCommentsConfig",
+          "list_blog_posts": "#/$defs/ConfluenceListBlogPostsConfig",
+          "list_child_pages": "#/$defs/ConfluenceListChildPagesConfig",
+          "list_content_properties": "#/$defs/ConfluenceListContentPropertiesConfig",
+          "list_footer_comments": "#/$defs/ConfluenceListFooterCommentsConfig",
+          "list_inline_comments": "#/$defs/ConfluenceListInlineCommentsConfig",
+          "list_page_labels": "#/$defs/ConfluenceListPageLabelsConfig",
+          "list_pages": "#/$defs/ConfluenceListPagesConfig",
+          "list_pages_in_space": "#/$defs/ConfluenceListPagesInSpaceConfig",
+          "list_space_labels": "#/$defs/ConfluenceListSpaceLabelsConfig",
+          "list_spaces": "#/$defs/ConfluenceListSpacesConfig",
+          "list_tasks": "#/$defs/ConfluenceListTasksConfig",
+          "on_new_content": "#/$defs/ConfluenceOnNewContentConfig",
+          "remove_label": "#/$defs/ConfluenceRemoveLabelConfig",
+          "search": "#/$defs/ConfluenceSearchConfig",
+          "search_content": "#/$defs/ConfluenceSearchContentConfig",
+          "update_blog_post": "#/$defs/ConfluenceUpdateBlogPostConfig",
+          "update_content_property": "#/$defs/ConfluenceUpdateContentPropertyConfig",
+          "update_footer_comment": "#/$defs/ConfluenceUpdateFooterCommentConfig",
+          "update_inline_comment": "#/$defs/ConfluenceUpdateInlineCommentConfig",
+          "update_page": "#/$defs/ConfluenceUpdatePageConfig",
+          "update_task": "#/$defs/ConfluenceUpdateTaskConfig",
+          "upload_attachment": "#/$defs/ConfluenceUploadAttachmentConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ConfluenceListPagesConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceGetPageConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceCreatePageConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceUpdatePageConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceDeletePageConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceListPagesInSpaceConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceListChildPagesConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceGetPageVersionsConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceGetPageAncestorsConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceListBlogPostsConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceGetBlogPostConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceCreateBlogPostConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceUpdateBlogPostConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceDeleteBlogPostConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceListSpacesConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceGetSpaceConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceCreateSpaceConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceListSpaceLabelsConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceListFooterCommentsConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceCreateFooterCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceUpdateFooterCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceDeleteFooterCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceListBlogPostFooterCommentsConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceListInlineCommentsConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceCreateInlineCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceUpdateInlineCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceDeleteInlineCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceListBlogPostInlineCommentsConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceListAttachmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceGetAttachmentConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceUploadAttachmentConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceDeleteAttachmentConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceListPageLabelsConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceAddLabelConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceRemoveLabelConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceListContentPropertiesConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceCreateContentPropertyConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceUpdateContentPropertyConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceDeleteContentPropertyConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceListTasksConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceGetTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceUpdateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceSearchContentConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceGetCurrentUserConfig"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceOnNewContentConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ConfluenceOAuthCredential"
+        },
+        {
+          "$ref": "#/$defs/ConfluenceApiTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Confluence Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Create a Confluence page in the DEV space with release notes",
+    "Search Confluence for pages mentioning 'onboarding'",
+    "Add a footer comment to a page when a ticket is closed",
+    "List all pages in the Engineering space",
+    "Update a page body and bump its version"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

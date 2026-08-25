@@ -1,0 +1,200 @@
+{
+  "$defs": {
+    "MergeAppendConfig": {
+      "description": "Concatenate all input arrays into one.",
+      "properties": {
+        "operation": {
+          "const": "append",
+          "default": "append",
+          "title": "Append",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Merge",
+          "x-display-name": "Append",
+          "x-is-trigger": false
+        }
+      },
+      "title": "MergeAppendConfig",
+      "type": "object"
+    },
+    "MergeCombineByFieldConfig": {
+      "description": "Join inputs by matching a common field (like a SQL JOIN).",
+      "properties": {
+        "operation": {
+          "const": "combine_by_field",
+          "default": "combine_by_field",
+          "title": "Combine by Field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Merge",
+          "x-display-name": "Combine by Field",
+          "x-is-trigger": false
+        },
+        "match_field": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Field name to match items across inputs (e.g., 'id', 'email').",
+          "placeholder": "field_name",
+          "title": "Match Field"
+        },
+        "conflict_resolution": {
+          "default": "prefer_first",
+          "description": "When two inputs share a field, prefer the first input, the last input, or merge them.",
+          "enum": [
+            "prefer_first",
+            "prefer_last",
+            "merge"
+          ],
+          "enumNames": [
+            "Prefer first",
+            "Prefer last",
+            "Merge"
+          ],
+          "title": "Conflict Resolution",
+          "type": "string"
+        }
+      },
+      "title": "MergeCombineByFieldConfig",
+      "type": "object"
+    },
+    "MergeCombineByPositionConfig": {
+      "description": "Combine inputs by index position (like zip).",
+      "properties": {
+        "operation": {
+          "const": "combine_by_position",
+          "default": "combine_by_position",
+          "title": "Combine by Position",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Merge",
+          "x-display-name": "Combine by Position",
+          "x-is-trigger": false
+        }
+      },
+      "title": "MergeCombineByPositionConfig",
+      "type": "object"
+    },
+    "MergeKeepMatchesConfig": {
+      "description": "Keep only items that exist in every input (intersection).",
+      "properties": {
+        "operation": {
+          "const": "keep_matches",
+          "default": "keep_matches",
+          "title": "Keep Matches",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Merge",
+          "x-display-name": "Keep Matches",
+          "x-is-trigger": false
+        },
+        "match_field": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Field name to match items across inputs (e.g., 'id', 'email'). Leave empty to compare whole items.",
+          "placeholder": "field_name",
+          "title": "Match Field"
+        }
+      },
+      "title": "MergeKeepMatchesConfig",
+      "type": "object"
+    },
+    "MergeRemoveDuplicatesConfig": {
+      "description": "Merge all inputs and remove duplicate items.",
+      "properties": {
+        "operation": {
+          "const": "remove_duplicates",
+          "default": "remove_duplicates",
+          "title": "Remove Duplicates",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Merge",
+          "x-display-name": "Remove Duplicates",
+          "x-is-trigger": false
+        },
+        "dedupe_field": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Field to use for detecting duplicates. Leave empty to compare whole items.",
+          "placeholder": "field_name",
+          "title": "Deduplication Field"
+        }
+      },
+      "title": "MergeRemoveDuplicatesConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for merge node (no credentials needed).",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "append": "#/$defs/MergeAppendConfig",
+          "combine_by_field": "#/$defs/MergeCombineByFieldConfig",
+          "combine_by_position": "#/$defs/MergeCombineByPositionConfig",
+          "keep_matches": "#/$defs/MergeKeepMatchesConfig",
+          "remove_duplicates": "#/$defs/MergeRemoveDuplicatesConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/MergeAppendConfig"
+        },
+        {
+          "$ref": "#/$defs/MergeCombineByPositionConfig"
+        },
+        {
+          "$ref": "#/$defs/MergeCombineByFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/MergeKeepMatchesConfig"
+        },
+        {
+          "$ref": "#/$defs/MergeRemoveDuplicatesConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials",
+      "type": "null"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Merge Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Switch to combine_by_field and match on email to join user data",
+    "Change operation to keep_matches to find common records across inputs",
+    "Use remove_duplicates by ID field to consolidate overlapping results",
+    "Change from append to combine_by_position for zipping paired arrays",
+    "Update conflict resolution to merge when combining by the user_id field"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

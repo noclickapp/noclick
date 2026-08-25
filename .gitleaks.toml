@@ -1,0 +1,57 @@
+[extend]
+useDefault = true
+
+[[allowlists]]
+description = "Dependency caches and generated build output are not repository content"
+paths = [
+  '''(^|/)node_modules/''',
+  '''(^|/)build/''',
+  '''(^|/)dist/''',
+  '''(^|/)__pycache__/''',
+  '''(^|/)\.pytest_cache/''',
+]
+
+[[allowlists]]
+description = "LinkedIn SVG component names collide with secret rule keywords"
+targetRules = ["linkedin-client-id", "linkedin-client-secret"]
+paths = ['''^frontend/app/components/workflow/nodes/LinkedInNode\.tsx$''']
+
+[[allowlists]]
+description = "OAuth hook name is not a LinkedIn client id"
+targetRules = ["linkedin-client-id"]
+regexes = ['''^useRedditOAuth$''']
+
+[[allowlists]]
+description = "Service-account validation checks PEM delimiters but contains no key material"
+targetRules = ["private-key"]
+paths = ['''^backend/nodes/agent/config/providers\.py$''']
+
+[[allowlists]]
+description = """
+Test fixtures. A node's mock tests construct its credential object, so every
+one of them contains something shaped exactly like that provider's key —
+`api_key="cal_test_key_12345"`, `SK1234567890abcdef…`, an sk-ant key spelling
+DEADBEEF. Scoped to the rules that fire on those shapes rather than switched
+off wholesale: an AWS key or a Slack token committed to a test still fails.
+"""
+targetRules = [
+  "generic-api-key",
+  "twilio-api-key",
+  "discord-client-id",
+  "anthropic-api-key",
+  "curl-auth-user",
+]
+paths = [
+  '''^backend/tests/''',
+  '''^backend/nodes/tests/''',
+  '''^frontend/tests/''',
+]
+
+[[allowlists]]
+description = """
+The onboarding walkthrough is a deterministic synthetic fixture. Its fixed
+UUIDs exercise the `credentialIds` rendering path but do not identify rows in
+any deployment. The generic rule still fires on a UUID next to that field.
+"""
+targetRules = ["generic-api-key"]
+paths = ['''^frontend/app/components/design/onboarding/liveWorkflow\.ts$''']

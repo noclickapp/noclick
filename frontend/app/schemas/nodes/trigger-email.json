@@ -1,0 +1,88 @@
+{
+  "$defs": {
+    "InboundEmailTriggerConfig": {
+      "description": "Configuration for the inbound-email trigger node.",
+      "properties": {
+        "local_part": {
+          "description": "Choose an inbox name. Email sent to this address triggers the workflow.",
+          "title": "Email Address",
+          "type": "string",
+          "ui:copyable": true,
+          "ui:widget": "email_trigger"
+        },
+        "email_address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The full reserved email address (auto-generated).",
+          "title": "Full Address",
+          "ui:hidden": true
+        },
+        "reservation_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reservation Id",
+          "ui:hidden": true
+        },
+        "allowed_senders": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated email addresses or @domains allowed to trigger this workflow. Leave empty to accept email from anyone.",
+          "placeholder": "alice@example.com, @trusted.com",
+          "title": "Allowed Senders (optional)"
+        }
+      },
+      "required": [
+        "local_part"
+      ],
+      "title": "InboundEmailTriggerConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the inbound-email trigger node (no credentials needed).",
+  "properties": {
+    "config": {
+      "$ref": "#/$defs/InboundEmailTriggerConfig",
+      "description": "Node-specific configuration"
+    },
+    "credentials": {
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials",
+      "type": "null"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Trigger-email Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Trigger this workflow when an email arrives at my reserved address",
+    "Pick the inbox name for incoming emails",
+    "Only accept email from a specific sender or domain",
+    "Copy the email address to share it",
+    "Process attachments from inbound emails"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

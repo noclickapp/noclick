@@ -1,0 +1,2672 @@
+{
+  "$defs": {
+    "MailgunAddMemberConfig": {
+      "description": "Add a single member to a mailing list.",
+      "properties": {
+        "operation": {
+          "const": "add_member",
+          "default": "add_member",
+          "title": "Add Member",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Mailing Lists",
+          "x-display-name": "Add Member",
+          "x-is-trigger": false
+        },
+        "list_address": {
+          "description": "The mailing list to add the member to",
+          "title": "List Address",
+          "type": "string"
+        },
+        "address": {
+          "description": "The member's email address",
+          "title": "Member Address",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The member's name",
+          "title": "Name"
+        },
+        "vars_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object of member variables (e.g. {\"plan\": \"pro\"})",
+          "title": "Variables (JSON)",
+          "ui:widget": "textarea"
+        },
+        "subscribed": {
+          "default": "yes",
+          "description": "Whether the member is subscribed",
+          "enum": [
+            "yes",
+            "no"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Subscribed",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "list_address",
+        "address"
+      ],
+      "title": "MailgunAddMemberConfig",
+      "type": "object"
+    },
+    "MailgunAddUnsubscribesConfig": {
+      "description": "Add an unsubscribe record to the suppression list.",
+      "properties": {
+        "operation": {
+          "const": "add_unsubscribe",
+          "default": "add_unsubscribe",
+          "title": "Add Unsubscribe",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Suppressions",
+          "x-display-name": "Add Unsubscribe",
+          "x-is-trigger": false
+        },
+        "domain": {
+          "description": "The domain to add the unsubscribe to",
+          "title": "Domain",
+          "type": "string"
+        },
+        "address": {
+          "description": "The email address to unsubscribe",
+          "title": "Address",
+          "type": "string"
+        },
+        "tag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "*",
+          "description": "Tag to unsubscribe from (* = all)",
+          "title": "Tag"
+        }
+      },
+      "required": [
+        "domain",
+        "address"
+      ],
+      "title": "MailgunAddUnsubscribesConfig",
+      "type": "object"
+    },
+    "MailgunApiKeyCredential": {
+      "description": "API Key credential for Mailgun (HTTP Basic Auth, username `api`).",
+      "properties": {
+        "credential_type": {
+          "const": "mailgun_api_key",
+          "default": "mailgun_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Your Mailgun Private API key from Account Settings -> API Keys",
+          "title": "Private API Key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "region": {
+          "default": "us",
+          "description": "Mailgun account region. EU accounts must select EU.",
+          "enum": [
+            "us",
+            "eu"
+          ],
+          "enumNames": [
+            "US (api.mailgun.net)",
+            "EU (api.eu.mailgun.net)"
+          ],
+          "title": "Region",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "webhook_signing_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HTTP webhook signing key (Account Settings -> Webhooks) used to verify inbound event signatures",
+          "title": "Webhook Signing Key",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "MailgunApiKeyCredential",
+      "type": "object",
+      "x-credential-url": "https://app.mailgun.com/app/account/security/api_keys"
+    },
+    "MailgunBulkAddMembersConfig": {
+      "description": "Add up to 1000 members to a mailing list in one call.",
+      "properties": {
+        "operation": {
+          "const": "bulk_add_members",
+          "default": "bulk_add_members",
+          "title": "Bulk Add Members",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Mailing Lists",
+          "x-display-name": "Bulk Add Members",
+          "x-is-trigger": false
+        },
+        "list_address": {
+          "description": "The mailing list to add members to",
+          "title": "List Address",
+          "type": "string"
+        },
+        "members_json": {
+          "description": "JSON array of member objects (e.g. [{\"address\":\"a@x.com\",\"name\":\"A\"}])",
+          "title": "Members (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "upsert": {
+          "default": "no",
+          "description": "Update existing members instead of erroring on duplicates",
+          "enum": [
+            "yes",
+            "no"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Upsert",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "list_address",
+        "members_json"
+      ],
+      "title": "MailgunBulkAddMembersConfig",
+      "type": "object"
+    },
+    "MailgunCreateDomainConfig": {
+      "description": "Add a new sending domain.",
+      "properties": {
+        "operation": {
+          "const": "create_domain",
+          "default": "create_domain",
+          "title": "Create Domain",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Domains",
+          "x-creates-resource": true,
+          "x-display-name": "Create Domain",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.domain.name",
+          "x-resource-type": "mailgun_domain"
+        },
+        "name": {
+          "description": "The domain to add (e.g. mg.example.com)",
+          "title": "Domain Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "MailgunCreateDomainConfig",
+      "type": "object"
+    },
+    "MailgunCreateMailingListConfig": {
+      "description": "Create a new mailing list.",
+      "properties": {
+        "operation": {
+          "const": "create_mailing_list",
+          "default": "create_mailing_list",
+          "title": "Create Mailing List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Mailing Lists",
+          "x-display-name": "Create Mailing List",
+          "x-is-trigger": false
+        },
+        "address": {
+          "description": "Email address for the list (e.g. team@example.com)",
+          "title": "List Address",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Display name for the list",
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional description of the list",
+          "title": "Description"
+        }
+      },
+      "required": [
+        "address"
+      ],
+      "title": "MailgunCreateMailingListConfig",
+      "type": "object"
+    },
+    "MailgunCreateRouteConfig": {
+      "description": "Create an inbound route (match expression -> action).",
+      "properties": {
+        "operation": {
+          "const": "create_route",
+          "default": "create_route",
+          "title": "Create Route",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Routes",
+          "x-display-name": "Create Route",
+          "x-is-trigger": false
+        },
+        "expression": {
+          "description": "Match filter (e.g. match_recipient(\".*@example.com\"))",
+          "title": "Match Expression",
+          "type": "string"
+        },
+        "action": {
+          "description": "Action(s) to take, comma-separated (e.g. forward(\"https://...\")), stop())",
+          "title": "Action",
+          "type": "string"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "0",
+          "description": "Route priority (lower runs first)",
+          "title": "Priority"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional route description",
+          "title": "Description"
+        }
+      },
+      "required": [
+        "expression",
+        "action"
+      ],
+      "title": "MailgunCreateRouteConfig",
+      "type": "object"
+    },
+    "MailgunCreateTemplateConfig": {
+      "description": "Store a new reusable email template.",
+      "properties": {
+        "operation": {
+          "const": "create_template",
+          "default": "create_template",
+          "title": "Create Template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "Create Template",
+          "x-is-trigger": false
+        },
+        "domain": {
+          "description": "The domain to store the template under",
+          "title": "Domain",
+          "type": "string"
+        },
+        "name": {
+          "description": "Unique name for the template",
+          "title": "Template Name",
+          "type": "string"
+        },
+        "template": {
+          "description": "The template HTML/handlebars content",
+          "title": "Template Content",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional template description",
+          "title": "Description"
+        }
+      },
+      "required": [
+        "domain",
+        "name",
+        "template"
+      ],
+      "title": "MailgunCreateTemplateConfig",
+      "type": "object"
+    },
+    "MailgunCreateTemplateVersionConfig": {
+      "description": "Add a new version to an existing template.",
+      "properties": {
+        "operation": {
+          "const": "create_template_version",
+          "default": "create_template_version",
+          "title": "Create Template Version",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "Create Template Version",
+          "x-is-trigger": false
+        },
+        "domain": {
+          "description": "The domain the template belongs to",
+          "title": "Domain",
+          "type": "string"
+        },
+        "template_name": {
+          "description": "The template to add a version to",
+          "title": "Template Name",
+          "type": "string"
+        },
+        "tag": {
+          "description": "A tag identifying this version (e.g. v2)",
+          "title": "Version Tag",
+          "type": "string"
+        },
+        "template": {
+          "description": "The template content for this version",
+          "title": "Template Content",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "active": {
+          "default": "yes",
+          "description": "Make this the active version",
+          "enum": [
+            "yes",
+            "no"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Active",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "domain",
+        "template_name",
+        "tag",
+        "template"
+      ],
+      "title": "MailgunCreateTemplateVersionConfig",
+      "type": "object"
+    },
+    "MailgunDeleteDomainConfig": {
+      "description": "Remove a sending domain.",
+      "properties": {
+        "operation": {
+          "const": "delete_domain",
+          "default": "delete_domain",
+          "title": "Delete Domain",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Domains",
+          "x-display-name": "Delete Domain",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "The domain to delete",
+          "title": "Domain Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "MailgunDeleteDomainConfig",
+      "type": "object"
+    },
+    "MailgunDeleteMemberConfig": {
+      "description": "Remove a member from a mailing list.",
+      "properties": {
+        "operation": {
+          "const": "delete_member",
+          "default": "delete_member",
+          "title": "Delete Member",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Mailing Lists",
+          "x-display-name": "Delete Member",
+          "x-is-trigger": false
+        },
+        "list_address": {
+          "description": "The mailing list to remove the member from",
+          "title": "List Address",
+          "type": "string"
+        },
+        "member_address": {
+          "description": "The member email address to remove",
+          "title": "Member Address",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_address",
+        "member_address"
+      ],
+      "title": "MailgunDeleteMemberConfig",
+      "type": "object"
+    },
+    "MailgunDeleteRouteConfig": {
+      "description": "Delete an inbound route.",
+      "properties": {
+        "operation": {
+          "const": "delete_route",
+          "default": "delete_route",
+          "title": "Delete Route",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Routes",
+          "x-display-name": "Delete Route",
+          "x-is-trigger": false
+        },
+        "route_id": {
+          "description": "The ID of the route to delete",
+          "title": "Route ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "route_id"
+      ],
+      "title": "MailgunDeleteRouteConfig",
+      "type": "object"
+    },
+    "MailgunGetDomainConfig": {
+      "description": "Get details and DNS records for a domain.",
+      "properties": {
+        "operation": {
+          "const": "get_domain",
+          "default": "get_domain",
+          "title": "Get Domain",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Domains",
+          "x-display-name": "Get Domain",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "The domain to retrieve",
+          "title": "Domain Name",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a domain name",
+            "field_name": "name",
+            "placeholder": "Select a domain...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "mailgun_domain"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "MailgunGetDomainConfig",
+      "type": "object"
+    },
+    "MailgunGetMetricsConfig": {
+      "description": "Retrieve aggregated sending analytics (Metrics API).",
+      "properties": {
+        "operation": {
+          "const": "get_metrics",
+          "default": "get_metrics",
+          "title": "Get Metrics",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Analytics",
+          "x-display-name": "Get Metrics",
+          "x-is-trigger": false
+        },
+        "start": {
+          "description": "Start of the time window (RFC 2822 or Unix timestamp)",
+          "title": "Start",
+          "type": "string"
+        },
+        "end": {
+          "description": "End of the time window (RFC 2822 or Unix timestamp)",
+          "title": "End",
+          "type": "string"
+        },
+        "metrics_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array of metric names to aggregate (e.g. [\"delivered_count\",\"opened_count\"])",
+          "title": "Metrics (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ],
+      "title": "MailgunGetMetricsConfig",
+      "type": "object"
+    },
+    "MailgunGetStoredMessageConfig": {
+      "description": "Retrieve a stored / inbound message by its storage key.",
+      "properties": {
+        "operation": {
+          "const": "get_stored_message",
+          "default": "get_stored_message",
+          "title": "Get Stored Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messages",
+          "x-display-name": "Get Stored Message",
+          "x-is-trigger": false
+        },
+        "domain": {
+          "description": "The domain the message belongs to",
+          "title": "Domain",
+          "type": "string"
+        },
+        "storage_key": {
+          "description": "The storage key identifying the stored message",
+          "title": "Storage Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain",
+        "storage_key"
+      ],
+      "title": "MailgunGetStoredMessageConfig",
+      "type": "object"
+    },
+    "MailgunGetTemplateConfig": {
+      "description": "Retrieve a template and its versions.",
+      "properties": {
+        "operation": {
+          "const": "get_template",
+          "default": "get_template",
+          "title": "Get Template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "Get Template",
+          "x-is-trigger": false
+        },
+        "domain": {
+          "description": "The domain the template belongs to",
+          "title": "Domain",
+          "type": "string"
+        },
+        "template_name": {
+          "description": "The template to retrieve",
+          "title": "Template Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain",
+        "template_name"
+      ],
+      "title": "MailgunGetTemplateConfig",
+      "type": "object"
+    },
+    "MailgunListBouncesConfig": {
+      "description": "List suppressed bounce addresses.",
+      "properties": {
+        "operation": {
+          "const": "list_bounces",
+          "default": "list_bounces",
+          "title": "List Bounces",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Suppressions",
+          "x-display-name": "List Bounces",
+          "x-is-trigger": false
+        },
+        "domain": {
+          "description": "The domain to list bounces for",
+          "title": "Domain",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "100",
+          "description": "Max number of bounces to return",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "MailgunListBouncesConfig",
+      "type": "object"
+    },
+    "MailgunListDomainsConfig": {
+      "description": "List sending domains.",
+      "properties": {
+        "operation": {
+          "const": "list_domains",
+          "default": "list_domains",
+          "title": "List Domains",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Domains",
+          "x-display-name": "List Domains",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "100",
+          "description": "Max number of domains to return",
+          "title": "Limit"
+        }
+      },
+      "title": "MailgunListDomainsConfig",
+      "type": "object"
+    },
+    "MailgunListEventsConfig": {
+      "description": "Query message events (accepted, delivered, opened, failed, ...).",
+      "properties": {
+        "operation": {
+          "const": "list_events",
+          "default": "list_events",
+          "title": "List Events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Analytics",
+          "x-display-name": "List Events",
+          "x-is-trigger": false
+        },
+        "domain": {
+          "description": "The sending domain to query events for",
+          "title": "Domain",
+          "type": "string"
+        },
+        "event": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter to a single event type (e.g. delivered, failed)",
+          "enum": [
+            "",
+            "accepted",
+            "delivered",
+            "opened",
+            "clicked",
+            "unsubscribed",
+            "complained",
+            "permanent_fail",
+            "temporary_fail",
+            "failed",
+            "stored",
+            "rejected"
+          ],
+          "title": "Event Type",
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "100",
+          "description": "Max number of events to return (1-300)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "MailgunListEventsConfig",
+      "type": "object"
+    },
+    "MailgunListMailingListsConfig": {
+      "description": "List all mailing lists.",
+      "properties": {
+        "operation": {
+          "const": "list_mailing_lists",
+          "default": "list_mailing_lists",
+          "title": "List Mailing Lists",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Mailing Lists",
+          "x-display-name": "List Mailing Lists",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "100",
+          "description": "Max number of lists to return",
+          "title": "Limit"
+        }
+      },
+      "title": "MailgunListMailingListsConfig",
+      "type": "object"
+    },
+    "MailgunListMembersConfig": {
+      "description": "List members of a mailing list.",
+      "properties": {
+        "operation": {
+          "const": "list_members",
+          "default": "list_members",
+          "title": "List Members",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Mailing Lists",
+          "x-display-name": "List Members",
+          "x-is-trigger": false
+        },
+        "list_address": {
+          "description": "The mailing list address to list members of",
+          "title": "List Address",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "100",
+          "description": "Max number of members to return",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "list_address"
+      ],
+      "title": "MailgunListMembersConfig",
+      "type": "object"
+    },
+    "MailgunListRoutesConfig": {
+      "description": "List inbound-email routing rules.",
+      "properties": {
+        "operation": {
+          "const": "list_routes",
+          "default": "list_routes",
+          "title": "List Routes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Routes",
+          "x-display-name": "List Routes",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "100",
+          "description": "Max number of routes to return",
+          "title": "Limit"
+        }
+      },
+      "title": "MailgunListRoutesConfig",
+      "type": "object"
+    },
+    "MailgunListTemplatesConfig": {
+      "description": "List stored account-level templates.",
+      "properties": {
+        "operation": {
+          "const": "list_templates",
+          "default": "list_templates",
+          "title": "List Templates",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "List Templates",
+          "x-is-trigger": false
+        },
+        "domain": {
+          "description": "The domain the templates belong to",
+          "title": "Domain",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "100",
+          "description": "Max number of templates to return",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "MailgunListTemplatesConfig",
+      "type": "object"
+    },
+    "MailgunListWebhooksConfig": {
+      "description": "List configured event webhooks for a domain.",
+      "properties": {
+        "operation": {
+          "const": "list_webhooks",
+          "default": "list_webhooks",
+          "title": "List Webhooks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "List Webhooks",
+          "x-is-trigger": false
+        },
+        "domain": {
+          "description": "The domain to list webhooks for",
+          "title": "Domain",
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "MailgunListWebhooksConfig",
+      "type": "object"
+    },
+    "MailgunOnAcceptedConfig": {
+      "description": "Fire when Mailgun accepts a message for delivery.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "domain": {
+          "description": "The domain to receive events / inbound mail for",
+          "title": "Domain",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Mailgun posts here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_accepted",
+          "default": "on_accepted",
+          "title": "On Email Accepted",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Email Accepted",
+          "x-is-trigger": true
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "MailgunOnAcceptedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "MailgunOnClickedConfig": {
+      "description": "Fire when a recipient clicks a tracked link (click tracking required).",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "domain": {
+          "description": "The domain to receive events / inbound mail for",
+          "title": "Domain",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Mailgun posts here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_clicked",
+          "default": "on_clicked",
+          "title": "On Email Clicked",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Email Clicked",
+          "x-is-trigger": true
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "MailgunOnClickedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "MailgunOnDeliveredConfig": {
+      "description": "Fire when a message is delivered to the recipient's server.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "domain": {
+          "description": "The domain to receive events / inbound mail for",
+          "title": "Domain",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Mailgun posts here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_delivered",
+          "default": "on_delivered",
+          "title": "On Email Delivered",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Email Delivered",
+          "x-is-trigger": true
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "MailgunOnDeliveredConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "MailgunOnHardBounceConfig": {
+      "description": "Fire on a permanent failure / hard bounce.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "domain": {
+          "description": "The domain to receive events / inbound mail for",
+          "title": "Domain",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Mailgun posts here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_hard_bounce",
+          "default": "on_hard_bounce",
+          "title": "On Hard Bounce",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Hard Bounce",
+          "x-is-trigger": true
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "MailgunOnHardBounceConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "MailgunOnInboundEmailConfig": {
+      "description": "Fire when an email is RECEIVED at the domain (via a Mailgun route forward).\n\nRegisters an account-level route ``match_recipient(\".*@{domain}\")`` \u2192\n``forward(webhook_url)`` so Mailgun POSTs the parsed inbound message here.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "domain": {
+          "description": "The domain to receive events / inbound mail for",
+          "title": "Domain",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Mailgun posts here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_inbound_email",
+          "default": "on_inbound_email",
+          "title": "On Inbound Email",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Inbound Email",
+          "x-is-trigger": true
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "MailgunOnInboundEmailConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "MailgunOnOpenedConfig": {
+      "description": "Fire when a recipient opens a message (open tracking required).",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "domain": {
+          "description": "The domain to receive events / inbound mail for",
+          "title": "Domain",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Mailgun posts here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_opened",
+          "default": "on_opened",
+          "title": "On Email Opened",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Email Opened",
+          "x-is-trigger": true
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "MailgunOnOpenedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "MailgunOnSoftBounceConfig": {
+      "description": "Fire on a temporary failure / soft bounce (deferred).",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "domain": {
+          "description": "The domain to receive events / inbound mail for",
+          "title": "Domain",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Mailgun posts here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_soft_bounce",
+          "default": "on_soft_bounce",
+          "title": "On Soft Bounce",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Soft Bounce",
+          "x-is-trigger": true
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "MailgunOnSoftBounceConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "MailgunOnSpamComplaintConfig": {
+      "description": "Fire when a recipient marks a message as spam.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "domain": {
+          "description": "The domain to receive events / inbound mail for",
+          "title": "Domain",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Mailgun posts here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_spam_complaint",
+          "default": "on_spam_complaint",
+          "title": "On Spam Complaint",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Spam Complaint",
+          "x-is-trigger": true
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "MailgunOnSpamComplaintConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "MailgunOnUnsubscribedConfig": {
+      "description": "Fire when a recipient unsubscribes.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "domain": {
+          "description": "The domain to receive events / inbound mail for",
+          "title": "Domain",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Mailgun posts here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_unsubscribed",
+          "default": "on_unsubscribed",
+          "title": "On Unsubscribe",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Unsubscribe",
+          "x-is-trigger": true
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "MailgunOnUnsubscribedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "MailgunQueryLogsConfig": {
+      "description": "Query the newer Logs/analytics API for message activity.",
+      "properties": {
+        "operation": {
+          "const": "query_logs",
+          "default": "query_logs",
+          "title": "Query Logs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Analytics",
+          "x-display-name": "Query Logs",
+          "x-is-trigger": false
+        },
+        "start": {
+          "description": "Start of the time window (RFC 2822 or Unix timestamp)",
+          "title": "Start",
+          "type": "string"
+        },
+        "end": {
+          "description": "End of the time window (RFC 2822 or Unix timestamp)",
+          "title": "End",
+          "type": "string"
+        },
+        "filter_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON filter object passed through to the Logs API",
+          "title": "Filter (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ],
+      "title": "MailgunQueryLogsConfig",
+      "type": "object"
+    },
+    "MailgunSendMessageConfig": {
+      "description": "Send an email message through a sending domain.",
+      "properties": {
+        "operation": {
+          "const": "send_message",
+          "default": "send_message",
+          "title": "Send Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messages",
+          "x-display-name": "Send Message",
+          "x-is-trigger": false
+        },
+        "domain": {
+          "description": "The verified sending domain (e.g. mg.example.com)",
+          "title": "Sending Domain",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a domain name",
+            "field_name": "domain",
+            "placeholder": "Select a domain...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "mailgun_domain"
+        },
+        "from_address": {
+          "description": "Sender address, optionally with a name: \"Excited User <mailgun@example.com>\"",
+          "title": "From",
+          "type": "string"
+        },
+        "to": {
+          "description": "Recipient address(es), comma-separated",
+          "title": "To",
+          "type": "string"
+        },
+        "subject": {
+          "description": "Email subject line",
+          "title": "Subject",
+          "type": "string"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Plain text version of the message body",
+          "title": "Plain Text Body",
+          "ui:widget": "textarea"
+        },
+        "html": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HTML version of the message body",
+          "title": "HTML Body",
+          "ui:widget": "textarea"
+        },
+        "cc": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "CC recipients, comma-separated",
+          "title": "CC"
+        },
+        "bcc": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "BCC recipients, comma-separated",
+          "title": "BCC"
+        },
+        "template": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Name of a stored template to render",
+          "title": "Template"
+        },
+        "variables": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object of variables for the template (e.g. {\"name\": \"Ada\"})",
+          "title": "Template Variables",
+          "ui:widget": "textarea"
+        },
+        "attachments": {
+          "description": "Files to attach: workflow resource ids or URLs (max 10MB per file, 20MB total)",
+          "items": {
+            "type": "string"
+          },
+          "placeholder": "{{node.resource_id}}",
+          "title": "Attachments",
+          "type": "array",
+          "ui:widget": "list"
+        }
+      },
+      "required": [
+        "domain",
+        "from_address",
+        "to",
+        "subject"
+      ],
+      "title": "MailgunSendMessageConfig",
+      "type": "object"
+    },
+    "MailgunSendMimeConfig": {
+      "description": "Send a pre-built raw MIME (RFC 2822) message.",
+      "properties": {
+        "operation": {
+          "const": "send_mime",
+          "default": "send_mime",
+          "title": "Send MIME Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messages",
+          "x-display-name": "Send MIME Message",
+          "x-is-trigger": false
+        },
+        "domain": {
+          "description": "The verified sending domain",
+          "title": "Sending Domain",
+          "type": "string"
+        },
+        "to": {
+          "description": "Recipient address(es), comma-separated",
+          "title": "To",
+          "type": "string"
+        },
+        "message": {
+          "description": "The full raw MIME (RFC 2822) message body",
+          "title": "MIME Message",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "domain",
+        "to",
+        "message"
+      ],
+      "title": "MailgunSendMimeConfig",
+      "type": "object"
+    },
+    "MailgunValidateAddressConfig": {
+      "description": "Validate a single email address (deliverability, risk, role flags).",
+      "properties": {
+        "operation": {
+          "const": "validate_address",
+          "default": "validate_address",
+          "title": "Validate Email Address",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Validation",
+          "x-display-name": "Validate Email Address",
+          "x-is-trigger": false
+        },
+        "address": {
+          "description": "The email address to validate",
+          "title": "Email Address",
+          "type": "string"
+        }
+      },
+      "required": [
+        "address"
+      ],
+      "title": "MailgunValidateAddressConfig",
+      "type": "object"
+    },
+    "MailgunVerifyDomainConfig": {
+      "description": "Trigger / check DNS verification for a domain.",
+      "properties": {
+        "operation": {
+          "const": "verify_domain",
+          "default": "verify_domain",
+          "title": "Verify Domain",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Domains",
+          "x-display-name": "Verify Domain",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "The domain to verify",
+          "title": "Domain Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "MailgunVerifyDomainConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the Mailgun node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_member": "#/$defs/MailgunAddMemberConfig",
+          "add_unsubscribe": "#/$defs/MailgunAddUnsubscribesConfig",
+          "bulk_add_members": "#/$defs/MailgunBulkAddMembersConfig",
+          "create_domain": "#/$defs/MailgunCreateDomainConfig",
+          "create_mailing_list": "#/$defs/MailgunCreateMailingListConfig",
+          "create_route": "#/$defs/MailgunCreateRouteConfig",
+          "create_template": "#/$defs/MailgunCreateTemplateConfig",
+          "create_template_version": "#/$defs/MailgunCreateTemplateVersionConfig",
+          "delete_domain": "#/$defs/MailgunDeleteDomainConfig",
+          "delete_member": "#/$defs/MailgunDeleteMemberConfig",
+          "delete_route": "#/$defs/MailgunDeleteRouteConfig",
+          "get_domain": "#/$defs/MailgunGetDomainConfig",
+          "get_metrics": "#/$defs/MailgunGetMetricsConfig",
+          "get_stored_message": "#/$defs/MailgunGetStoredMessageConfig",
+          "get_template": "#/$defs/MailgunGetTemplateConfig",
+          "list_bounces": "#/$defs/MailgunListBouncesConfig",
+          "list_domains": "#/$defs/MailgunListDomainsConfig",
+          "list_events": "#/$defs/MailgunListEventsConfig",
+          "list_mailing_lists": "#/$defs/MailgunListMailingListsConfig",
+          "list_members": "#/$defs/MailgunListMembersConfig",
+          "list_routes": "#/$defs/MailgunListRoutesConfig",
+          "list_templates": "#/$defs/MailgunListTemplatesConfig",
+          "list_webhooks": "#/$defs/MailgunListWebhooksConfig",
+          "on_accepted": "#/$defs/MailgunOnAcceptedConfig",
+          "on_clicked": "#/$defs/MailgunOnClickedConfig",
+          "on_delivered": "#/$defs/MailgunOnDeliveredConfig",
+          "on_hard_bounce": "#/$defs/MailgunOnHardBounceConfig",
+          "on_inbound_email": "#/$defs/MailgunOnInboundEmailConfig",
+          "on_opened": "#/$defs/MailgunOnOpenedConfig",
+          "on_soft_bounce": "#/$defs/MailgunOnSoftBounceConfig",
+          "on_spam_complaint": "#/$defs/MailgunOnSpamComplaintConfig",
+          "on_unsubscribed": "#/$defs/MailgunOnUnsubscribedConfig",
+          "query_logs": "#/$defs/MailgunQueryLogsConfig",
+          "send_message": "#/$defs/MailgunSendMessageConfig",
+          "send_mime": "#/$defs/MailgunSendMimeConfig",
+          "validate_address": "#/$defs/MailgunValidateAddressConfig",
+          "verify_domain": "#/$defs/MailgunVerifyDomainConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/MailgunSendMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/MailgunSendMimeConfig"
+        },
+        {
+          "$ref": "#/$defs/MailgunGetStoredMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/MailgunListEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/MailgunQueryLogsConfig"
+        },
+        {
+          "$ref": "#/$defs/MailgunGetMetricsConfig"
+        },
+        {
+          "$ref": "#/$defs/MailgunListDomainsConfig"
+        },
+        {
+          "$ref": "#/$defs/MailgunCreateDomainConfig"
+        },
+        {
+          "$ref": "#/$defs/MailgunGetDomainConfig"
+        },
+        {
+          "$ref": "#/$defs/MailgunVerifyDomainConfig"
+        },
+        {
+          "$ref": "#/$defs/MailgunDeleteDomainConfig"
+        },
+        {
+          "$ref": "#/$defs/MailgunListMailingListsConfig"
+        },
+        {
+          "$ref": "#/$defs/MailgunCreateMailingListConfig"
+        },
+        {
+          "$ref": "#/$defs/MailgunListMembersConfig"
+        },
+        {
+          "$ref": "#/$defs/MailgunAddMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/MailgunBulkAddMembersConfig"
+        },
+        {
+          "$ref": "#/$defs/MailgunDeleteMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/MailgunListTemplatesConfig"
+        },
+        {
+          "$ref": "#/$defs/MailgunCreateTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/MailgunGetTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/MailgunCreateTemplateVersionConfig"
+        },
+        {
+          "$ref": "#/$defs/MailgunListRoutesConfig"
+        },
+        {
+          "$ref": "#/$defs/MailgunCreateRouteConfig"
+        },
+        {
+          "$ref": "#/$defs/MailgunDeleteRouteConfig"
+        },
+        {
+          "$ref": "#/$defs/MailgunListWebhooksConfig"
+        },
+        {
+          "$ref": "#/$defs/MailgunListBouncesConfig"
+        },
+        {
+          "$ref": "#/$defs/MailgunAddUnsubscribesConfig"
+        },
+        {
+          "$ref": "#/$defs/MailgunValidateAddressConfig"
+        },
+        {
+          "$ref": "#/$defs/MailgunOnAcceptedConfig"
+        },
+        {
+          "$ref": "#/$defs/MailgunOnDeliveredConfig"
+        },
+        {
+          "$ref": "#/$defs/MailgunOnOpenedConfig"
+        },
+        {
+          "$ref": "#/$defs/MailgunOnClickedConfig"
+        },
+        {
+          "$ref": "#/$defs/MailgunOnUnsubscribedConfig"
+        },
+        {
+          "$ref": "#/$defs/MailgunOnSpamComplaintConfig"
+        },
+        {
+          "$ref": "#/$defs/MailgunOnHardBounceConfig"
+        },
+        {
+          "$ref": "#/$defs/MailgunOnSoftBounceConfig"
+        },
+        {
+          "$ref": "#/$defs/MailgunOnInboundEmailConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MailgunApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Mailgun Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Send a transactional email through my Mailgun domain",
+    "Validate an email address before adding it to a list",
+    "Add a new subscriber to a Mailgun mailing list",
+    "Get delivery metrics for the last 7 days",
+    "Trigger a workflow whenever an email is delivered or bounces"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

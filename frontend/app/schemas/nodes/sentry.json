@@ -1,0 +1,3408 @@
+{
+  "$defs": {
+    "SentryAddProjectToTeamConfig": {
+      "properties": {
+        "operation": {
+          "const": "add_project_to_team",
+          "default": "add_project_to_team",
+          "title": "Add Project to Team",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Teams",
+          "x-display-name": "Add Project to Team",
+          "x-is-trigger": false
+        },
+        "project_slug": {
+          "description": "The Sentry project",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a project slug",
+            "field_name": "project_slug",
+            "placeholder": "Select a project\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "sentry_project"
+        },
+        "team_slug": {
+          "description": "The Sentry team",
+          "title": "Team",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a team slug",
+            "field_name": "team_slug",
+            "placeholder": "Select a team\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "sentry_team"
+        }
+      },
+      "required": [
+        "project_slug",
+        "team_slug"
+      ],
+      "title": "SentryAddProjectToTeamConfig",
+      "type": "object"
+    },
+    "SentryAuthTokenCredential": {
+      "description": "Sentry auth token (Bearer) \u2014 the simplest, unrestricted path.\n\nUse a User Auth Token, an Org Auth Token (``sntrys_\u2026``), or an Internal\nIntegration token. Mint one in Sentry \u2192 Settings \u2192 Auth Tokens (or User\nSettings \u2192 User Auth Tokens) with the scopes your operations need.",
+      "properties": {
+        "credential_type": {
+          "const": "sentry_auth_token",
+          "default": "sentry_auth_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "region": {
+          "default": "us",
+          "description": "Where your Sentry organization's data lives (or 'custom' for self-hosted)",
+          "enum": [
+            "us",
+            "us2",
+            "de",
+            "custom"
+          ],
+          "enumNames": [
+            "US (sentry.io)",
+            "US2",
+            "EU (Germany)",
+            "Self-hosted / Custom"
+          ],
+          "title": "Region",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "host": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Self-hosted base URL (e.g. https://sentry.mycompany.com) \u2014 required when Region is 'custom'",
+          "title": "Custom Host"
+        },
+        "auth_token": {
+          "description": "A Sentry auth token (User/Org/Internal-Integration). Sent as a Bearer token.",
+          "title": "Auth Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "organization_slug": {
+          "description": "Your Sentry org slug (the part in the URL: sentry.io/organizations/<slug>/)",
+          "title": "Organization Slug",
+          "type": "string"
+        }
+      },
+      "required": [
+        "auth_token",
+        "organization_slug"
+      ],
+      "title": "SentryAuthTokenCredential",
+      "type": "object",
+      "x-credential-url": "https://sentry.io/settings/auth-tokens/",
+      "x-help-text": "Create an auth token at Settings \u2192 Auth Tokens. Enter your org slug (from the Sentry URL)."
+    },
+    "SentryCreateDashboardConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_dashboard",
+          "default": "create_dashboard",
+          "title": "Create Dashboard",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Dashboards",
+          "x-creates-resource": true,
+          "x-display-name": "Create Dashboard",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "sentry_dashboard"
+        },
+        "body_json": {
+          "description": "e.g. {\"title\":\"My dashboard\",\"widgets\":[\u2026]}",
+          "title": "Dashboard (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "body_json"
+      ],
+      "title": "SentryCreateDashboardConfig",
+      "type": "object"
+    },
+    "SentryCreateDeployConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_deploy",
+          "default": "create_deploy",
+          "title": "Create Deploy",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Releases",
+          "x-display-name": "Create Deploy",
+          "x-is-trigger": false
+        },
+        "version": {
+          "title": "Version",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a version",
+            "field_name": "release_version",
+            "placeholder": "Select a release\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "environment": {
+          "description": "e.g. production, staging",
+          "title": "Environment",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional, e.g. {\"name\":\"\u2026\",\"url\":\"\u2026\"}",
+          "title": "Extra Config (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "version",
+        "environment"
+      ],
+      "title": "SentryCreateDeployConfig",
+      "type": "object"
+    },
+    "SentryCreateIssueAlertConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_issue_alert",
+          "default": "create_issue_alert",
+          "title": "Create Issue Alert Rule",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alerts",
+          "x-creates-resource": true,
+          "x-display-name": "Create Issue Alert Rule",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "sentry_issue_alert"
+        },
+        "project_slug": {
+          "description": "The Sentry project",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a project slug",
+            "field_name": "project_slug",
+            "placeholder": "Select a project\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "sentry_project"
+        },
+        "body_json": {
+          "description": "Alert rule definition, e.g. {\"name\":\"\u2026\",\"conditions\":[\u2026],\"actions\":[\u2026],\"frequency\":30}",
+          "title": "Rule (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "project_slug",
+        "body_json"
+      ],
+      "title": "SentryCreateIssueAlertConfig",
+      "type": "object"
+    },
+    "SentryCreateMetricAlertConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_metric_alert",
+          "default": "create_metric_alert",
+          "title": "Create Metric Alert Rule",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alerts",
+          "x-creates-resource": true,
+          "x-display-name": "Create Metric Alert Rule",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "sentry_metric_alert"
+        },
+        "body_json": {
+          "description": "Metric alert definition (name, aggregate, timeWindow, triggers, projects, \u2026)",
+          "title": "Rule (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "body_json"
+      ],
+      "title": "SentryCreateMetricAlertConfig",
+      "type": "object"
+    },
+    "SentryCreateMonitorConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_monitor",
+          "default": "create_monitor",
+          "title": "Create Monitor",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Crons",
+          "x-creates-resource": true,
+          "x-display-name": "Create Monitor",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.slug",
+          "x-resource-type": "sentry_monitor"
+        },
+        "body_json": {
+          "description": "e.g. {\"name\":\"\u2026\",\"project\":\"my-project\",\"config\":{\"schedule\":\"0 * * * *\",\"schedule_type\":\"crontab\"}}",
+          "title": "Monitor (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "body_json"
+      ],
+      "title": "SentryCreateMonitorConfig",
+      "type": "object"
+    },
+    "SentryCreateProjectConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_project",
+          "default": "create_project",
+          "title": "Create Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-creates-resource": true,
+          "x-display-name": "Create Project",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new project"
+          ],
+          "x-resource-id-path": "data.slug",
+          "x-resource-type": "sentry_project"
+        },
+        "team_slug": {
+          "description": "The Sentry team",
+          "title": "Team",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a team slug",
+            "field_name": "team_slug",
+            "placeholder": "Select a team\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "sentry_team"
+        },
+        "name": {
+          "description": "The new project's name",
+          "title": "Name",
+          "type": "string"
+        },
+        "platform": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "e.g. python, javascript, node (optional)",
+          "title": "Platform"
+        }
+      },
+      "required": [
+        "team_slug",
+        "name"
+      ],
+      "title": "SentryCreateProjectConfig",
+      "type": "object"
+    },
+    "SentryCreateReleaseConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_release",
+          "default": "create_release",
+          "title": "Create Release",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Releases",
+          "x-display-name": "Create Release",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "deploy",
+            "version"
+          ]
+        },
+        "version": {
+          "description": "Release version/identifier, e.g. 1.2.3 or a git sha",
+          "title": "Version",
+          "type": "string"
+        },
+        "projects": {
+          "description": "Comma-separated project slugs this release applies to",
+          "title": "Projects",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional, e.g. {\"refs\":[{\"repository\":\"org/repo\",\"commit\":\"sha\"}]}",
+          "title": "Extra Config (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "version",
+        "projects"
+      ],
+      "title": "SentryCreateReleaseConfig",
+      "type": "object"
+    },
+    "SentryCreateTeamConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_team",
+          "default": "create_team",
+          "title": "Create Team",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Teams",
+          "x-creates-resource": true,
+          "x-display-name": "Create Team",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.slug",
+          "x-resource-type": "sentry_team"
+        },
+        "name": {
+          "description": "The new team's name",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "SentryCreateTeamConfig",
+      "type": "object"
+    },
+    "SentryDeleteDashboardConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_dashboard",
+          "default": "delete_dashboard",
+          "title": "Delete Dashboard",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Dashboards",
+          "x-display-name": "Delete Dashboard",
+          "x-is-trigger": false
+        },
+        "dashboard_id": {
+          "title": "Dashboard",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a dashboard id",
+            "field_name": "dashboard_id",
+            "placeholder": "Select a dashboard\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "sentry_dashboard"
+        }
+      },
+      "required": [
+        "dashboard_id"
+      ],
+      "title": "SentryDeleteDashboardConfig",
+      "type": "object"
+    },
+    "SentryDeleteIssueAlertConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_issue_alert",
+          "default": "delete_issue_alert",
+          "title": "Delete Issue Alert Rule",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alerts",
+          "x-display-name": "Delete Issue Alert Rule",
+          "x-is-trigger": false
+        },
+        "project_slug": {
+          "description": "The Sentry project",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a project slug",
+            "field_name": "project_slug",
+            "placeholder": "Select a project\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "sentry_project"
+        },
+        "rule_id": {
+          "title": "Rule",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a rule id",
+            "depends_on": "project_slug",
+            "field_name": "rule_id",
+            "placeholder": "Select a rule\u2026",
+            "searchable": true
+          },
+          "x-resource-type": "sentry_issue_alert"
+        }
+      },
+      "required": [
+        "project_slug",
+        "rule_id"
+      ],
+      "title": "SentryDeleteIssueAlertConfig",
+      "type": "object"
+    },
+    "SentryDeleteIssueConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_issue",
+          "default": "delete_issue",
+          "title": "Delete Issue",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Issues",
+          "x-display-name": "Delete Issue",
+          "x-is-trigger": false
+        },
+        "issue_id": {
+          "description": "The Sentry issue",
+          "title": "Issue",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an issue id",
+            "field_name": "issue_id",
+            "placeholder": "Select an issue\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "issue_id"
+      ],
+      "title": "SentryDeleteIssueConfig",
+      "type": "object"
+    },
+    "SentryDeleteMetricAlertConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_metric_alert",
+          "default": "delete_metric_alert",
+          "title": "Delete Metric Alert Rule",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alerts",
+          "x-display-name": "Delete Metric Alert Rule",
+          "x-is-trigger": false
+        },
+        "alert_rule_id": {
+          "title": "Metric Alert Rule",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an alert rule id",
+            "field_name": "alert_rule_id",
+            "placeholder": "Select a metric alert\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "sentry_metric_alert"
+        }
+      },
+      "required": [
+        "alert_rule_id"
+      ],
+      "title": "SentryDeleteMetricAlertConfig",
+      "type": "object"
+    },
+    "SentryDeleteMonitorConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_monitor",
+          "default": "delete_monitor",
+          "title": "Delete Monitor",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Crons",
+          "x-display-name": "Delete Monitor",
+          "x-is-trigger": false
+        },
+        "monitor_slug": {
+          "title": "Monitor",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a monitor slug",
+            "field_name": "monitor_slug",
+            "placeholder": "Select a monitor\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "sentry_monitor"
+        }
+      },
+      "required": [
+        "monitor_slug"
+      ],
+      "title": "SentryDeleteMonitorConfig",
+      "type": "object"
+    },
+    "SentryDeleteProjectConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_project",
+          "default": "delete_project",
+          "title": "Delete Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Delete Project",
+          "x-is-trigger": false
+        },
+        "project_slug": {
+          "description": "The Sentry project",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a project slug",
+            "field_name": "project_slug",
+            "placeholder": "Select a project\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "sentry_project"
+        }
+      },
+      "required": [
+        "project_slug"
+      ],
+      "title": "SentryDeleteProjectConfig",
+      "type": "object"
+    },
+    "SentryDeleteReleaseConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_release",
+          "default": "delete_release",
+          "title": "Delete Release",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Releases",
+          "x-display-name": "Delete Release",
+          "x-is-trigger": false
+        },
+        "version": {
+          "title": "Version",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a version",
+            "field_name": "release_version",
+            "placeholder": "Select a release\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "version"
+      ],
+      "title": "SentryDeleteReleaseConfig",
+      "type": "object"
+    },
+    "SentryDeleteServiceHookConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_service_hook",
+          "default": "delete_service_hook",
+          "title": "Delete Service Hook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Service Hooks",
+          "x-display-name": "Delete Service Hook",
+          "x-is-trigger": false
+        },
+        "project_slug": {
+          "description": "The Sentry project",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a project slug",
+            "field_name": "project_slug",
+            "placeholder": "Select a project\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "sentry_project"
+        },
+        "hook_id": {
+          "title": "Service Hook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a hook id",
+            "depends_on": "project_slug",
+            "field_name": "hook_id",
+            "placeholder": "Select a service hook\u2026",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "project_slug",
+        "hook_id"
+      ],
+      "title": "SentryDeleteServiceHookConfig",
+      "type": "object"
+    },
+    "SentryDeleteTeamConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_team",
+          "default": "delete_team",
+          "title": "Delete Team",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Teams",
+          "x-display-name": "Delete Team",
+          "x-is-trigger": false
+        },
+        "team_slug": {
+          "description": "The Sentry team",
+          "title": "Team",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a team slug",
+            "field_name": "team_slug",
+            "placeholder": "Select a team\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "sentry_team"
+        }
+      },
+      "required": [
+        "team_slug"
+      ],
+      "title": "SentryDeleteTeamConfig",
+      "type": "object"
+    },
+    "SentryDiscoverConfig": {
+      "properties": {
+        "operation": {
+          "const": "query_discover",
+          "default": "query_discover",
+          "title": "Query Events (Discover)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Discover",
+          "x-display-name": "Query Events (Discover)",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "analytics",
+            "search events",
+            "explore"
+          ]
+        },
+        "field": {
+          "description": "Comma-separated columns, e.g. title,count(),project",
+          "title": "Fields",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sentry search filter (optional)",
+          "title": "Query"
+        },
+        "stats_period": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "e.g. 24h, 14d",
+          "title": "Stats Period"
+        },
+        "project_slug": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The Sentry project",
+          "title": "Project",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a project slug",
+            "field_name": "project_slug",
+            "placeholder": "Select a project\u2026",
+            "searchable": true
+          },
+          "x-resource-type": "sentry_project"
+        },
+        "environment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter to an environment (optional)",
+          "title": "Environment",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an environment name",
+            "field_name": "environment",
+            "placeholder": "Select an environment\u2026",
+            "searchable": true
+          }
+        },
+        "dataset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "",
+            "errors",
+            "transactions",
+            "spans",
+            "logs"
+          ],
+          "title": "Dataset",
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page (\u2264100)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "field"
+      ],
+      "title": "SentryDiscoverConfig",
+      "type": "object"
+    },
+    "SentryEventsStatsConfig": {
+      "properties": {
+        "operation": {
+          "const": "events_stats",
+          "default": "events_stats",
+          "title": "Events Time Series (Stats)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Discover",
+          "x-display-name": "Events Time Series (Stats)",
+          "x-is-trigger": false
+        },
+        "y_axis": {
+          "description": "Aggregate to plot, e.g. count() or p95(transaction.duration)",
+          "title": "Y-Axis",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sentry search filter (optional)",
+          "title": "Query"
+        },
+        "stats_period": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "e.g. 24h, 14d",
+          "title": "Stats Period"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Bucket size, e.g. 1h, 1d",
+          "title": "Interval"
+        }
+      },
+      "required": [
+        "y_axis"
+      ],
+      "title": "SentryEventsStatsConfig",
+      "type": "object"
+    },
+    "SentryGetDashboardConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_dashboard",
+          "default": "get_dashboard",
+          "title": "Get Dashboard",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Dashboards",
+          "x-display-name": "Get Dashboard",
+          "x-is-trigger": false
+        },
+        "dashboard_id": {
+          "title": "Dashboard",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a dashboard id",
+            "field_name": "dashboard_id",
+            "placeholder": "Select a dashboard\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "sentry_dashboard"
+        }
+      },
+      "required": [
+        "dashboard_id"
+      ],
+      "title": "SentryGetDashboardConfig",
+      "type": "object"
+    },
+    "SentryGetEventConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_event",
+          "default": "get_event",
+          "title": "Get Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "Get Event",
+          "x-is-trigger": false
+        },
+        "project_slug": {
+          "description": "The Sentry project",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a project slug",
+            "field_name": "project_slug",
+            "placeholder": "Select a project\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "sentry_project"
+        },
+        "event_id": {
+          "description": "The event id (or 'latest'/'oldest')",
+          "title": "Event ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_slug",
+        "event_id"
+      ],
+      "title": "SentryGetEventConfig",
+      "type": "object"
+    },
+    "SentryGetIssueAlertConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_issue_alert",
+          "default": "get_issue_alert",
+          "title": "Get Issue Alert Rule",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alerts",
+          "x-display-name": "Get Issue Alert Rule",
+          "x-is-trigger": false
+        },
+        "project_slug": {
+          "description": "The Sentry project",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a project slug",
+            "field_name": "project_slug",
+            "placeholder": "Select a project\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "sentry_project"
+        },
+        "rule_id": {
+          "title": "Rule",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a rule id",
+            "depends_on": "project_slug",
+            "field_name": "rule_id",
+            "placeholder": "Select a rule\u2026",
+            "searchable": true
+          },
+          "x-resource-type": "sentry_issue_alert"
+        }
+      },
+      "required": [
+        "project_slug",
+        "rule_id"
+      ],
+      "title": "SentryGetIssueAlertConfig",
+      "type": "object"
+    },
+    "SentryGetIssueConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_issue",
+          "default": "get_issue",
+          "title": "Get Issue",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Issues",
+          "x-display-name": "Get Issue",
+          "x-is-trigger": false
+        },
+        "issue_id": {
+          "description": "The Sentry issue",
+          "title": "Issue",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an issue id",
+            "field_name": "issue_id",
+            "placeholder": "Select an issue\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "issue_id"
+      ],
+      "title": "SentryGetIssueConfig",
+      "type": "object"
+    },
+    "SentryGetMemberConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_member",
+          "default": "get_member",
+          "title": "Get Member",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Members",
+          "x-display-name": "Get Member",
+          "x-is-trigger": false
+        },
+        "member_id": {
+          "title": "Member",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a member id",
+            "field_name": "member_id",
+            "placeholder": "Select a member\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "member_id"
+      ],
+      "title": "SentryGetMemberConfig",
+      "type": "object"
+    },
+    "SentryGetMetricAlertConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_metric_alert",
+          "default": "get_metric_alert",
+          "title": "Get Metric Alert Rule",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alerts",
+          "x-display-name": "Get Metric Alert Rule",
+          "x-is-trigger": false
+        },
+        "alert_rule_id": {
+          "title": "Metric Alert Rule",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an alert rule id",
+            "field_name": "alert_rule_id",
+            "placeholder": "Select a metric alert\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "sentry_metric_alert"
+        }
+      },
+      "required": [
+        "alert_rule_id"
+      ],
+      "title": "SentryGetMetricAlertConfig",
+      "type": "object"
+    },
+    "SentryGetMonitorConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_monitor",
+          "default": "get_monitor",
+          "title": "Get Monitor",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Crons",
+          "x-display-name": "Get Monitor",
+          "x-is-trigger": false
+        },
+        "monitor_slug": {
+          "title": "Monitor",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a monitor slug",
+            "field_name": "monitor_slug",
+            "placeholder": "Select a monitor\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "sentry_monitor"
+        }
+      },
+      "required": [
+        "monitor_slug"
+      ],
+      "title": "SentryGetMonitorConfig",
+      "type": "object"
+    },
+    "SentryGetOrgConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_organization",
+          "default": "get_organization",
+          "title": "Get Organization",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organizations",
+          "x-display-name": "Get Organization",
+          "x-is-trigger": false
+        }
+      },
+      "title": "SentryGetOrgConfig",
+      "type": "object"
+    },
+    "SentryGetProjectConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "title": "Get Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Get Project",
+          "x-is-trigger": false
+        },
+        "project_slug": {
+          "description": "The Sentry project",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a project slug",
+            "field_name": "project_slug",
+            "placeholder": "Select a project\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "sentry_project"
+        }
+      },
+      "required": [
+        "project_slug"
+      ],
+      "title": "SentryGetProjectConfig",
+      "type": "object"
+    },
+    "SentryGetReleaseConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_release",
+          "default": "get_release",
+          "title": "Get Release",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Releases",
+          "x-display-name": "Get Release",
+          "x-is-trigger": false
+        },
+        "version": {
+          "description": "The release version",
+          "title": "Version",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a version",
+            "field_name": "release_version",
+            "placeholder": "Select a release\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "version"
+      ],
+      "title": "SentryGetReleaseConfig",
+      "type": "object"
+    },
+    "SentryGetServiceHookConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_service_hook",
+          "default": "get_service_hook",
+          "title": "Get Service Hook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Service Hooks",
+          "x-display-name": "Get Service Hook",
+          "x-is-trigger": false
+        },
+        "project_slug": {
+          "description": "The Sentry project",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a project slug",
+            "field_name": "project_slug",
+            "placeholder": "Select a project\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "sentry_project"
+        },
+        "hook_id": {
+          "title": "Service Hook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a hook id",
+            "depends_on": "project_slug",
+            "field_name": "hook_id",
+            "placeholder": "Select a service hook\u2026",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "project_slug",
+        "hook_id"
+      ],
+      "title": "SentryGetServiceHookConfig",
+      "type": "object"
+    },
+    "SentryGetTeamConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_team",
+          "default": "get_team",
+          "title": "Get Team",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Teams",
+          "x-display-name": "Get Team",
+          "x-is-trigger": false
+        },
+        "team_slug": {
+          "description": "The Sentry team",
+          "title": "Team",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a team slug",
+            "field_name": "team_slug",
+            "placeholder": "Select a team\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "sentry_team"
+        }
+      },
+      "required": [
+        "team_slug"
+      ],
+      "title": "SentryGetTeamConfig",
+      "type": "object"
+    },
+    "SentryInviteMemberConfig": {
+      "properties": {
+        "operation": {
+          "const": "invite_member",
+          "default": "invite_member",
+          "title": "Invite Member",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Members",
+          "x-display-name": "Invite Member",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "add user"
+          ]
+        },
+        "email": {
+          "description": "Email address to invite",
+          "title": "Email",
+          "type": "string"
+        },
+        "org_role": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Organization role for the new member",
+          "enum": [
+            "",
+            "member",
+            "admin",
+            "manager",
+            "owner",
+            "billing"
+          ],
+          "title": "Org Role",
+          "x-enum-searchable": true
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional, e.g. {\"teamRoles\":[{\"teamSlug\":\"eng\",\"role\":\"contributor\"}]}",
+          "title": "Extra Config (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "SentryInviteMemberConfig",
+      "type": "object"
+    },
+    "SentryLatestEventConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_latest_event",
+          "default": "get_latest_event",
+          "title": "Get Latest Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Issues",
+          "x-display-name": "Get Latest Event",
+          "x-is-trigger": false
+        },
+        "issue_id": {
+          "description": "The Sentry issue",
+          "title": "Issue",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an issue id",
+            "field_name": "issue_id",
+            "placeholder": "Select an issue\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "issue_id"
+      ],
+      "title": "SentryLatestEventConfig",
+      "type": "object"
+    },
+    "SentryListCheckinsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_checkins",
+          "default": "list_checkins",
+          "title": "List Monitor Check-ins",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Crons",
+          "x-display-name": "List Monitor Check-ins",
+          "x-is-trigger": false
+        },
+        "monitor_slug": {
+          "title": "Monitor",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a monitor slug",
+            "field_name": "monitor_slug",
+            "placeholder": "Select a monitor\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "sentry_monitor"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page (\u2264100)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "monitor_slug"
+      ],
+      "title": "SentryListCheckinsConfig",
+      "type": "object"
+    },
+    "SentryListDashboardsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_dashboards",
+          "default": "list_dashboards",
+          "title": "List Dashboards",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Dashboards",
+          "x-display-name": "List Dashboards",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page (\u2264100)",
+          "title": "Limit"
+        }
+      },
+      "title": "SentryListDashboardsConfig",
+      "type": "object"
+    },
+    "SentryListDeploysConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_deploys",
+          "default": "list_deploys",
+          "title": "List Deploys",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Releases",
+          "x-display-name": "List Deploys",
+          "x-is-trigger": false
+        },
+        "version": {
+          "title": "Version",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a version",
+            "field_name": "release_version",
+            "placeholder": "Select a release\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "version"
+      ],
+      "title": "SentryListDeploysConfig",
+      "type": "object"
+    },
+    "SentryListEventsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_project_events",
+          "default": "list_project_events",
+          "title": "List Project Events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "List Project Events",
+          "x-is-trigger": false
+        },
+        "project_slug": {
+          "description": "The Sentry project",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a project slug",
+            "field_name": "project_slug",
+            "placeholder": "Select a project\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "sentry_project"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page (\u2264100)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "project_slug"
+      ],
+      "title": "SentryListEventsConfig",
+      "type": "object"
+    },
+    "SentryListIssueAlertsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_issue_alerts",
+          "default": "list_issue_alerts",
+          "title": "List Issue Alert Rules",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alerts",
+          "x-display-name": "List Issue Alert Rules",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "rules"
+          ]
+        },
+        "project_slug": {
+          "description": "The Sentry project",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a project slug",
+            "field_name": "project_slug",
+            "placeholder": "Select a project\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "sentry_project"
+        }
+      },
+      "required": [
+        "project_slug"
+      ],
+      "title": "SentryListIssueAlertsConfig",
+      "type": "object"
+    },
+    "SentryListIssueEventsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_issue_events",
+          "default": "list_issue_events",
+          "title": "List Issue Events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Issues",
+          "x-display-name": "List Issue Events",
+          "x-is-trigger": false
+        },
+        "issue_id": {
+          "description": "The Sentry issue",
+          "title": "Issue",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an issue id",
+            "field_name": "issue_id",
+            "placeholder": "Select an issue\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page (\u2264100)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "issue_id"
+      ],
+      "title": "SentryListIssueEventsConfig",
+      "type": "object"
+    },
+    "SentryListIssuesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_issues",
+          "default": "list_issues",
+          "title": "List Issues",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Issues",
+          "x-display-name": "List Issues",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "errors",
+            "problems",
+            "search issues"
+          ]
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sentry search, e.g. is:unresolved level:error",
+          "title": "Query"
+        },
+        "project_slug": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The Sentry project",
+          "title": "Project",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a project slug",
+            "field_name": "project_slug",
+            "placeholder": "Select a project\u2026",
+            "searchable": true
+          },
+          "x-resource-type": "sentry_project"
+        },
+        "stats_period": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "e.g. 24h, 14d",
+          "title": "Stats Period"
+        },
+        "environment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter to an environment (optional)",
+          "title": "Environment",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an environment name",
+            "field_name": "environment",
+            "placeholder": "Select an environment\u2026",
+            "searchable": true
+          }
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "",
+            "date",
+            "new",
+            "priority",
+            "freq",
+            "user"
+          ],
+          "title": "Sort",
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page (\u2264100)",
+          "title": "Limit"
+        }
+      },
+      "title": "SentryListIssuesConfig",
+      "type": "object"
+    },
+    "SentryListMembersConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_members",
+          "default": "list_members",
+          "title": "List Members",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Members",
+          "x-display-name": "List Members",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "users",
+            "people"
+          ]
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page (\u2264100)",
+          "title": "Limit"
+        }
+      },
+      "title": "SentryListMembersConfig",
+      "type": "object"
+    },
+    "SentryListMetricAlertsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_metric_alerts",
+          "default": "list_metric_alerts",
+          "title": "List Metric Alert Rules",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alerts",
+          "x-display-name": "List Metric Alert Rules",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page (\u2264100)",
+          "title": "Limit"
+        }
+      },
+      "title": "SentryListMetricAlertsConfig",
+      "type": "object"
+    },
+    "SentryListMonitorsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_monitors",
+          "default": "list_monitors",
+          "title": "List Monitors",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Crons",
+          "x-display-name": "List Monitors",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "cron",
+            "scheduled jobs"
+          ]
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page (\u2264100)",
+          "title": "Limit"
+        }
+      },
+      "title": "SentryListMonitorsConfig",
+      "type": "object"
+    },
+    "SentryListOrgsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_organizations",
+          "default": "list_organizations",
+          "title": "List Organizations",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organizations",
+          "x-display-name": "List Organizations",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "orgs"
+          ]
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page (\u2264100)",
+          "title": "Limit"
+        }
+      },
+      "title": "SentryListOrgsConfig",
+      "type": "object"
+    },
+    "SentryListProjectKeysConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_project_keys",
+          "default": "list_project_keys",
+          "title": "List Client Keys (DSNs)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "List Client Keys (DSNs)",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "dsn"
+          ]
+        },
+        "project_slug": {
+          "description": "The Sentry project",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a project slug",
+            "field_name": "project_slug",
+            "placeholder": "Select a project\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "sentry_project"
+        }
+      },
+      "required": [
+        "project_slug"
+      ],
+      "title": "SentryListProjectKeysConfig",
+      "type": "object"
+    },
+    "SentryListProjectsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "title": "List Projects",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "List Projects",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "apps"
+          ]
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page (\u2264100)",
+          "title": "Limit"
+        }
+      },
+      "title": "SentryListProjectsConfig",
+      "type": "object"
+    },
+    "SentryListReleasesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_releases",
+          "default": "list_releases",
+          "title": "List Releases",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Releases",
+          "x-display-name": "List Releases",
+          "x-is-trigger": false
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by version substring (optional)",
+          "title": "Query"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page (\u2264100)",
+          "title": "Limit"
+        }
+      },
+      "title": "SentryListReleasesConfig",
+      "type": "object"
+    },
+    "SentryListServiceHooksConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_service_hooks",
+          "default": "list_service_hooks",
+          "title": "List Service Hooks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Service Hooks",
+          "x-display-name": "List Service Hooks",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "webhooks"
+          ]
+        },
+        "project_slug": {
+          "description": "The Sentry project",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a project slug",
+            "field_name": "project_slug",
+            "placeholder": "Select a project\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "sentry_project"
+        }
+      },
+      "required": [
+        "project_slug"
+      ],
+      "title": "SentryListServiceHooksConfig",
+      "type": "object"
+    },
+    "SentryListTeamProjectsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_team_projects",
+          "default": "list_team_projects",
+          "title": "List Team Projects",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Teams",
+          "x-display-name": "List Team Projects",
+          "x-is-trigger": false
+        },
+        "team_slug": {
+          "description": "The Sentry team",
+          "title": "Team",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a team slug",
+            "field_name": "team_slug",
+            "placeholder": "Select a team\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "sentry_team"
+        }
+      },
+      "required": [
+        "team_slug"
+      ],
+      "title": "SentryListTeamProjectsConfig",
+      "type": "object"
+    },
+    "SentryListTeamsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_teams",
+          "default": "list_teams",
+          "title": "List Teams",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Teams",
+          "x-display-name": "List Teams",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page (\u2264100)",
+          "title": "Limit"
+        }
+      },
+      "title": "SentryListTeamsConfig",
+      "type": "object"
+    },
+    "SentryOAuthCredential": {
+      "description": "OAuth 2.0 credential for Sentry (authorization-code flow).\n\nTokens come from the consent flow, not entered manually. Access tokens last\n~30 days and auto-refresh. The organization slug auto-detects from the first\naccessible org when left blank.",
+      "properties": {
+        "credential_type": {
+          "const": "sentry_oauth",
+          "default": "sentry_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "title": "Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refresh Token"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Expiry"
+        },
+        "region": {
+          "default": "us",
+          "description": "Where your Sentry organization's data lives (or 'custom' for self-hosted)",
+          "enum": [
+            "us",
+            "us2",
+            "de",
+            "custom"
+          ],
+          "enumNames": [
+            "US (sentry.io)",
+            "US2",
+            "EU (Germany)",
+            "Self-hosted / Custom"
+          ],
+          "title": "Region",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "host": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Self-hosted base URL (e.g. https://sentry.mycompany.com) \u2014 required when Region is 'custom'",
+          "title": "Custom Host"
+        },
+        "organization_slug": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Leave blank to use your default org \u2014 it's auto-detected from the token.",
+          "title": "Organization Slug"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Email"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "SentryOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://docs.sentry.io/api/auth/",
+      "x-oauth-provider": "sentry",
+      "x-oauth-scopes": [
+        "org:read",
+        "org:write",
+        "project:read",
+        "project:write",
+        "project:admin",
+        "project:releases",
+        "team:read",
+        "team:write",
+        "team:admin",
+        "member:read",
+        "member:write",
+        "event:read",
+        "event:write",
+        "event:admin"
+      ]
+    },
+    "SentryOnAlertConfig": {
+      "description": "Fires when a project alert rule triggers (service-hook event.alert).",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "project_slug": {
+          "description": "The Sentry project",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a project slug",
+            "field_name": "project_slug",
+            "placeholder": "Select a project\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "sentry_project"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_alert",
+          "default": "on_alert",
+          "title": "On Alert",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Alert",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "event.alert",
+            "alert triggered"
+          ]
+        }
+      },
+      "required": [
+        "project_slug"
+      ],
+      "title": "SentryOnAlertConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "SentryOnErrorConfig": {
+      "description": "Fires on every new error event in the project (service-hook event.created).",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "project_slug": {
+          "description": "The Sentry project",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a project slug",
+            "field_name": "project_slug",
+            "placeholder": "Select a project\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "sentry_project"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_error",
+          "default": "on_error",
+          "title": "On Error Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Error Event",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "event.created",
+            "new error",
+            "exception"
+          ]
+        }
+      },
+      "required": [
+        "project_slug"
+      ],
+      "title": "SentryOnErrorConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "SentryRawRequestConfig": {
+      "properties": {
+        "operation": {
+          "const": "raw_request",
+          "default": "raw_request",
+          "title": "Custom Request",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Advanced",
+          "x-display-name": "Custom Request",
+          "x-is-trigger": false
+        },
+        "method": {
+          "default": "GET",
+          "enum": [
+            "GET",
+            "POST",
+            "PUT",
+            "DELETE"
+          ],
+          "title": "Method",
+          "type": "string"
+        },
+        "path": {
+          "description": "Path after the host, e.g. /api/0/organizations/{org}/projects/. {org} is substituted.",
+          "title": "Path",
+          "type": "string"
+        },
+        "query_params": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "e.g. per_page=100&cursor=0:100:0",
+          "title": "Query Parameters"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Request body as JSON",
+          "title": "Body (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "title": "SentryRawRequestConfig",
+      "type": "object"
+    },
+    "SentryRemoveMemberConfig": {
+      "properties": {
+        "operation": {
+          "const": "remove_member",
+          "default": "remove_member",
+          "title": "Remove Member",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Members",
+          "x-display-name": "Remove Member",
+          "x-is-trigger": false
+        },
+        "member_id": {
+          "title": "Member",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a member id",
+            "field_name": "member_id",
+            "placeholder": "Select a member\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "member_id"
+      ],
+      "title": "SentryRemoveMemberConfig",
+      "type": "object"
+    },
+    "SentryRemoveProjectFromTeamConfig": {
+      "properties": {
+        "operation": {
+          "const": "remove_project_from_team",
+          "default": "remove_project_from_team",
+          "title": "Remove Project from Team",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Teams",
+          "x-display-name": "Remove Project from Team",
+          "x-is-trigger": false
+        },
+        "project_slug": {
+          "description": "The Sentry project",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a project slug",
+            "field_name": "project_slug",
+            "placeholder": "Select a project\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "sentry_project"
+        },
+        "team_slug": {
+          "description": "The Sentry team",
+          "title": "Team",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a team slug",
+            "field_name": "team_slug",
+            "placeholder": "Select a team\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "sentry_team"
+        }
+      },
+      "required": [
+        "project_slug",
+        "team_slug"
+      ],
+      "title": "SentryRemoveProjectFromTeamConfig",
+      "type": "object"
+    },
+    "SentrySessionsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_sessions",
+          "default": "list_sessions",
+          "title": "Release Health (Sessions)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Discover",
+          "x-display-name": "Release Health (Sessions)",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "release health",
+            "crash rate"
+          ]
+        },
+        "field": {
+          "default": "sum(session)",
+          "description": "e.g. sum(session), crash_free_rate(session)",
+          "title": "Fields",
+          "type": "string"
+        },
+        "stats_period": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "e.g. 24h, 14d",
+          "title": "Stats Period"
+        },
+        "project_slug": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The Sentry project",
+          "title": "Project",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a project slug",
+            "field_name": "project_slug",
+            "placeholder": "Select a project\u2026",
+            "searchable": true
+          },
+          "x-resource-type": "sentry_project"
+        },
+        "environment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter to an environment (optional)",
+          "title": "Environment",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an environment name",
+            "field_name": "environment",
+            "placeholder": "Select an environment\u2026",
+            "searchable": true
+          }
+        }
+      },
+      "title": "SentrySessionsConfig",
+      "type": "object"
+    },
+    "SentryUpdateIssueAlertConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_issue_alert",
+          "default": "update_issue_alert",
+          "title": "Update Issue Alert Rule",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alerts",
+          "x-display-name": "Update Issue Alert Rule",
+          "x-is-trigger": false
+        },
+        "project_slug": {
+          "description": "The Sentry project",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a project slug",
+            "field_name": "project_slug",
+            "placeholder": "Select a project\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "sentry_project"
+        },
+        "rule_id": {
+          "title": "Rule",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a rule id",
+            "depends_on": "project_slug",
+            "field_name": "rule_id",
+            "placeholder": "Select a rule\u2026",
+            "searchable": true
+          },
+          "x-resource-type": "sentry_issue_alert"
+        },
+        "body_json": {
+          "description": "The FULL updated rule \u2014 Sentry replaces it wholesale, so include name, conditions, and actions (a rule with no action is rejected)",
+          "title": "Rule (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "project_slug",
+        "rule_id",
+        "body_json"
+      ],
+      "title": "SentryUpdateIssueAlertConfig",
+      "type": "object"
+    },
+    "SentryUpdateIssueConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_issue",
+          "default": "update_issue",
+          "title": "Update Issue",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Issues",
+          "x-display-name": "Update Issue",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "resolve",
+            "ignore",
+            "assign"
+          ]
+        },
+        "issue_id": {
+          "description": "The Sentry issue",
+          "title": "Issue",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an issue id",
+            "field_name": "issue_id",
+            "placeholder": "Select an issue\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "",
+            "resolved",
+            "unresolved",
+            "ignored",
+            "muted",
+            "resolvedInNextRelease"
+          ],
+          "title": "Status",
+          "x-enum-searchable": true
+        },
+        "assigned_to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Username, email, or team:<id> (optional)",
+          "title": "Assign To"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Other fields, e.g. {\"priority\":\"high\",\"isBookmarked\":true}",
+          "title": "Extra Fields (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "issue_id"
+      ],
+      "title": "SentryUpdateIssueConfig",
+      "type": "object"
+    },
+    "SentryUpdateMemberConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_member",
+          "default": "update_member",
+          "title": "Update Member",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Members",
+          "x-display-name": "Update Member",
+          "x-is-trigger": false
+        },
+        "member_id": {
+          "title": "Member",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a member id",
+            "field_name": "member_id",
+            "placeholder": "Select a member\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "body_json": {
+          "description": "e.g. {\"orgRole\":\"manager\"}",
+          "title": "Fields (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "member_id",
+        "body_json"
+      ],
+      "title": "SentryUpdateMemberConfig",
+      "type": "object"
+    },
+    "SentryUpdateMetricAlertConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_metric_alert",
+          "default": "update_metric_alert",
+          "title": "Update Metric Alert Rule",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Alerts",
+          "x-display-name": "Update Metric Alert Rule",
+          "x-is-trigger": false
+        },
+        "alert_rule_id": {
+          "title": "Metric Alert Rule",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an alert rule id",
+            "field_name": "alert_rule_id",
+            "placeholder": "Select a metric alert\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "sentry_metric_alert"
+        },
+        "body_json": {
+          "title": "Fields (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "alert_rule_id",
+        "body_json"
+      ],
+      "title": "SentryUpdateMetricAlertConfig",
+      "type": "object"
+    },
+    "SentryUpdateMonitorConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_monitor",
+          "default": "update_monitor",
+          "title": "Update Monitor",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Crons",
+          "x-display-name": "Update Monitor",
+          "x-is-trigger": false
+        },
+        "monitor_slug": {
+          "title": "Monitor",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a monitor slug",
+            "field_name": "monitor_slug",
+            "placeholder": "Select a monitor\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "sentry_monitor"
+        },
+        "body_json": {
+          "title": "Fields (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "monitor_slug",
+        "body_json"
+      ],
+      "title": "SentryUpdateMonitorConfig",
+      "type": "object"
+    },
+    "SentryUpdateProjectConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_project",
+          "default": "update_project",
+          "title": "Update Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Update Project",
+          "x-is-trigger": false
+        },
+        "project_slug": {
+          "description": "The Sentry project",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a project slug",
+            "field_name": "project_slug",
+            "placeholder": "Select a project\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "sentry_project"
+        },
+        "body_json": {
+          "description": "e.g. {\"name\":\"New\",\"platform\":\"python\"}",
+          "title": "Fields (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "project_slug",
+        "body_json"
+      ],
+      "title": "SentryUpdateProjectConfig",
+      "type": "object"
+    },
+    "SentryUpdateReleaseConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_release",
+          "default": "update_release",
+          "title": "Update Release",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Releases",
+          "x-display-name": "Update Release",
+          "x-is-trigger": false
+        },
+        "version": {
+          "title": "Version",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a version",
+            "field_name": "release_version",
+            "placeholder": "Select a release\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "body_json": {
+          "description": "e.g. {\"ref\":\"\u2026\",\"refs\":[\u2026]}",
+          "title": "Fields (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "version",
+        "body_json"
+      ],
+      "title": "SentryUpdateReleaseConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full Sentry node configuration including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_project_to_team": "#/$defs/SentryAddProjectToTeamConfig",
+          "create_dashboard": "#/$defs/SentryCreateDashboardConfig",
+          "create_deploy": "#/$defs/SentryCreateDeployConfig",
+          "create_issue_alert": "#/$defs/SentryCreateIssueAlertConfig",
+          "create_metric_alert": "#/$defs/SentryCreateMetricAlertConfig",
+          "create_monitor": "#/$defs/SentryCreateMonitorConfig",
+          "create_project": "#/$defs/SentryCreateProjectConfig",
+          "create_release": "#/$defs/SentryCreateReleaseConfig",
+          "create_team": "#/$defs/SentryCreateTeamConfig",
+          "delete_dashboard": "#/$defs/SentryDeleteDashboardConfig",
+          "delete_issue": "#/$defs/SentryDeleteIssueConfig",
+          "delete_issue_alert": "#/$defs/SentryDeleteIssueAlertConfig",
+          "delete_metric_alert": "#/$defs/SentryDeleteMetricAlertConfig",
+          "delete_monitor": "#/$defs/SentryDeleteMonitorConfig",
+          "delete_project": "#/$defs/SentryDeleteProjectConfig",
+          "delete_release": "#/$defs/SentryDeleteReleaseConfig",
+          "delete_service_hook": "#/$defs/SentryDeleteServiceHookConfig",
+          "delete_team": "#/$defs/SentryDeleteTeamConfig",
+          "events_stats": "#/$defs/SentryEventsStatsConfig",
+          "get_dashboard": "#/$defs/SentryGetDashboardConfig",
+          "get_event": "#/$defs/SentryGetEventConfig",
+          "get_issue": "#/$defs/SentryGetIssueConfig",
+          "get_issue_alert": "#/$defs/SentryGetIssueAlertConfig",
+          "get_latest_event": "#/$defs/SentryLatestEventConfig",
+          "get_member": "#/$defs/SentryGetMemberConfig",
+          "get_metric_alert": "#/$defs/SentryGetMetricAlertConfig",
+          "get_monitor": "#/$defs/SentryGetMonitorConfig",
+          "get_organization": "#/$defs/SentryGetOrgConfig",
+          "get_project": "#/$defs/SentryGetProjectConfig",
+          "get_release": "#/$defs/SentryGetReleaseConfig",
+          "get_service_hook": "#/$defs/SentryGetServiceHookConfig",
+          "get_team": "#/$defs/SentryGetTeamConfig",
+          "invite_member": "#/$defs/SentryInviteMemberConfig",
+          "list_checkins": "#/$defs/SentryListCheckinsConfig",
+          "list_dashboards": "#/$defs/SentryListDashboardsConfig",
+          "list_deploys": "#/$defs/SentryListDeploysConfig",
+          "list_issue_alerts": "#/$defs/SentryListIssueAlertsConfig",
+          "list_issue_events": "#/$defs/SentryListIssueEventsConfig",
+          "list_issues": "#/$defs/SentryListIssuesConfig",
+          "list_members": "#/$defs/SentryListMembersConfig",
+          "list_metric_alerts": "#/$defs/SentryListMetricAlertsConfig",
+          "list_monitors": "#/$defs/SentryListMonitorsConfig",
+          "list_organizations": "#/$defs/SentryListOrgsConfig",
+          "list_project_events": "#/$defs/SentryListEventsConfig",
+          "list_project_keys": "#/$defs/SentryListProjectKeysConfig",
+          "list_projects": "#/$defs/SentryListProjectsConfig",
+          "list_releases": "#/$defs/SentryListReleasesConfig",
+          "list_service_hooks": "#/$defs/SentryListServiceHooksConfig",
+          "list_sessions": "#/$defs/SentrySessionsConfig",
+          "list_team_projects": "#/$defs/SentryListTeamProjectsConfig",
+          "list_teams": "#/$defs/SentryListTeamsConfig",
+          "on_alert": "#/$defs/SentryOnAlertConfig",
+          "on_error": "#/$defs/SentryOnErrorConfig",
+          "query_discover": "#/$defs/SentryDiscoverConfig",
+          "raw_request": "#/$defs/SentryRawRequestConfig",
+          "remove_member": "#/$defs/SentryRemoveMemberConfig",
+          "remove_project_from_team": "#/$defs/SentryRemoveProjectFromTeamConfig",
+          "update_issue": "#/$defs/SentryUpdateIssueConfig",
+          "update_issue_alert": "#/$defs/SentryUpdateIssueAlertConfig",
+          "update_member": "#/$defs/SentryUpdateMemberConfig",
+          "update_metric_alert": "#/$defs/SentryUpdateMetricAlertConfig",
+          "update_monitor": "#/$defs/SentryUpdateMonitorConfig",
+          "update_project": "#/$defs/SentryUpdateProjectConfig",
+          "update_release": "#/$defs/SentryUpdateReleaseConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/SentryListOrgsConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryGetOrgConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryListProjectsConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryGetProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryCreateProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryUpdateProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryDeleteProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryListProjectKeysConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryListTeamsConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryGetTeamConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryCreateTeamConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryDeleteTeamConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryListTeamProjectsConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryAddProjectToTeamConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryRemoveProjectFromTeamConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryListIssuesConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryGetIssueConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryUpdateIssueConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryDeleteIssueConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryListIssueEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryLatestEventConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryListEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryGetEventConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryListReleasesConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryCreateReleaseConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryGetReleaseConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryUpdateReleaseConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryDeleteReleaseConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryListDeploysConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryCreateDeployConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryListMembersConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryInviteMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryGetMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryUpdateMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryRemoveMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryListIssueAlertsConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryCreateIssueAlertConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryGetIssueAlertConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryUpdateIssueAlertConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryDeleteIssueAlertConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryListMetricAlertsConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryCreateMetricAlertConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryGetMetricAlertConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryUpdateMetricAlertConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryDeleteMetricAlertConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryListMonitorsConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryCreateMonitorConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryGetMonitorConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryUpdateMonitorConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryDeleteMonitorConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryListCheckinsConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryListDashboardsConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryCreateDashboardConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryGetDashboardConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryDeleteDashboardConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryDiscoverConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryEventsStatsConfig"
+        },
+        {
+          "$ref": "#/$defs/SentrySessionsConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryListServiceHooksConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryGetServiceHookConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryDeleteServiceHookConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryRawRequestConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryOnErrorConfig"
+        },
+        {
+          "$ref": "#/$defs/SentryOnAlertConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SentryAuthTokenCredential"
+        },
+        {
+          "$ref": "#/$defs/SentryOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Sentry Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "List unresolved Sentry issues for a project",
+    "Resolve a Sentry issue when a fix is deployed",
+    "Create a Sentry release and mark a deploy",
+    "Trigger a workflow when a new error is captured in Sentry",
+    "Query Sentry Discover for the top errors this week"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -1,0 +1,1656 @@
+{
+  "$defs": {
+    "PineconeAPIKeyCredential": {
+      "description": "API Key credential for Pinecone.",
+      "properties": {
+        "credential_type": {
+          "const": "pinecone_api_key",
+          "default": "pinecone_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Your Pinecone API key from the console (App \u2192 API Keys)",
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "PineconeAPIKeyCredential",
+      "type": "object",
+      "x-credential-url": "https://app.pinecone.io/organizations/-/keys"
+    },
+    "PineconeCancelImportConfig": {
+      "description": "Cancel a pending or in-progress bulk import operation.",
+      "properties": {
+        "operation": {
+          "const": "cancel_import",
+          "default": "cancel_import",
+          "title": "Cancel Import",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bulk Import",
+          "x-display-name": "Cancel Import",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "cancel bulk import",
+            "stop import",
+            "abort import"
+          ]
+        },
+        "index": {
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the index name",
+            "field_name": "index",
+            "placeholder": "Select an index...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "pinecone_index"
+        },
+        "import_id": {
+          "description": "ID of the import to cancel",
+          "title": "Import ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "index",
+        "import_id"
+      ],
+      "title": "PineconeCancelImportConfig",
+      "type": "object"
+    },
+    "PineconeConfigureIndexConfig": {
+      "description": "Change deletion protection or pod replica/type on an existing index.",
+      "properties": {
+        "operation": {
+          "const": "configure_index",
+          "default": "configure_index",
+          "title": "Configure Index",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Index",
+          "x-display-name": "Configure Index",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "update index",
+            "scale index",
+            "deletion protection",
+            "replicas"
+          ]
+        },
+        "index": {
+          "title": "Index Name",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the index name",
+            "field_name": "index",
+            "placeholder": "Select an index...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "pinecone_index"
+        },
+        "deletion_protection": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "enabled",
+            "disabled"
+          ],
+          "title": "Deletion Protection",
+          "x-enum-searchable": true
+        },
+        "replicas": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of replicas (pod-based indexes only)",
+          "title": "Replicas"
+        },
+        "pod_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pod type for scale-up (pod-based indexes only), e.g. p1.x2",
+          "title": "Pod Type"
+        }
+      },
+      "required": [
+        "index"
+      ],
+      "title": "PineconeConfigureIndexConfig",
+      "type": "object"
+    },
+    "PineconeCreateIndexConfig": {
+      "description": "Create a new serverless index.",
+      "properties": {
+        "operation": {
+          "const": "create_index",
+          "default": "create_index",
+          "title": "Create Index",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Index",
+          "x-creates-resource": true,
+          "x-display-name": "Create Index",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new index",
+            "provision",
+            "setup"
+          ],
+          "x-resource-id-path": "data.name",
+          "x-resource-type": "pinecone_index"
+        },
+        "name": {
+          "description": "Name for the new index",
+          "title": "Name",
+          "type": "string"
+        },
+        "dimension": {
+          "description": "Vector dimensionality (must match your embedding model)",
+          "title": "Dimension",
+          "type": "integer"
+        },
+        "metric": {
+          "default": "cosine",
+          "description": "Distance metric",
+          "enum": [
+            "cosine",
+            "euclidean",
+            "dotproduct"
+          ],
+          "title": "Metric",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "cloud": {
+          "default": "aws",
+          "enum": [
+            "aws",
+            "gcp",
+            "azure"
+          ],
+          "title": "Cloud",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "region": {
+          "default": "us-east-1",
+          "description": "Cloud region, e.g. us-east-1",
+          "title": "Region",
+          "type": "string"
+        },
+        "deletion_protection": {
+          "default": "disabled",
+          "enum": [
+            "enabled",
+            "disabled"
+          ],
+          "title": "Deletion Protection",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "name",
+        "dimension"
+      ],
+      "title": "PineconeCreateIndexConfig",
+      "type": "object"
+    },
+    "PineconeCreateIndexForModelConfig": {
+      "description": "Create a text-native index that embeds content server-side (no dimension needed).",
+      "properties": {
+        "operation": {
+          "const": "create_index_for_model",
+          "default": "create_index_for_model",
+          "title": "Create Index for Model",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Integrated Inference",
+          "x-display-name": "Create Index for Model",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "text native index",
+            "integrated embedding",
+            "create for model",
+            "auto embed"
+          ]
+        },
+        "name": {
+          "description": "Name for the new index",
+          "title": "Name",
+          "type": "string"
+        },
+        "embed_model": {
+          "default": "multilingual-e5-large",
+          "description": "Pinecone-hosted embedding model to use for this index",
+          "enum": [
+            "multilingual-e5-large",
+            "llama-text-embed-v2"
+          ],
+          "title": "Embedding Model",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "field_map_text": {
+          "default": "text",
+          "description": "Name of the field in your records that holds the text to embed",
+          "title": "Text Field",
+          "type": "string"
+        },
+        "cloud": {
+          "default": "aws",
+          "enum": [
+            "aws",
+            "gcp",
+            "azure"
+          ],
+          "title": "Cloud",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "region": {
+          "default": "us-east-1",
+          "title": "Region",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "PineconeCreateIndexForModelConfig",
+      "type": "object"
+    },
+    "PineconeDeleteConfig": {
+      "description": "Delete vectors by ID, by metadata filter, or clear a namespace.",
+      "properties": {
+        "operation": {
+          "const": "delete",
+          "default": "delete",
+          "title": "Delete Vectors",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Vectors",
+          "x-display-name": "Delete Vectors",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove",
+            "clear",
+            "purge vectors"
+          ]
+        },
+        "index": {
+          "description": "Pinecone index",
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the index name",
+            "field_name": "index",
+            "placeholder": "Select an index...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "pinecone_index"
+        },
+        "ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Vector IDs to delete, comma-separated",
+          "title": "IDs"
+        },
+        "delete_all": {
+          "default": "false",
+          "description": "Delete every vector in the namespace",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Delete All in Namespace",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Delete vectors matching a JSON metadata filter, e.g. {\"source\": {\"$eq\": \"doc1\"}}",
+          "title": "Metadata Filter"
+        },
+        "namespace": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Namespace"
+        }
+      },
+      "required": [
+        "index"
+      ],
+      "title": "PineconeDeleteConfig",
+      "type": "object"
+    },
+    "PineconeDeleteIndexConfig": {
+      "description": "Delete an index and all its vectors permanently.",
+      "properties": {
+        "operation": {
+          "const": "delete_index",
+          "default": "delete_index",
+          "title": "Delete Index",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Index",
+          "x-display-name": "Delete Index",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove index",
+            "drop index",
+            "destroy index"
+          ]
+        },
+        "index": {
+          "description": "Name of the index to delete. This is irreversible.",
+          "title": "Index Name",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the index name",
+            "field_name": "index",
+            "placeholder": "Select an index...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "pinecone_index"
+        }
+      },
+      "required": [
+        "index"
+      ],
+      "title": "PineconeDeleteIndexConfig",
+      "type": "object"
+    },
+    "PineconeDescribeImportConfig": {
+      "description": "Get the status and details of a specific bulk import operation.",
+      "properties": {
+        "operation": {
+          "const": "describe_import",
+          "default": "describe_import",
+          "title": "Describe Import",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bulk Import",
+          "x-display-name": "Describe Import",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "import status",
+            "check import",
+            "import details"
+          ]
+        },
+        "index": {
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the index name",
+            "field_name": "index",
+            "placeholder": "Select an index...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "pinecone_index"
+        },
+        "import_id": {
+          "description": "ID returned by Start Import",
+          "title": "Import ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "index",
+        "import_id"
+      ],
+      "title": "PineconeDescribeImportConfig",
+      "type": "object"
+    },
+    "PineconeDescribeIndexConfig": {
+      "description": "Get full details for a single index: status, host, metric, dimension, spec.",
+      "properties": {
+        "operation": {
+          "const": "describe_index",
+          "default": "describe_index",
+          "title": "Describe Index",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Index",
+          "x-display-name": "Describe Index",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "get index",
+            "index details",
+            "index status",
+            "index host"
+          ]
+        },
+        "index": {
+          "description": "Name of the index to describe",
+          "title": "Index Name",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the index name",
+            "field_name": "index",
+            "placeholder": "Select an index...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "pinecone_index"
+        }
+      },
+      "required": [
+        "index"
+      ],
+      "title": "PineconeDescribeIndexConfig",
+      "type": "object"
+    },
+    "PineconeDescribeIndexStatsConfig": {
+      "description": "Get per-namespace vector counts, total dimension, and index fullness.",
+      "properties": {
+        "operation": {
+          "const": "describe_index_stats",
+          "default": "describe_index_stats",
+          "title": "Describe Index Stats",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Vectors",
+          "x-display-name": "Describe Index Stats",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "stats",
+            "vector count",
+            "namespace count",
+            "index fullness",
+            "usage"
+          ]
+        },
+        "index": {
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the index name",
+            "field_name": "index",
+            "placeholder": "Select an index...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "pinecone_index"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON metadata filter to scope the stats query",
+          "title": "Metadata Filter"
+        }
+      },
+      "required": [
+        "index"
+      ],
+      "title": "PineconeDescribeIndexStatsConfig",
+      "type": "object"
+    },
+    "PineconeFetchConfig": {
+      "description": "Fetch vectors by their IDs.",
+      "properties": {
+        "operation": {
+          "const": "fetch",
+          "default": "fetch",
+          "title": "Fetch Vectors",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Vectors",
+          "x-display-name": "Fetch Vectors",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "get",
+            "lookup by id",
+            "read vectors"
+          ]
+        },
+        "index": {
+          "description": "Pinecone index",
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the index name",
+            "field_name": "index",
+            "placeholder": "Select an index...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "pinecone_index"
+        },
+        "ids": {
+          "description": "Vector IDs to fetch, comma-separated",
+          "title": "IDs",
+          "type": "string"
+        },
+        "namespace": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Namespace"
+        }
+      },
+      "required": [
+        "index",
+        "ids"
+      ],
+      "title": "PineconeFetchConfig",
+      "type": "object"
+    },
+    "PineconeGenerateEmbeddingsConfig": {
+      "description": "Generate dense embeddings using Pinecone's hosted models.",
+      "properties": {
+        "operation": {
+          "const": "generate_embeddings",
+          "default": "generate_embeddings",
+          "title": "Generate Embeddings",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inference",
+          "x-display-name": "Generate Embeddings",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "embed",
+            "vectorize",
+            "embedding",
+            "encode text",
+            "pinecone inference"
+          ]
+        },
+        "model": {
+          "default": "multilingual-e5-large",
+          "enum": [
+            "multilingual-e5-large",
+            "llama-text-embed-v2"
+          ],
+          "title": "Model",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "inputs": {
+          "description": "JSON array of text strings to embed, e.g. [\"Hello world\", \"Foo bar\"]",
+          "title": "Inputs",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "input_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "passage (for indexing) or query (for search). Leave blank to let the model decide.",
+          "enum": [
+            "passage",
+            "query",
+            ""
+          ],
+          "title": "Input Type",
+          "x-enum-searchable": true
+        },
+        "truncate": {
+          "default": "END",
+          "description": "How to handle inputs exceeding the model's token limit",
+          "enum": [
+            "NONE",
+            "END"
+          ],
+          "title": "Truncate",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "inputs"
+      ],
+      "title": "PineconeGenerateEmbeddingsConfig",
+      "type": "object"
+    },
+    "PineconeListImportsConfig": {
+      "description": "List all bulk import operations for an index.",
+      "properties": {
+        "operation": {
+          "const": "list_imports",
+          "default": "list_imports",
+          "title": "List Imports",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bulk Import",
+          "x-display-name": "List Imports",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "list bulk imports",
+            "import status",
+            "import jobs"
+          ]
+        },
+        "index": {
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the index name",
+            "field_name": "index",
+            "placeholder": "Select an index...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "pinecone_index"
+        },
+        "limit": {
+          "default": 20,
+          "description": "Max results to return (1\u2013100)",
+          "title": "Limit",
+          "type": "integer"
+        },
+        "pagination_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Pagination Token"
+        }
+      },
+      "required": [
+        "index"
+      ],
+      "title": "PineconeListImportsConfig",
+      "type": "object"
+    },
+    "PineconeListIndexesConfig": {
+      "description": "List all indexes in the project.",
+      "properties": {
+        "operation": {
+          "const": "list_indexes",
+          "default": "list_indexes",
+          "title": "List Indexes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Index",
+          "x-display-name": "List Indexes",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "list",
+            "show indexes",
+            "describe"
+          ]
+        }
+      },
+      "title": "PineconeListIndexesConfig",
+      "type": "object"
+    },
+    "PineconeListVectorsConfig": {
+      "description": "List vector IDs in a namespace by prefix (serverless indexes only).",
+      "properties": {
+        "operation": {
+          "const": "list_vectors",
+          "default": "list_vectors",
+          "title": "List Vectors",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Vectors",
+          "x-display-name": "List Vectors",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "list ids",
+            "paginate vectors",
+            "enumerate vectors"
+          ]
+        },
+        "index": {
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the index name",
+            "field_name": "index",
+            "placeholder": "Select an index...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "pinecone_index"
+        },
+        "namespace": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Namespace"
+        },
+        "prefix": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only return IDs starting with this prefix",
+          "title": "ID Prefix"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Max IDs to return (1\u2013100)",
+          "title": "Limit",
+          "type": "integer"
+        },
+        "pagination_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token from a previous response to fetch the next page",
+          "title": "Pagination Token"
+        }
+      },
+      "required": [
+        "index"
+      ],
+      "title": "PineconeListVectorsConfig",
+      "type": "object"
+    },
+    "PineconeQueryConfig": {
+      "description": "Find the most similar vectors to a query vector (similarity search).",
+      "properties": {
+        "operation": {
+          "const": "query",
+          "default": "query",
+          "title": "Query / Search",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Vectors",
+          "x-display-name": "Query / Search",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "search",
+            "similarity search",
+            "semantic search",
+            "retrieve",
+            "nearest neighbors",
+            "vector search",
+            "rag"
+          ]
+        },
+        "index": {
+          "description": "Pinecone index to query",
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the index name",
+            "field_name": "index",
+            "placeholder": "Select an index...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "pinecone_index"
+        },
+        "vector": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Embedding to search with \u2014 a JSON array of numbers, e.g. [0.1, 0.2, ...]. Provide this OR a vector ID.",
+          "title": "Query Vector",
+          "ui:widget": "textarea"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Instead of a vector, return neighbours of an existing vector by its ID",
+          "title": "By Vector ID"
+        },
+        "top_k": {
+          "default": 10,
+          "description": "Number of most-similar matches to return",
+          "title": "Top K",
+          "type": "integer"
+        },
+        "namespace": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Namespace to query (uses the default namespace if blank)",
+          "title": "Namespace"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON metadata filter, e.g. {\"genre\": {\"$eq\": \"comedy\"}}",
+          "title": "Metadata Filter"
+        },
+        "include_metadata": {
+          "default": "true",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Metadata",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "include_values": {
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Values",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "index"
+      ],
+      "title": "PineconeQueryConfig",
+      "type": "object"
+    },
+    "PineconeRerankConfig": {
+      "description": "Rerank a set of documents against a query using Pinecone's reranking model.",
+      "properties": {
+        "operation": {
+          "const": "rerank",
+          "default": "rerank",
+          "title": "Rerank Documents",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inference",
+          "x-display-name": "Rerank Documents",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "rerank",
+            "cross-encoder",
+            "result ranking",
+            "relevance score"
+          ]
+        },
+        "model": {
+          "default": "bge-reranker-v2-m3",
+          "enum": [
+            "bge-reranker-v2-m3"
+          ],
+          "title": "Model",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "query": {
+          "description": "The search query to rank documents against",
+          "title": "Query",
+          "type": "string"
+        },
+        "documents": {
+          "description": "JSON array of document strings or objects, e.g. [\"Hello\", \"World\"] or [{\"text\": \"Hello\"}]",
+          "title": "Documents",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "top_n": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of top results to return (defaults to all)",
+          "title": "Top N"
+        },
+        "rank_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated field names to use for ranking when documents are objects, e.g. text,title",
+          "title": "Rank Fields"
+        },
+        "return_documents": {
+          "default": "true",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Return Documents",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "query",
+        "documents"
+      ],
+      "title": "PineconeRerankConfig",
+      "type": "object"
+    },
+    "PineconeSearchRecordsConfig": {
+      "description": "Search a text-native index with a text query (server-side embedding + optional rerank).",
+      "properties": {
+        "operation": {
+          "const": "search_records",
+          "default": "search_records",
+          "title": "Search Records (Text-Native)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Integrated Inference",
+          "x-display-name": "Search Records (Text-Native)",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "text search",
+            "natural language search",
+            "search records",
+            "rerank"
+          ]
+        },
+        "index": {
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the index name",
+            "field_name": "index",
+            "placeholder": "Select an index...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "pinecone_index"
+        },
+        "namespace": {
+          "title": "Namespace",
+          "type": "string"
+        },
+        "query_text": {
+          "description": "Natural language query \u2014 the index embeds it server-side",
+          "title": "Query Text",
+          "type": "string"
+        },
+        "top_k": {
+          "default": 10,
+          "title": "Top K",
+          "type": "integer"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON metadata filter, e.g. {\"category\": {\"$eq\": \"greet\"}}",
+          "title": "Metadata Filter"
+        },
+        "rerank_model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional: rerank results with this model, e.g. bge-reranker-v2-m3",
+          "enum": [
+            "bge-reranker-v2-m3",
+            ""
+          ],
+          "title": "Rerank Model",
+          "x-enum-searchable": true
+        },
+        "rerank_top_n": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "How many results to keep after reranking (defaults to top_k)",
+          "title": "Rerank Top N"
+        }
+      },
+      "required": [
+        "index",
+        "namespace",
+        "query_text"
+      ],
+      "title": "PineconeSearchRecordsConfig",
+      "type": "object"
+    },
+    "PineconeStartImportConfig": {
+      "description": "Start an async bulk import of Parquet vectors from S3, GCS, or Azure Blob.",
+      "properties": {
+        "operation": {
+          "const": "start_import",
+          "default": "start_import",
+          "title": "Start Import",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bulk Import",
+          "x-display-name": "Start Import",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "bulk import",
+            "parquet",
+            "s3 import",
+            "batch upsert",
+            "large scale"
+          ]
+        },
+        "index": {
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the index name",
+            "field_name": "index",
+            "placeholder": "Select an index...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "pinecone_index"
+        },
+        "uri": {
+          "description": "URI of the Parquet file or folder: s3://bucket/path, gs://bucket/path, or https://\u2026",
+          "title": "Source URI",
+          "type": "string"
+        },
+        "error_mode": {
+          "default": "continue",
+          "description": "What to do when a record fails to import",
+          "enum": [
+            "continue",
+            "abort"
+          ],
+          "title": "On Error",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "integration_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Pinecone storage integration ID for private buckets",
+          "title": "Integration ID"
+        }
+      },
+      "required": [
+        "index",
+        "uri"
+      ],
+      "title": "PineconeStartImportConfig",
+      "type": "object"
+    },
+    "PineconeUpdateVectorConfig": {
+      "description": "Partially update values or metadata on a single existing vector.",
+      "properties": {
+        "operation": {
+          "const": "update_vector",
+          "default": "update_vector",
+          "title": "Update Vector",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Vectors",
+          "x-display-name": "Update Vector",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "patch vector",
+            "update metadata",
+            "set metadata",
+            "modify vector"
+          ]
+        },
+        "index": {
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the index name",
+            "field_name": "index",
+            "placeholder": "Select an index...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "pinecone_index"
+        },
+        "id": {
+          "description": "ID of the vector to update",
+          "title": "Vector ID",
+          "type": "string"
+        },
+        "values": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Replacement float array as JSON, e.g. [0.1, 0.2, ...]. Omit to leave values unchanged.",
+          "title": "New Values",
+          "ui:widget": "textarea"
+        },
+        "set_metadata": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object of metadata keys to set/overwrite, e.g. {\"source\": \"v2\"}",
+          "title": "Set Metadata"
+        },
+        "namespace": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Namespace"
+        }
+      },
+      "required": [
+        "index",
+        "id"
+      ],
+      "title": "PineconeUpdateVectorConfig",
+      "type": "object"
+    },
+    "PineconeUploadIndexConfig": {
+      "description": "Upload a document file, chunk + embed it with text-embedding-3-small, and upsert.",
+      "properties": {
+        "operation": {
+          "const": "upload_and_index",
+          "default": "upload_and_index",
+          "title": "Upload & Index Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Upload & Index Document",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "upload",
+            "ingest",
+            "index document",
+            "rag",
+            "embed file",
+            "add pdf"
+          ]
+        },
+        "index": {
+          "description": "Pinecone index to write to",
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the index name",
+            "field_name": "index",
+            "placeholder": "Select an index...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "pinecone_index"
+        },
+        "document": {
+          "description": "Upload a PDF/DOCX/TXT/MD/CSV file (or paste a URL). It's chunked, embedded with text-embedding-3-small, and upserted.",
+          "title": "Document",
+          "type": "string",
+          "ui:accept": ".pdf,.docx,.txt,.md,.markdown,.csv,.json,.html,.htm",
+          "ui:widget": "media_upload"
+        },
+        "namespace": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Namespace"
+        },
+        "chunk_size": {
+          "default": 1000,
+          "description": "Characters per chunk",
+          "title": "Chunk Size",
+          "type": "integer"
+        },
+        "chunk_overlap": {
+          "default": 200,
+          "description": "Overlapping characters between chunks",
+          "title": "Chunk Overlap",
+          "type": "integer"
+        },
+        "id_prefix": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional prefix for chunk IDs (defaults to the filename)",
+          "title": "ID Prefix"
+        }
+      },
+      "required": [
+        "index",
+        "document"
+      ],
+      "title": "PineconeUploadIndexConfig",
+      "type": "object"
+    },
+    "PineconeUpsertConfig": {
+      "description": "Insert or overwrite vectors in an index.",
+      "properties": {
+        "operation": {
+          "const": "upsert",
+          "default": "upsert",
+          "title": "Upsert Vectors",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Vectors",
+          "x-display-name": "Upsert Vectors",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "insert",
+            "index",
+            "add vectors",
+            "store",
+            "write",
+            "embed"
+          ]
+        },
+        "index": {
+          "description": "Pinecone index to write to",
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the index name",
+            "field_name": "index",
+            "placeholder": "Select an index...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "pinecone_index"
+        },
+        "vectors": {
+          "description": "JSON array of vectors: [{\"id\": \"a\", \"values\": [0.1, ...], \"metadata\": {\"source\": \"doc1\"}}]",
+          "title": "Vectors",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "namespace": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Namespace to write to (default if blank)",
+          "title": "Namespace"
+        }
+      },
+      "required": [
+        "index",
+        "vectors"
+      ],
+      "title": "PineconeUpsertConfig",
+      "type": "object"
+    },
+    "PineconeUpsertRecordsConfig": {
+      "description": "Upsert text records into a text-native index (server-side embedding, no vectors needed).",
+      "properties": {
+        "operation": {
+          "const": "upsert_records",
+          "default": "upsert_records",
+          "title": "Upsert Records (Text-Native)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Integrated Inference",
+          "x-display-name": "Upsert Records (Text-Native)",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "upsert text",
+            "text native upsert",
+            "auto embed records",
+            "insert records"
+          ]
+        },
+        "index": {
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the index name",
+            "field_name": "index",
+            "placeholder": "Select an index...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "pinecone_index"
+        },
+        "namespace": {
+          "description": "Namespace to write records into (required for text-native indexes)",
+          "title": "Namespace",
+          "type": "string"
+        },
+        "records": {
+          "description": "JSON array of records, e.g. [{\"id\": \"r1\", \"text\": \"Hello world\", \"category\": \"greet\"}]",
+          "title": "Records",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "index",
+        "namespace",
+        "records"
+      ],
+      "title": "PineconeUpsertRecordsConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the Pinecone node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_import": "#/$defs/PineconeCancelImportConfig",
+          "configure_index": "#/$defs/PineconeConfigureIndexConfig",
+          "create_index": "#/$defs/PineconeCreateIndexConfig",
+          "create_index_for_model": "#/$defs/PineconeCreateIndexForModelConfig",
+          "delete": "#/$defs/PineconeDeleteConfig",
+          "delete_index": "#/$defs/PineconeDeleteIndexConfig",
+          "describe_import": "#/$defs/PineconeDescribeImportConfig",
+          "describe_index": "#/$defs/PineconeDescribeIndexConfig",
+          "describe_index_stats": "#/$defs/PineconeDescribeIndexStatsConfig",
+          "fetch": "#/$defs/PineconeFetchConfig",
+          "generate_embeddings": "#/$defs/PineconeGenerateEmbeddingsConfig",
+          "list_imports": "#/$defs/PineconeListImportsConfig",
+          "list_indexes": "#/$defs/PineconeListIndexesConfig",
+          "list_vectors": "#/$defs/PineconeListVectorsConfig",
+          "query": "#/$defs/PineconeQueryConfig",
+          "rerank": "#/$defs/PineconeRerankConfig",
+          "search_records": "#/$defs/PineconeSearchRecordsConfig",
+          "start_import": "#/$defs/PineconeStartImportConfig",
+          "update_vector": "#/$defs/PineconeUpdateVectorConfig",
+          "upload_and_index": "#/$defs/PineconeUploadIndexConfig",
+          "upsert": "#/$defs/PineconeUpsertConfig",
+          "upsert_records": "#/$defs/PineconeUpsertRecordsConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/PineconeQueryConfig"
+        },
+        {
+          "$ref": "#/$defs/PineconeUpsertConfig"
+        },
+        {
+          "$ref": "#/$defs/PineconeFetchConfig"
+        },
+        {
+          "$ref": "#/$defs/PineconeDeleteConfig"
+        },
+        {
+          "$ref": "#/$defs/PineconeUpdateVectorConfig"
+        },
+        {
+          "$ref": "#/$defs/PineconeListVectorsConfig"
+        },
+        {
+          "$ref": "#/$defs/PineconeDescribeIndexStatsConfig"
+        },
+        {
+          "$ref": "#/$defs/PineconeListIndexesConfig"
+        },
+        {
+          "$ref": "#/$defs/PineconeDescribeIndexConfig"
+        },
+        {
+          "$ref": "#/$defs/PineconeCreateIndexConfig"
+        },
+        {
+          "$ref": "#/$defs/PineconeConfigureIndexConfig"
+        },
+        {
+          "$ref": "#/$defs/PineconeDeleteIndexConfig"
+        },
+        {
+          "$ref": "#/$defs/PineconeCreateIndexForModelConfig"
+        },
+        {
+          "$ref": "#/$defs/PineconeUpsertRecordsConfig"
+        },
+        {
+          "$ref": "#/$defs/PineconeSearchRecordsConfig"
+        },
+        {
+          "$ref": "#/$defs/PineconeGenerateEmbeddingsConfig"
+        },
+        {
+          "$ref": "#/$defs/PineconeRerankConfig"
+        },
+        {
+          "$ref": "#/$defs/PineconeStartImportConfig"
+        },
+        {
+          "$ref": "#/$defs/PineconeListImportsConfig"
+        },
+        {
+          "$ref": "#/$defs/PineconeDescribeImportConfig"
+        },
+        {
+          "$ref": "#/$defs/PineconeCancelImportConfig"
+        },
+        {
+          "$ref": "#/$defs/PineconeUploadIndexConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PineconeAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Pinecone Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Search a Pinecone index for the vectors most similar to a query embedding",
+    "Upsert document embeddings into a Pinecone index with metadata",
+    "Delete all vectors in a namespace before re-indexing",
+    "Fetch specific vectors by ID to inspect their metadata",
+    "Create a new serverless index for a 1536-dimension embedding model",
+    "Generate embeddings with Pinecone's multilingual-e5-large model",
+    "Rerank search results against a query using bge-reranker-v2-m3",
+    "Bulk-import a Parquet file of vectors from S3 into a Pinecone index"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -1,0 +1,4199 @@
+{
+  "$defs": {
+    "AttioAPIKeyCredential": {
+      "description": "API Key (single-workspace access token) credential for Attio.",
+      "properties": {
+        "credential_type": {
+          "const": "attio_api_key",
+          "default": "attio_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "Attio access token from Workspace settings -> Developers -> Access tokens. Passed as a Bearer token.",
+          "title": "Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "AttioAPIKeyCredential",
+      "type": "object",
+      "x-credential-url": "https://app.attio.com/_workos/settings/developers"
+    },
+    "AttioAssertListEntryConfig": {
+      "description": "Upsert a list entry by its parent record (create if absent, else update).",
+      "properties": {
+        "operation": {
+          "const": "assert_list_entry",
+          "default": "assert_list_entry",
+          "title": "Assert List Entry",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "List Entries",
+          "x-display-name": "Assert List Entry (by parent)",
+          "x-is-trigger": false
+        },
+        "list": {
+          "description": "List slug or ID",
+          "title": "List",
+          "type": "string"
+        },
+        "parent_record_id": {
+          "description": "record_id (UUID) of the parent record",
+          "title": "Parent Record ID",
+          "type": "string"
+        },
+        "parent_object": {
+          "description": "Object slug of the parent record",
+          "title": "Parent Object",
+          "type": "string"
+        },
+        "entry_values_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Map of list attribute slug -> value",
+          "title": "Entry Values (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "list",
+        "parent_record_id",
+        "parent_object"
+      ],
+      "title": "AttioAssertListEntryConfig",
+      "type": "object"
+    },
+    "AttioCreateAttributeConfig": {
+      "description": "Create an attribute on an object or list.",
+      "properties": {
+        "operation": {
+          "const": "create_attribute",
+          "default": "create_attribute",
+          "title": "Create Attribute",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Attributes",
+          "x-display-name": "Create Attribute",
+          "x-is-trigger": false
+        },
+        "target": {
+          "default": "objects",
+          "description": "Whether the identifier refers to an object or a list",
+          "enum": [
+            "objects",
+            "lists"
+          ],
+          "enumNames": [
+            "Object",
+            "List"
+          ],
+          "title": "Target",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "identifier": {
+          "description": "Object/list slug or ID",
+          "title": "Identifier",
+          "type": "string"
+        },
+        "title": {
+          "description": "Human-readable attribute name",
+          "title": "Title",
+          "type": "string"
+        },
+        "api_slug": {
+          "description": "Unique snake_case slug",
+          "title": "API Slug",
+          "type": "string"
+        },
+        "type": {
+          "default": "text",
+          "description": "Attribute data type",
+          "enum": [
+            "text",
+            "number",
+            "checkbox",
+            "currency",
+            "date",
+            "timestamp",
+            "rating",
+            "status",
+            "select",
+            "record-reference",
+            "actor-reference",
+            "location",
+            "domain",
+            "email-address",
+            "phone-number"
+          ],
+          "title": "Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "is_required": {
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Required",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "is_unique": {
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Unique",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "is_multiselect": {
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Multiselect",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description",
+          "ui:placeholder": "Optional attribute description"
+        },
+        "config_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Type-specific config, e.g. {\"currency\": {\"default_currency_code\": \"USD\", \"display_type\": \"symbol\"}}",
+          "title": "Config (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "identifier",
+        "title",
+        "api_slug"
+      ],
+      "title": "AttioCreateAttributeConfig",
+      "type": "object"
+    },
+    "AttioCreateCommentConfig": {
+      "description": "Create a comment on a record (starts a new thread on that record).",
+      "properties": {
+        "operation": {
+          "const": "create_comment",
+          "default": "create_comment",
+          "title": "Comment on Record",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comments",
+          "x-display-name": "Comment on Record",
+          "x-is-trigger": false
+        },
+        "content": {
+          "description": "Comment body (plaintext)",
+          "title": "Content",
+          "type": "string",
+          "ui:placeholder": "Write your comment...",
+          "ui:widget": "textarea"
+        },
+        "record_object": {
+          "description": "Object slug/ID the comment is posted on",
+          "title": "Record Object",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an object slug",
+            "field_name": "object",
+            "placeholder": "Select an object...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "attio_object"
+        },
+        "record_id": {
+          "description": "record_id (UUID) to comment on",
+          "title": "Record ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 6003a6aa-7122-45f1-b840-efe9231dfd06"
+        },
+        "author_workspace_member_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Workspace member the comment is authored by. Defaults to the token owner.",
+          "title": "Author (Workspace Member ID)",
+          "ui:placeholder": "Defaults to the token owner"
+        }
+      },
+      "required": [
+        "content",
+        "record_object",
+        "record_id"
+      ],
+      "title": "AttioCreateCommentConfig",
+      "type": "object"
+    },
+    "AttioCreateEntryCommentConfig": {
+      "description": "Create a comment on a list entry (starts a new thread on that entry).",
+      "properties": {
+        "operation": {
+          "const": "create_entry_comment",
+          "default": "create_entry_comment",
+          "title": "Comment on List Entry",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comments",
+          "x-display-name": "Comment on List Entry",
+          "x-is-trigger": false
+        },
+        "content": {
+          "description": "Comment body (plaintext)",
+          "title": "Content",
+          "type": "string",
+          "ui:placeholder": "Write your comment...",
+          "ui:widget": "textarea"
+        },
+        "entry_list": {
+          "description": "List slug/ID the entry belongs to",
+          "title": "List",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a list slug",
+            "field_name": "list",
+            "placeholder": "Select a list...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "attio_list"
+        },
+        "entry_id": {
+          "description": "entry_id (UUID) to comment on",
+          "title": "Entry ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 861c1071-54ba-4d3d-b642-f72f7bcc8c7e"
+        },
+        "author_workspace_member_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Workspace member the comment is authored by. Defaults to the token owner.",
+          "title": "Author (Workspace Member ID)",
+          "ui:placeholder": "Defaults to the token owner"
+        }
+      },
+      "required": [
+        "content",
+        "entry_list",
+        "entry_id"
+      ],
+      "title": "AttioCreateEntryCommentConfig",
+      "type": "object"
+    },
+    "AttioCreateListConfig": {
+      "description": "Create a new list.",
+      "properties": {
+        "operation": {
+          "const": "create_list",
+          "default": "create_list",
+          "title": "Create List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lists",
+          "x-creates-resource": true,
+          "x-display-name": "Create List",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.api_slug",
+          "x-resource-type": "attio_list"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string",
+          "ui:placeholder": "e.g. Sales Pipeline"
+        },
+        "api_slug": {
+          "description": "Unique snake_case slug",
+          "title": "API Slug",
+          "type": "string"
+        },
+        "parent_object": {
+          "description": "Object slug or ID the list is based on",
+          "title": "Parent Object",
+          "type": "string"
+        },
+        "workspace_access": {
+          "default": "full-access",
+          "description": "Default access level for all workspace members",
+          "enum": [
+            "full-access",
+            "read-and-write",
+            "read-only"
+          ],
+          "title": "Workspace Access",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "name",
+        "api_slug",
+        "parent_object"
+      ],
+      "title": "AttioCreateListConfig",
+      "type": "object"
+    },
+    "AttioCreateListEntryConfig": {
+      "description": "Add a record to a list (create an entry).",
+      "properties": {
+        "operation": {
+          "const": "create_list_entry",
+          "default": "create_list_entry",
+          "title": "Create List Entry",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "List Entries",
+          "x-display-name": "Create List Entry",
+          "x-is-trigger": false
+        },
+        "list": {
+          "description": "List slug or ID",
+          "title": "List",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a list slug",
+            "field_name": "list",
+            "placeholder": "Select a list...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "attio_list"
+        },
+        "parent_record_id": {
+          "description": "The record_id (UUID) to add to the list",
+          "title": "Record ID",
+          "type": "string"
+        },
+        "parent_object": {
+          "description": "The object slug of the parent record (e.g. companies, people)",
+          "title": "Parent Object",
+          "type": "string"
+        },
+        "entry_values_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Map of list-specific attribute slug -> value as JSON",
+          "title": "Entry Values (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "list",
+        "parent_record_id",
+        "parent_object"
+      ],
+      "title": "AttioCreateListEntryConfig",
+      "type": "object"
+    },
+    "AttioCreateNoteConfig": {
+      "description": "Create a note attached to a record.",
+      "properties": {
+        "operation": {
+          "const": "create_note",
+          "default": "create_note",
+          "title": "Create Note",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Notes",
+          "x-display-name": "Create Note",
+          "x-is-trigger": false
+        },
+        "parent_object": {
+          "description": "Object slug the note is attached to (e.g. companies)",
+          "title": "Parent Object",
+          "type": "string"
+        },
+        "parent_record_id": {
+          "description": "The record_id (UUID) the note is attached to",
+          "title": "Parent Record ID",
+          "type": "string"
+        },
+        "title": {
+          "description": "Note title",
+          "title": "Title",
+          "type": "string"
+        },
+        "content": {
+          "description": "Note body content (plaintext)",
+          "title": "Content",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "parent_object",
+        "parent_record_id",
+        "title",
+        "content"
+      ],
+      "title": "AttioCreateNoteConfig",
+      "type": "object"
+    },
+    "AttioCreateObjectConfig": {
+      "description": "Create a new custom object.",
+      "properties": {
+        "operation": {
+          "const": "create_object",
+          "default": "create_object",
+          "title": "Create Object",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Objects",
+          "x-creates-resource": true,
+          "x-display-name": "Create Object",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.api_slug",
+          "x-resource-type": "attio_object"
+        },
+        "api_slug": {
+          "description": "Unique snake_case slug (e.g. projects)",
+          "title": "API Slug",
+          "type": "string"
+        },
+        "singular_noun": {
+          "description": "e.g. Project",
+          "title": "Singular Noun",
+          "type": "string"
+        },
+        "plural_noun": {
+          "description": "e.g. Projects",
+          "title": "Plural Noun",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_slug",
+        "singular_noun",
+        "plural_noun"
+      ],
+      "title": "AttioCreateObjectConfig",
+      "type": "object"
+    },
+    "AttioCreateRecordConfig": {
+      "description": "Create a record on any object.",
+      "properties": {
+        "operation": {
+          "const": "create_record",
+          "default": "create_record",
+          "title": "Create Record",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Records",
+          "x-display-name": "Create Record",
+          "x-is-trigger": false
+        },
+        "object": {
+          "description": "Object slug or ID",
+          "title": "Object",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an object slug",
+            "field_name": "object",
+            "placeholder": "Select an object...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "attio_object"
+        },
+        "values_json": {
+          "description": "Map of attribute slug -> value as JSON, e.g. {\"name\": \"Acme\", \"domains\": [\"acme.com\"]}",
+          "title": "Attribute Values (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "object",
+        "values_json"
+      ],
+      "title": "AttioCreateRecordConfig",
+      "type": "object"
+    },
+    "AttioCreateSelectOptionConfig": {
+      "description": "Add a select option to a select attribute.",
+      "properties": {
+        "operation": {
+          "const": "create_select_option",
+          "default": "create_select_option",
+          "title": "Create Select Option",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Attributes",
+          "x-display-name": "Create Select Option",
+          "x-is-trigger": false
+        },
+        "target": {
+          "default": "objects",
+          "description": "Whether the identifier refers to an object or a list",
+          "enum": [
+            "objects",
+            "lists"
+          ],
+          "enumNames": [
+            "Object",
+            "List"
+          ],
+          "title": "Target",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "identifier": {
+          "description": "Object/list slug or ID",
+          "title": "Identifier",
+          "type": "string",
+          "ui:placeholder": "e.g. companies"
+        },
+        "attribute": {
+          "description": "Attribute slug or ID",
+          "title": "Attribute",
+          "type": "string",
+          "ui:placeholder": "e.g. status"
+        },
+        "title": {
+          "title": "Option Title",
+          "type": "string",
+          "ui:placeholder": "e.g. Enterprise"
+        }
+      },
+      "required": [
+        "identifier",
+        "attribute",
+        "title"
+      ],
+      "title": "AttioCreateSelectOptionConfig",
+      "type": "object"
+    },
+    "AttioCreateStatusConfig": {
+      "description": "Add a status to a status attribute.",
+      "properties": {
+        "operation": {
+          "const": "create_status",
+          "default": "create_status",
+          "title": "Create Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Attributes",
+          "x-display-name": "Create Status",
+          "x-is-trigger": false
+        },
+        "target": {
+          "default": "objects",
+          "description": "Whether the identifier refers to an object or a list",
+          "enum": [
+            "objects",
+            "lists"
+          ],
+          "enumNames": [
+            "Object",
+            "List"
+          ],
+          "title": "Target",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "identifier": {
+          "description": "Object/list slug or ID",
+          "title": "Identifier",
+          "type": "string",
+          "ui:placeholder": "e.g. companies"
+        },
+        "attribute": {
+          "description": "Attribute slug or ID",
+          "title": "Attribute",
+          "type": "string",
+          "ui:placeholder": "e.g. status"
+        },
+        "title": {
+          "title": "Status Title",
+          "type": "string",
+          "ui:placeholder": "e.g. In Progress"
+        },
+        "celebration_enabled": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "",
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Default",
+            "Yes",
+            "No"
+          ],
+          "title": "Celebration",
+          "x-enum-searchable": true
+        },
+        "target_time_in_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO-8601 duration, e.g. P0Y0M1DT0H0M0S",
+          "title": "Target Time In Status"
+        }
+      },
+      "required": [
+        "identifier",
+        "attribute",
+        "title"
+      ],
+      "title": "AttioCreateStatusConfig",
+      "type": "object"
+    },
+    "AttioCreateTaskConfig": {
+      "description": "Create a task with content, deadline, assignees, and linked records.",
+      "properties": {
+        "operation": {
+          "const": "create_task",
+          "default": "create_task",
+          "title": "Create Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Create Task",
+          "x-is-trigger": false
+        },
+        "content": {
+          "description": "Task description (plaintext)",
+          "title": "Content",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "deadline_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Task deadline as ISO 8601 datetime",
+          "title": "Deadline"
+        },
+        "is_completed": {
+          "default": "false",
+          "description": "Whether the task starts completed",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Completed",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "assignees_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Array of assignee refs as JSON, e.g. [{\"referenced_actor_type\": \"workspace-member\", \"referenced_actor_id\": \"...\"}]",
+          "title": "Assignees (JSON)",
+          "ui:widget": "textarea"
+        },
+        "linked_records_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Array of record refs as JSON, e.g. [{\"target_object\": \"companies\", \"target_record_id\": \"...\"}]",
+          "title": "Linked Records (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "content"
+      ],
+      "title": "AttioCreateTaskConfig",
+      "type": "object"
+    },
+    "AttioDeleteCommentConfig": {
+      "description": "Delete a comment by ID.",
+      "properties": {
+        "operation": {
+          "const": "delete_comment",
+          "default": "delete_comment",
+          "title": "Delete Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comments",
+          "x-display-name": "Delete Comment",
+          "x-is-trigger": false
+        },
+        "comment_id": {
+          "description": "The comment_id (UUID)",
+          "title": "Comment ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 016e88d9-de10-4e1c-9aef-36b07cb4260d"
+        }
+      },
+      "required": [
+        "comment_id"
+      ],
+      "title": "AttioDeleteCommentConfig",
+      "type": "object"
+    },
+    "AttioDeleteListEntryConfig": {
+      "description": "Remove an entry from a list.",
+      "properties": {
+        "operation": {
+          "const": "delete_list_entry",
+          "default": "delete_list_entry",
+          "title": "Delete List Entry",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "List Entries",
+          "x-display-name": "Delete List Entry",
+          "x-is-trigger": false
+        },
+        "list": {
+          "description": "List slug or ID",
+          "title": "List",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a list slug",
+            "field_name": "list",
+            "placeholder": "Select a list...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "attio_list"
+        },
+        "entry_id": {
+          "description": "The entry_id (UUID) to delete",
+          "title": "Entry ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list",
+        "entry_id"
+      ],
+      "title": "AttioDeleteListEntryConfig",
+      "type": "object"
+    },
+    "AttioDeleteNoteConfig": {
+      "description": "Delete a note by ID.",
+      "properties": {
+        "operation": {
+          "const": "delete_note",
+          "default": "delete_note",
+          "title": "Delete Note",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Notes",
+          "x-display-name": "Delete Note",
+          "x-is-trigger": false
+        },
+        "note_id": {
+          "description": "The note_id (UUID) to delete",
+          "title": "Note ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "note_id"
+      ],
+      "title": "AttioDeleteNoteConfig",
+      "type": "object"
+    },
+    "AttioDeleteRecordConfig": {
+      "description": "Delete a record by ID.",
+      "properties": {
+        "operation": {
+          "const": "delete_record",
+          "default": "delete_record",
+          "title": "Delete Record",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Records",
+          "x-display-name": "Delete Record",
+          "x-is-trigger": false
+        },
+        "object": {
+          "description": "Object slug or ID",
+          "title": "Object",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an object slug",
+            "field_name": "object",
+            "placeholder": "Select an object...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "attio_object"
+        },
+        "record_id": {
+          "description": "The record_id (UUID) to delete",
+          "title": "Record ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "object",
+        "record_id"
+      ],
+      "title": "AttioDeleteRecordConfig",
+      "type": "object"
+    },
+    "AttioDeleteTaskConfig": {
+      "description": "Delete a task by ID.",
+      "properties": {
+        "operation": {
+          "const": "delete_task",
+          "default": "delete_task",
+          "title": "Delete Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Delete Task",
+          "x-is-trigger": false
+        },
+        "task_id": {
+          "description": "The task_id (UUID) to delete",
+          "title": "Task ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "AttioDeleteTaskConfig",
+      "type": "object"
+    },
+    "AttioGetAttributeConfig": {
+      "description": "Fetch a single attribute on an object or list.",
+      "properties": {
+        "operation": {
+          "const": "get_attribute",
+          "default": "get_attribute",
+          "title": "Get Attribute",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Attributes",
+          "x-display-name": "Get Attribute",
+          "x-is-trigger": false
+        },
+        "target": {
+          "default": "objects",
+          "description": "Whether the identifier refers to an object or a list",
+          "enum": [
+            "objects",
+            "lists"
+          ],
+          "enumNames": [
+            "Object",
+            "List"
+          ],
+          "title": "Target",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "identifier": {
+          "description": "Object/list slug or ID",
+          "title": "Identifier",
+          "type": "string"
+        },
+        "attribute": {
+          "description": "Attribute slug or ID",
+          "title": "Attribute",
+          "type": "string"
+        }
+      },
+      "required": [
+        "identifier",
+        "attribute"
+      ],
+      "title": "AttioGetAttributeConfig",
+      "type": "object"
+    },
+    "AttioGetCommentConfig": {
+      "description": "Fetch a single comment by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_comment",
+          "default": "get_comment",
+          "title": "Get Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comments",
+          "x-display-name": "Get Comment",
+          "x-is-trigger": false
+        },
+        "comment_id": {
+          "description": "The comment_id (UUID)",
+          "title": "Comment ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 016e88d9-de10-4e1c-9aef-36b07cb4260d"
+        }
+      },
+      "required": [
+        "comment_id"
+      ],
+      "title": "AttioGetCommentConfig",
+      "type": "object"
+    },
+    "AttioGetFileConfig": {
+      "description": "Fetch a single file's metadata by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_file",
+          "default": "get_file",
+          "title": "Get File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Files",
+          "x-display-name": "Get File",
+          "x-is-trigger": false
+        },
+        "file_id": {
+          "description": "The file_id (UUID)",
+          "title": "File ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 6116c4ff-3d9f-4b1a-b47c-67f2a543060f"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "AttioGetFileConfig",
+      "type": "object"
+    },
+    "AttioGetListConfig": {
+      "description": "Fetch a single list by slug or ID.",
+      "properties": {
+        "operation": {
+          "const": "get_list",
+          "default": "get_list",
+          "title": "Get List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lists",
+          "x-display-name": "Get List",
+          "x-is-trigger": false
+        },
+        "list": {
+          "description": "List slug or ID",
+          "title": "List",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list"
+      ],
+      "title": "AttioGetListConfig",
+      "type": "object"
+    },
+    "AttioGetListEntryConfig": {
+      "description": "Fetch a single list entry by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_list_entry",
+          "default": "get_list_entry",
+          "title": "Get List Entry",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "List Entries",
+          "x-display-name": "Get List Entry",
+          "x-is-trigger": false
+        },
+        "list": {
+          "description": "List slug or ID",
+          "title": "List",
+          "type": "string"
+        },
+        "entry_id": {
+          "description": "The entry_id (UUID)",
+          "title": "Entry ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 861c1071-54ba-4d3d-b642-f72f7bcc8c7e"
+        }
+      },
+      "required": [
+        "list",
+        "entry_id"
+      ],
+      "title": "AttioGetListEntryConfig",
+      "type": "object"
+    },
+    "AttioGetMeetingConfig": {
+      "description": "Fetch a single meeting by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_meeting",
+          "default": "get_meeting",
+          "title": "Get Meeting",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Meetings",
+          "x-display-name": "Get Meeting",
+          "x-is-trigger": false
+        },
+        "meeting_id": {
+          "description": "The meeting_id (UUID)",
+          "title": "Meeting ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 928e88d9-de10-4e1c-9aef-36b07cb4260d"
+        }
+      },
+      "required": [
+        "meeting_id"
+      ],
+      "title": "AttioGetMeetingConfig",
+      "type": "object"
+    },
+    "AttioGetNoteConfig": {
+      "description": "Fetch a single note by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_note",
+          "default": "get_note",
+          "title": "Get Note",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Notes",
+          "x-display-name": "Get Note",
+          "x-is-trigger": false
+        },
+        "note_id": {
+          "description": "The note_id (UUID)",
+          "title": "Note ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 3cf18abc-4497-4955-89dc-7a4bd0c0eb65"
+        }
+      },
+      "required": [
+        "note_id"
+      ],
+      "title": "AttioGetNoteConfig",
+      "type": "object"
+    },
+    "AttioGetObjectConfig": {
+      "description": "Fetch a single object definition by slug or ID.",
+      "properties": {
+        "operation": {
+          "const": "get_object",
+          "default": "get_object",
+          "title": "Get Object",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Objects",
+          "x-display-name": "Get Object",
+          "x-is-trigger": false
+        },
+        "object": {
+          "description": "Object slug or ID",
+          "title": "Object",
+          "type": "string"
+        }
+      },
+      "required": [
+        "object"
+      ],
+      "title": "AttioGetObjectConfig",
+      "type": "object"
+    },
+    "AttioGetRecordConfig": {
+      "description": "Fetch a single record by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_record",
+          "default": "get_record",
+          "title": "Get Record",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Records",
+          "x-display-name": "Get Record",
+          "x-is-trigger": false
+        },
+        "object": {
+          "description": "Object slug or ID",
+          "title": "Object",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an object slug",
+            "field_name": "object",
+            "placeholder": "Select an object...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "attio_object"
+        },
+        "record_id": {
+          "description": "The record_id (UUID) to fetch",
+          "title": "Record ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "object",
+        "record_id"
+      ],
+      "title": "AttioGetRecordConfig",
+      "type": "object"
+    },
+    "AttioGetTaskConfig": {
+      "description": "Fetch a single task by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_task",
+          "default": "get_task",
+          "title": "Get Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Get Task",
+          "x-is-trigger": false
+        },
+        "task_id": {
+          "description": "The task_id (UUID)",
+          "title": "Task ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 3a07dd01-20b5-4064-b1a0-0f329ba9669c"
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "AttioGetTaskConfig",
+      "type": "object"
+    },
+    "AttioGetThreadConfig": {
+      "description": "Fetch a single comment thread by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_thread",
+          "default": "get_thread",
+          "title": "Get Thread",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comments",
+          "x-display-name": "Get Thread",
+          "x-is-trigger": false
+        },
+        "thread_id": {
+          "description": "The thread_id (UUID)",
+          "title": "Thread ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 016e88d9-de10-4e1c-9aef-36b07cb4260d"
+        }
+      },
+      "required": [
+        "thread_id"
+      ],
+      "title": "AttioGetThreadConfig",
+      "type": "object"
+    },
+    "AttioGetWorkspaceMemberConfig": {
+      "description": "Fetch a single workspace member by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_workspace_member",
+          "default": "get_workspace_member",
+          "title": "Get Workspace Member",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspace",
+          "x-display-name": "Get Workspace Member",
+          "x-is-trigger": false
+        },
+        "workspace_member_id": {
+          "description": "The workspace_member_id (UUID)",
+          "title": "Workspace Member ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace_member_id"
+      ],
+      "title": "AttioGetWorkspaceMemberConfig",
+      "type": "object"
+    },
+    "AttioIdentifySelfConfig": {
+      "description": "Introspect the current token: workspace + granted permissions.",
+      "properties": {
+        "operation": {
+          "const": "identify_self",
+          "default": "identify_self",
+          "title": "Identify Self",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspace",
+          "x-display-name": "Identify Self",
+          "x-is-trigger": false
+        }
+      },
+      "title": "AttioIdentifySelfConfig",
+      "type": "object"
+    },
+    "AttioListAttributesConfig": {
+      "description": "List attributes defined on an object or list.",
+      "properties": {
+        "operation": {
+          "const": "list_attributes",
+          "default": "list_attributes",
+          "title": "List Attributes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Schema",
+          "x-display-name": "List Attributes",
+          "x-is-trigger": false
+        },
+        "target": {
+          "default": "objects",
+          "description": "Whether the identifier refers to an object or a list",
+          "enum": [
+            "objects",
+            "lists"
+          ],
+          "enumNames": [
+            "Object",
+            "List"
+          ],
+          "title": "Target",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "identifier": {
+          "description": "Object/list slug or ID to list attributes for (e.g. people, companies)",
+          "title": "Identifier",
+          "type": "string"
+        }
+      },
+      "required": [
+        "identifier"
+      ],
+      "title": "AttioListAttributesConfig",
+      "type": "object"
+    },
+    "AttioListEntriesConfig": {
+      "description": "Query entries in a list with filters, sorting, and pagination.",
+      "properties": {
+        "operation": {
+          "const": "list_entries",
+          "default": "list_entries",
+          "title": "List Entries",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "List Entries",
+          "x-display-name": "List Entries",
+          "x-is-trigger": false
+        },
+        "list": {
+          "description": "List slug or ID",
+          "title": "List",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a list slug",
+            "field_name": "list",
+            "placeholder": "Select a list...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "attio_list"
+        },
+        "filter_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Attio filter object as JSON",
+          "title": "Filter (JSON)",
+          "ui:widget": "textarea"
+        },
+        "sorts_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Array of sort objects as JSON",
+          "title": "Sorts (JSON)",
+          "ui:widget": "textarea"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "50",
+          "description": "Max number of entries to return",
+          "title": "Limit"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "0",
+          "description": "Number of entries to skip for pagination",
+          "title": "Offset"
+        }
+      },
+      "required": [
+        "list"
+      ],
+      "title": "AttioListEntriesConfig",
+      "type": "object"
+    },
+    "AttioListEntryAttributeValuesConfig": {
+      "description": "List the historical values of one attribute on a list entry.",
+      "properties": {
+        "operation": {
+          "const": "list_list_entry_attribute_values",
+          "default": "list_list_entry_attribute_values",
+          "title": "List Entry Attribute Values",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "List Entries",
+          "x-display-name": "List Entry Attribute Values",
+          "x-is-trigger": false
+        },
+        "list": {
+          "description": "List slug or ID",
+          "title": "List",
+          "type": "string"
+        },
+        "entry_id": {
+          "description": "The entry_id (UUID)",
+          "title": "Entry ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 861c1071-54ba-4d3d-b642-f72f7bcc8c7e"
+        },
+        "attribute": {
+          "description": "Attribute slug or ID",
+          "title": "Attribute",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "50",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "list",
+        "entry_id",
+        "attribute"
+      ],
+      "title": "AttioListEntryAttributeValuesConfig",
+      "type": "object"
+    },
+    "AttioListEntryThreadsConfig": {
+      "description": "List comment threads on a list entry.",
+      "properties": {
+        "operation": {
+          "const": "list_entry_threads",
+          "default": "list_entry_threads",
+          "title": "List Threads on List Entry",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comments",
+          "x-display-name": "List Threads on List Entry",
+          "x-is-trigger": false
+        },
+        "entry_list": {
+          "description": "List slug/ID the entry belongs to",
+          "title": "List",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a list slug",
+            "field_name": "list",
+            "placeholder": "Select a list...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "attio_list"
+        },
+        "entry_id": {
+          "description": "entry_id (UUID) whose threads to list",
+          "title": "Entry ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 861c1071-54ba-4d3d-b642-f72f7bcc8c7e"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "50",
+          "title": "Limit",
+          "ui:placeholder": "e.g. 50"
+        }
+      },
+      "required": [
+        "entry_list",
+        "entry_id"
+      ],
+      "title": "AttioListEntryThreadsConfig",
+      "type": "object"
+    },
+    "AttioListFilesConfig": {
+      "description": "List files attached to a record.",
+      "properties": {
+        "operation": {
+          "const": "list_files",
+          "default": "list_files",
+          "title": "List Files",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Files",
+          "x-display-name": "List Files",
+          "x-is-trigger": false
+        },
+        "object": {
+          "description": "Object slug or ID",
+          "title": "Object",
+          "type": "string"
+        },
+        "record_id": {
+          "description": "record_id (UUID) whose files to list",
+          "title": "Record ID",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "50",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "object",
+        "record_id"
+      ],
+      "title": "AttioListFilesConfig",
+      "type": "object"
+    },
+    "AttioListListsConfig": {
+      "description": "List all lists in the workspace.",
+      "properties": {
+        "operation": {
+          "const": "list_lists",
+          "default": "list_lists",
+          "title": "List All Lists",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Schema",
+          "x-display-name": "List All Lists",
+          "x-is-trigger": false
+        }
+      },
+      "title": "AttioListListsConfig",
+      "type": "object"
+    },
+    "AttioListMeetingsConfig": {
+      "description": "List meetings, optionally scoped to a linked record.",
+      "properties": {
+        "operation": {
+          "const": "list_meetings",
+          "default": "list_meetings",
+          "title": "List Meetings",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Meetings",
+          "x-display-name": "List Meetings",
+          "x-is-trigger": false
+        },
+        "linked_object": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Object slug to scope meetings to (optional)",
+          "title": "Linked Object"
+        },
+        "linked_record_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "record_id (UUID) to scope meetings to (optional)",
+          "title": "Linked Record ID"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "50",
+          "title": "Limit"
+        }
+      },
+      "title": "AttioListMeetingsConfig",
+      "type": "object"
+    },
+    "AttioListNotesConfig": {
+      "description": "List notes, optionally filtered by parent record/object.",
+      "properties": {
+        "operation": {
+          "const": "list_notes",
+          "default": "list_notes",
+          "title": "List Notes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Notes",
+          "x-display-name": "List Notes",
+          "x-is-trigger": false
+        },
+        "parent_object": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter to notes on this object slug (optional)",
+          "title": "Parent Object"
+        },
+        "parent_record_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter to notes on this record (optional)",
+          "title": "Parent Record ID"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "50",
+          "description": "Max number of notes to return",
+          "title": "Limit"
+        }
+      },
+      "title": "AttioListNotesConfig",
+      "type": "object"
+    },
+    "AttioListObjectsConfig": {
+      "description": "List all objects (standard + custom) in the workspace.",
+      "properties": {
+        "operation": {
+          "const": "list_objects",
+          "default": "list_objects",
+          "title": "List Objects",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Schema",
+          "x-display-name": "List Objects",
+          "x-is-trigger": false
+        }
+      },
+      "title": "AttioListObjectsConfig",
+      "type": "object"
+    },
+    "AttioListRecordAttributeValuesConfig": {
+      "description": "List the historical values of one attribute on a record.",
+      "properties": {
+        "operation": {
+          "const": "list_record_attribute_values",
+          "default": "list_record_attribute_values",
+          "title": "List Record Attribute Values",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Records",
+          "x-display-name": "List Record Attribute Values",
+          "x-is-trigger": false
+        },
+        "object": {
+          "description": "Object slug or ID",
+          "title": "Object",
+          "type": "string"
+        },
+        "record_id": {
+          "description": "The record_id (UUID)",
+          "title": "Record ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 6003a6aa-7122-45f1-b840-efe9231dfd06"
+        },
+        "attribute": {
+          "description": "Attribute slug or ID",
+          "title": "Attribute",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "50",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "object",
+        "record_id",
+        "attribute"
+      ],
+      "title": "AttioListRecordAttributeValuesConfig",
+      "type": "object"
+    },
+    "AttioListRecordEntriesConfig": {
+      "description": "List the list entries a record belongs to.",
+      "properties": {
+        "operation": {
+          "const": "list_record_entries",
+          "default": "list_record_entries",
+          "title": "List Record's List Entries",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Records",
+          "x-display-name": "List Record's List Entries",
+          "x-is-trigger": false
+        },
+        "object": {
+          "description": "Object slug or ID",
+          "title": "Object",
+          "type": "string"
+        },
+        "record_id": {
+          "description": "The record_id (UUID)",
+          "title": "Record ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 6003a6aa-7122-45f1-b840-efe9231dfd06"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "50",
+          "title": "Limit"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "0",
+          "title": "Offset"
+        }
+      },
+      "required": [
+        "object",
+        "record_id"
+      ],
+      "title": "AttioListRecordEntriesConfig",
+      "type": "object"
+    },
+    "AttioListRecordsConfig": {
+      "description": "List/query records of an object with filtering, sorting, and pagination.",
+      "properties": {
+        "operation": {
+          "const": "list_records",
+          "default": "list_records",
+          "title": "List Records",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Records",
+          "x-display-name": "List Records",
+          "x-is-trigger": false
+        },
+        "object": {
+          "description": "Object slug or ID (e.g. people, companies, deals, or a custom object)",
+          "title": "Object",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an object slug",
+            "field_name": "object",
+            "placeholder": "Select an object...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "attio_object"
+        },
+        "filter_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Attio filter object as JSON, e.g. {\"name\": {\"$contains\": \"Acme\"}}",
+          "title": "Filter (JSON)",
+          "ui:widget": "textarea"
+        },
+        "sorts_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Array of sort objects as JSON, e.g. [{\"attribute\": \"name\", \"direction\": \"asc\"}]",
+          "title": "Sorts (JSON)",
+          "ui:widget": "textarea"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "50",
+          "description": "Max number of records to return (1-1000)",
+          "title": "Limit"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "0",
+          "description": "Number of records to skip for pagination",
+          "title": "Offset"
+        }
+      },
+      "required": [
+        "object"
+      ],
+      "title": "AttioListRecordsConfig",
+      "type": "object"
+    },
+    "AttioListSelectOptionsConfig": {
+      "description": "List the select options of a select attribute.",
+      "properties": {
+        "operation": {
+          "const": "list_select_options",
+          "default": "list_select_options",
+          "title": "List Select Options",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Attributes",
+          "x-display-name": "List Select Options",
+          "x-is-trigger": false
+        },
+        "target": {
+          "default": "objects",
+          "description": "Whether the identifier refers to an object or a list",
+          "enum": [
+            "objects",
+            "lists"
+          ],
+          "enumNames": [
+            "Object",
+            "List"
+          ],
+          "title": "Target",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "identifier": {
+          "description": "Object/list slug or ID",
+          "title": "Identifier",
+          "type": "string",
+          "ui:placeholder": "e.g. companies"
+        },
+        "attribute": {
+          "description": "Select attribute slug or ID",
+          "title": "Attribute",
+          "type": "string"
+        }
+      },
+      "required": [
+        "identifier",
+        "attribute"
+      ],
+      "title": "AttioListSelectOptionsConfig",
+      "type": "object"
+    },
+    "AttioListStatusesConfig": {
+      "description": "List the statuses of a status attribute.",
+      "properties": {
+        "operation": {
+          "const": "list_statuses",
+          "default": "list_statuses",
+          "title": "List Statuses",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Attributes",
+          "x-display-name": "List Statuses",
+          "x-is-trigger": false
+        },
+        "target": {
+          "default": "objects",
+          "description": "Whether the identifier refers to an object or a list",
+          "enum": [
+            "objects",
+            "lists"
+          ],
+          "enumNames": [
+            "Object",
+            "List"
+          ],
+          "title": "Target",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "identifier": {
+          "description": "Object/list slug or ID",
+          "title": "Identifier",
+          "type": "string",
+          "ui:placeholder": "e.g. companies"
+        },
+        "attribute": {
+          "description": "Status attribute slug or ID",
+          "title": "Attribute",
+          "type": "string"
+        }
+      },
+      "required": [
+        "identifier",
+        "attribute"
+      ],
+      "title": "AttioListStatusesConfig",
+      "type": "object"
+    },
+    "AttioListTasksConfig": {
+      "description": "List tasks in the workspace.",
+      "properties": {
+        "operation": {
+          "const": "list_tasks",
+          "default": "list_tasks",
+          "title": "List Tasks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "List Tasks",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "50",
+          "description": "Max number of tasks to return",
+          "title": "Limit"
+        }
+      },
+      "title": "AttioListTasksConfig",
+      "type": "object"
+    },
+    "AttioListThreadsConfig": {
+      "description": "List comment threads on a record.",
+      "properties": {
+        "operation": {
+          "const": "list_threads",
+          "default": "list_threads",
+          "title": "List Threads on Record",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comments",
+          "x-display-name": "List Threads on Record",
+          "x-is-trigger": false
+        },
+        "record_object": {
+          "description": "Object slug/ID whose threads to list",
+          "title": "Record Object",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an object slug",
+            "field_name": "object",
+            "placeholder": "Select an object...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "attio_object"
+        },
+        "record_id": {
+          "description": "record_id (UUID) whose threads to list",
+          "title": "Record ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 6003a6aa-7122-45f1-b840-efe9231dfd06"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "50",
+          "title": "Limit",
+          "ui:placeholder": "e.g. 50"
+        }
+      },
+      "required": [
+        "record_object",
+        "record_id"
+      ],
+      "title": "AttioListThreadsConfig",
+      "type": "object"
+    },
+    "AttioListWorkspaceMembersConfig": {
+      "description": "List workspace members (for assignment / actor lookup).",
+      "properties": {
+        "operation": {
+          "const": "list_workspace_members",
+          "default": "list_workspace_members",
+          "title": "List Workspace Members",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspace",
+          "x-display-name": "List Workspace Members",
+          "x-is-trigger": false
+        }
+      },
+      "title": "AttioListWorkspaceMembersConfig",
+      "type": "object"
+    },
+    "AttioOAuthCredential": {
+      "description": "OAuth 2.0 credential for Attio.\n\nTokens are obtained via the OAuth flow, not entered manually. Attio tokens are\nlong-lived (non-expiring in the classic authorization-code flow).\n\nRegister an OAuth app at: https://app.attio.com/_workos/settings/developers",
+      "properties": {
+        "credential_type": {
+          "const": "attio_oauth",
+          "default": "attio_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refresh Token"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Expiry"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Workspace Name"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "AttioOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-oauth-provider": "attio",
+      "x-oauth-scopes": [
+        "user_management:read",
+        "record_permission:read-write",
+        "object_configuration:read-write",
+        "list_entry:read-write",
+        "list_configuration:read-write",
+        "comment:read-write",
+        "note:read-write",
+        "task:read-write",
+        "meeting:read",
+        "call_recording:read",
+        "webhook:read-write",
+        "file:read"
+      ]
+    },
+    "AttioOnCommentEventConfig": {
+      "description": "Fire when a comment is created, deleted, resolved, or unresolved.",
+      "properties": {
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Attio posts events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_comment_event",
+          "default": "on_comment_event",
+          "title": "On Comment Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Comment Event",
+          "x-is-trigger": true
+        },
+        "event_types": {
+          "default": "*",
+          "description": "Which comment event fires this workflow. Choose 'All events in this category' to fire on every one, or narrow to specific events. Supported: comment.created, comment.deleted, comment.resolved, comment.unresolved. Accepts a comma-separated list.",
+          "enum": [
+            "*",
+            "comment.created",
+            "comment.deleted",
+            "comment.resolved",
+            "comment.unresolved"
+          ],
+          "enumNames": [
+            "All events in this category",
+            "Comment created",
+            "Comment deleted",
+            "Comment resolved",
+            "Comment unresolved"
+          ],
+          "title": "Event Type",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "title": "AttioOnCommentEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "AttioOnListEntryEventConfig": {
+      "description": "Fire when a list entry is created, updated, or deleted.",
+      "properties": {
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Attio posts events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_list_entry_event",
+          "default": "on_list_entry_event",
+          "title": "On List Entry Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On List Entry Event",
+          "x-is-trigger": true
+        },
+        "event_types": {
+          "default": "*",
+          "description": "Which list-entry event fires this workflow. Choose 'All events in this category' to fire on every one, or narrow to specific events. Supported: list-entry.created, list-entry.updated, list-entry.deleted. Accepts a comma-separated list.",
+          "enum": [
+            "*",
+            "list-entry.created",
+            "list-entry.updated",
+            "list-entry.deleted"
+          ],
+          "enumNames": [
+            "All events in this category",
+            "List entry created",
+            "List entry updated",
+            "List entry deleted"
+          ],
+          "title": "Event Type",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "title": "AttioOnListEntryEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "AttioOnNoteEventConfig": {
+      "description": "Fire when a note is created, updated, deleted, or its content changes.",
+      "properties": {
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Attio posts events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_note_event",
+          "default": "on_note_event",
+          "title": "On Note Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Note Event",
+          "x-is-trigger": true
+        },
+        "event_types": {
+          "default": "*",
+          "description": "Which note event fires this workflow. Choose 'All events in this category' to fire on every one, or narrow to specific events. Supported: note.created, note.updated, note.deleted, note-content.updated. Accepts a comma-separated list.",
+          "enum": [
+            "*",
+            "note.created",
+            "note.updated",
+            "note.deleted",
+            "note-content.updated"
+          ],
+          "enumNames": [
+            "All events in this category",
+            "Note created",
+            "Note updated",
+            "Note deleted",
+            "Note content updated"
+          ],
+          "title": "Event Type",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "title": "AttioOnNoteEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "AttioOnRecordEventConfig": {
+      "description": "Fire when a record is created, updated, deleted, or merged.",
+      "properties": {
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Attio posts events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_record_event",
+          "default": "on_record_event",
+          "title": "On Record Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Record Event",
+          "x-is-trigger": true
+        },
+        "event_types": {
+          "default": "*",
+          "description": "Which record event fires this workflow. Choose 'All events in this category' to fire on every one, or narrow to specific events. Supported: record.created, record.updated, record.deleted, record.merged. Accepts a comma-separated list.",
+          "enum": [
+            "*",
+            "record.created",
+            "record.updated",
+            "record.deleted",
+            "record.merged"
+          ],
+          "enumNames": [
+            "All events in this category",
+            "Record created",
+            "Record updated",
+            "Record deleted",
+            "Record merged"
+          ],
+          "title": "Event Type",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "title": "AttioOnRecordEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "AttioOnTaskEventConfig": {
+      "description": "Fire when a task is created, updated, or deleted.",
+      "properties": {
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Attio posts events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_task_event",
+          "default": "on_task_event",
+          "title": "On Task Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Task Event",
+          "x-is-trigger": true
+        },
+        "event_types": {
+          "default": "*",
+          "description": "Which task event fires this workflow. Choose 'All events in this category' to fire on every one, or narrow to specific events. Supported: task.created, task.updated, task.deleted. Accepts a comma-separated list.",
+          "enum": [
+            "*",
+            "task.created",
+            "task.updated",
+            "task.deleted"
+          ],
+          "enumNames": [
+            "All events in this category",
+            "Task created",
+            "Task updated",
+            "Task deleted"
+          ],
+          "title": "Event Type",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "title": "AttioOnTaskEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "AttioOverwriteListEntryConfig": {
+      "description": "Overwrite a list entry (PUT replaces multiselect values).",
+      "properties": {
+        "operation": {
+          "const": "overwrite_list_entry",
+          "default": "overwrite_list_entry",
+          "title": "Overwrite List Entry",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "List Entries",
+          "x-display-name": "Overwrite List Entry",
+          "x-is-trigger": false
+        },
+        "list": {
+          "description": "List slug or ID",
+          "title": "List",
+          "type": "string"
+        },
+        "entry_id": {
+          "description": "The entry_id (UUID)",
+          "title": "Entry ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 861c1071-54ba-4d3d-b642-f72f7bcc8c7e"
+        },
+        "entry_values_json": {
+          "description": "Map of attribute slug -> value. PUT overwrites multiselect values.",
+          "title": "Entry Values (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "list",
+        "entry_id",
+        "entry_values_json"
+      ],
+      "title": "AttioOverwriteListEntryConfig",
+      "type": "object"
+    },
+    "AttioOverwriteRecordConfig": {
+      "description": "Overwrite a record (PUT replaces multiselect attribute values).",
+      "properties": {
+        "operation": {
+          "const": "overwrite_record",
+          "default": "overwrite_record",
+          "title": "Overwrite Record",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Records",
+          "x-display-name": "Overwrite Record",
+          "x-is-trigger": false
+        },
+        "object": {
+          "description": "Object slug or ID",
+          "title": "Object",
+          "type": "string"
+        },
+        "record_id": {
+          "description": "record_id (UUID) to overwrite",
+          "title": "Record ID",
+          "type": "string"
+        },
+        "values_json": {
+          "description": "Map of attribute slug -> value. PUT overwrites multiselect values.",
+          "title": "Attribute Values (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "object",
+        "record_id",
+        "values_json"
+      ],
+      "title": "AttioOverwriteRecordConfig",
+      "type": "object"
+    },
+    "AttioReplyToThreadConfig": {
+      "description": "Reply to an existing comment thread.",
+      "properties": {
+        "operation": {
+          "const": "reply_to_thread",
+          "default": "reply_to_thread",
+          "title": "Reply to Thread",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comments",
+          "x-display-name": "Reply to Thread",
+          "x-is-trigger": false
+        },
+        "content": {
+          "description": "Comment body (plaintext)",
+          "title": "Content",
+          "type": "string",
+          "ui:placeholder": "Write your comment...",
+          "ui:widget": "textarea"
+        },
+        "thread_id": {
+          "description": "The thread_id (UUID) to reply to",
+          "title": "Thread ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 016e88d9-de10-4e1c-9aef-36b07cb4260d"
+        },
+        "author_workspace_member_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Workspace member the comment is authored by. Defaults to the token owner.",
+          "title": "Author (Workspace Member ID)",
+          "ui:placeholder": "Defaults to the token owner"
+        }
+      },
+      "required": [
+        "content",
+        "thread_id"
+      ],
+      "title": "AttioReplyToThreadConfig",
+      "type": "object"
+    },
+    "AttioSearchRecordsConfig": {
+      "description": "Search records of an object by matching text against an attribute.\n\nAttio has no global full-text endpoint; search is a filtered query against a\nsingle object's records/query endpoint using a ``$contains`` match.",
+      "properties": {
+        "operation": {
+          "const": "search_records",
+          "default": "search_records",
+          "title": "Search Records",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Records",
+          "x-display-name": "Search Records",
+          "x-is-trigger": false,
+          "x-keywords": "find lookup full text search records by name"
+        },
+        "object": {
+          "description": "Object slug or ID to search within (e.g. people, companies)",
+          "title": "Object",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an object slug",
+            "field_name": "object",
+            "placeholder": "Select an object...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "attio_object"
+        },
+        "query": {
+          "description": "Text to match against the search attribute",
+          "title": "Query",
+          "type": "string"
+        },
+        "attribute": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "name",
+          "description": "Attribute slug to match the query against (default: name)",
+          "title": "Search Attribute"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max number of results to return",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "object",
+        "query"
+      ],
+      "title": "AttioSearchRecordsConfig",
+      "type": "object"
+    },
+    "AttioUpdateAttributeConfig": {
+      "description": "Update an attribute (title, slug, required/unique, archive, config).",
+      "properties": {
+        "operation": {
+          "const": "update_attribute",
+          "default": "update_attribute",
+          "title": "Update Attribute",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Attributes",
+          "x-display-name": "Update Attribute",
+          "x-is-trigger": false
+        },
+        "target": {
+          "default": "objects",
+          "description": "Whether the identifier refers to an object or a list",
+          "enum": [
+            "objects",
+            "lists"
+          ],
+          "enumNames": [
+            "Object",
+            "List"
+          ],
+          "title": "Target",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "identifier": {
+          "description": "Object/list slug or ID",
+          "title": "Identifier",
+          "type": "string"
+        },
+        "attribute": {
+          "description": "Attribute slug or ID",
+          "title": "Attribute",
+          "type": "string"
+        },
+        "values_json": {
+          "description": "Fields to update, e.g. {\"title\": \"New name\", \"is_required\": true, \"is_archived\": false}",
+          "title": "Fields (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "identifier",
+        "attribute",
+        "values_json"
+      ],
+      "title": "AttioUpdateAttributeConfig",
+      "type": "object"
+    },
+    "AttioUpdateListConfig": {
+      "description": "Update a list's name, slug, or access.",
+      "properties": {
+        "operation": {
+          "const": "update_list",
+          "default": "update_list",
+          "title": "Update List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lists",
+          "x-display-name": "Update List",
+          "x-is-trigger": false
+        },
+        "list": {
+          "description": "List slug or ID",
+          "title": "List",
+          "type": "string",
+          "ui:placeholder": "e.g. sales_pipeline"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name",
+          "ui:placeholder": "e.g. Sales Pipeline"
+        },
+        "api_slug": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "API Slug",
+          "ui:placeholder": "e.g. projects"
+        },
+        "workspace_access": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "",
+            "full-access",
+            "read-and-write",
+            "read-only"
+          ],
+          "enumNames": [
+            "No change",
+            "Full access",
+            "Read & write",
+            "Read only"
+          ],
+          "title": "Workspace Access",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "list"
+      ],
+      "title": "AttioUpdateListConfig",
+      "type": "object"
+    },
+    "AttioUpdateListEntryConfig": {
+      "description": "Update a list entry's attribute values.",
+      "properties": {
+        "operation": {
+          "const": "update_list_entry",
+          "default": "update_list_entry",
+          "title": "Update List Entry",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "List Entries",
+          "x-display-name": "Update List Entry",
+          "x-is-trigger": false
+        },
+        "list": {
+          "description": "List slug or ID",
+          "title": "List",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a list slug",
+            "field_name": "list",
+            "placeholder": "Select a list...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "attio_list"
+        },
+        "entry_id": {
+          "description": "The entry_id (UUID) to update",
+          "title": "Entry ID",
+          "type": "string"
+        },
+        "entry_values_json": {
+          "description": "Map of attribute slug -> value as JSON",
+          "title": "Entry Values (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "list",
+        "entry_id",
+        "entry_values_json"
+      ],
+      "title": "AttioUpdateListEntryConfig",
+      "type": "object"
+    },
+    "AttioUpdateObjectConfig": {
+      "description": "Update a custom object's slug or nouns.",
+      "properties": {
+        "operation": {
+          "const": "update_object",
+          "default": "update_object",
+          "title": "Update Object",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Objects",
+          "x-display-name": "Update Object",
+          "x-is-trigger": false
+        },
+        "object": {
+          "description": "Object slug or ID",
+          "title": "Object",
+          "type": "string"
+        },
+        "api_slug": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "API Slug",
+          "ui:placeholder": "e.g. projects"
+        },
+        "singular_noun": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Singular Noun",
+          "ui:placeholder": "e.g. Project"
+        },
+        "plural_noun": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Plural Noun",
+          "ui:placeholder": "e.g. Projects"
+        }
+      },
+      "required": [
+        "object"
+      ],
+      "title": "AttioUpdateObjectConfig",
+      "type": "object"
+    },
+    "AttioUpdateRecordConfig": {
+      "description": "Update a record (PATCH appends to multiselect attributes).",
+      "properties": {
+        "operation": {
+          "const": "update_record",
+          "default": "update_record",
+          "title": "Update Record",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Records",
+          "x-display-name": "Update Record",
+          "x-is-trigger": false
+        },
+        "object": {
+          "description": "Object slug or ID",
+          "title": "Object",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an object slug",
+            "field_name": "object",
+            "placeholder": "Select an object...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "attio_object"
+        },
+        "record_id": {
+          "description": "The record_id (UUID) to update",
+          "title": "Record ID",
+          "type": "string"
+        },
+        "values_json": {
+          "description": "Map of attribute slug -> value as JSON. PATCH appends to multiselect attributes.",
+          "title": "Attribute Values (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "object",
+        "record_id",
+        "values_json"
+      ],
+      "title": "AttioUpdateRecordConfig",
+      "type": "object"
+    },
+    "AttioUpdateSelectOptionConfig": {
+      "description": "Rename or archive a select option.",
+      "properties": {
+        "operation": {
+          "const": "update_select_option",
+          "default": "update_select_option",
+          "title": "Update Select Option",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Attributes",
+          "x-display-name": "Update Select Option",
+          "x-is-trigger": false
+        },
+        "target": {
+          "default": "objects",
+          "description": "Whether the identifier refers to an object or a list",
+          "enum": [
+            "objects",
+            "lists"
+          ],
+          "enumNames": [
+            "Object",
+            "List"
+          ],
+          "title": "Target",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "identifier": {
+          "description": "Object/list slug or ID",
+          "title": "Identifier",
+          "type": "string",
+          "ui:placeholder": "e.g. companies"
+        },
+        "attribute": {
+          "description": "Attribute slug or ID",
+          "title": "Attribute",
+          "type": "string",
+          "ui:placeholder": "e.g. status"
+        },
+        "option": {
+          "description": "Option ID to update",
+          "title": "Option ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 016e88d9-de10-4e1c-9aef-36b07cb4260d"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "New Title",
+          "ui:placeholder": "Leave blank to keep current"
+        },
+        "is_archived": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "",
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "No change",
+            "Yes",
+            "No"
+          ],
+          "title": "Archived",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "identifier",
+        "attribute",
+        "option"
+      ],
+      "title": "AttioUpdateSelectOptionConfig",
+      "type": "object"
+    },
+    "AttioUpdateStatusConfig": {
+      "description": "Rename, archive, or retime a status.",
+      "properties": {
+        "operation": {
+          "const": "update_status",
+          "default": "update_status",
+          "title": "Update Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Attributes",
+          "x-display-name": "Update Status",
+          "x-is-trigger": false
+        },
+        "target": {
+          "default": "objects",
+          "description": "Whether the identifier refers to an object or a list",
+          "enum": [
+            "objects",
+            "lists"
+          ],
+          "enumNames": [
+            "Object",
+            "List"
+          ],
+          "title": "Target",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "identifier": {
+          "description": "Object/list slug or ID",
+          "title": "Identifier",
+          "type": "string",
+          "ui:placeholder": "e.g. companies"
+        },
+        "attribute": {
+          "description": "Attribute slug or ID",
+          "title": "Attribute",
+          "type": "string",
+          "ui:placeholder": "e.g. status"
+        },
+        "status": {
+          "description": "Status ID to update",
+          "title": "Status ID",
+          "type": "string"
+        },
+        "values_json": {
+          "description": "Fields to update, e.g. {\"title\": \"Won\", \"is_archived\": false}",
+          "title": "Fields (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "identifier",
+        "attribute",
+        "status",
+        "values_json"
+      ],
+      "title": "AttioUpdateStatusConfig",
+      "type": "object"
+    },
+    "AttioUpdateTaskConfig": {
+      "description": "Update a task (e.g. mark complete, change deadline).",
+      "properties": {
+        "operation": {
+          "const": "update_task",
+          "default": "update_task",
+          "title": "Update Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Update Task",
+          "x-is-trigger": false
+        },
+        "task_id": {
+          "description": "The task_id (UUID) to update",
+          "title": "Task ID",
+          "type": "string"
+        },
+        "is_completed": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Mark the task complete or incomplete",
+          "enum": [
+            "",
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "No change",
+            "Yes",
+            "No"
+          ],
+          "title": "Completed",
+          "x-enum-searchable": true
+        },
+        "deadline_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New deadline as ISO 8601 datetime",
+          "title": "Deadline"
+        },
+        "assignees_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Array of assignee refs as JSON",
+          "title": "Assignees (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "AttioUpdateTaskConfig",
+      "type": "object"
+    },
+    "AttioUpsertRecordConfig": {
+      "description": "Create-or-update a record by a matching attribute (dedupe).",
+      "properties": {
+        "operation": {
+          "const": "upsert_record",
+          "default": "upsert_record",
+          "title": "Upsert Record",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Records",
+          "x-display-name": "Upsert Record",
+          "x-is-trigger": false
+        },
+        "object": {
+          "description": "Object slug or ID",
+          "title": "Object",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an object slug",
+            "field_name": "object",
+            "placeholder": "Select an object...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "attio_object"
+        },
+        "matching_attribute": {
+          "description": "Slug of a unique attribute used to match an existing record (e.g. email_addresses, domains)",
+          "title": "Matching Attribute",
+          "type": "string"
+        },
+        "values_json": {
+          "description": "Map of attribute slug -> value as JSON.",
+          "title": "Attribute Values (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "object",
+        "matching_attribute",
+        "values_json"
+      ],
+      "title": "AttioUpsertRecordConfig",
+      "type": "object"
+    },
+    "AttioWebhookTriggerConfig": {
+      "description": "Catch-all: fire on ANY Attio webhook event (including schema/admin events\nlike list, attribute, call-recording, and workspace-member changes).",
+      "properties": {
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Attio posts events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_attio_event",
+          "default": "on_attio_event",
+          "title": "On Attio Event (Any)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Attio Event (Any)",
+          "x-is-trigger": true
+        },
+        "event_types": {
+          "default": "*",
+          "description": "Which Attio webhook event fires this workflow. Choose 'All events' to fire on every event, or pick specific ones. Covers all 27 event types across records, list entries, notes, tasks, comments, lists, attributes, call recordings, and workspace members. Accepts a comma-separated list.",
+          "enum": [
+            "*",
+            "record.created",
+            "record.updated",
+            "record.deleted",
+            "record.merged",
+            "list-entry.created",
+            "list-entry.updated",
+            "list-entry.deleted",
+            "note.created",
+            "note.updated",
+            "note.deleted",
+            "note-content.updated",
+            "task.created",
+            "task.updated",
+            "task.deleted",
+            "comment.created",
+            "comment.deleted",
+            "comment.resolved",
+            "comment.unresolved",
+            "list.created",
+            "list.updated",
+            "list.deleted",
+            "object-attribute.created",
+            "object-attribute.updated",
+            "list-attribute.created",
+            "list-attribute.updated",
+            "call-recording.created",
+            "workspace-member.created"
+          ],
+          "enumNames": [
+            "All events",
+            "Record created",
+            "Record updated",
+            "Record deleted",
+            "Record merged",
+            "List entry created",
+            "List entry updated",
+            "List entry deleted",
+            "Note created",
+            "Note updated",
+            "Note deleted",
+            "Note content updated",
+            "Task created",
+            "Task updated",
+            "Task deleted",
+            "Comment created",
+            "Comment deleted",
+            "Comment resolved",
+            "Comment unresolved",
+            "List created",
+            "List updated",
+            "List deleted",
+            "Object attribute created",
+            "Object attribute updated",
+            "List attribute created",
+            "List attribute updated",
+            "Call recording created",
+            "Workspace member created"
+          ],
+          "title": "Event Type",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "title": "AttioWebhookTriggerConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    }
+  },
+  "description": "Full configuration for the Attio node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "assert_list_entry": "#/$defs/AttioAssertListEntryConfig",
+          "create_attribute": "#/$defs/AttioCreateAttributeConfig",
+          "create_comment": "#/$defs/AttioCreateCommentConfig",
+          "create_entry_comment": "#/$defs/AttioCreateEntryCommentConfig",
+          "create_list": "#/$defs/AttioCreateListConfig",
+          "create_list_entry": "#/$defs/AttioCreateListEntryConfig",
+          "create_note": "#/$defs/AttioCreateNoteConfig",
+          "create_object": "#/$defs/AttioCreateObjectConfig",
+          "create_record": "#/$defs/AttioCreateRecordConfig",
+          "create_select_option": "#/$defs/AttioCreateSelectOptionConfig",
+          "create_status": "#/$defs/AttioCreateStatusConfig",
+          "create_task": "#/$defs/AttioCreateTaskConfig",
+          "delete_comment": "#/$defs/AttioDeleteCommentConfig",
+          "delete_list_entry": "#/$defs/AttioDeleteListEntryConfig",
+          "delete_note": "#/$defs/AttioDeleteNoteConfig",
+          "delete_record": "#/$defs/AttioDeleteRecordConfig",
+          "delete_task": "#/$defs/AttioDeleteTaskConfig",
+          "get_attribute": "#/$defs/AttioGetAttributeConfig",
+          "get_comment": "#/$defs/AttioGetCommentConfig",
+          "get_file": "#/$defs/AttioGetFileConfig",
+          "get_list": "#/$defs/AttioGetListConfig",
+          "get_list_entry": "#/$defs/AttioGetListEntryConfig",
+          "get_meeting": "#/$defs/AttioGetMeetingConfig",
+          "get_note": "#/$defs/AttioGetNoteConfig",
+          "get_object": "#/$defs/AttioGetObjectConfig",
+          "get_record": "#/$defs/AttioGetRecordConfig",
+          "get_task": "#/$defs/AttioGetTaskConfig",
+          "get_thread": "#/$defs/AttioGetThreadConfig",
+          "get_workspace_member": "#/$defs/AttioGetWorkspaceMemberConfig",
+          "identify_self": "#/$defs/AttioIdentifySelfConfig",
+          "list_attributes": "#/$defs/AttioListAttributesConfig",
+          "list_entries": "#/$defs/AttioListEntriesConfig",
+          "list_entry_threads": "#/$defs/AttioListEntryThreadsConfig",
+          "list_files": "#/$defs/AttioListFilesConfig",
+          "list_list_entry_attribute_values": "#/$defs/AttioListEntryAttributeValuesConfig",
+          "list_lists": "#/$defs/AttioListListsConfig",
+          "list_meetings": "#/$defs/AttioListMeetingsConfig",
+          "list_notes": "#/$defs/AttioListNotesConfig",
+          "list_objects": "#/$defs/AttioListObjectsConfig",
+          "list_record_attribute_values": "#/$defs/AttioListRecordAttributeValuesConfig",
+          "list_record_entries": "#/$defs/AttioListRecordEntriesConfig",
+          "list_records": "#/$defs/AttioListRecordsConfig",
+          "list_select_options": "#/$defs/AttioListSelectOptionsConfig",
+          "list_statuses": "#/$defs/AttioListStatusesConfig",
+          "list_tasks": "#/$defs/AttioListTasksConfig",
+          "list_threads": "#/$defs/AttioListThreadsConfig",
+          "list_workspace_members": "#/$defs/AttioListWorkspaceMembersConfig",
+          "on_attio_event": "#/$defs/AttioWebhookTriggerConfig",
+          "on_comment_event": "#/$defs/AttioOnCommentEventConfig",
+          "on_list_entry_event": "#/$defs/AttioOnListEntryEventConfig",
+          "on_note_event": "#/$defs/AttioOnNoteEventConfig",
+          "on_record_event": "#/$defs/AttioOnRecordEventConfig",
+          "on_task_event": "#/$defs/AttioOnTaskEventConfig",
+          "overwrite_list_entry": "#/$defs/AttioOverwriteListEntryConfig",
+          "overwrite_record": "#/$defs/AttioOverwriteRecordConfig",
+          "reply_to_thread": "#/$defs/AttioReplyToThreadConfig",
+          "search_records": "#/$defs/AttioSearchRecordsConfig",
+          "update_attribute": "#/$defs/AttioUpdateAttributeConfig",
+          "update_list": "#/$defs/AttioUpdateListConfig",
+          "update_list_entry": "#/$defs/AttioUpdateListEntryConfig",
+          "update_object": "#/$defs/AttioUpdateObjectConfig",
+          "update_record": "#/$defs/AttioUpdateRecordConfig",
+          "update_select_option": "#/$defs/AttioUpdateSelectOptionConfig",
+          "update_status": "#/$defs/AttioUpdateStatusConfig",
+          "update_task": "#/$defs/AttioUpdateTaskConfig",
+          "upsert_record": "#/$defs/AttioUpsertRecordConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/AttioListRecordsConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioGetRecordConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioCreateRecordConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioUpdateRecordConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioUpsertRecordConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioDeleteRecordConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioSearchRecordsConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioListObjectsConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioListAttributesConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioListListsConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioListEntriesConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioCreateListEntryConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioUpdateListEntryConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioDeleteListEntryConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioListNotesConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioCreateNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioDeleteNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioListTasksConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioCreateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioUpdateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioDeleteTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioCreateCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioCreateEntryCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioReplyToThreadConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioGetCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioDeleteCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioListThreadsConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioListEntryThreadsConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioGetThreadConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioListWorkspaceMembersConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioGetWorkspaceMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioIdentifySelfConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioGetObjectConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioCreateObjectConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioUpdateObjectConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioGetAttributeConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioCreateAttributeConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioUpdateAttributeConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioListSelectOptionsConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioCreateSelectOptionConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioUpdateSelectOptionConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioListStatusesConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioCreateStatusConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioUpdateStatusConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioOverwriteRecordConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioListRecordEntriesConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioListRecordAttributeValuesConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioGetListConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioCreateListConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioUpdateListConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioGetListEntryConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioAssertListEntryConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioOverwriteListEntryConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioListEntryAttributeValuesConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioGetNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioGetTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioListFilesConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioGetFileConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioListMeetingsConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioGetMeetingConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioOnRecordEventConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioOnListEntryEventConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioOnNoteEventConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioOnTaskEventConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioOnCommentEventConfig"
+        },
+        {
+          "$ref": "#/$defs/AttioWebhookTriggerConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AttioOAuthCredential"
+        },
+        {
+          "$ref": "#/$defs/AttioAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Attio Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "List all companies in Attio",
+    "Create a person record when a form is submitted",
+    "Upsert a company by domain to dedupe",
+    "Add a note to a deal when it closes",
+    "Create a follow-up task assigned to a teammate",
+    "Trigger a workflow whenever a new record is created in Attio"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

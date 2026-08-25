@@ -1,0 +1,4610 @@
+{
+  "$defs": {
+    "GCSAdvanceRelocateBucketConfig": {
+      "description": "Advance a relocation operation to final synchronization.",
+      "properties": {
+        "operation": {
+          "const": "advance_relocate_bucket",
+          "default": "advance_relocate_bucket",
+          "title": "Advance Relocate Bucket",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Operations",
+          "x-display-name": "Advance Relocate Bucket",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Bucket associated with the relocation",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "operation_id": {
+          "description": "Relocation operation ID",
+          "title": "Operation ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket",
+        "operation_id"
+      ],
+      "title": "GCSAdvanceRelocateBucketConfig",
+      "type": "object"
+    },
+    "GCSBulkRestoreObjectsConfig": {
+      "description": "Start a long-running bulk restore for soft-deleted objects in a bucket.",
+      "properties": {
+        "operation": {
+          "const": "bulk_restore_objects",
+          "default": "bulk_restore_objects",
+          "title": "Bulk Restore Objects",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Objects",
+          "x-display-name": "Bulk Restore Objects",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "allow_overwrite": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Allow restored objects to overwrite live objects with the same name",
+          "title": "Allow Overwrite"
+        },
+        "copy_source_acl": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Copy source ACLs to restored objects when uniform access is disabled",
+          "title": "Copy Source ACL"
+        },
+        "deleted_after_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only restore objects soft-deleted after this RFC3339 timestamp",
+          "title": "Deleted After Time"
+        },
+        "deleted_before_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only restore objects soft-deleted before this RFC3339 timestamp",
+          "title": "Deleted Before Time"
+        },
+        "match_glob": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional glob pattern for object names to restore",
+          "title": "Match Glob"
+        }
+      },
+      "required": [
+        "bucket"
+      ],
+      "title": "GCSBulkRestoreObjectsConfig",
+      "type": "object"
+    },
+    "GCSCancelOperationConfig": {
+      "description": "Cancel a long-running bucket operation.",
+      "properties": {
+        "operation": {
+          "const": "cancel_operation",
+          "default": "cancel_operation",
+          "title": "Cancel Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Operations",
+          "x-display-name": "Cancel Operation",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Bucket associated with the operation",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "operation_id": {
+          "description": "Long-running operation ID",
+          "title": "Operation ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket",
+        "operation_id"
+      ],
+      "title": "GCSCancelOperationConfig",
+      "type": "object"
+    },
+    "GCSComposeObjectsConfig": {
+      "description": "Concatenate up to 32 source objects into one destination object.",
+      "properties": {
+        "operation": {
+          "const": "compose_objects",
+          "default": "compose_objects",
+          "title": "Compose Objects",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Objects",
+          "x-display-name": "Compose Objects",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "destination_object": {
+          "description": "Name of the composed result object",
+          "title": "Destination Object",
+          "type": "string"
+        },
+        "source_objects": {
+          "description": "Names of source objects to concatenate, comma-separated (max 32)",
+          "title": "Source Objects",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket",
+        "destination_object",
+        "source_objects"
+      ],
+      "title": "GCSComposeObjectsConfig",
+      "type": "object"
+    },
+    "GCSCopyObjectConfig": {
+      "description": "Copy an object to a new destination.",
+      "properties": {
+        "operation": {
+          "const": "copy_object",
+          "default": "copy_object",
+          "title": "Copy Object",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Objects",
+          "x-display-name": "Copy Object",
+          "x-is-trigger": false
+        },
+        "source_bucket": {
+          "description": "Bucket of the source object",
+          "title": "Source Bucket",
+          "type": "string"
+        },
+        "source_object": {
+          "description": "Name of the source object",
+          "title": "Source Object",
+          "type": "string"
+        },
+        "destination_bucket": {
+          "description": "Bucket for the copied object",
+          "title": "Destination Bucket",
+          "type": "string"
+        },
+        "destination_object": {
+          "description": "Name for the copied object",
+          "title": "Destination Object",
+          "type": "string"
+        }
+      },
+      "required": [
+        "source_bucket",
+        "source_object",
+        "destination_bucket",
+        "destination_object"
+      ],
+      "title": "GCSCopyObjectConfig",
+      "type": "object"
+    },
+    "GCSCreateAnywhereCacheConfig": {
+      "description": "Create a Rapid Cache instance.",
+      "properties": {
+        "operation": {
+          "const": "create_anywhere_cache",
+          "default": "create_anywhere_cache",
+          "title": "Create Anywhere Cache",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Anywhere Cache",
+          "x-display-name": "Create Anywhere Cache",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "zone": {
+          "description": "Zone where the cache should run",
+          "title": "Zone",
+          "type": "string"
+        },
+        "ttl": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cache TTL, such as 86400s",
+          "title": "TTL"
+        },
+        "ingest_on_write": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Ingest object data into the cache when written",
+          "title": "Ingest On Write"
+        }
+      },
+      "required": [
+        "bucket",
+        "zone"
+      ],
+      "title": "GCSCreateAnywhereCacheConfig",
+      "type": "object"
+    },
+    "GCSCreateBucketAclConfig": {
+      "description": "Create a bucket ACL entry.",
+      "properties": {
+        "operation": {
+          "const": "create_bucket_acl",
+          "default": "create_bucket_acl",
+          "title": "Create Bucket ACL",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bucket ACLs",
+          "x-display-name": "Create Bucket ACL",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "entity": {
+          "description": "ACL entity to grant access to",
+          "title": "Entity",
+          "type": "string"
+        },
+        "role": {
+          "description": "ACL role, such as READER, WRITER, or OWNER",
+          "title": "Role",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket",
+        "entity",
+        "role"
+      ],
+      "title": "GCSCreateBucketAclConfig",
+      "type": "object"
+    },
+    "GCSCreateBucketConfig": {
+      "description": "Create a new bucket in a project.",
+      "properties": {
+        "operation": {
+          "const": "create_bucket",
+          "default": "create_bucket",
+          "title": "Create Bucket",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Buckets",
+          "x-creates-resource": true,
+          "x-display-name": "Create Bucket",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.name",
+          "x-resource-type": "google_cloud_storage_bucket"
+        },
+        "project_id": {
+          "description": "The GCP project ID to create the bucket in",
+          "title": "Project ID",
+          "type": "string"
+        },
+        "name": {
+          "description": "Globally-unique name for the new bucket",
+          "title": "Bucket Name",
+          "type": "string"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "US",
+          "description": "Bucket location (e.g. US, EU, us-central1)",
+          "title": "Location"
+        },
+        "storage_class": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Default storage class for objects in the bucket",
+          "enum": [
+            "",
+            "STANDARD",
+            "NEARLINE",
+            "COLDLINE",
+            "ARCHIVE"
+          ],
+          "enumNames": [
+            "Default",
+            "Standard",
+            "Nearline",
+            "Coldline",
+            "Archive"
+          ],
+          "title": "Storage Class",
+          "x-enum-searchable": true
+        },
+        "metadata_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Extra bucket resource fields as a JSON object (e.g. labels, lifecycle)",
+          "title": "Additional Metadata (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "project_id",
+        "name"
+      ],
+      "title": "GCSCreateBucketConfig",
+      "type": "object"
+    },
+    "GCSCreateDefaultObjectAclConfig": {
+      "description": "Create a default object ACL entry.",
+      "properties": {
+        "operation": {
+          "const": "create_default_object_acl",
+          "default": "create_default_object_acl",
+          "title": "Create Default Object ACL",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Default Object ACLs",
+          "x-display-name": "Create Default Object ACL",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "entity": {
+          "description": "ACL entity to grant access to",
+          "title": "Entity",
+          "type": "string"
+        },
+        "role": {
+          "description": "ACL role to assign",
+          "title": "Role",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket",
+        "entity",
+        "role"
+      ],
+      "title": "GCSCreateDefaultObjectAclConfig",
+      "type": "object"
+    },
+    "GCSCreateFolderConfig": {
+      "description": "Create a folder in an HNS-enabled bucket.",
+      "properties": {
+        "operation": {
+          "const": "create_folder",
+          "default": "create_folder",
+          "title": "Create Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Folders",
+          "x-creates-resource": true,
+          "x-display-name": "Create Folder",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.name",
+          "x-resource-type": "google_cloud_storage_folder"
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a bucket name",
+            "field_name": "bucket",
+            "placeholder": "Select a bucket...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_cloud_storage_bucket"
+        },
+        "folder_name": {
+          "description": "Folder path to create",
+          "title": "Folder Name",
+          "type": "string"
+        },
+        "recursive": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Create missing parent folders automatically",
+          "title": "Create Parents"
+        }
+      },
+      "required": [
+        "bucket",
+        "folder_name"
+      ],
+      "title": "GCSCreateFolderConfig",
+      "type": "object"
+    },
+    "GCSCreateHmacKeyConfig": {
+      "description": "Create an HMAC key for a service account.",
+      "properties": {
+        "operation": {
+          "const": "create_hmac_key",
+          "default": "create_hmac_key",
+          "title": "Create HMAC Key",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Create HMAC Key",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "The GCP project ID",
+          "title": "Project ID",
+          "type": "string"
+        },
+        "service_account_email": {
+          "description": "Email of the service account the HMAC key belongs to",
+          "title": "Service Account Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "service_account_email"
+      ],
+      "title": "GCSCreateHmacKeyConfig",
+      "type": "object"
+    },
+    "GCSCreateManagedFolderConfig": {
+      "description": "Create a managed folder.",
+      "properties": {
+        "operation": {
+          "const": "create_managed_folder",
+          "default": "create_managed_folder",
+          "title": "Create Managed Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Managed Folders",
+          "x-creates-resource": true,
+          "x-display-name": "Create Managed Folder",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.name",
+          "x-resource-type": "google_cloud_storage_managed_folder"
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a bucket name",
+            "field_name": "bucket",
+            "placeholder": "Select a bucket...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_cloud_storage_bucket"
+        },
+        "managed_folder": {
+          "description": "Managed folder path to create",
+          "title": "Managed Folder Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket",
+        "managed_folder"
+      ],
+      "title": "GCSCreateManagedFolderConfig",
+      "type": "object"
+    },
+    "GCSCreateNotificationConfig": {
+      "description": "Create a Pub/Sub notification config for bucket events.",
+      "properties": {
+        "operation": {
+          "const": "create_notification",
+          "default": "create_notification",
+          "title": "Create Notification Config",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Notifications",
+          "x-display-name": "Create Notification Config",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "topic": {
+          "description": "Full Pub/Sub topic (e.g. //pubsub.googleapis.com/projects/PROJECT/topics/TOPIC)",
+          "title": "Pub/Sub Topic",
+          "type": "string"
+        },
+        "payload_format": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "JSON_API_V1",
+          "description": "Notification payload format",
+          "enum": [
+            "JSON_API_V1",
+            "NONE"
+          ],
+          "enumNames": [
+            "JSON API v1",
+            "None"
+          ],
+          "title": "Payload Format",
+          "x-enum-searchable": true
+        },
+        "event_types": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Events to notify on, comma-separated (e.g. OBJECT_FINALIZE,OBJECT_DELETE). Empty = all",
+          "title": "Event Types"
+        }
+      },
+      "required": [
+        "bucket",
+        "topic"
+      ],
+      "title": "GCSCreateNotificationConfig",
+      "type": "object"
+    },
+    "GCSCreateObjectAclEntryConfig": {
+      "description": "Create an object ACL entry.",
+      "properties": {
+        "operation": {
+          "const": "create_object_acl_entry",
+          "default": "create_object_acl_entry",
+          "title": "Create Object ACL Entry",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Object ACLs",
+          "x-display-name": "Create Object ACL Entry",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "object_name": {
+          "description": "Full name of the object",
+          "title": "Object Name",
+          "type": "string"
+        },
+        "entity": {
+          "description": "ACL entity to grant access to",
+          "title": "Entity",
+          "type": "string"
+        },
+        "role": {
+          "description": "ACL role to assign",
+          "title": "Role",
+          "type": "string"
+        },
+        "generation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional object generation to update",
+          "title": "Generation"
+        }
+      },
+      "required": [
+        "bucket",
+        "object_name",
+        "entity",
+        "role"
+      ],
+      "title": "GCSCreateObjectAclEntryConfig",
+      "type": "object"
+    },
+    "GCSDeleteBucketAclConfig": {
+      "description": "Delete a bucket ACL entry.",
+      "properties": {
+        "operation": {
+          "const": "delete_bucket_acl",
+          "default": "delete_bucket_acl",
+          "title": "Delete Bucket ACL",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bucket ACLs",
+          "x-display-name": "Delete Bucket ACL",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "entity": {
+          "description": "ACL entity to remove",
+          "title": "Entity",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket",
+        "entity"
+      ],
+      "title": "GCSDeleteBucketAclConfig",
+      "type": "object"
+    },
+    "GCSDeleteBucketConfig": {
+      "description": "Delete an empty bucket.",
+      "properties": {
+        "operation": {
+          "const": "delete_bucket",
+          "default": "delete_bucket",
+          "title": "Delete Bucket",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Buckets",
+          "x-display-name": "Delete Bucket",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the empty bucket to delete",
+          "title": "Bucket",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket"
+      ],
+      "title": "GCSDeleteBucketConfig",
+      "type": "object"
+    },
+    "GCSDeleteDefaultObjectAclConfig": {
+      "description": "Delete a default object ACL entry.",
+      "properties": {
+        "operation": {
+          "const": "delete_default_object_acl",
+          "default": "delete_default_object_acl",
+          "title": "Delete Default Object ACL",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Default Object ACLs",
+          "x-display-name": "Delete Default Object ACL",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "entity": {
+          "description": "ACL entity to remove",
+          "title": "Entity",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket",
+        "entity"
+      ],
+      "title": "GCSDeleteDefaultObjectAclConfig",
+      "type": "object"
+    },
+    "GCSDeleteFolderConfig": {
+      "description": "Delete an empty folder from an HNS-enabled bucket.",
+      "properties": {
+        "operation": {
+          "const": "delete_folder",
+          "default": "delete_folder",
+          "title": "Delete Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Folders",
+          "x-display-name": "Delete Folder",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a bucket name",
+            "field_name": "bucket",
+            "placeholder": "Select a bucket...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_cloud_storage_bucket"
+        },
+        "folder_name": {
+          "description": "Folder path to delete",
+          "title": "Folder Name",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a folder path",
+            "field_name": "folder_name",
+            "placeholder": "Select a folder...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_cloud_storage_folder"
+        }
+      },
+      "required": [
+        "bucket",
+        "folder_name"
+      ],
+      "title": "GCSDeleteFolderConfig",
+      "type": "object"
+    },
+    "GCSDeleteFolderRecursiveConfig": {
+      "description": "Delete a folder and all descendants from an HNS-enabled bucket.",
+      "properties": {
+        "operation": {
+          "const": "delete_folder_recursive",
+          "default": "delete_folder_recursive",
+          "title": "Delete Folder Recursively",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Folders",
+          "x-display-name": "Delete Folder Recursively",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a bucket name",
+            "field_name": "bucket",
+            "placeholder": "Select a bucket...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_cloud_storage_bucket"
+        },
+        "folder_name": {
+          "description": "Folder path to delete recursively",
+          "title": "Folder Name",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a folder path",
+            "field_name": "folder_name",
+            "placeholder": "Select a folder...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_cloud_storage_folder"
+        },
+        "if_metageneration_match": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only delete if the folder metageneration matches this value",
+          "title": "If Metageneration Match"
+        },
+        "if_metageneration_not_match": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only delete if the folder metageneration does not match this value",
+          "title": "If Metageneration Not Match"
+        }
+      },
+      "required": [
+        "bucket",
+        "folder_name"
+      ],
+      "title": "GCSDeleteFolderRecursiveConfig",
+      "type": "object"
+    },
+    "GCSDeleteHmacKeyConfig": {
+      "description": "Delete an HMAC key.",
+      "properties": {
+        "operation": {
+          "const": "delete_hmac_key",
+          "default": "delete_hmac_key",
+          "title": "Delete HMAC Key",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Delete HMAC Key",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "The GCP project ID",
+          "title": "Project ID",
+          "type": "string"
+        },
+        "access_id": {
+          "description": "Access ID of the HMAC key",
+          "title": "Access ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "access_id"
+      ],
+      "title": "GCSDeleteHmacKeyConfig",
+      "type": "object"
+    },
+    "GCSDeleteManagedFolderConfig": {
+      "description": "Delete a managed folder.",
+      "properties": {
+        "operation": {
+          "const": "delete_managed_folder",
+          "default": "delete_managed_folder",
+          "title": "Delete Managed Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Managed Folders",
+          "x-display-name": "Delete Managed Folder",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a bucket name",
+            "field_name": "bucket",
+            "placeholder": "Select a bucket...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_cloud_storage_bucket"
+        },
+        "managed_folder": {
+          "description": "Managed folder path to delete",
+          "title": "Managed Folder Name",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a managed folder path",
+            "field_name": "managed_folder",
+            "placeholder": "Select a managed folder...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_cloud_storage_managed_folder"
+        },
+        "allow_non_empty": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Allow deleting a non-empty managed folder",
+          "title": "Allow Non-Empty Delete"
+        }
+      },
+      "required": [
+        "bucket",
+        "managed_folder"
+      ],
+      "title": "GCSDeleteManagedFolderConfig",
+      "type": "object"
+    },
+    "GCSDeleteNotificationConfig": {
+      "description": "Delete a notification config.",
+      "properties": {
+        "operation": {
+          "const": "delete_notification",
+          "default": "delete_notification",
+          "title": "Delete Notification Config",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Notifications",
+          "x-display-name": "Delete Notification Config",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "notification_id": {
+          "description": "ID of the notification config to delete",
+          "title": "Notification ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket",
+        "notification_id"
+      ],
+      "title": "GCSDeleteNotificationConfig",
+      "type": "object"
+    },
+    "GCSDeleteObjectAclEntryConfig": {
+      "description": "Delete an object ACL entry.",
+      "properties": {
+        "operation": {
+          "const": "delete_object_acl_entry",
+          "default": "delete_object_acl_entry",
+          "title": "Delete Object ACL Entry",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Object ACLs",
+          "x-display-name": "Delete Object ACL Entry",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "object_name": {
+          "description": "Full name of the object",
+          "title": "Object Name",
+          "type": "string"
+        },
+        "entity": {
+          "description": "ACL entity to remove",
+          "title": "Entity",
+          "type": "string"
+        },
+        "generation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional object generation to update",
+          "title": "Generation"
+        }
+      },
+      "required": [
+        "bucket",
+        "object_name",
+        "entity"
+      ],
+      "title": "GCSDeleteObjectAclEntryConfig",
+      "type": "object"
+    },
+    "GCSDeleteObjectConfig": {
+      "description": "Delete an object (or a specific generation).",
+      "properties": {
+        "operation": {
+          "const": "delete_object",
+          "default": "delete_object",
+          "title": "Delete Object",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Objects",
+          "x-display-name": "Delete Object",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "object_name": {
+          "description": "Full name of the object to delete",
+          "title": "Object Name",
+          "type": "string"
+        },
+        "generation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specific object generation to delete (optional)",
+          "title": "Generation"
+        }
+      },
+      "required": [
+        "bucket",
+        "object_name"
+      ],
+      "title": "GCSDeleteObjectConfig",
+      "type": "object"
+    },
+    "GCSDisableAnywhereCacheConfig": {
+      "description": "Disable a Rapid Cache instance.",
+      "properties": {
+        "operation": {
+          "const": "disable_anywhere_cache",
+          "default": "disable_anywhere_cache",
+          "title": "Disable Anywhere Cache",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Anywhere Cache",
+          "x-display-name": "Disable Anywhere Cache",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "anywhere_cache_id": {
+          "description": "Cache identifier to disable",
+          "title": "Anywhere Cache ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket",
+        "anywhere_cache_id"
+      ],
+      "title": "GCSDisableAnywhereCacheConfig",
+      "type": "object"
+    },
+    "GCSDownloadObjectConfig": {
+      "description": "Download an object's bytes.",
+      "properties": {
+        "operation": {
+          "const": "download_object",
+          "default": "download_object",
+          "title": "Download Object",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Objects",
+          "x-display-name": "Download Object",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "object_name": {
+          "description": "Full name (path) of the object to download",
+          "title": "Object Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket",
+        "object_name"
+      ],
+      "title": "GCSDownloadObjectConfig",
+      "type": "object"
+    },
+    "GCSGetAnywhereCacheConfig": {
+      "description": "Get a Rapid Cache instance.",
+      "properties": {
+        "operation": {
+          "const": "get_anywhere_cache",
+          "default": "get_anywhere_cache",
+          "title": "Get Anywhere Cache",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Anywhere Cache",
+          "x-display-name": "Get Anywhere Cache",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "anywhere_cache_id": {
+          "description": "Cache identifier, typically a zone ID",
+          "title": "Anywhere Cache ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket",
+        "anywhere_cache_id"
+      ],
+      "title": "GCSGetAnywhereCacheConfig",
+      "type": "object"
+    },
+    "GCSGetBucketAclConfig": {
+      "description": "Get a single bucket ACL entry.",
+      "properties": {
+        "operation": {
+          "const": "get_bucket_acl",
+          "default": "get_bucket_acl",
+          "title": "Get Bucket ACL",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bucket ACLs",
+          "x-display-name": "Get Bucket ACL",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "entity": {
+          "description": "ACL entity, such as user-name@example.com",
+          "title": "Entity",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket",
+        "entity"
+      ],
+      "title": "GCSGetBucketAclConfig",
+      "type": "object"
+    },
+    "GCSGetBucketConfig": {
+      "description": "Get a bucket's metadata.",
+      "properties": {
+        "operation": {
+          "const": "get_bucket",
+          "default": "get_bucket",
+          "title": "Get Bucket",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Buckets",
+          "x-display-name": "Get Bucket",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a bucket name",
+            "field_name": "bucket",
+            "placeholder": "Select a bucket...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_cloud_storage_bucket"
+        },
+        "project_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "GCP project ID (used to populate the bucket dropdown)",
+          "title": "Project ID"
+        }
+      },
+      "required": [
+        "bucket"
+      ],
+      "title": "GCSGetBucketConfig",
+      "type": "object"
+    },
+    "GCSGetBucketIamConfig": {
+      "description": "Read a bucket's IAM policy.",
+      "properties": {
+        "operation": {
+          "const": "get_bucket_iam",
+          "default": "get_bucket_iam",
+          "title": "Get Bucket IAM Policy",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "IAM",
+          "x-display-name": "Get Bucket IAM Policy",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket"
+      ],
+      "title": "GCSGetBucketIamConfig",
+      "type": "object"
+    },
+    "GCSGetDefaultObjectAclConfig": {
+      "description": "Get a single default object ACL entry.",
+      "properties": {
+        "operation": {
+          "const": "get_default_object_acl",
+          "default": "get_default_object_acl",
+          "title": "Get Default Object ACL",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Default Object ACLs",
+          "x-display-name": "Get Default Object ACL",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "entity": {
+          "description": "ACL entity to retrieve",
+          "title": "Entity",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket",
+        "entity"
+      ],
+      "title": "GCSGetDefaultObjectAclConfig",
+      "type": "object"
+    },
+    "GCSGetFolderConfig": {
+      "description": "Get folder metadata from an HNS-enabled bucket.",
+      "properties": {
+        "operation": {
+          "const": "get_folder",
+          "default": "get_folder",
+          "title": "Get Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Folders",
+          "x-display-name": "Get Folder",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a bucket name",
+            "field_name": "bucket",
+            "placeholder": "Select a bucket...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_cloud_storage_bucket"
+        },
+        "folder_name": {
+          "description": "Folder path to retrieve",
+          "title": "Folder Name",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a folder path",
+            "field_name": "folder_name",
+            "placeholder": "Select a folder...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_cloud_storage_folder"
+        }
+      },
+      "required": [
+        "bucket",
+        "folder_name"
+      ],
+      "title": "GCSGetFolderConfig",
+      "type": "object"
+    },
+    "GCSGetFolderIntelligenceConfig": {
+      "description": "Get the Storage Intelligence config for a folder.",
+      "properties": {
+        "operation": {
+          "const": "get_folder_intelligence_config",
+          "default": "get_folder_intelligence_config",
+          "title": "Get Folder Intelligence Config",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Storage Intelligence",
+          "x-display-name": "Get Folder Intelligence Config",
+          "x-is-trigger": false
+        },
+        "folder_id": {
+          "description": "Google Cloud folder ID",
+          "title": "Folder ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folder_id"
+      ],
+      "title": "GCSGetFolderIntelligenceConfig",
+      "type": "object"
+    },
+    "GCSGetHmacKeyConfig": {
+      "description": "Get HMAC key metadata.",
+      "properties": {
+        "operation": {
+          "const": "get_hmac_key",
+          "default": "get_hmac_key",
+          "title": "Get HMAC Key",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Get HMAC Key",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "The GCP project ID",
+          "title": "Project ID",
+          "type": "string"
+        },
+        "access_id": {
+          "description": "Access ID of the HMAC key",
+          "title": "Access ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "access_id"
+      ],
+      "title": "GCSGetHmacKeyConfig",
+      "type": "object"
+    },
+    "GCSGetManagedFolderConfig": {
+      "description": "Get a managed folder.",
+      "properties": {
+        "operation": {
+          "const": "get_managed_folder",
+          "default": "get_managed_folder",
+          "title": "Get Managed Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Managed Folders",
+          "x-display-name": "Get Managed Folder",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a bucket name",
+            "field_name": "bucket",
+            "placeholder": "Select a bucket...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_cloud_storage_bucket"
+        },
+        "managed_folder": {
+          "description": "Managed folder path to retrieve",
+          "title": "Managed Folder Name",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a managed folder path",
+            "field_name": "managed_folder",
+            "placeholder": "Select a managed folder...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_cloud_storage_managed_folder"
+        }
+      },
+      "required": [
+        "bucket",
+        "managed_folder"
+      ],
+      "title": "GCSGetManagedFolderConfig",
+      "type": "object"
+    },
+    "GCSGetManagedFolderIamConfig": {
+      "description": "Get the IAM policy for a managed folder.",
+      "properties": {
+        "operation": {
+          "const": "get_managed_folder_iam",
+          "default": "get_managed_folder_iam",
+          "title": "Get Managed Folder IAM Policy",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Managed Folders",
+          "x-display-name": "Get Managed Folder IAM Policy",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a bucket name",
+            "field_name": "bucket",
+            "placeholder": "Select a bucket...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_cloud_storage_bucket"
+        },
+        "managed_folder": {
+          "description": "Managed folder path to inspect",
+          "title": "Managed Folder Name",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a managed folder path",
+            "field_name": "managed_folder",
+            "placeholder": "Select a managed folder...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_cloud_storage_managed_folder"
+        },
+        "requested_policy_version": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional IAM policy version to request",
+          "title": "Requested Policy Version"
+        }
+      },
+      "required": [
+        "bucket",
+        "managed_folder"
+      ],
+      "title": "GCSGetManagedFolderIamConfig",
+      "type": "object"
+    },
+    "GCSGetNotificationConfig": {
+      "description": "Get a notification config by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_notification",
+          "default": "get_notification",
+          "title": "Get Notification Config",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Notifications",
+          "x-display-name": "Get Notification Config",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "notification_id": {
+          "description": "ID of the notification config",
+          "title": "Notification ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket",
+        "notification_id"
+      ],
+      "title": "GCSGetNotificationConfig",
+      "type": "object"
+    },
+    "GCSGetObjectAclConfig": {
+      "description": "List the access-control entries for an object.",
+      "properties": {
+        "operation": {
+          "const": "get_object_acl",
+          "default": "get_object_acl",
+          "title": "Get Object ACL",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Objects",
+          "x-display-name": "Get Object ACL",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "object_name": {
+          "description": "Full name of the object",
+          "title": "Object Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket",
+        "object_name"
+      ],
+      "title": "GCSGetObjectAclConfig",
+      "type": "object"
+    },
+    "GCSGetObjectAclEntryConfig": {
+      "description": "Get a single object ACL entry.",
+      "properties": {
+        "operation": {
+          "const": "get_object_acl_entry",
+          "default": "get_object_acl_entry",
+          "title": "Get Object ACL Entry",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Object ACLs",
+          "x-display-name": "Get Object ACL Entry",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "object_name": {
+          "description": "Full name of the object",
+          "title": "Object Name",
+          "type": "string"
+        },
+        "entity": {
+          "description": "ACL entity to retrieve",
+          "title": "Entity",
+          "type": "string"
+        },
+        "generation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional object generation to query",
+          "title": "Generation"
+        }
+      },
+      "required": [
+        "bucket",
+        "object_name",
+        "entity"
+      ],
+      "title": "GCSGetObjectAclEntryConfig",
+      "type": "object"
+    },
+    "GCSGetObjectConfig": {
+      "description": "Get an object's metadata.",
+      "properties": {
+        "operation": {
+          "const": "get_object",
+          "default": "get_object",
+          "title": "Get Object Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Objects",
+          "x-display-name": "Get Object Metadata",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "object_name": {
+          "description": "Full name (path) of the object",
+          "title": "Object Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket",
+        "object_name"
+      ],
+      "title": "GCSGetObjectConfig",
+      "type": "object"
+    },
+    "GCSGetObjectIamConfig": {
+      "description": "Read an object's IAM policy.",
+      "properties": {
+        "operation": {
+          "const": "get_object_iam",
+          "default": "get_object_iam",
+          "title": "Get Object IAM Policy",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "IAM",
+          "x-display-name": "Get Object IAM Policy",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "object_name": {
+          "description": "Name of the object",
+          "title": "Object Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket",
+        "object_name"
+      ],
+      "title": "GCSGetObjectIamConfig",
+      "type": "object"
+    },
+    "GCSGetOperationConfig": {
+      "description": "Get a long-running bucket operation.",
+      "properties": {
+        "operation": {
+          "const": "get_operation",
+          "default": "get_operation",
+          "title": "Get Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Operations",
+          "x-display-name": "Get Operation",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Bucket associated with the operation",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "operation_id": {
+          "description": "Long-running operation ID",
+          "title": "Operation ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket",
+        "operation_id"
+      ],
+      "title": "GCSGetOperationConfig",
+      "type": "object"
+    },
+    "GCSGetOrganizationIntelligenceConfig": {
+      "description": "Get the Storage Intelligence config for an organization.",
+      "properties": {
+        "operation": {
+          "const": "get_organization_intelligence_config",
+          "default": "get_organization_intelligence_config",
+          "title": "Get Organization Intelligence Config",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Storage Intelligence",
+          "x-display-name": "Get Organization Intelligence Config",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "description": "Google Cloud organization ID",
+          "title": "Organization ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "GCSGetOrganizationIntelligenceConfig",
+      "type": "object"
+    },
+    "GCSGetProjectIntelligenceConfig": {
+      "description": "Get the Storage Intelligence config for a project.",
+      "properties": {
+        "operation": {
+          "const": "get_project_intelligence_config",
+          "default": "get_project_intelligence_config",
+          "title": "Get Project Intelligence Config",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Storage Intelligence",
+          "x-display-name": "Get Project Intelligence Config",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Google Cloud project ID",
+          "title": "Project ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "GCSGetProjectIntelligenceConfig",
+      "type": "object"
+    },
+    "GCSGetServiceAccountConfig": {
+      "description": "Get the project's Cloud Storage service account email.",
+      "properties": {
+        "operation": {
+          "const": "get_service_account",
+          "default": "get_service_account",
+          "title": "Get Service Account",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Get Service Account",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "The GCP project ID",
+          "title": "Project ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "GCSGetServiceAccountConfig",
+      "type": "object"
+    },
+    "GCSGetStorageLayoutConfig": {
+      "description": "Return a bucket's storage layout and HNS status.",
+      "properties": {
+        "operation": {
+          "const": "get_storage_layout",
+          "default": "get_storage_layout",
+          "title": "Get Storage Layout",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Buckets",
+          "x-display-name": "Get Storage Layout",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "prefix": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional prefix to scope the permission check for the request",
+          "title": "Prefix"
+        }
+      },
+      "required": [
+        "bucket"
+      ],
+      "title": "GCSGetStorageLayoutConfig",
+      "type": "object"
+    },
+    "GCSListAnywhereCachesConfig": {
+      "description": "List Rapid Cache instances for a bucket.",
+      "properties": {
+        "operation": {
+          "const": "list_anywhere_caches",
+          "default": "list_anywhere_caches",
+          "title": "List Anywhere Caches",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Anywhere Cache",
+          "x-display-name": "List Anywhere Caches",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket"
+      ],
+      "title": "GCSListAnywhereCachesConfig",
+      "type": "object"
+    },
+    "GCSListBucketAclConfig": {
+      "description": "List ACL entries on a bucket.",
+      "properties": {
+        "operation": {
+          "const": "list_bucket_acl",
+          "default": "list_bucket_acl",
+          "title": "List Bucket ACLs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bucket ACLs",
+          "x-display-name": "List Bucket ACLs",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket"
+      ],
+      "title": "GCSListBucketAclConfig",
+      "type": "object"
+    },
+    "GCSListBucketsConfig": {
+      "description": "List the buckets in a project.",
+      "properties": {
+        "operation": {
+          "const": "list_buckets",
+          "default": "list_buckets",
+          "title": "List Buckets",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Buckets",
+          "x-display-name": "List Buckets",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "The GCP project ID whose buckets to list",
+          "title": "Project ID",
+          "type": "string"
+        },
+        "prefix": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only list buckets whose names start with this prefix",
+          "title": "Name Prefix"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of buckets to return per page",
+          "title": "Max Results"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "nextPageToken from a previous response for pagination",
+          "title": "Page Token"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "GCSListBucketsConfig",
+      "type": "object"
+    },
+    "GCSListDefaultObjectAclConfig": {
+      "description": "List default object ACL entries on a bucket.",
+      "properties": {
+        "operation": {
+          "const": "list_default_object_acl",
+          "default": "list_default_object_acl",
+          "title": "List Default Object ACLs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Default Object ACLs",
+          "x-display-name": "List Default Object ACLs",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket"
+      ],
+      "title": "GCSListDefaultObjectAclConfig",
+      "type": "object"
+    },
+    "GCSListFoldersConfig": {
+      "description": "List folders in an HNS-enabled bucket.",
+      "properties": {
+        "operation": {
+          "const": "list_folders",
+          "default": "list_folders",
+          "title": "List Folders",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Folders",
+          "x-display-name": "List Folders",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "prefix": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional folder prefix filter",
+          "title": "Prefix"
+        },
+        "delimiter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use / for one-level directory-style listing",
+          "title": "Delimiter"
+        },
+        "start_offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Lower lexicographic bound for folder names",
+          "title": "Start Offset"
+        },
+        "end_offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Upper lexicographic bound for folder names",
+          "title": "End Offset"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of folders to return per page",
+          "title": "Max Results"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Continuation token from a previous response",
+          "title": "Page Token"
+        }
+      },
+      "required": [
+        "bucket"
+      ],
+      "title": "GCSListFoldersConfig",
+      "type": "object"
+    },
+    "GCSListHmacKeysConfig": {
+      "description": "List a project's HMAC keys.",
+      "properties": {
+        "operation": {
+          "const": "list_hmac_keys",
+          "default": "list_hmac_keys",
+          "title": "List HMAC Keys",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "List HMAC Keys",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "The GCP project ID",
+          "title": "Project ID",
+          "type": "string"
+        },
+        "service_account_email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter keys to this service account (optional)",
+          "title": "Service Account Email"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "GCSListHmacKeysConfig",
+      "type": "object"
+    },
+    "GCSListManagedFoldersConfig": {
+      "description": "List managed folders in a bucket.",
+      "properties": {
+        "operation": {
+          "const": "list_managed_folders",
+          "default": "list_managed_folders",
+          "title": "List Managed Folders",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Managed Folders",
+          "x-display-name": "List Managed Folders",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a bucket name",
+            "field_name": "bucket",
+            "placeholder": "Select a bucket...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_cloud_storage_bucket"
+        },
+        "prefix": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional managed folder prefix filter",
+          "title": "Prefix"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of managed folders to return",
+          "title": "Max Results"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Continuation token from a previous response",
+          "title": "Page Token"
+        }
+      },
+      "required": [
+        "bucket"
+      ],
+      "title": "GCSListManagedFoldersConfig",
+      "type": "object"
+    },
+    "GCSListNotificationsConfig": {
+      "description": "List a bucket's Pub/Sub notification configs.",
+      "properties": {
+        "operation": {
+          "const": "list_notifications",
+          "default": "list_notifications",
+          "title": "List Notification Configs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Notifications",
+          "x-display-name": "List Notification Configs",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket"
+      ],
+      "title": "GCSListNotificationsConfig",
+      "type": "object"
+    },
+    "GCSListObjectAclEntriesConfig": {
+      "description": "List ACL entries on an object.",
+      "properties": {
+        "operation": {
+          "const": "list_object_acl_entries",
+          "default": "list_object_acl_entries",
+          "title": "List Object ACLs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Object ACLs",
+          "x-display-name": "List Object ACLs",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "object_name": {
+          "description": "Full name of the object",
+          "title": "Object Name",
+          "type": "string"
+        },
+        "generation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional object generation to query",
+          "title": "Generation"
+        }
+      },
+      "required": [
+        "bucket",
+        "object_name"
+      ],
+      "title": "GCSListObjectAclEntriesConfig",
+      "type": "object"
+    },
+    "GCSListObjectsConfig": {
+      "description": "List the objects in a bucket.",
+      "properties": {
+        "operation": {
+          "const": "list_objects",
+          "default": "list_objects",
+          "title": "List Objects",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Objects",
+          "x-display-name": "List Objects",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a bucket name",
+            "field_name": "bucket",
+            "placeholder": "Select a bucket...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_cloud_storage_bucket"
+        },
+        "project_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "GCP project ID (used to populate the bucket dropdown)",
+          "title": "Project ID"
+        },
+        "prefix": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only list objects whose names start with this prefix",
+          "title": "Prefix"
+        },
+        "delimiter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Returns folder-style prefixes when set (e.g. '/')",
+          "title": "Delimiter"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of objects to return per page",
+          "title": "Max Results"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "nextPageToken from a previous response for pagination",
+          "title": "Page Token"
+        }
+      },
+      "required": [
+        "bucket"
+      ],
+      "title": "GCSListObjectsConfig",
+      "type": "object"
+    },
+    "GCSListOperationsConfig": {
+      "description": "List long-running bucket operations.",
+      "properties": {
+        "operation": {
+          "const": "list_operations",
+          "default": "list_operations",
+          "title": "List Operations",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Operations",
+          "x-display-name": "List Operations",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Bucket whose operations to list",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "nextPageToken from a previous response for pagination",
+          "title": "Page Token"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of operations to return per page",
+          "title": "Max Results"
+        }
+      },
+      "required": [
+        "bucket"
+      ],
+      "title": "GCSListOperationsConfig",
+      "type": "object"
+    },
+    "GCSLockRetentionPolicyConfig": {
+      "description": "Permanently lock a bucket's retention policy.",
+      "properties": {
+        "operation": {
+          "const": "lock_retention_policy",
+          "default": "lock_retention_policy",
+          "title": "Lock Retention Policy",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Buckets",
+          "x-display-name": "Lock Retention Policy",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a bucket name",
+            "field_name": "bucket",
+            "placeholder": "Select a bucket...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_cloud_storage_bucket"
+        },
+        "metageneration": {
+          "description": "Current metageneration of the bucket (precondition for the lock)",
+          "title": "Metageneration",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket",
+        "metageneration"
+      ],
+      "title": "GCSLockRetentionPolicyConfig",
+      "type": "object"
+    },
+    "GCSMoveObjectConfig": {
+      "description": "Rename/move an object within a bucket (HNS-enabled buckets).",
+      "properties": {
+        "operation": {
+          "const": "move_object",
+          "default": "move_object",
+          "title": "Move Object",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Objects",
+          "x-display-name": "Move Object",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "source_object": {
+          "description": "Current object name",
+          "title": "Source Object",
+          "type": "string"
+        },
+        "destination_object": {
+          "description": "New object name",
+          "title": "Destination Object",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket",
+        "source_object",
+        "destination_object"
+      ],
+      "title": "GCSMoveObjectConfig",
+      "type": "object"
+    },
+    "GCSOnNewObjectConfig": {
+      "description": "Poll a bucket/prefix and trigger on newly-created objects.\n\nGCS has no direct HTTP webhook (only Pub/Sub notifications), so this trigger\nis poll-based: an external scheduler POSTs the node's webhook URL on the\nconfigured schedule, ``execute()`` lists objects, and emits only those whose\ncreation time is newer than the last poll. The cursor (``last_polled_at``)\nis the max ``timeCreated`` seen so far, so already-seen objects never\nre-emit. The first poll baselines (records the cursor, emits nothing).",
+      "properties": {
+        "operation": {
+          "const": "on_new_object",
+          "default": "on_new_object",
+          "title": "On New Object",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New Object",
+          "x-is-trigger": true
+        },
+        "bucket": {
+          "description": "Bucket to watch for newly-created objects",
+          "title": "Bucket",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a bucket name",
+            "field_name": "bucket",
+            "placeholder": "Select a bucket...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "project_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "GCP project ID (used to populate the bucket dropdown)",
+          "title": "Project ID"
+        },
+        "prefix": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only watch objects whose names start with this prefix (e.g. 'incoming/')",
+          "title": "Prefix"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "100",
+          "description": "Maximum number of objects to scan per poll",
+          "title": "Max Objects Per Poll"
+        },
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": {
+            "frequency": "minutes",
+            "interval": 5,
+            "hour": 9,
+            "minute": 0,
+            "dayOfWeek": 1,
+            "dayOfMonth": 1
+          },
+          "description": "How often to poll the bucket for new objects",
+          "title": "Check Frequency",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:copyable": true,
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Check",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "last_polled_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Polled At",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "bucket"
+      ],
+      "title": "GCSOnNewObjectConfig",
+      "type": "object"
+    },
+    "GCSPatchBucketAclConfig": {
+      "description": "Patch a bucket ACL entry.",
+      "properties": {
+        "operation": {
+          "const": "patch_bucket_acl",
+          "default": "patch_bucket_acl",
+          "title": "Patch Bucket ACL",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bucket ACLs",
+          "x-display-name": "Patch Bucket ACL",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "entity": {
+          "description": "ACL entity to patch",
+          "title": "Entity",
+          "type": "string"
+        },
+        "role": {
+          "description": "Updated ACL role",
+          "title": "Role",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket",
+        "entity",
+        "role"
+      ],
+      "title": "GCSPatchBucketAclConfig",
+      "type": "object"
+    },
+    "GCSPatchBucketConfig": {
+      "description": "Partially update a bucket's metadata (e.g. labels, lifecycle).",
+      "properties": {
+        "operation": {
+          "const": "patch_bucket",
+          "default": "patch_bucket",
+          "title": "Patch Bucket",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Buckets",
+          "x-display-name": "Patch Bucket",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket to patch",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "metadata_json": {
+          "description": "Partial bucket resource fields to update as a JSON object",
+          "title": "Patch Metadata (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "bucket",
+        "metadata_json"
+      ],
+      "title": "GCSPatchBucketConfig",
+      "type": "object"
+    },
+    "GCSPatchDefaultObjectAclConfig": {
+      "description": "Patch a default object ACL entry.",
+      "properties": {
+        "operation": {
+          "const": "patch_default_object_acl",
+          "default": "patch_default_object_acl",
+          "title": "Patch Default Object ACL",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Default Object ACLs",
+          "x-display-name": "Patch Default Object ACL",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "entity": {
+          "description": "ACL entity to patch",
+          "title": "Entity",
+          "type": "string"
+        },
+        "role": {
+          "description": "Updated ACL role",
+          "title": "Role",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket",
+        "entity",
+        "role"
+      ],
+      "title": "GCSPatchDefaultObjectAclConfig",
+      "type": "object"
+    },
+    "GCSPatchObjectAclEntryConfig": {
+      "description": "Patch an object ACL entry.",
+      "properties": {
+        "operation": {
+          "const": "patch_object_acl_entry",
+          "default": "patch_object_acl_entry",
+          "title": "Patch Object ACL Entry",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Object ACLs",
+          "x-display-name": "Patch Object ACL Entry",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "object_name": {
+          "description": "Full name of the object",
+          "title": "Object Name",
+          "type": "string"
+        },
+        "entity": {
+          "description": "ACL entity to patch",
+          "title": "Entity",
+          "type": "string"
+        },
+        "role": {
+          "description": "Updated ACL role",
+          "title": "Role",
+          "type": "string"
+        },
+        "generation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional object generation to update",
+          "title": "Generation"
+        }
+      },
+      "required": [
+        "bucket",
+        "object_name",
+        "entity",
+        "role"
+      ],
+      "title": "GCSPatchObjectAclEntryConfig",
+      "type": "object"
+    },
+    "GCSPatchObjectConfig": {
+      "description": "Partially update an object's metadata (e.g. contentType, custom metadata).",
+      "properties": {
+        "operation": {
+          "const": "patch_object",
+          "default": "patch_object",
+          "title": "Patch Object Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Objects",
+          "x-display-name": "Patch Object Metadata",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "object_name": {
+          "description": "Full name of the object",
+          "title": "Object Name",
+          "type": "string"
+        },
+        "metadata_json": {
+          "description": "Partial object resource fields to update as a JSON object",
+          "title": "Patch Metadata (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "bucket",
+        "object_name",
+        "metadata_json"
+      ],
+      "title": "GCSPatchObjectConfig",
+      "type": "object"
+    },
+    "GCSPauseAnywhereCacheConfig": {
+      "description": "Pause an Anywhere Cache instance.",
+      "properties": {
+        "operation": {
+          "const": "pause_anywhere_cache",
+          "default": "pause_anywhere_cache",
+          "title": "Pause Anywhere Cache",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Anywhere Cache",
+          "x-display-name": "Pause Anywhere Cache",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "anywhere_cache_id": {
+          "description": "Cache identifier to pause",
+          "title": "Anywhere Cache ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket",
+        "anywhere_cache_id"
+      ],
+      "title": "GCSPauseAnywhereCacheConfig",
+      "type": "object"
+    },
+    "GCSRelocateBucketConfig": {
+      "description": "Start a dry-run or live bucket relocation operation.",
+      "properties": {
+        "operation": {
+          "const": "relocate_bucket",
+          "default": "relocate_bucket",
+          "title": "Relocate Bucket",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Buckets",
+          "x-display-name": "Relocate Bucket",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket to relocate",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "destination_location": {
+          "description": "Destination location for the relocation operation",
+          "title": "Destination Location",
+          "type": "string"
+        },
+        "destination_data_locations": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated locations for configurable dual-region relocation",
+          "title": "Destination Data Locations"
+        },
+        "validate_only": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Start a relocation dry run instead of the live relocation step",
+          "title": "Dry Run Only"
+        }
+      },
+      "required": [
+        "bucket",
+        "destination_location"
+      ],
+      "title": "GCSRelocateBucketConfig",
+      "type": "object"
+    },
+    "GCSRenameFolderConfig": {
+      "description": "Rename a folder in an HNS-enabled bucket.",
+      "properties": {
+        "operation": {
+          "const": "rename_folder",
+          "default": "rename_folder",
+          "title": "Rename Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Folders",
+          "x-display-name": "Rename Folder",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a bucket name",
+            "field_name": "bucket",
+            "placeholder": "Select a bucket...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_cloud_storage_bucket"
+        },
+        "source_folder_name": {
+          "description": "Existing folder path to rename",
+          "title": "Source Folder Name",
+          "type": "string"
+        },
+        "destination_folder_name": {
+          "description": "New folder path",
+          "title": "Destination Folder Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket",
+        "source_folder_name",
+        "destination_folder_name"
+      ],
+      "title": "GCSRenameFolderConfig",
+      "type": "object"
+    },
+    "GCSRestoreBucketConfig": {
+      "description": "Restore a soft-deleted bucket generation.",
+      "properties": {
+        "operation": {
+          "const": "restore_bucket",
+          "default": "restore_bucket",
+          "title": "Restore Bucket",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Buckets",
+          "x-display-name": "Restore Bucket",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the soft-deleted bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "generation": {
+          "description": "Generation number of the soft-deleted bucket to restore",
+          "title": "Generation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket",
+        "generation"
+      ],
+      "title": "GCSRestoreBucketConfig",
+      "type": "object"
+    },
+    "GCSRestoreObjectConfig": {
+      "description": "Restore a soft-deleted object generation.",
+      "properties": {
+        "operation": {
+          "const": "restore_object",
+          "default": "restore_object",
+          "title": "Restore Object",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Objects",
+          "x-display-name": "Restore Object",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "object_name": {
+          "description": "Name of the object to restore",
+          "title": "Object Name",
+          "type": "string"
+        },
+        "generation": {
+          "description": "Generation of the soft-deleted object to restore",
+          "title": "Generation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket",
+        "object_name",
+        "generation"
+      ],
+      "title": "GCSRestoreObjectConfig",
+      "type": "object"
+    },
+    "GCSResumeAnywhereCacheConfig": {
+      "description": "Resume a Rapid Cache instance.",
+      "properties": {
+        "operation": {
+          "const": "resume_anywhere_cache",
+          "default": "resume_anywhere_cache",
+          "title": "Resume Anywhere Cache",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Anywhere Cache",
+          "x-display-name": "Resume Anywhere Cache",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "anywhere_cache_id": {
+          "description": "Cache identifier to resume",
+          "title": "Anywhere Cache ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket",
+        "anywhere_cache_id"
+      ],
+      "title": "GCSResumeAnywhereCacheConfig",
+      "type": "object"
+    },
+    "GCSRewriteObjectConfig": {
+      "description": "Rewrite/copy large objects (resumable via rewriteToken).",
+      "properties": {
+        "operation": {
+          "const": "rewrite_object",
+          "default": "rewrite_object",
+          "title": "Rewrite Object",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Objects",
+          "x-display-name": "Rewrite Object",
+          "x-is-trigger": false
+        },
+        "source_bucket": {
+          "description": "Bucket of the source object",
+          "title": "Source Bucket",
+          "type": "string"
+        },
+        "source_object": {
+          "description": "Name of the source object",
+          "title": "Source Object",
+          "type": "string"
+        },
+        "destination_bucket": {
+          "description": "Bucket for the rewritten object",
+          "title": "Destination Bucket",
+          "type": "string"
+        },
+        "destination_object": {
+          "description": "Name for the rewritten object",
+          "title": "Destination Object",
+          "type": "string"
+        },
+        "rewrite_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token from a previous rewrite response to resume",
+          "title": "Rewrite Token"
+        }
+      },
+      "required": [
+        "source_bucket",
+        "source_object",
+        "destination_bucket",
+        "destination_object"
+      ],
+      "title": "GCSRewriteObjectConfig",
+      "type": "object"
+    },
+    "GCSSetBucketIamConfig": {
+      "description": "Replace a bucket's IAM policy.",
+      "properties": {
+        "operation": {
+          "const": "set_bucket_iam",
+          "default": "set_bucket_iam",
+          "title": "Set Bucket IAM Policy",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "IAM",
+          "x-display-name": "Set Bucket IAM Policy",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "policy_json": {
+          "description": "The complete IAM policy resource as a JSON object",
+          "title": "IAM Policy (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "bucket",
+        "policy_json"
+      ],
+      "title": "GCSSetBucketIamConfig",
+      "type": "object"
+    },
+    "GCSSetManagedFolderIamConfig": {
+      "description": "Set the IAM policy for a managed folder.",
+      "properties": {
+        "operation": {
+          "const": "set_managed_folder_iam",
+          "default": "set_managed_folder_iam",
+          "title": "Set Managed Folder IAM Policy",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Managed Folders",
+          "x-display-name": "Set Managed Folder IAM Policy",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a bucket name",
+            "field_name": "bucket",
+            "placeholder": "Select a bucket...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_cloud_storage_bucket"
+        },
+        "managed_folder": {
+          "description": "Managed folder path to update",
+          "title": "Managed Folder Name",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a managed folder path",
+            "field_name": "managed_folder",
+            "placeholder": "Select a managed folder...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_cloud_storage_managed_folder"
+        },
+        "policy_json": {
+          "description": "Complete IAM policy resource as JSON",
+          "title": "IAM Policy (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "bucket",
+        "managed_folder",
+        "policy_json"
+      ],
+      "title": "GCSSetManagedFolderIamConfig",
+      "type": "object"
+    },
+    "GCSSetObjectIamConfig": {
+      "description": "Replace an object's IAM policy.",
+      "properties": {
+        "operation": {
+          "const": "set_object_iam",
+          "default": "set_object_iam",
+          "title": "Set Object IAM Policy",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "IAM",
+          "x-display-name": "Set Object IAM Policy",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "object_name": {
+          "description": "Name of the object",
+          "title": "Object Name",
+          "type": "string"
+        },
+        "policy_json": {
+          "description": "The complete IAM policy resource as a JSON object",
+          "title": "IAM Policy (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "bucket",
+        "object_name",
+        "policy_json"
+      ],
+      "title": "GCSSetObjectIamConfig",
+      "type": "object"
+    },
+    "GCSTestIamPermissionsConfig": {
+      "description": "Check the caller's permissions on a bucket.",
+      "properties": {
+        "operation": {
+          "const": "test_iam_permissions",
+          "default": "test_iam_permissions",
+          "title": "Test IAM Permissions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "IAM",
+          "x-display-name": "Test IAM Permissions",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "permissions": {
+          "description": "Permissions to test, comma-separated (e.g. storage.buckets.get,storage.objects.list)",
+          "title": "Permissions",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket",
+        "permissions"
+      ],
+      "title": "GCSTestIamPermissionsConfig",
+      "type": "object"
+    },
+    "GCSTestManagedFolderIamPermissionsConfig": {
+      "description": "Test caller permissions on a managed folder.",
+      "properties": {
+        "operation": {
+          "const": "test_managed_folder_iam_permissions",
+          "default": "test_managed_folder_iam_permissions",
+          "title": "Test Managed Folder IAM Permissions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Managed Folders",
+          "x-display-name": "Test Managed Folder IAM Permissions",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a bucket name",
+            "field_name": "bucket",
+            "placeholder": "Select a bucket...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_cloud_storage_bucket"
+        },
+        "managed_folder": {
+          "description": "Managed folder path to test",
+          "title": "Managed Folder Name",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type a managed folder path",
+            "field_name": "managed_folder",
+            "placeholder": "Select a managed folder...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_cloud_storage_managed_folder"
+        },
+        "permissions": {
+          "description": "Permissions to test, comma-separated",
+          "title": "Permissions",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket",
+        "managed_folder",
+        "permissions"
+      ],
+      "title": "GCSTestManagedFolderIamPermissionsConfig",
+      "type": "object"
+    },
+    "GCSTestObjectIamPermissionsConfig": {
+      "description": "Check the caller's permissions on an object.",
+      "properties": {
+        "operation": {
+          "const": "test_object_iam_permissions",
+          "default": "test_object_iam_permissions",
+          "title": "Test Object IAM Permissions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "IAM",
+          "x-display-name": "Test Object IAM Permissions",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "object_name": {
+          "description": "Name of the object",
+          "title": "Object Name",
+          "type": "string"
+        },
+        "permissions": {
+          "description": "Permissions to test, comma-separated (e.g. storage.objects.get,storage.objects.update)",
+          "title": "Permissions",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket",
+        "object_name",
+        "permissions"
+      ],
+      "title": "GCSTestObjectIamPermissionsConfig",
+      "type": "object"
+    },
+    "GCSUpdateAnywhereCacheConfig": {
+      "description": "Update a Rapid Cache instance.",
+      "properties": {
+        "operation": {
+          "const": "update_anywhere_cache",
+          "default": "update_anywhere_cache",
+          "title": "Update Anywhere Cache",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Anywhere Cache",
+          "x-display-name": "Update Anywhere Cache",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "anywhere_cache_id": {
+          "description": "Cache identifier to update",
+          "title": "Anywhere Cache ID",
+          "type": "string"
+        },
+        "ttl": {
+          "description": "New cache TTL, such as 86400s",
+          "title": "TTL",
+          "type": "string"
+        },
+        "ingest_on_write": {
+          "description": "Whether the cache ingests new writes",
+          "title": "Ingest On Write",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "bucket",
+        "anywhere_cache_id",
+        "ttl",
+        "ingest_on_write"
+      ],
+      "title": "GCSUpdateAnywhereCacheConfig",
+      "type": "object"
+    },
+    "GCSUpdateBucketAclConfig": {
+      "description": "Replace a bucket ACL entry.",
+      "properties": {
+        "operation": {
+          "const": "update_bucket_acl",
+          "default": "update_bucket_acl",
+          "title": "Update Bucket ACL",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bucket ACLs",
+          "x-display-name": "Update Bucket ACL",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "entity": {
+          "description": "ACL entity to update",
+          "title": "Entity",
+          "type": "string"
+        },
+        "role": {
+          "description": "ACL role to set",
+          "title": "Role",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket",
+        "entity",
+        "role"
+      ],
+      "title": "GCSUpdateBucketAclConfig",
+      "type": "object"
+    },
+    "GCSUpdateBucketConfig": {
+      "description": "Replace a bucket's metadata (full update).",
+      "properties": {
+        "operation": {
+          "const": "update_bucket",
+          "default": "update_bucket",
+          "title": "Update Bucket",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Buckets",
+          "x-display-name": "Update Bucket",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket to update",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "metadata_json": {
+          "description": "Full bucket resource as a JSON object",
+          "title": "Bucket Metadata (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "bucket",
+        "metadata_json"
+      ],
+      "title": "GCSUpdateBucketConfig",
+      "type": "object"
+    },
+    "GCSUpdateDefaultObjectAclConfig": {
+      "description": "Replace a default object ACL entry.",
+      "properties": {
+        "operation": {
+          "const": "update_default_object_acl",
+          "default": "update_default_object_acl",
+          "title": "Update Default Object ACL",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Default Object ACLs",
+          "x-display-name": "Update Default Object ACL",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "entity": {
+          "description": "ACL entity to update",
+          "title": "Entity",
+          "type": "string"
+        },
+        "role": {
+          "description": "ACL role to set",
+          "title": "Role",
+          "type": "string"
+        }
+      },
+      "required": [
+        "bucket",
+        "entity",
+        "role"
+      ],
+      "title": "GCSUpdateDefaultObjectAclConfig",
+      "type": "object"
+    },
+    "GCSUpdateFolderIntelligenceConfig": {
+      "description": "Update the Storage Intelligence config for a folder.",
+      "properties": {
+        "operation": {
+          "const": "update_folder_intelligence_config",
+          "default": "update_folder_intelligence_config",
+          "title": "Update Folder Intelligence Config",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Storage Intelligence",
+          "x-display-name": "Update Folder Intelligence Config",
+          "x-is-trigger": false
+        },
+        "folder_id": {
+          "description": "Google Cloud folder ID",
+          "title": "Folder ID",
+          "type": "string"
+        },
+        "intelligence_config_json": {
+          "description": "The IntelligenceConfig resource as JSON",
+          "title": "Intelligence Config (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "update_mask": {
+          "description": "Comma-separated field mask of IntelligenceConfig fields to update",
+          "title": "Update Mask",
+          "type": "string"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional idempotency token for the update request",
+          "title": "Request ID"
+        }
+      },
+      "required": [
+        "folder_id",
+        "intelligence_config_json",
+        "update_mask"
+      ],
+      "title": "GCSUpdateFolderIntelligenceConfig",
+      "type": "object"
+    },
+    "GCSUpdateHmacKeyConfig": {
+      "description": "Update an HMAC key's state.",
+      "properties": {
+        "operation": {
+          "const": "update_hmac_key",
+          "default": "update_hmac_key",
+          "title": "Update HMAC Key",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Update HMAC Key",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "The GCP project ID",
+          "title": "Project ID",
+          "type": "string"
+        },
+        "access_id": {
+          "description": "Access ID of the HMAC key",
+          "title": "Access ID",
+          "type": "string"
+        },
+        "state": {
+          "description": "New state for the HMAC key",
+          "enum": [
+            "ACTIVE",
+            "INACTIVE"
+          ],
+          "title": "State",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "access_id",
+        "state"
+      ],
+      "title": "GCSUpdateHmacKeyConfig",
+      "type": "object"
+    },
+    "GCSUpdateObjectAclEntryConfig": {
+      "description": "Replace an object ACL entry.",
+      "properties": {
+        "operation": {
+          "const": "update_object_acl_entry",
+          "default": "update_object_acl_entry",
+          "title": "Update Object ACL Entry",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Object ACLs",
+          "x-display-name": "Update Object ACL Entry",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "object_name": {
+          "description": "Full name of the object",
+          "title": "Object Name",
+          "type": "string"
+        },
+        "entity": {
+          "description": "ACL entity to update",
+          "title": "Entity",
+          "type": "string"
+        },
+        "role": {
+          "description": "ACL role to set",
+          "title": "Role",
+          "type": "string"
+        },
+        "generation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional object generation to update",
+          "title": "Generation"
+        }
+      },
+      "required": [
+        "bucket",
+        "object_name",
+        "entity",
+        "role"
+      ],
+      "title": "GCSUpdateObjectAclEntryConfig",
+      "type": "object"
+    },
+    "GCSUpdateObjectConfig": {
+      "description": "Replace an object's metadata (full update).",
+      "properties": {
+        "operation": {
+          "const": "update_object",
+          "default": "update_object",
+          "title": "Update Object Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Objects",
+          "x-display-name": "Update Object Metadata",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "object_name": {
+          "description": "Full name of the object",
+          "title": "Object Name",
+          "type": "string"
+        },
+        "metadata_json": {
+          "description": "Full object resource as a JSON object",
+          "title": "Object Metadata (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "bucket",
+        "object_name",
+        "metadata_json"
+      ],
+      "title": "GCSUpdateObjectConfig",
+      "type": "object"
+    },
+    "GCSUpdateOrganizationIntelligenceConfig": {
+      "description": "Update the Storage Intelligence config for an organization.",
+      "properties": {
+        "operation": {
+          "const": "update_organization_intelligence_config",
+          "default": "update_organization_intelligence_config",
+          "title": "Update Organization Intelligence Config",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Storage Intelligence",
+          "x-display-name": "Update Organization Intelligence Config",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "description": "Google Cloud organization ID",
+          "title": "Organization ID",
+          "type": "string"
+        },
+        "intelligence_config_json": {
+          "description": "The IntelligenceConfig resource as JSON",
+          "title": "Intelligence Config (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "update_mask": {
+          "description": "Comma-separated field mask of IntelligenceConfig fields to update",
+          "title": "Update Mask",
+          "type": "string"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional idempotency token for the update request",
+          "title": "Request ID"
+        }
+      },
+      "required": [
+        "organization_id",
+        "intelligence_config_json",
+        "update_mask"
+      ],
+      "title": "GCSUpdateOrganizationIntelligenceConfig",
+      "type": "object"
+    },
+    "GCSUpdateProjectIntelligenceConfig": {
+      "description": "Update the Storage Intelligence config for a project.",
+      "properties": {
+        "operation": {
+          "const": "update_project_intelligence_config",
+          "default": "update_project_intelligence_config",
+          "title": "Update Project Intelligence Config",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Storage Intelligence",
+          "x-display-name": "Update Project Intelligence Config",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Google Cloud project ID",
+          "title": "Project ID",
+          "type": "string"
+        },
+        "intelligence_config_json": {
+          "description": "The IntelligenceConfig resource as JSON",
+          "title": "Intelligence Config (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "update_mask": {
+          "description": "Comma-separated field mask of IntelligenceConfig fields to update",
+          "title": "Update Mask",
+          "type": "string"
+        },
+        "request_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional idempotency token for the update request",
+          "title": "Request ID"
+        }
+      },
+      "required": [
+        "project_id",
+        "intelligence_config_json",
+        "update_mask"
+      ],
+      "title": "GCSUpdateProjectIntelligenceConfig",
+      "type": "object"
+    },
+    "GCSUploadObjectConfig": {
+      "description": "Upload a new object using simple, multipart, or resumable upload.",
+      "properties": {
+        "operation": {
+          "const": "upload_object",
+          "default": "upload_object",
+          "title": "Upload Object",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Objects",
+          "x-display-name": "Upload Object",
+          "x-is-trigger": false
+        },
+        "bucket": {
+          "description": "Name of the destination bucket",
+          "title": "Bucket",
+          "type": "string"
+        },
+        "object_name": {
+          "description": "Name to give the uploaded object (path)",
+          "title": "Object Name",
+          "type": "string"
+        },
+        "media_input": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Upload a local file, paste a public URL, or drag a workflow resource reference. If set, this is used instead of Content and Base64 Content.",
+          "title": "File / URL",
+          "ui:widget": "media_upload"
+        },
+        "content": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "UTF-8 text content to upload as the object's bytes",
+          "title": "Content",
+          "ui:widget": "textarea"
+        },
+        "content_base64": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Base64-encoded object bytes. If provided, this is used instead of Content.",
+          "title": "Base64 Content",
+          "ui:widget": "textarea"
+        },
+        "content_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "text/plain",
+          "description": "MIME type of the content (e.g. text/plain, application/json)",
+          "title": "Content Type"
+        },
+        "metadata_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional object metadata. Required for multipart/resumable upload metadata.",
+          "title": "Object Metadata (JSON)",
+          "ui:widget": "textarea"
+        },
+        "upload_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "simple",
+          "description": "JSON API upload mode",
+          "enum": [
+            "simple",
+            "multipart",
+            "resumable"
+          ],
+          "enumNames": [
+            "Simple",
+            "Multipart",
+            "Resumable"
+          ],
+          "title": "Upload Type",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "bucket",
+        "object_name"
+      ],
+      "title": "GCSUploadObjectConfig",
+      "type": "object"
+    },
+    "GoogleCloudStorageOAuthCredential": {
+      "description": "OAuth credential for Google Cloud Storage access.\n\nTokens are obtained via the Google OAuth flow, not entered manually.",
+      "properties": {
+        "credential_type": {
+          "const": "google_cloud_storage_oauth",
+          "default": "google_cloud_storage_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "OAuth 2.0 access token from Google",
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "description": "OAuth 2.0 refresh token for automatic renewal",
+          "title": "Refresh Token",
+          "type": "string"
+        },
+        "expires_at": {
+          "description": "ISO 8601 timestamp when access token expires",
+          "title": "Token Expiry",
+          "type": "string"
+        },
+        "email": {
+          "description": "Email address of the connected Google account",
+          "title": "Google Account",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "email"
+      ],
+      "title": "GoogleCloudStorageOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://console.cloud.google.com/apis/credentials",
+      "x-oauth-provider": "google",
+      "x-oauth-scopes": [
+        "https://www.googleapis.com/auth/devstorage.read_write",
+        "https://www.googleapis.com/auth/devstorage.full_control"
+      ]
+    },
+    "GoogleCloudStorageServiceAccountCredential": {
+      "description": "Service-account JSON key for server-to-server Cloud Storage access.",
+      "properties": {
+        "credential_type": {
+          "const": "google_cloud_storage_service_account",
+          "default": "google_cloud_storage_service_account",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "service_account_json": {
+          "description": "Raw JSON key for a Google Cloud service account with Cloud Storage access",
+          "title": "Service Account JSON",
+          "type": "string",
+          "ui:rows": 12,
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "service_account_json"
+      ],
+      "title": "GoogleCloudStorageServiceAccountCredential",
+      "type": "object",
+      "x-credential-instructions": "Create a JSON key for a service account that has the required Cloud Storage IAM roles. Prefer user OAuth for user-delegated access; use service accounts for server-to-server automation.",
+      "x-credential-url": "https://console.cloud.google.com/iam-admin/serviceaccounts"
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the Google Cloud Storage node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "advance_relocate_bucket": "#/$defs/GCSAdvanceRelocateBucketConfig",
+          "bulk_restore_objects": "#/$defs/GCSBulkRestoreObjectsConfig",
+          "cancel_operation": "#/$defs/GCSCancelOperationConfig",
+          "compose_objects": "#/$defs/GCSComposeObjectsConfig",
+          "copy_object": "#/$defs/GCSCopyObjectConfig",
+          "create_anywhere_cache": "#/$defs/GCSCreateAnywhereCacheConfig",
+          "create_bucket": "#/$defs/GCSCreateBucketConfig",
+          "create_bucket_acl": "#/$defs/GCSCreateBucketAclConfig",
+          "create_default_object_acl": "#/$defs/GCSCreateDefaultObjectAclConfig",
+          "create_folder": "#/$defs/GCSCreateFolderConfig",
+          "create_hmac_key": "#/$defs/GCSCreateHmacKeyConfig",
+          "create_managed_folder": "#/$defs/GCSCreateManagedFolderConfig",
+          "create_notification": "#/$defs/GCSCreateNotificationConfig",
+          "create_object_acl_entry": "#/$defs/GCSCreateObjectAclEntryConfig",
+          "delete_bucket": "#/$defs/GCSDeleteBucketConfig",
+          "delete_bucket_acl": "#/$defs/GCSDeleteBucketAclConfig",
+          "delete_default_object_acl": "#/$defs/GCSDeleteDefaultObjectAclConfig",
+          "delete_folder": "#/$defs/GCSDeleteFolderConfig",
+          "delete_folder_recursive": "#/$defs/GCSDeleteFolderRecursiveConfig",
+          "delete_hmac_key": "#/$defs/GCSDeleteHmacKeyConfig",
+          "delete_managed_folder": "#/$defs/GCSDeleteManagedFolderConfig",
+          "delete_notification": "#/$defs/GCSDeleteNotificationConfig",
+          "delete_object": "#/$defs/GCSDeleteObjectConfig",
+          "delete_object_acl_entry": "#/$defs/GCSDeleteObjectAclEntryConfig",
+          "disable_anywhere_cache": "#/$defs/GCSDisableAnywhereCacheConfig",
+          "download_object": "#/$defs/GCSDownloadObjectConfig",
+          "get_anywhere_cache": "#/$defs/GCSGetAnywhereCacheConfig",
+          "get_bucket": "#/$defs/GCSGetBucketConfig",
+          "get_bucket_acl": "#/$defs/GCSGetBucketAclConfig",
+          "get_bucket_iam": "#/$defs/GCSGetBucketIamConfig",
+          "get_default_object_acl": "#/$defs/GCSGetDefaultObjectAclConfig",
+          "get_folder": "#/$defs/GCSGetFolderConfig",
+          "get_folder_intelligence_config": "#/$defs/GCSGetFolderIntelligenceConfig",
+          "get_hmac_key": "#/$defs/GCSGetHmacKeyConfig",
+          "get_managed_folder": "#/$defs/GCSGetManagedFolderConfig",
+          "get_managed_folder_iam": "#/$defs/GCSGetManagedFolderIamConfig",
+          "get_notification": "#/$defs/GCSGetNotificationConfig",
+          "get_object": "#/$defs/GCSGetObjectConfig",
+          "get_object_acl": "#/$defs/GCSGetObjectAclConfig",
+          "get_object_acl_entry": "#/$defs/GCSGetObjectAclEntryConfig",
+          "get_object_iam": "#/$defs/GCSGetObjectIamConfig",
+          "get_operation": "#/$defs/GCSGetOperationConfig",
+          "get_organization_intelligence_config": "#/$defs/GCSGetOrganizationIntelligenceConfig",
+          "get_project_intelligence_config": "#/$defs/GCSGetProjectIntelligenceConfig",
+          "get_service_account": "#/$defs/GCSGetServiceAccountConfig",
+          "get_storage_layout": "#/$defs/GCSGetStorageLayoutConfig",
+          "list_anywhere_caches": "#/$defs/GCSListAnywhereCachesConfig",
+          "list_bucket_acl": "#/$defs/GCSListBucketAclConfig",
+          "list_buckets": "#/$defs/GCSListBucketsConfig",
+          "list_default_object_acl": "#/$defs/GCSListDefaultObjectAclConfig",
+          "list_folders": "#/$defs/GCSListFoldersConfig",
+          "list_hmac_keys": "#/$defs/GCSListHmacKeysConfig",
+          "list_managed_folders": "#/$defs/GCSListManagedFoldersConfig",
+          "list_notifications": "#/$defs/GCSListNotificationsConfig",
+          "list_object_acl_entries": "#/$defs/GCSListObjectAclEntriesConfig",
+          "list_objects": "#/$defs/GCSListObjectsConfig",
+          "list_operations": "#/$defs/GCSListOperationsConfig",
+          "lock_retention_policy": "#/$defs/GCSLockRetentionPolicyConfig",
+          "move_object": "#/$defs/GCSMoveObjectConfig",
+          "on_new_object": "#/$defs/GCSOnNewObjectConfig",
+          "patch_bucket": "#/$defs/GCSPatchBucketConfig",
+          "patch_bucket_acl": "#/$defs/GCSPatchBucketAclConfig",
+          "patch_default_object_acl": "#/$defs/GCSPatchDefaultObjectAclConfig",
+          "patch_object": "#/$defs/GCSPatchObjectConfig",
+          "patch_object_acl_entry": "#/$defs/GCSPatchObjectAclEntryConfig",
+          "pause_anywhere_cache": "#/$defs/GCSPauseAnywhereCacheConfig",
+          "relocate_bucket": "#/$defs/GCSRelocateBucketConfig",
+          "rename_folder": "#/$defs/GCSRenameFolderConfig",
+          "restore_bucket": "#/$defs/GCSRestoreBucketConfig",
+          "restore_object": "#/$defs/GCSRestoreObjectConfig",
+          "resume_anywhere_cache": "#/$defs/GCSResumeAnywhereCacheConfig",
+          "rewrite_object": "#/$defs/GCSRewriteObjectConfig",
+          "set_bucket_iam": "#/$defs/GCSSetBucketIamConfig",
+          "set_managed_folder_iam": "#/$defs/GCSSetManagedFolderIamConfig",
+          "set_object_iam": "#/$defs/GCSSetObjectIamConfig",
+          "test_iam_permissions": "#/$defs/GCSTestIamPermissionsConfig",
+          "test_managed_folder_iam_permissions": "#/$defs/GCSTestManagedFolderIamPermissionsConfig",
+          "test_object_iam_permissions": "#/$defs/GCSTestObjectIamPermissionsConfig",
+          "update_anywhere_cache": "#/$defs/GCSUpdateAnywhereCacheConfig",
+          "update_bucket": "#/$defs/GCSUpdateBucketConfig",
+          "update_bucket_acl": "#/$defs/GCSUpdateBucketAclConfig",
+          "update_default_object_acl": "#/$defs/GCSUpdateDefaultObjectAclConfig",
+          "update_folder_intelligence_config": "#/$defs/GCSUpdateFolderIntelligenceConfig",
+          "update_hmac_key": "#/$defs/GCSUpdateHmacKeyConfig",
+          "update_object": "#/$defs/GCSUpdateObjectConfig",
+          "update_object_acl_entry": "#/$defs/GCSUpdateObjectAclEntryConfig",
+          "update_organization_intelligence_config": "#/$defs/GCSUpdateOrganizationIntelligenceConfig",
+          "update_project_intelligence_config": "#/$defs/GCSUpdateProjectIntelligenceConfig",
+          "upload_object": "#/$defs/GCSUploadObjectConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GCSListBucketsConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSGetBucketConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSCreateBucketConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSUpdateBucketConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSPatchBucketConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSDeleteBucketConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSLockRetentionPolicyConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSGetStorageLayoutConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSRestoreBucketConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSRelocateBucketConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSGetBucketIamConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSSetBucketIamConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSTestIamPermissionsConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSGetObjectIamConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSSetObjectIamConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSTestObjectIamPermissionsConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSListObjectsConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSGetObjectConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSDownloadObjectConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSUploadObjectConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSUpdateObjectConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSPatchObjectConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSDeleteObjectConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSCopyObjectConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSRewriteObjectConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSComposeObjectsConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSMoveObjectConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSRestoreObjectConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSGetObjectAclConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSBulkRestoreObjectsConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSCreateNotificationConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSGetNotificationConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSListNotificationsConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSDeleteNotificationConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSCreateHmacKeyConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSListHmacKeysConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSGetHmacKeyConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSUpdateHmacKeyConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSDeleteHmacKeyConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSGetServiceAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSGetOperationConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSListOperationsConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSCancelOperationConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSAdvanceRelocateBucketConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSListBucketAclConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSGetBucketAclConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSCreateBucketAclConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSPatchBucketAclConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSUpdateBucketAclConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSDeleteBucketAclConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSListDefaultObjectAclConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSGetDefaultObjectAclConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSCreateDefaultObjectAclConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSPatchDefaultObjectAclConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSUpdateDefaultObjectAclConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSDeleteDefaultObjectAclConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSListObjectAclEntriesConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSGetObjectAclEntryConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSCreateObjectAclEntryConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSPatchObjectAclEntryConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSUpdateObjectAclEntryConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSDeleteObjectAclEntryConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSListFoldersConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSGetFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSCreateFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSRenameFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSDeleteFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSDeleteFolderRecursiveConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSListManagedFoldersConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSGetManagedFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSCreateManagedFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSDeleteManagedFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSGetManagedFolderIamConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSSetManagedFolderIamConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSTestManagedFolderIamPermissionsConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSListAnywhereCachesConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSGetAnywhereCacheConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSCreateAnywhereCacheConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSUpdateAnywhereCacheConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSDisableAnywhereCacheConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSPauseAnywhereCacheConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSResumeAnywhereCacheConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSGetProjectIntelligenceConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSUpdateProjectIntelligenceConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSGetFolderIntelligenceConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSUpdateFolderIntelligenceConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSGetOrganizationIntelligenceConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSUpdateOrganizationIntelligenceConfig"
+        },
+        {
+          "$ref": "#/$defs/GCSOnNewObjectConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GoogleCloudStorageOAuthCredential"
+        },
+        {
+          "$ref": "#/$defs/GoogleCloudStorageServiceAccountCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Google-cloud-storage Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "List all objects in my data bucket",
+    "Upload a JSON report to a Cloud Storage bucket",
+    "Download a file from a bucket and pass its contents downstream",
+    "Copy an object from one bucket to another",
+    "Create a new storage bucket in my project"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -1,0 +1,3181 @@
+{
+  "$defs": {
+    "IntercomAccessTokenCredential": {
+      "description": "Static Access Token credential for Intercom (private app).",
+      "properties": {
+        "credential_type": {
+          "const": "intercom_token",
+          "default": "intercom_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "Your Intercom Access Token from Developer Hub > your app > Configure > Authentication",
+          "title": "Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "region": {
+          "default": "us",
+          "description": "Data residency region for your Intercom workspace",
+          "enum": [
+            "us",
+            "eu",
+            "au"
+          ],
+          "enumNames": [
+            "US (api.intercom.io)",
+            "EU (api.eu.intercom.io)",
+            "AU (api.au.intercom.io)"
+          ],
+          "title": "Region",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "IntercomAccessTokenCredential",
+      "type": "object",
+      "x-credential-instructions": "Create a private app in the Intercom Developer Hub, open Configure > Authentication, copy the Access Token, and select the region matching your workspace's data residency.",
+      "x-credential-url": "https://app.intercom.com/a/apps/_/developer-hub"
+    },
+    "IntercomArchiveContactConfig": {
+      "description": "Archive (soft-delete) a contact.",
+      "properties": {
+        "operation": {
+          "const": "archive_contact",
+          "default": "archive_contact",
+          "title": "Archive Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Archive Contact",
+          "x-is-trigger": false
+        },
+        "contact_id": {
+          "description": "The Intercom contact ID to archive",
+          "title": "Contact ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste contact ID",
+            "field_name": "contact_id",
+            "placeholder": "Search contacts...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "intercom_contact"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "IntercomArchiveContactConfig",
+      "type": "object"
+    },
+    "IntercomAttachContactToCompanyConfig": {
+      "properties": {
+        "operation": {
+          "const": "attach_contact_to_company",
+          "default": "attach_contact_to_company",
+          "title": "Attach Contact to Company",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Attach Contact to Company",
+          "x-is-trigger": false
+        },
+        "contact_id": {
+          "description": "The Intercom contact ID",
+          "title": "Contact ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste contact ID",
+            "field_name": "contact_id",
+            "placeholder": "Search contacts...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "intercom_contact"
+        },
+        "company_id": {
+          "description": "The Intercom company ID to attach the contact to",
+          "title": "Company ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste company ID",
+            "field_name": "company_id",
+            "placeholder": "Search companies...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "intercom_company"
+        }
+      },
+      "required": [
+        "contact_id",
+        "company_id"
+      ],
+      "title": "IntercomAttachContactToCompanyConfig",
+      "type": "object"
+    },
+    "IntercomCompanyEventConfig": {
+      "description": "Trigger: fire when an Intercom company, admin, or workspace event occurs.\n\nAdd the generated webhook URL in Developer Hub > Configure > Webhooks and\nsubscribe company.* and/or admin.* topics.",
+      "properties": {
+        "operation": {
+          "const": "on_company_event",
+          "default": "on_company_event",
+          "title": "On Company / Workspace Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Company / Workspace Event",
+          "x-is-trigger": true
+        },
+        "event_types": {
+          "default": "*",
+          "description": "Which company or workspace event fires this workflow. Choose \"All company & workspace events\" to fire on any company.* / admin.* / event.created topic, or pick one (e.g. company.created). Subscribe matching topics at the URL above in Developer Hub.",
+          "enum": [
+            "*",
+            "company.created",
+            "company.updated",
+            "company.deleted",
+            "company.contact.attached",
+            "company.contact.detached",
+            "event.created",
+            "admin.activity_log_event.created",
+            "admin.added_to_workspace",
+            "admin.removed_from_workspace",
+            "admin.away_mode_updated",
+            "ping"
+          ],
+          "enumNames": [
+            "All company & workspace events",
+            "Company created",
+            "Company updated",
+            "Company deleted",
+            "Contact attached to a company",
+            "Contact detached from a company",
+            "Custom data event submitted",
+            "Admin activity log entry created",
+            "Admin added to workspace",
+            "Admin removed from workspace",
+            "Admin away mode changed",
+            "Ping (subscription health check)"
+          ],
+          "title": "Trigger On",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Add this URL in Intercom Developer Hub > Configure > Webhooks and subscribe company.* / admin.* topics",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Your app's Client Secret (Developer Hub > Basic Info) for X-Hub-Signature verification",
+          "title": "Client Secret",
+          "ui:widget": "password"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        }
+      },
+      "title": "IntercomCompanyEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "IntercomContactEventConfig": {
+      "description": "Trigger: fire when an Intercom contact event occurs.\n\nAdd the generated webhook URL in Developer Hub > Configure > Webhooks and\nsubscribe contact.* and/or visitor.* topics.",
+      "properties": {
+        "operation": {
+          "const": "on_contact_event",
+          "default": "on_contact_event",
+          "title": "On Contact Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Contact Event",
+          "x-is-trigger": true
+        },
+        "event_types": {
+          "default": "*",
+          "description": "Which contact event fires this workflow. Choose \"All contact events\" to fire on any contact.* / visitor.signed_up topic, or pick one (e.g. contact.user.created, contact.archived). Subscribe matching topics at the URL above in Developer Hub.",
+          "enum": [
+            "*",
+            "contact.user.created",
+            "contact.user.updated",
+            "contact.lead.created",
+            "contact.lead.updated",
+            "contact.lead.added_email",
+            "contact.lead.signed_up",
+            "contact.user.tag.created",
+            "contact.user.tag.deleted",
+            "contact.lead.tag.created",
+            "contact.lead.tag.deleted",
+            "contact.email.updated",
+            "contact.subscribed",
+            "contact.unsubscribed",
+            "contact.archived",
+            "contact.unarchive",
+            "contact.merged",
+            "contact.deleted",
+            "visitor.signed_up"
+          ],
+          "enumNames": [
+            "All contact events",
+            "User contact created",
+            "User contact updated",
+            "Lead created",
+            "Lead updated",
+            "Email added to lead",
+            "Lead signed up (converted to user)",
+            "User tagged",
+            "User untagged",
+            "Lead tagged",
+            "Lead untagged",
+            "Contact email updated",
+            "Contact subscribed",
+            "Contact unsubscribed",
+            "Contact archived",
+            "Contact unarchived",
+            "Contacts merged",
+            "Contact deleted",
+            "Visitor converted to a user"
+          ],
+          "title": "Trigger On",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Add this URL in Intercom Developer Hub > Configure > Webhooks and subscribe contact.* topics",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Your app's Client Secret (Developer Hub > Basic Info) for X-Hub-Signature verification",
+          "title": "Client Secret",
+          "ui:widget": "password"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        }
+      },
+      "title": "IntercomContactEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "IntercomConversationEventConfig": {
+      "description": "Trigger: fire when an Intercom conversation event occurs.\n\nAdd the generated webhook URL as a separate endpoint in Intercom Developer\nHub > Configure > Webhooks and subscribe the conversation.* topics you need.\nEach domain trigger gets its own URL, so topics are isolated per trigger.",
+      "properties": {
+        "operation": {
+          "const": "on_conversation_event",
+          "default": "on_conversation_event",
+          "title": "On Conversation Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Conversation Event",
+          "x-is-trigger": true
+        },
+        "event_types": {
+          "default": "*",
+          "description": "Which conversation event fires this workflow. Choose \"All conversation events\" to fire on every conversation.* topic, or pick one specific event (e.g. conversation.user.created, conversation.admin.closed). Subscribe the matching topics at the URL above in Developer Hub.",
+          "enum": [
+            "*",
+            "conversation.user.created",
+            "conversation.user.replied",
+            "conversation.admin.replied",
+            "conversation.admin.single.created",
+            "conversation.admin.assigned",
+            "conversation.admin.open.assigned",
+            "conversation.admin.noted",
+            "conversation.admin.opened",
+            "conversation.admin.closed",
+            "conversation.admin.snoozed",
+            "conversation.admin.unsnoozed",
+            "conversation.operator.replied",
+            "conversation.rating.added",
+            "conversation.priority.updated",
+            "conversation.read",
+            "conversation.deleted",
+            "conversation.company.updated",
+            "conversation.contact.attached",
+            "conversation.contact.detached",
+            "conversation_part.tag.created",
+            "conversation_part.redacted"
+          ],
+          "enumNames": [
+            "All conversation events",
+            "User started a conversation",
+            "User replied to a conversation",
+            "Admin replied to a conversation",
+            "Admin started a conversation",
+            "Conversation assigned to an admin",
+            "Admin opened and assigned conversation",
+            "Admin added a note",
+            "Conversation reopened",
+            "Conversation closed",
+            "Conversation snoozed",
+            "Conversation unsnoozed",
+            "Fin/bot replied to a conversation",
+            "Conversation rated",
+            "Conversation priority changed",
+            "Conversation marked as read",
+            "Conversation deleted",
+            "Company on conversation updated",
+            "Contact attached to conversation",
+            "Contact detached from conversation",
+            "Tag added to a conversation part",
+            "Conversation part redacted"
+          ],
+          "title": "Trigger On",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Add this URL in Intercom Developer Hub > Configure > Webhooks and subscribe conversation.* topics",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Your app's Client Secret (Developer Hub > Basic Info) for X-Hub-Signature verification",
+          "title": "Client Secret",
+          "ui:widget": "password"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        }
+      },
+      "title": "IntercomConversationEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "IntercomCreateArticleConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_article",
+          "default": "create_article",
+          "title": "Create Article",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Help Center",
+          "x-display-name": "Create Article",
+          "x-is-trigger": false
+        },
+        "title": {
+          "description": "The article title",
+          "title": "Title",
+          "type": "string"
+        },
+        "body": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The article body in HTML",
+          "title": "Body (HTML)",
+          "ui:widget": "textarea"
+        },
+        "author_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The admin who authors the article",
+          "title": "Author Admin",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste admin ID",
+            "field_name": "admin_id",
+            "placeholder": "Select an admin...",
+            "searchable": true
+          }
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "draft",
+          "description": "Article state",
+          "enum": [
+            "draft",
+            "published"
+          ],
+          "enumNames": [
+            "Draft",
+            "Published"
+          ],
+          "title": "State",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "IntercomCreateArticleConfig",
+      "type": "object"
+    },
+    "IntercomCreateCompanyConfig": {
+      "description": "Create or upsert a company by company_id.",
+      "properties": {
+        "operation": {
+          "const": "create_company",
+          "default": "create_company",
+          "title": "Create or Update Company",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Companies",
+          "x-creates-resource": true,
+          "x-display-name": "Create or Update Company",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "intercom_company"
+        },
+        "company_id": {
+          "description": "Your unique identifier for the company (upserts on it)",
+          "title": "Company ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The company name",
+          "title": "Name"
+        },
+        "plan": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The company's plan name",
+          "title": "Plan"
+        },
+        "custom_attributes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object of custom attributes",
+          "title": "Custom Attributes (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "IntercomCreateCompanyConfig",
+      "type": "object"
+    },
+    "IntercomCreateContactConfig": {
+      "description": "Create (or upsert) a contact \u2014 a user or a lead.",
+      "properties": {
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Create or Update Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-creates-resource": true,
+          "x-display-name": "Create or Update Contact",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "intercom_contact"
+        },
+        "role": {
+          "default": "user",
+          "description": "Whether the contact is a user or a lead",
+          "enum": [
+            "user",
+            "lead"
+          ],
+          "enumNames": [
+            "User",
+            "Lead"
+          ],
+          "title": "Role",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact email address",
+          "title": "Email"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Your unique identifier for this contact (upserts on it)",
+          "title": "External ID"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact's full name",
+          "title": "Name"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact phone number",
+          "title": "Phone"
+        },
+        "custom_attributes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object of custom attributes",
+          "title": "Custom Attributes (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "IntercomCreateContactConfig",
+      "type": "object"
+    },
+    "IntercomCreateConversationConfig": {
+      "description": "Start a conversation from a contact.",
+      "properties": {
+        "operation": {
+          "const": "create_conversation",
+          "default": "create_conversation",
+          "title": "Create Conversation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Conversations",
+          "x-display-name": "Create Conversation",
+          "x-is-trigger": false
+        },
+        "contact_id": {
+          "description": "The contact starting the conversation",
+          "title": "From Contact ID",
+          "type": "string"
+        },
+        "body": {
+          "description": "The opening message body (HTML supported)",
+          "title": "Message Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "contact_id",
+        "body"
+      ],
+      "title": "IntercomCreateConversationConfig",
+      "type": "object"
+    },
+    "IntercomCreateNoteConfig": {
+      "description": "Add an internal note to a contact.",
+      "properties": {
+        "operation": {
+          "const": "create_note",
+          "default": "create_note",
+          "title": "Create Contact Note",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Create Contact Note",
+          "x-is-trigger": false
+        },
+        "contact_id": {
+          "description": "The contact to add a note to",
+          "title": "Contact ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste contact ID",
+            "field_name": "contact_id",
+            "placeholder": "Search contacts...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "intercom_contact"
+        },
+        "body": {
+          "description": "The note text",
+          "title": "Note Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "admin_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Admin who authors the note",
+          "title": "Admin",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste admin ID",
+            "field_name": "admin_id",
+            "placeholder": "Select an admin...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "contact_id",
+        "body"
+      ],
+      "title": "IntercomCreateNoteConfig",
+      "type": "object"
+    },
+    "IntercomCreateTagConfig": {
+      "description": "Create a tag (or update an existing tag by name).",
+      "properties": {
+        "operation": {
+          "const": "create_tag",
+          "default": "create_tag",
+          "title": "Create Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspace",
+          "x-creates-resource": true,
+          "x-display-name": "Create Tag",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "intercom_tag"
+        },
+        "name": {
+          "description": "The name of the tag to create or update",
+          "title": "Tag Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "IntercomCreateTagConfig",
+      "type": "object"
+    },
+    "IntercomCreateTicketConfig": {
+      "description": "Create a support, back-office, or tracker ticket.",
+      "properties": {
+        "operation": {
+          "const": "create_ticket",
+          "default": "create_ticket",
+          "title": "Create Ticket",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tickets",
+          "x-display-name": "Create Ticket",
+          "x-is-trigger": false
+        },
+        "ticket_type_id": {
+          "description": "The ID of the ticket type to create",
+          "title": "Ticket Type",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste ticket type ID",
+            "field_name": "ticket_type_id",
+            "placeholder": "Select ticket type...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "contact_id": {
+          "description": "The contact the ticket is for",
+          "title": "Contact ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste contact ID",
+            "field_name": "contact_id",
+            "placeholder": "Search contacts...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "intercom_contact"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ticket title (a ticket attribute)",
+          "title": "Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ticket description (a ticket attribute)",
+          "title": "Description",
+          "ui:widget": "textarea"
+        },
+        "ticket_attributes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object of additional ticket attributes",
+          "title": "Ticket Attributes (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "ticket_type_id",
+        "contact_id"
+      ],
+      "title": "IntercomCreateTicketConfig",
+      "type": "object"
+    },
+    "IntercomDeleteArticleConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_article",
+          "default": "delete_article",
+          "title": "Delete Article",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Help Center",
+          "x-display-name": "Delete Article",
+          "x-is-trigger": false
+        },
+        "article_id": {
+          "description": "The article ID to delete",
+          "title": "Article ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "article_id"
+      ],
+      "title": "IntercomDeleteArticleConfig",
+      "type": "object"
+    },
+    "IntercomDeleteCompanyConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_company",
+          "default": "delete_company",
+          "title": "Delete Company",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Companies",
+          "x-display-name": "Delete Company",
+          "x-is-trigger": false
+        },
+        "company_id": {
+          "description": "The Intercom company ID to delete",
+          "title": "Company ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste company ID",
+            "field_name": "company_id",
+            "placeholder": "Search companies...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "intercom_company"
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "IntercomDeleteCompanyConfig",
+      "type": "object"
+    },
+    "IntercomDeleteContactConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Delete Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Delete Contact",
+          "x-is-trigger": false
+        },
+        "contact_id": {
+          "description": "The Intercom contact ID to permanently delete",
+          "title": "Contact ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste contact ID",
+            "field_name": "contact_id",
+            "placeholder": "Search contacts...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "intercom_contact"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "IntercomDeleteContactConfig",
+      "type": "object"
+    },
+    "IntercomDeleteTagConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_tag",
+          "default": "delete_tag",
+          "title": "Delete Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspace",
+          "x-display-name": "Delete Tag",
+          "x-is-trigger": false
+        },
+        "tag_id": {
+          "description": "The tag to delete",
+          "title": "Tag",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste tag ID",
+            "field_name": "tag_id",
+            "placeholder": "Select a tag...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "intercom_tag"
+        }
+      },
+      "required": [
+        "tag_id"
+      ],
+      "title": "IntercomDeleteTagConfig",
+      "type": "object"
+    },
+    "IntercomDetachContactFromCompanyConfig": {
+      "properties": {
+        "operation": {
+          "const": "detach_contact_from_company",
+          "default": "detach_contact_from_company",
+          "title": "Detach Contact from Company",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Detach Contact from Company",
+          "x-is-trigger": false
+        },
+        "contact_id": {
+          "description": "The Intercom contact ID",
+          "title": "Contact ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste contact ID",
+            "field_name": "contact_id",
+            "placeholder": "Search contacts...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "intercom_contact"
+        },
+        "company_id": {
+          "description": "The Intercom company ID to detach",
+          "title": "Company ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste company ID",
+            "field_name": "company_id",
+            "placeholder": "Search companies...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "intercom_company"
+        }
+      },
+      "required": [
+        "contact_id",
+        "company_id"
+      ],
+      "title": "IntercomDetachContactFromCompanyConfig",
+      "type": "object"
+    },
+    "IntercomGetArticleConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_article",
+          "default": "get_article",
+          "title": "Get Article",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Help Center",
+          "x-display-name": "Get Article",
+          "x-is-trigger": false
+        },
+        "article_id": {
+          "description": "The Intercom article ID",
+          "title": "Article ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "article_id"
+      ],
+      "title": "IntercomGetArticleConfig",
+      "type": "object"
+    },
+    "IntercomGetCompanyConfig": {
+      "description": "Retrieve a company by its Intercom ID.",
+      "properties": {
+        "operation": {
+          "const": "get_company",
+          "default": "get_company",
+          "title": "Get Company",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Companies",
+          "x-display-name": "Get Company",
+          "x-is-trigger": false
+        },
+        "company_id": {
+          "description": "The Intercom company ID",
+          "title": "Company ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste company ID",
+            "field_name": "company_id",
+            "placeholder": "Search companies...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "intercom_company"
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "IntercomGetCompanyConfig",
+      "type": "object"
+    },
+    "IntercomGetContactConfig": {
+      "description": "Retrieve a single contact by its Intercom ID.",
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Get Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Get Contact",
+          "x-is-trigger": false
+        },
+        "contact_id": {
+          "description": "The Intercom contact ID",
+          "title": "Contact ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste contact ID",
+            "field_name": "contact_id",
+            "placeholder": "Search contacts...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "intercom_contact"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "IntercomGetContactConfig",
+      "type": "object"
+    },
+    "IntercomGetConversationConfig": {
+      "description": "Retrieve a conversation with its parts.",
+      "properties": {
+        "operation": {
+          "const": "get_conversation",
+          "default": "get_conversation",
+          "title": "Get Conversation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Conversations",
+          "x-display-name": "Get Conversation",
+          "x-is-trigger": false
+        },
+        "conversation_id": {
+          "description": "The conversation ID",
+          "title": "Conversation ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "conversation_id"
+      ],
+      "title": "IntercomGetConversationConfig",
+      "type": "object"
+    },
+    "IntercomGetTicketConfig": {
+      "description": "Retrieve a ticket by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_ticket",
+          "default": "get_ticket",
+          "title": "Get Ticket",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tickets",
+          "x-display-name": "Get Ticket",
+          "x-is-trigger": false
+        },
+        "ticket_id": {
+          "description": "The ticket ID",
+          "title": "Ticket ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ticket_id"
+      ],
+      "title": "IntercomGetTicketConfig",
+      "type": "object"
+    },
+    "IntercomListAdminsConfig": {
+      "description": "List all admins (teammates) in the workspace.",
+      "properties": {
+        "operation": {
+          "const": "list_admins",
+          "default": "list_admins",
+          "title": "List Admins",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspace",
+          "x-display-name": "List Admins",
+          "x-is-trigger": false
+        }
+      },
+      "title": "IntercomListAdminsConfig",
+      "type": "object"
+    },
+    "IntercomListArticlesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_articles",
+          "default": "list_articles",
+          "title": "List Articles",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Help Center",
+          "x-display-name": "List Articles",
+          "x-is-trigger": false
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Number of articles per page",
+          "title": "Per Page"
+        }
+      },
+      "title": "IntercomListArticlesConfig",
+      "type": "object"
+    },
+    "IntercomListCompaniesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_companies",
+          "default": "list_companies",
+          "title": "List Companies",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Companies",
+          "x-display-name": "List Companies",
+          "x-is-trigger": false
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "50",
+          "description": "Number of companies per page (max 150)",
+          "title": "Per Page"
+        }
+      },
+      "title": "IntercomListCompaniesConfig",
+      "type": "object"
+    },
+    "IntercomListCompanyContactsConfig": {
+      "description": "List contacts attached to a company.",
+      "properties": {
+        "operation": {
+          "const": "list_company_contacts",
+          "default": "list_company_contacts",
+          "title": "List Company Contacts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Companies",
+          "x-display-name": "List Company Contacts",
+          "x-is-trigger": false
+        },
+        "company_id": {
+          "description": "The Intercom company ID",
+          "title": "Company ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste company ID",
+            "field_name": "company_id",
+            "placeholder": "Search companies...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "intercom_company"
+        }
+      },
+      "required": [
+        "company_id"
+      ],
+      "title": "IntercomListCompanyContactsConfig",
+      "type": "object"
+    },
+    "IntercomListContactCompaniesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_contact_companies",
+          "default": "list_contact_companies",
+          "title": "List Contact Companies",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "List Contact Companies",
+          "x-is-trigger": false
+        },
+        "contact_id": {
+          "description": "The Intercom contact ID",
+          "title": "Contact ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste contact ID",
+            "field_name": "contact_id",
+            "placeholder": "Search contacts...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "intercom_contact"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "IntercomListContactCompaniesConfig",
+      "type": "object"
+    },
+    "IntercomListContactNotesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_contact_notes",
+          "default": "list_contact_notes",
+          "title": "List Contact Notes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "List Contact Notes",
+          "x-is-trigger": false
+        },
+        "contact_id": {
+          "description": "The Intercom contact ID",
+          "title": "Contact ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste contact ID",
+            "field_name": "contact_id",
+            "placeholder": "Search contacts...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "intercom_contact"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "IntercomListContactNotesConfig",
+      "type": "object"
+    },
+    "IntercomListContactsConfig": {
+      "description": "List/cursor-paginate all contacts.",
+      "properties": {
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "List Contacts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "List Contacts",
+          "x-is-trigger": false
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "50",
+          "description": "Number of contacts per page (max 150)",
+          "title": "Per Page"
+        },
+        "starting_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor for the next page",
+          "title": "Starting After"
+        }
+      },
+      "title": "IntercomListContactsConfig",
+      "type": "object"
+    },
+    "IntercomListConversationsConfig": {
+      "description": "List all conversations.",
+      "properties": {
+        "operation": {
+          "const": "list_conversations",
+          "default": "list_conversations",
+          "title": "List Conversations",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Conversations",
+          "x-display-name": "List Conversations",
+          "x-is-trigger": false
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Number of conversations per page (max 150)",
+          "title": "Per Page"
+        },
+        "starting_after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor for the next page",
+          "title": "Starting After"
+        }
+      },
+      "title": "IntercomListConversationsConfig",
+      "type": "object"
+    },
+    "IntercomListDataAttributesConfig": {
+      "description": "List custom/standard data attributes (schema).",
+      "properties": {
+        "operation": {
+          "const": "list_data_attributes",
+          "default": "list_data_attributes",
+          "title": "List Data Attributes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspace",
+          "x-display-name": "List Data Attributes",
+          "x-is-trigger": false
+        },
+        "model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter attributes by the model they belong to",
+          "enum": [
+            "",
+            "contact",
+            "company",
+            "conversation"
+          ],
+          "enumNames": [
+            "All",
+            "Contact",
+            "Company",
+            "Conversation"
+          ],
+          "title": "Model",
+          "x-enum-searchable": true
+        }
+      },
+      "title": "IntercomListDataAttributesConfig",
+      "type": "object"
+    },
+    "IntercomListSegmentsConfig": {
+      "description": "List all segments.",
+      "properties": {
+        "operation": {
+          "const": "list_segments",
+          "default": "list_segments",
+          "title": "List Segments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspace",
+          "x-display-name": "List Segments",
+          "x-is-trigger": false
+        }
+      },
+      "title": "IntercomListSegmentsConfig",
+      "type": "object"
+    },
+    "IntercomListTagsConfig": {
+      "description": "List all tags in the workspace.",
+      "properties": {
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "List Tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspace",
+          "x-display-name": "List Tags",
+          "x-is-trigger": false
+        }
+      },
+      "title": "IntercomListTagsConfig",
+      "type": "object"
+    },
+    "IntercomListTeamsConfig": {
+      "description": "List all teams in the workspace.",
+      "properties": {
+        "operation": {
+          "const": "list_teams",
+          "default": "list_teams",
+          "title": "List Teams",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspace",
+          "x-display-name": "List Teams",
+          "x-is-trigger": false
+        }
+      },
+      "title": "IntercomListTeamsConfig",
+      "type": "object"
+    },
+    "IntercomListTicketTypesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_ticket_types",
+          "default": "list_ticket_types",
+          "title": "List Ticket Types",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tickets",
+          "x-display-name": "List Ticket Types",
+          "x-is-trigger": false
+        }
+      },
+      "title": "IntercomListTicketTypesConfig",
+      "type": "object"
+    },
+    "IntercomManageConversationConfig": {
+      "description": "Assign, snooze, open, or close a conversation.",
+      "properties": {
+        "operation": {
+          "const": "manage_conversation",
+          "default": "manage_conversation",
+          "title": "Manage Conversation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Conversations",
+          "x-display-name": "Manage Conversation",
+          "x-is-trigger": false
+        },
+        "conversation_id": {
+          "description": "The conversation to manage",
+          "title": "Conversation ID",
+          "type": "string"
+        },
+        "message_type": {
+          "default": "close",
+          "description": "The management action to run",
+          "enum": [
+            "assignment",
+            "snoozed",
+            "open",
+            "close"
+          ],
+          "enumNames": [
+            "Assign",
+            "Snooze",
+            "Open",
+            "Close"
+          ],
+          "title": "Action",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "admin_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Admin performing the action",
+          "title": "Admin",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste admin ID",
+            "field_name": "admin_id",
+            "placeholder": "Select an admin...",
+            "searchable": true
+          }
+        },
+        "assignee_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Admin or team ID to assign to (for the assignment action)",
+          "title": "Assignee ID"
+        },
+        "snoozed_until": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "UNIX timestamp to snooze until (for the snooze action)",
+          "title": "Snoozed Until"
+        }
+      },
+      "required": [
+        "conversation_id"
+      ],
+      "title": "IntercomManageConversationConfig",
+      "type": "object"
+    },
+    "IntercomMergeContactsConfig": {
+      "description": "Merge a lead into a user.",
+      "properties": {
+        "operation": {
+          "const": "merge_contacts",
+          "default": "merge_contacts",
+          "title": "Merge Contacts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Merge Contacts",
+          "x-is-trigger": false
+        },
+        "contact_id": {
+          "description": "The lead contact ID (the contact being merged from)",
+          "title": "Lead ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste contact ID",
+            "field_name": "contact_id",
+            "placeholder": "Search contacts...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "intercom_contact"
+        },
+        "into_contact_id": {
+          "description": "The user contact ID to merge the lead into",
+          "title": "Into User ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste contact ID",
+            "field_name": "contact_id",
+            "placeholder": "Search contacts...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "intercom_contact"
+        }
+      },
+      "required": [
+        "contact_id",
+        "into_contact_id"
+      ],
+      "title": "IntercomMergeContactsConfig",
+      "type": "object"
+    },
+    "IntercomOAuthCredential": {
+      "description": "OAuth 2.0 credential for Intercom (public app, authorization_code flow).\n\nTokens are obtained via the OAuth flow (\"Connect Intercom account\"), not\nentered manually. Intercom access tokens are LONG-LIVED \u2014 they never expire\nand there is no refresh token, so this credential intentionally carries no\n``refresh_token`` / ``expires_at`` (nothing to rotate).\n\nRegister an OAuth app at: https://app.intercom.com/a/apps/_/developer-hub",
+      "properties": {
+        "credential_type": {
+          "const": "intercom_oauth",
+          "default": "intercom_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "Intercom OAuth access token (Bearer). Long-lived; never expires.",
+          "title": "Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "region": {
+          "default": "us",
+          "description": "Data residency region for your Intercom workspace",
+          "enum": [
+            "us",
+            "eu",
+            "au"
+          ],
+          "enumNames": [
+            "US (api.intercom.io)",
+            "EU (api.eu.intercom.io)",
+            "AU (api.au.intercom.io)"
+          ],
+          "title": "Region",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Workspace Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Email"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "IntercomOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://app.intercom.com/a/apps/_/developer-hub",
+      "x-oauth-custom-client-help": "Optionally bring your own Intercom OAuth app. Create one in the Intercom Developer Hub, open Configure > Authentication, add NoClick's Intercom callback as a redirect URL, enable the scopes above, and paste its Client ID and Secret here. Leave blank to use NoClick's shared Intercom app.",
+      "x-oauth-provider": "intercom",
+      "x-oauth-scopes": [
+        "read_write_users",
+        "read_write_companies",
+        "read_write_conversations",
+        "read_write_tags",
+        "read_write_events",
+        "read_write_tickets",
+        "read_admins",
+        "read_teams"
+      ],
+      "x-oauth-supports-custom-client": true
+    },
+    "IntercomReplyConversationConfig": {
+      "description": "Add an admin or user reply (comment or note) to a conversation.",
+      "properties": {
+        "operation": {
+          "const": "reply_conversation",
+          "default": "reply_conversation",
+          "title": "Reply to Conversation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Conversations",
+          "x-display-name": "Reply to Conversation",
+          "x-is-trigger": false
+        },
+        "conversation_id": {
+          "description": "The conversation to reply to. When triggered by a conversation event, use the conversation_id from that event.",
+          "title": "Conversation ID",
+          "type": "string"
+        },
+        "message_type": {
+          "default": "comment",
+          "description": "Type of reply",
+          "enum": [
+            "comment",
+            "note"
+          ],
+          "enumNames": [
+            "Comment (visible)",
+            "Note (internal)"
+          ],
+          "title": "Message Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "reply_type": {
+          "default": "admin",
+          "description": "Whether an admin or the user replies",
+          "enum": [
+            "admin",
+            "user"
+          ],
+          "enumNames": [
+            "Admin",
+            "User"
+          ],
+          "title": "Reply As",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "body": {
+          "description": "The reply text (HTML supported)",
+          "title": "Reply Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "admin_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Admin authoring the reply (required when replying as admin)",
+          "title": "Admin",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste admin ID",
+            "field_name": "admin_id",
+            "placeholder": "Select an admin...",
+            "searchable": true
+          }
+        },
+        "contact_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact authoring the reply (required when replying as user)",
+          "title": "Contact ID"
+        }
+      },
+      "required": [
+        "conversation_id",
+        "body"
+      ],
+      "title": "IntercomReplyConversationConfig",
+      "type": "object"
+    },
+    "IntercomReplyTicketConfig": {
+      "properties": {
+        "operation": {
+          "const": "reply_ticket",
+          "default": "reply_ticket",
+          "title": "Reply to Ticket",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tickets",
+          "x-display-name": "Reply to Ticket",
+          "x-is-trigger": false
+        },
+        "ticket_id": {
+          "description": "The ticket ID to reply to",
+          "title": "Ticket ID",
+          "type": "string"
+        },
+        "message_type": {
+          "default": "comment",
+          "description": "Type of reply",
+          "enum": [
+            "comment",
+            "note"
+          ],
+          "enumNames": [
+            "Comment (visible)",
+            "Note (internal)"
+          ],
+          "title": "Message Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "admin_id": {
+          "description": "Admin authoring the reply",
+          "title": "Admin",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste admin ID",
+            "field_name": "admin_id",
+            "placeholder": "Select an admin...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "body": {
+          "description": "The reply text (HTML supported)",
+          "title": "Reply Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "ticket_id",
+        "admin_id",
+        "body"
+      ],
+      "title": "IntercomReplyTicketConfig",
+      "type": "object"
+    },
+    "IntercomSearchContactsConfig": {
+      "description": "Search contacts by attribute filters (JSON query body).",
+      "properties": {
+        "operation": {
+          "const": "search_contacts",
+          "default": "search_contacts",
+          "title": "Search Contacts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Search Contacts",
+          "x-is-trigger": false
+        },
+        "query": {
+          "description": "Intercom search query object, e.g. {\"field\":\"email\",\"operator\":\"=\",\"value\":\"a@b.com\"}",
+          "title": "Query (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "50",
+          "description": "Number of results per page",
+          "title": "Per Page"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "IntercomSearchContactsConfig",
+      "type": "object"
+    },
+    "IntercomSearchConversationsConfig": {
+      "description": "Search conversations by filters (JSON query body).",
+      "properties": {
+        "operation": {
+          "const": "search_conversations",
+          "default": "search_conversations",
+          "title": "Search Conversations",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Conversations",
+          "x-display-name": "Search Conversations",
+          "x-is-trigger": false
+        },
+        "query": {
+          "description": "Intercom search query object, e.g. {\"field\":\"open\",\"operator\":\"=\",\"value\":true}",
+          "title": "Query (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Number of results per page",
+          "title": "Per Page"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "IntercomSearchConversationsConfig",
+      "type": "object"
+    },
+    "IntercomSearchTicketsConfig": {
+      "description": "Search tickets by filters (JSON query body).",
+      "properties": {
+        "operation": {
+          "const": "search_tickets",
+          "default": "search_tickets",
+          "title": "Search Tickets",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tickets",
+          "x-display-name": "Search Tickets",
+          "x-is-trigger": false
+        },
+        "query": {
+          "description": "Intercom search query object, e.g. {\"field\":\"state\",\"operator\":\"=\",\"value\":\"submitted\"}",
+          "title": "Query (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Number of results per page",
+          "title": "Per Page"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "IntercomSearchTicketsConfig",
+      "type": "object"
+    },
+    "IntercomSendMessageConfig": {
+      "description": "Send an in-app or email message from an admin to a contact.",
+      "properties": {
+        "operation": {
+          "const": "send_message",
+          "default": "send_message",
+          "title": "Send Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messaging",
+          "x-display-name": "Send Message",
+          "x-is-trigger": false
+        },
+        "message_type": {
+          "default": "inapp",
+          "description": "Whether to send an in-app or email message",
+          "enum": [
+            "inapp",
+            "email"
+          ],
+          "enumNames": [
+            "In-App",
+            "Email"
+          ],
+          "title": "Message Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "contact_id": {
+          "description": "The recipient contact ID",
+          "title": "To Contact ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste contact ID",
+            "field_name": "contact_id",
+            "placeholder": "Search contacts...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "intercom_contact"
+        },
+        "admin_id": {
+          "description": "The admin sending the message",
+          "title": "From Admin",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste admin ID",
+            "field_name": "admin_id",
+            "placeholder": "Select an admin...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "body": {
+          "description": "The message body (HTML supported)",
+          "title": "Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Email subject line (required for email messages)",
+          "title": "Subject"
+        }
+      },
+      "required": [
+        "contact_id",
+        "admin_id",
+        "body"
+      ],
+      "title": "IntercomSendMessageConfig",
+      "type": "object"
+    },
+    "IntercomSubmitEventConfig": {
+      "description": "Submit a custom data event for a contact (analytics / triggers).",
+      "properties": {
+        "operation": {
+          "const": "submit_event",
+          "default": "submit_event",
+          "title": "Submit Data Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Messaging",
+          "x-display-name": "Submit Data Event",
+          "x-is-trigger": false
+        },
+        "event_name": {
+          "description": "The name of the event",
+          "title": "Event Name",
+          "type": "string"
+        },
+        "contact_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The Intercom contact ID (or use email / external ID)",
+          "title": "Contact ID"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact email (alternative to contact ID)",
+          "title": "Email"
+        },
+        "user_external_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact external ID (alternative to contact ID)",
+          "title": "External ID"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object of event metadata",
+          "title": "Metadata (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "event_name"
+      ],
+      "title": "IntercomSubmitEventConfig",
+      "type": "object"
+    },
+    "IntercomTagContactConfig": {
+      "properties": {
+        "operation": {
+          "const": "tag_contact",
+          "default": "tag_contact",
+          "title": "Tag Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Tag Contact",
+          "x-is-trigger": false
+        },
+        "contact_id": {
+          "description": "The Intercom contact ID",
+          "title": "Contact ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste contact ID",
+            "field_name": "contact_id",
+            "placeholder": "Search contacts...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "intercom_contact"
+        },
+        "tag_id": {
+          "description": "The tag to attach",
+          "title": "Tag",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste tag ID",
+            "field_name": "tag_id",
+            "placeholder": "Select a tag...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "intercom_tag"
+        }
+      },
+      "required": [
+        "contact_id",
+        "tag_id"
+      ],
+      "title": "IntercomTagContactConfig",
+      "type": "object"
+    },
+    "IntercomTagConversationConfig": {
+      "description": "Attach a tag to a conversation.",
+      "properties": {
+        "operation": {
+          "const": "tag_conversation",
+          "default": "tag_conversation",
+          "title": "Tag Conversation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Conversations",
+          "x-display-name": "Tag Conversation",
+          "x-is-trigger": false
+        },
+        "conversation_id": {
+          "description": "The conversation to tag",
+          "title": "Conversation ID",
+          "type": "string"
+        },
+        "tag_id": {
+          "description": "The tag to attach",
+          "title": "Tag",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste tag ID",
+            "field_name": "tag_id",
+            "placeholder": "Select a tag...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "admin_id": {
+          "description": "Admin applying the tag",
+          "title": "Admin",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste admin ID",
+            "field_name": "admin_id",
+            "placeholder": "Select an admin...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "conversation_id",
+        "tag_id",
+        "admin_id"
+      ],
+      "title": "IntercomTagConversationConfig",
+      "type": "object"
+    },
+    "IntercomTicketEventConfig": {
+      "description": "Trigger: fire when an Intercom ticket event occurs.\n\nAdd the generated webhook URL in Developer Hub > Configure > Webhooks and\nsubscribe ticket.* topics.",
+      "properties": {
+        "operation": {
+          "const": "on_ticket_event",
+          "default": "on_ticket_event",
+          "title": "On Ticket Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Ticket Event",
+          "x-is-trigger": true
+        },
+        "event_types": {
+          "default": "*",
+          "description": "Which ticket event fires this workflow. Choose \"All ticket events\" to fire on any ticket.* topic, or pick one (e.g. ticket.created, ticket.resolved). Subscribe matching topics at the URL above in Developer Hub.",
+          "enum": [
+            "*",
+            "ticket.created",
+            "ticket.state.updated",
+            "ticket.admin.assigned",
+            "ticket.team.assigned",
+            "ticket.admin.replied",
+            "ticket.contact.replied",
+            "ticket.note.created",
+            "ticket.attribute.updated",
+            "ticket.rating.provided",
+            "ticket.closed",
+            "ticket.resolved",
+            "ticket.contact.attached",
+            "ticket.contact.detached"
+          ],
+          "enumNames": [
+            "All ticket events",
+            "Ticket created",
+            "Ticket state changed",
+            "Ticket assigned to an admin",
+            "Ticket assigned to a team",
+            "Admin replied to a ticket",
+            "Contact replied to a ticket",
+            "Note added to a ticket",
+            "Ticket attribute updated",
+            "Ticket rated",
+            "Ticket closed",
+            "Ticket resolved",
+            "Contact attached to ticket",
+            "Contact detached from ticket"
+          ],
+          "title": "Trigger On",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Add this URL in Intercom Developer Hub > Configure > Webhooks and subscribe ticket.* topics",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Your app's Client Secret (Developer Hub > Basic Info) for X-Hub-Signature verification",
+          "title": "Client Secret",
+          "ui:widget": "password"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        }
+      },
+      "title": "IntercomTicketEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "IntercomUnarchiveContactConfig": {
+      "properties": {
+        "operation": {
+          "const": "unarchive_contact",
+          "default": "unarchive_contact",
+          "title": "Unarchive Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Unarchive Contact",
+          "x-is-trigger": false
+        },
+        "contact_id": {
+          "description": "The Intercom contact ID to unarchive",
+          "title": "Contact ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste contact ID",
+            "field_name": "contact_id",
+            "placeholder": "Search contacts...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "intercom_contact"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "IntercomUnarchiveContactConfig",
+      "type": "object"
+    },
+    "IntercomUntagContactConfig": {
+      "properties": {
+        "operation": {
+          "const": "untag_contact",
+          "default": "untag_contact",
+          "title": "Untag Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Untag Contact",
+          "x-is-trigger": false
+        },
+        "contact_id": {
+          "description": "The Intercom contact ID",
+          "title": "Contact ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste contact ID",
+            "field_name": "contact_id",
+            "placeholder": "Search contacts...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "intercom_contact"
+        },
+        "tag_id": {
+          "description": "The tag to remove",
+          "title": "Tag",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste tag ID",
+            "field_name": "tag_id",
+            "placeholder": "Select a tag...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "intercom_tag"
+        }
+      },
+      "required": [
+        "contact_id",
+        "tag_id"
+      ],
+      "title": "IntercomUntagContactConfig",
+      "type": "object"
+    },
+    "IntercomUntagConversationConfig": {
+      "properties": {
+        "operation": {
+          "const": "untag_conversation",
+          "default": "untag_conversation",
+          "title": "Untag Conversation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Conversations",
+          "x-display-name": "Untag Conversation",
+          "x-is-trigger": false
+        },
+        "conversation_id": {
+          "description": "The conversation to untag",
+          "title": "Conversation ID",
+          "type": "string"
+        },
+        "tag_id": {
+          "description": "The tag to remove",
+          "title": "Tag",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste tag ID",
+            "field_name": "tag_id",
+            "placeholder": "Select a tag...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "intercom_tag"
+        },
+        "admin_id": {
+          "description": "Admin removing the tag",
+          "title": "Admin",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste admin ID",
+            "field_name": "admin_id",
+            "placeholder": "Select an admin...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "conversation_id",
+        "tag_id",
+        "admin_id"
+      ],
+      "title": "IntercomUntagConversationConfig",
+      "type": "object"
+    },
+    "IntercomUpdateArticleConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_article",
+          "default": "update_article",
+          "title": "Update Article",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Help Center",
+          "x-display-name": "Update Article",
+          "x-is-trigger": false
+        },
+        "article_id": {
+          "description": "The article ID to update",
+          "title": "Article ID",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New article title",
+          "title": "Title"
+        },
+        "body": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New article body in HTML",
+          "title": "Body (HTML)",
+          "ui:widget": "textarea"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New article state",
+          "enum": [
+            "",
+            "draft",
+            "published"
+          ],
+          "enumNames": [
+            "Unchanged",
+            "Draft",
+            "Published"
+          ],
+          "title": "State",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "article_id"
+      ],
+      "title": "IntercomUpdateArticleConfig",
+      "type": "object"
+    },
+    "IntercomUpdateContactConfig": {
+      "description": "Update a contact's attributes.",
+      "properties": {
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Update Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Update Contact",
+          "x-is-trigger": false
+        },
+        "contact_id": {
+          "description": "The Intercom contact ID to update",
+          "title": "Contact ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste contact ID",
+            "field_name": "contact_id",
+            "placeholder": "Search contacts...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "intercom_contact"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New email address",
+          "title": "Email"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New full name",
+          "title": "Name"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New phone number",
+          "title": "Phone"
+        },
+        "custom_attributes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object of custom attributes to set",
+          "title": "Custom Attributes (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "IntercomUpdateContactConfig",
+      "type": "object"
+    },
+    "IntercomUpdateTicketConfig": {
+      "description": "Update ticket state, attributes, or assignee.",
+      "properties": {
+        "operation": {
+          "const": "update_ticket",
+          "default": "update_ticket",
+          "title": "Update Ticket",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tickets",
+          "x-display-name": "Update Ticket",
+          "x-is-trigger": false
+        },
+        "ticket_id": {
+          "description": "The ticket ID to update",
+          "title": "Ticket ID",
+          "type": "string"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New ticket state",
+          "enum": [
+            "",
+            "submitted",
+            "in_progress",
+            "waiting_on_customer",
+            "resolved"
+          ],
+          "enumNames": [
+            "Unchanged",
+            "Submitted",
+            "In Progress",
+            "Waiting on Customer",
+            "Resolved"
+          ],
+          "title": "State",
+          "x-enum-searchable": true
+        },
+        "assignee_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Admin or team ID to assign the ticket to",
+          "title": "Assignee ID"
+        },
+        "ticket_attributes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object of ticket attributes to update",
+          "title": "Ticket Attributes (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "ticket_id"
+      ],
+      "title": "IntercomUpdateTicketConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the Intercom node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "archive_contact": "#/$defs/IntercomArchiveContactConfig",
+          "attach_contact_to_company": "#/$defs/IntercomAttachContactToCompanyConfig",
+          "create_article": "#/$defs/IntercomCreateArticleConfig",
+          "create_company": "#/$defs/IntercomCreateCompanyConfig",
+          "create_contact": "#/$defs/IntercomCreateContactConfig",
+          "create_conversation": "#/$defs/IntercomCreateConversationConfig",
+          "create_note": "#/$defs/IntercomCreateNoteConfig",
+          "create_tag": "#/$defs/IntercomCreateTagConfig",
+          "create_ticket": "#/$defs/IntercomCreateTicketConfig",
+          "delete_article": "#/$defs/IntercomDeleteArticleConfig",
+          "delete_company": "#/$defs/IntercomDeleteCompanyConfig",
+          "delete_contact": "#/$defs/IntercomDeleteContactConfig",
+          "delete_tag": "#/$defs/IntercomDeleteTagConfig",
+          "detach_contact_from_company": "#/$defs/IntercomDetachContactFromCompanyConfig",
+          "get_article": "#/$defs/IntercomGetArticleConfig",
+          "get_company": "#/$defs/IntercomGetCompanyConfig",
+          "get_contact": "#/$defs/IntercomGetContactConfig",
+          "get_conversation": "#/$defs/IntercomGetConversationConfig",
+          "get_ticket": "#/$defs/IntercomGetTicketConfig",
+          "list_admins": "#/$defs/IntercomListAdminsConfig",
+          "list_articles": "#/$defs/IntercomListArticlesConfig",
+          "list_companies": "#/$defs/IntercomListCompaniesConfig",
+          "list_company_contacts": "#/$defs/IntercomListCompanyContactsConfig",
+          "list_contact_companies": "#/$defs/IntercomListContactCompaniesConfig",
+          "list_contact_notes": "#/$defs/IntercomListContactNotesConfig",
+          "list_contacts": "#/$defs/IntercomListContactsConfig",
+          "list_conversations": "#/$defs/IntercomListConversationsConfig",
+          "list_data_attributes": "#/$defs/IntercomListDataAttributesConfig",
+          "list_segments": "#/$defs/IntercomListSegmentsConfig",
+          "list_tags": "#/$defs/IntercomListTagsConfig",
+          "list_teams": "#/$defs/IntercomListTeamsConfig",
+          "list_ticket_types": "#/$defs/IntercomListTicketTypesConfig",
+          "manage_conversation": "#/$defs/IntercomManageConversationConfig",
+          "merge_contacts": "#/$defs/IntercomMergeContactsConfig",
+          "on_company_event": "#/$defs/IntercomCompanyEventConfig",
+          "on_contact_event": "#/$defs/IntercomContactEventConfig",
+          "on_conversation_event": "#/$defs/IntercomConversationEventConfig",
+          "on_ticket_event": "#/$defs/IntercomTicketEventConfig",
+          "reply_conversation": "#/$defs/IntercomReplyConversationConfig",
+          "reply_ticket": "#/$defs/IntercomReplyTicketConfig",
+          "search_contacts": "#/$defs/IntercomSearchContactsConfig",
+          "search_conversations": "#/$defs/IntercomSearchConversationsConfig",
+          "search_tickets": "#/$defs/IntercomSearchTicketsConfig",
+          "send_message": "#/$defs/IntercomSendMessageConfig",
+          "submit_event": "#/$defs/IntercomSubmitEventConfig",
+          "tag_contact": "#/$defs/IntercomTagContactConfig",
+          "tag_conversation": "#/$defs/IntercomTagConversationConfig",
+          "unarchive_contact": "#/$defs/IntercomUnarchiveContactConfig",
+          "untag_contact": "#/$defs/IntercomUntagContactConfig",
+          "untag_conversation": "#/$defs/IntercomUntagConversationConfig",
+          "update_article": "#/$defs/IntercomUpdateArticleConfig",
+          "update_contact": "#/$defs/IntercomUpdateContactConfig",
+          "update_ticket": "#/$defs/IntercomUpdateTicketConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/IntercomCreateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomGetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomUpdateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomSearchContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomArchiveContactConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomMergeContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomCreateNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomUnarchiveContactConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomDeleteContactConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomListContactNotesConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomListContactCompaniesConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomAttachContactToCompanyConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomDetachContactFromCompanyConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomTagContactConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomUntagContactConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomCreateConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomGetConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomListConversationsConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomSearchConversationsConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomReplyConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomManageConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomTagConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomUntagConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomCreateTicketConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomGetTicketConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomUpdateTicketConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomSearchTicketsConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomListTicketTypesConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomReplyTicketConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomCreateCompanyConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomGetCompanyConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomListCompanyContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomListCompaniesConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomDeleteCompanyConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomSendMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomSubmitEventConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomListTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomCreateTagConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomDeleteTagConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomListAdminsConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomListTeamsConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomListDataAttributesConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomListSegmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomListArticlesConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomGetArticleConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomCreateArticleConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomUpdateArticleConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomDeleteArticleConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomConversationEventConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomContactEventConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomTicketEventConfig"
+        },
+        {
+          "$ref": "#/$defs/IntercomCompanyEventConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/IntercomOAuthCredential"
+        },
+        {
+          "$ref": "#/$defs/IntercomAccessTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Intercom Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Create or update an Intercom contact when a user signs up",
+    "Reply to an open Intercom conversation as an admin",
+    "Create a support ticket for a contact",
+    "Send an in-app message to a user",
+    "Trigger a workflow when a new Intercom conversation is created"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -1,0 +1,1783 @@
+{
+  "$defs": {
+    "CanvaCreateAssetUploadConfig": {
+      "description": "Upload asset from binary data",
+      "properties": {
+        "operation": {
+          "const": "upload_asset_from_binary",
+          "default": "upload_asset_from_binary",
+          "title": "Upload Asset from Binary",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Asset",
+          "x-display-name": "Upload Asset from Binary",
+          "x-is-trigger": false
+        },
+        "file_data": {
+          "description": "Base64-encoded binary file data (max 50MB for images)",
+          "title": "File Data (Base64)",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Name for the asset",
+          "title": "Asset Name"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Tags to organize the asset",
+          "title": "Tags"
+        }
+      },
+      "required": [
+        "file_data"
+      ],
+      "title": "Create Asset Upload",
+      "type": "object"
+    },
+    "CanvaCreateAutofillJobConfig": {
+      "description": "Start async job to autofill design using brand template",
+      "properties": {
+        "operation": {
+          "const": "create_design_autofill_job",
+          "default": "create_design_autofill_job",
+          "title": "Create Design Autofill Job",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Design Autofill",
+          "x-display-name": "Create Design Autofill Job",
+          "x-is-trigger": false
+        },
+        "brand_template_id": {
+          "description": "The ID of the brand template to use",
+          "title": "Brand Template ID",
+          "type": "string"
+        },
+        "data": {
+          "additionalProperties": true,
+          "description": "Data to autofill into the template fields",
+          "title": "Data",
+          "type": "object"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Title for the autofilled design",
+          "title": "Title"
+        }
+      },
+      "required": [
+        "brand_template_id",
+        "data"
+      ],
+      "title": "Create Autofill Job",
+      "type": "object"
+    },
+    "CanvaCreateCommentThreadConfig": {
+      "description": "Create comment thread on design",
+      "properties": {
+        "operation": {
+          "const": "create_design_comment_thread",
+          "default": "create_design_comment_thread",
+          "title": "Create Design Comment Thread",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment Thread",
+          "x-display-name": "Create Design Comment Thread",
+          "x-is-trigger": false
+        },
+        "design_id": {
+          "description": "The ID of the design",
+          "title": "Design ID",
+          "type": "string"
+        },
+        "message": {
+          "description": "Comment message content",
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "design_id",
+        "message"
+      ],
+      "title": "Create Comment Thread",
+      "type": "object"
+    },
+    "CanvaCreateDesignConfig": {
+      "description": "Create a new Canva design",
+      "properties": {
+        "operation": {
+          "const": "create_design",
+          "default": "create_design",
+          "title": "Create Design",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Design",
+          "x-display-name": "Create Design",
+          "x-is-trigger": false
+        },
+        "design_type": {
+          "description": "Type of design to create (e.g., 'Presentation', 'Whiteboard', 'Doc')",
+          "enum": [
+            "Presentation",
+            "Whiteboard",
+            "Doc",
+            "Instagram Post",
+            "Instagram Story",
+            "Facebook Post",
+            "LinkedIn Post",
+            "Twitter Post",
+            "YouTube Thumbnail",
+            "Poster",
+            "Flyer",
+            "A4 Document",
+            "Letter Document",
+            "Business Card",
+            "Logo",
+            "Infographic",
+            "Resume"
+          ],
+          "title": "Design Type",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Title for the new design",
+          "title": "Title"
+        },
+        "asset_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of an asset to use as the design's initial content",
+          "title": "Asset ID"
+        }
+      },
+      "required": [
+        "design_type"
+      ],
+      "title": "Create Design",
+      "type": "object"
+    },
+    "CanvaCreateDesignImportConfig": {
+      "description": "Import design from binary file data",
+      "properties": {
+        "operation": {
+          "const": "import_design_from_binary_file",
+          "default": "import_design_from_binary_file",
+          "title": "Import Design from Binary File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Design",
+          "x-display-name": "Import Design from Binary File",
+          "x-is-trigger": false
+        },
+        "file_data": {
+          "description": "Base64-encoded binary file data",
+          "title": "File Data (Base64)",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Title for the imported design",
+          "title": "Title"
+        }
+      },
+      "required": [
+        "file_data"
+      ],
+      "title": "Create Design Import",
+      "type": "object"
+    },
+    "CanvaCreateExportConfig": {
+      "description": "Create a design export job",
+      "properties": {
+        "operation": {
+          "const": "create_design_export_job",
+          "default": "create_design_export_job",
+          "title": "Create Design Export Job",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Design Export",
+          "x-display-name": "Create Design Export Job",
+          "x-is-trigger": false
+        },
+        "design_id": {
+          "description": "The ID of the design to export",
+          "title": "Design ID",
+          "type": "string"
+        },
+        "format": {
+          "description": "Format to export the design as",
+          "enum": [
+            "pdf",
+            "jpg",
+            "png",
+            "gif",
+            "pptx",
+            "mp4"
+          ],
+          "title": "Export Format",
+          "type": "string"
+        },
+        "pages": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specific page numbers to export (1-indexed). Leave empty for all pages.",
+          "title": "Pages"
+        },
+        "quality": {
+          "anyOf": [
+            {
+              "enum": [
+                "regular",
+                "pro"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "regular",
+          "description": "Export quality level",
+          "title": "Quality",
+          "enum": [
+            "regular",
+            "pro"
+          ],
+          "x-enum-searchable": true
+        },
+        "lossless": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "For PNG exports, whether to use lossless compression",
+          "title": "Lossless"
+        }
+      },
+      "required": [
+        "design_id",
+        "format"
+      ],
+      "title": "Create Export",
+      "type": "object"
+    },
+    "CanvaCreateFolderConfig": {
+      "description": "Create a new folder",
+      "properties": {
+        "operation": {
+          "const": "create_folder",
+          "default": "create_folder",
+          "title": "Create Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Folder",
+          "x-display-name": "Create Folder",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Name for the new folder",
+          "title": "Folder Name",
+          "type": "string"
+        },
+        "parent_folder_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "root",
+          "description": "ID of the parent folder (use 'root' for top-level)",
+          "title": "Parent Folder ID"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "Create Folder",
+      "type": "object"
+    },
+    "CanvaCreateReplyConfig": {
+      "description": "Create reply to comment thread",
+      "properties": {
+        "operation": {
+          "const": "create_comment_thread_reply",
+          "default": "create_comment_thread_reply",
+          "title": "Create Comment Thread Reply",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment Thread",
+          "x-display-name": "Create Comment Thread Reply",
+          "x-is-trigger": false
+        },
+        "design_id": {
+          "description": "The ID of the design",
+          "title": "Design ID",
+          "type": "string"
+        },
+        "thread_id": {
+          "description": "The ID of the comment thread",
+          "title": "Thread ID",
+          "type": "string"
+        },
+        "message": {
+          "description": "Reply message content",
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "design_id",
+        "thread_id",
+        "message"
+      ],
+      "title": "Create Reply",
+      "type": "object"
+    },
+    "CanvaCreateResizeConfig": {
+      "description": "Create async job to resize a design to new dimensions",
+      "properties": {
+        "operation": {
+          "const": "create_design_resize_job",
+          "default": "create_design_resize_job",
+          "title": "Create Design Resize Job",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Design Resize",
+          "x-display-name": "Create Design Resize Job",
+          "x-is-trigger": false
+        },
+        "design_id": {
+          "description": "The ID of the design to resize",
+          "title": "Design ID",
+          "type": "string"
+        },
+        "width": {
+          "description": "Target width in pixels",
+          "title": "Width (px)",
+          "type": "integer"
+        },
+        "height": {
+          "description": "Target height in pixels",
+          "title": "Height (px)",
+          "type": "integer"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Title for the resized design copy",
+          "title": "Title"
+        }
+      },
+      "required": [
+        "design_id",
+        "width",
+        "height"
+      ],
+      "title": "Create Resize",
+      "type": "object"
+    },
+    "CanvaDeleteAssetConfig": {
+      "description": "Delete an asset",
+      "properties": {
+        "operation": {
+          "const": "delete_asset",
+          "default": "delete_asset",
+          "title": "Delete Asset",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Asset",
+          "x-display-name": "Delete Asset",
+          "x-is-trigger": false
+        },
+        "asset_id": {
+          "description": "The ID of the asset to delete",
+          "title": "Asset ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "asset_id"
+      ],
+      "title": "Delete Asset",
+      "type": "object"
+    },
+    "CanvaDeleteFolderConfig": {
+      "description": "Delete a folder",
+      "properties": {
+        "operation": {
+          "const": "delete_folder",
+          "default": "delete_folder",
+          "title": "Delete Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Folder",
+          "x-display-name": "Delete Folder",
+          "x-is-trigger": false
+        },
+        "folder_id": {
+          "description": "The ID of the folder to delete",
+          "title": "Folder ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folder_id"
+      ],
+      "title": "Delete Folder",
+      "type": "object"
+    },
+    "CanvaGetAppJWKSConfig": {
+      "description": "Get JSON Web Key Set of an app for JWT verification",
+      "properties": {
+        "operation": {
+          "const": "get_app_json_web_key_set",
+          "default": "get_app_json_web_key_set",
+          "title": "Get App Json Web Key Set",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Authentication",
+          "x-display-name": "Get App Json Web Key Set",
+          "x-is-trigger": false
+        },
+        "app_id": {
+          "description": "The ID of the app",
+          "title": "App ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "app_id"
+      ],
+      "title": "Get App JWKS",
+      "type": "object"
+    },
+    "CanvaGetAssetConfig": {
+      "description": "Get asset metadata",
+      "properties": {
+        "operation": {
+          "const": "get_asset_metadata",
+          "default": "get_asset_metadata",
+          "title": "Get Asset Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Asset",
+          "x-display-name": "Get Asset Metadata",
+          "x-is-trigger": false
+        },
+        "asset_id": {
+          "description": "The ID of the asset to retrieve",
+          "title": "Asset ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "asset_id"
+      ],
+      "title": "Get Asset",
+      "type": "object"
+    },
+    "CanvaGetAssetUploadJobConfig": {
+      "description": "Get status of an asset upload job",
+      "properties": {
+        "operation": {
+          "const": "get_asset_upload_job_status",
+          "default": "get_asset_upload_job_status",
+          "title": "Get Asset Upload Job Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Asset",
+          "x-display-name": "Get Asset Upload Job Status",
+          "x-is-trigger": false
+        },
+        "job_id": {
+          "description": "The ID of the upload job",
+          "title": "Job ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "Get Asset Upload Job",
+      "type": "object"
+    },
+    "CanvaGetAssetUploadJobStatusConfig": {
+      "description": "Get status of binary asset upload job",
+      "properties": {
+        "operation": {
+          "const": "get_binary_asset_upload_job_status",
+          "default": "get_binary_asset_upload_job_status",
+          "title": "Get Binary Asset Upload Job Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Asset",
+          "x-display-name": "Get Binary Asset Upload Job Status",
+          "x-is-trigger": false
+        },
+        "job_id": {
+          "description": "The ID of the asset upload job",
+          "title": "Job ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "Get Asset Upload Job Status",
+      "type": "object"
+    },
+    "CanvaGetAutofillJobConfig": {
+      "description": "Get status of design autofill job",
+      "properties": {
+        "operation": {
+          "const": "get_design_autofill_job_status",
+          "default": "get_design_autofill_job_status",
+          "title": "Get Design Autofill Job Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Design Autofill",
+          "x-display-name": "Get Design Autofill Job Status",
+          "x-is-trigger": false
+        },
+        "job_id": {
+          "description": "The ID of the autofill job",
+          "title": "Job ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "Get Autofill Job",
+      "type": "object"
+    },
+    "CanvaGetBrandTemplateConfig": {
+      "description": "Get brand template metadata",
+      "properties": {
+        "operation": {
+          "const": "get_brand_template_metadata",
+          "default": "get_brand_template_metadata",
+          "title": "Get Brand Template Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Brand Template",
+          "x-display-name": "Get Brand Template Metadata",
+          "x-is-trigger": false
+        },
+        "brand_template_id": {
+          "description": "The ID of the brand template",
+          "title": "Brand Template ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "brand_template_id"
+      ],
+      "title": "Get Brand Template",
+      "type": "object"
+    },
+    "CanvaGetBrandTemplateDatasetConfig": {
+      "description": "Get dataset definition for autofill fields",
+      "properties": {
+        "operation": {
+          "const": "get_autofill_dataset_definition",
+          "default": "get_autofill_dataset_definition",
+          "title": "Get Autofill Dataset Definition",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Design Autofill",
+          "x-display-name": "Get Autofill Dataset Definition",
+          "x-is-trigger": false
+        },
+        "brand_template_id": {
+          "description": "The ID of the brand template",
+          "title": "Brand Template ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "brand_template_id"
+      ],
+      "title": "Get Brand Template Dataset",
+      "type": "object"
+    },
+    "CanvaGetCommentThreadConfig": {
+      "description": "Get comment or suggestion thread",
+      "properties": {
+        "operation": {
+          "const": "get_design_comment_thread",
+          "default": "get_design_comment_thread",
+          "title": "Get Design Comment Thread",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment Thread",
+          "x-display-name": "Get Design Comment Thread",
+          "x-is-trigger": false
+        },
+        "design_id": {
+          "description": "The ID of the design",
+          "title": "Design ID",
+          "type": "string"
+        },
+        "thread_id": {
+          "description": "The ID of the comment thread",
+          "title": "Thread ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "design_id",
+        "thread_id"
+      ],
+      "title": "Get Comment Thread",
+      "type": "object"
+    },
+    "CanvaGetDesignConfig": {
+      "description": "Get design metadata",
+      "properties": {
+        "operation": {
+          "const": "get_design_metadata",
+          "default": "get_design_metadata",
+          "title": "Get Design Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Design",
+          "x-display-name": "Get Design Metadata",
+          "x-is-trigger": false
+        },
+        "design_id": {
+          "description": "The ID of the design to retrieve",
+          "title": "Design ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "design_id"
+      ],
+      "title": "Get Design",
+      "type": "object"
+    },
+    "CanvaGetDesignImportJobConfig": {
+      "description": "Get status of binary design import job",
+      "properties": {
+        "operation": {
+          "const": "get_binary_design_import_job_status",
+          "default": "get_binary_design_import_job_status",
+          "title": "Get Binary Design Import Job Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Design",
+          "x-display-name": "Get Binary Design Import Job Status",
+          "x-is-trigger": false
+        },
+        "job_id": {
+          "description": "The ID of the design import job",
+          "title": "Job ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "Get Design Import Job",
+      "type": "object"
+    },
+    "CanvaGetExportFormatsConfig": {
+      "description": "Get available export formats for a design (preview feature)",
+      "properties": {
+        "operation": {
+          "const": "get_design_export_formats",
+          "default": "get_design_export_formats",
+          "title": "Get Design Export Formats",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Design Export",
+          "x-display-name": "Get Design Export Formats",
+          "x-is-trigger": false
+        },
+        "design_id": {
+          "description": "The ID of the design",
+          "title": "Design ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "design_id"
+      ],
+      "title": "Get Export Formats",
+      "type": "object"
+    },
+    "CanvaGetExportJobConfig": {
+      "description": "Get status of an export job",
+      "properties": {
+        "operation": {
+          "const": "get_design_export_job_status",
+          "default": "get_design_export_job_status",
+          "title": "Get Design Export Job Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Design Export",
+          "x-display-name": "Get Design Export Job Status",
+          "x-is-trigger": false
+        },
+        "export_id": {
+          "description": "The ID of the export job",
+          "title": "Export ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "export_id"
+      ],
+      "title": "Get Export Job",
+      "type": "object"
+    },
+    "CanvaGetFolderConfig": {
+      "description": "Get folder details",
+      "properties": {
+        "operation": {
+          "const": "get_folder_details",
+          "default": "get_folder_details",
+          "title": "Get Folder Details",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Folder",
+          "x-display-name": "Get Folder Details",
+          "x-is-trigger": false
+        },
+        "folder_id": {
+          "description": "The ID of the folder (use 'root' for Projects folder)",
+          "title": "Folder ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folder_id"
+      ],
+      "title": "Get Folder",
+      "type": "object"
+    },
+    "CanvaGetImportJobConfig": {
+      "description": "Get status of a design import job",
+      "properties": {
+        "operation": {
+          "const": "get_design_import_job_status",
+          "default": "get_design_import_job_status",
+          "title": "Get Design Import Job Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Design",
+          "x-display-name": "Get Design Import Job Status",
+          "x-is-trigger": false
+        },
+        "job_id": {
+          "description": "The ID of the import job",
+          "title": "Job ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "Get Import Job",
+      "type": "object"
+    },
+    "CanvaGetOIDCJWKSConfig": {
+      "description": "Get JSON Web Key Set for OpenID Connect",
+      "properties": {
+        "operation": {
+          "const": "get_openid_connect_jwks",
+          "default": "get_openid_connect_jwks",
+          "title": "Get Openid Connect Jwks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Authentication",
+          "x-display-name": "Get Openid Connect Jwks",
+          "x-is-trigger": false
+        }
+      },
+      "title": "Get OIDC JWKS",
+      "type": "object"
+    },
+    "CanvaGetOIDCUserInfoConfig": {
+      "description": "Fetch current user's OIDC claims",
+      "properties": {
+        "operation": {
+          "const": "fetch_current_user_oidc_claims",
+          "default": "fetch_current_user_oidc_claims",
+          "title": "Fetch Current User Oidc Claims",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Authentication",
+          "x-display-name": "Fetch Current User Oidc Claims",
+          "x-is-trigger": false
+        }
+      },
+      "title": "Get OIDC User Info",
+      "type": "object"
+    },
+    "CanvaGetReplyConfig": {
+      "description": "Get specific reply from thread",
+      "properties": {
+        "operation": {
+          "const": "get_comment_thread_reply",
+          "default": "get_comment_thread_reply",
+          "title": "Get Comment Thread Reply",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment Thread",
+          "x-display-name": "Get Comment Thread Reply",
+          "x-is-trigger": false
+        },
+        "design_id": {
+          "description": "The ID of the design",
+          "title": "Design ID",
+          "type": "string"
+        },
+        "thread_id": {
+          "description": "The ID of the comment thread",
+          "title": "Thread ID",
+          "type": "string"
+        },
+        "reply_id": {
+          "description": "The ID of the reply",
+          "title": "Reply ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "design_id",
+        "thread_id",
+        "reply_id"
+      ],
+      "title": "Get Reply",
+      "type": "object"
+    },
+    "CanvaGetResizeJobConfig": {
+      "description": "Get status of a design resize job",
+      "properties": {
+        "operation": {
+          "const": "get_design_resize_job_status",
+          "default": "get_design_resize_job_status",
+          "title": "Get Design Resize Job Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Design Resize",
+          "x-display-name": "Get Design Resize Job Status",
+          "x-is-trigger": false
+        },
+        "job_id": {
+          "description": "The ID of the resize job",
+          "title": "Job ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "Get Resize Job",
+      "type": "object"
+    },
+    "CanvaGetUserCapabilitiesConfig": {
+      "description": "Get user capabilities (what features are available)",
+      "properties": {
+        "operation": {
+          "const": "get_user_available_features",
+          "default": "get_user_available_features",
+          "title": "Get User Available Features",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Get User Available Features",
+          "x-is-trigger": false
+        }
+      },
+      "title": "Get User Capabilities",
+      "type": "object"
+    },
+    "CanvaGetUserConfig": {
+      "description": "Get current user ID",
+      "properties": {
+        "operation": {
+          "const": "get_current_user_id",
+          "default": "get_current_user_id",
+          "title": "Get Current User Id",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Get Current User Id",
+          "x-is-trigger": false
+        }
+      },
+      "title": "Get User",
+      "type": "object"
+    },
+    "CanvaGetUserProfileConfig": {
+      "description": "Get user profile information",
+      "properties": {
+        "operation": {
+          "const": "get_user_profile_information",
+          "default": "get_user_profile_information",
+          "title": "Get User Profile Information",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Get User Profile Information",
+          "x-is-trigger": false
+        }
+      },
+      "title": "Get User Profile",
+      "type": "object"
+    },
+    "CanvaGetWebhookKeysConfig": {
+      "description": "Get JSON Web Keys for webhook signature verification",
+      "properties": {
+        "operation": {
+          "const": "get_webhook_signature_verification_keys",
+          "default": "get_webhook_signature_verification_keys",
+          "title": "Get Webhook Signature Verification Keys",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhook",
+          "x-display-name": "Get Webhook Signature Verification Keys",
+          "x-is-trigger": false
+        }
+      },
+      "title": "Get Webhook Keys",
+      "type": "object"
+    },
+    "CanvaImportFromURLConfig": {
+      "description": "Import a file as a design from URL",
+      "properties": {
+        "operation": {
+          "const": "import_design_from_url",
+          "default": "import_design_from_url",
+          "title": "Import Design from Url",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Design",
+          "x-display-name": "Import Design from Url",
+          "x-is-trigger": false
+        },
+        "url": {
+          "description": "URL of the file to import (supports PDF, PPT, PPTX, etc.)",
+          "title": "URL",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Title for the imported design",
+          "title": "Title"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "Import from URL",
+      "type": "object"
+    },
+    "CanvaIntrospectTokenConfig": {
+      "description": "Verify token validity and get token metadata",
+      "properties": {
+        "operation": {
+          "const": "verify_token_validity",
+          "default": "verify_token_validity",
+          "title": "Verify Token Validity",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Authentication",
+          "x-display-name": "Verify Token Validity",
+          "x-is-trigger": false
+        }
+      },
+      "title": "Introspect Token",
+      "type": "object"
+    },
+    "CanvaListBrandTemplatesConfig": {
+      "description": "List brand templates with search and filters",
+      "properties": {
+        "operation": {
+          "const": "list_brand_templates_with_search",
+          "default": "list_brand_templates_with_search",
+          "title": "List Brand Templates with Search",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Brand Template",
+          "x-display-name": "List Brand Templates with Search",
+          "x-is-trigger": false
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search term to filter brand templates",
+          "title": "Search Query"
+        },
+        "continuation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination token from previous response",
+          "title": "Continuation Token"
+        }
+      },
+      "title": "List Brand Templates",
+      "type": "object"
+    },
+    "CanvaListDesignPagesConfig": {
+      "description": "List pages in a design (preview feature)",
+      "properties": {
+        "operation": {
+          "const": "list_design_pages",
+          "default": "list_design_pages",
+          "title": "List Design Pages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Design",
+          "x-display-name": "List Design Pages",
+          "x-is-trigger": false
+        },
+        "design_id": {
+          "description": "The ID of the design",
+          "title": "Design ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "design_id"
+      ],
+      "title": "List Design Pages",
+      "type": "object"
+    },
+    "CanvaListDesignsConfig": {
+      "description": "List user's designs",
+      "properties": {
+        "operation": {
+          "const": "list_user_designs",
+          "default": "list_user_designs",
+          "title": "List User Designs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Design",
+          "x-display-name": "List User Designs",
+          "x-is-trigger": false
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search term to filter designs",
+          "title": "Search Query"
+        },
+        "continuation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination token from previous response",
+          "title": "Continuation Token"
+        },
+        "ownership": {
+          "anyOf": [
+            {
+              "enum": [
+                "owned",
+                "shared",
+                "any"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "any",
+          "description": "Filter by ownership type",
+          "title": "Ownership",
+          "enum": [
+            "owned",
+            "shared",
+            "any"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "List Designs",
+      "type": "object"
+    },
+    "CanvaListFolderItemsConfig": {
+      "description": "List items in a folder",
+      "properties": {
+        "operation": {
+          "const": "list_folder_contents",
+          "default": "list_folder_contents",
+          "title": "List Folder Contents",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Folder",
+          "x-display-name": "List Folder Contents",
+          "x-is-trigger": false
+        },
+        "folder_id": {
+          "default": "root",
+          "description": "The ID of the folder (use 'root' for Projects folder)",
+          "title": "Folder ID",
+          "type": "string"
+        },
+        "item_types": {
+          "anyOf": [
+            {
+              "items": {
+                "enum": [
+                  "design",
+                  "folder",
+                  "image"
+                ],
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by item types",
+          "title": "Item Types"
+        },
+        "continuation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination token from previous response",
+          "title": "Continuation Token"
+        }
+      },
+      "title": "List Folder Items",
+      "type": "object"
+    },
+    "CanvaListRepliesConfig": {
+      "description": "List replies for a comment thread",
+      "properties": {
+        "operation": {
+          "const": "list_comment_thread_replies",
+          "default": "list_comment_thread_replies",
+          "title": "List Comment Thread Replies",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment Thread",
+          "x-display-name": "List Comment Thread Replies",
+          "x-is-trigger": false
+        },
+        "design_id": {
+          "description": "The ID of the design",
+          "title": "Design ID",
+          "type": "string"
+        },
+        "thread_id": {
+          "description": "The ID of the comment thread",
+          "title": "Thread ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "design_id",
+        "thread_id"
+      ],
+      "title": "List Replies",
+      "type": "object"
+    },
+    "CanvaMoveItemConfig": {
+      "description": "Move an item to a folder",
+      "properties": {
+        "operation": {
+          "const": "move_item_to_folder",
+          "default": "move_item_to_folder",
+          "title": "Move Item to Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Folder",
+          "x-display-name": "Move Item to Folder",
+          "x-is-trigger": false
+        },
+        "item_id": {
+          "description": "The ID of the item to move (design, folder, or asset)",
+          "title": "Item ID",
+          "type": "string"
+        },
+        "item_type": {
+          "description": "The type of item being moved",
+          "enum": [
+            "design",
+            "folder",
+            "asset"
+          ],
+          "title": "Item Type",
+          "type": "string"
+        },
+        "to_folder_id": {
+          "description": "The ID of the destination folder",
+          "title": "Destination Folder ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "item_id",
+        "item_type",
+        "to_folder_id"
+      ],
+      "title": "Move Item",
+      "type": "object"
+    },
+    "CanvaOAuthCredential": {
+      "description": "OAuth 2.0 credential for Canva.\nTokens are obtained via OAuth flow with PKCE, not entered manually.\n\nDocumentation: https://www.canva.dev/docs/connect/authentication/",
+      "properties": {
+        "credential_type": {
+          "const": "canva_oauth",
+          "default": "canva_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "OAuth 2.0 access token from Canva",
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "description": "OAuth 2.0 refresh token for automatic renewal",
+          "title": "Refresh Token",
+          "type": "string"
+        },
+        "expires_at": {
+          "description": "ISO 8601 timestamp when access token expires",
+          "title": "Token Expiry",
+          "type": "string"
+        },
+        "display_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Display name of the connected Canva account",
+          "title": "Display Name"
+        }
+      },
+      "required": [
+        "access_token",
+        "refresh_token",
+        "expires_at"
+      ],
+      "title": "CanvaOAuthCredential",
+      "type": "object",
+      "x-credential-notice": "The Canva integration is currently unavailable while its OAuth app awaits approval from Canva. You'll be able to connect once it's approved.",
+      "x-credential-type": "oauth",
+      "x-oauth-provider": "canva",
+      "x-oauth-scopes": [
+        "asset:read",
+        "asset:write",
+        "design:meta:read",
+        "design:content:read",
+        "design:content:write",
+        "folder:read",
+        "folder:write",
+        "profile:read",
+        "brandtemplate:meta:read",
+        "brandtemplate:content:read",
+        "comment:read",
+        "comment:write"
+      ]
+    },
+    "CanvaRevokeTokenConfig": {
+      "description": "Revoke access or refresh token",
+      "properties": {
+        "operation": {
+          "const": "revoke_access_or_refresh_token",
+          "default": "revoke_access_or_refresh_token",
+          "title": "Revoke Access or Refresh Token",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Authentication",
+          "x-display-name": "Revoke Access or Refresh Token",
+          "x-is-trigger": false
+        },
+        "token_type": {
+          "default": "access_token",
+          "description": "Type of token to revoke",
+          "enum": [
+            "access_token",
+            "refresh_token"
+          ],
+          "title": "Token Type",
+          "type": "string"
+        }
+      },
+      "title": "Revoke Token",
+      "type": "object"
+    },
+    "CanvaUpdateAssetConfig": {
+      "description": "Update asset name or tags",
+      "properties": {
+        "operation": {
+          "const": "update_asset_name_or_tags",
+          "default": "update_asset_name_or_tags",
+          "title": "Update Asset Name or Tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Asset",
+          "x-display-name": "Update Asset Name or Tags",
+          "x-is-trigger": false
+        },
+        "asset_id": {
+          "description": "The ID of the asset to update",
+          "title": "Asset ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New name for the asset",
+          "title": "Name"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New tags for the asset",
+          "title": "Tags"
+        }
+      },
+      "required": [
+        "asset_id"
+      ],
+      "title": "Update Asset",
+      "type": "object"
+    },
+    "CanvaUpdateFolderConfig": {
+      "description": "Update folder name",
+      "properties": {
+        "operation": {
+          "const": "update_folder_name",
+          "default": "update_folder_name",
+          "title": "Update Folder Name",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Folder",
+          "x-display-name": "Update Folder Name",
+          "x-is-trigger": false
+        },
+        "folder_id": {
+          "description": "The ID of the folder to update",
+          "title": "Folder ID",
+          "type": "string"
+        },
+        "name": {
+          "description": "New name for the folder",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folder_id",
+        "name"
+      ],
+      "title": "Update Folder",
+      "type": "object"
+    },
+    "CanvaUploadAssetFromURLConfig": {
+      "description": "Upload an asset from a URL (preview feature)",
+      "properties": {
+        "operation": {
+          "const": "upload_asset_from_url",
+          "default": "upload_asset_from_url",
+          "title": "Upload Asset from Url",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Asset",
+          "x-display-name": "Upload Asset from Url",
+          "x-is-trigger": false
+        },
+        "url": {
+          "description": "URL of the file to upload",
+          "title": "URL",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Name for the uploaded asset",
+          "title": "Name"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "Upload Asset from URL",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for Canva node including credentials",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_comment_thread_reply": "#/$defs/CanvaCreateReplyConfig",
+          "create_design": "#/$defs/CanvaCreateDesignConfig",
+          "create_design_autofill_job": "#/$defs/CanvaCreateAutofillJobConfig",
+          "create_design_comment_thread": "#/$defs/CanvaCreateCommentThreadConfig",
+          "create_design_export_job": "#/$defs/CanvaCreateExportConfig",
+          "create_design_resize_job": "#/$defs/CanvaCreateResizeConfig",
+          "create_folder": "#/$defs/CanvaCreateFolderConfig",
+          "delete_asset": "#/$defs/CanvaDeleteAssetConfig",
+          "delete_folder": "#/$defs/CanvaDeleteFolderConfig",
+          "fetch_current_user_oidc_claims": "#/$defs/CanvaGetOIDCUserInfoConfig",
+          "get_app_json_web_key_set": "#/$defs/CanvaGetAppJWKSConfig",
+          "get_asset_metadata": "#/$defs/CanvaGetAssetConfig",
+          "get_asset_upload_job_status": "#/$defs/CanvaGetAssetUploadJobConfig",
+          "get_autofill_dataset_definition": "#/$defs/CanvaGetBrandTemplateDatasetConfig",
+          "get_binary_asset_upload_job_status": "#/$defs/CanvaGetAssetUploadJobStatusConfig",
+          "get_binary_design_import_job_status": "#/$defs/CanvaGetDesignImportJobConfig",
+          "get_brand_template_metadata": "#/$defs/CanvaGetBrandTemplateConfig",
+          "get_comment_thread_reply": "#/$defs/CanvaGetReplyConfig",
+          "get_current_user_id": "#/$defs/CanvaGetUserConfig",
+          "get_design_autofill_job_status": "#/$defs/CanvaGetAutofillJobConfig",
+          "get_design_comment_thread": "#/$defs/CanvaGetCommentThreadConfig",
+          "get_design_export_formats": "#/$defs/CanvaGetExportFormatsConfig",
+          "get_design_export_job_status": "#/$defs/CanvaGetExportJobConfig",
+          "get_design_import_job_status": "#/$defs/CanvaGetImportJobConfig",
+          "get_design_metadata": "#/$defs/CanvaGetDesignConfig",
+          "get_design_resize_job_status": "#/$defs/CanvaGetResizeJobConfig",
+          "get_folder_details": "#/$defs/CanvaGetFolderConfig",
+          "get_openid_connect_jwks": "#/$defs/CanvaGetOIDCJWKSConfig",
+          "get_user_available_features": "#/$defs/CanvaGetUserCapabilitiesConfig",
+          "get_user_profile_information": "#/$defs/CanvaGetUserProfileConfig",
+          "get_webhook_signature_verification_keys": "#/$defs/CanvaGetWebhookKeysConfig",
+          "import_design_from_binary_file": "#/$defs/CanvaCreateDesignImportConfig",
+          "import_design_from_url": "#/$defs/CanvaImportFromURLConfig",
+          "list_brand_templates_with_search": "#/$defs/CanvaListBrandTemplatesConfig",
+          "list_comment_thread_replies": "#/$defs/CanvaListRepliesConfig",
+          "list_design_pages": "#/$defs/CanvaListDesignPagesConfig",
+          "list_folder_contents": "#/$defs/CanvaListFolderItemsConfig",
+          "list_user_designs": "#/$defs/CanvaListDesignsConfig",
+          "move_item_to_folder": "#/$defs/CanvaMoveItemConfig",
+          "revoke_access_or_refresh_token": "#/$defs/CanvaRevokeTokenConfig",
+          "update_asset_name_or_tags": "#/$defs/CanvaUpdateAssetConfig",
+          "update_folder_name": "#/$defs/CanvaUpdateFolderConfig",
+          "upload_asset_from_binary": "#/$defs/CanvaCreateAssetUploadConfig",
+          "upload_asset_from_url": "#/$defs/CanvaUploadAssetFromURLConfig",
+          "verify_token_validity": "#/$defs/CanvaIntrospectTokenConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CanvaListDesignsConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaCreateDesignConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaGetDesignConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaListDesignPagesConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaGetExportFormatsConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaUploadAssetFromURLConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaGetAssetConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaUpdateAssetConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaDeleteAssetConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaGetAssetUploadJobConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaCreateAssetUploadConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaGetAssetUploadJobStatusConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaCreateExportConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaGetExportJobConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaCreateFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaGetFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaUpdateFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaDeleteFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaListFolderItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaMoveItemConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaGetUserConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaGetUserProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaGetUserCapabilitiesConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaCreateResizeConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaGetResizeJobConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaImportFromURLConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaGetImportJobConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaCreateDesignImportConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaGetDesignImportJobConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaListBrandTemplatesConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaGetBrandTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaGetBrandTemplateDatasetConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaCreateAutofillJobConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaGetAutofillJobConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaCreateCommentThreadConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaGetCommentThreadConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaCreateReplyConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaListRepliesConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaGetReplyConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaIntrospectTokenConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaRevokeTokenConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaGetWebhookKeysConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaGetOIDCJWKSConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaGetOIDCUserInfoConfig"
+        },
+        {
+          "$ref": "#/$defs/CanvaGetAppJWKSConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CanvaOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Canva Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Create a new design in the \"Marketing\" folder with custom dimensions",
+    "List all designs in the workspace and filter by status",
+    "Export a design to PNG and download the file from the export URL",
+    "Upload an image asset from a URL to the design library",
+    "Create a resize job to generate thumbnails at 800x600 pixels",
+    "Create an autofill job with template variables for a bulk design",
+    "Get current user capabilities and check available tier features"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

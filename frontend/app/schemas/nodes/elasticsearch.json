@@ -1,0 +1,2230 @@
+{
+  "$defs": {
+    "ESAliasExistsConfig": {
+      "properties": {
+        "operation": {
+          "const": "alias_exists",
+          "default": "alias_exists",
+          "title": "Alias Exists",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Aliases",
+          "x-display-name": "Alias Exists",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "alias exists",
+            "check alias",
+            "head alias"
+          ]
+        },
+        "name": {
+          "description": "Alias name or pattern to check",
+          "title": "Alias Name",
+          "type": "string"
+        },
+        "index": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional index pattern to limit the alias check",
+          "title": "Index",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an index / alias / pattern",
+            "field_name": "index",
+            "placeholder": "Select an index or enter a pattern...",
+            "searchable": true
+          },
+          "x-resource-type": "elasticsearch_index"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "ESAliasExistsConfig",
+      "type": "object"
+    },
+    "ESBulkIndexConfig": {
+      "properties": {
+        "operation": {
+          "const": "bulk_index",
+          "default": "bulk_index",
+          "title": "Bulk Index",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Bulk Index",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "bulk",
+            "batch insert",
+            "ingest",
+            "index many"
+          ]
+        },
+        "index": {
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an index / alias / pattern",
+            "field_name": "index",
+            "placeholder": "Select an index or enter a pattern...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "elasticsearch_index"
+        },
+        "documents": {
+          "description": "JSON array of documents. Each may include \"_id\".",
+          "title": "Documents",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "pipeline": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional ingest pipeline ID",
+          "title": "Ingest Pipeline"
+        },
+        "routing": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional custom shard routing value",
+          "title": "Routing"
+        },
+        "refresh": {
+          "default": "wait_for",
+          "description": "When the writes become visible to search",
+          "enum": [
+            "false",
+            "true",
+            "wait_for"
+          ],
+          "title": "Refresh Policy",
+          "type": "string"
+        }
+      },
+      "required": [
+        "index",
+        "documents"
+      ],
+      "title": "ESBulkIndexConfig",
+      "type": "object"
+    },
+    "ESBulkWriteConfig": {
+      "properties": {
+        "operation": {
+          "const": "bulk_write",
+          "default": "bulk_write",
+          "title": "Bulk Write",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Bulk Write",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "bulk",
+            "batch write",
+            "bulk create",
+            "bulk update",
+            "bulk delete"
+          ]
+        },
+        "index": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional default index for actions that do not specify _index",
+          "title": "Default Index",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an index / alias / pattern",
+            "field_name": "index",
+            "placeholder": "Select an index or enter a pattern...",
+            "searchable": true
+          },
+          "x-resource-type": "elasticsearch_index"
+        },
+        "actions": {
+          "description": "JSON array of action objects. Example: [{\"action\":\"index\",\"_id\":\"1\",\"document\":{\"content\":\"a\"}},{\"action\":\"delete\",\"_id\":\"2\"}].",
+          "title": "Actions",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "pipeline": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional ingest pipeline ID",
+          "title": "Ingest Pipeline"
+        },
+        "routing": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional custom shard routing value",
+          "title": "Routing"
+        },
+        "refresh": {
+          "default": "wait_for",
+          "description": "When the writes become visible to search",
+          "enum": [
+            "false",
+            "true",
+            "wait_for"
+          ],
+          "title": "Refresh Policy",
+          "type": "string"
+        }
+      },
+      "required": [
+        "actions"
+      ],
+      "title": "ESBulkWriteConfig",
+      "type": "object"
+    },
+    "ESCountConfig": {
+      "properties": {
+        "operation": {
+          "const": "count",
+          "default": "count",
+          "title": "Count Documents",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Search",
+          "x-display-name": "Count Documents",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "count",
+            "count documents",
+            "how many"
+          ]
+        },
+        "index": {
+          "description": "Index, alias, or pattern to count",
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an index / alias / pattern",
+            "field_name": "index",
+            "placeholder": "Select an index or enter a pattern...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "elasticsearch_index"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Query DSL JSON. If blank, counts all documents in the target index pattern.",
+          "title": "Query",
+          "ui:widget": "textarea"
+        },
+        "routing": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional custom shard routing value",
+          "title": "Routing"
+        }
+      },
+      "required": [
+        "index"
+      ],
+      "title": "ESCountConfig",
+      "type": "object"
+    },
+    "ESCreateDocConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_document",
+          "default": "create_document",
+          "title": "Create Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Create Document",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "create",
+            "insert if absent",
+            "create only",
+            "dedupe write"
+          ]
+        },
+        "index": {
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an index / alias / pattern",
+            "field_name": "index",
+            "placeholder": "Select an index or enter a pattern...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "elasticsearch_index"
+        },
+        "id": {
+          "description": "Document _id. The request fails if this ID already exists.",
+          "title": "ID",
+          "type": "string"
+        },
+        "document": {
+          "description": "JSON object to create, e.g. {\"content\": \"...\"}",
+          "title": "Document",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "pipeline": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional ingest pipeline ID",
+          "title": "Ingest Pipeline"
+        },
+        "routing": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional custom shard routing value",
+          "title": "Routing"
+        },
+        "refresh": {
+          "default": "wait_for",
+          "description": "When the write becomes visible to search",
+          "enum": [
+            "false",
+            "true",
+            "wait_for"
+          ],
+          "title": "Refresh Policy",
+          "type": "string"
+        }
+      },
+      "required": [
+        "index",
+        "id",
+        "document"
+      ],
+      "title": "ESCreateDocConfig",
+      "type": "object"
+    },
+    "ESCreateIndexConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_index",
+          "default": "create_index",
+          "title": "Create Index",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Index",
+          "x-creates-resource": true,
+          "x-display-name": "Create Index",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "create index",
+            "new index",
+            "provision index",
+            "mapping"
+          ],
+          "x-resource-id-path": "data.index",
+          "x-resource-type": "elasticsearch_index"
+        },
+        "index": {
+          "description": "Name for the new index",
+          "title": "Index",
+          "type": "string"
+        },
+        "mappings": {
+          "description": "JSON mappings object",
+          "title": "Mappings",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "settings": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON index settings object",
+          "title": "Settings",
+          "ui:widget": "textarea"
+        },
+        "aliases": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON aliases object",
+          "title": "Aliases",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "index",
+        "mappings"
+      ],
+      "title": "ESCreateIndexConfig",
+      "type": "object"
+    },
+    "ESDeleteByQueryConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_by_query",
+          "default": "delete_by_query",
+          "title": "Delete By Query",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Delete By Query",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "delete by query",
+            "bulk delete",
+            "remove matching"
+          ]
+        },
+        "index": {
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an index / alias / pattern",
+            "field_name": "index",
+            "placeholder": "Select an index or enter a pattern...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "elasticsearch_index"
+        },
+        "query": {
+          "description": "Query DSL JSON selecting documents to delete",
+          "title": "Query",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "conflicts": {
+          "default": "proceed",
+          "description": "How version conflicts are handled",
+          "enum": [
+            "abort",
+            "proceed"
+          ],
+          "title": "Conflicts",
+          "type": "string"
+        },
+        "refresh": {
+          "default": true,
+          "description": "Refresh affected shards after completion",
+          "title": "Refresh",
+          "type": "boolean"
+        },
+        "wait_for_completion": {
+          "default": true,
+          "description": "Wait for the task to finish before returning",
+          "title": "Wait For Completion",
+          "type": "boolean"
+        },
+        "requests_per_second": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Throttle rate for the operation",
+          "title": "Requests Per Second"
+        }
+      },
+      "required": [
+        "index",
+        "query"
+      ],
+      "title": "ESDeleteByQueryConfig",
+      "type": "object"
+    },
+    "ESDeleteDocConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_document",
+          "default": "delete_document",
+          "title": "Delete Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Delete Document",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "delete",
+            "remove",
+            "purge"
+          ]
+        },
+        "index": {
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an index / alias / pattern",
+            "field_name": "index",
+            "placeholder": "Select an index or enter a pattern...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "elasticsearch_index"
+        },
+        "id": {
+          "description": "Document _id",
+          "title": "ID",
+          "type": "string"
+        },
+        "routing": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional custom shard routing value",
+          "title": "Routing"
+        },
+        "refresh": {
+          "default": "wait_for",
+          "description": "When the deletion becomes visible to search",
+          "enum": [
+            "false",
+            "true",
+            "wait_for"
+          ],
+          "title": "Refresh Policy",
+          "type": "string"
+        }
+      },
+      "required": [
+        "index",
+        "id"
+      ],
+      "title": "ESDeleteDocConfig",
+      "type": "object"
+    },
+    "ESDeleteIndexConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_index",
+          "default": "delete_index",
+          "title": "Delete Index",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Index",
+          "x-display-name": "Delete Index",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "delete index",
+            "remove index"
+          ]
+        },
+        "index": {
+          "description": "Index, alias, or pattern",
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an index / alias / pattern",
+            "field_name": "index",
+            "placeholder": "Select an index or enter a pattern...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "elasticsearch_index"
+        }
+      },
+      "required": [
+        "index"
+      ],
+      "title": "ESDeleteIndexConfig",
+      "type": "object"
+    },
+    "ESDocumentExistsConfig": {
+      "properties": {
+        "operation": {
+          "const": "document_exists",
+          "default": "document_exists",
+          "title": "Document Exists",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Document Exists",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "exists",
+            "head",
+            "document exists"
+          ]
+        },
+        "index": {
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an index / alias / pattern",
+            "field_name": "index",
+            "placeholder": "Select an index or enter a pattern...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "elasticsearch_index"
+        },
+        "id": {
+          "description": "Document _id",
+          "title": "ID",
+          "type": "string"
+        },
+        "routing": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional custom shard routing value",
+          "title": "Routing"
+        }
+      },
+      "required": [
+        "index",
+        "id"
+      ],
+      "title": "ESDocumentExistsConfig",
+      "type": "object"
+    },
+    "ESGetDocConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_document",
+          "default": "get_document",
+          "title": "Get Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Get Document",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "get",
+            "fetch",
+            "lookup by id",
+            "read"
+          ]
+        },
+        "index": {
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an index / alias / pattern",
+            "field_name": "index",
+            "placeholder": "Select an index or enter a pattern...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "elasticsearch_index"
+        },
+        "id": {
+          "description": "Document _id",
+          "title": "ID",
+          "type": "string"
+        },
+        "routing": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional custom shard routing value",
+          "title": "Routing"
+        }
+      },
+      "required": [
+        "index",
+        "id"
+      ],
+      "title": "ESGetDocConfig",
+      "type": "object"
+    },
+    "ESGetDocSourceConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_document_source",
+          "default": "get_document_source",
+          "title": "Get Document Source",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Get Document Source",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "source",
+            "get source",
+            "document source"
+          ]
+        },
+        "index": {
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an index / alias / pattern",
+            "field_name": "index",
+            "placeholder": "Select an index or enter a pattern...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "elasticsearch_index"
+        },
+        "id": {
+          "description": "Document _id",
+          "title": "ID",
+          "type": "string"
+        },
+        "routing": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional custom shard routing value",
+          "title": "Routing"
+        }
+      },
+      "required": [
+        "index",
+        "id"
+      ],
+      "title": "ESGetDocSourceConfig",
+      "type": "object"
+    },
+    "ESGetIndexConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_index",
+          "default": "get_index",
+          "title": "Get Index",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Index",
+          "x-display-name": "Get Index",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "get index",
+            "index info",
+            "describe index"
+          ]
+        },
+        "index": {
+          "description": "Index, alias, or pattern",
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an index / alias / pattern",
+            "field_name": "index",
+            "placeholder": "Select an index or enter a pattern...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "elasticsearch_index"
+        },
+        "include_defaults": {
+          "default": false,
+          "description": "Include default settings in the response",
+          "title": "Include Defaults",
+          "type": "boolean"
+        },
+        "flat_settings": {
+          "default": false,
+          "description": "Return settings in flat format",
+          "title": "Flat Settings",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "index"
+      ],
+      "title": "ESGetIndexConfig",
+      "type": "object"
+    },
+    "ESGetIndexStatsConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_index_stats",
+          "default": "get_index_stats",
+          "title": "Get Index Stats",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Index",
+          "x-display-name": "Get Index Stats",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "stats",
+            "index stats",
+            "index metrics"
+          ]
+        },
+        "index": {
+          "description": "Index, alias, or pattern",
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an index / alias / pattern",
+            "field_name": "index",
+            "placeholder": "Select an index or enter a pattern...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "elasticsearch_index"
+        },
+        "metrics": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional comma-separated metric list, e.g. docs,store,indexing",
+          "title": "Metrics"
+        }
+      },
+      "required": [
+        "index"
+      ],
+      "title": "ESGetIndexStatsConfig",
+      "type": "object"
+    },
+    "ESGetMappingConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_mapping",
+          "default": "get_mapping",
+          "title": "Get Mapping",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Index",
+          "x-display-name": "Get Mapping",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "get mapping",
+            "mapping info",
+            "field mapping"
+          ]
+        },
+        "index": {
+          "description": "Index, alias, or pattern",
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an index / alias / pattern",
+            "field_name": "index",
+            "placeholder": "Select an index or enter a pattern...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "elasticsearch_index"
+        }
+      },
+      "required": [
+        "index"
+      ],
+      "title": "ESGetMappingConfig",
+      "type": "object"
+    },
+    "ESGetSettingsConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_settings",
+          "default": "get_settings",
+          "title": "Get Settings",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Index",
+          "x-display-name": "Get Settings",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "get settings",
+            "index settings"
+          ]
+        },
+        "index": {
+          "description": "Index, alias, or pattern",
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an index / alias / pattern",
+            "field_name": "index",
+            "placeholder": "Select an index or enter a pattern...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "elasticsearch_index"
+        },
+        "include_defaults": {
+          "default": false,
+          "description": "Include default settings in the response",
+          "title": "Include Defaults",
+          "type": "boolean"
+        },
+        "flat_settings": {
+          "default": false,
+          "description": "Return settings in flat format",
+          "title": "Flat Settings",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "index"
+      ],
+      "title": "ESGetSettingsConfig",
+      "type": "object"
+    },
+    "ESIndexDocConfig": {
+      "properties": {
+        "operation": {
+          "const": "index_document",
+          "default": "index_document",
+          "title": "Index Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Index Document",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "index",
+            "insert",
+            "add",
+            "upsert",
+            "store",
+            "write"
+          ]
+        },
+        "index": {
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an index / alias / pattern",
+            "field_name": "index",
+            "placeholder": "Select an index or enter a pattern...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "elasticsearch_index"
+        },
+        "document": {
+          "description": "JSON object, e.g. {\"content\": \"...\", \"contentVector\": [0.1, ...]}",
+          "title": "Document",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Document _id (auto-generated if blank)",
+          "title": "ID"
+        },
+        "pipeline": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional ingest pipeline ID",
+          "title": "Ingest Pipeline"
+        },
+        "routing": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional custom shard routing value",
+          "title": "Routing"
+        },
+        "refresh": {
+          "default": "wait_for",
+          "description": "When the write becomes visible to search",
+          "enum": [
+            "false",
+            "true",
+            "wait_for"
+          ],
+          "title": "Refresh Policy",
+          "type": "string"
+        }
+      },
+      "required": [
+        "index",
+        "document"
+      ],
+      "title": "ESIndexDocConfig",
+      "type": "object"
+    },
+    "ESIndexExistsConfig": {
+      "properties": {
+        "operation": {
+          "const": "index_exists",
+          "default": "index_exists",
+          "title": "Index Exists",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Index",
+          "x-display-name": "Index Exists",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "index exists",
+            "check index",
+            "head index"
+          ]
+        },
+        "index": {
+          "description": "Index, alias, data stream, or pattern",
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an index / alias / pattern",
+            "field_name": "index",
+            "placeholder": "Select an index or enter a pattern...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "elasticsearch_index"
+        }
+      },
+      "required": [
+        "index"
+      ],
+      "title": "ESIndexExistsConfig",
+      "type": "object"
+    },
+    "ESListAliasesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_aliases",
+          "default": "list_aliases",
+          "title": "List Aliases",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Aliases",
+          "x-display-name": "List Aliases",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "aliases",
+            "list aliases",
+            "get aliases"
+          ]
+        },
+        "index": {
+          "default": "*",
+          "description": "Index, alias, or pattern",
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an index / alias / pattern",
+            "field_name": "index",
+            "placeholder": "Select an index or enter a pattern...",
+            "searchable": true
+          },
+          "x-resource-type": "elasticsearch_index"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional alias name or pattern",
+          "title": "Alias Name"
+        }
+      },
+      "title": "ESListAliasesConfig",
+      "type": "object"
+    },
+    "ESListIndicesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_indices",
+          "default": "list_indices",
+          "title": "List Indices",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Index",
+          "x-display-name": "List Indices",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "list indices",
+            "show indices"
+          ]
+        }
+      },
+      "title": "ESListIndicesConfig",
+      "type": "object"
+    },
+    "ESMultiGetConfig": {
+      "properties": {
+        "operation": {
+          "const": "multi_get",
+          "default": "multi_get",
+          "title": "Multi Get",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Multi Get",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "mget",
+            "multi get",
+            "fetch many"
+          ]
+        },
+        "index": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional default index for the request",
+          "title": "Index",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an index / alias / pattern",
+            "field_name": "index",
+            "placeholder": "Select an index or enter a pattern...",
+            "searchable": true
+          },
+          "x-resource-type": "elasticsearch_index"
+        },
+        "items": {
+          "description": "JSON array. With Index set, use [\"1\",\"2\"] or [{\"_id\":\"1\"}]. Without Index set, use [{\"_index\":\"docs\",\"_id\":\"1\"}].",
+          "title": "Items",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "items"
+      ],
+      "title": "ESMultiGetConfig",
+      "type": "object"
+    },
+    "ESMultiSearchConfig": {
+      "properties": {
+        "operation": {
+          "const": "multi_search",
+          "default": "multi_search",
+          "title": "Multi Search",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Search",
+          "x-display-name": "Multi Search",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "msearch",
+            "multi search",
+            "batch search",
+            "search many"
+          ]
+        },
+        "index": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional default index for each search request",
+          "title": "Default Index",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an index / alias / pattern",
+            "field_name": "index",
+            "placeholder": "Select an index or enter a pattern...",
+            "searchable": true
+          },
+          "x-resource-type": "elasticsearch_index"
+        },
+        "searches": {
+          "description": "JSON array. Each item may be {\"body\": {...}} or {\"header\": {...}, \"body\": {...}}.",
+          "title": "Searches",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "searches"
+      ],
+      "title": "ESMultiSearchConfig",
+      "type": "object"
+    },
+    "ESRefreshIndexConfig": {
+      "properties": {
+        "operation": {
+          "const": "refresh_index",
+          "default": "refresh_index",
+          "title": "Refresh Index",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Index",
+          "x-display-name": "Refresh Index",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "refresh index",
+            "make searchable"
+          ]
+        },
+        "index": {
+          "description": "Index, alias, or pattern",
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an index / alias / pattern",
+            "field_name": "index",
+            "placeholder": "Select an index or enter a pattern...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "elasticsearch_index"
+        }
+      },
+      "required": [
+        "index"
+      ],
+      "title": "ESRefreshIndexConfig",
+      "type": "object"
+    },
+    "ESReindexConfig": {
+      "properties": {
+        "operation": {
+          "const": "reindex_documents",
+          "default": "reindex_documents",
+          "title": "Reindex Documents",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Reindex Documents",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "reindex",
+            "copy documents",
+            "migrate index"
+          ]
+        },
+        "source_index": {
+          "description": "Index, alias, or pattern to read from",
+          "title": "Source Index",
+          "type": "string"
+        },
+        "dest_index": {
+          "description": "Destination index or alias",
+          "title": "Destination Index",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional source Query DSL JSON",
+          "title": "Source Query",
+          "ui:widget": "textarea"
+        },
+        "script": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional transform script JSON",
+          "title": "Script",
+          "ui:widget": "textarea"
+        },
+        "max_docs": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of documents to reindex",
+          "title": "Max Docs"
+        },
+        "dest_pipeline": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional destination ingest pipeline ID",
+          "title": "Destination Pipeline"
+        },
+        "conflicts": {
+          "default": "proceed",
+          "description": "How version conflicts are handled",
+          "enum": [
+            "abort",
+            "proceed"
+          ],
+          "title": "Conflicts",
+          "type": "string"
+        },
+        "refresh": {
+          "default": true,
+          "description": "Refresh the destination after completion",
+          "title": "Refresh",
+          "type": "boolean"
+        },
+        "wait_for_completion": {
+          "default": true,
+          "description": "Wait for the task to finish before returning",
+          "title": "Wait For Completion",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "source_index",
+        "dest_index"
+      ],
+      "title": "ESReindexConfig",
+      "type": "object"
+    },
+    "ESSearchConfig": {
+      "properties": {
+        "operation": {
+          "const": "search",
+          "default": "search",
+          "title": "Search",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Search",
+          "x-display-name": "Search",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "search",
+            "vector search",
+            "knn",
+            "similarity search",
+            "rag",
+            "retrieve"
+          ]
+        },
+        "index": {
+          "description": "Index, alias, or pattern to search",
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an index / alias / pattern",
+            "field_name": "index",
+            "placeholder": "Select an index or enter a pattern...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "elasticsearch_index"
+        },
+        "field": {
+          "description": "The dense_vector field to search against",
+          "title": "Vector Field",
+          "type": "string"
+        },
+        "query_vector": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array of numbers used for kNN search",
+          "title": "Query Vector",
+          "ui:widget": "textarea"
+        },
+        "query_vector_builder": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object for server-side vector construction, e.g. {\"text_embedding\": {\"model_id\": \"my-model\", \"model_text\": \"hello\"}}",
+          "title": "Query Vector Builder",
+          "ui:widget": "textarea"
+        },
+        "k": {
+          "default": 10,
+          "description": "Number of nearest neighbours to return",
+          "title": "K",
+          "type": "integer"
+        },
+        "num_candidates": {
+          "default": 100,
+          "description": "Candidates considered per shard (>= k)",
+          "title": "Num Candidates",
+          "type": "integer"
+        },
+        "similarity": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional minimum similarity score",
+          "title": "Similarity Threshold"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Query DSL filter JSON, e.g. {\"term\": {\"category\": \"docs\"}}",
+          "title": "Filter",
+          "ui:widget": "textarea"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fields to return, comma-separated",
+          "title": "Source Fields"
+        },
+        "routing": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional custom shard routing value",
+          "title": "Routing"
+        }
+      },
+      "required": [
+        "index",
+        "field"
+      ],
+      "title": "ESSearchConfig",
+      "type": "object"
+    },
+    "ESUpdateAliasesConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_aliases",
+          "default": "update_aliases",
+          "title": "Update Aliases",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Aliases",
+          "x-display-name": "Update Aliases",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "alias",
+            "update aliases",
+            "add alias",
+            "remove alias"
+          ]
+        },
+        "actions": {
+          "description": "JSON array for the _aliases API, e.g. [{\"add\": {\"index\": \"docs\", \"alias\": \"docs-live\"}}]",
+          "title": "Actions",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "actions"
+      ],
+      "title": "ESUpdateAliasesConfig",
+      "type": "object"
+    },
+    "ESUpdateByQueryConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_by_query",
+          "default": "update_by_query",
+          "title": "Update By Query",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Update By Query",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "update by query",
+            "bulk update",
+            "mutate matching"
+          ]
+        },
+        "index": {
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an index / alias / pattern",
+            "field_name": "index",
+            "placeholder": "Select an index or enter a pattern...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "elasticsearch_index"
+        },
+        "query": {
+          "description": "Query DSL JSON selecting documents to update",
+          "title": "Query",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "script": {
+          "description": "Painless script JSON",
+          "title": "Script",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "conflicts": {
+          "default": "proceed",
+          "description": "How version conflicts are handled",
+          "enum": [
+            "abort",
+            "proceed"
+          ],
+          "title": "Conflicts",
+          "type": "string"
+        },
+        "refresh": {
+          "default": true,
+          "description": "Refresh affected shards after completion",
+          "title": "Refresh",
+          "type": "boolean"
+        },
+        "wait_for_completion": {
+          "default": true,
+          "description": "Wait for the task to finish before returning",
+          "title": "Wait For Completion",
+          "type": "boolean"
+        },
+        "requests_per_second": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Throttle rate for the operation",
+          "title": "Requests Per Second"
+        }
+      },
+      "required": [
+        "index",
+        "query",
+        "script"
+      ],
+      "title": "ESUpdateByQueryConfig",
+      "type": "object"
+    },
+    "ESUpdateDocConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_document",
+          "default": "update_document",
+          "title": "Update Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Update Document",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "update",
+            "partial update",
+            "scripted update"
+          ]
+        },
+        "index": {
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an index / alias / pattern",
+            "field_name": "index",
+            "placeholder": "Select an index or enter a pattern...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "elasticsearch_index"
+        },
+        "id": {
+          "description": "Document _id",
+          "title": "ID",
+          "type": "string"
+        },
+        "document": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object merged into the existing document, e.g. {\"status\": \"done\"}",
+          "title": "Partial Document",
+          "ui:widget": "textarea"
+        },
+        "script": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Painless script JSON, e.g. {\"source\": \"ctx._source.count += params.n\", \"params\": {\"n\": 1}}",
+          "title": "Script",
+          "ui:widget": "textarea"
+        },
+        "upsert": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object used if the document does not exist",
+          "title": "Upsert Document",
+          "ui:widget": "textarea"
+        },
+        "scripted_upsert": {
+          "default": false,
+          "description": "Run the script even when the document does not exist",
+          "title": "Scripted Upsert",
+          "type": "boolean"
+        },
+        "doc_as_upsert": {
+          "default": false,
+          "description": "Treat Partial Document as the upsert document",
+          "title": "Doc As Upsert",
+          "type": "boolean"
+        },
+        "retry_on_conflict": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of version-conflict retries",
+          "title": "Retry On Conflict"
+        },
+        "routing": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional custom shard routing value",
+          "title": "Routing"
+        },
+        "refresh": {
+          "default": "wait_for",
+          "description": "When the update becomes visible to search",
+          "enum": [
+            "false",
+            "true",
+            "wait_for"
+          ],
+          "title": "Refresh Policy",
+          "type": "string"
+        }
+      },
+      "required": [
+        "index",
+        "id"
+      ],
+      "title": "ESUpdateDocConfig",
+      "type": "object"
+    },
+    "ESUpdateMappingConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_mapping",
+          "default": "update_mapping",
+          "title": "Update Mapping",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Index",
+          "x-display-name": "Update Mapping",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "update mapping",
+            "put mapping",
+            "add field"
+          ]
+        },
+        "index": {
+          "description": "Index, alias, or pattern",
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an index / alias / pattern",
+            "field_name": "index",
+            "placeholder": "Select an index or enter a pattern...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "elasticsearch_index"
+        },
+        "mappings": {
+          "description": "JSON mappings object",
+          "title": "Mappings",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "index",
+        "mappings"
+      ],
+      "title": "ESUpdateMappingConfig",
+      "type": "object"
+    },
+    "ESUpdateSettingsConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_settings",
+          "default": "update_settings",
+          "title": "Update Settings",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Index",
+          "x-display-name": "Update Settings",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "update settings",
+            "put settings",
+            "index settings"
+          ]
+        },
+        "index": {
+          "description": "Index, alias, or pattern",
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an index / alias / pattern",
+            "field_name": "index",
+            "placeholder": "Select an index or enter a pattern...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "elasticsearch_index"
+        },
+        "settings": {
+          "description": "JSON settings object",
+          "title": "Settings",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "preserve_existing": {
+          "default": false,
+          "description": "Only set values that are not already configured",
+          "title": "Preserve Existing",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "index",
+        "settings"
+      ],
+      "title": "ESUpdateSettingsConfig",
+      "type": "object"
+    },
+    "ESUploadIndexConfig": {
+      "properties": {
+        "operation": {
+          "const": "upload_and_index",
+          "default": "upload_and_index",
+          "title": "Upload & Index Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Upload & Index Document",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "upload",
+            "ingest",
+            "index document",
+            "rag",
+            "embed file"
+          ]
+        },
+        "index": {
+          "title": "Index",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an index / alias / pattern",
+            "field_name": "index",
+            "placeholder": "Select an index or enter a pattern...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "elasticsearch_index"
+        },
+        "document": {
+          "description": "Upload a PDF/DOCX/TXT/MD/CSV/JSON/HTML file (or pass a URL / upstream file reference). It is chunked, embedded with text-embedding-3-small, and bulk-indexed.",
+          "title": "Document",
+          "type": "string",
+          "ui:accept": ".pdf,.docx,.txt,.md,.markdown,.csv,.json,.html,.htm",
+          "ui:widget": "media_upload"
+        },
+        "vector_field": {
+          "default": "vector",
+          "description": "The index dense_vector field name",
+          "title": "Vector Field",
+          "type": "string"
+        },
+        "text_field": {
+          "default": "text",
+          "description": "The index field that stores chunk text",
+          "title": "Text Field",
+          "type": "string"
+        },
+        "chunk_size": {
+          "default": 1000,
+          "description": "Characters per chunk",
+          "title": "Chunk Size",
+          "type": "integer"
+        },
+        "chunk_overlap": {
+          "default": 200,
+          "description": "Overlapping characters between chunks",
+          "title": "Chunk Overlap",
+          "type": "integer"
+        },
+        "id_prefix": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional prefix for chunk IDs",
+          "title": "ID Prefix"
+        },
+        "pipeline": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional ingest pipeline ID",
+          "title": "Ingest Pipeline"
+        },
+        "refresh": {
+          "default": "wait_for",
+          "description": "When the writes become visible to search",
+          "enum": [
+            "false",
+            "true",
+            "wait_for"
+          ],
+          "title": "Refresh Policy",
+          "type": "string"
+        }
+      },
+      "required": [
+        "index",
+        "document"
+      ],
+      "title": "ESUploadIndexConfig",
+      "type": "object"
+    },
+    "ElasticsearchCredential": {
+      "description": "Elasticsearch credential: cluster URL + API key.",
+      "properties": {
+        "credential_type": {
+          "const": "elasticsearch_api_key",
+          "default": "elasticsearch_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "url": {
+          "description": "Your Elasticsearch endpoint, e.g. https://my-deployment.es.us-central1.gcp.cloud.es.io",
+          "title": "Cluster URL",
+          "type": "string"
+        },
+        "api_key": {
+          "description": "Encoded Elastic API key (the value shown after creating a key in Kibana \u2192 Stack Management \u2192 API Keys)",
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "url",
+        "api_key"
+      ],
+      "title": "ElasticsearchCredential",
+      "type": "object",
+      "x-credential-instructions": "Create an API key in Kibana \u2192 Stack Management \u2192 API Keys and paste the encoded value here.",
+      "x-credential-url": "https://www.elastic.co/docs/deploy-manage/api-keys/elasticsearch-api-keys"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "alias_exists": "#/$defs/ESAliasExistsConfig",
+          "bulk_index": "#/$defs/ESBulkIndexConfig",
+          "bulk_write": "#/$defs/ESBulkWriteConfig",
+          "count": "#/$defs/ESCountConfig",
+          "create_document": "#/$defs/ESCreateDocConfig",
+          "create_index": "#/$defs/ESCreateIndexConfig",
+          "delete_by_query": "#/$defs/ESDeleteByQueryConfig",
+          "delete_document": "#/$defs/ESDeleteDocConfig",
+          "delete_index": "#/$defs/ESDeleteIndexConfig",
+          "document_exists": "#/$defs/ESDocumentExistsConfig",
+          "get_document": "#/$defs/ESGetDocConfig",
+          "get_document_source": "#/$defs/ESGetDocSourceConfig",
+          "get_index": "#/$defs/ESGetIndexConfig",
+          "get_index_stats": "#/$defs/ESGetIndexStatsConfig",
+          "get_mapping": "#/$defs/ESGetMappingConfig",
+          "get_settings": "#/$defs/ESGetSettingsConfig",
+          "index_document": "#/$defs/ESIndexDocConfig",
+          "index_exists": "#/$defs/ESIndexExistsConfig",
+          "list_aliases": "#/$defs/ESListAliasesConfig",
+          "list_indices": "#/$defs/ESListIndicesConfig",
+          "multi_get": "#/$defs/ESMultiGetConfig",
+          "multi_search": "#/$defs/ESMultiSearchConfig",
+          "refresh_index": "#/$defs/ESRefreshIndexConfig",
+          "reindex_documents": "#/$defs/ESReindexConfig",
+          "search": "#/$defs/ESSearchConfig",
+          "update_aliases": "#/$defs/ESUpdateAliasesConfig",
+          "update_by_query": "#/$defs/ESUpdateByQueryConfig",
+          "update_document": "#/$defs/ESUpdateDocConfig",
+          "update_mapping": "#/$defs/ESUpdateMappingConfig",
+          "update_settings": "#/$defs/ESUpdateSettingsConfig",
+          "upload_and_index": "#/$defs/ESUploadIndexConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ESSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/ESCountConfig"
+        },
+        {
+          "$ref": "#/$defs/ESMultiSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/ESIndexDocConfig"
+        },
+        {
+          "$ref": "#/$defs/ESCreateDocConfig"
+        },
+        {
+          "$ref": "#/$defs/ESBulkIndexConfig"
+        },
+        {
+          "$ref": "#/$defs/ESBulkWriteConfig"
+        },
+        {
+          "$ref": "#/$defs/ESGetDocConfig"
+        },
+        {
+          "$ref": "#/$defs/ESGetDocSourceConfig"
+        },
+        {
+          "$ref": "#/$defs/ESDocumentExistsConfig"
+        },
+        {
+          "$ref": "#/$defs/ESMultiGetConfig"
+        },
+        {
+          "$ref": "#/$defs/ESUpdateDocConfig"
+        },
+        {
+          "$ref": "#/$defs/ESDeleteDocConfig"
+        },
+        {
+          "$ref": "#/$defs/ESDeleteByQueryConfig"
+        },
+        {
+          "$ref": "#/$defs/ESUpdateByQueryConfig"
+        },
+        {
+          "$ref": "#/$defs/ESReindexConfig"
+        },
+        {
+          "$ref": "#/$defs/ESListIndicesConfig"
+        },
+        {
+          "$ref": "#/$defs/ESIndexExistsConfig"
+        },
+        {
+          "$ref": "#/$defs/ESGetIndexConfig"
+        },
+        {
+          "$ref": "#/$defs/ESCreateIndexConfig"
+        },
+        {
+          "$ref": "#/$defs/ESDeleteIndexConfig"
+        },
+        {
+          "$ref": "#/$defs/ESRefreshIndexConfig"
+        },
+        {
+          "$ref": "#/$defs/ESGetMappingConfig"
+        },
+        {
+          "$ref": "#/$defs/ESUpdateMappingConfig"
+        },
+        {
+          "$ref": "#/$defs/ESGetSettingsConfig"
+        },
+        {
+          "$ref": "#/$defs/ESUpdateSettingsConfig"
+        },
+        {
+          "$ref": "#/$defs/ESListAliasesConfig"
+        },
+        {
+          "$ref": "#/$defs/ESAliasExistsConfig"
+        },
+        {
+          "$ref": "#/$defs/ESUpdateAliasesConfig"
+        },
+        {
+          "$ref": "#/$defs/ESGetIndexStatsConfig"
+        },
+        {
+          "$ref": "#/$defs/ESUploadIndexConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ElasticsearchCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Elasticsearch Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "kNN-search an Elasticsearch index for the documents most similar to a query embedding",
+    "Index or bulk-index documents into Elasticsearch and search them immediately",
+    "Update matching documents with update_by_query, or delete them with delete_by_query",
+    "Reindex documents from one Elasticsearch index into another",
+    "Inspect mappings, settings, aliases, and stats for an Elasticsearch index"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

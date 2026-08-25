@@ -1,0 +1,685 @@
+{
+  "$defs": {
+    "GoogleFormsCreateFormConfig": {
+      "description": "Configuration for creating a new form",
+      "properties": {
+        "operation": {
+          "const": "create_new_form",
+          "default": "create_new_form",
+          "description": "Create a new form",
+          "title": "Create New Form",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Form",
+          "x-creates-resource": true,
+          "x-display-name": "Create New Form",
+          "x-is-trigger": false,
+          "x-resource-id-path": "form.formId",
+          "x-resource-type": "google_form"
+        },
+        "title": {
+          "description": "Title for the new form",
+          "placeholder": "My Survey",
+          "title": "Title",
+          "type": "string"
+        },
+        "document_title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Title shown in Google Drive (defaults to form title)",
+          "placeholder": "Drive filename (optional)",
+          "title": "Document Title"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "GoogleFormsCreateFormConfig",
+      "type": "object"
+    },
+    "GoogleFormsGetFormConfig": {
+      "description": "Configuration for getting a form",
+      "properties": {
+        "operation": {
+          "const": "get_form_metadata",
+          "default": "get_form_metadata",
+          "description": "Get a form",
+          "title": "Get Form Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Form",
+          "x-display-name": "Get Form Metadata",
+          "x-is-trigger": false
+        },
+        "form_id": {
+          "description": "Select a Google Form",
+          "title": "Form",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste form ID",
+            "field_name": "form_id",
+            "placeholder": "Select a form...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_form"
+        }
+      },
+      "required": [
+        "form_id"
+      ],
+      "title": "GoogleFormsGetFormConfig",
+      "type": "object"
+    },
+    "GoogleFormsGetResponseConfig": {
+      "description": "Configuration for getting a single response",
+      "properties": {
+        "operation": {
+          "const": "get_form_response",
+          "default": "get_form_response",
+          "description": "Get a specific response",
+          "title": "Get Form Response",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Response",
+          "x-display-name": "Get Form Response",
+          "x-is-trigger": false
+        },
+        "form_id": {
+          "description": "Select a Google Form",
+          "title": "Form",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste form ID",
+            "field_name": "form_id",
+            "placeholder": "Select a form...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_form"
+        },
+        "response_id": {
+          "description": "The ID of the response to retrieve",
+          "placeholder": "Response ID",
+          "title": "Response ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "form_id",
+        "response_id"
+      ],
+      "title": "GoogleFormsGetResponseConfig",
+      "type": "object"
+    },
+    "GoogleFormsListFormsConfig": {
+      "description": "Configuration for listing forms from Google Drive",
+      "properties": {
+        "operation": {
+          "const": "list_google_drive_forms",
+          "default": "list_google_drive_forms",
+          "description": "List Google Forms",
+          "title": "List Google Drive Forms",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Form",
+          "x-display-name": "List Google Drive Forms",
+          "x-is-trigger": false
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "description": "Maximum number of forms to return (1-100)",
+          "title": "Page Size"
+        },
+        "search_query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search term to filter forms by name",
+          "placeholder": "Form name (optional)",
+          "title": "Search Query"
+        }
+      },
+      "title": "GoogleFormsListFormsConfig",
+      "type": "object"
+    },
+    "GoogleFormsListResponsesConfig": {
+      "description": "Configuration for listing form responses",
+      "properties": {
+        "operation": {
+          "const": "list_form_responses",
+          "default": "list_form_responses",
+          "description": "List form responses",
+          "title": "List Form Responses",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Response",
+          "x-display-name": "List Form Responses",
+          "x-is-trigger": false
+        },
+        "form_id": {
+          "description": "Select a Google Form",
+          "title": "Form",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste form ID",
+            "field_name": "form_id",
+            "placeholder": "Select a form...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_form"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 5000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "description": "Maximum number of responses to return (1-5000)",
+          "title": "Page Size"
+        }
+      },
+      "required": [
+        "form_id"
+      ],
+      "title": "GoogleFormsListResponsesConfig",
+      "type": "object"
+    },
+    "GoogleFormsOAuthCredential": {
+      "description": "OAuth credential for Google Forms access.\nTokens are obtained via OAuth flow, not entered manually.",
+      "properties": {
+        "credential_type": {
+          "const": "google_forms_oauth",
+          "default": "google_forms_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "OAuth 2.0 access token from Google",
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "description": "OAuth 2.0 refresh token for automatic renewal",
+          "title": "Refresh Token",
+          "type": "string"
+        },
+        "expires_at": {
+          "description": "ISO 8601 timestamp when access token expires",
+          "title": "Token Expiry",
+          "type": "string"
+        },
+        "email": {
+          "description": "Email address of the connected Google account",
+          "title": "Google Account",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "email"
+      ],
+      "title": "GoogleFormsOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-oauth-provider": "google",
+      "x-oauth-scopes": [
+        "https://www.googleapis.com/auth/forms.body",
+        "https://www.googleapis.com/auth/forms.responses.readonly",
+        "https://www.googleapis.com/auth/drive"
+      ]
+    },
+    "GoogleFormsOnResponseConfig": {
+      "description": "Trigger: polls a form on a schedule and fires for new responses.",
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_form_response",
+          "default": "on_form_response",
+          "title": "On Form Response",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Form Response",
+          "x-is-trigger": true
+        },
+        "form_id": {
+          "description": "The form to watch for new responses",
+          "title": "Form",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a form ID",
+            "field_name": "form_id",
+            "placeholder": "Select a form...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "form_id"
+      ],
+      "title": "GoogleFormsOnResponseConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "GoogleFormsUpdateFormConfig": {
+      "description": "Configuration for updating a form's metadata",
+      "properties": {
+        "operation": {
+          "const": "update_form_metadata",
+          "default": "update_form_metadata",
+          "description": "Update form metadata",
+          "title": "Update Form Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Form",
+          "x-display-name": "Update Form Metadata",
+          "x-is-trigger": false
+        },
+        "form_id": {
+          "description": "Select a Google Form",
+          "title": "Form",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste form ID",
+            "field_name": "form_id",
+            "placeholder": "Select a form...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_form"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New title for the form",
+          "placeholder": "New title (optional)",
+          "title": "New Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Description shown at the top of the form",
+          "placeholder": "Form description (optional)",
+          "title": "Description",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "form_id"
+      ],
+      "title": "GoogleFormsUpdateFormConfig",
+      "type": "object"
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for Google Forms node including credentials",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_new_form": "#/$defs/GoogleFormsCreateFormConfig",
+          "get_form_metadata": "#/$defs/GoogleFormsGetFormConfig",
+          "get_form_response": "#/$defs/GoogleFormsGetResponseConfig",
+          "list_form_responses": "#/$defs/GoogleFormsListResponsesConfig",
+          "list_google_drive_forms": "#/$defs/GoogleFormsListFormsConfig",
+          "on_form_response": "#/$defs/GoogleFormsOnResponseConfig",
+          "update_form_metadata": "#/$defs/GoogleFormsUpdateFormConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GoogleFormsOnResponseConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleFormsListFormsConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleFormsGetFormConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleFormsCreateFormConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleFormsUpdateFormConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleFormsListResponsesConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleFormsGetResponseConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GoogleFormsOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Google-forms Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Create a new product feedback survey with 5 questions and share link",
+    "Get all responses from customer satisfaction form and get statistics",
+    "Update the job application form title and add new required fields",
+    "List all active surveys and count total responses from this month",
+    "Get a specific response and extract the answers into structured data",
+    "Create an onboarding form for new employees with required documents",
+    "Get form responses and filter by rating to identify detractors"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

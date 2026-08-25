@@ -1,0 +1,526 @@
+{
+  "$defs": {
+    "GoogleAdsGetAdGroupPerformanceConfig": {
+      "description": "Get performance metrics for ad groups in a Google Ads account.",
+      "properties": {
+        "developer_token": {
+          "description": "Google Ads API developer token from your manager account's API Center",
+          "title": "Developer Token",
+          "type": "string",
+          "ui:help": "Found in your Google Ads Manager Account \u2192 Tools \u2192 API Center",
+          "x-help-url": "https://ads.google.com/home/tools/manager-accounts/"
+        },
+        "customer_id": {
+          "description": "Google Ads customer/account ID (10 digits, no dashes, e.g. 1234567890)",
+          "title": "Customer ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter customer ID (no dashes)",
+            "field_name": "customer_id",
+            "placeholder": "Select an account...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_ads_customer"
+        },
+        "login_customer_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If accessing via a manager (MCC) account, enter the manager's customer ID here",
+          "placeholder": "Manager account ID (optional)",
+          "title": "Manager Account ID",
+          "ui:help": "Required when your OAuth user accesses client accounts through a manager account"
+        },
+        "operation": {
+          "const": "get_ad_group_performance_metrics",
+          "default": "get_ad_group_performance_metrics",
+          "description": "Get ad group performance",
+          "title": "Get Ad Group Performance Metrics",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "General",
+          "x-display-name": "Get Ad Group Performance Metrics",
+          "x-is-trigger": false
+        },
+        "start_date": {
+          "default": "",
+          "description": "Start date in YYYY-MM-DD format (leave empty for last 30 days)",
+          "placeholder": "YYYY-MM-DD (optional)",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "default": "",
+          "description": "End date in YYYY-MM-DD format (leave empty for today)",
+          "placeholder": "YYYY-MM-DD (optional)",
+          "title": "End Date",
+          "type": "string"
+        },
+        "campaign_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by specific campaign ID (optional)",
+          "placeholder": "Campaign ID (optional)",
+          "title": "Campaign ID"
+        }
+      },
+      "required": [
+        "developer_token",
+        "customer_id"
+      ],
+      "title": "GoogleAdsGetAdGroupPerformanceConfig",
+      "type": "object"
+    },
+    "GoogleAdsGetCampaignPerformanceConfig": {
+      "description": "Get performance metrics for campaigns in a Google Ads account.",
+      "properties": {
+        "developer_token": {
+          "description": "Google Ads API developer token from your manager account's API Center",
+          "title": "Developer Token",
+          "type": "string",
+          "ui:help": "Found in your Google Ads Manager Account \u2192 Tools \u2192 API Center",
+          "x-help-url": "https://ads.google.com/home/tools/manager-accounts/"
+        },
+        "customer_id": {
+          "description": "Google Ads customer/account ID (10 digits, no dashes, e.g. 1234567890)",
+          "title": "Customer ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter customer ID (no dashes)",
+            "field_name": "customer_id",
+            "placeholder": "Select an account...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_ads_customer"
+        },
+        "login_customer_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If accessing via a manager (MCC) account, enter the manager's customer ID here",
+          "placeholder": "Manager account ID (optional)",
+          "title": "Manager Account ID",
+          "ui:help": "Required when your OAuth user accesses client accounts through a manager account"
+        },
+        "operation": {
+          "const": "get_campaign_performance_metrics",
+          "default": "get_campaign_performance_metrics",
+          "description": "Get campaign performance",
+          "title": "Get Campaign Performance Metrics",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "General",
+          "x-display-name": "Get Campaign Performance Metrics",
+          "x-is-trigger": false
+        },
+        "start_date": {
+          "default": "",
+          "description": "Start date in YYYY-MM-DD format (leave empty for last 30 days)",
+          "placeholder": "YYYY-MM-DD (optional)",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "default": "",
+          "description": "End date in YYYY-MM-DD format (leave empty for today)",
+          "placeholder": "YYYY-MM-DD (optional)",
+          "title": "End Date",
+          "type": "string"
+        },
+        "campaign_status": {
+          "default": "all",
+          "description": "Filter by campaign status",
+          "enum": [
+            "all",
+            "ENABLED",
+            "PAUSED",
+            "REMOVED"
+          ],
+          "enumNames": [
+            "All",
+            "Enabled",
+            "Paused",
+            "Removed"
+          ],
+          "title": "Campaign Status",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "developer_token",
+        "customer_id"
+      ],
+      "title": "GoogleAdsGetCampaignPerformanceConfig",
+      "type": "object"
+    },
+    "GoogleAdsGetKeywordPerformanceConfig": {
+      "description": "Get performance metrics for keywords across campaigns.",
+      "properties": {
+        "developer_token": {
+          "description": "Google Ads API developer token from your manager account's API Center",
+          "title": "Developer Token",
+          "type": "string",
+          "ui:help": "Found in your Google Ads Manager Account \u2192 Tools \u2192 API Center",
+          "x-help-url": "https://ads.google.com/home/tools/manager-accounts/"
+        },
+        "customer_id": {
+          "description": "Google Ads customer/account ID (10 digits, no dashes, e.g. 1234567890)",
+          "title": "Customer ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter customer ID (no dashes)",
+            "field_name": "customer_id",
+            "placeholder": "Select an account...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_ads_customer"
+        },
+        "login_customer_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If accessing via a manager (MCC) account, enter the manager's customer ID here",
+          "placeholder": "Manager account ID (optional)",
+          "title": "Manager Account ID",
+          "ui:help": "Required when your OAuth user accesses client accounts through a manager account"
+        },
+        "operation": {
+          "const": "get_keyword_performance_metrics",
+          "default": "get_keyword_performance_metrics",
+          "description": "Get keyword performance",
+          "title": "Get Keyword Performance Metrics",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "General",
+          "x-display-name": "Get Keyword Performance Metrics",
+          "x-is-trigger": false
+        },
+        "start_date": {
+          "default": "",
+          "description": "Start date in YYYY-MM-DD format (leave empty for last 30 days)",
+          "placeholder": "YYYY-MM-DD (optional)",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "default": "",
+          "description": "End date in YYYY-MM-DD format (leave empty for today)",
+          "placeholder": "YYYY-MM-DD (optional)",
+          "title": "End Date",
+          "type": "string"
+        },
+        "campaign_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by specific campaign ID (optional)",
+          "placeholder": "Campaign ID (optional)",
+          "title": "Campaign ID"
+        }
+      },
+      "required": [
+        "developer_token",
+        "customer_id"
+      ],
+      "title": "GoogleAdsGetKeywordPerformanceConfig",
+      "type": "object"
+    },
+    "GoogleAdsGetSearchTermsConfig": {
+      "description": "Get search terms that triggered your ads \u2014 reveals actual user queries.",
+      "properties": {
+        "developer_token": {
+          "description": "Google Ads API developer token from your manager account's API Center",
+          "title": "Developer Token",
+          "type": "string",
+          "ui:help": "Found in your Google Ads Manager Account \u2192 Tools \u2192 API Center",
+          "x-help-url": "https://ads.google.com/home/tools/manager-accounts/"
+        },
+        "customer_id": {
+          "description": "Google Ads customer/account ID (10 digits, no dashes, e.g. 1234567890)",
+          "title": "Customer ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter customer ID (no dashes)",
+            "field_name": "customer_id",
+            "placeholder": "Select an account...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_ads_customer"
+        },
+        "login_customer_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If accessing via a manager (MCC) account, enter the manager's customer ID here",
+          "placeholder": "Manager account ID (optional)",
+          "title": "Manager Account ID",
+          "ui:help": "Required when your OAuth user accesses client accounts through a manager account"
+        },
+        "operation": {
+          "const": "get_search_terms_triggering_ads",
+          "default": "get_search_terms_triggering_ads",
+          "description": "Get search terms report",
+          "title": "Get Search Terms Triggering Ads",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "General",
+          "x-display-name": "Get Search Terms Triggering Ads",
+          "x-is-trigger": false
+        },
+        "start_date": {
+          "default": "",
+          "description": "Start date in YYYY-MM-DD format (leave empty for last 30 days)",
+          "placeholder": "YYYY-MM-DD (optional)",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "default": "",
+          "description": "End date in YYYY-MM-DD format (leave empty for today)",
+          "placeholder": "YYYY-MM-DD (optional)",
+          "title": "End Date",
+          "type": "string"
+        },
+        "campaign_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by specific campaign ID (optional)",
+          "placeholder": "Campaign ID (optional)",
+          "title": "Campaign ID"
+        }
+      },
+      "required": [
+        "developer_token",
+        "customer_id"
+      ],
+      "title": "GoogleAdsGetSearchTermsConfig",
+      "type": "object"
+    },
+    "GoogleAdsOAuthCredential": {
+      "description": "OAuth credential for Google Ads access.",
+      "properties": {
+        "credential_type": {
+          "const": "google_ads_oauth",
+          "default": "google_ads_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "OAuth 2.0 access token from Google",
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "description": "OAuth 2.0 refresh token for automatic renewal",
+          "title": "Refresh Token",
+          "type": "string"
+        },
+        "expires_at": {
+          "description": "ISO 8601 timestamp when access token expires",
+          "title": "Token Expiry",
+          "type": "string"
+        },
+        "email": {
+          "description": "Email address of the connected Google account",
+          "title": "Google Account",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "email"
+      ],
+      "title": "GoogleAdsOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-oauth-provider": "google",
+      "x-oauth-scopes": [
+        "https://www.googleapis.com/auth/adwords"
+      ]
+    },
+    "GoogleAdsSearchConfig": {
+      "description": "Run a custom GAQL (Google Ads Query Language) query.",
+      "properties": {
+        "developer_token": {
+          "description": "Google Ads API developer token from your manager account's API Center",
+          "title": "Developer Token",
+          "type": "string",
+          "ui:help": "Found in your Google Ads Manager Account \u2192 Tools \u2192 API Center",
+          "x-help-url": "https://ads.google.com/home/tools/manager-accounts/"
+        },
+        "customer_id": {
+          "description": "Google Ads customer/account ID (10 digits, no dashes, e.g. 1234567890)",
+          "title": "Customer ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter customer ID (no dashes)",
+            "field_name": "customer_id",
+            "placeholder": "Select an account...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_ads_customer"
+        },
+        "login_customer_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If accessing via a manager (MCC) account, enter the manager's customer ID here",
+          "placeholder": "Manager account ID (optional)",
+          "title": "Manager Account ID",
+          "ui:help": "Required when your OAuth user accesses client accounts through a manager account"
+        },
+        "operation": {
+          "const": "run_gaql_query",
+          "default": "run_gaql_query",
+          "description": "Run a custom GAQL query",
+          "title": "Run Gaql Query",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "General",
+          "x-display-name": "Run Gaql Query",
+          "x-is-trigger": false
+        },
+        "query": {
+          "description": "Google Ads Query Language query",
+          "placeholder": "SELECT campaign.name, metrics.impressions FROM campaign WHERE segments.date DURING LAST_30_DAYS",
+          "title": "GAQL Query",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "sql"
+        }
+      },
+      "required": [
+        "developer_token",
+        "customer_id",
+        "query"
+      ],
+      "title": "GoogleAdsSearchConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "get_ad_group_performance_metrics": "#/$defs/GoogleAdsGetAdGroupPerformanceConfig",
+          "get_campaign_performance_metrics": "#/$defs/GoogleAdsGetCampaignPerformanceConfig",
+          "get_keyword_performance_metrics": "#/$defs/GoogleAdsGetKeywordPerformanceConfig",
+          "get_search_terms_triggering_ads": "#/$defs/GoogleAdsGetSearchTermsConfig",
+          "run_gaql_query": "#/$defs/GoogleAdsSearchConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GoogleAdsGetCampaignPerformanceConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleAdsGetAdGroupPerformanceConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleAdsGetKeywordPerformanceConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleAdsGetSearchTermsConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleAdsSearchConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GoogleAdsOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Google-ads Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Get campaign performance for Q2 and identify highest ROI campaigns",
+    "Get ad group stats and find which groups have lowest click-through rates",
+    "Get keyword performance and bid recommendations for top performers",
+    "Get search terms report and identify negative keywords to exclude",
+    "Run GAQL query to get impressions by device type last 30 days",
+    "Get campaign performance by status and pause underperforming campaigns",
+    "Get conversion data by campaign and calculate cost per acquisition"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

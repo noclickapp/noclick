@@ -1,0 +1,185 @@
+{
+  "$defs": {
+    "MCPServerConfig": {
+      "description": "Configuration for connecting to an MCP server.\n\nTwo either-or modes, resolved at execute time from the wiring:\n- EXTERNAL: ``server_url`` set, no bottom-wired providers \u2014 discovers and\n  proxies the external server's tools (the original behavior).\n- HOSTING: tool-provider nodes wired into the bottom handle, no\n  ``server_url`` \u2014 aggregates their allowlisted operations into one named\n  tool bundle (and optionally serves it externally via a hosted link).",
+      "properties": {
+        "server_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL of an external MCP server endpoint. Leave empty when hosting: wire tool nodes into the bottom handle instead.",
+          "placeholder": "https://api.example.com/mcp",
+          "title": "Server URL"
+        },
+        "transport_type": {
+          "default": "shttp",
+          "description": "MCP transport protocol (shttp for Streamable HTTP, sse for Server-Sent Events)",
+          "enum": [
+            "shttp",
+            "sse"
+          ],
+          "title": "Transport Type",
+          "type": "string"
+        },
+        "tool_prefix": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Prefix to add to all tool names from this server (helps avoid name conflicts)",
+          "placeholder": "brave_",
+          "title": "Tool Prefix"
+        },
+        "tool_filter": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "List of tool names to include (empty = include all tools)",
+          "title": "Tool Filter"
+        }
+      },
+      "title": "MCPServerConfig",
+      "type": "object"
+    },
+    "MCPServerCredentials": {
+      "description": "Credentials for authenticating with MCP servers.\n\nSupports both API key and OAuth authentication. For OAuth, the access_token\nis fetched from the stored credential and passed at execution time.",
+      "properties": {
+        "auth_type": {
+          "default": "none",
+          "description": "Authentication type: none, api_key, or oauth",
+          "enum": [
+            "none",
+            "api_key",
+            "oauth"
+          ],
+          "title": "Authentication Type",
+          "type": "string"
+        },
+        "api_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "API key for authenticating with the MCP server",
+          "title": "API Key"
+        },
+        "custom_headers": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Additional HTTP headers to send with MCP requests",
+          "title": "Custom Headers"
+        },
+        "oauth_credential_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of the stored OAuth credential",
+          "title": "OAuth Credential ID"
+        },
+        "oauth_server_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The MCP server URL this OAuth credential is for",
+          "title": "OAuth Server URL"
+        },
+        "access_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "OAuth access token (populated at execution time)",
+          "title": "Access Token"
+        }
+      },
+      "title": "MCPServerCredentials",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for MCP Server node including optional credentials.",
+  "properties": {
+    "config": {
+      "$ref": "#/$defs/MCPServerConfig",
+      "description": "Node-specific configuration"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MCPServerCredentials"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Mcp-server Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Change server URL to a new endpoint",
+    "Switch transport type to SSE",
+    "Add API key authentication",
+    "Set up OAuth token for authentication",
+    "Filter tools by name prefix",
+    "Add custom headers for the request",
+    "Restrict available tools for this agent"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

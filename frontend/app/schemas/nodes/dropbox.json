@@ -1,0 +1,1830 @@
+{
+  "$defs": {
+    "DropboxAddFileMemberConfig": {
+      "description": "Share a file with specific users.",
+      "properties": {
+        "operation": {
+          "const": "share_file_with_members",
+          "default": "share_file_with_members",
+          "title": "Share File with Members",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File Sharing",
+          "x-display-name": "Share File with Members",
+          "x-is-trigger": false
+        },
+        "file_path": {
+          "description": "Path to file to share",
+          "placeholder": "/Documents/report.pdf",
+          "title": "File Path",
+          "type": "string"
+        },
+        "member_emails": {
+          "description": "Comma-separated emails",
+          "placeholder": "user1@example.com, user2@example.com",
+          "title": "Member Emails",
+          "type": "string"
+        },
+        "access_level": {
+          "default": "viewer",
+          "enum": [
+            "viewer",
+            "editor"
+          ],
+          "enumNames": [
+            "Viewer",
+            "Editor"
+          ],
+          "title": "Access Level",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_path",
+        "member_emails"
+      ],
+      "title": "DropboxAddFileMemberConfig",
+      "type": "object"
+    },
+    "DropboxAddFolderMemberConfig": {
+      "description": "Add members to an existing shared folder.",
+      "properties": {
+        "operation": {
+          "const": "add_members_to_shared_folder",
+          "default": "add_members_to_shared_folder",
+          "title": "Add Members to Shared Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Shared Folder",
+          "x-display-name": "Add Members to Shared Folder",
+          "x-is-trigger": false
+        },
+        "shared_folder_id": {
+          "placeholder": "84528192421",
+          "title": "Shared Folder ID",
+          "type": "string"
+        },
+        "member_emails": {
+          "description": "Comma-separated emails",
+          "placeholder": "user1@example.com, user2@example.com",
+          "title": "Member Emails",
+          "type": "string"
+        },
+        "access_level": {
+          "default": "viewer",
+          "enum": [
+            "viewer",
+            "editor"
+          ],
+          "enumNames": [
+            "Viewer",
+            "Editor"
+          ],
+          "title": "Access Level",
+          "type": "string"
+        }
+      },
+      "required": [
+        "shared_folder_id",
+        "member_emails"
+      ],
+      "title": "DropboxAddFolderMemberConfig",
+      "type": "object"
+    },
+    "DropboxAddPropertiesConfig": {
+      "description": "Add custom properties to a file.",
+      "properties": {
+        "operation": {
+          "const": "add_custom_properties_to_file",
+          "default": "add_custom_properties_to_file",
+          "title": "Add Custom Properties to File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File Sharing",
+          "x-display-name": "Add Custom Properties to File",
+          "x-is-trigger": false
+        },
+        "path": {
+          "placeholder": "/Documents/file.pdf",
+          "title": "File Path",
+          "type": "string"
+        },
+        "property_groups": {
+          "description": "JSON object of custom properties",
+          "placeholder": "{\"project_id\": \"123\", \"status\": \"active\"}",
+          "title": "Properties (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "path",
+        "property_groups"
+      ],
+      "title": "DropboxAddPropertiesConfig",
+      "type": "object"
+    },
+    "DropboxCopyConfig": {
+      "description": "Copy a file or folder to another location.",
+      "properties": {
+        "operation": {
+          "const": "copy_file_or_folder",
+          "default": "copy_file_or_folder",
+          "title": "Copy File or Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File",
+          "x-display-name": "Copy File or Folder",
+          "x-is-trigger": false
+        },
+        "from_path": {
+          "description": "Path to copy from",
+          "placeholder": "/Documents/file.txt",
+          "title": "Source Path",
+          "type": "string"
+        },
+        "to_path": {
+          "description": "Path to copy to",
+          "placeholder": "/Backups/file.txt",
+          "title": "Destination Path",
+          "type": "string"
+        },
+        "allow_shared_folder": {
+          "default": false,
+          "description": "Allow copying from shared folders",
+          "title": "Allow Shared Folder",
+          "type": "boolean"
+        },
+        "autorename": {
+          "default": false,
+          "title": "Auto-rename if exists",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "from_path",
+        "to_path"
+      ],
+      "title": "DropboxCopyConfig",
+      "type": "object"
+    },
+    "DropboxCountFileRequestsConfig": {
+      "description": "Get count of file requests.",
+      "properties": {
+        "operation": {
+          "const": "count_file_requests",
+          "default": "count_file_requests",
+          "title": "Count File Requests",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File Request",
+          "x-display-name": "Count File Requests",
+          "x-is-trigger": false
+        }
+      },
+      "title": "DropboxCountFileRequestsConfig",
+      "type": "object"
+    },
+    "DropboxCreateFileRequestConfig": {
+      "description": "Create a file request to collect files from others.",
+      "properties": {
+        "operation": {
+          "const": "create_file_request",
+          "default": "create_file_request",
+          "title": "Create File Request",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File Request",
+          "x-display-name": "Create File Request",
+          "x-is-trigger": false
+        },
+        "title": {
+          "description": "Title for the file request",
+          "placeholder": "Submit your documents",
+          "title": "Request Title",
+          "type": "string"
+        },
+        "destination": {
+          "description": "Where uploaded files will be saved",
+          "placeholder": "/File Requests/Documents",
+          "title": "Destination Folder",
+          "type": "string"
+        },
+        "deadline": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Deadline for file submission (ISO 8601)",
+          "placeholder": "2025-12-31T23:59:59Z",
+          "title": "Deadline"
+        },
+        "open": {
+          "default": true,
+          "description": "Allow file submissions",
+          "title": "Open Request",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "title",
+        "destination"
+      ],
+      "title": "DropboxCreateFileRequestConfig",
+      "type": "object"
+    },
+    "DropboxCreateFolderConfig": {
+      "description": "Create a new folder in Dropbox.",
+      "properties": {
+        "operation": {
+          "const": "create_folder",
+          "default": "create_folder",
+          "title": "Create Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Folder",
+          "x-display-name": "Create Folder",
+          "x-is-trigger": false
+        },
+        "path": {
+          "description": "Path for the new folder",
+          "placeholder": "/Projects/New Project",
+          "title": "Folder Path",
+          "type": "string"
+        },
+        "autorename": {
+          "default": false,
+          "description": "Automatically rename if folder already exists",
+          "title": "Auto-rename if exists",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "title": "DropboxCreateFolderConfig",
+      "type": "object"
+    },
+    "DropboxCreateSharedLinkConfig": {
+      "description": "Create a shared link for a file or folder.",
+      "properties": {
+        "operation": {
+          "const": "create_shared_link",
+          "default": "create_shared_link",
+          "title": "Create Shared Link",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File Sharing",
+          "x-display-name": "Create Shared Link",
+          "x-is-trigger": false
+        },
+        "path": {
+          "description": "Path to file or folder to share",
+          "placeholder": "/Documents/report.pdf",
+          "title": "Path",
+          "type": "string"
+        },
+        "password": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional password to protect the link",
+          "title": "Password Protection",
+          "ui:widget": "password"
+        },
+        "expires": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When the link should expire (ISO 8601 format)",
+          "placeholder": "2025-12-31T23:59:59Z",
+          "title": "Expiration Date"
+        },
+        "audience": {
+          "default": "public",
+          "description": "Who can access the link",
+          "enum": [
+            "public",
+            "team",
+            "no_one"
+          ],
+          "enumNames": [
+            "Public (anyone with link)",
+            "Team only",
+            "No one (password only)"
+          ],
+          "title": "Link Audience",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "title": "DropboxCreateSharedLinkConfig",
+      "type": "object"
+    },
+    "DropboxDeleteConfig": {
+      "description": "Delete a file or folder from Dropbox.",
+      "properties": {
+        "operation": {
+          "const": "delete_file_or_folder",
+          "default": "delete_file_or_folder",
+          "title": "Delete File or Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File",
+          "x-display-name": "Delete File or Folder",
+          "x-is-trigger": false
+        },
+        "path": {
+          "description": "Path to file or folder to delete",
+          "placeholder": "/Documents/old_file.txt",
+          "title": "Path to Delete",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "title": "DropboxDeleteConfig",
+      "type": "object"
+    },
+    "DropboxDeleteFileRequestConfig": {
+      "description": "Delete a file request.",
+      "properties": {
+        "operation": {
+          "const": "delete_file_request",
+          "default": "delete_file_request",
+          "title": "Delete File Request",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File Request",
+          "x-display-name": "Delete File Request",
+          "x-is-trigger": false
+        },
+        "file_request_id": {
+          "placeholder": "oaCAVmEyrqYnkZX9955Y",
+          "title": "File Request ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_request_id"
+      ],
+      "title": "DropboxDeleteFileRequestConfig",
+      "type": "object"
+    },
+    "DropboxDownloadFileConfig": {
+      "description": "Download a file from Dropbox.",
+      "properties": {
+        "operation": {
+          "const": "download_file",
+          "default": "download_file",
+          "title": "Download File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File",
+          "x-display-name": "Download File",
+          "x-is-trigger": false
+        },
+        "dropbox_path": {
+          "description": "Path to the file in Dropbox to download",
+          "placeholder": "/Documents/report.pdf",
+          "title": "Dropbox File Path",
+          "type": "string"
+        },
+        "local_file_path": {
+          "description": "Where to save the downloaded file",
+          "placeholder": "/path/to/save/report.pdf",
+          "title": "Local Destination Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dropbox_path",
+        "local_file_path"
+      ],
+      "title": "DropboxDownloadFileConfig",
+      "type": "object"
+    },
+    "DropboxDownloadZipConfig": {
+      "description": "Download a folder as a ZIP archive.",
+      "properties": {
+        "operation": {
+          "const": "download_folder_as_zip",
+          "default": "download_folder_as_zip",
+          "title": "Download Folder As Zip",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Folder",
+          "x-display-name": "Download Folder As Zip",
+          "x-is-trigger": false
+        },
+        "path": {
+          "description": "Path to folder to download as ZIP",
+          "placeholder": "/Documents/Project",
+          "title": "Folder Path",
+          "type": "string"
+        },
+        "local_save_path": {
+          "description": "Where to save the ZIP file",
+          "placeholder": "/path/to/save/archive.zip",
+          "title": "Local Save Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "local_save_path"
+      ],
+      "title": "DropboxDownloadZipConfig",
+      "type": "object"
+    },
+    "DropboxGetAccountInfoConfig": {
+      "description": "Get current account information.",
+      "properties": {
+        "operation": {
+          "const": "get_account_info",
+          "default": "get_account_info",
+          "title": "Get Account Info",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Account Info",
+          "x-is-trigger": false
+        }
+      },
+      "title": "DropboxGetAccountInfoConfig",
+      "type": "object"
+    },
+    "DropboxGetFileRequestConfig": {
+      "description": "Get details of a file request.",
+      "properties": {
+        "operation": {
+          "const": "get_file_request",
+          "default": "get_file_request",
+          "title": "Get File Request",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File Request",
+          "x-display-name": "Get File Request",
+          "x-is-trigger": false
+        },
+        "file_request_id": {
+          "placeholder": "oaCAVmEyrqYnkZX9955Y",
+          "title": "File Request ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_request_id"
+      ],
+      "title": "DropboxGetFileRequestConfig",
+      "type": "object"
+    },
+    "DropboxGetFolderMetadataConfig": {
+      "description": "Get metadata for a shared folder.",
+      "properties": {
+        "operation": {
+          "const": "get_shared_folder_metadata",
+          "default": "get_shared_folder_metadata",
+          "title": "Get Shared Folder Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Shared Folder",
+          "x-display-name": "Get Shared Folder Metadata",
+          "x-is-trigger": false
+        },
+        "shared_folder_id": {
+          "placeholder": "84528192421",
+          "title": "Shared Folder ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "shared_folder_id"
+      ],
+      "title": "DropboxGetFolderMetadataConfig",
+      "type": "object"
+    },
+    "DropboxGetMetadataConfig": {
+      "description": "Get metadata for a file or folder.",
+      "properties": {
+        "operation": {
+          "const": "get_file_or_folder_metadata",
+          "default": "get_file_or_folder_metadata",
+          "title": "Get File or Folder Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File",
+          "x-display-name": "Get File or Folder Metadata",
+          "x-is-trigger": false
+        },
+        "path": {
+          "description": "Path to file or folder",
+          "placeholder": "/Documents/file.txt",
+          "title": "Path",
+          "type": "string"
+        },
+        "include_media_info": {
+          "default": false,
+          "description": "Include photo and video metadata",
+          "title": "Include Media Info",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "title": "DropboxGetMetadataConfig",
+      "type": "object"
+    },
+    "DropboxGetSpaceUsageConfig": {
+      "description": "Get account space usage and quota.",
+      "properties": {
+        "operation": {
+          "const": "get_account_space_usage",
+          "default": "get_account_space_usage",
+          "title": "Get Account Space Usage",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Account Space Usage",
+          "x-is-trigger": false
+        }
+      },
+      "title": "DropboxGetSpaceUsageConfig",
+      "type": "object"
+    },
+    "DropboxGetTemporaryLinkConfig": {
+      "description": "Create a temporary direct link to download a file.",
+      "properties": {
+        "operation": {
+          "const": "get_temporary_download_link",
+          "default": "get_temporary_download_link",
+          "title": "Get Temporary Download Link",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File",
+          "x-display-name": "Get Temporary Download Link",
+          "x-is-trigger": false
+        },
+        "path": {
+          "description": "Path to the file",
+          "placeholder": "/Documents/file.pdf",
+          "title": "File Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "title": "DropboxGetTemporaryLinkConfig",
+      "type": "object"
+    },
+    "DropboxGetThumbnailConfig": {
+      "description": "Get thumbnail for an image file.",
+      "properties": {
+        "operation": {
+          "const": "get_file_thumbnail",
+          "default": "get_file_thumbnail",
+          "title": "Get File Thumbnail",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File",
+          "x-display-name": "Get File Thumbnail",
+          "x-is-trigger": false
+        },
+        "path": {
+          "description": "Path to image file",
+          "placeholder": "/Photos/image.jpg",
+          "title": "Image File Path",
+          "type": "string"
+        },
+        "format": {
+          "default": "jpeg",
+          "enum": [
+            "jpeg",
+            "png"
+          ],
+          "enumNames": [
+            "JPEG",
+            "PNG"
+          ],
+          "title": "Thumbnail Format",
+          "type": "string"
+        },
+        "size": {
+          "default": "w64h64",
+          "enum": [
+            "w32h32",
+            "w64h64",
+            "w128h128",
+            "w256h256",
+            "w480h320",
+            "w640h480",
+            "w960h640",
+            "w1024h768",
+            "w2048h1536"
+          ],
+          "enumNames": [
+            "32x32",
+            "64x64",
+            "128x128",
+            "256x256",
+            "480x320",
+            "640x480",
+            "960x640",
+            "1024x768",
+            "2048x1536"
+          ],
+          "title": "Thumbnail Size",
+          "type": "string"
+        },
+        "local_save_path": {
+          "description": "Where to save the thumbnail",
+          "placeholder": "/path/to/thumbnail.jpg",
+          "title": "Save Thumbnail To",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "local_save_path"
+      ],
+      "title": "DropboxGetThumbnailConfig",
+      "type": "object"
+    },
+    "DropboxListFileMembersConfig": {
+      "description": "List all members who have access to a file.",
+      "properties": {
+        "operation": {
+          "const": "list_file_members",
+          "default": "list_file_members",
+          "title": "List File Members",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File Sharing",
+          "x-display-name": "List File Members",
+          "x-is-trigger": false
+        },
+        "file_id": {
+          "placeholder": "id:a4ayc_80_OEAAAAAAAAAXw",
+          "title": "File ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "DropboxListFileMembersConfig",
+      "type": "object"
+    },
+    "DropboxListFileRequestsConfig": {
+      "description": "List all file requests.",
+      "properties": {
+        "operation": {
+          "const": "list_file_requests",
+          "default": "list_file_requests",
+          "title": "List File Requests",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File Request",
+          "x-display-name": "List File Requests",
+          "x-is-trigger": false
+        }
+      },
+      "title": "DropboxListFileRequestsConfig",
+      "type": "object"
+    },
+    "DropboxListFolderConfig": {
+      "description": "List contents of a Dropbox folder.",
+      "properties": {
+        "operation": {
+          "const": "list_folder_contents",
+          "default": "list_folder_contents",
+          "title": "List Folder Contents",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Folder",
+          "x-display-name": "List Folder Contents",
+          "x-is-trigger": false
+        },
+        "path": {
+          "default": "",
+          "description": "Path to folder (empty string for root)",
+          "placeholder": "/Documents",
+          "title": "Folder Path",
+          "type": "string"
+        },
+        "recursive": {
+          "default": false,
+          "description": "List all files and folders recursively",
+          "title": "Recursive",
+          "type": "boolean"
+        },
+        "include_deleted": {
+          "default": false,
+          "description": "Include deleted files and folders",
+          "title": "Include Deleted Files",
+          "type": "boolean"
+        },
+        "include_media_info": {
+          "default": false,
+          "description": "Include photo and video metadata",
+          "title": "Include Media Info",
+          "type": "boolean"
+        },
+        "limit": {
+          "default": 2000,
+          "description": "Maximum number of results (max 2000)",
+          "maximum": 2000,
+          "minimum": 1,
+          "title": "Max Results",
+          "type": "integer"
+        }
+      },
+      "title": "DropboxListFolderConfig",
+      "type": "object"
+    },
+    "DropboxListFolderMembersConfig": {
+      "description": "List all members of a shared folder.",
+      "properties": {
+        "operation": {
+          "const": "list_shared_folder_members",
+          "default": "list_shared_folder_members",
+          "title": "List Shared Folder Members",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Shared Folder",
+          "x-display-name": "List Shared Folder Members",
+          "x-is-trigger": false
+        },
+        "shared_folder_id": {
+          "placeholder": "84528192421",
+          "title": "Shared Folder ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "shared_folder_id"
+      ],
+      "title": "DropboxListFolderMembersConfig",
+      "type": "object"
+    },
+    "DropboxListRevisionsConfig": {
+      "description": "List revision history for a file.",
+      "properties": {
+        "operation": {
+          "const": "list_file_revisions",
+          "default": "list_file_revisions",
+          "title": "List File Revisions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File",
+          "x-display-name": "List File Revisions",
+          "x-is-trigger": false
+        },
+        "path": {
+          "placeholder": "/Documents/file.txt",
+          "title": "File Path",
+          "type": "string"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Maximum number of revisions to return",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Max Revisions",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "title": "DropboxListRevisionsConfig",
+      "type": "object"
+    },
+    "DropboxListSharedLinksConfig": {
+      "description": "List all shared links.",
+      "properties": {
+        "operation": {
+          "const": "list_shared_links",
+          "default": "list_shared_links",
+          "title": "List Shared Links",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File Sharing",
+          "x-display-name": "List Shared Links",
+          "x-is-trigger": false
+        },
+        "path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only show links for this path (optional)",
+          "placeholder": "/Documents",
+          "title": "Filter by Path"
+        },
+        "direct_only": {
+          "default": false,
+          "description": "Only show direct links (not inherited)",
+          "title": "Direct Links Only",
+          "type": "boolean"
+        }
+      },
+      "title": "DropboxListSharedLinksConfig",
+      "type": "object"
+    },
+    "DropboxMountFolderConfig": {
+      "description": "Mount a shared folder to your Dropbox.",
+      "properties": {
+        "operation": {
+          "const": "mount_shared_folder",
+          "default": "mount_shared_folder",
+          "title": "Mount Shared Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Shared Folder",
+          "x-display-name": "Mount Shared Folder",
+          "x-is-trigger": false
+        },
+        "shared_folder_id": {
+          "placeholder": "84528192421",
+          "title": "Shared Folder ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "shared_folder_id"
+      ],
+      "title": "DropboxMountFolderConfig",
+      "type": "object"
+    },
+    "DropboxMoveConfig": {
+      "description": "Move a file or folder to another location.",
+      "properties": {
+        "operation": {
+          "const": "move_file_or_folder",
+          "default": "move_file_or_folder",
+          "title": "Move File or Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File",
+          "x-display-name": "Move File or Folder",
+          "x-is-trigger": false
+        },
+        "from_path": {
+          "description": "Path to move from",
+          "placeholder": "/Documents/file.txt",
+          "title": "Source Path",
+          "type": "string"
+        },
+        "to_path": {
+          "description": "Path to move to",
+          "placeholder": "/Archives/file.txt",
+          "title": "Destination Path",
+          "type": "string"
+        },
+        "allow_shared_folder": {
+          "default": false,
+          "title": "Allow Shared Folder",
+          "type": "boolean"
+        },
+        "autorename": {
+          "default": false,
+          "title": "Auto-rename if exists",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "from_path",
+        "to_path"
+      ],
+      "title": "DropboxMoveConfig",
+      "type": "object"
+    },
+    "DropboxOAuthCredential": {
+      "description": "OAuth 2.0 credential for Dropbox.\n\nTokens are obtained via OAuth flow, not entered manually.\nSupports both short-lived and long-lived (refresh token) access.\n\nRegister OAuth app at: https://www.dropbox.com/developers/apps",
+      "properties": {
+        "credential_type": {
+          "const": "dropbox_oauth",
+          "default": "dropbox_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refresh Token"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Expiry"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account ID"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Email"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "DropboxOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-oauth-provider": "dropbox",
+      "x-oauth-scopes": [
+        "account_info.read",
+        "files.metadata.read",
+        "files.metadata.write",
+        "files.content.read",
+        "files.content.write",
+        "sharing.read",
+        "sharing.write",
+        "file_requests.read",
+        "file_requests.write"
+      ]
+    },
+    "DropboxRemoveFileMemberConfig": {
+      "description": "Remove a member's access to a shared file.",
+      "properties": {
+        "operation": {
+          "const": "remove_file_member",
+          "default": "remove_file_member",
+          "title": "Remove File Member",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File Sharing",
+          "x-display-name": "Remove File Member",
+          "x-is-trigger": false
+        },
+        "file_id": {
+          "placeholder": "id:a4ayc_80_OEAAAAAAAAAXw",
+          "title": "File ID",
+          "type": "string"
+        },
+        "member_email": {
+          "placeholder": "user@example.com",
+          "title": "Member Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id",
+        "member_email"
+      ],
+      "title": "DropboxRemoveFileMemberConfig",
+      "type": "object"
+    },
+    "DropboxRemoveFolderMemberConfig": {
+      "description": "Remove a member from a shared folder.",
+      "properties": {
+        "operation": {
+          "const": "remove_shared_folder_member",
+          "default": "remove_shared_folder_member",
+          "title": "Remove Shared Folder Member",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Shared Folder",
+          "x-display-name": "Remove Shared Folder Member",
+          "x-is-trigger": false
+        },
+        "shared_folder_id": {
+          "placeholder": "84528192421",
+          "title": "Shared Folder ID",
+          "type": "string"
+        },
+        "member_email": {
+          "placeholder": "user@example.com",
+          "title": "Member Email",
+          "type": "string"
+        },
+        "leave_a_copy": {
+          "default": false,
+          "title": "Leave a Copy for Member",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "shared_folder_id",
+        "member_email"
+      ],
+      "title": "DropboxRemoveFolderMemberConfig",
+      "type": "object"
+    },
+    "DropboxRemovePropertiesConfig": {
+      "description": "Remove custom properties from a file.",
+      "properties": {
+        "operation": {
+          "const": "remove_custom_properties",
+          "default": "remove_custom_properties",
+          "title": "Remove Custom Properties",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File Sharing",
+          "x-display-name": "Remove Custom Properties",
+          "x-is-trigger": false
+        },
+        "path": {
+          "placeholder": "/Documents/file.pdf",
+          "title": "File Path",
+          "type": "string"
+        },
+        "property_template_id": {
+          "placeholder": "ptid:1a5n2i6d3OYEAAAAAAAAAYa",
+          "title": "Property Template ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "property_template_id"
+      ],
+      "title": "DropboxRemovePropertiesConfig",
+      "type": "object"
+    },
+    "DropboxRestoreConfig": {
+      "description": "Restore a file to a previous revision.",
+      "properties": {
+        "operation": {
+          "const": "restore_file_to_revision",
+          "default": "restore_file_to_revision",
+          "title": "Restore File to Revision",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File",
+          "x-display-name": "Restore File to Revision",
+          "x-is-trigger": false
+        },
+        "path": {
+          "placeholder": "/Documents/file.txt",
+          "title": "File Path",
+          "type": "string"
+        },
+        "rev": {
+          "description": "Revision ID to restore to",
+          "placeholder": "a1c10ce0dd78",
+          "title": "Revision ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "path",
+        "rev"
+      ],
+      "title": "DropboxRestoreConfig",
+      "type": "object"
+    },
+    "DropboxRevokeSharedLinkConfig": {
+      "description": "Revoke a shared link.",
+      "properties": {
+        "operation": {
+          "const": "revoke_shared_link",
+          "default": "revoke_shared_link",
+          "title": "Revoke Shared Link",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File Sharing",
+          "x-display-name": "Revoke Shared Link",
+          "x-is-trigger": false
+        },
+        "url": {
+          "description": "The shared link URL to revoke",
+          "placeholder": "https://www.dropbox.com/s/...",
+          "title": "Shared Link URL",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "DropboxRevokeSharedLinkConfig",
+      "type": "object"
+    },
+    "DropboxSaveUrlConfig": {
+      "description": "Save a URL's content directly to Dropbox.",
+      "properties": {
+        "operation": {
+          "const": "save_url_to_dropbox",
+          "default": "save_url_to_dropbox",
+          "title": "Save Url to Dropbox",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File",
+          "x-display-name": "Save Url to Dropbox",
+          "x-is-trigger": false
+        },
+        "url": {
+          "description": "URL to save",
+          "placeholder": "https://example.com/file.pdf",
+          "title": "URL",
+          "type": "string"
+        },
+        "path": {
+          "description": "Where to save the file",
+          "placeholder": "/Downloads/file.pdf",
+          "title": "Dropbox Save Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url",
+        "path"
+      ],
+      "title": "DropboxSaveUrlConfig",
+      "type": "object"
+    },
+    "DropboxSearchConfig": {
+      "description": "Search for files and folders in Dropbox.",
+      "properties": {
+        "operation": {
+          "const": "search_files_and_folders",
+          "default": "search_files_and_folders",
+          "title": "Search Files and Folders",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File",
+          "x-display-name": "Search Files and Folders",
+          "x-is-trigger": false
+        },
+        "query": {
+          "description": "Text to search for",
+          "placeholder": "meeting notes",
+          "title": "Search Query",
+          "type": "string"
+        },
+        "path": {
+          "default": "",
+          "description": "Folder to search in (empty for entire Dropbox)",
+          "placeholder": "/Documents",
+          "title": "Search Path",
+          "type": "string"
+        },
+        "max_results": {
+          "default": 100,
+          "description": "Maximum number of results to return",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Max Results",
+          "type": "integer"
+        },
+        "file_extensions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by file extensions (comma-separated, e.g., pdf,docx)",
+          "placeholder": "pdf,docx,txt",
+          "title": "File Extensions"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "DropboxSearchConfig",
+      "type": "object"
+    },
+    "DropboxShareFolderConfig": {
+      "description": "Share a folder with specific users.",
+      "properties": {
+        "operation": {
+          "const": "share_folder_with_members",
+          "default": "share_folder_with_members",
+          "title": "Share Folder with Members",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Shared Folder",
+          "x-display-name": "Share Folder with Members",
+          "x-is-trigger": false
+        },
+        "path": {
+          "description": "Path to folder to share",
+          "placeholder": "/Projects/Team Project",
+          "title": "Folder Path",
+          "type": "string"
+        },
+        "member_emails": {
+          "description": "Comma-separated list of email addresses to share with",
+          "placeholder": "user1@example.com, user2@example.com",
+          "title": "Member Emails",
+          "type": "string"
+        },
+        "access_level": {
+          "default": "viewer",
+          "description": "Permission level for members",
+          "enum": [
+            "viewer",
+            "editor",
+            "owner"
+          ],
+          "enumNames": [
+            "Viewer (can view)",
+            "Editor (can edit)",
+            "Owner (full control)"
+          ],
+          "title": "Access Level",
+          "type": "string"
+        },
+        "send_notification": {
+          "default": true,
+          "description": "Notify members via email",
+          "title": "Send Notification",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "path",
+        "member_emails"
+      ],
+      "title": "DropboxShareFolderConfig",
+      "type": "object"
+    },
+    "DropboxUnmountFolderConfig": {
+      "description": "Unmount a shared folder from your Dropbox.",
+      "properties": {
+        "operation": {
+          "const": "unmount_shared_folder",
+          "default": "unmount_shared_folder",
+          "title": "Unmount Shared Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Shared Folder",
+          "x-display-name": "Unmount Shared Folder",
+          "x-is-trigger": false
+        },
+        "shared_folder_id": {
+          "placeholder": "84528192421",
+          "title": "Shared Folder ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "shared_folder_id"
+      ],
+      "title": "DropboxUnmountFolderConfig",
+      "type": "object"
+    },
+    "DropboxUnshareFolderConfig": {
+      "description": "Stop sharing a folder.",
+      "properties": {
+        "operation": {
+          "const": "unshare_folder",
+          "default": "unshare_folder",
+          "title": "Unshare Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Shared Folder",
+          "x-display-name": "Unshare Folder",
+          "x-is-trigger": false
+        },
+        "shared_folder_id": {
+          "placeholder": "84528192421",
+          "title": "Shared Folder ID",
+          "type": "string"
+        },
+        "leave_a_copy": {
+          "default": false,
+          "description": "Keep a copy for current user",
+          "title": "Leave a Copy",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "shared_folder_id"
+      ],
+      "title": "DropboxUnshareFolderConfig",
+      "type": "object"
+    },
+    "DropboxUpdateFileRequestConfig": {
+      "description": "Update a file request.",
+      "properties": {
+        "operation": {
+          "const": "update_file_request",
+          "default": "update_file_request",
+          "title": "Update File Request",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File Request",
+          "x-display-name": "Update File Request",
+          "x-is-trigger": false
+        },
+        "file_request_id": {
+          "placeholder": "oaCAVmEyrqYnkZX9955Y",
+          "title": "File Request ID",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Update the title (optional)",
+          "title": "New Title"
+        },
+        "deadline": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Update deadline (ISO 8601)",
+          "placeholder": "2025-12-31T23:59:59Z",
+          "title": "New Deadline"
+        },
+        "open": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Open/Close Request"
+        }
+      },
+      "required": [
+        "file_request_id"
+      ],
+      "title": "DropboxUpdateFileRequestConfig",
+      "type": "object"
+    },
+    "DropboxUpdateFolderMemberConfig": {
+      "description": "Update a member's access level in a shared folder.",
+      "properties": {
+        "operation": {
+          "const": "update_shared_folder_member_access",
+          "default": "update_shared_folder_member_access",
+          "title": "Update Shared Folder Member Access",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Shared Folder",
+          "x-display-name": "Update Shared Folder Member Access",
+          "x-is-trigger": false
+        },
+        "shared_folder_id": {
+          "placeholder": "84528192421",
+          "title": "Shared Folder ID",
+          "type": "string"
+        },
+        "member_email": {
+          "placeholder": "user@example.com",
+          "title": "Member Email",
+          "type": "string"
+        },
+        "access_level": {
+          "enum": [
+            "viewer",
+            "editor"
+          ],
+          "enumNames": [
+            "Viewer",
+            "Editor"
+          ],
+          "title": "New Access Level",
+          "type": "string"
+        }
+      },
+      "required": [
+        "shared_folder_id",
+        "member_email",
+        "access_level"
+      ],
+      "title": "DropboxUpdateFolderMemberConfig",
+      "type": "object"
+    },
+    "DropboxUpdatePropertiesConfig": {
+      "description": "Update custom properties on a file.",
+      "properties": {
+        "operation": {
+          "const": "update_custom_properties",
+          "default": "update_custom_properties",
+          "title": "Update Custom Properties",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File Sharing",
+          "x-display-name": "Update Custom Properties",
+          "x-is-trigger": false
+        },
+        "path": {
+          "placeholder": "/Documents/file.pdf",
+          "title": "File Path",
+          "type": "string"
+        },
+        "property_groups": {
+          "placeholder": "{\"status\": \"completed\"}",
+          "title": "Updated Properties (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "path",
+        "property_groups"
+      ],
+      "title": "DropboxUpdatePropertiesConfig",
+      "type": "object"
+    },
+    "DropboxUploadFileConfig": {
+      "description": "Upload a file to Dropbox (max 150 MB).",
+      "properties": {
+        "operation": {
+          "const": "upload_file",
+          "default": "upload_file",
+          "title": "Upload File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File",
+          "x-display-name": "Upload File",
+          "x-is-trigger": false
+        },
+        "local_file_path": {
+          "description": "Path to the file to upload",
+          "placeholder": "/path/to/local/file.txt",
+          "title": "Local File Path",
+          "type": "string"
+        },
+        "dropbox_path": {
+          "description": "Where to save the file in Dropbox (e.g., /Documents/file.txt)",
+          "placeholder": "/Documents/file.txt",
+          "title": "Dropbox Destination Path",
+          "type": "string"
+        },
+        "mode": {
+          "default": "add",
+          "description": "How to handle existing files",
+          "enum": [
+            "add",
+            "overwrite",
+            "update"
+          ],
+          "enumNames": [
+            "Add (fail if exists)",
+            "Overwrite",
+            "Update if exists"
+          ],
+          "title": "Write Mode",
+          "type": "string"
+        },
+        "autorename": {
+          "default": false,
+          "description": "Automatically rename if file exists",
+          "title": "Auto-rename if conflict",
+          "type": "boolean"
+        },
+        "mute": {
+          "default": false,
+          "description": "Don't notify users about this change",
+          "title": "Mute notifications",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "local_file_path",
+        "dropbox_path"
+      ],
+      "title": "DropboxUploadFileConfig",
+      "type": "object"
+    },
+    "DropboxUploadLargeFileConfig": {
+      "description": "Upload large files (150 MB to 350 GB) using upload sessions.",
+      "properties": {
+        "operation": {
+          "const": "upload_large_file_with_sessions",
+          "default": "upload_large_file_with_sessions",
+          "title": "Upload Large File with Sessions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File",
+          "x-display-name": "Upload Large File with Sessions",
+          "x-is-trigger": false
+        },
+        "local_file_path": {
+          "description": "Path to the large file to upload",
+          "placeholder": "/path/to/large_file.zip",
+          "title": "Local File Path",
+          "type": "string"
+        },
+        "dropbox_path": {
+          "description": "Where to save the file in Dropbox",
+          "placeholder": "/Backups/large_file.zip",
+          "title": "Dropbox Destination Path",
+          "type": "string"
+        },
+        "chunk_size_mb": {
+          "default": 4,
+          "description": "Size of each upload chunk (recommended: 4 MB multiples)",
+          "maximum": 150,
+          "minimum": 1,
+          "title": "Chunk Size (MB)",
+          "type": "integer"
+        },
+        "mode": {
+          "default": "add",
+          "enum": [
+            "add",
+            "overwrite",
+            "update"
+          ],
+          "title": "Write Mode",
+          "type": "string"
+        }
+      },
+      "required": [
+        "local_file_path",
+        "dropbox_path"
+      ],
+      "title": "DropboxUploadLargeFileConfig",
+      "type": "object"
+    }
+  },
+  "description": "Complete Dropbox node configuration.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_custom_properties_to_file": "#/$defs/DropboxAddPropertiesConfig",
+          "add_members_to_shared_folder": "#/$defs/DropboxAddFolderMemberConfig",
+          "copy_file_or_folder": "#/$defs/DropboxCopyConfig",
+          "count_file_requests": "#/$defs/DropboxCountFileRequestsConfig",
+          "create_file_request": "#/$defs/DropboxCreateFileRequestConfig",
+          "create_folder": "#/$defs/DropboxCreateFolderConfig",
+          "create_shared_link": "#/$defs/DropboxCreateSharedLinkConfig",
+          "delete_file_or_folder": "#/$defs/DropboxDeleteConfig",
+          "delete_file_request": "#/$defs/DropboxDeleteFileRequestConfig",
+          "download_file": "#/$defs/DropboxDownloadFileConfig",
+          "download_folder_as_zip": "#/$defs/DropboxDownloadZipConfig",
+          "get_account_info": "#/$defs/DropboxGetAccountInfoConfig",
+          "get_account_space_usage": "#/$defs/DropboxGetSpaceUsageConfig",
+          "get_file_or_folder_metadata": "#/$defs/DropboxGetMetadataConfig",
+          "get_file_request": "#/$defs/DropboxGetFileRequestConfig",
+          "get_file_thumbnail": "#/$defs/DropboxGetThumbnailConfig",
+          "get_shared_folder_metadata": "#/$defs/DropboxGetFolderMetadataConfig",
+          "get_temporary_download_link": "#/$defs/DropboxGetTemporaryLinkConfig",
+          "list_file_members": "#/$defs/DropboxListFileMembersConfig",
+          "list_file_requests": "#/$defs/DropboxListFileRequestsConfig",
+          "list_file_revisions": "#/$defs/DropboxListRevisionsConfig",
+          "list_folder_contents": "#/$defs/DropboxListFolderConfig",
+          "list_shared_folder_members": "#/$defs/DropboxListFolderMembersConfig",
+          "list_shared_links": "#/$defs/DropboxListSharedLinksConfig",
+          "mount_shared_folder": "#/$defs/DropboxMountFolderConfig",
+          "move_file_or_folder": "#/$defs/DropboxMoveConfig",
+          "remove_custom_properties": "#/$defs/DropboxRemovePropertiesConfig",
+          "remove_file_member": "#/$defs/DropboxRemoveFileMemberConfig",
+          "remove_shared_folder_member": "#/$defs/DropboxRemoveFolderMemberConfig",
+          "restore_file_to_revision": "#/$defs/DropboxRestoreConfig",
+          "revoke_shared_link": "#/$defs/DropboxRevokeSharedLinkConfig",
+          "save_url_to_dropbox": "#/$defs/DropboxSaveUrlConfig",
+          "search_files_and_folders": "#/$defs/DropboxSearchConfig",
+          "share_file_with_members": "#/$defs/DropboxAddFileMemberConfig",
+          "share_folder_with_members": "#/$defs/DropboxShareFolderConfig",
+          "unmount_shared_folder": "#/$defs/DropboxUnmountFolderConfig",
+          "unshare_folder": "#/$defs/DropboxUnshareFolderConfig",
+          "update_custom_properties": "#/$defs/DropboxUpdatePropertiesConfig",
+          "update_file_request": "#/$defs/DropboxUpdateFileRequestConfig",
+          "update_shared_folder_member_access": "#/$defs/DropboxUpdateFolderMemberConfig",
+          "upload_file": "#/$defs/DropboxUploadFileConfig",
+          "upload_large_file_with_sessions": "#/$defs/DropboxUploadLargeFileConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/DropboxUploadFileConfig"
+        },
+        {
+          "$ref": "#/$defs/DropboxUploadLargeFileConfig"
+        },
+        {
+          "$ref": "#/$defs/DropboxDownloadFileConfig"
+        },
+        {
+          "$ref": "#/$defs/DropboxListFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/DropboxCreateFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/DropboxDeleteConfig"
+        },
+        {
+          "$ref": "#/$defs/DropboxCopyConfig"
+        },
+        {
+          "$ref": "#/$defs/DropboxMoveConfig"
+        },
+        {
+          "$ref": "#/$defs/DropboxSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/DropboxGetMetadataConfig"
+        },
+        {
+          "$ref": "#/$defs/DropboxGetTemporaryLinkConfig"
+        },
+        {
+          "$ref": "#/$defs/DropboxListRevisionsConfig"
+        },
+        {
+          "$ref": "#/$defs/DropboxRestoreConfig"
+        },
+        {
+          "$ref": "#/$defs/DropboxDownloadZipConfig"
+        },
+        {
+          "$ref": "#/$defs/DropboxGetThumbnailConfig"
+        },
+        {
+          "$ref": "#/$defs/DropboxSaveUrlConfig"
+        },
+        {
+          "$ref": "#/$defs/DropboxCreateSharedLinkConfig"
+        },
+        {
+          "$ref": "#/$defs/DropboxListSharedLinksConfig"
+        },
+        {
+          "$ref": "#/$defs/DropboxRevokeSharedLinkConfig"
+        },
+        {
+          "$ref": "#/$defs/DropboxShareFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/DropboxListFolderMembersConfig"
+        },
+        {
+          "$ref": "#/$defs/DropboxAddFolderMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/DropboxRemoveFolderMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/DropboxUpdateFolderMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/DropboxMountFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/DropboxUnmountFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/DropboxUnshareFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/DropboxGetFolderMetadataConfig"
+        },
+        {
+          "$ref": "#/$defs/DropboxAddFileMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/DropboxRemoveFileMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/DropboxListFileMembersConfig"
+        },
+        {
+          "$ref": "#/$defs/DropboxGetAccountInfoConfig"
+        },
+        {
+          "$ref": "#/$defs/DropboxGetSpaceUsageConfig"
+        },
+        {
+          "$ref": "#/$defs/DropboxCreateFileRequestConfig"
+        },
+        {
+          "$ref": "#/$defs/DropboxListFileRequestsConfig"
+        },
+        {
+          "$ref": "#/$defs/DropboxGetFileRequestConfig"
+        },
+        {
+          "$ref": "#/$defs/DropboxUpdateFileRequestConfig"
+        },
+        {
+          "$ref": "#/$defs/DropboxDeleteFileRequestConfig"
+        },
+        {
+          "$ref": "#/$defs/DropboxCountFileRequestsConfig"
+        },
+        {
+          "$ref": "#/$defs/DropboxAddPropertiesConfig"
+        },
+        {
+          "$ref": "#/$defs/DropboxUpdatePropertiesConfig"
+        },
+        {
+          "$ref": "#/$defs/DropboxRemovePropertiesConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DropboxOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Dropbox Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Upload daily sales report to /Reports/Q4 and share read-only link",
+    "Create backup folder, delete old files over 90 days, list remaining",
+    "Search for invoices and create shared folder for accountant review",
+    "Download all CSV files from /Data, batch rename with timestamp",
+    "Move completed projects to /Archive and revoke team share access",
+    "Create /Client-Files folder and generate 30-day expiring share link",
+    "Copy template folder to /Templates/[ProjectName] and update metadata"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

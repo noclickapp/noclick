@@ -1,0 +1,1234 @@
+{
+  "$defs": {
+    "ExpensifyAdvancedEmployeeUpdaterConfig": {
+      "description": "Modern employee provisioning (emails, managers, admin status, payroll).",
+      "properties": {
+        "operation": {
+          "const": "advanced_employee_updater",
+          "default": "advanced_employee_updater",
+          "title": "Advanced Employee Updater",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Update",
+          "x-display-name": "Advanced Employee Updater",
+          "x-is-trigger": false
+        },
+        "policy_id": {
+          "description": "The policy to provision employees in",
+          "title": "Policy (Workspace)",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a policy ID",
+            "field_name": "policy_id",
+            "placeholder": "Select a workspace...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "expensify_policy"
+        },
+        "employees_json": {
+          "description": "JSON array of employee objects (email, manager, admin, payroll data)",
+          "title": "Employees (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "policy_id",
+        "employees_json"
+      ],
+      "title": "ExpensifyAdvancedEmployeeUpdaterConfig",
+      "type": "object"
+    },
+    "ExpensifyCreateExpenseRulesConfig": {
+      "description": "Create automatic expense-tagging rules for an employee.",
+      "properties": {
+        "operation": {
+          "const": "create_expense_rules",
+          "default": "create_expense_rules",
+          "title": "Create Expense Rules",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Create",
+          "x-display-name": "Create Expense Rules",
+          "x-is-trigger": false
+        },
+        "policy_id": {
+          "description": "The policy the rules apply to",
+          "title": "Policy (Workspace)",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a policy ID",
+            "field_name": "policy_id",
+            "placeholder": "Select a workspace...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "expensify_policy"
+        },
+        "employee_email": {
+          "description": "Email of the employee the rules apply to",
+          "title": "Employee Email",
+          "type": "string"
+        },
+        "rules_json": {
+          "description": "JSON \"actions\" object for the rule, e.g. {\"tag\":\"Travel\",\"defaultBillable\":true}",
+          "title": "Rule Actions (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "policy_id",
+        "employee_email",
+        "rules_json"
+      ],
+      "title": "ExpensifyCreateExpenseRulesConfig",
+      "type": "object"
+    },
+    "ExpensifyCreateExpensesConfig": {
+      "description": "Create individual expenses in a user's account.",
+      "properties": {
+        "operation": {
+          "const": "create_expenses",
+          "default": "create_expenses",
+          "title": "Create Expenses",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Create",
+          "x-display-name": "Create Expenses",
+          "x-is-trigger": false
+        },
+        "employee_email": {
+          "description": "Email of the user the expenses are created for",
+          "title": "Employee Email",
+          "type": "string"
+        },
+        "expenses_json": {
+          "description": "JSON array of expense objects, e.g. [{\"created\":\"2026-01-01\",\"merchant\":\"Cab\",\"amount\":1500,\"currency\":\"USD\",\"category\":\"Travel\"}]",
+          "title": "Expenses (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "policy_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional policy/workspace to assign the expenses to",
+          "title": "Policy (Workspace)",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a policy ID",
+            "field_name": "policy_id",
+            "placeholder": "Select a workspace...",
+            "searchable": true
+          },
+          "x-resource-type": "expensify_policy"
+        }
+      },
+      "required": [
+        "employee_email",
+        "expenses_json"
+      ],
+      "title": "ExpensifyCreateExpensesConfig",
+      "type": "object"
+    },
+    "ExpensifyCreatePolicyConfig": {
+      "description": "Create a new workspace policy.",
+      "properties": {
+        "operation": {
+          "const": "create_policy",
+          "default": "create_policy",
+          "title": "Create Policy",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Create",
+          "x-creates-resource": true,
+          "x-display-name": "Create Policy",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.policyID",
+          "x-resource-type": "expensify_policy"
+        },
+        "policy_name": {
+          "description": "Name of the new workspace policy",
+          "title": "Policy Name",
+          "type": "string"
+        },
+        "policy_plan": {
+          "default": "team",
+          "description": "The plan type for the new policy",
+          "enum": [
+            "team",
+            "corporate"
+          ],
+          "enumNames": [
+            "Team (Collect)",
+            "Corporate (Control)"
+          ],
+          "title": "Plan",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "policy_name"
+      ],
+      "title": "ExpensifyCreatePolicyConfig",
+      "type": "object"
+    },
+    "ExpensifyCreateReportConfig": {
+      "description": "Create a new expense report with transactions.",
+      "properties": {
+        "operation": {
+          "const": "create_report",
+          "default": "create_report",
+          "title": "Create Report",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Create",
+          "x-display-name": "Create Report",
+          "x-is-trigger": false
+        },
+        "policy_id": {
+          "description": "The policy/workspace ID the report belongs to",
+          "title": "Policy (Workspace)",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a policy ID",
+            "field_name": "policy_id",
+            "placeholder": "Select a workspace...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "expensify_policy"
+        },
+        "employee_email": {
+          "description": "Email of the user the report is created for",
+          "title": "Employee Email",
+          "type": "string"
+        },
+        "report_title": {
+          "description": "Title of the new report",
+          "title": "Report Title",
+          "type": "string"
+        },
+        "expenses_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array of expense objects, e.g. [{\"created\":\"2026-01-01\",\"merchant\":\"Cab\",\"amount\":1500,\"currency\":\"USD\"}]",
+          "title": "Expenses (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "policy_id",
+        "employee_email",
+        "report_title"
+      ],
+      "title": "ExpensifyCreateReportConfig",
+      "type": "object"
+    },
+    "ExpensifyDownloadFileConfig": {
+      "description": "Download a previously generated export file by name.",
+      "properties": {
+        "operation": {
+          "const": "download_file",
+          "default": "download_file",
+          "title": "Download Generated File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Exports",
+          "x-display-name": "Download Generated File",
+          "x-is-trigger": false
+        },
+        "file_name": {
+          "description": "The generated filename returned by an export or reconciliation job",
+          "title": "File Name",
+          "type": "string"
+        },
+        "file_system": {
+          "default": "integrationServer",
+          "description": "Where the file lives \u2014 'integrationServer' for report exports, 'reconciliation' for reconciliation exports",
+          "enum": [
+            "integrationServer",
+            "reconciliation"
+          ],
+          "enumNames": [
+            "Report export",
+            "Reconciliation export"
+          ],
+          "title": "File System",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "file_name"
+      ],
+      "title": "ExpensifyDownloadFileConfig",
+      "type": "object"
+    },
+    "ExpensifyExportReportsConfig": {
+      "description": "Generate an export of report/expense data via a Freemarker template.",
+      "properties": {
+        "operation": {
+          "const": "export_reports",
+          "default": "export_reports",
+          "title": "Export Reports to File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Exports",
+          "x-display-name": "Export Reports to File",
+          "x-is-trigger": false
+        },
+        "template": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Freemarker template controlling the export output. Defaults to a per-transaction CSV.",
+          "title": "Freemarker Template",
+          "ui:widget": "textarea"
+        },
+        "file_extension": {
+          "default": "csv",
+          "description": "Output file extension",
+          "enum": [
+            "csv",
+            "xls",
+            "xlsx",
+            "pdf",
+            "json",
+            "xml",
+            "txt"
+          ],
+          "enumNames": [
+            "CSV",
+            "XLS",
+            "XLSX",
+            "PDF",
+            "JSON",
+            "XML",
+            "TXT"
+          ],
+          "title": "File Extension",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter reports starting on/after this date (YYYY-MM-DD)",
+          "title": "Start Date"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter reports up to this date (YYYY-MM-DD)",
+          "title": "End Date"
+        },
+        "report_state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by report approval state",
+          "enum": [
+            "",
+            "OPEN",
+            "SUBMITTED",
+            "APPROVED",
+            "REIMBURSED",
+            "ARCHIVED"
+          ],
+          "enumNames": [
+            "Any",
+            "Open",
+            "Submitted",
+            "Approved",
+            "Reimbursed",
+            "Archived"
+          ],
+          "title": "Report State",
+          "x-enum-searchable": true
+        },
+        "report_id_list": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated report IDs to export (optional)",
+          "title": "Report IDs"
+        },
+        "mark_as_exported": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If set, marks exported reports with this label to avoid re-pulling them",
+          "title": "Mark As Exported Label"
+        }
+      },
+      "title": "ExpensifyExportReportsConfig",
+      "type": "object"
+    },
+    "ExpensifyGetDomainCardListConfig": {
+      "description": "Retrieve corporate (domain-level) card info.",
+      "properties": {
+        "operation": {
+          "const": "get_domain_card_list",
+          "default": "get_domain_card_list",
+          "title": "Get Domain Card List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Get",
+          "x-display-name": "Get Domain Card List",
+          "x-is-trigger": false
+        },
+        "domain_name": {
+          "description": "The Expensify domain to list cards for",
+          "title": "Domain Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain_name"
+      ],
+      "title": "ExpensifyGetDomainCardListConfig",
+      "type": "object"
+    },
+    "ExpensifyGetPolicyConfig": {
+      "description": "Retrieve full policy config (categories, tags, tax rates, employees).",
+      "properties": {
+        "operation": {
+          "const": "get_policy",
+          "default": "get_policy",
+          "title": "Get Policy Details",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Get",
+          "x-display-name": "Get Policy Details",
+          "x-is-trigger": false
+        },
+        "policy_id_list": {
+          "description": "Comma-separated policy/workspace IDs to retrieve",
+          "title": "Policy IDs",
+          "type": "string"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated fields to include (e.g. categories,tags,reportFields). Empty returns all.",
+          "title": "Fields Filter"
+        }
+      },
+      "required": [
+        "policy_id_list"
+      ],
+      "title": "ExpensifyGetPolicyConfig",
+      "type": "object"
+    },
+    "ExpensifyGetPolicyListConfig": {
+      "description": "List all policies accessible to the credential's user.",
+      "properties": {
+        "operation": {
+          "const": "get_policy_list",
+          "default": "get_policy_list",
+          "title": "Get Policy List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Get",
+          "x-display-name": "Get Policy List",
+          "x-is-trigger": false
+        },
+        "admin_only": {
+          "default": "false",
+          "description": "Only return policies where the user is an admin",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Admin Policies Only",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ExpensifyGetPolicyListConfig",
+      "type": "object"
+    },
+    "ExpensifyOnNewReportConfig": {
+      "description": "Poll the report exporter for newly submitted/created reports.\n\nExpensify has no outbound webhooks, so the trigger polls the Integration\nServer on a schedule. Each poll runs the two-step export (generate a JSON\nreport-metadata file, then download it) and emits only reports not seen on a\nprevious poll. Webhook + schedule provisioning, seen-set persistence, and\nteardown come from ``ScheduledPollTriggerMixin``.",
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_report",
+          "default": "on_new_report",
+          "description": "Trigger the workflow when a new report is submitted/created",
+          "title": "On New Report",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New Report",
+          "x-is-trigger": true
+        },
+        "report_state": {
+          "default": "SUBMITTED",
+          "description": "Only trigger on reports in this approval state",
+          "enum": [
+            "",
+            "OPEN",
+            "SUBMITTED",
+            "APPROVED",
+            "REIMBURSED",
+            "ARCHIVED"
+          ],
+          "enumNames": [
+            "Any",
+            "Open",
+            "Submitted",
+            "Approved",
+            "Reimbursed",
+            "Archived"
+          ],
+          "title": "Report State",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ExpensifyOnNewReportConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "ExpensifyPartnerCredential": {
+      "description": "Partner credential (partnerUserID + partnerUserSecret) for Expensify.",
+      "properties": {
+        "credential_type": {
+          "const": "expensify_partner",
+          "default": "expensify_partner",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "partner_user_id": {
+          "description": "partnerUserID generated at expensify.com/tools/integrations",
+          "title": "Partner User ID",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "partner_user_secret": {
+          "description": "partnerUserSecret generated alongside the ID (shown only once)",
+          "title": "Partner User Secret",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "partner_user_id",
+        "partner_user_secret"
+      ],
+      "title": "ExpensifyPartnerCredential",
+      "type": "object",
+      "x-credential-instructions": "Generate partner credentials at expensify.com/tools/integrations. Both values are shown only once \u2014 store them securely.",
+      "x-credential-url": "https://www.expensify.com/tools/integrations/"
+    },
+    "ExpensifyReconciliationConfig": {
+      "description": "Export card-transaction data for given card feeds and date range.",
+      "properties": {
+        "operation": {
+          "const": "reconciliation_export",
+          "default": "reconciliation_export",
+          "title": "Reconciliation Export",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Exports",
+          "x-display-name": "Reconciliation Export",
+          "x-is-trigger": false
+        },
+        "domain_name": {
+          "description": "The Expensify domain the card feeds belong to",
+          "title": "Domain Name",
+          "type": "string"
+        },
+        "start_date": {
+          "description": "Start of the transaction date range (YYYY-MM-DD)",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "description": "End of the transaction date range (YYYY-MM-DD)",
+          "title": "End Date",
+          "type": "string"
+        },
+        "feed_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Restrict to a specific card feed (optional)",
+          "title": "Card Feed Name"
+        },
+        "reportable_status": {
+          "default": "all",
+          "description": "Which transactions to include",
+          "enum": [
+            "all",
+            "unreported"
+          ],
+          "enumNames": [
+            "All transactions",
+            "Unreported only"
+          ],
+          "title": "Transaction Status",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "template": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Freemarker template controlling the export output (optional)",
+          "title": "Freemarker Template",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "domain_name",
+        "start_date",
+        "end_date"
+      ],
+      "title": "ExpensifyReconciliationConfig",
+      "type": "object"
+    },
+    "ExpensifyUpdateExpenseRulesConfig": {
+      "description": "Modify existing expense rules for an employee.",
+      "properties": {
+        "operation": {
+          "const": "update_expense_rules",
+          "default": "update_expense_rules",
+          "title": "Update Expense Rules",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Update",
+          "x-display-name": "Update Expense Rules",
+          "x-is-trigger": false
+        },
+        "policy_id": {
+          "description": "The policy the rules belong to",
+          "title": "Policy (Workspace)",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a policy ID",
+            "field_name": "policy_id",
+            "placeholder": "Select a workspace...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "expensify_policy"
+        },
+        "employee_email": {
+          "description": "Email of the employee whose rule to update",
+          "title": "Employee Email",
+          "type": "string"
+        },
+        "rule_id": {
+          "description": "The numeric ID of the existing rule to modify",
+          "title": "Rule ID",
+          "type": "string"
+        },
+        "rules_json": {
+          "description": "JSON \"actions\" object for the rule, e.g. {\"tag\":\"Travel\"}",
+          "title": "Rule Actions (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "policy_id",
+        "employee_email",
+        "rule_id",
+        "rules_json"
+      ],
+      "title": "ExpensifyUpdateExpenseRulesConfig",
+      "type": "object"
+    },
+    "ExpensifyUpdatePolicyConfig": {
+      "description": "Manage categories, tags, and report fields on a policy.",
+      "properties": {
+        "operation": {
+          "const": "update_policy",
+          "default": "update_policy",
+          "title": "Update Policy",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Update",
+          "x-display-name": "Update Policy",
+          "x-is-trigger": false
+        },
+        "policy_id": {
+          "description": "The policy/workspace to update",
+          "title": "Policy (Workspace)",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a policy ID",
+            "field_name": "policy_id",
+            "placeholder": "Select a workspace...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "expensify_policy"
+        },
+        "update_type": {
+          "default": "categories",
+          "description": "What to manage on the policy",
+          "enum": [
+            "categories",
+            "tags",
+            "reportFields"
+          ],
+          "enumNames": [
+            "Categories",
+            "Tags",
+            "Report Fields"
+          ],
+          "title": "Update Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "data_json": {
+          "description": "JSON payload describing the categories/tags/report fields to merge or replace",
+          "title": "Data (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "policy_id",
+        "data_json"
+      ],
+      "title": "ExpensifyUpdatePolicyConfig",
+      "type": "object"
+    },
+    "ExpensifyUpdateReportStatusConfig": {
+      "description": "Mark reports as reimbursed.",
+      "properties": {
+        "operation": {
+          "const": "update_report_status",
+          "default": "update_report_status",
+          "title": "Mark Reports Reimbursed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Update",
+          "x-display-name": "Mark Reports Reimbursed",
+          "x-is-trigger": false
+        },
+        "report_id_list": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated report IDs to reimburse",
+          "title": "Report IDs"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reimburse reports starting on/after this date (YYYY-MM-DD)",
+          "title": "Start Date"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reimburse reports up to this date (YYYY-MM-DD)",
+          "title": "End Date"
+        }
+      },
+      "title": "ExpensifyUpdateReportStatusConfig",
+      "type": "object"
+    },
+    "ExpensifyUpdateTagApproversConfig": {
+      "description": "Assign approvers to specific single-level tags.",
+      "properties": {
+        "operation": {
+          "const": "update_tag_approvers",
+          "default": "update_tag_approvers",
+          "title": "Update Tag Approvers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Update",
+          "x-display-name": "Update Tag Approvers",
+          "x-is-trigger": false
+        },
+        "policy_id": {
+          "description": "The policy the tags belong to",
+          "title": "Policy (Workspace)",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a policy ID",
+            "field_name": "policy_id",
+            "placeholder": "Select a workspace...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "expensify_policy"
+        },
+        "approvers_json": {
+          "description": "JSON array mapping tags to approver emails, e.g. [{\"tag\":\"Marketing\",\"approver\":\"lead@co.com\"}]",
+          "title": "Tag Approvers (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "policy_id",
+        "approvers_json"
+      ],
+      "title": "ExpensifyUpdateTagApproversConfig",
+      "type": "object"
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the Expensify node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "advanced_employee_updater": "#/$defs/ExpensifyAdvancedEmployeeUpdaterConfig",
+          "create_expense_rules": "#/$defs/ExpensifyCreateExpenseRulesConfig",
+          "create_expenses": "#/$defs/ExpensifyCreateExpensesConfig",
+          "create_policy": "#/$defs/ExpensifyCreatePolicyConfig",
+          "create_report": "#/$defs/ExpensifyCreateReportConfig",
+          "download_file": "#/$defs/ExpensifyDownloadFileConfig",
+          "export_reports": "#/$defs/ExpensifyExportReportsConfig",
+          "get_domain_card_list": "#/$defs/ExpensifyGetDomainCardListConfig",
+          "get_policy": "#/$defs/ExpensifyGetPolicyConfig",
+          "get_policy_list": "#/$defs/ExpensifyGetPolicyListConfig",
+          "on_new_report": "#/$defs/ExpensifyOnNewReportConfig",
+          "reconciliation_export": "#/$defs/ExpensifyReconciliationConfig",
+          "update_expense_rules": "#/$defs/ExpensifyUpdateExpenseRulesConfig",
+          "update_policy": "#/$defs/ExpensifyUpdatePolicyConfig",
+          "update_report_status": "#/$defs/ExpensifyUpdateReportStatusConfig",
+          "update_tag_approvers": "#/$defs/ExpensifyUpdateTagApproversConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ExpensifyExportReportsConfig"
+        },
+        {
+          "$ref": "#/$defs/ExpensifyDownloadFileConfig"
+        },
+        {
+          "$ref": "#/$defs/ExpensifyReconciliationConfig"
+        },
+        {
+          "$ref": "#/$defs/ExpensifyCreateReportConfig"
+        },
+        {
+          "$ref": "#/$defs/ExpensifyCreateExpensesConfig"
+        },
+        {
+          "$ref": "#/$defs/ExpensifyCreatePolicyConfig"
+        },
+        {
+          "$ref": "#/$defs/ExpensifyCreateExpenseRulesConfig"
+        },
+        {
+          "$ref": "#/$defs/ExpensifyGetPolicyConfig"
+        },
+        {
+          "$ref": "#/$defs/ExpensifyGetPolicyListConfig"
+        },
+        {
+          "$ref": "#/$defs/ExpensifyGetDomainCardListConfig"
+        },
+        {
+          "$ref": "#/$defs/ExpensifyUpdatePolicyConfig"
+        },
+        {
+          "$ref": "#/$defs/ExpensifyUpdateReportStatusConfig"
+        },
+        {
+          "$ref": "#/$defs/ExpensifyUpdateExpenseRulesConfig"
+        },
+        {
+          "$ref": "#/$defs/ExpensifyUpdateTagApproversConfig"
+        },
+        {
+          "$ref": "#/$defs/ExpensifyAdvancedEmployeeUpdaterConfig"
+        },
+        {
+          "$ref": "#/$defs/ExpensifyOnNewReportConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ExpensifyPartnerCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Expensify Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Export all approved reports from last month to a CSV file",
+    "Create an expense report for an employee with a list of transactions",
+    "Mark a batch of reports as reimbursed",
+    "List all the workspaces I can access",
+    "Create a new corporate workspace policy"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

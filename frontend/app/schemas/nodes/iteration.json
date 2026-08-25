@@ -1,0 +1,83 @@
+{
+  "$defs": {
+    "IterationInnerConfig": {
+      "description": "Configuration for the iteration node.",
+      "properties": {
+        "items": {
+          "description": "Reference to the array to iterate over (e.g., {{sheets-1.values}})",
+          "placeholder": "{{node-id.field}}",
+          "title": "Items",
+          "ui:widget": "textarea"
+        },
+        "header_row": {
+          "default": "false",
+          "description": "If enabled, the first row is used as field names and each subsequent row becomes an object with named fields. Perfect for Google Sheets data.",
+          "enum": [
+            "false",
+            "true"
+          ],
+          "enumNames": [
+            "No",
+            "Yes"
+          ],
+          "title": "First Row is Header",
+          "type": "string"
+        },
+        "field_names": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated field names to map array values to object keys (e.g., 'name,email,message'). Use this when your data doesn't have a header row.",
+          "placeholder": "field1,field2,field3",
+          "title": "Field Names"
+        },
+        "concurrency": {
+          "default": 1,
+          "description": "Number of items to process in parallel (1 = sequential, up to 10 for parallel)",
+          "maximum": 10,
+          "minimum": 1,
+          "title": "Concurrency",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "items"
+      ],
+      "title": "IterationInnerConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for iteration node (no credentials needed).",
+  "properties": {
+    "config": {
+      "$ref": "#/$defs/IterationInnerConfig",
+      "description": "Node-specific configuration"
+    },
+    "credentials": {
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials",
+      "type": "null"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Iteration Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Loop over rows from Google Sheets with headers",
+    "Iterate over API response items in parallel",
+    "Use header row mode for spreadsheet data",
+    "Process each item 5 at a time for faster execution",
+    "Define custom field names for array data",
+    "Run the same workflow step for every email address"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

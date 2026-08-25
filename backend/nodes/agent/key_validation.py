@@ -1,0 +1,181 @@
+"""Connect-time validation for harness LLM API keys.
+
+A dead or creditless key saved silently becomes a runtime failure minutes later
+inside an agent turn, where a provider balance error is easy to misread as an
+instance balance problem. Validating at
+credential creation puts the rejection in the form, at the moment the user can
+act, in the same words the runtime classifier would use.
+
+Policy — act only on DEFINITIVE signals (same principle as the cron-scheduler
+"never delete on a non-definitive signal" invariant):
+
+- provider says the key is bad (401/403 auth) or has no credits → reject with
+  the shared ``provider_errors`` message;
+- anything else — network blip, provider 5xx, rate limit, a model id that
+  drifted — → ALLOW. Validation exists to catch bad keys, not to make
+  credential creation depend on provider availability or on our probe model
+  staying current.
+
+Inference probes use the pinned harness defaults from ``_cli_models.json``
+(refreshed daily), so the probe model can't rot independently of the product.
+"""
+
+import logging
+from typing import Any, Dict, Optional
+
+import httpx
+
+from nodes.agent.provider_errors import format_provider_message
+
+logger = logging.getLogger(__name__)
+
+_PROBE_TIMEOUT_S = 8.0
+
+
+def _extract_env(credential_data: Any) -> Dict[str, str]:
+    """The agent credential blob is ``{"credentials": {ENV: value}}``; accept a
+    flat dict too (legacy shape handled by AgentCredentials' validator)."""
+    if not isinstance(credential_data, dict):
+        return {}
+    inner = credential_data.get("credentials")
+    env = inner if isinstance(inner, dict) else credential_data
+    return {k: v for k, v in env.items() if isinstance(k, str) and isinstance(v, str)}
+
+
+async def _probe_anthropic(key: str) -> Optional[str]:
+    from nodes.agent.config._cli_models_loader import claude_code_aliases
+
+    model = claude_code_aliases()["haiku"]  # cheapest pinned model, refreshed daily
+    async with httpx.AsyncClient(timeout=_PROBE_TIMEOUT_S) as client:
+        resp = await client.post(
+            "https://api.anthropic.com/v1/messages",
+            headers={"x-api-key": key, "anthropic-version": "2023-06-01"},
+            json={"model": model, "max_tokens": 1,
+                  "messages": [{"role": "user", "content": "hi"}]},
+        )
+    if resp.status_code == 401:
+        return format_provider_message("anthropic", "invalid_key", resp.text)
+    if resp.status_code in (400, 403) and "credit balance is too low" in resp.text.lower():
+        return format_provider_message("anthropic", "no_credits", resp.text)
+    return None
+
+
+async def _probe_openai(key: str) -> Optional[str]:
+    from nodes.agent.config._cli_models_loader import harness_default_model
+
+    headers = {"Authorization": f"Bearer {key}"}
+    async with httpx.AsyncClient(timeout=_PROBE_TIMEOUT_S) as client:
+        auth = await client.get("https://api.openai.com/v1/models", headers=headers)
+        if auth.status_code == 401:
+            return format_provider_message("openai", "invalid_key", auth.text)
+        # Quota exhaustion only surfaces on inference; probe with the pinned
+        # cheap codex model. A 400/404 here means OUR probe model drifted —
+        # never the user's fault, so it allows.
+        infer = await client.post(
+            "https://api.openai.com/v1/responses",
+            headers=headers,
+            json={"model": harness_default_model("codex"), "input": "hi",
+                  "max_output_tokens": 16},
+        )
+    if infer.status_code in (403, 429) and "insufficient_quota" in infer.text.lower():
+        return format_provider_message("openai", "no_credits", infer.text)
+    return None
+
+
+async def _probe_openrouter(key: str) -> Optional[str]:
+    async with httpx.AsyncClient(timeout=_PROBE_TIMEOUT_S) as client:
+        resp = await client.get(
+            "https://openrouter.ai/api/v1/key",
+            headers={"Authorization": f"Bearer {key}"},
+        )
+    if resp.status_code == 401:
+        return format_provider_message("openrouter", "invalid_key", resp.text)
+    # Zero balance is allowed — OpenRouter serves free models.
+    return None
+
+
+async def _probe_gemini(key: str) -> Optional[str]:
+    async with httpx.AsyncClient(timeout=_PROBE_TIMEOUT_S) as client:
+        resp = await client.get(
+            "https://generativelanguage.googleapis.com/v1beta/models",
+            params={"key": key},
+        )
+    if resp.status_code in (400, 401, 403) and "api key not valid" in resp.text.lower():
+        return format_provider_message("gemini", "invalid_key", resp.text)
+    return None
+
+
+async def _probe_xai(key: str) -> Optional[str]:
+    async with httpx.AsyncClient(timeout=_PROBE_TIMEOUT_S) as client:
+        resp = await client.get(
+            "https://api.x.ai/v1/models",
+            headers={"Authorization": f"Bearer {key}"},
+        )
+    if resp.status_code in (401, 403):
+        return format_provider_message("xai", "invalid_key", resp.text)
+    return None
+
+
+async def _probe_opencode(key: str) -> Optional[str]:
+    """OpenCode Zen validates a PROVIDED key even on its keyless free models —
+    a 1-token completion against a live free model is a definitive $0 auth
+    check (the /models endpoint ignores auth entirely, so it can't probe).
+    The probe model comes from the live servable set so free-tier rotation
+    can't rot it; no free model live → inconclusive → allow."""
+    from utils.opencode_zen import ZEN_TIER_BASE_URLS, get_zen_servable_ids
+
+    servable = await get_zen_servable_ids("opencode") or set()
+    probe_model = next((m for m in sorted(servable) if m.endswith("-free")), None)
+    if probe_model is None:
+        return None
+    async with httpx.AsyncClient(timeout=_PROBE_TIMEOUT_S) as client:
+        resp = await client.post(
+            f"{ZEN_TIER_BASE_URLS['opencode']}/chat/completions",
+            headers={"Authorization": f"Bearer {key}"},
+            json={"model": probe_model, "max_tokens": 1,
+                  "messages": [{"role": "user", "content": "hi"}]},
+        )
+    if resp.status_code == 401:
+        return format_provider_message("opencode", "invalid_key", resp.text)
+    return None
+
+
+_PROBES = {
+    "ANTHROPIC_API_KEY": _probe_anthropic,
+    "OPENAI_API_KEY": _probe_openai,
+    "OPENROUTER_API_KEY": _probe_openrouter,
+    "GEMINI_API_KEY": _probe_gemini,
+    "XAI_API_KEY": _probe_xai,
+    "OPENCODE_API_KEY": _probe_opencode,
+}
+
+
+async def validate_agent_api_key(
+    credential_type: Optional[str], credential_data: Any
+) -> Optional[str]:
+    """Return a rejection message if a recognized LLM API key in an agent
+    credential is definitively bad/creditless; None to allow creation.
+
+    Only agent harness credential types are probed. Probe failures (network,
+    provider 5xx, drifted probe model) allow with a warning — see module
+    docstring for the fail-open rationale.
+    """
+    if not credential_type or not credential_type.startswith("agent"):
+        return None
+    env = _extract_env(credential_data)
+    for env_var, probe in _PROBES.items():
+        key = (env.get(env_var) or "").strip()
+        if not key:
+            continue
+        try:
+            rejection = await probe(key)
+        except Exception as e:
+            logger.warning(
+                "[key_validation] %s probe inconclusive (allowing credential): %s",
+                env_var, e,
+            )
+            continue
+        if rejection:
+            logger.info("[key_validation] rejected %s at connect time", env_var)
+            return rejection
+    return None

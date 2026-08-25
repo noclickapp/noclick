@@ -1,0 +1,259 @@
+{
+  "$defs": {
+    "FunctionInput": {
+      "description": "A single named input parameter for the function.",
+      "properties": {
+        "name": {
+          "description": "Variable name (valid identifier)",
+          "pattern": "^[a-zA-Z_$][a-zA-Z0-9_$]*$",
+          "title": "Parameter Name",
+          "type": "string"
+        },
+        "value": {
+          "description": "Value reference from upstream node (e.g., {{node-id.field}})",
+          "title": "Value"
+        }
+      },
+      "required": [
+        "name",
+        "value"
+      ],
+      "title": "FunctionInput",
+      "type": "object"
+    },
+    "HardwareConfig": {
+      "description": "Hardware configuration for the serverless function sandbox.",
+      "properties": {
+        "gpu_type": {
+          "default": "none",
+          "description": "GPU type to use. Select 'CPU Only' for no GPU.",
+          "title": "GPU Type",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": false,
+            "field_name": "gpu_type",
+            "placeholder": "Select GPU type...",
+            "searchable": false
+          }
+        },
+        "gpu_count": {
+          "default": 1,
+          "description": "Number of GPUs (only applies if GPU type is not 'CPU Only')",
+          "maximum": 8,
+          "minimum": 1,
+          "title": "GPU Count",
+          "type": "integer"
+        },
+        "cpu_cores": {
+          "default": 1.0,
+          "description": "Number of CPU cores (can be fractional, e.g., 0.5)",
+          "maximum": 16.0,
+          "minimum": 0.25,
+          "title": "CPU Cores",
+          "type": "number"
+        },
+        "memory_mb": {
+          "default": 1024,
+          "description": "Memory limit in MiB",
+          "maximum": 65536,
+          "minimum": 256,
+          "title": "Memory (MB)",
+          "type": "integer"
+        }
+      },
+      "title": "HardwareConfig",
+      "type": "object"
+    },
+    "JavaScriptRuntimeConfig": {
+      "description": "JavaScript Runtime - Fast QuickJS execution.",
+      "properties": {
+        "operation": {
+          "const": "run_javascript_function",
+          "default": "run_javascript_function",
+          "description": "For quick data transformations and simple logic without external dependencies",
+          "title": "Run Javascript Function",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Runtime",
+          "x-display-name": "Run Javascript Function",
+          "x-is-trigger": false
+        },
+        "function_inputs": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/FunctionInput"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Named input parameters for the function",
+          "title": "Function Inputs",
+          "ui:widget": "function_inputs"
+        },
+        "function_body": {
+          "description": "JavaScript code for the function body. Declared function inputs are available as bare variables (an input named `x` is just `x`, also `inputs.x`). To inline an upstream value directly in code, wrap the reference in quoted double curly braces \u2014 e.g. `const x = Number(\"{{ $('node_id').field }}\");` \u2014 substitution is textual, and a bare $('node_id') outside {{ }} is a ReferenceError at run time.",
+          "minLength": 1,
+          "placeholder": "// Use your input variables here\nconst result = data.map(x => x * 2);\nreturn { processed: result };",
+          "title": "Function Body",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "javascript"
+        }
+      },
+      "required": [
+        "function_body"
+      ],
+      "title": "JavaScriptRuntimeConfig",
+      "type": "object"
+    },
+    "PythonRuntimeConfig": {
+      "description": "Python Runtime \u2014 isolated compute with GPU & packages.",
+      "properties": {
+        "operation": {
+          "const": "run_python_function",
+          "default": "run_python_function",
+          "description": "For computationally heavy tasks, GPU workloads, or when you need pip packages",
+          "title": "Run Python Function",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Runtime",
+          "x-display-name": "Run Python Function",
+          "x-is-trigger": false
+        },
+        "function_inputs": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/FunctionInput"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Named input parameters for the function",
+          "title": "Function Inputs",
+          "ui:widget": "function_inputs"
+        },
+        "function_body": {
+          "description": "Python code for the function body. Declared function inputs are available as parameters (an input named `x` is just `x`). To inline an upstream value directly in code, wrap the reference in quoted double curly braces \u2014 e.g. `x = float(\"{{ $('node_id').field }}\")` \u2014 substitution is textual, and a bare $('node_id') outside {{ }} is a NameError at run time.",
+          "minLength": 1,
+          "placeholder": "# Use your input variables here\nresult = [x * 2 for x in data]\nreturn {'processed': result}",
+          "title": "Function Body",
+          "type": "string",
+          "ui:widget": "python_editor"
+        },
+        "pip_packages": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Python packages to install (one per line)",
+          "placeholder": "numpy\npandas\nrequests>=2.28.0",
+          "title": "Requirements",
+          "ui:widget": "textarea"
+        },
+        "hardware": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/HardwareConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "description": "Hardware resources for function execution",
+          "title": "Hardware"
+        },
+        "timeout_seconds": {
+          "default": 300,
+          "description": "Maximum execution time",
+          "maximum": 3600,
+          "minimum": 1,
+          "title": "Timeout (seconds)",
+          "type": "integer"
+        },
+        "region": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Preferred cloud region",
+          "title": "Region",
+          "x-dynamic-options": {
+            "allow_custom": false,
+            "field_name": "region",
+            "placeholder": "Select region...",
+            "searchable": false
+          }
+        }
+      },
+      "required": [
+        "function_body"
+      ],
+      "title": "PythonRuntimeConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for serverless function node (no credentials needed).",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "run_javascript_function": "#/$defs/JavaScriptRuntimeConfig",
+          "run_python_function": "#/$defs/PythonRuntimeConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/JavaScriptRuntimeConfig"
+        },
+        {
+          "$ref": "#/$defs/PythonRuntimeConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials",
+      "type": "null"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Serverless-function Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Switch runtime from Python to JavaScript",
+    "Add GPU support with A100 GPU",
+    "Increase timeout to 600 seconds",
+    "Install numpy and pandas packages",
+    "Add function input parameter",
+    "Set region to EU West",
+    "Allocate 4 CPU cores and 8GB memory"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -1,0 +1,5829 @@
+{
+  "$defs": {
+    "ExtendApiKeyCredential": {
+      "description": "API Key credential for Extend.",
+      "properties": {
+        "credential_type": {
+          "const": "extend_api_key",
+          "default": "extend_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Your Extend API key from Dashboard -> Developer settings (https://dashboard.extend.ai/developers)",
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "workspace_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required only for organization-scoped keys (ws_...). Leave blank for workspace keys.",
+          "title": "Workspace ID (org keys only)"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "ExtendApiKeyCredential",
+      "type": "object",
+      "x-credential-url": "https://dashboard.extend.ai/developers"
+    },
+    "ExtendBatchClassifyRunsConfig": {
+      "properties": {
+        "operation": {
+          "const": "batch_classify_runs",
+          "default": "batch_classify_runs",
+          "title": "Batch Classify Runs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Classify",
+          "x-display-name": "Batch Classify Runs",
+          "x-is-trigger": false
+        },
+        "classifier_id": {
+          "title": "Classifier",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a classifier ID",
+            "field_name": "classifier_id",
+            "placeholder": "Select a classifier...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "extend_classifier"
+        },
+        "inputs": {
+          "description": "JSON array of file inputs",
+          "title": "Inputs",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority"
+        }
+      },
+      "required": [
+        "classifier_id",
+        "inputs"
+      ],
+      "title": "ExtendBatchClassifyRunsConfig",
+      "type": "object"
+    },
+    "ExtendBatchExtractRunsConfig": {
+      "properties": {
+        "operation": {
+          "const": "batch_extract_runs",
+          "default": "batch_extract_runs",
+          "title": "Batch Extract Runs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Extract",
+          "x-display-name": "Batch Extract Runs",
+          "x-is-trigger": false
+        },
+        "extractor_id": {
+          "title": "Extractor",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an extractor ID",
+            "field_name": "extractor_id",
+            "placeholder": "Select an extractor...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "inputs": {
+          "description": "JSON array of file inputs",
+          "title": "Inputs",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority"
+        }
+      },
+      "required": [
+        "extractor_id",
+        "inputs"
+      ],
+      "title": "ExtendBatchExtractRunsConfig",
+      "type": "object"
+    },
+    "ExtendBatchParseRunsConfig": {
+      "description": "Create many parse runs in one batch.",
+      "properties": {
+        "operation": {
+          "const": "batch_parse_runs",
+          "default": "batch_parse_runs",
+          "title": "Batch Parse Runs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Parse",
+          "x-display-name": "Batch Parse Runs",
+          "x-is-trigger": false
+        },
+        "inputs": {
+          "description": "JSON array of file inputs, e.g. [{\"file\":{\"id\":\"...\"}}]",
+          "title": "Inputs",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "config": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional parse config applied to all inputs",
+          "title": "Parse Config",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Run priority (default 50)",
+          "title": "Priority"
+        }
+      },
+      "required": [
+        "inputs"
+      ],
+      "title": "ExtendBatchParseRunsConfig",
+      "type": "object"
+    },
+    "ExtendBatchSplitRunsConfig": {
+      "properties": {
+        "operation": {
+          "const": "batch_split_runs",
+          "default": "batch_split_runs",
+          "title": "Batch Split Runs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Split",
+          "x-display-name": "Batch Split Runs",
+          "x-is-trigger": false
+        },
+        "splitter_id": {
+          "title": "Splitter",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a splitter ID",
+            "field_name": "splitter_id",
+            "placeholder": "Select a splitter...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "inputs": {
+          "description": "JSON array of file inputs",
+          "title": "Inputs",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority"
+        }
+      },
+      "required": [
+        "splitter_id",
+        "inputs"
+      ],
+      "title": "ExtendBatchSplitRunsConfig",
+      "type": "object"
+    },
+    "ExtendBatchWorkflowRunsConfig": {
+      "properties": {
+        "operation": {
+          "const": "batch_workflow_runs",
+          "default": "batch_workflow_runs",
+          "title": "Batch Workflow Runs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workflow Runs",
+          "x-display-name": "Batch Workflow Runs",
+          "x-is-trigger": false
+        },
+        "workflow_id": {
+          "title": "Workflow",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a workflow ID",
+            "field_name": "workflow_id",
+            "placeholder": "Select a workflow...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "inputs": {
+          "description": "JSON array of file inputs",
+          "title": "Inputs",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority"
+        }
+      },
+      "required": [
+        "workflow_id",
+        "inputs"
+      ],
+      "title": "ExtendBatchWorkflowRunsConfig",
+      "type": "object"
+    },
+    "ExtendCancelClassifyRunConfig": {
+      "properties": {
+        "operation": {
+          "const": "cancel_classify_run",
+          "default": "cancel_classify_run",
+          "title": "Cancel Classify Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Classify",
+          "x-display-name": "Cancel Classify Run",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "description": "The ID of the classify run.",
+          "title": "Classify Run ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "ExtendCancelClassifyRunConfig",
+      "type": "object"
+    },
+    "ExtendCancelExtractRunConfig": {
+      "properties": {
+        "operation": {
+          "const": "cancel_extract_run",
+          "default": "cancel_extract_run",
+          "title": "Cancel Extract Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Extract",
+          "x-display-name": "Cancel Extract Run",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "description": "The ID of the extract run.",
+          "title": "Extract Run ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "ExtendCancelExtractRunConfig",
+      "type": "object"
+    },
+    "ExtendCancelParseRunConfig": {
+      "description": "Cancel an in-progress parse run.",
+      "properties": {
+        "operation": {
+          "const": "cancel_parse_run",
+          "default": "cancel_parse_run",
+          "title": "Cancel Parse Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Parse",
+          "x-display-name": "Cancel Parse Run",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "description": "The ID of the parse run.",
+          "title": "Parse Run ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "ExtendCancelParseRunConfig",
+      "type": "object"
+    },
+    "ExtendCancelSplitRunConfig": {
+      "properties": {
+        "operation": {
+          "const": "cancel_split_run",
+          "default": "cancel_split_run",
+          "title": "Cancel Split Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Split",
+          "x-display-name": "Cancel Split Run",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "description": "The ID of the split run.",
+          "title": "Split Run ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "ExtendCancelSplitRunConfig",
+      "type": "object"
+    },
+    "ExtendCancelWorkflowRunConfig": {
+      "properties": {
+        "operation": {
+          "const": "cancel_workflow_run",
+          "default": "cancel_workflow_run",
+          "title": "Cancel Workflow Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workflow Runs",
+          "x-display-name": "Cancel Workflow Run",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "description": "The ID of the workflow run.",
+          "title": "Workflow Run ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "ExtendCancelWorkflowRunConfig",
+      "type": "object"
+    },
+    "ExtendClassifySyncConfig": {
+      "description": "Classify a document synchronously (\u22645 min).",
+      "properties": {
+        "operation": {
+          "const": "classify",
+          "default": "classify",
+          "title": "Classify (Sync)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sync",
+          "x-display-name": "Classify (Sync)",
+          "x-is-trigger": false
+        },
+        "classifier_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Classifier",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a classifier ID",
+            "field_name": "classifier_id",
+            "placeholder": "Select a classifier...",
+            "searchable": true
+          },
+          "x-resource-type": "extend_classifier"
+        },
+        "config": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inline classify config (mutually exclusive with Classifier)",
+          "title": "Inline Config",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "file_id": {
+          "description": "The Extend file id to classify",
+          "title": "File ID",
+          "type": "string"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional run metadata",
+          "title": "Metadata",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "ExtendClassifySyncConfig",
+      "type": "object"
+    },
+    "ExtendCreateClassifierConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_classifier",
+          "default": "create_classifier",
+          "title": "Create Classifier",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Classifiers",
+          "x-creates-resource": true,
+          "x-display-name": "Create Classifier",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "extend_classifier"
+        },
+        "name": {
+          "description": "Use a human-readable name for this classifier.",
+          "title": "Name",
+          "type": "string"
+        },
+        "config": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Classifier config (types/options)",
+          "title": "Config",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "clone_classifier_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Clone From Classifier ID"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "ExtendCreateClassifierConfig",
+      "type": "object"
+    },
+    "ExtendCreateClassifierVersionConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_classifier_version",
+          "default": "create_classifier_version",
+          "title": "Create Classifier Version",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Classifiers",
+          "x-display-name": "Create Classifier Version",
+          "x-is-trigger": false
+        },
+        "classifier_id": {
+          "title": "Classifier",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a classifier ID",
+            "field_name": "classifier_id",
+            "placeholder": "Select a classifier...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "extend_classifier"
+        },
+        "release_type": {
+          "enum": [
+            "major",
+            "minor",
+            "patch"
+          ],
+          "title": "Release Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "config": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Version config override",
+          "title": "Config",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "classifier_id",
+        "release_type"
+      ],
+      "title": "ExtendCreateClassifierVersionConfig",
+      "type": "object"
+    },
+    "ExtendCreateClassifyRunConfig": {
+      "description": "Classify a file into one of a configured set of document types.",
+      "properties": {
+        "operation": {
+          "const": "create_classify_run",
+          "default": "create_classify_run",
+          "title": "Create Classify Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Classify",
+          "x-display-name": "Create Classify Run",
+          "x-is-trigger": false
+        },
+        "classifier_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Classifier",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a classifier ID",
+            "field_name": "classifier_id",
+            "placeholder": "Select a classifier...",
+            "searchable": true
+          },
+          "x-resource-type": "extend_classifier"
+        },
+        "config": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inline classify config (mutually exclusive with Classifier)",
+          "title": "Inline Config",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "file_id": {
+          "description": "The file to classify",
+          "title": "File ID",
+          "type": "string"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional run metadata",
+          "title": "Metadata",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "ExtendCreateClassifyRunConfig",
+      "type": "object"
+    },
+    "ExtendCreateEditRunConfig": {
+      "description": "Run a programmatic document edit (config = schema + instructions).",
+      "properties": {
+        "operation": {
+          "const": "create_edit_run",
+          "default": "create_edit_run",
+          "title": "Create Edit Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Edit",
+          "x-display-name": "Create Edit Run",
+          "x-is-trigger": false
+        },
+        "file_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An Extend file id (from Upload File). Takes precedence over File URL.",
+          "title": "File ID"
+        },
+        "file_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A publicly reachable URL to fetch the document from (used when File ID is empty).",
+          "title": "File URL"
+        },
+        "config": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Edit config: schema, instructions, advancedOptions",
+          "title": "Edit Config",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "ExtendCreateEditRunConfig",
+      "type": "object"
+    },
+    "ExtendCreateEvaluationSetConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_evaluation_set",
+          "default": "create_evaluation_set",
+          "title": "Create Evaluation Set",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Evaluation",
+          "x-display-name": "Create Evaluation Set",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Use a human-readable name for this evaluation set.",
+          "title": "Name",
+          "type": "string"
+        },
+        "entity_id": {
+          "description": "The processor/workflow this set evaluates",
+          "title": "Entity ID",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "name",
+        "entity_id"
+      ],
+      "title": "ExtendCreateEvaluationSetConfig",
+      "type": "object"
+    },
+    "ExtendCreateEvaluationSetItemsConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_evaluation_set_items",
+          "default": "create_evaluation_set_items",
+          "title": "Create Evaluation Set Items",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Evaluation",
+          "x-display-name": "Create Evaluation Set Items",
+          "x-is-trigger": false
+        },
+        "evaluation_set_id": {
+          "description": "The ID of the evaluation set.",
+          "title": "Evaluation Set ID",
+          "type": "string"
+        },
+        "items": {
+          "description": "JSON array of items to add",
+          "title": "Items",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "evaluation_set_id",
+        "items"
+      ],
+      "title": "ExtendCreateEvaluationSetItemsConfig",
+      "type": "object"
+    },
+    "ExtendCreateEvaluationSetRunConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_evaluation_set_run",
+          "default": "create_evaluation_set_run",
+          "title": "Create Evaluation Set Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Evaluation",
+          "x-display-name": "Create Evaluation Set Run",
+          "x-is-trigger": false
+        },
+        "evaluation_set_id": {
+          "description": "The ID of the evaluation set.",
+          "title": "Evaluation Set ID",
+          "type": "string"
+        },
+        "entity": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Entity (processor/workflow version) to evaluate",
+          "title": "Entity",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "evaluation_set_item_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array of specific item ids to run",
+          "title": "Item IDs",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "evaluation_set_id"
+      ],
+      "title": "ExtendCreateEvaluationSetRunConfig",
+      "type": "object"
+    },
+    "ExtendCreateExtractRunConfig": {
+      "description": "Run structured data extraction on a file using an extractor.",
+      "properties": {
+        "operation": {
+          "const": "create_extract_run",
+          "default": "create_extract_run",
+          "title": "Create Extract Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Extract",
+          "x-display-name": "Create Extract Run",
+          "x-is-trigger": false
+        },
+        "extractor_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Extractor",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an extractor ID",
+            "field_name": "extractor_id",
+            "placeholder": "Select an extractor...",
+            "searchable": true
+          }
+        },
+        "config": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inline extract config (mutually exclusive with Extractor)",
+          "title": "Inline Config",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "file_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An Extend file id (from Upload File). Takes precedence over File URL.",
+          "title": "File ID"
+        },
+        "file_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A publicly reachable URL to fetch the document from (used when File ID is empty).",
+          "title": "File URL"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional run metadata",
+          "title": "Metadata",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "ExtendCreateExtractRunConfig",
+      "type": "object"
+    },
+    "ExtendCreateExtractorConfig": {
+      "description": "Create a reusable extractor (schema + prompt config).",
+      "properties": {
+        "operation": {
+          "const": "create_extractor",
+          "default": "create_extractor",
+          "title": "Create Extractor",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Extractors",
+          "x-display-name": "Create Extractor",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Display name for the extractor",
+          "title": "Name",
+          "type": "string"
+        },
+        "config": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Extractor config (schema, instructions, options)",
+          "title": "Config",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "clone_extractor_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Seed from an existing extractor",
+          "title": "Clone From Extractor ID"
+        },
+        "generate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional auto-generation instructions",
+          "title": "Generate",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "ExtendCreateExtractorConfig",
+      "type": "object"
+    },
+    "ExtendCreateExtractorVersionConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_extractor_version",
+          "default": "create_extractor_version",
+          "title": "Create Extractor Version",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Extractors",
+          "x-display-name": "Create Extractor Version",
+          "x-is-trigger": false
+        },
+        "extractor_id": {
+          "title": "Extractor",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an extractor ID",
+            "field_name": "extractor_id",
+            "placeholder": "Select an extractor...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "release_type": {
+          "enum": [
+            "major",
+            "minor",
+            "patch"
+          ],
+          "title": "Release Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "config": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Version config override",
+          "title": "Config",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "extractor_id",
+        "release_type"
+      ],
+      "title": "ExtendCreateExtractorVersionConfig",
+      "type": "object"
+    },
+    "ExtendCreateParseRunConfig": {
+      "description": "Parse a file into clean, chunked, LLM-ready markdown + structured blocks.",
+      "properties": {
+        "operation": {
+          "const": "create_parse_run",
+          "default": "create_parse_run",
+          "title": "Create Parse Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Parse",
+          "x-display-name": "Create Parse Run",
+          "x-is-trigger": false
+        },
+        "file_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An Extend file id (from Upload File). Takes precedence over File URL.",
+          "title": "File ID"
+        },
+        "file_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A publicly reachable URL to fetch the document from (used when File ID is empty).",
+          "title": "File URL"
+        },
+        "config": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional parse configuration",
+          "title": "Parse Config",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional run metadata",
+          "title": "Metadata",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "ExtendCreateParseRunConfig",
+      "type": "object"
+    },
+    "ExtendCreateSplitRunConfig": {
+      "description": "Split a multi-document file into logical sub-documents.",
+      "properties": {
+        "operation": {
+          "const": "create_split_run",
+          "default": "create_split_run",
+          "title": "Create Split Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Split",
+          "x-display-name": "Create Split Run",
+          "x-is-trigger": false
+        },
+        "splitter_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Splitter",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a splitter ID",
+            "field_name": "splitter_id",
+            "placeholder": "Select a splitter...",
+            "searchable": true
+          }
+        },
+        "config": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inline split config (mutually exclusive with Splitter)",
+          "title": "Inline Config",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "file_id": {
+          "description": "The multi-document file to split",
+          "title": "File ID",
+          "type": "string"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional run metadata",
+          "title": "Metadata",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "ExtendCreateSplitRunConfig",
+      "type": "object"
+    },
+    "ExtendCreateSplitterConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_splitter",
+          "default": "create_splitter",
+          "title": "Create Splitter",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Splitters",
+          "x-display-name": "Create Splitter",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Use a human-readable name for this splitter.",
+          "title": "Name",
+          "type": "string"
+        },
+        "config": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Splitter config",
+          "title": "Config",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "clone_splitter_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Clone From Splitter ID"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "ExtendCreateSplitterConfig",
+      "type": "object"
+    },
+    "ExtendCreateSplitterVersionConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_splitter_version",
+          "default": "create_splitter_version",
+          "title": "Create Splitter Version",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Splitters",
+          "x-display-name": "Create Splitter Version",
+          "x-is-trigger": false
+        },
+        "splitter_id": {
+          "title": "Splitter",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a splitter ID",
+            "field_name": "splitter_id",
+            "placeholder": "Select a splitter...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "release_type": {
+          "enum": [
+            "major",
+            "minor",
+            "patch"
+          ],
+          "title": "Release Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        },
+        "config": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Version config override",
+          "title": "Config",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "splitter_id",
+        "release_type"
+      ],
+      "title": "ExtendCreateSplitterVersionConfig",
+      "type": "object"
+    },
+    "ExtendCreateWebhookEndpointConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_webhook_endpoint",
+          "default": "create_webhook_endpoint",
+          "title": "Create Webhook Endpoint",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Create Webhook Endpoint",
+          "x-is-trigger": false
+        },
+        "url": {
+          "description": "HTTPS URL to deliver events to",
+          "title": "URL",
+          "type": "string"
+        },
+        "name": {
+          "description": "Use a human-readable name for this webhook endpoint.",
+          "title": "Name",
+          "type": "string"
+        },
+        "enabled_events": {
+          "description": "JSON array of event types, e.g. [\"workflow_run.completed\"]",
+          "title": "Enabled Events",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "enabled",
+            "disabled"
+          ],
+          "title": "Status",
+          "x-enum-searchable": true
+        },
+        "advanced_options": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom headers / delivery settings",
+          "title": "Advanced Options",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "url",
+        "name",
+        "enabled_events"
+      ],
+      "title": "ExtendCreateWebhookEndpointConfig",
+      "type": "object"
+    },
+    "ExtendCreateWebhookSubscriptionConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_webhook_subscription",
+          "default": "create_webhook_subscription",
+          "title": "Create Webhook Subscription",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Create Webhook Subscription",
+          "x-is-trigger": false
+        },
+        "webhook_endpoint_id": {
+          "description": "The webhook endpoint that should receive these events.",
+          "title": "Webhook Endpoint ID",
+          "type": "string"
+        },
+        "resource_type": {
+          "description": "The Extend resource type to subscribe to, for example workflow or extractor.",
+          "title": "Resource Type",
+          "type": "string"
+        },
+        "resource_id": {
+          "description": "The ID of the Extend resource for this subscription.",
+          "title": "Resource ID",
+          "type": "string"
+        },
+        "enabled_events": {
+          "description": "JSON array of event types",
+          "title": "Enabled Events",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "webhook_endpoint_id",
+        "resource_type",
+        "resource_id",
+        "enabled_events"
+      ],
+      "title": "ExtendCreateWebhookSubscriptionConfig",
+      "type": "object"
+    },
+    "ExtendCreateWorkflowConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_workflow",
+          "default": "create_workflow",
+          "title": "Create Workflow",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workflows",
+          "x-display-name": "Create Workflow",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Use a human-readable name for this workflow.",
+          "title": "Name",
+          "type": "string"
+        },
+        "steps": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array of workflow steps",
+          "title": "Steps",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "ExtendCreateWorkflowConfig",
+      "type": "object"
+    },
+    "ExtendCreateWorkflowRunConfig": {
+      "description": "Run a configured Extend workflow on a file.",
+      "properties": {
+        "operation": {
+          "const": "create_workflow_run",
+          "default": "create_workflow_run",
+          "title": "Create Workflow Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workflow Runs",
+          "x-display-name": "Create Workflow Run",
+          "x-is-trigger": false
+        },
+        "workflow_id": {
+          "title": "Workflow",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a workflow ID",
+            "field_name": "workflow_id",
+            "placeholder": "Select a workflow...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "file_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An Extend file id (from Upload File). Takes precedence over File URL.",
+          "title": "File ID"
+        },
+        "file_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A publicly reachable URL to fetch the document from (used when File ID is empty).",
+          "title": "File URL"
+        },
+        "version": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specific version or 'draft'",
+          "title": "Workflow Version"
+        },
+        "outputs": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional predetermined processor outputs (override)",
+          "title": "Outputs",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Priority"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional run metadata",
+          "title": "Metadata",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "secrets": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional secrets for processor use",
+          "title": "Secrets",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "workflow_id"
+      ],
+      "title": "ExtendCreateWorkflowRunConfig",
+      "type": "object"
+    },
+    "ExtendCreateWorkflowVersionConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_workflow_version",
+          "default": "create_workflow_version",
+          "title": "Create Workflow Version",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workflows",
+          "x-display-name": "Create Workflow Version",
+          "x-is-trigger": false
+        },
+        "workflow_id": {
+          "title": "Workflow",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a workflow ID",
+            "field_name": "workflow_id",
+            "placeholder": "Select a workflow...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set a human-readable name for this workflow version.",
+          "title": "Name"
+        },
+        "steps": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array of workflow steps",
+          "title": "Steps",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "workflow_id"
+      ],
+      "title": "ExtendCreateWorkflowVersionConfig",
+      "type": "object"
+    },
+    "ExtendDeleteClassifyRunConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_classify_run",
+          "default": "delete_classify_run",
+          "title": "Delete Classify Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Classify",
+          "x-display-name": "Delete Classify Run",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "description": "The ID of the classify run.",
+          "title": "Classify Run ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "ExtendDeleteClassifyRunConfig",
+      "type": "object"
+    },
+    "ExtendDeleteEditRunConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_edit_run",
+          "default": "delete_edit_run",
+          "title": "Delete Edit Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Edit",
+          "x-display-name": "Delete Edit Run",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "description": "The ID of the edit run.",
+          "title": "Edit Run ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "ExtendDeleteEditRunConfig",
+      "type": "object"
+    },
+    "ExtendDeleteEvaluationSetItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_evaluation_set_item",
+          "default": "delete_evaluation_set_item",
+          "title": "Delete Evaluation Set Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Evaluation",
+          "x-display-name": "Delete Evaluation Set Item",
+          "x-is-trigger": false
+        },
+        "evaluation_set_id": {
+          "description": "The ID of the evaluation set.",
+          "title": "Evaluation Set ID",
+          "type": "string"
+        },
+        "item_id": {
+          "description": "The ID of the evaluation set item.",
+          "title": "Item ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "evaluation_set_id",
+        "item_id"
+      ],
+      "title": "ExtendDeleteEvaluationSetItemConfig",
+      "type": "object"
+    },
+    "ExtendDeleteExtractRunConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_extract_run",
+          "default": "delete_extract_run",
+          "title": "Delete Extract Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Extract",
+          "x-display-name": "Delete Extract Run",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "description": "The ID of the extract run.",
+          "title": "Extract Run ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "ExtendDeleteExtractRunConfig",
+      "type": "object"
+    },
+    "ExtendDeleteFileConfig": {
+      "description": "Delete an uploaded file.",
+      "properties": {
+        "operation": {
+          "const": "delete_file",
+          "default": "delete_file",
+          "title": "Delete File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Files",
+          "x-display-name": "Delete File",
+          "x-is-trigger": false
+        },
+        "file_id": {
+          "description": "The id of the file to delete",
+          "title": "File ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "ExtendDeleteFileConfig",
+      "type": "object"
+    },
+    "ExtendDeleteParseRunConfig": {
+      "description": "Delete a parse run.",
+      "properties": {
+        "operation": {
+          "const": "delete_parse_run",
+          "default": "delete_parse_run",
+          "title": "Delete Parse Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Parse",
+          "x-display-name": "Delete Parse Run",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "description": "The ID of the parse run.",
+          "title": "Parse Run ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "ExtendDeleteParseRunConfig",
+      "type": "object"
+    },
+    "ExtendDeleteSplitRunConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_split_run",
+          "default": "delete_split_run",
+          "title": "Delete Split Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Split",
+          "x-display-name": "Delete Split Run",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "description": "The ID of the split run.",
+          "title": "Split Run ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "ExtendDeleteSplitRunConfig",
+      "type": "object"
+    },
+    "ExtendDeleteWebhookEndpointConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_webhook_endpoint",
+          "default": "delete_webhook_endpoint",
+          "title": "Delete Webhook Endpoint",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Delete Webhook Endpoint",
+          "x-is-trigger": false
+        },
+        "endpoint_id": {
+          "description": "The ID of the webhook endpoint.",
+          "title": "Webhook Endpoint ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "endpoint_id"
+      ],
+      "title": "ExtendDeleteWebhookEndpointConfig",
+      "type": "object"
+    },
+    "ExtendDeleteWebhookSubscriptionConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_webhook_subscription",
+          "default": "delete_webhook_subscription",
+          "title": "Delete Webhook Subscription",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Delete Webhook Subscription",
+          "x-is-trigger": false
+        },
+        "subscription_id": {
+          "description": "The ID of the webhook subscription.",
+          "title": "Webhook Subscription ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "subscription_id"
+      ],
+      "title": "ExtendDeleteWebhookSubscriptionConfig",
+      "type": "object"
+    },
+    "ExtendDeleteWorkflowRunConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_workflow_run",
+          "default": "delete_workflow_run",
+          "title": "Delete Workflow Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workflow Runs",
+          "x-display-name": "Delete Workflow Run",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "description": "The ID of the workflow run.",
+          "title": "Workflow Run ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "ExtendDeleteWorkflowRunConfig",
+      "type": "object"
+    },
+    "ExtendEditSyncConfig": {
+      "description": "Edit a document synchronously (\u22645 min).",
+      "properties": {
+        "operation": {
+          "const": "edit",
+          "default": "edit",
+          "title": "Edit (Sync)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sync",
+          "x-display-name": "Edit (Sync)",
+          "x-is-trigger": false
+        },
+        "file_id": {
+          "description": "The Extend file id to edit",
+          "title": "File ID",
+          "type": "string"
+        },
+        "config": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Edit config: schema + instructions",
+          "title": "Edit Config",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "ExtendEditSyncConfig",
+      "type": "object"
+    },
+    "ExtendExtractSyncConfig": {
+      "description": "Run structured extraction synchronously (\u22645 min).",
+      "properties": {
+        "operation": {
+          "const": "extract",
+          "default": "extract",
+          "title": "Extract (Sync)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sync",
+          "x-display-name": "Extract (Sync)",
+          "x-is-trigger": false
+        },
+        "extractor_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Extractor",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an extractor ID",
+            "field_name": "extractor_id",
+            "placeholder": "Select an extractor...",
+            "searchable": true
+          }
+        },
+        "config": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inline extract config (mutually exclusive with Extractor)",
+          "title": "Inline Config",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "file_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An Extend file id (from Upload File). Takes precedence over File URL.",
+          "title": "File ID"
+        },
+        "file_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A publicly reachable URL to fetch the document from (used when File ID is empty).",
+          "title": "File URL"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional run metadata",
+          "title": "Metadata",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "ExtendExtractSyncConfig",
+      "type": "object"
+    },
+    "ExtendGenerateEditSchemaConfig": {
+      "description": "Analyze a document and auto-generate an edit schema.",
+      "properties": {
+        "operation": {
+          "const": "generate_edit_schema",
+          "default": "generate_edit_schema",
+          "title": "Generate Edit Schema",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Edit",
+          "x-display-name": "Generate Edit Schema",
+          "x-is-trigger": false
+        },
+        "file_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An Extend file id (from Upload File). Takes precedence over File URL.",
+          "title": "File ID"
+        },
+        "file_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A publicly reachable URL to fetch the document from (used when File ID is empty).",
+          "title": "File URL"
+        },
+        "config": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional generation config / instructions",
+          "title": "Config",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "title": "ExtendGenerateEditSchemaConfig",
+      "type": "object"
+    },
+    "ExtendGetBatchProcessorRunConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_batch_processor_run",
+          "default": "get_batch_processor_run",
+          "title": "Get Batch Processor Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Batch",
+          "x-display-name": "Get Batch Processor Run",
+          "x-is-trigger": false
+        },
+        "batch_id": {
+          "description": "The ID of the batch processor run.",
+          "title": "Batch Processor Run ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "batch_id"
+      ],
+      "title": "ExtendGetBatchProcessorRunConfig",
+      "type": "object"
+    },
+    "ExtendGetBatchRunConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_batch_run",
+          "default": "get_batch_run",
+          "title": "Get Batch Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Batch",
+          "x-display-name": "Get Batch Run",
+          "x-is-trigger": false
+        },
+        "batch_id": {
+          "description": "The ID of the batch run.",
+          "title": "Batch Run ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "batch_id"
+      ],
+      "title": "ExtendGetBatchRunConfig",
+      "type": "object"
+    },
+    "ExtendGetClassifierConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_classifier",
+          "default": "get_classifier",
+          "title": "Get Classifier",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Classifiers",
+          "x-display-name": "Get Classifier",
+          "x-is-trigger": false
+        },
+        "classifier_id": {
+          "title": "Classifier",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a classifier ID",
+            "field_name": "classifier_id",
+            "placeholder": "Select a classifier...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "extend_classifier"
+        }
+      },
+      "required": [
+        "classifier_id"
+      ],
+      "title": "ExtendGetClassifierConfig",
+      "type": "object"
+    },
+    "ExtendGetClassifierVersionConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_classifier_version",
+          "default": "get_classifier_version",
+          "title": "Get Classifier Version",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Classifiers",
+          "x-display-name": "Get Classifier Version",
+          "x-is-trigger": false
+        },
+        "classifier_id": {
+          "title": "Classifier",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a classifier ID",
+            "field_name": "classifier_id",
+            "placeholder": "Select a classifier...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "extend_classifier"
+        },
+        "version_id": {
+          "description": "The ID of the classifier version to retrieve.",
+          "title": "Version ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "classifier_id",
+        "version_id"
+      ],
+      "title": "ExtendGetClassifierVersionConfig",
+      "type": "object"
+    },
+    "ExtendGetClassifyRunConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_classify_run",
+          "default": "get_classify_run",
+          "title": "Get Classify Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Classify",
+          "x-display-name": "Get Classify Run",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "description": "The ID of the classify run.",
+          "title": "Classify Run ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "ExtendGetClassifyRunConfig",
+      "type": "object"
+    },
+    "ExtendGetEditRunConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_edit_run",
+          "default": "get_edit_run",
+          "title": "Get Edit Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Edit",
+          "x-display-name": "Get Edit Run",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "description": "The ID of the edit run.",
+          "title": "Edit Run ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "ExtendGetEditRunConfig",
+      "type": "object"
+    },
+    "ExtendGetEditTemplateConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_edit_template",
+          "default": "get_edit_template",
+          "title": "Get Edit Template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Edit",
+          "x-display-name": "Get Edit Template",
+          "x-is-trigger": false
+        },
+        "template_id": {
+          "description": "The ID of the edit template.",
+          "title": "Edit Template ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "ExtendGetEditTemplateConfig",
+      "type": "object"
+    },
+    "ExtendGetEvaluationSetConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_evaluation_set",
+          "default": "get_evaluation_set",
+          "title": "Get Evaluation Set",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Evaluation",
+          "x-display-name": "Get Evaluation Set",
+          "x-is-trigger": false
+        },
+        "evaluation_set_id": {
+          "description": "The ID of the evaluation set.",
+          "title": "Evaluation Set ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "evaluation_set_id"
+      ],
+      "title": "ExtendGetEvaluationSetConfig",
+      "type": "object"
+    },
+    "ExtendGetEvaluationSetItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_evaluation_set_item",
+          "default": "get_evaluation_set_item",
+          "title": "Get Evaluation Set Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Evaluation",
+          "x-display-name": "Get Evaluation Set Item",
+          "x-is-trigger": false
+        },
+        "evaluation_set_id": {
+          "description": "The ID of the evaluation set.",
+          "title": "Evaluation Set ID",
+          "type": "string"
+        },
+        "item_id": {
+          "description": "The ID of the evaluation set item.",
+          "title": "Item ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "evaluation_set_id",
+        "item_id"
+      ],
+      "title": "ExtendGetEvaluationSetItemConfig",
+      "type": "object"
+    },
+    "ExtendGetEvaluationSetRunConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_evaluation_set_run",
+          "default": "get_evaluation_set_run",
+          "title": "Get Evaluation Set Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Evaluation",
+          "x-display-name": "Get Evaluation Set Run",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "description": "The ID of the evaluation set run.",
+          "title": "Evaluation Set Run ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "ExtendGetEvaluationSetRunConfig",
+      "type": "object"
+    },
+    "ExtendGetExtractRunConfig": {
+      "description": "Poll an extract run for status and extracted JSON.",
+      "properties": {
+        "operation": {
+          "const": "get_extract_run",
+          "default": "get_extract_run",
+          "title": "Get Extract Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Extract",
+          "x-display-name": "Get Extract Run",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "description": "The ID of the extract run.",
+          "title": "Extract Run ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "ExtendGetExtractRunConfig",
+      "type": "object"
+    },
+    "ExtendGetExtractorConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_extractor",
+          "default": "get_extractor",
+          "title": "Get Extractor",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Extractors",
+          "x-display-name": "Get Extractor",
+          "x-is-trigger": false
+        },
+        "extractor_id": {
+          "title": "Extractor",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an extractor ID",
+            "field_name": "extractor_id",
+            "placeholder": "Select an extractor...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "extractor_id"
+      ],
+      "title": "ExtendGetExtractorConfig",
+      "type": "object"
+    },
+    "ExtendGetExtractorVersionConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_extractor_version",
+          "default": "get_extractor_version",
+          "title": "Get Extractor Version",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Extractors",
+          "x-display-name": "Get Extractor Version",
+          "x-is-trigger": false
+        },
+        "extractor_id": {
+          "title": "Extractor",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an extractor ID",
+            "field_name": "extractor_id",
+            "placeholder": "Select an extractor...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "version_id": {
+          "description": "The ID of the extractor version to retrieve.",
+          "title": "Version ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "extractor_id",
+        "version_id"
+      ],
+      "title": "ExtendGetExtractorVersionConfig",
+      "type": "object"
+    },
+    "ExtendGetFileConfig": {
+      "description": "Retrieve a file's metadata, and optionally its parsed text/markdown/html.",
+      "properties": {
+        "operation": {
+          "const": "get_file",
+          "default": "get_file",
+          "title": "Get File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Files",
+          "x-display-name": "Get File",
+          "x-is-trigger": false
+        },
+        "file_id": {
+          "description": "The id of the file to retrieve",
+          "title": "File ID",
+          "type": "string"
+        },
+        "raw_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Raw Text",
+          "x-enum-searchable": true
+        },
+        "markdown": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Markdown",
+          "x-enum-searchable": true
+        },
+        "html": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include HTML",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "ExtendGetFileConfig",
+      "type": "object"
+    },
+    "ExtendGetParseRunConfig": {
+      "description": "Poll a parse run for status and parsed output.",
+      "properties": {
+        "operation": {
+          "const": "get_parse_run",
+          "default": "get_parse_run",
+          "title": "Get Parse Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Parse",
+          "x-display-name": "Get Parse Run",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "description": "The parse run to poll",
+          "title": "Parse Run ID",
+          "type": "string"
+        },
+        "response_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "url",
+            "raw"
+          ],
+          "title": "Response Type",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "ExtendGetParseRunConfig",
+      "type": "object"
+    },
+    "ExtendGetSplitRunConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_split_run",
+          "default": "get_split_run",
+          "title": "Get Split Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Split",
+          "x-display-name": "Get Split Run",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "description": "The ID of the split run.",
+          "title": "Split Run ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "ExtendGetSplitRunConfig",
+      "type": "object"
+    },
+    "ExtendGetSplitterConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_splitter",
+          "default": "get_splitter",
+          "title": "Get Splitter",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Splitters",
+          "x-display-name": "Get Splitter",
+          "x-is-trigger": false
+        },
+        "splitter_id": {
+          "title": "Splitter",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a splitter ID",
+            "field_name": "splitter_id",
+            "placeholder": "Select a splitter...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "splitter_id"
+      ],
+      "title": "ExtendGetSplitterConfig",
+      "type": "object"
+    },
+    "ExtendGetSplitterVersionConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_splitter_version",
+          "default": "get_splitter_version",
+          "title": "Get Splitter Version",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Splitters",
+          "x-display-name": "Get Splitter Version",
+          "x-is-trigger": false
+        },
+        "splitter_id": {
+          "title": "Splitter",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a splitter ID",
+            "field_name": "splitter_id",
+            "placeholder": "Select a splitter...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "version_id": {
+          "description": "The ID of the splitter version to retrieve.",
+          "title": "Version ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "splitter_id",
+        "version_id"
+      ],
+      "title": "ExtendGetSplitterVersionConfig",
+      "type": "object"
+    },
+    "ExtendGetWebhookEndpointConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_webhook_endpoint",
+          "default": "get_webhook_endpoint",
+          "title": "Get Webhook Endpoint",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Get Webhook Endpoint",
+          "x-is-trigger": false
+        },
+        "endpoint_id": {
+          "description": "The ID of the webhook endpoint.",
+          "title": "Webhook Endpoint ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "endpoint_id"
+      ],
+      "title": "ExtendGetWebhookEndpointConfig",
+      "type": "object"
+    },
+    "ExtendGetWebhookSubscriptionConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_webhook_subscription",
+          "default": "get_webhook_subscription",
+          "title": "Get Webhook Subscription",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Get Webhook Subscription",
+          "x-is-trigger": false
+        },
+        "subscription_id": {
+          "description": "The ID of the webhook subscription.",
+          "title": "Webhook Subscription ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "subscription_id"
+      ],
+      "title": "ExtendGetWebhookSubscriptionConfig",
+      "type": "object"
+    },
+    "ExtendGetWorkflowConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_workflow",
+          "default": "get_workflow",
+          "title": "Get Workflow",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workflows",
+          "x-display-name": "Get Workflow",
+          "x-is-trigger": false
+        },
+        "workflow_id": {
+          "title": "Workflow",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a workflow ID",
+            "field_name": "workflow_id",
+            "placeholder": "Select a workflow...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "workflow_id"
+      ],
+      "title": "ExtendGetWorkflowConfig",
+      "type": "object"
+    },
+    "ExtendGetWorkflowRunConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_workflow_run",
+          "default": "get_workflow_run",
+          "title": "Get Workflow Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workflow Runs",
+          "x-display-name": "Get Workflow Run",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "description": "The ID of the workflow run.",
+          "title": "Workflow Run ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "ExtendGetWorkflowRunConfig",
+      "type": "object"
+    },
+    "ExtendGetWorkflowVersionConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_workflow_version",
+          "default": "get_workflow_version",
+          "title": "Get Workflow Version",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workflows",
+          "x-display-name": "Get Workflow Version",
+          "x-is-trigger": false
+        },
+        "workflow_id": {
+          "title": "Workflow",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a workflow ID",
+            "field_name": "workflow_id",
+            "placeholder": "Select a workflow...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "version_id": {
+          "description": "The ID of the workflow version to retrieve.",
+          "title": "Version ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workflow_id",
+        "version_id"
+      ],
+      "title": "ExtendGetWorkflowVersionConfig",
+      "type": "object"
+    },
+    "ExtendListClassifierVersionsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_classifier_versions",
+          "default": "list_classifier_versions",
+          "title": "List Classifier Versions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Classifiers",
+          "x-display-name": "List Classifier Versions",
+          "x-is-trigger": false
+        },
+        "classifier_id": {
+          "title": "Classifier",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a classifier ID",
+            "field_name": "classifier_id",
+            "placeholder": "Select a classifier...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "extend_classifier"
+        },
+        "sort_dir": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "enumNames": [
+            "Ascending",
+            "Descending"
+          ],
+          "title": "Sort Direction",
+          "x-enum-searchable": true
+        },
+        "max_page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Max number of results per page",
+          "title": "Page Size"
+        },
+        "next_page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from a previous response",
+          "title": "Next Page Token"
+        }
+      },
+      "required": [
+        "classifier_id"
+      ],
+      "title": "ExtendListClassifierVersionsConfig",
+      "type": "object"
+    },
+    "ExtendListClassifiersConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_classifiers",
+          "default": "list_classifiers",
+          "title": "List Classifiers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Classifiers",
+          "x-display-name": "List Classifiers",
+          "x-is-trigger": false
+        },
+        "sort_by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort By"
+        },
+        "sort_dir": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "enumNames": [
+            "Ascending",
+            "Descending"
+          ],
+          "title": "Sort Direction",
+          "x-enum-searchable": true
+        },
+        "max_page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Max number of results per page",
+          "title": "Page Size"
+        },
+        "next_page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from a previous response",
+          "title": "Next Page Token"
+        }
+      },
+      "title": "ExtendListClassifiersConfig",
+      "type": "object"
+    },
+    "ExtendListClassifyRunsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_classify_runs",
+          "default": "list_classify_runs",
+          "title": "List Classify Runs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Classify",
+          "x-display-name": "List Classify Runs",
+          "x-is-trigger": false
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by run status.",
+          "title": "Status"
+        },
+        "classifier_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by classifier ID.",
+          "title": "Classifier ID"
+        },
+        "file_name_contains": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by a substring in the source file name.",
+          "title": "File Name Contains"
+        },
+        "batch_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by the batch id returned from a batch request.",
+          "title": "Batch ID"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by the source that created the run.",
+          "title": "Source"
+        },
+        "source_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by the source object ID that created the run.",
+          "title": "Source ID"
+        },
+        "sort_dir": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "enumNames": [
+            "Ascending",
+            "Descending"
+          ],
+          "title": "Sort Direction",
+          "x-enum-searchable": true
+        },
+        "max_page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Max number of results per page",
+          "title": "Page Size"
+        },
+        "next_page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from a previous response",
+          "title": "Next Page Token"
+        }
+      },
+      "title": "ExtendListClassifyRunsConfig",
+      "type": "object"
+    },
+    "ExtendListEvaluationSetItemsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_evaluation_set_items",
+          "default": "list_evaluation_set_items",
+          "title": "List Evaluation Set Items",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Evaluation",
+          "x-display-name": "List Evaluation Set Items",
+          "x-is-trigger": false
+        },
+        "evaluation_set_id": {
+          "description": "The ID of the evaluation set.",
+          "title": "Evaluation Set ID",
+          "type": "string"
+        },
+        "sort_by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort By"
+        },
+        "sort_dir": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "enumNames": [
+            "Ascending",
+            "Descending"
+          ],
+          "title": "Sort Direction",
+          "x-enum-searchable": true
+        },
+        "max_page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Max number of results per page",
+          "title": "Page Size"
+        },
+        "next_page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from a previous response",
+          "title": "Next Page Token"
+        }
+      },
+      "required": [
+        "evaluation_set_id"
+      ],
+      "title": "ExtendListEvaluationSetItemsConfig",
+      "type": "object"
+    },
+    "ExtendListEvaluationSetsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_evaluation_sets",
+          "default": "list_evaluation_sets",
+          "title": "List Evaluation Sets",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Evaluation",
+          "x-display-name": "List Evaluation Sets",
+          "x-is-trigger": false
+        },
+        "entity_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Entity ID"
+        },
+        "sort_by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort By"
+        },
+        "sort_dir": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "enumNames": [
+            "Ascending",
+            "Descending"
+          ],
+          "title": "Sort Direction",
+          "x-enum-searchable": true
+        },
+        "max_page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Max number of results per page",
+          "title": "Page Size"
+        },
+        "next_page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from a previous response",
+          "title": "Next Page Token"
+        }
+      },
+      "title": "ExtendListEvaluationSetsConfig",
+      "type": "object"
+    },
+    "ExtendListExtractRunsConfig": {
+      "description": "List extract runs (cursor pagination).",
+      "properties": {
+        "operation": {
+          "const": "list_extract_runs",
+          "default": "list_extract_runs",
+          "title": "List Extract Runs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Extract",
+          "x-display-name": "List Extract Runs",
+          "x-is-trigger": false
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by run status.",
+          "title": "Status"
+        },
+        "extractor_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by extractor ID.",
+          "title": "Extractor ID"
+        },
+        "file_name_contains": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by a substring in the source file name.",
+          "title": "File Name Contains"
+        },
+        "batch_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by the batch id returned from a batch request.",
+          "title": "Batch ID"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by the source that created the run.",
+          "title": "Source"
+        },
+        "source_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by the source object ID that created the run.",
+          "title": "Source ID"
+        },
+        "sort_dir": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "enumNames": [
+            "Ascending",
+            "Descending"
+          ],
+          "title": "Sort Direction",
+          "x-enum-searchable": true
+        },
+        "max_page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Max number of results per page",
+          "title": "Page Size"
+        },
+        "next_page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from a previous response",
+          "title": "Next Page Token"
+        }
+      },
+      "title": "ExtendListExtractRunsConfig",
+      "type": "object"
+    },
+    "ExtendListExtractorVersionsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_extractor_versions",
+          "default": "list_extractor_versions",
+          "title": "List Extractor Versions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Extractors",
+          "x-display-name": "List Extractor Versions",
+          "x-is-trigger": false
+        },
+        "extractor_id": {
+          "title": "Extractor",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an extractor ID",
+            "field_name": "extractor_id",
+            "placeholder": "Select an extractor...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "sort_dir": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "enumNames": [
+            "Ascending",
+            "Descending"
+          ],
+          "title": "Sort Direction",
+          "x-enum-searchable": true
+        },
+        "max_page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Max number of results per page",
+          "title": "Page Size"
+        },
+        "next_page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from a previous response",
+          "title": "Next Page Token"
+        }
+      },
+      "required": [
+        "extractor_id"
+      ],
+      "title": "ExtendListExtractorVersionsConfig",
+      "type": "object"
+    },
+    "ExtendListExtractorsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_extractors",
+          "default": "list_extractors",
+          "title": "List Extractors",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Extractors",
+          "x-display-name": "List Extractors",
+          "x-is-trigger": false
+        },
+        "sort_by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort By"
+        },
+        "sort_dir": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "enumNames": [
+            "Ascending",
+            "Descending"
+          ],
+          "title": "Sort Direction",
+          "x-enum-searchable": true
+        },
+        "max_page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Max number of results per page",
+          "title": "Page Size"
+        },
+        "next_page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from a previous response",
+          "title": "Next Page Token"
+        }
+      },
+      "title": "ExtendListExtractorsConfig",
+      "type": "object"
+    },
+    "ExtendListFilesConfig": {
+      "description": "List uploaded files (cursor pagination).",
+      "properties": {
+        "operation": {
+          "const": "list_files",
+          "default": "list_files",
+          "title": "List Files",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Files",
+          "x-display-name": "List Files",
+          "x-is-trigger": false
+        },
+        "name_contains": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by filename substring",
+          "title": "Name Contains"
+        },
+        "sort_dir": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "enumNames": [
+            "Ascending",
+            "Descending"
+          ],
+          "title": "Sort Direction",
+          "x-enum-searchable": true
+        },
+        "max_page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Max number of results per page",
+          "title": "Page Size"
+        },
+        "next_page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from a previous response",
+          "title": "Next Page Token"
+        }
+      },
+      "title": "ExtendListFilesConfig",
+      "type": "object"
+    },
+    "ExtendListParseRunsConfig": {
+      "description": "List parse runs (cursor pagination).",
+      "properties": {
+        "operation": {
+          "const": "list_parse_runs",
+          "default": "list_parse_runs",
+          "title": "List Parse Runs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Parse",
+          "x-display-name": "List Parse Runs",
+          "x-is-trigger": false
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by run status",
+          "title": "Status"
+        },
+        "file_name_contains": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by a substring in the source file name.",
+          "title": "File Name Contains"
+        },
+        "batch_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by the batch id returned from a batch request.",
+          "title": "Batch ID"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by the source that created the run.",
+          "title": "Source"
+        },
+        "source_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by the source object ID that created the run.",
+          "title": "Source ID"
+        },
+        "max_page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Max number of results per page",
+          "title": "Page Size"
+        },
+        "next_page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from a previous response",
+          "title": "Next Page Token"
+        }
+      },
+      "title": "ExtendListParseRunsConfig",
+      "type": "object"
+    },
+    "ExtendListSplitRunsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_split_runs",
+          "default": "list_split_runs",
+          "title": "List Split Runs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Split",
+          "x-display-name": "List Split Runs",
+          "x-is-trigger": false
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by run status.",
+          "title": "Status"
+        },
+        "splitter_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by splitter ID.",
+          "title": "Splitter ID"
+        },
+        "file_name_contains": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by a substring in the source file name.",
+          "title": "File Name Contains"
+        },
+        "batch_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by the batch id returned from a batch request.",
+          "title": "Batch ID"
+        },
+        "source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by the source that created the run.",
+          "title": "Source"
+        },
+        "source_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by the source object ID that created the run.",
+          "title": "Source ID"
+        },
+        "sort_dir": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "enumNames": [
+            "Ascending",
+            "Descending"
+          ],
+          "title": "Sort Direction",
+          "x-enum-searchable": true
+        },
+        "max_page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Max number of results per page",
+          "title": "Page Size"
+        },
+        "next_page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from a previous response",
+          "title": "Next Page Token"
+        }
+      },
+      "title": "ExtendListSplitRunsConfig",
+      "type": "object"
+    },
+    "ExtendListSplitterVersionsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_splitter_versions",
+          "default": "list_splitter_versions",
+          "title": "List Splitter Versions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Splitters",
+          "x-display-name": "List Splitter Versions",
+          "x-is-trigger": false
+        },
+        "splitter_id": {
+          "title": "Splitter",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a splitter ID",
+            "field_name": "splitter_id",
+            "placeholder": "Select a splitter...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "sort_dir": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "enumNames": [
+            "Ascending",
+            "Descending"
+          ],
+          "title": "Sort Direction",
+          "x-enum-searchable": true
+        },
+        "max_page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Max number of results per page",
+          "title": "Page Size"
+        },
+        "next_page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from a previous response",
+          "title": "Next Page Token"
+        }
+      },
+      "required": [
+        "splitter_id"
+      ],
+      "title": "ExtendListSplitterVersionsConfig",
+      "type": "object"
+    },
+    "ExtendListSplittersConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_splitters",
+          "default": "list_splitters",
+          "title": "List Splitters",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Splitters",
+          "x-display-name": "List Splitters",
+          "x-is-trigger": false
+        },
+        "sort_by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort By"
+        },
+        "sort_dir": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "enumNames": [
+            "Ascending",
+            "Descending"
+          ],
+          "title": "Sort Direction",
+          "x-enum-searchable": true
+        },
+        "max_page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Max number of results per page",
+          "title": "Page Size"
+        },
+        "next_page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from a previous response",
+          "title": "Next Page Token"
+        }
+      },
+      "title": "ExtendListSplittersConfig",
+      "type": "object"
+    },
+    "ExtendListWebhookEndpointsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_webhook_endpoints",
+          "default": "list_webhook_endpoints",
+          "title": "List Webhook Endpoints",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "List Webhook Endpoints",
+          "x-is-trigger": false
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Status"
+        },
+        "sort_dir": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "enumNames": [
+            "Ascending",
+            "Descending"
+          ],
+          "title": "Sort Direction",
+          "x-enum-searchable": true
+        },
+        "max_page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Max number of results per page",
+          "title": "Page Size"
+        },
+        "next_page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from a previous response",
+          "title": "Next Page Token"
+        }
+      },
+      "title": "ExtendListWebhookEndpointsConfig",
+      "type": "object"
+    },
+    "ExtendListWebhookSubscriptionsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_webhook_subscriptions",
+          "default": "list_webhook_subscriptions",
+          "title": "List Webhook Subscriptions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "List Webhook Subscriptions",
+          "x-is-trigger": false
+        },
+        "webhook_endpoint_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by the webhook endpoint ID.",
+          "title": "Webhook Endpoint ID"
+        },
+        "resource_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ID of the Extend resource for this subscription.",
+          "title": "Resource ID"
+        },
+        "sort_dir": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "enumNames": [
+            "Ascending",
+            "Descending"
+          ],
+          "title": "Sort Direction",
+          "x-enum-searchable": true
+        },
+        "max_page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Max number of results per page",
+          "title": "Page Size"
+        },
+        "next_page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from a previous response",
+          "title": "Next Page Token"
+        }
+      },
+      "title": "ExtendListWebhookSubscriptionsConfig",
+      "type": "object"
+    },
+    "ExtendListWorkflowRunsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_workflow_runs",
+          "default": "list_workflow_runs",
+          "title": "List Workflow Runs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workflow Runs",
+          "x-display-name": "List Workflow Runs",
+          "x-is-trigger": false
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by run status.",
+          "title": "Status"
+        },
+        "workflow_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by workflow ID.",
+          "title": "Workflow ID"
+        },
+        "file_name_contains": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by a substring in the source file name.",
+          "title": "File Name Contains"
+        },
+        "batch_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by the batch id returned from a batch request.",
+          "title": "Batch ID"
+        },
+        "sort_dir": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "enumNames": [
+            "Ascending",
+            "Descending"
+          ],
+          "title": "Sort Direction",
+          "x-enum-searchable": true
+        },
+        "max_page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Max number of results per page",
+          "title": "Page Size"
+        },
+        "next_page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from a previous response",
+          "title": "Next Page Token"
+        }
+      },
+      "title": "ExtendListWorkflowRunsConfig",
+      "type": "object"
+    },
+    "ExtendListWorkflowVersionsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_workflow_versions",
+          "default": "list_workflow_versions",
+          "title": "List Workflow Versions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workflows",
+          "x-display-name": "List Workflow Versions",
+          "x-is-trigger": false
+        },
+        "workflow_id": {
+          "title": "Workflow",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a workflow ID",
+            "field_name": "workflow_id",
+            "placeholder": "Select a workflow...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "sort_dir": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "enumNames": [
+            "Ascending",
+            "Descending"
+          ],
+          "title": "Sort Direction",
+          "x-enum-searchable": true
+        },
+        "max_page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Max number of results per page",
+          "title": "Page Size"
+        },
+        "next_page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from a previous response",
+          "title": "Next Page Token"
+        }
+      },
+      "required": [
+        "workflow_id"
+      ],
+      "title": "ExtendListWorkflowVersionsConfig",
+      "type": "object"
+    },
+    "ExtendListWorkflowsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_workflows",
+          "default": "list_workflows",
+          "title": "List Workflows",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workflows",
+          "x-display-name": "List Workflows",
+          "x-is-trigger": false
+        },
+        "sort_by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Sort By"
+        },
+        "sort_dir": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "enumNames": [
+            "Ascending",
+            "Descending"
+          ],
+          "title": "Sort Direction",
+          "x-enum-searchable": true
+        },
+        "max_page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Max number of results per page",
+          "title": "Page Size"
+        },
+        "next_page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from a previous response",
+          "title": "Next Page Token"
+        }
+      },
+      "title": "ExtendListWorkflowsConfig",
+      "type": "object"
+    },
+    "ExtendParseSyncConfig": {
+      "description": "Parse a document synchronously into clean markdown + blocks (\u22645 min).",
+      "properties": {
+        "operation": {
+          "const": "parse",
+          "default": "parse",
+          "title": "Parse (Sync)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sync",
+          "x-display-name": "Parse (Sync)",
+          "x-is-trigger": false
+        },
+        "file_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "An Extend file id (from Upload File). Takes precedence over File URL.",
+          "title": "File ID"
+        },
+        "file_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A publicly reachable URL to fetch the document from (used when File ID is empty).",
+          "title": "File URL"
+        },
+        "config": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional parse configuration (target format, chunking, etc.)",
+          "title": "Parse Config",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional run metadata (max 10KB)",
+          "title": "Metadata",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "response_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "url",
+            "raw"
+          ],
+          "title": "Response Type",
+          "x-enum-searchable": true
+        }
+      },
+      "title": "ExtendParseSyncConfig",
+      "type": "object"
+    },
+    "ExtendRunCompletedTriggerConfig": {
+      "description": "Fire when an Extend document-processing run (parse/extract/classify/split/edit or batch) completes or fails.\n\n(Workflow-run events are not deliverable to a global webhook endpoint by the\nExtend API; use a webhook subscription for those.)",
+      "properties": {
+        "operation": {
+          "const": "on_run_completed",
+          "default": "on_run_completed",
+          "title": "On Run Completed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Run Completed",
+          "x-is-trigger": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Extend posts run events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        }
+      },
+      "title": "ExtendRunCompletedTriggerConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "ExtendSplitSyncConfig": {
+      "description": "Split a multi-document file synchronously (\u22645 min).",
+      "properties": {
+        "operation": {
+          "const": "split",
+          "default": "split",
+          "title": "Split (Sync)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sync",
+          "x-display-name": "Split (Sync)",
+          "x-is-trigger": false
+        },
+        "splitter_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Splitter",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a splitter ID",
+            "field_name": "splitter_id",
+            "placeholder": "Select a splitter...",
+            "searchable": true
+          }
+        },
+        "config": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inline split config (mutually exclusive with Splitter)",
+          "title": "Inline Config",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "file_id": {
+          "description": "The Extend file id to split",
+          "title": "File ID",
+          "type": "string"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional run metadata",
+          "title": "Metadata",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "ExtendSplitSyncConfig",
+      "type": "object"
+    },
+    "ExtendUpdateClassifierConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_classifier",
+          "default": "update_classifier",
+          "title": "Update Classifier",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Classifiers",
+          "x-display-name": "Update Classifier",
+          "x-is-trigger": false
+        },
+        "classifier_id": {
+          "title": "Classifier",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a classifier ID",
+            "field_name": "classifier_id",
+            "placeholder": "Select a classifier...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "extend_classifier"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set a human-readable name for this classifier.",
+          "title": "Name"
+        },
+        "config": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated classifier config",
+          "title": "Config",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "classifier_id"
+      ],
+      "title": "ExtendUpdateClassifierConfig",
+      "type": "object"
+    },
+    "ExtendUpdateEvaluationSetItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_evaluation_set_item",
+          "default": "update_evaluation_set_item",
+          "title": "Update Evaluation Set Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Evaluation",
+          "x-display-name": "Update Evaluation Set Item",
+          "x-is-trigger": false
+        },
+        "evaluation_set_id": {
+          "description": "The ID of the evaluation set.",
+          "title": "Evaluation Set ID",
+          "type": "string"
+        },
+        "item_id": {
+          "description": "The ID of the evaluation set item.",
+          "title": "Item ID",
+          "type": "string"
+        },
+        "expected_output": {
+          "description": "The corrected expected output JSON",
+          "title": "Expected Output",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "evaluation_set_id",
+        "item_id",
+        "expected_output"
+      ],
+      "title": "ExtendUpdateEvaluationSetItemConfig",
+      "type": "object"
+    },
+    "ExtendUpdateExtractorConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_extractor",
+          "default": "update_extractor",
+          "title": "Update Extractor",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Extractors",
+          "x-display-name": "Update Extractor",
+          "x-is-trigger": false
+        },
+        "extractor_id": {
+          "title": "Extractor",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an extractor ID",
+            "field_name": "extractor_id",
+            "placeholder": "Select an extractor...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set a human-readable name for this extractor.",
+          "title": "Name"
+        },
+        "config": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated extractor config",
+          "title": "Config",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "extractor_id"
+      ],
+      "title": "ExtendUpdateExtractorConfig",
+      "type": "object"
+    },
+    "ExtendUpdateSplitterConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_splitter",
+          "default": "update_splitter",
+          "title": "Update Splitter",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Splitters",
+          "x-display-name": "Update Splitter",
+          "x-is-trigger": false
+        },
+        "splitter_id": {
+          "title": "Splitter",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a splitter ID",
+            "field_name": "splitter_id",
+            "placeholder": "Select a splitter...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set a human-readable name for this splitter.",
+          "title": "Name"
+        },
+        "config": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated splitter config",
+          "title": "Config",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "splitter_id"
+      ],
+      "title": "ExtendUpdateSplitterConfig",
+      "type": "object"
+    },
+    "ExtendUpdateWebhookEndpointConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_webhook_endpoint",
+          "default": "update_webhook_endpoint",
+          "title": "Update Webhook Endpoint",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Update Webhook Endpoint",
+          "x-is-trigger": false
+        },
+        "endpoint_id": {
+          "description": "The ID of the webhook endpoint.",
+          "title": "Webhook Endpoint ID",
+          "type": "string"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The HTTPS URL to deliver events to.",
+          "title": "URL"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set a human-readable name for this webhook endpoint.",
+          "title": "Name"
+        },
+        "enabled_events": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array of event types",
+          "title": "Enabled Events",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "enabled",
+            "disabled"
+          ],
+          "title": "Status",
+          "x-enum-searchable": true
+        },
+        "advanced_options": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom headers / delivery settings",
+          "title": "Advanced Options",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "endpoint_id"
+      ],
+      "title": "ExtendUpdateWebhookEndpointConfig",
+      "type": "object"
+    },
+    "ExtendUpdateWebhookSubscriptionConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_webhook_subscription",
+          "default": "update_webhook_subscription",
+          "title": "Update Webhook Subscription",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Update Webhook Subscription",
+          "x-is-trigger": false
+        },
+        "subscription_id": {
+          "description": "The ID of the webhook subscription.",
+          "title": "Webhook Subscription ID",
+          "type": "string"
+        },
+        "enabled_events": {
+          "description": "JSON array of event types",
+          "title": "Enabled Events",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "subscription_id",
+        "enabled_events"
+      ],
+      "title": "ExtendUpdateWebhookSubscriptionConfig",
+      "type": "object"
+    },
+    "ExtendUpdateWorkflowConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_workflow",
+          "default": "update_workflow",
+          "title": "Update Workflow",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workflows",
+          "x-display-name": "Update Workflow",
+          "x-is-trigger": false
+        },
+        "workflow_id": {
+          "title": "Workflow",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a workflow ID",
+            "field_name": "workflow_id",
+            "placeholder": "Select a workflow...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set a human-readable name for this workflow.",
+          "title": "Name"
+        },
+        "steps": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated JSON array of workflow steps",
+          "title": "Steps",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "workflow_id"
+      ],
+      "title": "ExtendUpdateWorkflowConfig",
+      "type": "object"
+    },
+    "ExtendUpdateWorkflowRunConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_workflow_run",
+          "default": "update_workflow_run",
+          "title": "Update Workflow Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workflow Runs",
+          "x-display-name": "Update Workflow Run",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "description": "The ID of the workflow run.",
+          "title": "Workflow Run ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set a human-readable name for this workflow run.",
+          "title": "Name"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated run metadata",
+          "title": "Metadata",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "ExtendUpdateWorkflowRunConfig",
+      "type": "object"
+    },
+    "ExtendUploadFileConfig": {
+      "description": "Upload a document to Extend (multipart) and get a fileId for processing.",
+      "properties": {
+        "operation": {
+          "const": "upload_file",
+          "default": "upload_file",
+          "title": "Upload File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Files",
+          "x-display-name": "Upload File",
+          "x-is-trigger": false
+        },
+        "file_url": {
+          "description": "A publicly reachable URL of the document to upload",
+          "title": "File URL",
+          "type": "string"
+        },
+        "file_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional name to store the file under",
+          "title": "File Name"
+        },
+        "password": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Password to unlock a protected PDF",
+          "title": "PDF Password"
+        },
+        "convert_to_pdf": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "false",
+          "description": "Convert images/Office/HTML to PDF on upload",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Convert To PDF",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "file_url"
+      ],
+      "title": "ExtendUploadFileConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the Extend node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "batch_classify_runs": "#/$defs/ExtendBatchClassifyRunsConfig",
+          "batch_extract_runs": "#/$defs/ExtendBatchExtractRunsConfig",
+          "batch_parse_runs": "#/$defs/ExtendBatchParseRunsConfig",
+          "batch_split_runs": "#/$defs/ExtendBatchSplitRunsConfig",
+          "batch_workflow_runs": "#/$defs/ExtendBatchWorkflowRunsConfig",
+          "cancel_classify_run": "#/$defs/ExtendCancelClassifyRunConfig",
+          "cancel_extract_run": "#/$defs/ExtendCancelExtractRunConfig",
+          "cancel_parse_run": "#/$defs/ExtendCancelParseRunConfig",
+          "cancel_split_run": "#/$defs/ExtendCancelSplitRunConfig",
+          "cancel_workflow_run": "#/$defs/ExtendCancelWorkflowRunConfig",
+          "classify": "#/$defs/ExtendClassifySyncConfig",
+          "create_classifier": "#/$defs/ExtendCreateClassifierConfig",
+          "create_classifier_version": "#/$defs/ExtendCreateClassifierVersionConfig",
+          "create_classify_run": "#/$defs/ExtendCreateClassifyRunConfig",
+          "create_edit_run": "#/$defs/ExtendCreateEditRunConfig",
+          "create_evaluation_set": "#/$defs/ExtendCreateEvaluationSetConfig",
+          "create_evaluation_set_items": "#/$defs/ExtendCreateEvaluationSetItemsConfig",
+          "create_evaluation_set_run": "#/$defs/ExtendCreateEvaluationSetRunConfig",
+          "create_extract_run": "#/$defs/ExtendCreateExtractRunConfig",
+          "create_extractor": "#/$defs/ExtendCreateExtractorConfig",
+          "create_extractor_version": "#/$defs/ExtendCreateExtractorVersionConfig",
+          "create_parse_run": "#/$defs/ExtendCreateParseRunConfig",
+          "create_split_run": "#/$defs/ExtendCreateSplitRunConfig",
+          "create_splitter": "#/$defs/ExtendCreateSplitterConfig",
+          "create_splitter_version": "#/$defs/ExtendCreateSplitterVersionConfig",
+          "create_webhook_endpoint": "#/$defs/ExtendCreateWebhookEndpointConfig",
+          "create_webhook_subscription": "#/$defs/ExtendCreateWebhookSubscriptionConfig",
+          "create_workflow": "#/$defs/ExtendCreateWorkflowConfig",
+          "create_workflow_run": "#/$defs/ExtendCreateWorkflowRunConfig",
+          "create_workflow_version": "#/$defs/ExtendCreateWorkflowVersionConfig",
+          "delete_classify_run": "#/$defs/ExtendDeleteClassifyRunConfig",
+          "delete_edit_run": "#/$defs/ExtendDeleteEditRunConfig",
+          "delete_evaluation_set_item": "#/$defs/ExtendDeleteEvaluationSetItemConfig",
+          "delete_extract_run": "#/$defs/ExtendDeleteExtractRunConfig",
+          "delete_file": "#/$defs/ExtendDeleteFileConfig",
+          "delete_parse_run": "#/$defs/ExtendDeleteParseRunConfig",
+          "delete_split_run": "#/$defs/ExtendDeleteSplitRunConfig",
+          "delete_webhook_endpoint": "#/$defs/ExtendDeleteWebhookEndpointConfig",
+          "delete_webhook_subscription": "#/$defs/ExtendDeleteWebhookSubscriptionConfig",
+          "delete_workflow_run": "#/$defs/ExtendDeleteWorkflowRunConfig",
+          "edit": "#/$defs/ExtendEditSyncConfig",
+          "extract": "#/$defs/ExtendExtractSyncConfig",
+          "generate_edit_schema": "#/$defs/ExtendGenerateEditSchemaConfig",
+          "get_batch_processor_run": "#/$defs/ExtendGetBatchProcessorRunConfig",
+          "get_batch_run": "#/$defs/ExtendGetBatchRunConfig",
+          "get_classifier": "#/$defs/ExtendGetClassifierConfig",
+          "get_classifier_version": "#/$defs/ExtendGetClassifierVersionConfig",
+          "get_classify_run": "#/$defs/ExtendGetClassifyRunConfig",
+          "get_edit_run": "#/$defs/ExtendGetEditRunConfig",
+          "get_edit_template": "#/$defs/ExtendGetEditTemplateConfig",
+          "get_evaluation_set": "#/$defs/ExtendGetEvaluationSetConfig",
+          "get_evaluation_set_item": "#/$defs/ExtendGetEvaluationSetItemConfig",
+          "get_evaluation_set_run": "#/$defs/ExtendGetEvaluationSetRunConfig",
+          "get_extract_run": "#/$defs/ExtendGetExtractRunConfig",
+          "get_extractor": "#/$defs/ExtendGetExtractorConfig",
+          "get_extractor_version": "#/$defs/ExtendGetExtractorVersionConfig",
+          "get_file": "#/$defs/ExtendGetFileConfig",
+          "get_parse_run": "#/$defs/ExtendGetParseRunConfig",
+          "get_split_run": "#/$defs/ExtendGetSplitRunConfig",
+          "get_splitter": "#/$defs/ExtendGetSplitterConfig",
+          "get_splitter_version": "#/$defs/ExtendGetSplitterVersionConfig",
+          "get_webhook_endpoint": "#/$defs/ExtendGetWebhookEndpointConfig",
+          "get_webhook_subscription": "#/$defs/ExtendGetWebhookSubscriptionConfig",
+          "get_workflow": "#/$defs/ExtendGetWorkflowConfig",
+          "get_workflow_run": "#/$defs/ExtendGetWorkflowRunConfig",
+          "get_workflow_version": "#/$defs/ExtendGetWorkflowVersionConfig",
+          "list_classifier_versions": "#/$defs/ExtendListClassifierVersionsConfig",
+          "list_classifiers": "#/$defs/ExtendListClassifiersConfig",
+          "list_classify_runs": "#/$defs/ExtendListClassifyRunsConfig",
+          "list_evaluation_set_items": "#/$defs/ExtendListEvaluationSetItemsConfig",
+          "list_evaluation_sets": "#/$defs/ExtendListEvaluationSetsConfig",
+          "list_extract_runs": "#/$defs/ExtendListExtractRunsConfig",
+          "list_extractor_versions": "#/$defs/ExtendListExtractorVersionsConfig",
+          "list_extractors": "#/$defs/ExtendListExtractorsConfig",
+          "list_files": "#/$defs/ExtendListFilesConfig",
+          "list_parse_runs": "#/$defs/ExtendListParseRunsConfig",
+          "list_split_runs": "#/$defs/ExtendListSplitRunsConfig",
+          "list_splitter_versions": "#/$defs/ExtendListSplitterVersionsConfig",
+          "list_splitters": "#/$defs/ExtendListSplittersConfig",
+          "list_webhook_endpoints": "#/$defs/ExtendListWebhookEndpointsConfig",
+          "list_webhook_subscriptions": "#/$defs/ExtendListWebhookSubscriptionsConfig",
+          "list_workflow_runs": "#/$defs/ExtendListWorkflowRunsConfig",
+          "list_workflow_versions": "#/$defs/ExtendListWorkflowVersionsConfig",
+          "list_workflows": "#/$defs/ExtendListWorkflowsConfig",
+          "on_run_completed": "#/$defs/ExtendRunCompletedTriggerConfig",
+          "parse": "#/$defs/ExtendParseSyncConfig",
+          "split": "#/$defs/ExtendSplitSyncConfig",
+          "update_classifier": "#/$defs/ExtendUpdateClassifierConfig",
+          "update_evaluation_set_item": "#/$defs/ExtendUpdateEvaluationSetItemConfig",
+          "update_extractor": "#/$defs/ExtendUpdateExtractorConfig",
+          "update_splitter": "#/$defs/ExtendUpdateSplitterConfig",
+          "update_webhook_endpoint": "#/$defs/ExtendUpdateWebhookEndpointConfig",
+          "update_webhook_subscription": "#/$defs/ExtendUpdateWebhookSubscriptionConfig",
+          "update_workflow": "#/$defs/ExtendUpdateWorkflowConfig",
+          "update_workflow_run": "#/$defs/ExtendUpdateWorkflowRunConfig",
+          "upload_file": "#/$defs/ExtendUploadFileConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ExtendUploadFileConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendGetFileConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendListFilesConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendDeleteFileConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendParseSyncConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendExtractSyncConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendClassifySyncConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendSplitSyncConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendEditSyncConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendCreateParseRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendGetParseRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendListParseRunsConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendCancelParseRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendDeleteParseRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendBatchParseRunsConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendCreateExtractRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendGetExtractRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendListExtractRunsConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendCancelExtractRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendDeleteExtractRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendBatchExtractRunsConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendCreateExtractorConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendGetExtractorConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendUpdateExtractorConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendListExtractorsConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendCreateExtractorVersionConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendListExtractorVersionsConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendGetExtractorVersionConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendCreateClassifyRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendGetClassifyRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendListClassifyRunsConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendCancelClassifyRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendDeleteClassifyRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendBatchClassifyRunsConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendCreateClassifierConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendGetClassifierConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendUpdateClassifierConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendListClassifiersConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendCreateClassifierVersionConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendListClassifierVersionsConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendGetClassifierVersionConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendCreateSplitRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendGetSplitRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendListSplitRunsConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendCancelSplitRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendDeleteSplitRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendBatchSplitRunsConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendCreateSplitterConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendGetSplitterConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendUpdateSplitterConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendListSplittersConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendCreateSplitterVersionConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendListSplitterVersionsConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendGetSplitterVersionConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendCreateEditRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendGetEditRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendDeleteEditRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendGenerateEditSchemaConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendGetEditTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendCreateWorkflowConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendGetWorkflowConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendUpdateWorkflowConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendListWorkflowsConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendCreateWorkflowVersionConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendListWorkflowVersionsConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendGetWorkflowVersionConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendCreateWorkflowRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendGetWorkflowRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendListWorkflowRunsConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendUpdateWorkflowRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendCancelWorkflowRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendDeleteWorkflowRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendBatchWorkflowRunsConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendCreateWebhookEndpointConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendListWebhookEndpointsConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendGetWebhookEndpointConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendUpdateWebhookEndpointConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendDeleteWebhookEndpointConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendCreateWebhookSubscriptionConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendListWebhookSubscriptionsConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendGetWebhookSubscriptionConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendUpdateWebhookSubscriptionConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendDeleteWebhookSubscriptionConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendCreateEvaluationSetConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendListEvaluationSetsConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendGetEvaluationSetConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendCreateEvaluationSetItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendListEvaluationSetItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendGetEvaluationSetItemConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendUpdateEvaluationSetItemConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendDeleteEvaluationSetItemConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendCreateEvaluationSetRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendGetEvaluationSetRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendGetBatchRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendGetBatchProcessorRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ExtendRunCompletedTriggerConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ExtendApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Extend Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Parse an uploaded PDF into clean markdown",
+    "Extract structured fields from an invoice using an extractor",
+    "Classify a document into one of my configured types",
+    "Split a multi-document PDF into logical sub-documents",
+    "Run a multi-step Extend workflow on a file",
+    "Trigger a workflow whenever an Extend run completes"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

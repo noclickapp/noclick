@@ -1,0 +1,26 @@
+{
+  "$schema": "https://mintlify.com/docs.json",
+  "theme": "mint",
+  "name": "NoClick Community",
+  "colors": {
+    "primary": "#18181b",
+    "light": "#27272a",
+    "dark": "#a1a1aa"
+  },
+  "navigation": {
+    "groups": [
+      {
+        "group": "Getting started",
+        "pages": ["index", "getting-started/local-development", "getting-started/configuration"]
+      },
+      {
+        "group": "Architecture",
+        "pages": ["architecture/overview", "architecture/community-boundary", "architecture/security"]
+      },
+      {
+        "group": "Reference",
+        "pages": ["reference/contributing", "reference/license"]
+      }
+    ]
+  }
+}

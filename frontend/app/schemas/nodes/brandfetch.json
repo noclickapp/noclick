@@ -1,0 +1,801 @@
+{
+  "$defs": {
+    "BrandfetchApiKeyCredential": {
+      "description": "API key (Bearer) + public Client ID credential for Brandfetch.\n\nThe API key is a secret used for the Brand / Brand Context / Transaction\nAPIs. The Client ID is a public identifier required by the Logo CDN and\nBrand Search APIs (passed as ?c=). Both are issued from the developer portal.",
+      "properties": {
+        "credential_type": {
+          "const": "brandfetch_api_key",
+          "default": "brandfetch_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Your Brandfetch API key (Bearer token) for Brand, Context, and Transaction APIs",
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "client_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Public Client ID required by the Logo CDN and Brand Search operations (passed as ?c=)",
+          "title": "Client ID",
+          "ui:help": "Optional. Only needed for Logo and Search operations."
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "BrandfetchApiKeyCredential",
+      "type": "object",
+      "x-credential-instructions": "Create a free account at developers.brandfetch.com, then copy your API key (Bearer, keep secret) and your public Client ID from the dashboard.",
+      "x-credential-url": "https://developers.brandfetch.com/register"
+    },
+    "BrandfetchGetBrandByCryptoConfig": {
+      "description": "Look up a brand by cryptocurrency symbol (e.g. BTC).",
+      "properties": {
+        "operation": {
+          "const": "get_brand_by_crypto",
+          "default": "get_brand_by_crypto",
+          "title": "Get Brand by Crypto",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Brand",
+          "x-display-name": "Get Brand by Crypto",
+          "x-is-trigger": false
+        },
+        "symbol": {
+          "description": "Cryptocurrency symbol, e.g. BTC",
+          "title": "Crypto Symbol",
+          "type": "string"
+        }
+      },
+      "required": [
+        "symbol"
+      ],
+      "title": "BrandfetchGetBrandByCryptoConfig",
+      "type": "object"
+    },
+    "BrandfetchGetBrandByDomainConfig": {
+      "description": "Fetch the full brand record for a domain (logos, colors, fonts, social links).",
+      "properties": {
+        "operation": {
+          "const": "get_brand_by_domain",
+          "default": "get_brand_by_domain",
+          "title": "Get Brand by Domain",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Brand",
+          "x-display-name": "Get Brand by Domain",
+          "x-is-trigger": false
+        },
+        "domain": {
+          "description": "Domain to look up, e.g. nike.com",
+          "title": "Domain",
+          "type": "string"
+        },
+        "allow_nsfw": {
+          "default": "false",
+          "description": "Include NSFW brands in results",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Allow NSFW",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "BrandfetchGetBrandByDomainConfig",
+      "type": "object"
+    },
+    "BrandfetchGetBrandByIsinConfig": {
+      "description": "Look up a brand by ISIN code (e.g. US6541061031).",
+      "properties": {
+        "operation": {
+          "const": "get_brand_by_isin",
+          "default": "get_brand_by_isin",
+          "title": "Get Brand by ISIN",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Brand",
+          "x-display-name": "Get Brand by ISIN",
+          "x-is-trigger": false
+        },
+        "isin": {
+          "description": "ISIN code, e.g. US6541061031",
+          "title": "ISIN",
+          "type": "string"
+        }
+      },
+      "required": [
+        "isin"
+      ],
+      "title": "BrandfetchGetBrandByIsinConfig",
+      "type": "object"
+    },
+    "BrandfetchGetBrandByTickerConfig": {
+      "description": "Look up a brand by stock/ETF ticker symbol (e.g. NKE).",
+      "properties": {
+        "operation": {
+          "const": "get_brand_by_ticker",
+          "default": "get_brand_by_ticker",
+          "title": "Get Brand by Ticker",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Brand",
+          "x-display-name": "Get Brand by Ticker",
+          "x-is-trigger": false
+        },
+        "ticker": {
+          "description": "Stock or ETF ticker symbol, e.g. NKE",
+          "title": "Ticker",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ticker"
+      ],
+      "title": "BrandfetchGetBrandByTickerConfig",
+      "type": "object"
+    },
+    "BrandfetchGetBrandConfig": {
+      "description": "Auto-detect lookup: resolves identifier in order domain -> ticker -> ISIN -> crypto.",
+      "properties": {
+        "operation": {
+          "const": "get_brand",
+          "default": "get_brand",
+          "title": "Get Brand (Auto-detect)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Brand",
+          "x-display-name": "Get Brand (Auto-detect)",
+          "x-is-trigger": false
+        },
+        "identifier": {
+          "description": "Domain, ticker, ISIN, or crypto symbol (auto-detected)",
+          "title": "Identifier",
+          "type": "string"
+        }
+      },
+      "required": [
+        "identifier"
+      ],
+      "title": "BrandfetchGetBrandConfig",
+      "type": "object"
+    },
+    "BrandfetchGetContextJsonConfig": {
+      "description": "Get AI/LLM-oriented structured brand intelligence as JSON.",
+      "properties": {
+        "operation": {
+          "const": "get_context_json",
+          "default": "get_context_json",
+          "title": "Get Brand Context (JSON)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Context",
+          "x-display-name": "Get Brand Context (JSON)",
+          "x-is-trigger": false
+        },
+        "domain": {
+          "description": "Domain to fetch brand context for, e.g. nike.com",
+          "title": "Domain",
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "BrandfetchGetContextJsonConfig",
+      "type": "object"
+    },
+    "BrandfetchGetContextMarkdownConfig": {
+      "description": "Get AI/LLM-ready brand intelligence as Markdown to drop into a prompt.",
+      "properties": {
+        "operation": {
+          "const": "get_context_markdown",
+          "default": "get_context_markdown",
+          "title": "Get Brand Context (Markdown)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Context",
+          "x-display-name": "Get Brand Context (Markdown)",
+          "x-is-trigger": false
+        },
+        "domain": {
+          "description": "Domain to fetch brand context for, e.g. nike.com",
+          "title": "Domain",
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "BrandfetchGetContextMarkdownConfig",
+      "type": "object"
+    },
+    "BrandfetchLogoByCryptoConfig": {
+      "description": "Build a Logo CDN URL for a crypto symbol (requires the public Client ID).",
+      "properties": {
+        "operation": {
+          "const": "logo_by_crypto",
+          "default": "logo_by_crypto",
+          "title": "Fetch Logo by Crypto",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Logo",
+          "x-display-name": "Fetch Logo by Crypto",
+          "x-is-trigger": false
+        },
+        "symbol": {
+          "description": "Cryptocurrency symbol, e.g. BTC",
+          "title": "Crypto Symbol",
+          "type": "string"
+        },
+        "logo_type": {
+          "default": "logo",
+          "description": "Which asset variant to return",
+          "enum": [
+            "logo",
+            "icon",
+            "symbol"
+          ],
+          "enumNames": [
+            "Logo",
+            "Icon",
+            "Symbol"
+          ],
+          "title": "Logo Type",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "symbol"
+      ],
+      "title": "BrandfetchLogoByCryptoConfig",
+      "type": "object"
+    },
+    "BrandfetchLogoByDomainConfig": {
+      "description": "Build a Logo CDN URL for a domain (requires the public Client ID).",
+      "properties": {
+        "operation": {
+          "const": "logo_by_domain",
+          "default": "logo_by_domain",
+          "title": "Fetch Logo by Domain",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Logo",
+          "x-display-name": "Fetch Logo by Domain",
+          "x-is-trigger": false
+        },
+        "domain": {
+          "description": "Domain to fetch the logo for, e.g. nike.com",
+          "title": "Domain",
+          "type": "string"
+        },
+        "logo_type": {
+          "default": "logo",
+          "description": "Which asset variant to return",
+          "enum": [
+            "logo",
+            "icon",
+            "symbol"
+          ],
+          "enumNames": [
+            "Logo",
+            "Icon",
+            "Symbol"
+          ],
+          "title": "Logo Type",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "BrandfetchLogoByDomainConfig",
+      "type": "object"
+    },
+    "BrandfetchLogoByIsinConfig": {
+      "description": "Build a Logo CDN URL for an ISIN (requires the public Client ID).",
+      "properties": {
+        "operation": {
+          "const": "logo_by_isin",
+          "default": "logo_by_isin",
+          "title": "Fetch Logo by ISIN",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Logo",
+          "x-display-name": "Fetch Logo by ISIN",
+          "x-is-trigger": false
+        },
+        "isin": {
+          "description": "ISIN code, e.g. US6541061031",
+          "title": "ISIN",
+          "type": "string"
+        },
+        "logo_type": {
+          "default": "logo",
+          "description": "Which asset variant to return",
+          "enum": [
+            "logo",
+            "icon",
+            "symbol"
+          ],
+          "enumNames": [
+            "Logo",
+            "Icon",
+            "Symbol"
+          ],
+          "title": "Logo Type",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "isin"
+      ],
+      "title": "BrandfetchLogoByIsinConfig",
+      "type": "object"
+    },
+    "BrandfetchLogoByTickerConfig": {
+      "description": "Build a Logo CDN URL for a stock ticker (requires the public Client ID).",
+      "properties": {
+        "operation": {
+          "const": "logo_by_ticker",
+          "default": "logo_by_ticker",
+          "title": "Fetch Logo by Ticker",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Logo",
+          "x-display-name": "Fetch Logo by Ticker",
+          "x-is-trigger": false
+        },
+        "ticker": {
+          "description": "Stock or ETF ticker symbol, e.g. NKE",
+          "title": "Ticker",
+          "type": "string"
+        },
+        "logo_type": {
+          "default": "logo",
+          "description": "Which asset variant to return",
+          "enum": [
+            "logo",
+            "icon",
+            "symbol"
+          ],
+          "enumNames": [
+            "Logo",
+            "Icon",
+            "Symbol"
+          ],
+          "title": "Logo Type",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "ticker"
+      ],
+      "title": "BrandfetchLogoByTickerConfig",
+      "type": "object"
+    },
+    "BrandfetchReceiveWebhookConfig": {
+      "description": "Receive brand-change events from Brandfetch (brand.updated, brand.company.updated).\n\nBrandfetch webhooks are Enterprise-plan only and registered from the\nBrandfetch dashboard (no self-serve subscription API), so this trigger\nsimply provisions an inbound URL the user pastes into their dashboard.",
+      "properties": {
+        "operation": {
+          "const": "receive_webhook",
+          "default": "receive_webhook",
+          "title": "Receive Brand Change Events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "Receive Brand Change Events",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "*",
+          "description": "Which Brandfetch event fires this workflow. Brandfetch delivers all events to one endpoint, so the trigger filters inbound deliveries by their `type` and skips events you did not select. Options: 'All brand events' (any event); 'brand.updated' (a brand's data changed); 'brand.company.updated' (a brand's company/firmographic data changed); 'brand.claimed' (a brand was claimed by its owner); 'brand.verified' (a brand was human-reviewed by Brandfetch); 'brand.deleted' (a brand was soft-deleted, rare).",
+          "enum": [
+            "*",
+            "brand.updated",
+            "brand.company.updated",
+            "brand.claimed",
+            "brand.verified",
+            "brand.deleted"
+          ],
+          "enumNames": [
+            "All brand events",
+            "Brand updated",
+            "Brand company data updated",
+            "Brand claimed",
+            "Brand verified",
+            "Brand deleted"
+          ],
+          "title": "Event Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Add this URL as a webhook endpoint in your Brandfetch dashboard (Enterprise plan)",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Svix signing secret from your Brandfetch webhook dashboard \u2014 starts with whsec_. Used to verify inbound delivery signatures. Leave blank to skip verification (not recommended for production).",
+          "title": "Webhook Secret",
+          "ui:placeholder": "whsec_...",
+          "ui:widget": "password"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        }
+      },
+      "title": "BrandfetchReceiveWebhookConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "BrandfetchSearchConfig": {
+      "description": "Autocomplete-style brand search by name (requires the public Client ID).",
+      "properties": {
+        "operation": {
+          "const": "search_brands",
+          "default": "search_brands",
+          "title": "Search Brands",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Search",
+          "x-display-name": "Search Brands",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Brand name to search for, e.g. Nike",
+          "title": "Brand Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "BrandfetchSearchConfig",
+      "type": "object"
+    },
+    "BrandfetchThemedLogoConfig": {
+      "description": "Build a transformed Logo CDN URL with theme, size, format, and fallback options.",
+      "properties": {
+        "operation": {
+          "const": "logo_themed",
+          "default": "logo_themed",
+          "title": "Fetch Themed/Sized Logo",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Logo",
+          "x-display-name": "Fetch Themed/Sized Logo",
+          "x-is-trigger": false
+        },
+        "domain": {
+          "description": "Domain to fetch the logo for, e.g. nike.com",
+          "title": "Domain",
+          "type": "string"
+        },
+        "logo_type": {
+          "default": "logo",
+          "description": "Which asset variant to return",
+          "enum": [
+            "logo",
+            "icon",
+            "symbol"
+          ],
+          "enumNames": [
+            "Logo",
+            "Icon",
+            "Symbol"
+          ],
+          "title": "Logo Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "theme": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Color theme for the logo",
+          "enum": [
+            "",
+            "light",
+            "dark"
+          ],
+          "enumNames": [
+            "Default",
+            "Light",
+            "Dark"
+          ],
+          "title": "Theme",
+          "x-enum-searchable": true
+        },
+        "width": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Target width in pixels",
+          "title": "Width"
+        },
+        "height": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Target height in pixels",
+          "title": "Height"
+        },
+        "image_format": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Output image format",
+          "enum": [
+            "",
+            "webp",
+            "png",
+            "jpg",
+            "svg"
+          ],
+          "enumNames": [
+            "Default",
+            "WebP",
+            "PNG",
+            "JPG",
+            "SVG"
+          ],
+          "title": "Format",
+          "x-enum-searchable": true
+        },
+        "fallback": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fallback rendering when no logo exists, e.g. lettermark",
+          "title": "Fallback"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "BrandfetchThemedLogoConfig",
+      "type": "object"
+    },
+    "BrandfetchTransactionConfig": {
+      "description": "Map a raw bank/card statement descriptor to a merchant brand.",
+      "properties": {
+        "operation": {
+          "const": "identify_transaction",
+          "default": "identify_transaction",
+          "title": "Identify Brand from Transaction",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Transaction",
+          "x-display-name": "Identify Brand from Transaction",
+          "x-is-trigger": false
+        },
+        "transaction_label": {
+          "description": "Raw statement descriptor, e.g. 'SQ *COFFEE SHOP'",
+          "title": "Transaction Label",
+          "type": "string"
+        },
+        "country_code": {
+          "description": "ISO 3166-1 alpha-2 country code, e.g. US (required by the API)",
+          "title": "Country Code",
+          "type": "string"
+        }
+      },
+      "required": [
+        "transaction_label",
+        "country_code"
+      ],
+      "title": "BrandfetchTransactionConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the Brandfetch node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "get_brand": "#/$defs/BrandfetchGetBrandConfig",
+          "get_brand_by_crypto": "#/$defs/BrandfetchGetBrandByCryptoConfig",
+          "get_brand_by_domain": "#/$defs/BrandfetchGetBrandByDomainConfig",
+          "get_brand_by_isin": "#/$defs/BrandfetchGetBrandByIsinConfig",
+          "get_brand_by_ticker": "#/$defs/BrandfetchGetBrandByTickerConfig",
+          "get_context_json": "#/$defs/BrandfetchGetContextJsonConfig",
+          "get_context_markdown": "#/$defs/BrandfetchGetContextMarkdownConfig",
+          "identify_transaction": "#/$defs/BrandfetchTransactionConfig",
+          "logo_by_crypto": "#/$defs/BrandfetchLogoByCryptoConfig",
+          "logo_by_domain": "#/$defs/BrandfetchLogoByDomainConfig",
+          "logo_by_isin": "#/$defs/BrandfetchLogoByIsinConfig",
+          "logo_by_ticker": "#/$defs/BrandfetchLogoByTickerConfig",
+          "logo_themed": "#/$defs/BrandfetchThemedLogoConfig",
+          "receive_webhook": "#/$defs/BrandfetchReceiveWebhookConfig",
+          "search_brands": "#/$defs/BrandfetchSearchConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/BrandfetchGetBrandByDomainConfig"
+        },
+        {
+          "$ref": "#/$defs/BrandfetchGetBrandByTickerConfig"
+        },
+        {
+          "$ref": "#/$defs/BrandfetchGetBrandByIsinConfig"
+        },
+        {
+          "$ref": "#/$defs/BrandfetchGetBrandByCryptoConfig"
+        },
+        {
+          "$ref": "#/$defs/BrandfetchGetBrandConfig"
+        },
+        {
+          "$ref": "#/$defs/BrandfetchGetContextJsonConfig"
+        },
+        {
+          "$ref": "#/$defs/BrandfetchGetContextMarkdownConfig"
+        },
+        {
+          "$ref": "#/$defs/BrandfetchSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/BrandfetchTransactionConfig"
+        },
+        {
+          "$ref": "#/$defs/BrandfetchLogoByDomainConfig"
+        },
+        {
+          "$ref": "#/$defs/BrandfetchLogoByTickerConfig"
+        },
+        {
+          "$ref": "#/$defs/BrandfetchLogoByCryptoConfig"
+        },
+        {
+          "$ref": "#/$defs/BrandfetchLogoByIsinConfig"
+        },
+        {
+          "$ref": "#/$defs/BrandfetchThemedLogoConfig"
+        },
+        {
+          "$ref": "#/$defs/BrandfetchReceiveWebhookConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BrandfetchApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Brandfetch Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Get the full brand record (logos, colors, fonts) for nike.com",
+    "Fetch LLM-ready brand context as Markdown for a company's domain",
+    "Search brands matching a name for an autocomplete field",
+    "Identify the merchant brand behind a bank statement descriptor",
+    "Build a themed logo CDN URL for a domain"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

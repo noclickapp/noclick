@@ -1,0 +1,1504 @@
+{
+  "$defs": {
+    "ElevenLabsAPIKeyCredential": {
+      "description": "ElevenLabs API Key credential.\n\nGet your API key at: https://elevenlabs.io/app/settings\nNavigate to: Account \u2192 Profile + API Key \u2192 Generate API Key\n\nNote: API keys are tied to your subscription tier and usage limits.",
+      "properties": {
+        "credential_type": {
+          "const": "elevenlabs_api_key",
+          "default": "elevenlabs_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Your ElevenLabs API key",
+          "placeholder": "sk_...",
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "ElevenLabsAPIKeyCredential",
+      "type": "object",
+      "x-credential-instructions": "Navigate to Account \u2192 Profile + API Key \u2192 Generate API Key. Copy the generated key.",
+      "x-credential-url": "https://elevenlabs.io/app/settings"
+    },
+    "ElevenLabsAddVoiceConfig": {
+      "description": "Clone a voice from audio samples (Instant Voice Cloning)",
+      "properties": {
+        "operation": {
+          "const": "clone_voice_from_audio_samples",
+          "default": "clone_voice_from_audio_samples",
+          "title": "Clone Voice from Audio Samples",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Voice",
+          "x-creates-resource": true,
+          "x-display-name": "Clone Voice from Audio Samples",
+          "x-is-trigger": false,
+          "x-resource-id-path": "voice_id",
+          "x-resource-type": "elevenlabs_voice"
+        },
+        "name": {
+          "description": "Name for the cloned voice",
+          "placeholder": "My Custom Voice",
+          "title": "Voice Name",
+          "type": "string"
+        },
+        "files_base64": {
+          "description": "JSON array of base64 encoded audio files for cloning (e.g., [\"base64data1\", \"base64data2\"]). Provide 1-25 audio samples.",
+          "placeholder": "[\"base64audio1\", \"base64audio2\"]",
+          "title": "Audio Files (Base64 JSON Array)",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Description of the voice",
+          "title": "Description (Optional)",
+          "ui:widget": "textarea"
+        },
+        "labels": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object of labels for the voice (e.g., {\"accent\": \"american\", \"age\": \"young\"})",
+          "placeholder": "{\"accent\": \"american\"}",
+          "title": "Labels (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "name",
+        "files_base64"
+      ],
+      "title": "Add Voice (Clone)",
+      "type": "object"
+    },
+    "ElevenLabsAudioIsolationConfig": {
+      "description": "Isolate vocals from audio",
+      "properties": {
+        "operation": {
+          "const": "isolate_vocals_from_audio",
+          "default": "isolate_vocals_from_audio",
+          "title": "Isolate Vocals from Audio",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audio Generation",
+          "x-display-name": "Isolate Vocals from Audio",
+          "x-is-trigger": false
+        },
+        "audio_base64": {
+          "description": "Base64 encoded audio data to isolate vocals from",
+          "placeholder": "Base64 encoded audio...",
+          "title": "Audio Data (Base64)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "audio_base64"
+      ],
+      "title": "Audio Isolation",
+      "type": "object"
+    },
+    "ElevenLabsCreateAudioNativeConfig": {
+      "description": "Create an audio native project (embeddable audio player)",
+      "properties": {
+        "operation": {
+          "const": "create_audio_native_project",
+          "default": "create_audio_native_project",
+          "title": "Create Audio Native Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audio Native Project",
+          "x-display-name": "Create Audio Native Project",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Name for the audio native project",
+          "placeholder": "My Article Audio",
+          "title": "Project Name",
+          "type": "string"
+        },
+        "html": {
+          "description": "HTML content to convert to audio",
+          "placeholder": "<html><body>Article content...</body></html>",
+          "title": "HTML Content",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "voice_id": {
+          "description": "Select a voice or paste voice ID",
+          "title": "Voice",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste voice ID",
+            "field_name": "voice_id",
+            "placeholder": "Select a voice...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "elevenlabs_voice"
+        },
+        "model_id": {
+          "default": "eleven_multilingual_v2",
+          "enum": [
+            "eleven_multilingual_v2",
+            "eleven_turbo_v2_5",
+            "eleven_flash_v2_5"
+          ],
+          "enumNames": [
+            "Multilingual v2",
+            "Turbo v2.5",
+            "Flash v2.5"
+          ],
+          "title": "Model ID",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "auto_convert": {
+          "default": true,
+          "description": "Automatically start conversion after creation",
+          "title": "Auto Convert",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "html",
+        "voice_id"
+      ],
+      "title": "Create Audio Native Project",
+      "type": "object"
+    },
+    "ElevenLabsCreateDubbingConfig": {
+      "description": "Create a dubbing project for video/audio",
+      "properties": {
+        "operation": {
+          "const": "create_dubbing_project",
+          "default": "create_dubbing_project",
+          "title": "Create Dubbing Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Dubbing Project",
+          "x-display-name": "Create Dubbing Project",
+          "x-is-trigger": false
+        },
+        "source_url": {
+          "description": "URL of the video or audio file to dub",
+          "placeholder": "https://example.com/video.mp4",
+          "title": "Source URL",
+          "type": "string"
+        },
+        "target_lang": {
+          "description": "Target language code for dubbing (e.g., 'es', 'fr', 'de')",
+          "placeholder": "es",
+          "title": "Target Language",
+          "type": "string"
+        },
+        "source_lang": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Source language code (auto-detected if not specified)",
+          "placeholder": "en",
+          "title": "Source Language (Optional)"
+        },
+        "num_speakers": {
+          "anyOf": [
+            {
+              "maximum": 10,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of speakers in the source audio (auto-detected if not specified)",
+          "title": "Number of Speakers (Optional)"
+        },
+        "watermark": {
+          "default": true,
+          "description": "Add ElevenLabs watermark to the dubbed audio",
+          "title": "Add Watermark",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "source_url",
+        "target_lang"
+      ],
+      "title": "Create Dubbing",
+      "type": "object"
+    },
+    "ElevenLabsCreatePronunciationDictionaryConfig": {
+      "description": "Create a pronunciation dictionary from rules",
+      "properties": {
+        "operation": {
+          "const": "create_pronunciation_dictionary",
+          "default": "create_pronunciation_dictionary",
+          "title": "Create Pronunciation Dictionary",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pronunciation Dictionary",
+          "x-display-name": "Create Pronunciation Dictionary",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Name for the pronunciation dictionary",
+          "placeholder": "My Pronunciations",
+          "title": "Dictionary Name",
+          "type": "string"
+        },
+        "rules": {
+          "description": "JSON array of pronunciation rules (e.g., [{\"string_to_replace\": \"hello\", \"phoneme\": \"h\u025blo\u028a\", \"alphabet\": \"ipa\"}])",
+          "placeholder": "[{\"string_to_replace\": \"ElevenLabs\", \"phoneme\": \"\u026a\u02c8l\u025bv\u0259n l\u00e6bz\", \"alphabet\": \"ipa\"}]",
+          "title": "Pronunciation Rules (JSON Array)",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Description of the dictionary",
+          "title": "Description (Optional)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "name",
+        "rules"
+      ],
+      "title": "Create Pronunciation Dictionary",
+      "type": "object"
+    },
+    "ElevenLabsDeleteAudioNativeConfig": {
+      "description": "Delete an audio native project",
+      "properties": {
+        "operation": {
+          "const": "delete_audio_native_project",
+          "default": "delete_audio_native_project",
+          "title": "Delete Audio Native Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audio Native Project",
+          "x-display-name": "Delete Audio Native Project",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "The audio native project ID to delete",
+          "placeholder": "project_abc123",
+          "title": "Project ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "Delete Audio Native Project",
+      "type": "object"
+    },
+    "ElevenLabsDeleteDubbingConfig": {
+      "description": "Delete a dubbing project",
+      "properties": {
+        "operation": {
+          "const": "delete_dubbing_project",
+          "default": "delete_dubbing_project",
+          "title": "Delete Dubbing Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Dubbing Project",
+          "x-display-name": "Delete Dubbing Project",
+          "x-is-trigger": false
+        },
+        "dubbing_id": {
+          "description": "The dubbing project ID to delete",
+          "placeholder": "dubbing_abc123",
+          "title": "Dubbing ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dubbing_id"
+      ],
+      "title": "Delete Dubbing",
+      "type": "object"
+    },
+    "ElevenLabsDeleteHistoryItemConfig": {
+      "description": "Delete a history item",
+      "properties": {
+        "operation": {
+          "const": "delete_history_item",
+          "default": "delete_history_item",
+          "title": "Delete History Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Generated Audio History",
+          "x-display-name": "Delete History Item",
+          "x-is-trigger": false
+        },
+        "history_item_id": {
+          "description": "The history item ID to delete",
+          "placeholder": "history_abc123",
+          "title": "History Item ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "history_item_id"
+      ],
+      "title": "Delete History Item",
+      "type": "object"
+    },
+    "ElevenLabsDeletePronunciationDictionaryConfig": {
+      "description": "Delete a pronunciation dictionary",
+      "properties": {
+        "operation": {
+          "const": "delete_pronunciation_dictionary",
+          "default": "delete_pronunciation_dictionary",
+          "title": "Delete Pronunciation Dictionary",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pronunciation Dictionary",
+          "x-display-name": "Delete Pronunciation Dictionary",
+          "x-is-trigger": false
+        },
+        "dictionary_id": {
+          "description": "The pronunciation dictionary ID to delete",
+          "placeholder": "dict_abc123",
+          "title": "Dictionary ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dictionary_id"
+      ],
+      "title": "Delete Pronunciation Dictionary",
+      "type": "object"
+    },
+    "ElevenLabsDeleteVoiceConfig": {
+      "description": "Delete a custom voice",
+      "properties": {
+        "operation": {
+          "const": "delete_custom_voice",
+          "default": "delete_custom_voice",
+          "title": "Delete Custom Voice",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Voice",
+          "x-display-name": "Delete Custom Voice",
+          "x-is-trigger": false
+        },
+        "voice_id": {
+          "description": "Select a voice or paste voice ID",
+          "title": "Voice",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste voice ID",
+            "field_name": "voice_id",
+            "placeholder": "Select a voice...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "elevenlabs_voice"
+        }
+      },
+      "required": [
+        "voice_id"
+      ],
+      "title": "Delete Voice",
+      "type": "object"
+    },
+    "ElevenLabsDownloadHistoryItemsConfig": {
+      "description": "Download multiple history items",
+      "properties": {
+        "operation": {
+          "const": "download_history_items",
+          "default": "download_history_items",
+          "title": "Download History Items",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Generated Audio History",
+          "x-display-name": "Download History Items",
+          "x-is-trigger": false
+        },
+        "history_item_ids": {
+          "description": "JSON array of history item IDs to download (e.g., [\"id1\", \"id2\"])",
+          "placeholder": "[\"history_abc123\", \"history_def456\"]",
+          "title": "History Item IDs (JSON Array)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "history_item_ids"
+      ],
+      "title": "Download History Items",
+      "type": "object"
+    },
+    "ElevenLabsEditVoiceConfig": {
+      "description": "Edit voice settings and metadata",
+      "properties": {
+        "operation": {
+          "const": "edit_voice_settings",
+          "default": "edit_voice_settings",
+          "title": "Edit Voice Settings",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Voice",
+          "x-display-name": "Edit Voice Settings",
+          "x-is-trigger": false
+        },
+        "voice_id": {
+          "description": "Select a voice or paste voice ID",
+          "title": "Voice",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste voice ID",
+            "field_name": "voice_id",
+            "placeholder": "Select a voice...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "elevenlabs_voice"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Update the voice name",
+          "placeholder": "Updated Voice Name",
+          "title": "New Name (Optional)"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Update the voice description",
+          "title": "New Description (Optional)",
+          "ui:widget": "textarea"
+        },
+        "labels": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Update voice labels",
+          "placeholder": "{\"accent\": \"british\"}",
+          "title": "New Labels (JSON, Optional)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "voice_id"
+      ],
+      "title": "Edit Voice",
+      "type": "object"
+    },
+    "ElevenLabsGetAudioNativeConfig": {
+      "description": "Get audio native project details",
+      "properties": {
+        "operation": {
+          "const": "get_audio_native_project_details",
+          "default": "get_audio_native_project_details",
+          "title": "Get Audio Native Project Details",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audio Native Project",
+          "x-display-name": "Get Audio Native Project Details",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "The audio native project ID to retrieve",
+          "placeholder": "project_abc123",
+          "title": "Project ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "Get Audio Native Project",
+      "type": "object"
+    },
+    "ElevenLabsGetDubbingConfig": {
+      "description": "Get dubbing project status and metadata",
+      "properties": {
+        "operation": {
+          "const": "get_dubbing_project_status",
+          "default": "get_dubbing_project_status",
+          "title": "Get Dubbing Project Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Dubbing Project",
+          "x-display-name": "Get Dubbing Project Status",
+          "x-is-trigger": false
+        },
+        "dubbing_id": {
+          "description": "The dubbing project ID to retrieve",
+          "placeholder": "dubbing_abc123",
+          "title": "Dubbing ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dubbing_id"
+      ],
+      "title": "Get Dubbing",
+      "type": "object"
+    },
+    "ElevenLabsGetHistoryAudioConfig": {
+      "description": "Get audio file from history item",
+      "properties": {
+        "operation": {
+          "const": "get_history_item_audio",
+          "default": "get_history_item_audio",
+          "title": "Get History Item Audio",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Generated Audio History",
+          "x-display-name": "Get History Item Audio",
+          "x-is-trigger": false
+        },
+        "history_item_id": {
+          "description": "The history item ID to get audio from",
+          "placeholder": "history_abc123",
+          "title": "History Item ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "history_item_id"
+      ],
+      "title": "Get History Audio",
+      "type": "object"
+    },
+    "ElevenLabsGetHistoryConfig": {
+      "description": "List all generated audio history",
+      "properties": {
+        "operation": {
+          "const": "list_generated_audio_history",
+          "default": "list_generated_audio_history",
+          "title": "List Generated Audio History",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Generated Audio History",
+          "x-display-name": "List Generated Audio History",
+          "x-is-trigger": false
+        },
+        "page_size": {
+          "default": 100,
+          "description": "Number of history items to retrieve per page",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "start_after_history_item_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination: Start after this history item ID",
+          "placeholder": "history_abc123",
+          "title": "Start After ID (Optional)"
+        },
+        "voice_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only show history for this voice",
+          "placeholder": "21m00Tcm4TlvDq8ikWAM",
+          "title": "Filter by Voice ID (Optional)"
+        }
+      },
+      "title": "Get History",
+      "type": "object"
+    },
+    "ElevenLabsGetHistoryItemConfig": {
+      "description": "Get a specific history item by ID",
+      "properties": {
+        "operation": {
+          "const": "get_history_item_details",
+          "default": "get_history_item_details",
+          "title": "Get History Item Details",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Generated Audio History",
+          "x-display-name": "Get History Item Details",
+          "x-is-trigger": false
+        },
+        "history_item_id": {
+          "description": "The history item ID to retrieve",
+          "placeholder": "history_abc123",
+          "title": "History Item ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "history_item_id"
+      ],
+      "title": "Get History Item",
+      "type": "object"
+    },
+    "ElevenLabsGetPronunciationDictionaryConfig": {
+      "description": "Get a pronunciation dictionary by ID",
+      "properties": {
+        "operation": {
+          "const": "get_pronunciation_dictionary_by_id",
+          "default": "get_pronunciation_dictionary_by_id",
+          "title": "Get Pronunciation Dictionary by Id",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pronunciation Dictionary",
+          "x-display-name": "Get Pronunciation Dictionary by Id",
+          "x-is-trigger": false
+        },
+        "dictionary_id": {
+          "description": "The pronunciation dictionary ID to retrieve",
+          "placeholder": "dict_abc123",
+          "title": "Dictionary ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dictionary_id"
+      ],
+      "title": "Get Pronunciation Dictionary",
+      "type": "object"
+    },
+    "ElevenLabsGetSubscriptionConfig": {
+      "description": "Get subscription information and limits",
+      "properties": {
+        "operation": {
+          "const": "get_subscription_information",
+          "default": "get_subscription_information",
+          "title": "Get Subscription Information",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Subscription Information",
+          "x-is-trigger": false
+        }
+      },
+      "title": "Get Subscription",
+      "type": "object"
+    },
+    "ElevenLabsGetUsageStatsConfig": {
+      "description": "Get character usage statistics",
+      "properties": {
+        "operation": {
+          "const": "get_character_usage_stats",
+          "default": "get_character_usage_stats",
+          "title": "Get Character Usage Stats",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Character Usage Stats",
+          "x-is-trigger": false
+        },
+        "start_unix": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start of time range in Unix timestamp (defaults to beginning of current billing period)",
+          "placeholder": "1704067200",
+          "title": "Start Time (Unix, Optional)"
+        },
+        "end_unix": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End of time range in Unix timestamp (defaults to current time)",
+          "placeholder": "1704153600",
+          "title": "End Time (Unix, Optional)"
+        }
+      },
+      "title": "Get Usage Statistics",
+      "type": "object"
+    },
+    "ElevenLabsGetUserInfoConfig": {
+      "description": "Get user account information",
+      "properties": {
+        "operation": {
+          "const": "get_user_account_information",
+          "default": "get_user_account_information",
+          "title": "Get User Account Information",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get User Account Information",
+          "x-is-trigger": false
+        }
+      },
+      "title": "Get User Info",
+      "type": "object"
+    },
+    "ElevenLabsGetVoiceConfig": {
+      "description": "Get voice details by ID",
+      "properties": {
+        "operation": {
+          "const": "get_voice_by_id",
+          "default": "get_voice_by_id",
+          "title": "Get Voice by Id",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Voice",
+          "x-display-name": "Get Voice by Id",
+          "x-is-trigger": false
+        },
+        "voice_id": {
+          "description": "Select a voice or paste voice ID",
+          "title": "Voice",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste voice ID",
+            "field_name": "voice_id",
+            "placeholder": "Select a voice...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "elevenlabs_voice"
+        },
+        "with_settings": {
+          "default": true,
+          "description": "Include voice settings in the response",
+          "title": "Include Settings",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "voice_id"
+      ],
+      "title": "Get Voice",
+      "type": "object"
+    },
+    "ElevenLabsListModelsConfig": {
+      "description": "List all available AI models",
+      "properties": {
+        "operation": {
+          "const": "list_available_ai_models",
+          "default": "list_available_ai_models",
+          "title": "List Available Ai Models",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Model",
+          "x-display-name": "List Available Ai Models",
+          "x-is-trigger": false
+        }
+      },
+      "title": "List Models",
+      "type": "object"
+    },
+    "ElevenLabsListPronunciationDictionariesConfig": {
+      "description": "List all pronunciation dictionaries",
+      "properties": {
+        "operation": {
+          "const": "list_pronunciation_dictionaries",
+          "default": "list_pronunciation_dictionaries",
+          "title": "List Pronunciation Dictionaries",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pronunciation Dictionary",
+          "x-display-name": "List Pronunciation Dictionaries",
+          "x-is-trigger": false
+        },
+        "page_size": {
+          "default": 100,
+          "description": "Number of dictionaries to retrieve",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "title": "List Pronunciation Dictionaries",
+      "type": "object"
+    },
+    "ElevenLabsListVoicesConfig": {
+      "description": "List all available voices",
+      "properties": {
+        "operation": {
+          "const": "list_available_voices",
+          "default": "list_available_voices",
+          "title": "List Available Voices",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Voice",
+          "x-display-name": "List Available Voices",
+          "x-is-trigger": false
+        },
+        "show_legacy": {
+          "default": false,
+          "description": "Include legacy voices in the results",
+          "title": "Show Legacy Voices",
+          "type": "boolean"
+        }
+      },
+      "title": "List Voices",
+      "type": "object"
+    },
+    "ElevenLabsSoundEffectsConfig": {
+      "description": "Generate sound effects from text description",
+      "properties": {
+        "operation": {
+          "const": "generate_sound_effects_from_text",
+          "default": "generate_sound_effects_from_text",
+          "title": "Generate Sound Effects from Text",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audio Generation",
+          "x-display-name": "Generate Sound Effects from Text",
+          "x-is-trigger": false
+        },
+        "text": {
+          "description": "Text description of the sound effect to generate",
+          "placeholder": "A dog barking loudly",
+          "title": "Sound Description",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "duration_seconds": {
+          "anyOf": [
+            {
+              "maximum": 30.0,
+              "minimum": 0.5,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Duration of the sound effect (0.5-30 seconds). If not specified, AI will determine optimal duration.",
+          "title": "Duration (Seconds, Optional)"
+        },
+        "prompt_influence": {
+          "default": 0.3,
+          "description": "How closely to follow the prompt (0-1). Higher values stick closer to the description.",
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Prompt Influence",
+          "type": "number"
+        },
+        "enable_looping": {
+          "default": false,
+          "description": "Generate a sound effect that loops seamlessly (only for eleven_text_to_sound_v2 model)",
+          "title": "Enable Seamless Looping",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "Generate Sound Effect",
+      "type": "object"
+    },
+    "ElevenLabsSpeechToSpeechConfig": {
+      "description": "Convert audio using a voice (voice changer)",
+      "properties": {
+        "operation": {
+          "const": "convert_audio_using_voice",
+          "default": "convert_audio_using_voice",
+          "title": "Convert Audio Using Voice",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audio Generation",
+          "x-display-name": "Convert Audio Using Voice",
+          "x-is-trigger": false
+        },
+        "voice_id": {
+          "description": "Select a voice or paste voice ID",
+          "title": "Voice",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste voice ID",
+            "field_name": "voice_id",
+            "placeholder": "Select a voice...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "elevenlabs_voice"
+        },
+        "audio_base64": {
+          "description": "Base64 encoded audio data to convert",
+          "placeholder": "Base64 encoded audio...",
+          "title": "Audio Data (Base64)",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "model_id": {
+          "default": "eleven_english_sts_v2",
+          "description": "Speech-to-speech model",
+          "enum": [
+            "eleven_english_sts_v2",
+            "eleven_multilingual_sts_v2"
+          ],
+          "enumNames": [
+            "English STS v2",
+            "Multilingual STS v2"
+          ],
+          "title": "Model ID",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "voice_id",
+        "audio_base64"
+      ],
+      "title": "Speech to Speech (Voice Changer)",
+      "type": "object"
+    },
+    "ElevenLabsSpeechToTextConfig": {
+      "description": "Transcribe audio to text",
+      "properties": {
+        "operation": {
+          "const": "transcribe_audio_to_text",
+          "default": "transcribe_audio_to_text",
+          "title": "Transcribe Audio to Text",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audio Generation",
+          "x-display-name": "Transcribe Audio to Text",
+          "x-is-trigger": false
+        },
+        "audio_base64": {
+          "description": "Base64 encoded audio data to transcribe",
+          "placeholder": "Base64 encoded audio...",
+          "title": "Audio Data (Base64)",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "model_id": {
+          "default": "scribe_v2",
+          "description": "Speech-to-text model",
+          "enum": [
+            "scribe_v2"
+          ],
+          "enumNames": [
+            "Scribe v2 (90+ languages, word timestamps)"
+          ],
+          "title": "Model ID",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Language code for transcription (auto-detect if not specified)",
+          "placeholder": "en",
+          "title": "Language Code (Optional)"
+        }
+      },
+      "required": [
+        "audio_base64"
+      ],
+      "title": "Speech to Text",
+      "type": "object"
+    },
+    "ElevenLabsTextToSpeechConfig": {
+      "description": "Convert text to speech",
+      "properties": {
+        "operation": {
+          "const": "convert_text_to_speech",
+          "default": "convert_text_to_speech",
+          "title": "Convert Text to Speech",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audio Generation",
+          "x-display-name": "Convert Text to Speech",
+          "x-is-trigger": false
+        },
+        "voice_id": {
+          "description": "Select a voice or paste voice ID",
+          "title": "Voice",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste voice ID",
+            "field_name": "voice_id",
+            "placeholder": "Select a voice...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "elevenlabs_voice"
+        },
+        "text": {
+          "description": "The text to convert to speech (up to 5000 characters for standard models)",
+          "placeholder": "Enter text to convert to speech...",
+          "title": "Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "model_id": {
+          "default": "eleven_multilingual_v2",
+          "description": "The model to use for synthesis",
+          "enum": [
+            "eleven_multilingual_v2",
+            "eleven_turbo_v2_5",
+            "eleven_flash_v2_5",
+            "eleven_turbo_v2",
+            "eleven_monolingual_v1"
+          ],
+          "enumNames": [
+            "Multilingual v2 (Highest quality, 32 languages)",
+            "Turbo v2.5 (Fast, high quality, 32 languages)",
+            "Flash v2.5 (Ultra-low latency ~75ms)",
+            "Turbo v2 (Balanced speed/quality)",
+            "Monolingual v1 (English only, legacy)"
+          ],
+          "title": "Model ID",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "stability": {
+          "default": 0.5,
+          "description": "Stability of the voice (0-1). Higher values make output more consistent, lower adds variation",
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Stability",
+          "type": "number"
+        },
+        "similarity_boost": {
+          "default": 0.75,
+          "description": "How closely to match the original voice (0-1). Higher values stick closer to the voice",
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Similarity Boost",
+          "type": "number"
+        },
+        "style": {
+          "anyOf": [
+            {
+              "maximum": 1.0,
+              "minimum": 0.0,
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exaggerate the style of the voice (0-1). Higher values amplify the voice's characteristics",
+          "title": "Style Exaggeration (Optional)"
+        },
+        "use_speaker_boost": {
+          "default": true,
+          "description": "Boost the similarity to the original speaker (recommended)",
+          "title": "Speaker Boost",
+          "type": "boolean"
+        },
+        "output_format": {
+          "default": "mp3_44100_128",
+          "description": "Audio output format and quality",
+          "enum": [
+            "mp3_44100_128",
+            "mp3_44100_192",
+            "pcm_16000",
+            "pcm_22050",
+            "pcm_24000",
+            "pcm_44100",
+            "ulaw_8000"
+          ],
+          "enumNames": [
+            "MP3 44.1kHz 128kbps",
+            "MP3 44.1kHz 192kbps (Higher quality)",
+            "PCM 16kHz (Raw)",
+            "PCM 22.05kHz (Raw)",
+            "PCM 24kHz (Raw)",
+            "PCM 44.1kHz (Raw)",
+            "\u03bc-law 8kHz (Telephony)"
+          ],
+          "title": "Output Format",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "voice_id",
+        "text"
+      ],
+      "title": "Text to Speech",
+      "type": "object"
+    },
+    "ElevenLabsTextToSpeechStreamConfig": {
+      "description": "Stream text to speech in real-time",
+      "properties": {
+        "operation": {
+          "const": "stream_text_to_speech_realtime",
+          "default": "stream_text_to_speech_realtime",
+          "title": "Stream Text to Speech Realtime",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audio Generation",
+          "x-display-name": "Stream Text to Speech Realtime",
+          "x-is-trigger": false
+        },
+        "voice_id": {
+          "description": "Select a voice or paste voice ID",
+          "title": "Voice",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste voice ID",
+            "field_name": "voice_id",
+            "placeholder": "Select a voice...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "elevenlabs_voice"
+        },
+        "text": {
+          "description": "The text to convert to speech",
+          "title": "Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "model_id": {
+          "default": "eleven_flash_v2_5",
+          "description": "The model to use (flash recommended for streaming)",
+          "enum": [
+            "eleven_flash_v2_5",
+            "eleven_turbo_v2_5",
+            "eleven_multilingual_v2"
+          ],
+          "enumNames": [
+            "Flash v2.5 (Ultra-low latency)",
+            "Turbo v2.5 (Fast)",
+            "Multilingual v2 (Highest quality)"
+          ],
+          "title": "Model ID",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "stability": {
+          "default": 0.5,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Stability",
+          "type": "number"
+        },
+        "similarity_boost": {
+          "default": 0.75,
+          "maximum": 1.0,
+          "minimum": 0.0,
+          "title": "Similarity Boost",
+          "type": "number"
+        }
+      },
+      "required": [
+        "voice_id",
+        "text"
+      ],
+      "title": "Text to Speech (Streaming)",
+      "type": "object"
+    },
+    "ElevenLabsTextToSpeechWithTimestampsConfig": {
+      "description": "Convert text to speech with word-level timestamps",
+      "properties": {
+        "operation": {
+          "const": "convert_text_to_speech_with_timestamps",
+          "default": "convert_text_to_speech_with_timestamps",
+          "title": "Convert Text to Speech with Timestamps",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audio Generation",
+          "x-display-name": "Convert Text to Speech with Timestamps",
+          "x-is-trigger": false
+        },
+        "voice_id": {
+          "description": "Select a voice or paste voice ID",
+          "title": "Voice",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste voice ID",
+            "field_name": "voice_id",
+            "placeholder": "Select a voice...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "elevenlabs_voice"
+        },
+        "text": {
+          "description": "The text to convert to speech",
+          "title": "Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "model_id": {
+          "default": "eleven_multilingual_v2",
+          "enum": [
+            "eleven_multilingual_v2",
+            "eleven_turbo_v2_5"
+          ],
+          "enumNames": [
+            "Multilingual v2",
+            "Turbo v2.5"
+          ],
+          "title": "Model ID",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "voice_id",
+        "text"
+      ],
+      "title": "Text to Speech with Timestamps",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for ElevenLabs automation node",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "clone_voice_from_audio_samples": "#/$defs/ElevenLabsAddVoiceConfig",
+          "convert_audio_using_voice": "#/$defs/ElevenLabsSpeechToSpeechConfig",
+          "convert_text_to_speech": "#/$defs/ElevenLabsTextToSpeechConfig",
+          "convert_text_to_speech_with_timestamps": "#/$defs/ElevenLabsTextToSpeechWithTimestampsConfig",
+          "create_audio_native_project": "#/$defs/ElevenLabsCreateAudioNativeConfig",
+          "create_dubbing_project": "#/$defs/ElevenLabsCreateDubbingConfig",
+          "create_pronunciation_dictionary": "#/$defs/ElevenLabsCreatePronunciationDictionaryConfig",
+          "delete_audio_native_project": "#/$defs/ElevenLabsDeleteAudioNativeConfig",
+          "delete_custom_voice": "#/$defs/ElevenLabsDeleteVoiceConfig",
+          "delete_dubbing_project": "#/$defs/ElevenLabsDeleteDubbingConfig",
+          "delete_history_item": "#/$defs/ElevenLabsDeleteHistoryItemConfig",
+          "delete_pronunciation_dictionary": "#/$defs/ElevenLabsDeletePronunciationDictionaryConfig",
+          "download_history_items": "#/$defs/ElevenLabsDownloadHistoryItemsConfig",
+          "edit_voice_settings": "#/$defs/ElevenLabsEditVoiceConfig",
+          "generate_sound_effects_from_text": "#/$defs/ElevenLabsSoundEffectsConfig",
+          "get_audio_native_project_details": "#/$defs/ElevenLabsGetAudioNativeConfig",
+          "get_character_usage_stats": "#/$defs/ElevenLabsGetUsageStatsConfig",
+          "get_dubbing_project_status": "#/$defs/ElevenLabsGetDubbingConfig",
+          "get_history_item_audio": "#/$defs/ElevenLabsGetHistoryAudioConfig",
+          "get_history_item_details": "#/$defs/ElevenLabsGetHistoryItemConfig",
+          "get_pronunciation_dictionary_by_id": "#/$defs/ElevenLabsGetPronunciationDictionaryConfig",
+          "get_subscription_information": "#/$defs/ElevenLabsGetSubscriptionConfig",
+          "get_user_account_information": "#/$defs/ElevenLabsGetUserInfoConfig",
+          "get_voice_by_id": "#/$defs/ElevenLabsGetVoiceConfig",
+          "isolate_vocals_from_audio": "#/$defs/ElevenLabsAudioIsolationConfig",
+          "list_available_ai_models": "#/$defs/ElevenLabsListModelsConfig",
+          "list_available_voices": "#/$defs/ElevenLabsListVoicesConfig",
+          "list_generated_audio_history": "#/$defs/ElevenLabsGetHistoryConfig",
+          "list_pronunciation_dictionaries": "#/$defs/ElevenLabsListPronunciationDictionariesConfig",
+          "stream_text_to_speech_realtime": "#/$defs/ElevenLabsTextToSpeechStreamConfig",
+          "transcribe_audio_to_text": "#/$defs/ElevenLabsSpeechToTextConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ElevenLabsTextToSpeechConfig"
+        },
+        {
+          "$ref": "#/$defs/ElevenLabsTextToSpeechStreamConfig"
+        },
+        {
+          "$ref": "#/$defs/ElevenLabsTextToSpeechWithTimestampsConfig"
+        },
+        {
+          "$ref": "#/$defs/ElevenLabsSpeechToSpeechConfig"
+        },
+        {
+          "$ref": "#/$defs/ElevenLabsSpeechToTextConfig"
+        },
+        {
+          "$ref": "#/$defs/ElevenLabsListVoicesConfig"
+        },
+        {
+          "$ref": "#/$defs/ElevenLabsGetVoiceConfig"
+        },
+        {
+          "$ref": "#/$defs/ElevenLabsAddVoiceConfig"
+        },
+        {
+          "$ref": "#/$defs/ElevenLabsEditVoiceConfig"
+        },
+        {
+          "$ref": "#/$defs/ElevenLabsDeleteVoiceConfig"
+        },
+        {
+          "$ref": "#/$defs/ElevenLabsSoundEffectsConfig"
+        },
+        {
+          "$ref": "#/$defs/ElevenLabsAudioIsolationConfig"
+        },
+        {
+          "$ref": "#/$defs/ElevenLabsCreateDubbingConfig"
+        },
+        {
+          "$ref": "#/$defs/ElevenLabsGetDubbingConfig"
+        },
+        {
+          "$ref": "#/$defs/ElevenLabsDeleteDubbingConfig"
+        },
+        {
+          "$ref": "#/$defs/ElevenLabsGetHistoryConfig"
+        },
+        {
+          "$ref": "#/$defs/ElevenLabsGetHistoryItemConfig"
+        },
+        {
+          "$ref": "#/$defs/ElevenLabsDeleteHistoryItemConfig"
+        },
+        {
+          "$ref": "#/$defs/ElevenLabsGetHistoryAudioConfig"
+        },
+        {
+          "$ref": "#/$defs/ElevenLabsDownloadHistoryItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/ElevenLabsListPronunciationDictionariesConfig"
+        },
+        {
+          "$ref": "#/$defs/ElevenLabsGetPronunciationDictionaryConfig"
+        },
+        {
+          "$ref": "#/$defs/ElevenLabsCreatePronunciationDictionaryConfig"
+        },
+        {
+          "$ref": "#/$defs/ElevenLabsDeletePronunciationDictionaryConfig"
+        },
+        {
+          "$ref": "#/$defs/ElevenLabsCreateAudioNativeConfig"
+        },
+        {
+          "$ref": "#/$defs/ElevenLabsGetAudioNativeConfig"
+        },
+        {
+          "$ref": "#/$defs/ElevenLabsDeleteAudioNativeConfig"
+        },
+        {
+          "$ref": "#/$defs/ElevenLabsListModelsConfig"
+        },
+        {
+          "$ref": "#/$defs/ElevenLabsGetUserInfoConfig"
+        },
+        {
+          "$ref": "#/$defs/ElevenLabsGetSubscriptionConfig"
+        },
+        {
+          "$ref": "#/$defs/ElevenLabsGetUsageStatsConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ElevenLabsAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Elevenlabs Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Convert customer support FAQs to speech in 5 languages",
+    "Clone voice from audio samples and use for announcements",
+    "Transcribe podcast audio with word-level timestamps",
+    "Generate realistic sound effects for video ads",
+    "Create embeddable audio player for blog articles",
+    "Dub video to Spanish preserving original voice tone",
+    "Get subscription limit and character usage statistics"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

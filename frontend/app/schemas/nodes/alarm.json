@@ -1,0 +1,52 @@
+{
+  "$defs": {
+    "AlarmConfig": {
+      "description": "Alarm config with viewer widget for inspecting active alarms.",
+      "properties": {
+        "active_alarms": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Active Alarms",
+          "ui:widget": "alarm_viewer"
+        }
+      },
+      "title": "AlarmConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for Alarm node (no credentials needed).",
+  "properties": {
+    "config": {
+      "$ref": "#/$defs/AlarmConfig",
+      "description": "Node-specific configuration"
+    },
+    "credentials": {
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials",
+      "type": "null"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Alarm Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Test schedule_alarm countdown timer",
+    "Check list_alarms to see scheduled tasks",
+    "Cancel an alarm by schedule_id",
+    "Update alarm message before it fires",
+    "Set up recurring cron schedule",
+    "Create alarm for specific datetime",
+    "Disable and re-enable existing alarm"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

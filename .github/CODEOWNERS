@@ -1,0 +1,6 @@
+# Default review ownership for the community repository.
+* @dhruvyad @neo-noclick
+
+/.github/ @dhruvyad @neo-noclick
+/infra/supabase/migrations/ @dhruvyad @neo-noclick
+/SECURITY.md @dhruvyad @neo-noclick

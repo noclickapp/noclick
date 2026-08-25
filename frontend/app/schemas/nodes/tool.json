@@ -1,0 +1,120 @@
+{
+  "$defs": {
+    "ToolConfig": {
+      "description": "Configuration for a workflow tool definition.",
+      "properties": {
+        "tool_name": {
+          "description": "Unique identifier for this tool (used in function calls)",
+          "maxLength": 64,
+          "minLength": 1,
+          "pattern": "^[a-zA-Z_][a-zA-Z0-9_]*$",
+          "title": "Tool Name",
+          "type": "string"
+        },
+        "tool_description": {
+          "description": "Description shown to the LLM explaining what this tool does",
+          "maxLength": 1024,
+          "minLength": 1,
+          "title": "Tool Description",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "parameters": {
+          "description": "Parameters that the LLM can pass to this tool",
+          "items": {
+            "$ref": "#/$defs/ToolParameter"
+          },
+          "title": "Parameters",
+          "type": "array"
+        }
+      },
+      "required": [
+        "tool_name",
+        "tool_description"
+      ],
+      "title": "ToolConfig",
+      "type": "object"
+    },
+    "ToolParameter": {
+      "description": "Definition of a single tool parameter.",
+      "properties": {
+        "name": {
+          "description": "Name of the parameter (must be valid identifier)",
+          "minLength": 1,
+          "pattern": "^[a-zA-Z_][a-zA-Z0-9_]*$",
+          "title": "Parameter Name",
+          "type": "string"
+        },
+        "type": {
+          "default": "string",
+          "description": "Data type of the parameter",
+          "enum": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "description": {
+          "default": "",
+          "description": "Description shown to the LLM",
+          "title": "Description",
+          "type": "string"
+        },
+        "required": {
+          "default": true,
+          "description": "Whether this parameter is required",
+          "title": "Required",
+          "type": "boolean"
+        },
+        "default": {
+          "anyOf": [
+            {},
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Default Value",
+          "description": "Default value if not provided"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "ToolParameter",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for Tool node (no credentials needed).",
+  "properties": {
+    "config": {
+      "$ref": "#/$defs/ToolConfig",
+      "description": "Node-specific configuration"
+    },
+    "credentials": {
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials",
+      "type": "null"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Tool Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Rename tool to reflect its purpose",
+    "Improve description to be more helpful to the LLM",
+    "Add a required parameter",
+    "Make an optional parameter required",
+    "Add default value for optional parameter",
+    "Change parameter type to array",
+    "Add validation description to parameters"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

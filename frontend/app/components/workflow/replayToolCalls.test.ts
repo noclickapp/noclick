@@ -1,7 +1,7 @@
 // Unit tests for toReplayToolCalls — the mapper that turns an agent response
-// run's embedded `tool_calls` package into ReplayToolCall rows. A warm (daemon)
-// agent's tool calls only exist in this package (the execution-detail query
-// can't find them), so this mapping is the sole source feeding the popup.
+// run's embedded `tool_calls` package into ReplayToolCall rows. Some runtimes
+// attach calls only to this package, so the mapping is a first-class source for
+// the popup.
 
 import { describe, it, expect } from 'vitest';
 import { toReplayToolCalls } from './ReplayToolCallsPanel';

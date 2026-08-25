@@ -1,0 +1,1587 @@
+{
+  "$defs": {
+    "GoogleMeetCreateSpaceConfig": {
+      "description": "Create a new meeting space; returns the shareable meeting URI and code.",
+      "properties": {
+        "operation": {
+          "const": "create_space",
+          "default": "create_space",
+          "title": "Create Meeting Space",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Spaces",
+          "x-display-name": "Create Meeting Space",
+          "x-is-trigger": false
+        },
+        "access_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Who can join without knocking",
+          "enum": [
+            "",
+            "OPEN",
+            "TRUSTED",
+            "RESTRICTED"
+          ],
+          "enumNames": [
+            "Default",
+            "Open (anyone with the link)",
+            "Trusted (same org)",
+            "Restricted (invited only)"
+          ],
+          "title": "Access Type",
+          "x-enum-searchable": true
+        },
+        "entry_point_access": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Which clients can be used to join",
+          "enum": [
+            "",
+            "ALL",
+            "CREATOR_APP_ONLY"
+          ],
+          "enumNames": [
+            "Default",
+            "All clients",
+            "Creator app only"
+          ],
+          "title": "Entry Point Access",
+          "x-enum-searchable": true
+        },
+        "moderation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether the host has moderation controls on",
+          "enum": [
+            "",
+            "ON",
+            "OFF"
+          ],
+          "enumNames": [
+            "Default",
+            "On",
+            "Off"
+          ],
+          "title": "Moderation",
+          "x-enum-searchable": true
+        },
+        "auto_recording": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Automatically record the meeting (host must be a Workspace user with recording enabled)",
+          "enum": [
+            "",
+            "ON",
+            "OFF"
+          ],
+          "enumNames": [
+            "Default",
+            "On",
+            "Off"
+          ],
+          "title": "Auto Recording",
+          "x-enum-searchable": true
+        },
+        "auto_transcription": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Automatically generate a transcript of the meeting",
+          "enum": [
+            "",
+            "ON",
+            "OFF"
+          ],
+          "enumNames": [
+            "Default",
+            "On",
+            "Off"
+          ],
+          "title": "Auto Transcription",
+          "x-enum-searchable": true
+        },
+        "auto_smart_notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Automatically generate Gemini smart notes (meeting summary)",
+          "enum": [
+            "",
+            "ON",
+            "OFF"
+          ],
+          "enumNames": [
+            "Default",
+            "On",
+            "Off"
+          ],
+          "title": "Auto Smart Notes",
+          "x-enum-searchable": true
+        },
+        "chat_restriction": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Who can send chat messages (requires moderation On)",
+          "enum": [
+            "",
+            "HOSTS_ONLY",
+            "NO_RESTRICTION"
+          ],
+          "enumNames": [
+            "Default",
+            "Hosts only",
+            "No restriction"
+          ],
+          "title": "Chat Restriction",
+          "x-enum-searchable": true
+        },
+        "reaction_restriction": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Who can send reactions (requires moderation On)",
+          "enum": [
+            "",
+            "HOSTS_ONLY",
+            "NO_RESTRICTION"
+          ],
+          "enumNames": [
+            "Default",
+            "Hosts only",
+            "No restriction"
+          ],
+          "title": "Reaction Restriction",
+          "x-enum-searchable": true
+        },
+        "present_restriction": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Who can present/share their screen (requires moderation On)",
+          "enum": [
+            "",
+            "HOSTS_ONLY",
+            "NO_RESTRICTION"
+          ],
+          "enumNames": [
+            "Default",
+            "Hosts only",
+            "No restriction"
+          ],
+          "title": "Present Restriction",
+          "x-enum-searchable": true
+        },
+        "default_join_as_viewer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether attendees join as viewers by default (requires moderation On)",
+          "enum": [
+            "",
+            "ON",
+            "OFF"
+          ],
+          "enumNames": [
+            "Default",
+            "On",
+            "Off"
+          ],
+          "title": "Default Join As Viewer",
+          "x-enum-searchable": true
+        }
+      },
+      "title": "GoogleMeetCreateSpaceConfig",
+      "type": "object"
+    },
+    "GoogleMeetEndActiveConferenceConfig": {
+      "description": "End the conference currently active in a space (removes all participants).",
+      "properties": {
+        "operation": {
+          "const": "end_active_conference",
+          "default": "end_active_conference",
+          "title": "End Active Conference",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Spaces",
+          "x-display-name": "End Active Conference",
+          "x-is-trigger": false
+        },
+        "space_name": {
+          "description": "Space resource name 'spaces/{space}' or the {space} id whose active conference to end",
+          "title": "Space",
+          "type": "string"
+        }
+      },
+      "required": [
+        "space_name"
+      ],
+      "title": "GoogleMeetEndActiveConferenceConfig",
+      "type": "object"
+    },
+    "GoogleMeetGetConferenceRecordConfig": {
+      "description": "Get a single past-meeting conference record.",
+      "properties": {
+        "operation": {
+          "const": "get_conference_record",
+          "default": "get_conference_record",
+          "title": "Get Conference Record",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Conference Records",
+          "x-display-name": "Get Conference Record",
+          "x-is-trigger": false
+        },
+        "conference_record_name": {
+          "description": "Resource name 'conferenceRecords/{conference_record}' or the {conference_record} id",
+          "title": "Conference Record",
+          "type": "string"
+        }
+      },
+      "required": [
+        "conference_record_name"
+      ],
+      "title": "GoogleMeetGetConferenceRecordConfig",
+      "type": "object"
+    },
+    "GoogleMeetGetParticipantConfig": {
+      "description": "Get a single participant of a conference record.",
+      "properties": {
+        "operation": {
+          "const": "get_participant",
+          "default": "get_participant",
+          "title": "Get Participant",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Participants",
+          "x-display-name": "Get Participant",
+          "x-is-trigger": false
+        },
+        "participant_name": {
+          "description": "Full resource name 'conferenceRecords/{record}/participants/{participant}'",
+          "title": "Participant",
+          "type": "string"
+        }
+      },
+      "required": [
+        "participant_name"
+      ],
+      "title": "GoogleMeetGetParticipantConfig",
+      "type": "object"
+    },
+    "GoogleMeetGetParticipantSessionConfig": {
+      "description": "Get one join/leave session for a participant.",
+      "properties": {
+        "operation": {
+          "const": "get_participant_session",
+          "default": "get_participant_session",
+          "title": "Get Participant Session",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Participant Sessions",
+          "x-display-name": "Get Participant Session",
+          "x-is-trigger": false
+        },
+        "participant_session_name": {
+          "description": "Full resource name 'conferenceRecords/{record}/participants/{participant}/participantSessions/{session}'",
+          "title": "Participant Session",
+          "type": "string"
+        }
+      },
+      "required": [
+        "participant_session_name"
+      ],
+      "title": "GoogleMeetGetParticipantSessionConfig",
+      "type": "object"
+    },
+    "GoogleMeetGetRecordingConfig": {
+      "description": "Get a recording's metadata and Drive file reference.",
+      "properties": {
+        "operation": {
+          "const": "get_recording",
+          "default": "get_recording",
+          "title": "Get Recording",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Recordings",
+          "x-display-name": "Get Recording",
+          "x-is-trigger": false
+        },
+        "recording_name": {
+          "description": "Full resource name 'conferenceRecords/{record}/recordings/{recording}'",
+          "title": "Recording",
+          "type": "string"
+        }
+      },
+      "required": [
+        "recording_name"
+      ],
+      "title": "GoogleMeetGetRecordingConfig",
+      "type": "object"
+    },
+    "GoogleMeetGetSmartNotesConfig": {
+      "description": "Get a smart-notes (Gemini summary) artifact's metadata and Docs reference.",
+      "properties": {
+        "operation": {
+          "const": "get_smart_notes",
+          "default": "get_smart_notes",
+          "title": "Get Smart Notes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Smart Notes",
+          "x-display-name": "Get Smart Notes",
+          "x-is-trigger": false
+        },
+        "smart_notes_name": {
+          "description": "Full resource name 'conferenceRecords/{record}/smartNotes/{smart_notes}'",
+          "title": "Smart Notes",
+          "type": "string"
+        }
+      },
+      "required": [
+        "smart_notes_name"
+      ],
+      "title": "GoogleMeetGetSmartNotesConfig",
+      "type": "object"
+    },
+    "GoogleMeetGetSpaceConfig": {
+      "description": "Get a meeting space by resource name (spaces/{space}) or meeting code.",
+      "properties": {
+        "operation": {
+          "const": "get_space",
+          "default": "get_space",
+          "title": "Get Meeting Space",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Spaces",
+          "x-display-name": "Get Meeting Space",
+          "x-is-trigger": false
+        },
+        "space_name": {
+          "description": "Space resource name 'spaces/{space}', the {space} id, or the meeting code",
+          "title": "Space",
+          "type": "string"
+        }
+      },
+      "required": [
+        "space_name"
+      ],
+      "title": "GoogleMeetGetSpaceConfig",
+      "type": "object"
+    },
+    "GoogleMeetGetTranscriptConfig": {
+      "description": "Get a transcript's metadata and Google Docs reference.",
+      "properties": {
+        "operation": {
+          "const": "get_transcript",
+          "default": "get_transcript",
+          "title": "Get Transcript",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Transcripts",
+          "x-display-name": "Get Transcript",
+          "x-is-trigger": false
+        },
+        "transcript_name": {
+          "description": "Full resource name 'conferenceRecords/{record}/transcripts/{transcript}'",
+          "title": "Transcript",
+          "type": "string"
+        }
+      },
+      "required": [
+        "transcript_name"
+      ],
+      "title": "GoogleMeetGetTranscriptConfig",
+      "type": "object"
+    },
+    "GoogleMeetGetTranscriptEntryConfig": {
+      "description": "Get a single spoken transcript entry (speaker, text, timing).",
+      "properties": {
+        "operation": {
+          "const": "get_transcript_entry",
+          "default": "get_transcript_entry",
+          "title": "Get Transcript Entry",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Transcripts",
+          "x-display-name": "Get Transcript Entry",
+          "x-is-trigger": false
+        },
+        "entry_name": {
+          "description": "Full resource name 'conferenceRecords/{record}/transcripts/{transcript}/entries/{entry}'",
+          "title": "Transcript Entry",
+          "type": "string"
+        }
+      },
+      "required": [
+        "entry_name"
+      ],
+      "title": "GoogleMeetGetTranscriptEntryConfig",
+      "type": "object"
+    },
+    "GoogleMeetListConferenceRecordsConfig": {
+      "description": "List past conference records; supports a filter and pagination.",
+      "properties": {
+        "operation": {
+          "const": "list_conference_records",
+          "default": "list_conference_records",
+          "title": "List Conference Records",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Conference Records",
+          "x-display-name": "List Conference Records",
+          "x-is-trigger": false
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "EBNF filter, e.g. space.name=\"spaces/abc\" or start_time>=\"2026-01-01T00:00:00Z\"",
+          "title": "Filter"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max records to return (default 25, max 100)",
+          "title": "Page Size"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token from a previous response for the next page",
+          "title": "Page Token"
+        }
+      },
+      "title": "GoogleMeetListConferenceRecordsConfig",
+      "type": "object"
+    },
+    "GoogleMeetListParticipantSessionsConfig": {
+      "description": "List a participant's device-level join/leave sessions.",
+      "properties": {
+        "operation": {
+          "const": "list_participant_sessions",
+          "default": "list_participant_sessions",
+          "title": "List Participant Sessions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Participant Sessions",
+          "x-display-name": "List Participant Sessions",
+          "x-is-trigger": false
+        },
+        "participant_name": {
+          "description": "Parent resource name 'conferenceRecords/{record}/participants/{participant}'",
+          "title": "Participant",
+          "type": "string"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "EBNF filter on session start/end time",
+          "title": "Filter"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max sessions to return (default 100, max 250)",
+          "title": "Page Size"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token from a previous response for the next page",
+          "title": "Page Token"
+        }
+      },
+      "required": [
+        "participant_name"
+      ],
+      "title": "GoogleMeetListParticipantSessionsConfig",
+      "type": "object"
+    },
+    "GoogleMeetListParticipantsConfig": {
+      "description": "List all participants for a conference record.",
+      "properties": {
+        "operation": {
+          "const": "list_participants",
+          "default": "list_participants",
+          "title": "List Participants",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Participants",
+          "x-display-name": "List Participants",
+          "x-is-trigger": false
+        },
+        "conference_record_name": {
+          "description": "Resource name 'conferenceRecords/{conference_record}' or the {conference_record} id",
+          "title": "Conference Record",
+          "type": "string"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "EBNF filter, e.g. earliest_start_time or latest_end_time conditions",
+          "title": "Filter"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max participants to return (default 100, max 250)",
+          "title": "Page Size"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token from a previous response for the next page",
+          "title": "Page Token"
+        }
+      },
+      "required": [
+        "conference_record_name"
+      ],
+      "title": "GoogleMeetListParticipantsConfig",
+      "type": "object"
+    },
+    "GoogleMeetListRecordingsConfig": {
+      "description": "List recordings produced by a conference record.",
+      "properties": {
+        "operation": {
+          "const": "list_recordings",
+          "default": "list_recordings",
+          "title": "List Recordings",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Recordings",
+          "x-display-name": "List Recordings",
+          "x-is-trigger": false
+        },
+        "conference_record_name": {
+          "description": "Resource name 'conferenceRecords/{conference_record}' or the {conference_record} id",
+          "title": "Conference Record",
+          "type": "string"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max recordings to return (default 10, max 100)",
+          "title": "Page Size"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token from a previous response for the next page",
+          "title": "Page Token"
+        }
+      },
+      "required": [
+        "conference_record_name"
+      ],
+      "title": "GoogleMeetListRecordingsConfig",
+      "type": "object"
+    },
+    "GoogleMeetListSmartNotesConfig": {
+      "description": "List the smart-notes (Gemini summary) artifacts for a conference record.",
+      "properties": {
+        "operation": {
+          "const": "list_smart_notes",
+          "default": "list_smart_notes",
+          "title": "List Smart Notes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Smart Notes",
+          "x-display-name": "List Smart Notes",
+          "x-is-trigger": false
+        },
+        "conference_record_name": {
+          "description": "Resource name 'conferenceRecords/{conference_record}' or the {conference_record} id",
+          "title": "Conference Record",
+          "type": "string"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max smart notes to return (default 10, max 100)",
+          "title": "Page Size"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token from a previous response for the next page",
+          "title": "Page Token"
+        }
+      },
+      "required": [
+        "conference_record_name"
+      ],
+      "title": "GoogleMeetListSmartNotesConfig",
+      "type": "object"
+    },
+    "GoogleMeetListTranscriptEntriesConfig": {
+      "description": "List the structured transcript entries for a transcript.",
+      "properties": {
+        "operation": {
+          "const": "list_transcript_entries",
+          "default": "list_transcript_entries",
+          "title": "List Transcript Entries",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Transcripts",
+          "x-display-name": "List Transcript Entries",
+          "x-is-trigger": false
+        },
+        "transcript_name": {
+          "description": "Parent resource name 'conferenceRecords/{record}/transcripts/{transcript}'",
+          "title": "Transcript",
+          "type": "string"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max entries to return (default 100, max 1000)",
+          "title": "Page Size"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token from a previous response for the next page",
+          "title": "Page Token"
+        }
+      },
+      "required": [
+        "transcript_name"
+      ],
+      "title": "GoogleMeetListTranscriptEntriesConfig",
+      "type": "object"
+    },
+    "GoogleMeetListTranscriptsConfig": {
+      "description": "List transcripts for a conference record.",
+      "properties": {
+        "operation": {
+          "const": "list_transcripts",
+          "default": "list_transcripts",
+          "title": "List Transcripts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Transcripts",
+          "x-display-name": "List Transcripts",
+          "x-is-trigger": false
+        },
+        "conference_record_name": {
+          "description": "Resource name 'conferenceRecords/{conference_record}' or the {conference_record} id",
+          "title": "Conference Record",
+          "type": "string"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max transcripts to return (default 10, max 100)",
+          "title": "Page Size"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token from a previous response for the next page",
+          "title": "Page Token"
+        }
+      },
+      "required": [
+        "conference_record_name"
+      ],
+      "title": "GoogleMeetListTranscriptsConfig",
+      "type": "object"
+    },
+    "GoogleMeetOAuthCredential": {
+      "description": "OAuth credential for Google Meet access.\nTokens are obtained via the Google OAuth flow, not entered manually.",
+      "properties": {
+        "credential_type": {
+          "const": "google_meet_oauth",
+          "default": "google_meet_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "OAuth 2.0 access token from Google",
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "description": "OAuth 2.0 refresh token for automatic renewal",
+          "title": "Refresh Token",
+          "type": "string"
+        },
+        "expires_at": {
+          "description": "ISO 8601 timestamp when the access token expires",
+          "title": "Token Expiry",
+          "type": "string"
+        },
+        "email": {
+          "description": "Email address of the connected Google account",
+          "title": "Google Account",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "email"
+      ],
+      "title": "GoogleMeetOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://console.cloud.google.com/apis/credentials",
+      "x-oauth-provider": "google",
+      "x-oauth-scopes": [
+        "https://www.googleapis.com/auth/meetings.space.created",
+        "https://www.googleapis.com/auth/meetings.space.readonly",
+        "https://www.googleapis.com/auth/meetings.space.settings"
+      ]
+    },
+    "GoogleMeetOnNewConferenceRecordConfig": {
+      "description": "Trigger: polls conferenceRecords.list on a schedule and fires for newly\nended meetings. Google Meet has no push webhooks, so this baselines on the\nfirst poll and then emits each new conference record exactly once,\ndeduplicating on the record's resource name.",
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_conference_record",
+          "default": "on_new_conference_record",
+          "title": "On New Meeting",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On New Meeting",
+          "x-is-trigger": true
+        },
+        "space_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only fire for meetings in this space ('spaces/{space}' or the {space} id). Leave blank to watch all accessible meetings.",
+          "title": "Space"
+        }
+      },
+      "title": "GoogleMeetOnNewConferenceRecordConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "GoogleMeetUpdateSpaceConfig": {
+      "description": "Update a meeting space's configuration (access type, moderation).",
+      "properties": {
+        "operation": {
+          "const": "update_space",
+          "default": "update_space",
+          "title": "Update Meeting Space",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Spaces",
+          "x-display-name": "Update Meeting Space",
+          "x-is-trigger": false
+        },
+        "space_name": {
+          "description": "Space resource name 'spaces/{space}' or the {space} id to update",
+          "title": "Space",
+          "type": "string"
+        },
+        "access_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Who can join without knocking",
+          "enum": [
+            "",
+            "OPEN",
+            "TRUSTED",
+            "RESTRICTED"
+          ],
+          "enumNames": [
+            "Unchanged",
+            "Open (anyone with the link)",
+            "Trusted (same org)",
+            "Restricted (invited only)"
+          ],
+          "title": "Access Type",
+          "x-enum-searchable": true
+        },
+        "entry_point_access": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Which clients can be used to join",
+          "enum": [
+            "",
+            "ALL",
+            "CREATOR_APP_ONLY"
+          ],
+          "enumNames": [
+            "Unchanged",
+            "All clients",
+            "Creator app only"
+          ],
+          "title": "Entry Point Access",
+          "x-enum-searchable": true
+        },
+        "moderation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether the host has moderation controls on",
+          "enum": [
+            "",
+            "ON",
+            "OFF"
+          ],
+          "enumNames": [
+            "Unchanged",
+            "On",
+            "Off"
+          ],
+          "title": "Moderation",
+          "x-enum-searchable": true
+        },
+        "auto_recording": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Automatically record the meeting (host must be a Workspace user with recording enabled)",
+          "enum": [
+            "",
+            "ON",
+            "OFF"
+          ],
+          "enumNames": [
+            "Default",
+            "On",
+            "Off"
+          ],
+          "title": "Auto Recording",
+          "x-enum-searchable": true
+        },
+        "auto_transcription": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Automatically generate a transcript of the meeting",
+          "enum": [
+            "",
+            "ON",
+            "OFF"
+          ],
+          "enumNames": [
+            "Default",
+            "On",
+            "Off"
+          ],
+          "title": "Auto Transcription",
+          "x-enum-searchable": true
+        },
+        "auto_smart_notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Automatically generate Gemini smart notes (meeting summary)",
+          "enum": [
+            "",
+            "ON",
+            "OFF"
+          ],
+          "enumNames": [
+            "Default",
+            "On",
+            "Off"
+          ],
+          "title": "Auto Smart Notes",
+          "x-enum-searchable": true
+        },
+        "chat_restriction": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Who can send chat messages (requires moderation On)",
+          "enum": [
+            "",
+            "HOSTS_ONLY",
+            "NO_RESTRICTION"
+          ],
+          "enumNames": [
+            "Default",
+            "Hosts only",
+            "No restriction"
+          ],
+          "title": "Chat Restriction",
+          "x-enum-searchable": true
+        },
+        "reaction_restriction": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Who can send reactions (requires moderation On)",
+          "enum": [
+            "",
+            "HOSTS_ONLY",
+            "NO_RESTRICTION"
+          ],
+          "enumNames": [
+            "Default",
+            "Hosts only",
+            "No restriction"
+          ],
+          "title": "Reaction Restriction",
+          "x-enum-searchable": true
+        },
+        "present_restriction": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Who can present/share their screen (requires moderation On)",
+          "enum": [
+            "",
+            "HOSTS_ONLY",
+            "NO_RESTRICTION"
+          ],
+          "enumNames": [
+            "Default",
+            "Hosts only",
+            "No restriction"
+          ],
+          "title": "Present Restriction",
+          "x-enum-searchable": true
+        },
+        "default_join_as_viewer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether attendees join as viewers by default (requires moderation On)",
+          "enum": [
+            "",
+            "ON",
+            "OFF"
+          ],
+          "enumNames": [
+            "Default",
+            "On",
+            "Off"
+          ],
+          "title": "Default Join As Viewer",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "space_name"
+      ],
+      "title": "GoogleMeetUpdateSpaceConfig",
+      "type": "object"
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the Google Meet node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_space": "#/$defs/GoogleMeetCreateSpaceConfig",
+          "end_active_conference": "#/$defs/GoogleMeetEndActiveConferenceConfig",
+          "get_conference_record": "#/$defs/GoogleMeetGetConferenceRecordConfig",
+          "get_participant": "#/$defs/GoogleMeetGetParticipantConfig",
+          "get_participant_session": "#/$defs/GoogleMeetGetParticipantSessionConfig",
+          "get_recording": "#/$defs/GoogleMeetGetRecordingConfig",
+          "get_smart_notes": "#/$defs/GoogleMeetGetSmartNotesConfig",
+          "get_space": "#/$defs/GoogleMeetGetSpaceConfig",
+          "get_transcript": "#/$defs/GoogleMeetGetTranscriptConfig",
+          "get_transcript_entry": "#/$defs/GoogleMeetGetTranscriptEntryConfig",
+          "list_conference_records": "#/$defs/GoogleMeetListConferenceRecordsConfig",
+          "list_participant_sessions": "#/$defs/GoogleMeetListParticipantSessionsConfig",
+          "list_participants": "#/$defs/GoogleMeetListParticipantsConfig",
+          "list_recordings": "#/$defs/GoogleMeetListRecordingsConfig",
+          "list_smart_notes": "#/$defs/GoogleMeetListSmartNotesConfig",
+          "list_transcript_entries": "#/$defs/GoogleMeetListTranscriptEntriesConfig",
+          "list_transcripts": "#/$defs/GoogleMeetListTranscriptsConfig",
+          "on_new_conference_record": "#/$defs/GoogleMeetOnNewConferenceRecordConfig",
+          "update_space": "#/$defs/GoogleMeetUpdateSpaceConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GoogleMeetOnNewConferenceRecordConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMeetCreateSpaceConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMeetGetSpaceConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMeetUpdateSpaceConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMeetEndActiveConferenceConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMeetGetConferenceRecordConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMeetListConferenceRecordsConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMeetGetParticipantConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMeetListParticipantsConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMeetGetParticipantSessionConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMeetListParticipantSessionsConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMeetGetRecordingConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMeetListRecordingsConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMeetGetTranscriptConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMeetListTranscriptsConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMeetGetTranscriptEntryConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMeetListTranscriptEntriesConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMeetGetSmartNotesConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleMeetListSmartNotesConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GoogleMeetOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Google-meet Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Create a new Google Meet space and return the join link",
+    "List the conference records for a meeting space",
+    "List the participants of the last conference",
+    "Get the transcript entries for a finished meeting",
+    "End the active conference in a meeting space",
+    "When a meeting ends, summarize the transcript and post it to Slack"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

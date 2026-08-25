@@ -1,0 +1,1719 @@
+{
+  "$defs": {
+    "GBPCreateLocalPostConfig": {
+      "description": "Create a new local post (Standard, Event, Offer, or Alert).",
+      "properties": {
+        "operation": {
+          "const": "create_local_post",
+          "default": "create_local_post",
+          "title": "Create Local Post",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Local Posts",
+          "x-display-name": "Create Local Post",
+          "x-keywords": [
+            "create post",
+            "publish post",
+            "new post",
+            "google post",
+            "offer",
+            "event post"
+          ]
+        },
+        "account_id": {
+          "description": "Google Business Profile account",
+          "title": "Account",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter account ID (accounts/xxxxx)",
+            "field_name": "account_id",
+            "placeholder": "Select an account...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_business_profile_account"
+        },
+        "location_id": {
+          "description": "Business location",
+          "title": "Location",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter location resource name (locations/xxxxx)",
+            "depends_on": "account_id",
+            "field_name": "location_id",
+            "placeholder": "Select a location...",
+            "searchable": true
+          },
+          "x-resource-type": "google_business_profile_location"
+        },
+        "topic_type": {
+          "default": "STANDARD",
+          "enum": [
+            "STANDARD",
+            "EVENT",
+            "OFFER",
+            "ALERT"
+          ],
+          "enumNames": [
+            "Standard",
+            "Event",
+            "Offer",
+            "Alert"
+          ],
+          "title": "Post Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "summary": {
+          "description": "Main content of the post (max 1500 characters for Standard/Alert, 500 for Event/Offer)",
+          "title": "Post Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "language_code": {
+          "default": "en-US",
+          "description": "BCP-47 language code for the post content",
+          "title": "Language Code",
+          "type": "string",
+          "ui:placeholder": "en-US"
+        },
+        "call_to_action_type": {
+          "default": "",
+          "description": "CTA button shown on the post. Leave blank for no button.",
+          "enum": [
+            "",
+            "BOOK",
+            "ORDER",
+            "SHOP",
+            "LEARN_MORE",
+            "SIGN_UP",
+            "CALL"
+          ],
+          "enumNames": [
+            "None",
+            "Book",
+            "Order Online",
+            "Buy",
+            "Learn More",
+            "Sign Up",
+            "Call Now"
+          ],
+          "title": "Call-to-Action Button",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "call_to_action_url": {
+          "default": "",
+          "description": "URL for the CTA button (required if CTA type is set)",
+          "title": "Call-to-Action URL",
+          "type": "string",
+          "ui:placeholder": "https://example.com/book"
+        },
+        "media_source_url": {
+          "default": "",
+          "description": "Public URL of a photo or video to attach to the post",
+          "title": "Photo/Video URL",
+          "type": "string",
+          "ui:placeholder": "https://example.com/photo.jpg"
+        },
+        "event_title": {
+          "default": "",
+          "description": "Required for EVENT posts",
+          "title": "Event Title",
+          "type": "string",
+          "ui:placeholder": "Grand Opening"
+        },
+        "event_start": {
+          "default": "",
+          "description": "Event start date in YYYY-MM-DD format",
+          "title": "Event Start",
+          "type": "string",
+          "ui:placeholder": "2026-08-01"
+        },
+        "event_end": {
+          "default": "",
+          "description": "Event end date in YYYY-MM-DD format",
+          "title": "Event End",
+          "type": "string",
+          "ui:placeholder": "2026-08-03"
+        },
+        "offer_coupon_code": {
+          "default": "",
+          "description": "For OFFER posts: redemption coupon code",
+          "title": "Coupon Code",
+          "type": "string",
+          "ui:placeholder": "SAVE20"
+        },
+        "offer_redeem_url": {
+          "default": "",
+          "description": "For OFFER posts: URL to redeem the offer",
+          "title": "Redeem URL",
+          "type": "string",
+          "ui:placeholder": "https://example.com/offer"
+        },
+        "offer_terms": {
+          "default": "",
+          "description": "For OFFER posts: terms and conditions",
+          "title": "Offer Terms",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "account_id",
+        "location_id",
+        "summary"
+      ],
+      "title": "GBPCreateLocalPostConfig",
+      "type": "object"
+    },
+    "GBPCreateMediaConfig": {
+      "description": "Upload a photo or video to a location via public URL.",
+      "properties": {
+        "operation": {
+          "const": "create_media",
+          "default": "create_media",
+          "title": "Upload Media",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Media",
+          "x-display-name": "Upload Media",
+          "x-keywords": [
+            "upload photo",
+            "add photo",
+            "upload image",
+            "add media",
+            "photo upload"
+          ]
+        },
+        "account_id": {
+          "description": "Google Business Profile account",
+          "title": "Account",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter account ID (accounts/xxxxx)",
+            "field_name": "account_id",
+            "placeholder": "Select an account...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_business_profile_account"
+        },
+        "location_id": {
+          "description": "Business location",
+          "title": "Location",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter location resource name (locations/xxxxx)",
+            "depends_on": "account_id",
+            "field_name": "location_id",
+            "placeholder": "Select a location...",
+            "searchable": true
+          },
+          "x-resource-type": "google_business_profile_location"
+        },
+        "source_url": {
+          "description": "Publicly accessible URL of the photo or video to upload",
+          "title": "Source URL",
+          "type": "string",
+          "ui:placeholder": "https://example.com/photo.jpg"
+        },
+        "media_format": {
+          "default": "PHOTO",
+          "enum": [
+            "PHOTO",
+            "VIDEO"
+          ],
+          "enumNames": [
+            "Photo",
+            "Video"
+          ],
+          "title": "Media Format",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "category": {
+          "default": "ADDITIONAL",
+          "description": "Where this photo will appear on the business listing",
+          "enum": [
+            "COVER",
+            "PROFILE",
+            "LOGO",
+            "EXTERIOR",
+            "INTERIOR",
+            "PRODUCT",
+            "AT_WORK",
+            "FOOD_AND_DRINK",
+            "MENU",
+            "COMMON_AREA",
+            "ROOMS",
+            "TEAMS",
+            "ADDITIONAL"
+          ],
+          "enumNames": [
+            "Cover",
+            "Profile",
+            "Logo",
+            "Exterior",
+            "Interior",
+            "Product",
+            "At Work",
+            "Food & Drink",
+            "Menu",
+            "Common Area",
+            "Rooms",
+            "Team",
+            "Additional"
+          ],
+          "title": "Photo Category",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "account_id",
+        "location_id",
+        "source_url"
+      ],
+      "title": "GBPCreateMediaConfig",
+      "type": "object"
+    },
+    "GBPCreatePlaceActionLinkConfig": {
+      "description": "Create a new booking/reservation/ordering link for a location.",
+      "properties": {
+        "operation": {
+          "const": "create_place_action_link",
+          "default": "create_place_action_link",
+          "title": "Create Place Action Link",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Place Actions",
+          "x-display-name": "Create Place Action Link",
+          "x-keywords": [
+            "create booking link",
+            "add reservation link",
+            "create action link"
+          ]
+        },
+        "location_id": {
+          "description": "Business location resource name (e.g. locations/xxxxx)",
+          "title": "Location",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter location resource name",
+            "field_name": "location_id",
+            "placeholder": "Select a location...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_business_profile_location"
+        },
+        "uri": {
+          "description": "URL for the action (booking page, ordering page, etc.)",
+          "title": "URL",
+          "type": "string",
+          "ui:placeholder": "https://book.example.com"
+        },
+        "place_action_type": {
+          "default": "APPOINTMENT",
+          "enum": [
+            "APPOINTMENT",
+            "ONLINE_APPOINTMENT",
+            "DINING_RESERVATION",
+            "FOOD_ORDERING_DELIVERY",
+            "FOOD_ORDERING_TAKEOUT",
+            "FOOD_ORDERING",
+            "SHOPPING_DELIVERY",
+            "SHOPPING_CURBSIDE",
+            "SHOPPING_IN_STORE",
+            "ORDER_ONLINE"
+          ],
+          "enumNames": [
+            "Appointment",
+            "Online Appointment",
+            "Dining Reservation",
+            "Food Delivery",
+            "Food Takeout",
+            "Food Ordering",
+            "Shopping Delivery",
+            "Shopping Curbside",
+            "Shopping In-Store",
+            "Order Online"
+          ],
+          "title": "Action Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "is_preferred": {
+          "default": "true",
+          "description": "Mark this as the preferred link for this action type",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Set as Preferred",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "location_id",
+        "uri"
+      ],
+      "title": "GBPCreatePlaceActionLinkConfig",
+      "type": "object"
+    },
+    "GBPDeleteLocalPostConfig": {
+      "description": "Delete a local post.",
+      "properties": {
+        "operation": {
+          "const": "delete_local_post",
+          "default": "delete_local_post",
+          "title": "Delete Local Post",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Local Posts",
+          "x-display-name": "Delete Local Post"
+        },
+        "local_post_name": {
+          "description": "Full resource name, e.g. accounts/X/locations/Y/localPosts/Z",
+          "title": "Local Post Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "local_post_name"
+      ],
+      "title": "GBPDeleteLocalPostConfig",
+      "type": "object"
+    },
+    "GBPDeleteMediaConfig": {
+      "description": "Delete a media item from a location.",
+      "properties": {
+        "operation": {
+          "const": "delete_media",
+          "default": "delete_media",
+          "title": "Delete Media Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Media",
+          "x-display-name": "Delete Media Item",
+          "x-keywords": [
+            "delete photo",
+            "remove photo",
+            "delete image"
+          ]
+        },
+        "media_item_name": {
+          "description": "Full resource name, e.g. accounts/X/locations/Y/media/Z",
+          "title": "Media Item Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "media_item_name"
+      ],
+      "title": "GBPDeleteMediaConfig",
+      "type": "object"
+    },
+    "GBPDeletePlaceActionLinkConfig": {
+      "description": "Delete a place action link.",
+      "properties": {
+        "operation": {
+          "const": "delete_place_action_link",
+          "default": "delete_place_action_link",
+          "title": "Delete Place Action Link",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Place Actions",
+          "x-display-name": "Delete Place Action Link"
+        },
+        "place_action_link_name": {
+          "description": "Full resource name, e.g. locations/X/placeActionLinks/Y",
+          "title": "Place Action Link Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "place_action_link_name"
+      ],
+      "title": "GBPDeletePlaceActionLinkConfig",
+      "type": "object"
+    },
+    "GBPDeleteReviewReplyConfig": {
+      "description": "Delete the owner reply from a review.",
+      "properties": {
+        "operation": {
+          "const": "delete_review_reply",
+          "default": "delete_review_reply",
+          "title": "Delete Review Reply",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reviews",
+          "x-display-name": "Delete Review Reply",
+          "x-keywords": [
+            "delete reply",
+            "remove reply",
+            "delete review response"
+          ]
+        },
+        "account_id": {
+          "description": "Google Business Profile account",
+          "title": "Account",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter account ID (accounts/xxxxx)",
+            "field_name": "account_id",
+            "placeholder": "Select an account...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_business_profile_account"
+        },
+        "location_id": {
+          "description": "Business location",
+          "title": "Location",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter location resource name (locations/xxxxx)",
+            "depends_on": "account_id",
+            "field_name": "location_id",
+            "placeholder": "Select a location...",
+            "searchable": true
+          },
+          "x-resource-type": "google_business_profile_location"
+        },
+        "review_id": {
+          "description": "Review resource name, e.g. accounts/X/locations/Y/reviews/Z",
+          "title": "Review ID",
+          "type": "string",
+          "ui:placeholder": "accounts/.../locations/.../reviews/..."
+        }
+      },
+      "required": [
+        "account_id",
+        "location_id",
+        "review_id"
+      ],
+      "title": "GBPDeleteReviewReplyConfig",
+      "type": "object"
+    },
+    "GBPGetLocalPostConfig": {
+      "description": "Get a single local post.",
+      "properties": {
+        "operation": {
+          "const": "get_local_post",
+          "default": "get_local_post",
+          "title": "Get Local Post",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Local Posts",
+          "x-display-name": "Get Local Post"
+        },
+        "local_post_name": {
+          "description": "Full resource name from List Local Posts, e.g. accounts/X/locations/Y/localPosts/Z",
+          "title": "Local Post Name",
+          "type": "string",
+          "ui:placeholder": "accounts/.../locations/.../localPosts/..."
+        }
+      },
+      "required": [
+        "local_post_name"
+      ],
+      "title": "GBPGetLocalPostConfig",
+      "type": "object"
+    },
+    "GBPGetLocalPostInsightsConfig": {
+      "description": "Get view and click insights for one or more local posts.",
+      "properties": {
+        "operation": {
+          "const": "get_local_post_insights",
+          "default": "get_local_post_insights",
+          "title": "Get Local Post Insights",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Local Posts",
+          "x-display-name": "Get Local Post Insights",
+          "x-keywords": [
+            "post insights",
+            "post performance",
+            "post views",
+            "post clicks"
+          ]
+        },
+        "account_id": {
+          "description": "Google Business Profile account",
+          "title": "Account",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter account ID (accounts/xxxxx)",
+            "field_name": "account_id",
+            "placeholder": "Select an account...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_business_profile_account"
+        },
+        "location_id": {
+          "description": "Business location",
+          "title": "Location",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter location resource name (locations/xxxxx)",
+            "depends_on": "account_id",
+            "field_name": "location_id",
+            "placeholder": "Select a location...",
+            "searchable": true
+          },
+          "x-resource-type": "google_business_profile_location"
+        },
+        "local_post_names": {
+          "description": "Comma-separated full post resource names, e.g. accounts/X/locations/Y/localPosts/Z",
+          "title": "Local Post Names",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "start_date": {
+          "default": "",
+          "description": "YYYY-MM-DD. Defaults to 30 days ago.",
+          "title": "Start Date",
+          "type": "string",
+          "ui:placeholder": "2026-06-01"
+        },
+        "end_date": {
+          "default": "",
+          "description": "YYYY-MM-DD. Defaults to today.",
+          "title": "End Date",
+          "type": "string",
+          "ui:placeholder": "2026-07-01"
+        }
+      },
+      "required": [
+        "account_id",
+        "location_id",
+        "local_post_names"
+      ],
+      "title": "GBPGetLocalPostInsightsConfig",
+      "type": "object"
+    },
+    "GBPGetLocationAttributesConfig": {
+      "description": "Get all attributes (amenities, accessibility, payments, etc.) for a location.",
+      "properties": {
+        "operation": {
+          "const": "get_location_attributes",
+          "default": "get_location_attributes",
+          "title": "Get Location Attributes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Location",
+          "x-display-name": "Get Location Attributes",
+          "x-keywords": [
+            "attributes",
+            "amenities",
+            "accessibility",
+            "location features"
+          ]
+        },
+        "location_id": {
+          "description": "Business location resource name (e.g. locations/xxxxx)",
+          "title": "Location",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter location resource name",
+            "field_name": "location_id",
+            "placeholder": "Select a location...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_business_profile_location"
+        }
+      },
+      "required": [
+        "location_id"
+      ],
+      "title": "GBPGetLocationAttributesConfig",
+      "type": "object"
+    },
+    "GBPGetLocationConfig": {
+      "description": "Get full details for a single location.",
+      "properties": {
+        "operation": {
+          "const": "get_location",
+          "default": "get_location",
+          "title": "Get Location",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Location",
+          "x-display-name": "Get Location",
+          "x-keywords": [
+            "get location",
+            "location details",
+            "fetch location",
+            "read location"
+          ]
+        },
+        "location_id": {
+          "description": "Business location resource name (e.g. locations/xxxxx)",
+          "title": "Location",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter location resource name",
+            "field_name": "location_id",
+            "placeholder": "Select a location...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_business_profile_location"
+        }
+      },
+      "required": [
+        "location_id"
+      ],
+      "title": "GBPGetLocationConfig",
+      "type": "object"
+    },
+    "GBPGetMediaConfig": {
+      "description": "Get a single media item.",
+      "properties": {
+        "operation": {
+          "const": "get_media",
+          "default": "get_media",
+          "title": "Get Media Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Media",
+          "x-display-name": "Get Media Item"
+        },
+        "media_item_name": {
+          "description": "Full resource name from List Media, e.g. accounts/X/locations/Y/media/Z",
+          "title": "Media Item Name",
+          "type": "string",
+          "ui:placeholder": "accounts/.../locations/.../media/..."
+        }
+      },
+      "required": [
+        "media_item_name"
+      ],
+      "title": "GBPGetMediaConfig",
+      "type": "object"
+    },
+    "GBPGetPerformanceConfig": {
+      "description": "Get daily performance metrics for a location over a date range.",
+      "properties": {
+        "operation": {
+          "const": "fetch_location_performance_metrics",
+          "default": "fetch_location_performance_metrics",
+          "title": "Fetch Location Performance Metrics",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Analytics",
+          "x-display-name": "Fetch Location Performance Metrics"
+        },
+        "location_id": {
+          "description": "Business location resource name (e.g. locations/xxxxx)",
+          "title": "Location",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter location resource name",
+            "field_name": "location_id",
+            "placeholder": "Select a location...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_business_profile_location"
+        },
+        "start_date": {
+          "default": "",
+          "description": "YYYY-MM-DD (defaults to 30 days ago)",
+          "placeholder": "YYYY-MM-DD (optional)",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "default": "",
+          "description": "YYYY-MM-DD (defaults to today)",
+          "placeholder": "YYYY-MM-DD (optional)",
+          "title": "End Date",
+          "type": "string"
+        },
+        "daily_metrics": {
+          "default": "BUSINESS_IMPRESSIONS_DESKTOP_MAPS,BUSINESS_IMPRESSIONS_MOBILE_MAPS,BUSINESS_IMPRESSIONS_DESKTOP_SEARCH,BUSINESS_IMPRESSIONS_MOBILE_SEARCH,BUSINESS_DIRECTION_REQUESTS,CALL_CLICKS,WEBSITE_CLICKS",
+          "description": "Comma-separated metrics to fetch",
+          "title": "Metrics",
+          "type": "string",
+          "ui:help": "Available: BUSINESS_IMPRESSIONS_DESKTOP_MAPS, BUSINESS_IMPRESSIONS_MOBILE_MAPS, BUSINESS_IMPRESSIONS_DESKTOP_SEARCH, BUSINESS_IMPRESSIONS_MOBILE_SEARCH, BUSINESS_DIRECTION_REQUESTS, CALL_CLICKS, WEBSITE_CLICKS, BUSINESS_BOOKINGS, BUSINESS_FOOD_ORDERS, BUSINESS_CONVERSATIONS"
+        }
+      },
+      "required": [
+        "location_id"
+      ],
+      "title": "GBPGetPerformanceConfig",
+      "type": "object"
+    },
+    "GBPGetReviewConfig": {
+      "description": "Get a single review by its resource name.",
+      "properties": {
+        "operation": {
+          "const": "get_review",
+          "default": "get_review",
+          "title": "Get Review",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reviews",
+          "x-display-name": "Get Review",
+          "x-keywords": [
+            "get review",
+            "fetch review",
+            "single review"
+          ]
+        },
+        "account_id": {
+          "description": "Google Business Profile account",
+          "title": "Account",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter account ID (accounts/xxxxx)",
+            "field_name": "account_id",
+            "placeholder": "Select an account...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_business_profile_account"
+        },
+        "location_id": {
+          "description": "Business location",
+          "title": "Location",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter location resource name (locations/xxxxx)",
+            "depends_on": "account_id",
+            "field_name": "location_id",
+            "placeholder": "Select a location...",
+            "searchable": true
+          },
+          "x-resource-type": "google_business_profile_location"
+        },
+        "review_id": {
+          "description": "Review resource name from List Reviews, e.g. accounts/X/locations/Y/reviews/Z",
+          "title": "Review ID",
+          "type": "string",
+          "ui:placeholder": "accounts/.../locations/.../reviews/..."
+        }
+      },
+      "required": [
+        "account_id",
+        "location_id",
+        "review_id"
+      ],
+      "title": "GBPGetReviewConfig",
+      "type": "object"
+    },
+    "GBPGetSearchKeywordsConfig": {
+      "description": "Get search keywords that led customers to discover the business profile.",
+      "properties": {
+        "operation": {
+          "const": "fetch_location_search_keywords",
+          "default": "fetch_location_search_keywords",
+          "title": "Fetch Location Search Keywords",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Analytics",
+          "x-display-name": "Fetch Location Search Keywords"
+        },
+        "location_id": {
+          "description": "Business location resource name (e.g. locations/xxxxx)",
+          "title": "Location",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter location resource name",
+            "field_name": "location_id",
+            "placeholder": "Select a location...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_business_profile_location"
+        },
+        "year": {
+          "default": "",
+          "description": "YYYY. Defaults to current year.",
+          "placeholder": "2026 (optional)",
+          "title": "Year",
+          "type": "string"
+        },
+        "month": {
+          "default": "",
+          "description": "1-12. Defaults to previous month.",
+          "placeholder": "1-12 (optional)",
+          "title": "Month",
+          "type": "string"
+        }
+      },
+      "required": [
+        "location_id"
+      ],
+      "title": "GBPGetSearchKeywordsConfig",
+      "type": "object"
+    },
+    "GBPListCustomerMediaConfig": {
+      "description": "List customer-contributed photos for a location.",
+      "properties": {
+        "operation": {
+          "const": "list_customer_media",
+          "default": "list_customer_media",
+          "title": "List Customer Media",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Media",
+          "x-display-name": "List Customer Media",
+          "x-keywords": [
+            "customer photos",
+            "user photos",
+            "customer images",
+            "customer media"
+          ]
+        },
+        "account_id": {
+          "description": "Google Business Profile account",
+          "title": "Account",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter account ID (accounts/xxxxx)",
+            "field_name": "account_id",
+            "placeholder": "Select an account...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_business_profile_account"
+        },
+        "location_id": {
+          "description": "Business location",
+          "title": "Location",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter location resource name (locations/xxxxx)",
+            "depends_on": "account_id",
+            "field_name": "location_id",
+            "placeholder": "Select a location...",
+            "searchable": true
+          },
+          "x-resource-type": "google_business_profile_location"
+        },
+        "page_size": {
+          "default": "100",
+          "description": "Items per page (max 100)",
+          "title": "Page Size",
+          "type": "string"
+        }
+      },
+      "required": [
+        "account_id",
+        "location_id"
+      ],
+      "title": "GBPListCustomerMediaConfig",
+      "type": "object"
+    },
+    "GBPListLocalPostsConfig": {
+      "description": "List local posts for a location.",
+      "properties": {
+        "operation": {
+          "const": "list_local_posts",
+          "default": "list_local_posts",
+          "title": "List Local Posts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Local Posts",
+          "x-display-name": "List Local Posts",
+          "x-keywords": [
+            "list posts",
+            "list local posts",
+            "google posts",
+            "marketing posts"
+          ]
+        },
+        "account_id": {
+          "description": "Google Business Profile account",
+          "title": "Account",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter account ID (accounts/xxxxx)",
+            "field_name": "account_id",
+            "placeholder": "Select an account...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_business_profile_account"
+        },
+        "location_id": {
+          "description": "Business location",
+          "title": "Location",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter location resource name (locations/xxxxx)",
+            "depends_on": "account_id",
+            "field_name": "location_id",
+            "placeholder": "Select a location...",
+            "searchable": true
+          },
+          "x-resource-type": "google_business_profile_location"
+        },
+        "page_size": {
+          "default": "20",
+          "description": "Posts per page (max 100)",
+          "title": "Page Size",
+          "type": "string"
+        }
+      },
+      "required": [
+        "account_id",
+        "location_id"
+      ],
+      "title": "GBPListLocalPostsConfig",
+      "type": "object"
+    },
+    "GBPListLocationsConfig": {
+      "description": "List all locations/businesses for a Google Business Profile account.",
+      "properties": {
+        "operation": {
+          "const": "list_business_profile_locations",
+          "default": "list_business_profile_locations",
+          "title": "List Business Profile Locations",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Location",
+          "x-display-name": "List Business Profile Locations"
+        },
+        "account_id": {
+          "description": "Google Business Profile account",
+          "title": "Account",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter account ID (accounts/xxxxx)",
+            "field_name": "account_id",
+            "placeholder": "Select an account...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_business_profile_account"
+        }
+      },
+      "required": [
+        "account_id"
+      ],
+      "title": "GBPListLocationsConfig",
+      "type": "object"
+    },
+    "GBPListMediaConfig": {
+      "description": "List media items (photos/videos) for a location.",
+      "properties": {
+        "operation": {
+          "const": "list_media",
+          "default": "list_media",
+          "title": "List Media",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Media",
+          "x-display-name": "List Media",
+          "x-keywords": [
+            "list photos",
+            "list media",
+            "list images",
+            "business photos"
+          ]
+        },
+        "account_id": {
+          "description": "Google Business Profile account",
+          "title": "Account",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter account ID (accounts/xxxxx)",
+            "field_name": "account_id",
+            "placeholder": "Select an account...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_business_profile_account"
+        },
+        "location_id": {
+          "description": "Business location",
+          "title": "Location",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter location resource name (locations/xxxxx)",
+            "depends_on": "account_id",
+            "field_name": "location_id",
+            "placeholder": "Select a location...",
+            "searchable": true
+          },
+          "x-resource-type": "google_business_profile_location"
+        },
+        "page_size": {
+          "default": "100",
+          "description": "Items per page (max 100)",
+          "title": "Page Size",
+          "type": "string"
+        }
+      },
+      "required": [
+        "account_id",
+        "location_id"
+      ],
+      "title": "GBPListMediaConfig",
+      "type": "object"
+    },
+    "GBPListPlaceActionLinksConfig": {
+      "description": "List booking/reservation/ordering links for a location.",
+      "properties": {
+        "operation": {
+          "const": "list_place_action_links",
+          "default": "list_place_action_links",
+          "title": "List Place Action Links",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Place Actions",
+          "x-display-name": "List Place Action Links",
+          "x-keywords": [
+            "booking links",
+            "reservation links",
+            "action links",
+            "place actions"
+          ]
+        },
+        "location_id": {
+          "description": "Business location resource name (e.g. locations/xxxxx)",
+          "title": "Location",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter location resource name",
+            "field_name": "location_id",
+            "placeholder": "Select a location...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_business_profile_location"
+        },
+        "filter": {
+          "default": "",
+          "description": "Optional filter, e.g. place_action_type=APPOINTMENT",
+          "title": "Filter",
+          "type": "string",
+          "ui:placeholder": "place_action_type=APPOINTMENT"
+        }
+      },
+      "required": [
+        "location_id"
+      ],
+      "title": "GBPListPlaceActionLinksConfig",
+      "type": "object"
+    },
+    "GBPListReviewsConfig": {
+      "description": "List reviews for a specific location.",
+      "properties": {
+        "operation": {
+          "const": "list_location_reviews",
+          "default": "list_location_reviews",
+          "title": "List Location Reviews",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reviews",
+          "x-display-name": "List Location Reviews"
+        },
+        "account_id": {
+          "description": "Google Business Profile account",
+          "title": "Account",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter account ID (accounts/xxxxx)",
+            "field_name": "account_id",
+            "placeholder": "Select an account...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_business_profile_account"
+        },
+        "location_id": {
+          "description": "Business location",
+          "title": "Location",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter location resource name (locations/xxxxx)",
+            "depends_on": "account_id",
+            "field_name": "location_id",
+            "placeholder": "Select a location...",
+            "searchable": true
+          },
+          "x-resource-type": "google_business_profile_location"
+        },
+        "page_size": {
+          "default": "50",
+          "description": "Reviews per page (max 50)",
+          "title": "Page Size",
+          "type": "string"
+        },
+        "order_by": {
+          "default": "update_time desc",
+          "enum": [
+            "update_time desc",
+            "update_time asc",
+            "rating desc",
+            "rating asc"
+          ],
+          "enumNames": [
+            "Newest First",
+            "Oldest First",
+            "Highest Rating",
+            "Lowest Rating"
+          ],
+          "title": "Sort Order",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "account_id",
+        "location_id"
+      ],
+      "title": "GBPListReviewsConfig",
+      "type": "object"
+    },
+    "GBPReplyToReviewConfig": {
+      "description": "Create or update the owner reply to a review.",
+      "properties": {
+        "operation": {
+          "const": "reply_to_review",
+          "default": "reply_to_review",
+          "title": "Reply to Review",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reviews",
+          "x-display-name": "Reply to Review",
+          "x-keywords": [
+            "reply review",
+            "respond review",
+            "review response",
+            "reply to customer"
+          ]
+        },
+        "account_id": {
+          "description": "Google Business Profile account",
+          "title": "Account",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter account ID (accounts/xxxxx)",
+            "field_name": "account_id",
+            "placeholder": "Select an account...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_business_profile_account"
+        },
+        "location_id": {
+          "description": "Business location",
+          "title": "Location",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter location resource name (locations/xxxxx)",
+            "depends_on": "account_id",
+            "field_name": "location_id",
+            "placeholder": "Select a location...",
+            "searchable": true
+          },
+          "x-resource-type": "google_business_profile_location"
+        },
+        "review_id": {
+          "description": "Review resource name, e.g. accounts/X/locations/Y/reviews/Z",
+          "title": "Review ID",
+          "type": "string",
+          "ui:placeholder": "accounts/.../locations/.../reviews/..."
+        },
+        "reply_text": {
+          "description": "Owner reply text (max 4096 characters)",
+          "title": "Reply Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "account_id",
+        "location_id",
+        "review_id",
+        "reply_text"
+      ],
+      "title": "GBPReplyToReviewConfig",
+      "type": "object"
+    },
+    "GBPUpdateLocalPostConfig": {
+      "description": "Update an existing local post.",
+      "properties": {
+        "operation": {
+          "const": "update_local_post",
+          "default": "update_local_post",
+          "title": "Update Local Post",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Local Posts",
+          "x-display-name": "Update Local Post"
+        },
+        "local_post_name": {
+          "description": "Full resource name, e.g. accounts/X/locations/Y/localPosts/Z",
+          "title": "Local Post Name",
+          "type": "string"
+        },
+        "summary": {
+          "default": "",
+          "description": "Updated post content. Leave blank to keep current.",
+          "title": "Post Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "call_to_action_type": {
+          "default": "",
+          "enum": [
+            "",
+            "BOOK",
+            "ORDER",
+            "SHOP",
+            "LEARN_MORE",
+            "SIGN_UP",
+            "CALL"
+          ],
+          "enumNames": [
+            "No change",
+            "Book",
+            "Order Online",
+            "Buy",
+            "Learn More",
+            "Sign Up",
+            "Call Now"
+          ],
+          "title": "Call-to-Action Button",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "call_to_action_url": {
+          "default": "",
+          "title": "Call-to-Action URL",
+          "type": "string",
+          "ui:placeholder": "https://example.com"
+        },
+        "media_source_url": {
+          "default": "",
+          "description": "Replace post media with this public URL. Leave blank to keep current.",
+          "title": "Photo/Video URL",
+          "type": "string"
+        }
+      },
+      "required": [
+        "local_post_name"
+      ],
+      "title": "GBPUpdateLocalPostConfig",
+      "type": "object"
+    },
+    "GBPUpdateLocationAttributesConfig": {
+      "description": "Update location attributes (e.g. wheelchair access, Wi-Fi, payment methods).",
+      "properties": {
+        "operation": {
+          "const": "update_location_attributes",
+          "default": "update_location_attributes",
+          "title": "Update Location Attributes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Location",
+          "x-display-name": "Update Location Attributes",
+          "x-keywords": [
+            "update attributes",
+            "set amenities",
+            "edit features"
+          ]
+        },
+        "location_id": {
+          "description": "Business location resource name (e.g. locations/xxxxx)",
+          "title": "Location",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter location resource name",
+            "field_name": "location_id",
+            "placeholder": "Select a location...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_business_profile_location"
+        },
+        "attributes": {
+          "description": "JSON array of attribute objects. Example: [{\"name\":\"attributes/has_wheelchair_accessible_entrance\",\"valueType\":\"BOOL\",\"values\":[true]}]",
+          "title": "Attributes (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "location_id",
+        "attributes"
+      ],
+      "title": "GBPUpdateLocationAttributesConfig",
+      "type": "object"
+    },
+    "GBPUpdateLocationConfig": {
+      "description": "Update a location's core fields (name, phone, website, description).",
+      "properties": {
+        "operation": {
+          "const": "update_location",
+          "default": "update_location",
+          "title": "Update Location",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Location",
+          "x-display-name": "Update Location",
+          "x-keywords": [
+            "update location",
+            "edit location",
+            "patch location",
+            "modify business"
+          ]
+        },
+        "location_id": {
+          "description": "Business location resource name (e.g. locations/xxxxx)",
+          "title": "Location",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter location resource name",
+            "field_name": "location_id",
+            "placeholder": "Select a location...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_business_profile_location"
+        },
+        "title": {
+          "default": "",
+          "description": "New business name. Leave blank to keep current.",
+          "title": "Business Name",
+          "type": "string",
+          "ui:placeholder": "e.g. Acme Bakery Downtown"
+        },
+        "primary_phone": {
+          "default": "",
+          "description": "Phone number in E.164 format. Leave blank to keep current.",
+          "title": "Primary Phone",
+          "type": "string",
+          "ui:placeholder": "+14155551234"
+        },
+        "website_uri": {
+          "default": "",
+          "description": "Business website URL. Leave blank to keep current.",
+          "title": "Website URL",
+          "type": "string",
+          "ui:placeholder": "https://example.com"
+        },
+        "description": {
+          "default": "",
+          "description": "Short business description (max 750 chars). Leave blank to keep current.",
+          "title": "Business Description",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "location_id"
+      ],
+      "title": "GBPUpdateLocationConfig",
+      "type": "object"
+    },
+    "GBPUpdatePlaceActionLinkConfig": {
+      "description": "Update an existing place action link.",
+      "properties": {
+        "operation": {
+          "const": "update_place_action_link",
+          "default": "update_place_action_link",
+          "title": "Update Place Action Link",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Place Actions",
+          "x-display-name": "Update Place Action Link"
+        },
+        "place_action_link_name": {
+          "description": "Full resource name from List Place Action Links",
+          "title": "Place Action Link Name",
+          "type": "string",
+          "ui:placeholder": "locations/.../placeActionLinks/..."
+        },
+        "uri": {
+          "default": "",
+          "description": "Updated URL. Leave blank to keep current.",
+          "title": "New URL",
+          "type": "string"
+        },
+        "is_preferred": {
+          "default": "",
+          "enum": [
+            "",
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "No change",
+            "Yes",
+            "No"
+          ],
+          "title": "Set as Preferred",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "place_action_link_name"
+      ],
+      "title": "GBPUpdatePlaceActionLinkConfig",
+      "type": "object"
+    },
+    "GoogleBusinessProfileOAuthCredential": {
+      "description": "OAuth credential for Google Business Profile access.",
+      "properties": {
+        "credential_type": {
+          "const": "google_business_profile_oauth",
+          "default": "google_business_profile_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "title": "Refresh Token",
+          "type": "string"
+        },
+        "expires_at": {
+          "title": "Token Expiry",
+          "type": "string"
+        },
+        "email": {
+          "title": "Google Account",
+          "type": "string"
+        },
+        "client_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client ID",
+          "ui:hidden": true
+        },
+        "client_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Client Secret",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "email"
+      ],
+      "title": "GoogleBusinessProfileOAuthCredential",
+      "type": "object",
+      "x-credential-instructions": "Google Business Profile API requires your own Google Cloud project. Create an OAuth 2.0 Web Application client at console.cloud.google.com \u2192 APIs & Services \u2192 Credentials, enable the My Business Account Management API and My Business Business Information API, then add this app's callback URL as an Authorised Redirect URI.",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://console.cloud.google.com/apis/credentials",
+      "x-oauth-provider": "google",
+      "x-oauth-redirect-uri": "/api/auth/google/callback",
+      "x-oauth-requires-custom-client": true,
+      "x-oauth-scopes": [
+        "https://www.googleapis.com/auth/business.manage"
+      ],
+      "x-oauth-validates-api-access": true
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_local_post": "#/$defs/GBPCreateLocalPostConfig",
+          "create_media": "#/$defs/GBPCreateMediaConfig",
+          "create_place_action_link": "#/$defs/GBPCreatePlaceActionLinkConfig",
+          "delete_local_post": "#/$defs/GBPDeleteLocalPostConfig",
+          "delete_media": "#/$defs/GBPDeleteMediaConfig",
+          "delete_place_action_link": "#/$defs/GBPDeletePlaceActionLinkConfig",
+          "delete_review_reply": "#/$defs/GBPDeleteReviewReplyConfig",
+          "fetch_location_performance_metrics": "#/$defs/GBPGetPerformanceConfig",
+          "fetch_location_search_keywords": "#/$defs/GBPGetSearchKeywordsConfig",
+          "get_local_post": "#/$defs/GBPGetLocalPostConfig",
+          "get_local_post_insights": "#/$defs/GBPGetLocalPostInsightsConfig",
+          "get_location": "#/$defs/GBPGetLocationConfig",
+          "get_location_attributes": "#/$defs/GBPGetLocationAttributesConfig",
+          "get_media": "#/$defs/GBPGetMediaConfig",
+          "get_review": "#/$defs/GBPGetReviewConfig",
+          "list_business_profile_locations": "#/$defs/GBPListLocationsConfig",
+          "list_customer_media": "#/$defs/GBPListCustomerMediaConfig",
+          "list_local_posts": "#/$defs/GBPListLocalPostsConfig",
+          "list_location_reviews": "#/$defs/GBPListReviewsConfig",
+          "list_media": "#/$defs/GBPListMediaConfig",
+          "list_place_action_links": "#/$defs/GBPListPlaceActionLinksConfig",
+          "reply_to_review": "#/$defs/GBPReplyToReviewConfig",
+          "update_local_post": "#/$defs/GBPUpdateLocalPostConfig",
+          "update_location": "#/$defs/GBPUpdateLocationConfig",
+          "update_location_attributes": "#/$defs/GBPUpdateLocationAttributesConfig",
+          "update_place_action_link": "#/$defs/GBPUpdatePlaceActionLinkConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GBPListLocationsConfig"
+        },
+        {
+          "$ref": "#/$defs/GBPGetLocationConfig"
+        },
+        {
+          "$ref": "#/$defs/GBPUpdateLocationConfig"
+        },
+        {
+          "$ref": "#/$defs/GBPGetLocationAttributesConfig"
+        },
+        {
+          "$ref": "#/$defs/GBPUpdateLocationAttributesConfig"
+        },
+        {
+          "$ref": "#/$defs/GBPListReviewsConfig"
+        },
+        {
+          "$ref": "#/$defs/GBPGetReviewConfig"
+        },
+        {
+          "$ref": "#/$defs/GBPReplyToReviewConfig"
+        },
+        {
+          "$ref": "#/$defs/GBPDeleteReviewReplyConfig"
+        },
+        {
+          "$ref": "#/$defs/GBPListLocalPostsConfig"
+        },
+        {
+          "$ref": "#/$defs/GBPGetLocalPostConfig"
+        },
+        {
+          "$ref": "#/$defs/GBPCreateLocalPostConfig"
+        },
+        {
+          "$ref": "#/$defs/GBPUpdateLocalPostConfig"
+        },
+        {
+          "$ref": "#/$defs/GBPDeleteLocalPostConfig"
+        },
+        {
+          "$ref": "#/$defs/GBPGetLocalPostInsightsConfig"
+        },
+        {
+          "$ref": "#/$defs/GBPListMediaConfig"
+        },
+        {
+          "$ref": "#/$defs/GBPGetMediaConfig"
+        },
+        {
+          "$ref": "#/$defs/GBPCreateMediaConfig"
+        },
+        {
+          "$ref": "#/$defs/GBPDeleteMediaConfig"
+        },
+        {
+          "$ref": "#/$defs/GBPListCustomerMediaConfig"
+        },
+        {
+          "$ref": "#/$defs/GBPGetPerformanceConfig"
+        },
+        {
+          "$ref": "#/$defs/GBPGetSearchKeywordsConfig"
+        },
+        {
+          "$ref": "#/$defs/GBPListPlaceActionLinksConfig"
+        },
+        {
+          "$ref": "#/$defs/GBPCreatePlaceActionLinkConfig"
+        },
+        {
+          "$ref": "#/$defs/GBPUpdatePlaceActionLinkConfig"
+        },
+        {
+          "$ref": "#/$defs/GBPDeletePlaceActionLinkConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GoogleBusinessProfileOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Google-business-profile Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "List all business locations and their performance metrics",
+    "Reply to all unanswered 1-star reviews",
+    "Create a weekly special offer post on Google",
+    "Upload exterior photos to the business listing",
+    "Update the business phone number and website",
+    "Get the top 20 search keywords that drove impressions last month",
+    "Add a booking link to the location"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

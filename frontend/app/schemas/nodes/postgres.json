@@ -1,0 +1,2138 @@
+{
+  "$defs": {
+    "PostgresAnalyzeTableConfig": {
+      "description": "Analyze a table to update statistics",
+      "properties": {
+        "operation": {
+          "const": "analyze_table_statistics",
+          "default": "analyze_table_statistics",
+          "title": "Analyze Table Statistics",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Table",
+          "x-display-name": "Analyze Table Statistics",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "analyze table",
+            "update statistics",
+            "refresh stats",
+            "gather statistics"
+          ]
+        },
+        "table_name": {
+          "description": "Name of the table to analyze",
+          "title": "Table Name",
+          "type": "string"
+        },
+        "schema_name": {
+          "default": "public",
+          "description": "Schema containing the table (default: public)",
+          "title": "Schema",
+          "type": "string"
+        }
+      },
+      "required": [
+        "table_name"
+      ],
+      "title": "PostgresAnalyzeTableConfig",
+      "type": "object"
+    },
+    "PostgresBeginTransactionConfig": {
+      "description": "Begin a new transaction",
+      "properties": {
+        "operation": {
+          "const": "begin_transaction",
+          "default": "begin_transaction",
+          "title": "Begin Transaction",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Transaction",
+          "x-display-name": "Begin Transaction",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "start transaction",
+            "begin tx",
+            "open transaction"
+          ]
+        },
+        "isolation_level": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Transaction isolation level",
+          "enum": [
+            "read_uncommitted",
+            "read_committed",
+            "repeatable_read",
+            "serializable"
+          ],
+          "title": "Isolation Level (Optional)"
+        }
+      },
+      "title": "PostgresBeginTransactionConfig",
+      "type": "object"
+    },
+    "PostgresCallFunctionConfig": {
+      "description": "Call a PostgreSQL function",
+      "properties": {
+        "operation": {
+          "const": "call_database_function",
+          "default": "call_database_function",
+          "title": "Call Database Function",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Function",
+          "x-display-name": "Call Database Function",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "call function",
+            "run function",
+            "invoke function",
+            "execute procedure",
+            "call stored procedure"
+          ]
+        },
+        "function_name": {
+          "description": "Name of the function to call",
+          "title": "Function Name",
+          "type": "string"
+        },
+        "params": {
+          "anyOf": [
+            {
+              "items": {},
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Parameters to pass to the function. Pass as JSON array.",
+          "title": "Function Parameters"
+        },
+        "schema_name": {
+          "default": "public",
+          "description": "Schema containing the function (default: public)",
+          "title": "Schema",
+          "type": "string"
+        }
+      },
+      "required": [
+        "function_name"
+      ],
+      "title": "PostgresCallFunctionConfig",
+      "type": "object"
+    },
+    "PostgresCommitTransactionConfig": {
+      "description": "Commit the current transaction",
+      "properties": {
+        "operation": {
+          "const": "commit_transaction",
+          "default": "commit_transaction",
+          "title": "Commit Transaction",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Transaction",
+          "x-display-name": "Commit Transaction",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "commit",
+            "save transaction",
+            "commit tx",
+            "finish transaction"
+          ]
+        }
+      },
+      "title": "PostgresCommitTransactionConfig",
+      "type": "object"
+    },
+    "PostgresConnectionStringCredential": {
+      "description": "Connection string credential for PostgreSQL.\n\nFormat: postgresql://user:password@host:port/database\nCan also include SSL mode: ?sslmode=require\n\nExample: postgresql://myuser:mypassword@localhost:5432/mydb",
+      "properties": {
+        "credential_type": {
+          "const": "postgres_connection_string",
+          "default": "postgres_connection_string",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "connection_string": {
+          "description": "PostgreSQL connection string (e.g., postgresql://user:password@host:port/database)",
+          "placeholder": "postgresql://user:password@host:port/database",
+          "title": "Connection String",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "connection_string"
+      ],
+      "title": "PostgresConnectionStringCredential",
+      "type": "object"
+    },
+    "PostgresCopyFromTableConfig": {
+      "description": "Bulk export data from a table using COPY",
+      "properties": {
+        "operation": {
+          "const": "copy_data_from_table",
+          "default": "copy_data_from_table",
+          "title": "Copy Data from Table",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Query",
+          "x-display-name": "Copy Data from Table",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "dump table",
+            "copy out",
+            "export csv",
+            "extract rows",
+            "unload data"
+          ]
+        },
+        "table_name": {
+          "description": "Name of the table to export data from",
+          "title": "Table Name",
+          "type": "string"
+        },
+        "columns": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "List of column names to export (defaults to all columns)",
+          "title": "Columns (Optional)"
+        },
+        "where_clause": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional WHERE clause to filter rows (e.g., 'id > 100')",
+          "title": "WHERE Clause (Optional)"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of rows to export",
+          "title": "Row Limit (Optional)"
+        },
+        "schema_name": {
+          "default": "public",
+          "description": "Schema containing the table (default: public)",
+          "title": "Schema",
+          "type": "string"
+        }
+      },
+      "required": [
+        "table_name"
+      ],
+      "title": "PostgresCopyFromTableConfig",
+      "type": "object"
+    },
+    "PostgresCopyToTableConfig": {
+      "description": "Bulk import data to a table using COPY",
+      "properties": {
+        "operation": {
+          "const": "copy_data_to_table",
+          "default": "copy_data_to_table",
+          "title": "Copy Data to Table",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Query",
+          "x-display-name": "Copy Data to Table",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "bulk load",
+            "copy into table",
+            "import csv",
+            "load data",
+            "ingest rows"
+          ]
+        },
+        "table_name": {
+          "description": "Name of the table to import data into",
+          "title": "Table Name",
+          "type": "string"
+        },
+        "columns": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "List of column names (defaults to all columns)",
+          "title": "Columns (Optional)"
+        },
+        "data": {
+          "description": "List of data rows to import (as 2D array)",
+          "items": {
+            "items": {},
+            "type": "array"
+          },
+          "title": "Data Rows",
+          "type": "array"
+        },
+        "schema_name": {
+          "default": "public",
+          "description": "Schema containing the table (default: public)",
+          "title": "Schema",
+          "type": "string"
+        }
+      },
+      "required": [
+        "table_name",
+        "data"
+      ],
+      "title": "PostgresCopyToTableConfig",
+      "type": "object"
+    },
+    "PostgresCreateExtensionConfig": {
+      "description": "Create/install an extension",
+      "properties": {
+        "operation": {
+          "const": "install_extension",
+          "default": "install_extension",
+          "title": "Install Extension",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Extension",
+          "x-display-name": "Install Extension",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "enable extension",
+            "add extension",
+            "create extension",
+            "install pgvector"
+          ]
+        },
+        "extension_name": {
+          "description": "Name of the extension to create (e.g., 'uuid-ossp', 'pg_trgm')",
+          "title": "Extension Name",
+          "type": "string"
+        },
+        "schema_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Schema to create extension in (default: depends on extension)",
+          "title": "Schema (Optional)"
+        },
+        "if_not_exists": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "Only create if extension doesn't exist",
+          "title": "If Not Exists"
+        }
+      },
+      "required": [
+        "extension_name"
+      ],
+      "title": "PostgresCreateExtensionConfig",
+      "type": "object"
+    },
+    "PostgresCreateIndexConfig": {
+      "description": "Create an index on a table",
+      "properties": {
+        "operation": {
+          "const": "create_index",
+          "default": "create_index",
+          "title": "Create Index",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Index",
+          "x-display-name": "Create Index",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new index",
+            "add index",
+            "make index",
+            "index column"
+          ]
+        },
+        "index_name": {
+          "description": "Name of the index to create",
+          "title": "Index Name",
+          "type": "string"
+        },
+        "table_name": {
+          "description": "Table to create the index on",
+          "title": "Table Name",
+          "type": "string"
+        },
+        "columns": {
+          "description": "List of column names to index",
+          "items": {
+            "type": "string"
+          },
+          "title": "Columns",
+          "type": "array"
+        },
+        "schema_name": {
+          "default": "public",
+          "description": "Schema containing the table (default: public)",
+          "title": "Schema",
+          "type": "string"
+        },
+        "unique": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Create a unique index",
+          "title": "Unique"
+        },
+        "if_not_exists": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "Only create if index doesn't exist",
+          "title": "If Not Exists"
+        }
+      },
+      "required": [
+        "index_name",
+        "table_name",
+        "columns"
+      ],
+      "title": "PostgresCreateIndexConfig",
+      "type": "object"
+    },
+    "PostgresCreateSchemaConfig": {
+      "description": "Create a new schema",
+      "properties": {
+        "operation": {
+          "const": "create_schema",
+          "default": "create_schema",
+          "title": "Create Schema",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Schema",
+          "x-display-name": "Create Schema",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new schema",
+            "make schema",
+            "add namespace"
+          ]
+        },
+        "schema_name": {
+          "description": "Name of the schema to create",
+          "title": "Schema Name",
+          "type": "string"
+        },
+        "if_not_exists": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "Only create if schema doesn't already exist",
+          "title": "If Not Exists"
+        }
+      },
+      "required": [
+        "schema_name"
+      ],
+      "title": "PostgresCreateSchemaConfig",
+      "type": "object"
+    },
+    "PostgresCreateTableConfig": {
+      "description": "Create a new table",
+      "properties": {
+        "operation": {
+          "const": "create_table",
+          "default": "create_table",
+          "title": "Create Table",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Table",
+          "x-display-name": "Create Table",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new table",
+            "make table",
+            "define table",
+            "add table",
+            "create relation"
+          ]
+        },
+        "table_name": {
+          "description": "Name of the table to create",
+          "title": "Table Name",
+          "type": "string"
+        },
+        "columns": {
+          "description": "Column definitions (e.g., 'id SERIAL PRIMARY KEY, name TEXT NOT NULL')",
+          "placeholder": "id SERIAL PRIMARY KEY,\nname TEXT NOT NULL,\nemail TEXT UNIQUE",
+          "title": "Column Definitions",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "schema_name": {
+          "default": "public",
+          "description": "Schema to create the table in (default: public)",
+          "title": "Schema",
+          "type": "string"
+        },
+        "if_not_exists": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "Only create if table doesn't exist",
+          "title": "If Not Exists"
+        }
+      },
+      "required": [
+        "table_name",
+        "columns"
+      ],
+      "title": "PostgresCreateTableConfig",
+      "type": "object"
+    },
+    "PostgresCreateViewConfig": {
+      "description": "Create a view",
+      "properties": {
+        "operation": {
+          "const": "create_view",
+          "default": "create_view",
+          "title": "Create View",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "View",
+          "x-display-name": "Create View",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new view",
+            "make view",
+            "add view",
+            "define view"
+          ]
+        },
+        "view_name": {
+          "description": "Name of the view to create",
+          "title": "View Name",
+          "type": "string"
+        },
+        "query": {
+          "description": "SELECT query that defines the view",
+          "placeholder": "SELECT column1, column2 FROM table_name WHERE condition",
+          "title": "SELECT Query",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "schema_name": {
+          "default": "public",
+          "description": "Schema to create the view in (default: public)",
+          "title": "Schema",
+          "type": "string"
+        },
+        "or_replace": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Replace the view if it already exists",
+          "title": "Or Replace"
+        }
+      },
+      "required": [
+        "view_name",
+        "query"
+      ],
+      "title": "PostgresCreateViewConfig",
+      "type": "object"
+    },
+    "PostgresCredentialsCredential": {
+      "description": "Individual credentials for PostgreSQL connection.\n\nUse this when you prefer to specify each connection parameter separately.",
+      "properties": {
+        "credential_type": {
+          "const": "postgres_credentials",
+          "default": "postgres_credentials",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "host": {
+          "description": "PostgreSQL server hostname or IP address",
+          "placeholder": "localhost",
+          "title": "Host",
+          "type": "string"
+        },
+        "port": {
+          "default": 5432,
+          "description": "PostgreSQL server port (default: 5432)",
+          "maximum": 65535,
+          "minimum": 1,
+          "title": "Port",
+          "type": "integer"
+        },
+        "database": {
+          "description": "Name of the database to connect to",
+          "placeholder": "mydb",
+          "title": "Database",
+          "type": "string"
+        },
+        "user": {
+          "description": "PostgreSQL username",
+          "title": "Username",
+          "type": "string"
+        },
+        "password": {
+          "description": "PostgreSQL password",
+          "title": "Password",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "ssl_mode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "SSL connection mode (defaults to require)",
+          "enum": [
+            "disable",
+            "require",
+            "verify-ca",
+            "verify-full"
+          ],
+          "title": "SSL Mode"
+        }
+      },
+      "required": [
+        "host",
+        "database",
+        "user",
+        "password"
+      ],
+      "title": "PostgresCredentialsCredential",
+      "type": "object"
+    },
+    "PostgresDropIndexConfig": {
+      "description": "Drop an index",
+      "properties": {
+        "operation": {
+          "const": "drop_index",
+          "default": "drop_index",
+          "title": "Drop Index",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Index",
+          "x-display-name": "Drop Index",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "delete index",
+            "remove index"
+          ]
+        },
+        "index_name": {
+          "description": "Name of the index to drop",
+          "title": "Index Name",
+          "type": "string"
+        },
+        "schema_name": {
+          "default": "public",
+          "description": "Schema containing the index (default: public)",
+          "title": "Schema",
+          "type": "string"
+        },
+        "if_exists": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "Only drop if index exists",
+          "title": "If Exists"
+        }
+      },
+      "required": [
+        "index_name"
+      ],
+      "title": "PostgresDropIndexConfig",
+      "type": "object"
+    },
+    "PostgresDropSchemaConfig": {
+      "description": "Drop a schema",
+      "properties": {
+        "operation": {
+          "const": "drop_schema",
+          "default": "drop_schema",
+          "title": "Drop Schema",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Schema",
+          "x-display-name": "Drop Schema",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "delete schema",
+            "remove schema",
+            "drop namespace"
+          ]
+        },
+        "schema_name": {
+          "description": "Name of the schema to drop",
+          "title": "Schema Name",
+          "type": "string"
+        },
+        "cascade": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Automatically drop objects contained in the schema",
+          "title": "Cascade"
+        },
+        "if_exists": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "Only drop if schema exists (avoids errors)",
+          "title": "If Exists"
+        }
+      },
+      "required": [
+        "schema_name"
+      ],
+      "title": "PostgresDropSchemaConfig",
+      "type": "object"
+    },
+    "PostgresDropTableConfig": {
+      "description": "Drop a table",
+      "properties": {
+        "operation": {
+          "const": "drop_table",
+          "default": "drop_table",
+          "title": "Drop Table",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Table",
+          "x-display-name": "Drop Table",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "delete table",
+            "remove table",
+            "drop relation"
+          ]
+        },
+        "table_name": {
+          "description": "Name of the table to drop",
+          "title": "Table Name",
+          "type": "string"
+        },
+        "schema_name": {
+          "default": "public",
+          "description": "Schema containing the table (default: public)",
+          "title": "Schema",
+          "type": "string"
+        },
+        "cascade": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Automatically drop objects that depend on the table",
+          "title": "Cascade"
+        },
+        "if_exists": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "Only drop if table exists",
+          "title": "If Exists"
+        }
+      },
+      "required": [
+        "table_name"
+      ],
+      "title": "PostgresDropTableConfig",
+      "type": "object"
+    },
+    "PostgresDropViewConfig": {
+      "description": "Drop a view",
+      "properties": {
+        "operation": {
+          "const": "drop_view",
+          "default": "drop_view",
+          "title": "Drop View",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "View",
+          "x-display-name": "Drop View",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "delete view",
+            "remove view"
+          ]
+        },
+        "view_name": {
+          "description": "Name of the view to drop",
+          "title": "View Name",
+          "type": "string"
+        },
+        "schema_name": {
+          "default": "public",
+          "description": "Schema containing the view (default: public)",
+          "title": "Schema",
+          "type": "string"
+        },
+        "if_exists": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "Only drop if view exists",
+          "title": "If Exists"
+        }
+      },
+      "required": [
+        "view_name"
+      ],
+      "title": "PostgresDropViewConfig",
+      "type": "object"
+    },
+    "PostgresExecuteConfig": {
+      "description": "Execute an INSERT, UPDATE, DELETE, or other non-SELECT statement",
+      "properties": {
+        "operation": {
+          "const": "execute_sql_statement",
+          "default": "execute_sql_statement",
+          "title": "Execute Sql Statement",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Query",
+          "x-display-name": "Execute Sql Statement",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "insert row",
+            "update rows",
+            "write sql",
+            "run statement",
+            "modify data",
+            "non select"
+          ]
+        },
+        "statement": {
+          "description": "SQL statement to execute. Use $1, $2, etc. for parameters.",
+          "placeholder": "INSERT INTO users (name, email) VALUES ($1, $2)",
+          "title": "SQL Statement",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "params": {
+          "anyOf": [
+            {
+              "items": {},
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Parameters to safely substitute into statement ($1, $2, etc.). Pass as JSON array.",
+          "title": "Statement Parameters"
+        },
+        "return_rows": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "For statements with RETURNING clause, return the rows",
+          "title": "Return Rows"
+        }
+      },
+      "required": [
+        "statement"
+      ],
+      "title": "PostgresExecuteConfig",
+      "type": "object"
+    },
+    "PostgresExecuteManyConfig": {
+      "description": "Execute a statement with multiple parameter sets (batch operations)",
+      "properties": {
+        "operation": {
+          "const": "execute_batch_statements",
+          "default": "execute_batch_statements",
+          "title": "Execute Batch Statements",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Query",
+          "x-display-name": "Execute Batch Statements",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "bulk insert",
+            "batch write",
+            "multiple inserts",
+            "many parameter sets",
+            "bulk statements"
+          ]
+        },
+        "statement": {
+          "description": "SQL statement to execute for each parameter set",
+          "placeholder": "INSERT INTO users (name, email) VALUES ($1, $2)",
+          "title": "SQL Statement",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "params_list": {
+          "description": "List of parameter arrays. Each inner array is one execution.",
+          "items": {
+            "items": {},
+            "type": "array"
+          },
+          "title": "Parameter Sets",
+          "type": "array"
+        }
+      },
+      "required": [
+        "statement",
+        "params_list"
+      ],
+      "title": "PostgresExecuteManyConfig",
+      "type": "object"
+    },
+    "PostgresExplainQueryConfig": {
+      "description": "Explain a query's execution plan",
+      "properties": {
+        "operation": {
+          "const": "explain_query_plan",
+          "default": "explain_query_plan",
+          "title": "Explain Query Plan",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Query",
+          "x-display-name": "Explain Query Plan",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "explain plan",
+            "query plan",
+            "execution plan",
+            "analyze query",
+            "explain analyze",
+            "query cost"
+          ]
+        },
+        "query": {
+          "description": "Query to explain",
+          "placeholder": "SELECT * FROM users WHERE active = true",
+          "title": "SQL Query",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "analyze": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Execute the query and show actual execution times (EXPLAIN ANALYZE)",
+          "title": "Analyze"
+        },
+        "verbose": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Show additional information in the plan",
+          "title": "Verbose"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "PostgresExplainQueryConfig",
+      "type": "object"
+    },
+    "PostgresGetCurrentSequenceValueConfig": {
+      "description": "Get the current value from a sequence (currval)",
+      "properties": {
+        "operation": {
+          "const": "get_sequence_current_value",
+          "default": "get_sequence_current_value",
+          "title": "Get Sequence Current Value",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sequence",
+          "x-display-name": "Get Sequence Current Value",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "currval",
+            "current id",
+            "current sequence value",
+            "last sequence value"
+          ]
+        },
+        "sequence_name": {
+          "description": "Name of the sequence",
+          "title": "Sequence Name",
+          "type": "string"
+        },
+        "schema_name": {
+          "default": "public",
+          "description": "Schema containing the sequence (default: public)",
+          "title": "Schema",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sequence_name"
+      ],
+      "title": "PostgresGetCurrentSequenceValueConfig",
+      "type": "object"
+    },
+    "PostgresGetNextSequenceValueConfig": {
+      "description": "Get the next value from a sequence (nextval)",
+      "properties": {
+        "operation": {
+          "const": "get_sequence_next_value",
+          "default": "get_sequence_next_value",
+          "title": "Get Sequence Next Value",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sequence",
+          "x-display-name": "Get Sequence Next Value",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "next id",
+            "nextval",
+            "advance sequence",
+            "increment sequence",
+            "next sequence value"
+          ]
+        },
+        "sequence_name": {
+          "description": "Name of the sequence",
+          "title": "Sequence Name",
+          "type": "string"
+        },
+        "schema_name": {
+          "default": "public",
+          "description": "Schema containing the sequence (default: public)",
+          "title": "Schema",
+          "type": "string"
+        }
+      },
+      "required": [
+        "sequence_name"
+      ],
+      "title": "PostgresGetNextSequenceValueConfig",
+      "type": "object"
+    },
+    "PostgresGetTableInfoConfig": {
+      "description": "Get detailed information about a table including constraints and indexes",
+      "properties": {
+        "operation": {
+          "const": "get_table_info",
+          "default": "get_table_info",
+          "title": "Get Table Info",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Table",
+          "x-display-name": "Get Table Info",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "describe table",
+            "table details",
+            "table structure",
+            "constraints and indexes",
+            "inspect table"
+          ]
+        },
+        "table_name": {
+          "description": "Name of the table to get information for",
+          "title": "Table Name",
+          "type": "string"
+        },
+        "schema_name": {
+          "default": "public",
+          "description": "Schema containing the table (default: public)",
+          "title": "Schema",
+          "type": "string"
+        }
+      },
+      "required": [
+        "table_name"
+      ],
+      "title": "PostgresGetTableInfoConfig",
+      "type": "object"
+    },
+    "PostgresListColumnsConfig": {
+      "description": "Get column metadata for a table",
+      "properties": {
+        "operation": {
+          "const": "list_table_columns",
+          "default": "list_table_columns",
+          "title": "List Table Columns",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Table",
+          "x-display-name": "List Table Columns",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "column metadata",
+            "table columns",
+            "describe columns",
+            "show fields",
+            "schema of table"
+          ]
+        },
+        "table_name": {
+          "description": "Name of the table to get columns for",
+          "title": "Table Name",
+          "type": "string"
+        },
+        "schema_name": {
+          "default": "public",
+          "description": "Schema containing the table (default: public)",
+          "title": "Schema",
+          "type": "string"
+        }
+      },
+      "required": [
+        "table_name"
+      ],
+      "title": "PostgresListColumnsConfig",
+      "type": "object"
+    },
+    "PostgresListConstraintsConfig": {
+      "description": "List all constraints for a table",
+      "properties": {
+        "operation": {
+          "const": "list_table_constraints",
+          "default": "list_table_constraints",
+          "title": "List Table Constraints",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Table",
+          "x-display-name": "List Table Constraints",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "show constraints",
+            "foreign keys",
+            "primary keys",
+            "table constraints",
+            "check constraints"
+          ]
+        },
+        "table_name": {
+          "description": "Name of the table to list constraints for",
+          "title": "Table Name",
+          "type": "string"
+        },
+        "schema_name": {
+          "default": "public",
+          "description": "Schema containing the table (default: public)",
+          "title": "Schema",
+          "type": "string"
+        }
+      },
+      "required": [
+        "table_name"
+      ],
+      "title": "PostgresListConstraintsConfig",
+      "type": "object"
+    },
+    "PostgresListDatabasesConfig": {
+      "description": "List all databases in the PostgreSQL server",
+      "properties": {
+        "operation": {
+          "const": "list_databases",
+          "default": "list_databases",
+          "title": "List Databases",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Database",
+          "x-display-name": "List Databases",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "show databases",
+            "all databases",
+            "list dbs",
+            "database names"
+          ]
+        }
+      },
+      "title": "PostgresListDatabasesConfig",
+      "type": "object"
+    },
+    "PostgresListExtensionsConfig": {
+      "description": "List all installed extensions",
+      "properties": {
+        "operation": {
+          "const": "list_extensions",
+          "default": "list_extensions",
+          "title": "List Extensions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Extension",
+          "x-display-name": "List Extensions",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "show extensions",
+            "installed extensions",
+            "list extensions"
+          ]
+        }
+      },
+      "title": "PostgresListExtensionsConfig",
+      "type": "object"
+    },
+    "PostgresListFunctionsConfig": {
+      "description": "List all functions in a schema",
+      "properties": {
+        "operation": {
+          "const": "list_schema_functions",
+          "default": "list_schema_functions",
+          "title": "List Schema Functions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Function",
+          "x-display-name": "List Schema Functions",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "show functions",
+            "all functions",
+            "list functions",
+            "stored procedures"
+          ]
+        },
+        "schema_name": {
+          "default": "public",
+          "description": "Schema name to list functions from (default: public)",
+          "title": "Schema",
+          "type": "string"
+        }
+      },
+      "title": "PostgresListFunctionsConfig",
+      "type": "object"
+    },
+    "PostgresListIndexesConfig": {
+      "description": "List all indexes in a schema",
+      "properties": {
+        "operation": {
+          "const": "list_schema_indexes",
+          "default": "list_schema_indexes",
+          "title": "List Schema Indexes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Index",
+          "x-display-name": "List Schema Indexes",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "show indexes",
+            "all indexes",
+            "list indexes"
+          ]
+        },
+        "schema_name": {
+          "default": "public",
+          "description": "Schema name to list indexes from (default: public)",
+          "title": "Schema",
+          "type": "string"
+        },
+        "table_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter indexes for a specific table",
+          "title": "Table Name (Optional)"
+        }
+      },
+      "title": "PostgresListIndexesConfig",
+      "type": "object"
+    },
+    "PostgresListRolesConfig": {
+      "description": "List all database roles",
+      "properties": {
+        "operation": {
+          "const": "list_database_roles",
+          "default": "list_database_roles",
+          "title": "List Database Roles",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Role",
+          "x-display-name": "List Database Roles",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "show roles",
+            "all roles",
+            "list roles",
+            "db roles",
+            "permissions roles"
+          ]
+        }
+      },
+      "title": "PostgresListRolesConfig",
+      "type": "object"
+    },
+    "PostgresListSchemasConfig": {
+      "description": "List all schemas in the database",
+      "properties": {
+        "operation": {
+          "const": "list_schemas",
+          "default": "list_schemas",
+          "title": "List Schemas",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Schema",
+          "x-display-name": "List Schemas",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "show schemas",
+            "all schemas",
+            "namespaces",
+            "schema names"
+          ]
+        }
+      },
+      "title": "PostgresListSchemasConfig",
+      "type": "object"
+    },
+    "PostgresListSequencesConfig": {
+      "description": "List all sequences in a schema",
+      "properties": {
+        "operation": {
+          "const": "list_schema_sequences",
+          "default": "list_schema_sequences",
+          "title": "List Schema Sequences",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sequence",
+          "x-display-name": "List Schema Sequences",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "show sequences",
+            "all sequences",
+            "list sequences"
+          ]
+        },
+        "schema_name": {
+          "default": "public",
+          "description": "Schema name to list sequences from (default: public)",
+          "title": "Schema",
+          "type": "string"
+        }
+      },
+      "title": "PostgresListSequencesConfig",
+      "type": "object"
+    },
+    "PostgresListTablesConfig": {
+      "description": "List all tables in a schema",
+      "properties": {
+        "operation": {
+          "const": "list_schema_tables",
+          "default": "list_schema_tables",
+          "title": "List Schema Tables",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Table",
+          "x-display-name": "List Schema Tables",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "show tables",
+            "all tables",
+            "tables in schema",
+            "table names"
+          ]
+        },
+        "schema_name": {
+          "default": "public",
+          "description": "Schema name to list tables from (default: public)",
+          "title": "Schema",
+          "type": "string"
+        },
+        "include_views": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Include views in the results",
+          "title": "Include Views"
+        }
+      },
+      "title": "PostgresListTablesConfig",
+      "type": "object"
+    },
+    "PostgresListTriggersConfig": {
+      "description": "List all triggers in a schema",
+      "properties": {
+        "operation": {
+          "const": "list_schema_triggers",
+          "default": "list_schema_triggers",
+          "title": "List Schema Triggers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Trigger",
+          "x-display-name": "List Schema Triggers",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "show triggers",
+            "all triggers",
+            "list triggers",
+            "db triggers"
+          ]
+        },
+        "schema_name": {
+          "default": "public",
+          "description": "Schema name to list triggers from (default: public)",
+          "title": "Schema",
+          "type": "string"
+        },
+        "table_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter triggers for a specific table",
+          "title": "Table Name (Optional)"
+        }
+      },
+      "title": "PostgresListTriggersConfig",
+      "type": "object"
+    },
+    "PostgresListUsersConfig": {
+      "description": "List all database users",
+      "properties": {
+        "operation": {
+          "const": "list_database_users",
+          "default": "list_database_users",
+          "title": "List Database Users",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Role",
+          "x-display-name": "List Database Users",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "show users",
+            "all users",
+            "db users",
+            "list accounts"
+          ]
+        }
+      },
+      "title": "PostgresListUsersConfig",
+      "type": "object"
+    },
+    "PostgresListViewsConfig": {
+      "description": "List all views in a schema",
+      "properties": {
+        "operation": {
+          "const": "list_schema_views",
+          "default": "list_schema_views",
+          "title": "List Schema Views",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "View",
+          "x-display-name": "List Schema Views",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "show views",
+            "all views",
+            "list views"
+          ]
+        },
+        "schema_name": {
+          "default": "public",
+          "description": "Schema name to list views from (default: public)",
+          "title": "Schema",
+          "type": "string"
+        }
+      },
+      "title": "PostgresListViewsConfig",
+      "type": "object"
+    },
+    "PostgresQueryConfig": {
+      "description": "Execute a SELECT query and return results as JSON",
+      "properties": {
+        "operation": {
+          "const": "run_select_query",
+          "default": "run_select_query",
+          "title": "Run Select Query",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Query",
+          "x-display-name": "Run Select Query",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "run sql",
+            "select rows",
+            "query database",
+            "fetch records",
+            "raw sql",
+            "read data"
+          ]
+        },
+        "query": {
+          "description": "SELECT query to execute. Use $1, $2, etc. for parameters.",
+          "placeholder": "SELECT * FROM users WHERE id = $1",
+          "title": "SQL Query",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "params": {
+          "anyOf": [
+            {
+              "items": {},
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Parameters to safely substitute into query ($1, $2, etc.). Pass as JSON array.",
+          "title": "Query Parameters"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 10000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1000,
+          "description": "Maximum number of rows to return (default: 1000, max: 10000)",
+          "title": "Row Limit"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "PostgresQueryConfig",
+      "type": "object"
+    },
+    "PostgresQueryCursorConfig": {
+      "description": "Execute query with cursor for large result sets",
+      "properties": {
+        "operation": {
+          "const": "run_query_with_cursor",
+          "default": "run_query_with_cursor",
+          "title": "Run Query with Cursor",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Query",
+          "x-display-name": "Run Query with Cursor",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "stream rows",
+            "cursor query",
+            "large result set",
+            "paginate query",
+            "server side cursor"
+          ]
+        },
+        "query": {
+          "description": "SELECT query to execute with cursor",
+          "placeholder": "SELECT * FROM large_table",
+          "title": "SQL Query",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "params": {
+          "anyOf": [
+            {
+              "items": {},
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Parameters to safely substitute into query ($1, $2, etc.)",
+          "title": "Query Parameters"
+        },
+        "batch_size": {
+          "anyOf": [
+            {
+              "maximum": 10000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1000,
+          "description": "Number of rows to fetch per batch (default: 1000)",
+          "title": "Batch Size"
+        },
+        "max_rows": {
+          "anyOf": [
+            {
+              "maximum": 100000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10000,
+          "description": "Maximum total rows to return (default: 10000)",
+          "title": "Max Rows"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "PostgresQueryCursorConfig",
+      "type": "object"
+    },
+    "PostgresRollbackTransactionConfig": {
+      "description": "Rollback the current transaction",
+      "properties": {
+        "operation": {
+          "const": "rollback_transaction",
+          "default": "rollback_transaction",
+          "title": "Rollback Transaction",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Transaction",
+          "x-display-name": "Rollback Transaction",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "rollback",
+            "undo transaction",
+            "abort transaction",
+            "cancel transaction"
+          ]
+        }
+      },
+      "title": "PostgresRollbackTransactionConfig",
+      "type": "object"
+    },
+    "PostgresSetSequenceValueConfig": {
+      "description": "Set the current value of a sequence (setval)",
+      "properties": {
+        "operation": {
+          "const": "set_sequence_value",
+          "default": "set_sequence_value",
+          "title": "Set Sequence Value",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sequence",
+          "x-display-name": "Set Sequence Value",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "setval",
+            "reset sequence",
+            "set counter",
+            "set sequence number"
+          ]
+        },
+        "sequence_name": {
+          "description": "Name of the sequence",
+          "title": "Sequence Name",
+          "type": "string"
+        },
+        "value": {
+          "description": "Value to set the sequence to",
+          "title": "Value",
+          "type": "integer"
+        },
+        "schema_name": {
+          "default": "public",
+          "description": "Schema containing the sequence (default: public)",
+          "title": "Schema",
+          "type": "string"
+        },
+        "is_called": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "If true, next nextval will advance before returning; if false, next nextval returns this value",
+          "title": "Is Called"
+        }
+      },
+      "required": [
+        "sequence_name",
+        "value"
+      ],
+      "title": "PostgresSetSequenceValueConfig",
+      "type": "object"
+    },
+    "PostgresTruncateTableConfig": {
+      "description": "Truncate a table (remove all rows)",
+      "properties": {
+        "operation": {
+          "const": "truncate_table",
+          "default": "truncate_table",
+          "title": "Truncate Table",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Table",
+          "x-display-name": "Truncate Table",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "empty table",
+            "clear all rows",
+            "wipe table",
+            "delete all rows"
+          ]
+        },
+        "table_name": {
+          "description": "Name of the table to truncate",
+          "title": "Table Name",
+          "type": "string"
+        },
+        "schema_name": {
+          "default": "public",
+          "description": "Schema containing the table (default: public)",
+          "title": "Schema",
+          "type": "string"
+        },
+        "restart_identity": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Restart sequences owned by columns of the truncated table",
+          "title": "Restart Identity"
+        },
+        "cascade": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Automatically truncate tables with foreign key references",
+          "title": "Cascade"
+        }
+      },
+      "required": [
+        "table_name"
+      ],
+      "title": "PostgresTruncateTableConfig",
+      "type": "object"
+    },
+    "PostgresVacuumTableConfig": {
+      "description": "Vacuum a table to reclaim storage and update statistics",
+      "properties": {
+        "operation": {
+          "const": "vacuum_table",
+          "default": "vacuum_table",
+          "title": "Vacuum Table",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Table",
+          "x-display-name": "Vacuum Table",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "vacuum",
+            "reclaim storage",
+            "clean up table",
+            "vacuum full"
+          ]
+        },
+        "table_name": {
+          "description": "Name of the table to vacuum",
+          "title": "Table Name",
+          "type": "string"
+        },
+        "schema_name": {
+          "default": "public",
+          "description": "Schema containing the table (default: public)",
+          "title": "Schema",
+          "type": "string"
+        },
+        "full": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Perform a VACUUM FULL (more thorough, locks table)",
+          "title": "Full"
+        },
+        "analyze": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "Update statistics for the query planner",
+          "title": "Analyze"
+        }
+      },
+      "required": [
+        "table_name"
+      ],
+      "title": "PostgresVacuumTableConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for PostgreSQL node including credentials",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "analyze_table_statistics": "#/$defs/PostgresAnalyzeTableConfig",
+          "begin_transaction": "#/$defs/PostgresBeginTransactionConfig",
+          "call_database_function": "#/$defs/PostgresCallFunctionConfig",
+          "commit_transaction": "#/$defs/PostgresCommitTransactionConfig",
+          "copy_data_from_table": "#/$defs/PostgresCopyFromTableConfig",
+          "copy_data_to_table": "#/$defs/PostgresCopyToTableConfig",
+          "create_index": "#/$defs/PostgresCreateIndexConfig",
+          "create_schema": "#/$defs/PostgresCreateSchemaConfig",
+          "create_table": "#/$defs/PostgresCreateTableConfig",
+          "create_view": "#/$defs/PostgresCreateViewConfig",
+          "drop_index": "#/$defs/PostgresDropIndexConfig",
+          "drop_schema": "#/$defs/PostgresDropSchemaConfig",
+          "drop_table": "#/$defs/PostgresDropTableConfig",
+          "drop_view": "#/$defs/PostgresDropViewConfig",
+          "execute_batch_statements": "#/$defs/PostgresExecuteManyConfig",
+          "execute_sql_statement": "#/$defs/PostgresExecuteConfig",
+          "explain_query_plan": "#/$defs/PostgresExplainQueryConfig",
+          "get_sequence_current_value": "#/$defs/PostgresGetCurrentSequenceValueConfig",
+          "get_sequence_next_value": "#/$defs/PostgresGetNextSequenceValueConfig",
+          "get_table_info": "#/$defs/PostgresGetTableInfoConfig",
+          "install_extension": "#/$defs/PostgresCreateExtensionConfig",
+          "list_database_roles": "#/$defs/PostgresListRolesConfig",
+          "list_database_users": "#/$defs/PostgresListUsersConfig",
+          "list_databases": "#/$defs/PostgresListDatabasesConfig",
+          "list_extensions": "#/$defs/PostgresListExtensionsConfig",
+          "list_schema_functions": "#/$defs/PostgresListFunctionsConfig",
+          "list_schema_indexes": "#/$defs/PostgresListIndexesConfig",
+          "list_schema_sequences": "#/$defs/PostgresListSequencesConfig",
+          "list_schema_tables": "#/$defs/PostgresListTablesConfig",
+          "list_schema_triggers": "#/$defs/PostgresListTriggersConfig",
+          "list_schema_views": "#/$defs/PostgresListViewsConfig",
+          "list_schemas": "#/$defs/PostgresListSchemasConfig",
+          "list_table_columns": "#/$defs/PostgresListColumnsConfig",
+          "list_table_constraints": "#/$defs/PostgresListConstraintsConfig",
+          "rollback_transaction": "#/$defs/PostgresRollbackTransactionConfig",
+          "run_query_with_cursor": "#/$defs/PostgresQueryCursorConfig",
+          "run_select_query": "#/$defs/PostgresQueryConfig",
+          "set_sequence_value": "#/$defs/PostgresSetSequenceValueConfig",
+          "truncate_table": "#/$defs/PostgresTruncateTableConfig",
+          "vacuum_table": "#/$defs/PostgresVacuumTableConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/PostgresQueryConfig"
+        },
+        {
+          "$ref": "#/$defs/PostgresExecuteConfig"
+        },
+        {
+          "$ref": "#/$defs/PostgresExecuteManyConfig"
+        },
+        {
+          "$ref": "#/$defs/PostgresQueryCursorConfig"
+        },
+        {
+          "$ref": "#/$defs/PostgresCopyToTableConfig"
+        },
+        {
+          "$ref": "#/$defs/PostgresCopyFromTableConfig"
+        },
+        {
+          "$ref": "#/$defs/PostgresListTablesConfig"
+        },
+        {
+          "$ref": "#/$defs/PostgresListColumnsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostgresGetTableInfoConfig"
+        },
+        {
+          "$ref": "#/$defs/PostgresCreateTableConfig"
+        },
+        {
+          "$ref": "#/$defs/PostgresDropTableConfig"
+        },
+        {
+          "$ref": "#/$defs/PostgresTruncateTableConfig"
+        },
+        {
+          "$ref": "#/$defs/PostgresListSchemasConfig"
+        },
+        {
+          "$ref": "#/$defs/PostgresCreateSchemaConfig"
+        },
+        {
+          "$ref": "#/$defs/PostgresDropSchemaConfig"
+        },
+        {
+          "$ref": "#/$defs/PostgresListDatabasesConfig"
+        },
+        {
+          "$ref": "#/$defs/PostgresListIndexesConfig"
+        },
+        {
+          "$ref": "#/$defs/PostgresCreateIndexConfig"
+        },
+        {
+          "$ref": "#/$defs/PostgresDropIndexConfig"
+        },
+        {
+          "$ref": "#/$defs/PostgresListViewsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostgresCreateViewConfig"
+        },
+        {
+          "$ref": "#/$defs/PostgresDropViewConfig"
+        },
+        {
+          "$ref": "#/$defs/PostgresListSequencesConfig"
+        },
+        {
+          "$ref": "#/$defs/PostgresGetNextSequenceValueConfig"
+        },
+        {
+          "$ref": "#/$defs/PostgresGetCurrentSequenceValueConfig"
+        },
+        {
+          "$ref": "#/$defs/PostgresSetSequenceValueConfig"
+        },
+        {
+          "$ref": "#/$defs/PostgresListFunctionsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostgresCallFunctionConfig"
+        },
+        {
+          "$ref": "#/$defs/PostgresListConstraintsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostgresListTriggersConfig"
+        },
+        {
+          "$ref": "#/$defs/PostgresListExtensionsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostgresCreateExtensionConfig"
+        },
+        {
+          "$ref": "#/$defs/PostgresListUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/PostgresListRolesConfig"
+        },
+        {
+          "$ref": "#/$defs/PostgresExplainQueryConfig"
+        },
+        {
+          "$ref": "#/$defs/PostgresVacuumTableConfig"
+        },
+        {
+          "$ref": "#/$defs/PostgresAnalyzeTableConfig"
+        },
+        {
+          "$ref": "#/$defs/PostgresBeginTransactionConfig"
+        },
+        {
+          "$ref": "#/$defs/PostgresCommitTransactionConfig"
+        },
+        {
+          "$ref": "#/$defs/PostgresRollbackTransactionConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PostgresConnectionStringCredential"
+        },
+        {
+          "$ref": "#/$defs/PostgresCredentialsCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Postgres Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Query users table where status=active and select email,created_at",
+    "Insert new order record with customer_id and timestamp",
+    "Update user profile picture URL where user_id matches",
+    "Delete archived records older than 1 year from archive table",
+    "List all tables in schema and get column details for users table",
+    "Execute bulk update to set last_login for active users",
+    "Query sales data with GROUP BY and ORDER for monthly report"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

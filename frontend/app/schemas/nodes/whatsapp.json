@@ -1,0 +1,2322 @@
+{
+  "$defs": {
+    "WhatsAppAccessTokenCredential": {
+      "description": "Meta Access Token credential for WhatsApp Business Cloud API.\n\nGet your access token from Meta Developer Console:\n1. Go to https://developers.facebook.com/apps\n2. Select your app -> WhatsApp -> API Setup\n3. Generate either:\n   - Temporary token (60 days, testing)\n   - Permanent token (via System User in Business Settings)\n\nRequired permissions:\n- whatsapp_business_messaging\n- whatsapp_business_management",
+      "properties": {
+        "credential_type": {
+          "const": "whatsapp_access_token",
+          "default": "whatsapp_access_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "Meta access token from Developer Console (temporary or permanent)",
+          "minLength": 1,
+          "title": "Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "phone_number_id": {
+          "description": "WhatsApp Business Phone Number ID from API Setup page",
+          "minLength": 1,
+          "placeholder": "1234567890123456",
+          "title": "Phone Number ID",
+          "type": "string"
+        },
+        "business_account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "WhatsApp Business Account ID (required for template management and account operations)",
+          "placeholder": "Leave empty if not managing templates/account",
+          "title": "Business Account ID (Optional)"
+        }
+      },
+      "required": [
+        "access_token",
+        "phone_number_id"
+      ],
+      "title": "WhatsAppAccessTokenCredential",
+      "type": "object",
+      "x-credential-instructions": "1. Go to Meta Developer Console\n2. Select your app -> WhatsApp -> API Setup\n3. Copy Phone Number ID and Access Token\n4. For permanent token: Business Settings -> System Users -> Generate New Token",
+      "x-credential-url": "https://developers.facebook.com/apps"
+    },
+    "WhatsAppCreateTemplateConfig": {
+      "description": "Create a new message template",
+      "properties": {
+        "operation": {
+          "const": "create_message_template",
+          "default": "create_message_template",
+          "title": "Create Message Template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Template",
+          "x-display-name": "Create Message Template",
+          "x-is-trigger": false,
+          "x-supported-credential-types": [
+            "whatsapp_access_token"
+          ]
+        },
+        "name": {
+          "description": "Template name (lowercase, underscores only)",
+          "placeholder": "welcome_message",
+          "title": "Template Name",
+          "type": "string"
+        },
+        "language": {
+          "default": "en_US",
+          "description": "Template language code",
+          "placeholder": "en_US",
+          "title": "Language",
+          "type": "string"
+        },
+        "category": {
+          "description": "Template category",
+          "enum": [
+            "AUTHENTICATION",
+            "MARKETING",
+            "UTILITY"
+          ],
+          "enumNames": [
+            "Authentication (OTP, verification)",
+            "Marketing (promotions, announcements)",
+            "Utility (account updates, alerts)"
+          ],
+          "title": "Category",
+          "type": "string"
+        },
+        "body": {
+          "description": "Template body text (use {{1}}, {{2}} for variables)",
+          "placeholder": "Hello {{1}}, your order {{2}} is ready!",
+          "title": "Body Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "header": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional header text or media",
+          "placeholder": "Welcome!",
+          "title": "Header (Optional)"
+        },
+        "footer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional footer text (max 60 chars)",
+          "placeholder": "Reply STOP to unsubscribe",
+          "title": "Footer (Optional)"
+        }
+      },
+      "required": [
+        "name",
+        "category",
+        "body"
+      ],
+      "title": "WhatsAppCreateTemplateConfig",
+      "type": "object"
+    },
+    "WhatsAppDeleteMediaConfig": {
+      "description": "Delete media from WhatsApp servers",
+      "properties": {
+        "operation": {
+          "const": "delete_media",
+          "default": "delete_media",
+          "title": "Delete Media",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Media",
+          "x-display-name": "Delete Media",
+          "x-is-trigger": false,
+          "x-supported-credential-types": [
+            "whatsapp_access_token"
+          ]
+        },
+        "media_id": {
+          "description": "WhatsApp media ID to delete",
+          "placeholder": "1234567890123456",
+          "title": "Media ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "media_id"
+      ],
+      "title": "WhatsAppDeleteMediaConfig",
+      "type": "object"
+    },
+    "WhatsAppDeleteTemplateConfig": {
+      "description": "Delete a message template",
+      "properties": {
+        "operation": {
+          "const": "delete_message_template",
+          "default": "delete_message_template",
+          "title": "Delete Message Template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Template",
+          "x-display-name": "Delete Message Template",
+          "x-is-trigger": false,
+          "x-supported-credential-types": [
+            "whatsapp_access_token"
+          ]
+        },
+        "template_name": {
+          "description": "Name of the template to delete",
+          "placeholder": "hello_world",
+          "title": "Template Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "template_name"
+      ],
+      "title": "WhatsAppDeleteTemplateConfig",
+      "type": "object"
+    },
+    "WhatsAppDownloadMediaConfig": {
+      "description": "Download media file (returns binary data)",
+      "properties": {
+        "operation": {
+          "const": "download_media",
+          "default": "download_media",
+          "title": "Download Media",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Media",
+          "x-display-name": "Download Media",
+          "x-is-trigger": false,
+          "x-supported-credential-types": [
+            "whatsapp_access_token"
+          ]
+        },
+        "media_url": {
+          "description": "Media download URL from get_media_url operation (valid for 5 minutes)",
+          "placeholder": "https://lookaside.fbsbx.com/...",
+          "title": "Media URL",
+          "type": "string"
+        }
+      },
+      "required": [
+        "media_url"
+      ],
+      "title": "WhatsAppDownloadMediaConfig",
+      "type": "object"
+    },
+    "WhatsAppEditMessageConfig": {
+      "description": "Edit a previously sent message (QR credentials)",
+      "properties": {
+        "operation": {
+          "const": "edit_message",
+          "default": "edit_message",
+          "title": "Edit Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Edit Message",
+          "x-is-trigger": false,
+          "x-supported-credential-types": [
+            "whatsapp_qr"
+          ]
+        },
+        "chat_id": {
+          "description": "Chat containing the message to edit",
+          "placeholder": "+12025550100",
+          "title": "Chat",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter a phone number / chat ID",
+            "field_name": "chat_id",
+            "placeholder": "Select a chat...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "whatsapp_chat"
+        },
+        "message_id": {
+          "description": "ID of the sent message to edit (from a send operation's output or Get Chat Messages)",
+          "placeholder": "message id",
+          "title": "Message ID",
+          "type": "string"
+        },
+        "body": {
+          "description": "Replacement message text",
+          "title": "New Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "chat_id",
+        "message_id",
+        "body"
+      ],
+      "title": "WhatsAppEditMessageConfig",
+      "type": "object"
+    },
+    "WhatsAppGetAccountInfoConfig": {
+      "description": "Get WhatsApp Business Account information",
+      "properties": {
+        "operation": {
+          "const": "get_account_info",
+          "default": "get_account_info",
+          "title": "Get Account Info",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Account Info",
+          "x-is-trigger": false,
+          "x-supported-credential-types": [
+            "whatsapp_access_token"
+          ]
+        },
+        "fields": {
+          "default": "id,name,message_template_namespace,timezone_id,currency,account_review_status",
+          "description": "Comma-separated list of fields to retrieve",
+          "placeholder": "id,name,timezone_id",
+          "title": "Fields",
+          "type": "string"
+        }
+      },
+      "title": "WhatsAppGetAccountInfoConfig",
+      "type": "object"
+    },
+    "WhatsAppGetBusinessProfileConfig": {
+      "description": "Get business profile information",
+      "properties": {
+        "operation": {
+          "const": "get_business_profile",
+          "default": "get_business_profile",
+          "title": "Get Business Profile",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Profile",
+          "x-display-name": "Get Business Profile",
+          "x-is-trigger": false,
+          "x-supported-credential-types": [
+            "whatsapp_access_token"
+          ]
+        },
+        "fields": {
+          "default": "about,address,description,email,profile_picture_url,websites,vertical",
+          "description": "Comma-separated list of fields to retrieve",
+          "placeholder": "about,address,description,email",
+          "title": "Fields",
+          "type": "string"
+        }
+      },
+      "title": "WhatsAppGetBusinessProfileConfig",
+      "type": "object"
+    },
+    "WhatsAppGetChatMessagesConfig": {
+      "description": "Read message history from a chat (QR credentials)",
+      "properties": {
+        "operation": {
+          "const": "get_chat_messages",
+          "default": "get_chat_messages",
+          "title": "Get Chat Messages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Chats",
+          "x-display-name": "Get Chat Messages",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "read messages",
+            "chat history",
+            "conversation history"
+          ],
+          "x-supported-credential-types": [
+            "whatsapp_qr"
+          ]
+        },
+        "chat_id": {
+          "description": "Chat to read messages from (pick from your WhatsApp chats)",
+          "placeholder": "+12025550100",
+          "title": "Chat",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter a phone number / chat ID",
+            "field_name": "chat_id",
+            "placeholder": "Select a chat...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "whatsapp_chat"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Number of messages to return, newest first",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from a previous page's next_before \u2014 fetches the next (older) page",
+          "placeholder": "Leave empty for the newest messages",
+          "title": "Before (Cursor)"
+        }
+      },
+      "required": [
+        "chat_id"
+      ],
+      "title": "WhatsAppGetChatMessagesConfig",
+      "type": "object"
+    },
+    "WhatsAppGetChatsConfig": {
+      "description": "List recent WhatsApp conversations",
+      "properties": {
+        "operation": {
+          "const": "list_recent_chats",
+          "default": "list_recent_chats",
+          "title": "List Recent Chats",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Chats",
+          "x-display-name": "List Recent Chats",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "conversations",
+            "inbox",
+            "chat list"
+          ],
+          "x-supported-credential-types": [
+            "whatsapp_qr"
+          ]
+        },
+        "limit": {
+          "default": 50,
+          "description": "Maximum number of chats to return",
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "unread_only": {
+          "default": "false",
+          "description": "Only return chats marked unread (best-effort)",
+          "enum": [
+            "false",
+            "true"
+          ],
+          "enumNames": [
+            "No (all chats)",
+            "Yes (unread only)"
+          ],
+          "title": "Unread Only",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "title": "WhatsAppGetChatsConfig",
+      "type": "object"
+    },
+    "WhatsAppGetMediaUrlConfig": {
+      "description": "Retrieve media URL from media ID",
+      "properties": {
+        "operation": {
+          "const": "get_media_url",
+          "default": "get_media_url",
+          "title": "Get Media Url",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Media",
+          "x-display-name": "Get Media Url",
+          "x-is-trigger": false,
+          "x-supported-credential-types": [
+            "whatsapp_access_token"
+          ]
+        },
+        "media_id": {
+          "description": "WhatsApp media ID",
+          "placeholder": "1234567890123456",
+          "title": "Media ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "media_id"
+      ],
+      "title": "WhatsAppGetMediaUrlConfig",
+      "type": "object"
+    },
+    "WhatsAppGetPhoneInfoConfig": {
+      "description": "Get phone number information",
+      "properties": {
+        "operation": {
+          "const": "get_phone_number_info",
+          "default": "get_phone_number_info",
+          "title": "Get Phone Number Info",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Phone",
+          "x-display-name": "Get Phone Number Info",
+          "x-is-trigger": false,
+          "x-supported-credential-types": [
+            "whatsapp_access_token"
+          ]
+        },
+        "fields": {
+          "default": "verified_name,code_verification_status,display_phone_number,quality_rating,messaging_limit_tier",
+          "description": "Comma-separated list of fields to retrieve",
+          "placeholder": "verified_name,quality_rating",
+          "title": "Fields",
+          "type": "string"
+        }
+      },
+      "title": "WhatsAppGetPhoneInfoConfig",
+      "type": "object"
+    },
+    "WhatsAppGetProfileConfig": {
+      "description": "Get the connected WhatsApp account profile info",
+      "properties": {
+        "operation": {
+          "const": "get_account_profile",
+          "default": "get_account_profile",
+          "title": "Get Account Profile",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Profile",
+          "x-display-name": "Get Account Profile",
+          "x-is-trigger": false,
+          "x-supported-credential-types": [
+            "whatsapp_qr"
+          ]
+        }
+      },
+      "title": "WhatsAppGetProfileConfig",
+      "type": "object"
+    },
+    "WhatsAppGetTemplateConfig": {
+      "description": "Get a specific message template",
+      "properties": {
+        "operation": {
+          "const": "get_message_template",
+          "default": "get_message_template",
+          "title": "Get Message Template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Template",
+          "x-display-name": "Get Message Template",
+          "x-is-trigger": false,
+          "x-supported-credential-types": [
+            "whatsapp_access_token"
+          ]
+        },
+        "template_id": {
+          "description": "WhatsApp template ID",
+          "placeholder": "1234567890123456",
+          "title": "Template ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "WhatsAppGetTemplateConfig",
+      "type": "object"
+    },
+    "WhatsAppListContactsConfig": {
+      "description": "List the connected account's WhatsApp contacts (QR credentials)",
+      "properties": {
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "List Contacts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Chats",
+          "x-display-name": "List Contacts",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "address book",
+            "phone numbers",
+            "people"
+          ],
+          "x-supported-credential-types": [
+            "whatsapp_qr"
+          ]
+        },
+        "limit": {
+          "default": 200,
+          "description": "Maximum number of contacts to return",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "title": "WhatsAppListContactsConfig",
+      "type": "object"
+    },
+    "WhatsAppListPhoneNumbersConfig": {
+      "description": "List all phone numbers in the account",
+      "properties": {
+        "operation": {
+          "const": "list_account_phone_numbers",
+          "default": "list_account_phone_numbers",
+          "title": "List Account Phone Numbers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Phone",
+          "x-display-name": "List Account Phone Numbers",
+          "x-is-trigger": false,
+          "x-supported-credential-types": [
+            "whatsapp_access_token"
+          ]
+        },
+        "limit": {
+          "default": 50,
+          "description": "Number of phone numbers to retrieve",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "title": "WhatsAppListPhoneNumbersConfig",
+      "type": "object"
+    },
+    "WhatsAppListTemplatesConfig": {
+      "description": "List all message templates",
+      "properties": {
+        "operation": {
+          "const": "list_message_templates",
+          "default": "list_message_templates",
+          "title": "List Message Templates",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Template",
+          "x-display-name": "List Message Templates",
+          "x-is-trigger": false,
+          "x-supported-credential-types": [
+            "whatsapp_access_token"
+          ]
+        },
+        "limit": {
+          "default": 50,
+          "description": "Number of templates to retrieve (1-250)",
+          "maximum": 250,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter templates by approval status",
+          "enum": [
+            "",
+            "APPROVED",
+            "PENDING",
+            "REJECTED"
+          ],
+          "enumNames": [
+            "All Statuses",
+            "Approved",
+            "Pending",
+            "Rejected"
+          ],
+          "title": "Filter by Status (Optional)"
+        }
+      },
+      "title": "WhatsAppListTemplatesConfig",
+      "type": "object"
+    },
+    "WhatsAppMarkChatReadConfig": {
+      "description": "Mark a chat's messages as read (QR credentials)",
+      "properties": {
+        "operation": {
+          "const": "mark_chat_read",
+          "default": "mark_chat_read",
+          "title": "Mark Chat Read",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Chats",
+          "x-display-name": "Mark Chat Read",
+          "x-is-trigger": false,
+          "x-supported-credential-types": [
+            "whatsapp_qr"
+          ]
+        },
+        "chat_id": {
+          "description": "Chat to mark as read",
+          "placeholder": "+12025550100",
+          "title": "Chat",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter a phone number / chat ID",
+            "field_name": "chat_id",
+            "placeholder": "Select a chat...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "whatsapp_chat"
+        }
+      },
+      "required": [
+        "chat_id"
+      ],
+      "title": "WhatsAppMarkChatReadConfig",
+      "type": "object"
+    },
+    "WhatsAppMarkReadConfig": {
+      "description": "Mark a message as read",
+      "properties": {
+        "operation": {
+          "const": "mark_message_read",
+          "default": "mark_message_read",
+          "title": "Mark Message Read",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Mark Message Read",
+          "x-is-trigger": false,
+          "x-supported-credential-types": [
+            "whatsapp_access_token"
+          ]
+        },
+        "message_id": {
+          "description": "WhatsApp message ID to mark as read (wamid)",
+          "placeholder": "wamid.xxx...",
+          "title": "Message ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message_id"
+      ],
+      "title": "WhatsAppMarkReadConfig",
+      "type": "object"
+    },
+    "WhatsAppQRCredential": {
+      "description": "WAHooks QR code scan credential for WhatsApp.\n\nConnect your WhatsApp account by scanning a QR code.\nNo Meta Developer account required - just scan with your phone.",
+      "properties": {
+        "credential_type": {
+          "const": "whatsapp_qr",
+          "default": "whatsapp_qr",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "connection_id": {
+          "description": "WAHooks connection ID (auto-filled after QR scan)",
+          "minLength": 1,
+          "title": "Connection ID",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "connection_id"
+      ],
+      "title": "WhatsAppQRCredential",
+      "type": "object",
+      "x-credential-instructions": "Connect your WhatsApp by scanning a QR code. A persistent connection fee of $0.99/month will be charged to your balance.",
+      "x-credential-type": "qr_scan"
+    },
+    "WhatsAppReceiveMessageConfig": {
+      "description": "Receive incoming messages via webhook. Works with both QR scan and Cloud API credentials.",
+      "properties": {
+        "operation": {
+          "const": "receive_message",
+          "default": "receive_message",
+          "title": "Receive Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "Receive Message",
+          "x-is-trigger": true
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Webhook URL for receiving messages. Auto-registered for QR credentials; for Cloud API, configure in Meta Developer Console.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "verify_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token to verify webhook subscription (you choose this)",
+          "title": "Verify Token (Optional)",
+          "ui:widget": "password"
+        },
+        "include_group_messages": {
+          "default": "false",
+          "description": "Also trigger when a message arrives in a group chat. Off by default: an auto-reply bot answering into groups can message many people at once.",
+          "enum": [
+            "false",
+            "true"
+          ],
+          "enumNames": [
+            "No (direct messages only)",
+            "Yes (also group chats)"
+          ],
+          "title": "Trigger on Group Messages",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "title": "WhatsAppReceiveMessageConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "WhatsAppReceiveStatusConfig": {
+      "description": "Receive message status updates via webhook",
+      "properties": {
+        "operation": {
+          "const": "receive_status_update",
+          "default": "receive_status_update",
+          "title": "Receive Status Update",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "Receive Status Update",
+          "x-is-trigger": true,
+          "x-supported-credential-types": [
+            "whatsapp_access_token"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Configure this URL in Meta Developer Console to receive status updates (sent, delivered, read, failed)",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "verify_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token to verify webhook subscription",
+          "title": "Verify Token (Optional)",
+          "ui:widget": "password"
+        }
+      },
+      "title": "WhatsAppReceiveStatusConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "WhatsAppRegisterPhoneConfig": {
+      "description": "Register a phone number with WhatsApp Business",
+      "properties": {
+        "operation": {
+          "const": "register_phone_number",
+          "default": "register_phone_number",
+          "title": "Register Phone Number",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Phone",
+          "x-display-name": "Register Phone Number",
+          "x-is-trigger": false,
+          "x-supported-credential-types": [
+            "whatsapp_access_token"
+          ]
+        },
+        "pin": {
+          "description": "6-digit PIN received via SMS or voice call",
+          "placeholder": "123456",
+          "title": "6-Digit PIN",
+          "type": "string"
+        }
+      },
+      "required": [
+        "pin"
+      ],
+      "title": "WhatsAppRegisterPhoneConfig",
+      "type": "object"
+    },
+    "WhatsAppRequestCodeConfig": {
+      "description": "Request verification code via SMS or voice",
+      "properties": {
+        "operation": {
+          "const": "request_verification_code",
+          "default": "request_verification_code",
+          "title": "Request Verification Code",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Phone",
+          "x-display-name": "Request Verification Code",
+          "x-is-trigger": false,
+          "x-supported-credential-types": [
+            "whatsapp_access_token"
+          ]
+        },
+        "code_method": {
+          "default": "SMS",
+          "description": "Method to receive verification code",
+          "enum": [
+            "SMS",
+            "VOICE"
+          ],
+          "enumNames": [
+            "SMS Text Message",
+            "Voice Call"
+          ],
+          "title": "Code Method",
+          "type": "string"
+        },
+        "language": {
+          "default": "en_US",
+          "description": "Language for the verification message",
+          "placeholder": "en_US",
+          "title": "Language",
+          "type": "string"
+        }
+      },
+      "title": "WhatsAppRequestCodeConfig",
+      "type": "object"
+    },
+    "WhatsAppSendAudioConfig": {
+      "description": "Send an audio message",
+      "properties": {
+        "operation": {
+          "const": "send_audio_message",
+          "default": "send_audio_message",
+          "title": "Send Audio Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Send Audio Message",
+          "x-is-trigger": false
+        },
+        "to": {
+          "description": "Recipient chat. When replying to an incoming message (e.g. from a WhatsApp trigger event), pass the sender's chat ID from that event EXACTLY as given (e.g. 12025550101@c.us or 12025550102@lid) \u2014 do NOT reformat it into a phone number. To start a new conversation, use a phone number in E.164 format (e.g., +12025550100).",
+          "placeholder": "+12025550100",
+          "title": "To (Phone or Chat)",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter a phone number / chat ID",
+            "field_name": "to",
+            "placeholder": "Select a chat...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "whatsapp_chat"
+        },
+        "audio_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The audio to send \u2014 upload a file, paste a URL, or reference an upstream file (e.g. {{http-1.response.url}}). Use this OR media_id.",
+          "placeholder": "https://example.com/audio.mp3",
+          "title": "Audio URL",
+          "ui:accept": "audio/*",
+          "ui:widget": "media_upload"
+        },
+        "media_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Uploaded media ID from WhatsApp (use this OR audio_url)",
+          "placeholder": "Leave empty if using URL",
+          "title": "Media ID"
+        }
+      },
+      "required": [
+        "to"
+      ],
+      "title": "WhatsAppSendAudioConfig",
+      "type": "object"
+    },
+    "WhatsAppSendButtonsConfig": {
+      "description": "Send an interactive message with quick reply buttons",
+      "properties": {
+        "operation": {
+          "const": "send_interactive_buttons",
+          "default": "send_interactive_buttons",
+          "title": "Send Interactive Buttons",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Send Interactive Buttons",
+          "x-is-trigger": false,
+          "x-supported-credential-types": [
+            "whatsapp_access_token"
+          ]
+        },
+        "to": {
+          "description": "Recipient phone number in E.164 format",
+          "placeholder": "+12025550100",
+          "title": "To (Phone Number)",
+          "type": "string"
+        },
+        "body": {
+          "description": "Main message text",
+          "placeholder": "Choose an option:",
+          "title": "Message Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "buttons": {
+          "description": "JSON array of button objects (max 3): [{\"type\":\"reply\",\"reply\":{\"id\":\"btn1\",\"title\":\"Button 1\"}}]",
+          "placeholder": "[{\"type\":\"reply\",\"reply\":{\"id\":\"btn1\",\"title\":\"Option 1\"}},{\"type\":\"reply\",\"reply\":{\"id\":\"btn2\",\"title\":\"Option 2\"}}]",
+          "title": "Buttons (JSON Array)",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "header": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional header text",
+          "placeholder": "Select your choice",
+          "title": "Header (Optional)"
+        },
+        "footer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional footer text",
+          "placeholder": "Powered by MyBusiness",
+          "title": "Footer (Optional)"
+        }
+      },
+      "required": [
+        "to",
+        "body",
+        "buttons"
+      ],
+      "title": "WhatsAppSendButtonsConfig",
+      "type": "object"
+    },
+    "WhatsAppSendCatalogConfig": {
+      "description": "Send catalog message",
+      "properties": {
+        "operation": {
+          "const": "send_catalog_message",
+          "default": "send_catalog_message",
+          "title": "Send Catalog Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Send Catalog Message",
+          "x-is-trigger": false,
+          "x-supported-credential-types": [
+            "whatsapp_access_token"
+          ]
+        },
+        "to": {
+          "description": "Recipient phone number in E.164 format",
+          "placeholder": "+12025550100",
+          "title": "To (Phone Number)",
+          "type": "string"
+        },
+        "body": {
+          "description": "Catalog message text",
+          "placeholder": "Check out our catalog!",
+          "title": "Message Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "thumbnail_product_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Product ID to show as thumbnail",
+          "placeholder": "product_123",
+          "title": "Thumbnail Product ID (Optional)"
+        }
+      },
+      "required": [
+        "to",
+        "body"
+      ],
+      "title": "WhatsAppSendCatalogConfig",
+      "type": "object"
+    },
+    "WhatsAppSendContactConfig": {
+      "description": "Send a contact card message",
+      "properties": {
+        "operation": {
+          "const": "send_contact_card",
+          "default": "send_contact_card",
+          "title": "Send Contact Card",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Send Contact Card",
+          "x-is-trigger": false
+        },
+        "to": {
+          "description": "Recipient chat. When replying to an incoming message (e.g. from a WhatsApp trigger event), pass the sender's chat ID from that event EXACTLY as given (e.g. 12025550101@c.us or 12025550102@lid) \u2014 do NOT reformat it into a phone number. To start a new conversation, use a phone number in E.164 format (e.g., +12025550100).",
+          "placeholder": "+12025550100",
+          "title": "To (Phone or Chat)",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter a phone number / chat ID",
+            "field_name": "to",
+            "placeholder": "Select a chat...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "whatsapp_chat"
+        },
+        "contact_name": {
+          "description": "Contact's full name",
+          "placeholder": "John Doe",
+          "title": "Contact Name",
+          "type": "string"
+        },
+        "contact_phone": {
+          "description": "Contact's phone number",
+          "placeholder": "+12025550100",
+          "title": "Contact Phone",
+          "type": "string"
+        },
+        "contact_email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact's email address",
+          "placeholder": "john@example.com",
+          "title": "Contact Email (Optional)"
+        }
+      },
+      "required": [
+        "to",
+        "contact_name",
+        "contact_phone"
+      ],
+      "title": "WhatsAppSendContactConfig",
+      "type": "object"
+    },
+    "WhatsAppSendDocumentConfig": {
+      "description": "Send a document message",
+      "properties": {
+        "operation": {
+          "const": "send_document_message",
+          "default": "send_document_message",
+          "title": "Send Document Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Send Document Message",
+          "x-is-trigger": false
+        },
+        "to": {
+          "description": "Recipient chat. When replying to an incoming message (e.g. from a WhatsApp trigger event), pass the sender's chat ID from that event EXACTLY as given (e.g. 12025550101@c.us or 12025550102@lid) \u2014 do NOT reformat it into a phone number. To start a new conversation, use a phone number in E.164 format (e.g., +12025550100).",
+          "placeholder": "+12025550100",
+          "title": "To (Phone or Chat)",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter a phone number / chat ID",
+            "field_name": "to",
+            "placeholder": "Select a chat...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "whatsapp_chat"
+        },
+        "document_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The document to send \u2014 upload a file, paste a URL, or reference an upstream file (e.g. {{http-1.response.url}}). Use this OR media_id.",
+          "placeholder": "https://example.com/document.pdf",
+          "title": "Document URL",
+          "ui:widget": "media_upload"
+        },
+        "media_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Uploaded media ID from WhatsApp (use this OR document_url)",
+          "placeholder": "Leave empty if using URL",
+          "title": "Media ID"
+        },
+        "filename": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Document filename",
+          "placeholder": "document.pdf",
+          "title": "Filename (Optional)"
+        },
+        "caption": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Document caption",
+          "placeholder": "Enter caption...",
+          "title": "Caption (Optional)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "to"
+      ],
+      "title": "WhatsAppSendDocumentConfig",
+      "type": "object"
+    },
+    "WhatsAppSendImageConfig": {
+      "description": "Send an image message",
+      "properties": {
+        "operation": {
+          "const": "send_image_message",
+          "default": "send_image_message",
+          "title": "Send Image Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Send Image Message",
+          "x-is-trigger": false
+        },
+        "to": {
+          "description": "Recipient chat. When replying to an incoming message (e.g. from a WhatsApp trigger event), pass the sender's chat ID from that event EXACTLY as given (e.g. 12025550101@c.us or 12025550102@lid) \u2014 do NOT reformat it into a phone number. To start a new conversation, use a phone number in E.164 format (e.g., +12025550100).",
+          "placeholder": "+12025550100",
+          "title": "To (Phone or Chat)",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter a phone number / chat ID",
+            "field_name": "to",
+            "placeholder": "Select a chat...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "whatsapp_chat"
+        },
+        "image_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The image to send \u2014 upload a file, paste a URL, or reference an upstream file (e.g. {{http-1.response.url}}). Use this OR media_id.",
+          "placeholder": "https://example.com/image.jpg",
+          "title": "Image URL",
+          "ui:accept": "image/*",
+          "ui:widget": "media_upload"
+        },
+        "media_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Uploaded media ID from WhatsApp (use this OR image_url)",
+          "placeholder": "Leave empty if using URL",
+          "title": "Media ID"
+        },
+        "caption": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Image caption",
+          "placeholder": "Enter caption...",
+          "title": "Caption (Optional)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "to"
+      ],
+      "title": "WhatsAppSendImageConfig",
+      "type": "object"
+    },
+    "WhatsAppSendListConfig": {
+      "description": "Send an interactive list message",
+      "properties": {
+        "operation": {
+          "const": "send_interactive_list",
+          "default": "send_interactive_list",
+          "title": "Send Interactive List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Send Interactive List",
+          "x-is-trigger": false,
+          "x-supported-credential-types": [
+            "whatsapp_access_token"
+          ]
+        },
+        "to": {
+          "description": "Recipient phone number in E.164 format",
+          "placeholder": "+12025550100",
+          "title": "To (Phone Number)",
+          "type": "string"
+        },
+        "body": {
+          "description": "Main message text",
+          "placeholder": "Please select from the list:",
+          "title": "Message Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "button_text": {
+          "default": "View Options",
+          "description": "Text shown on the list button (max 20 chars)",
+          "placeholder": "View Options",
+          "title": "Button Text",
+          "type": "string"
+        },
+        "sections": {
+          "description": "JSON array of sections with rows (max 10 total): [{\"title\":\"Section 1\",\"rows\":[{\"id\":\"row1\",\"title\":\"Option 1\",\"description\":\"Description\"}]}]",
+          "placeholder": "[{\"title\":\"Section 1\",\"rows\":[{\"id\":\"opt1\",\"title\":\"Option 1\",\"description\":\"First option\"}]}]",
+          "title": "List Sections (JSON Array)",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "header": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional header text",
+          "placeholder": "Choose from menu",
+          "title": "Header (Optional)"
+        },
+        "footer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional footer text",
+          "placeholder": "Select one option",
+          "title": "Footer (Optional)"
+        }
+      },
+      "required": [
+        "to",
+        "body",
+        "sections"
+      ],
+      "title": "WhatsAppSendListConfig",
+      "type": "object"
+    },
+    "WhatsAppSendLocationConfig": {
+      "description": "Send a location message",
+      "properties": {
+        "operation": {
+          "const": "send_location_message",
+          "default": "send_location_message",
+          "title": "Send Location Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Send Location Message",
+          "x-is-trigger": false
+        },
+        "to": {
+          "description": "Recipient chat. When replying to an incoming message (e.g. from a WhatsApp trigger event), pass the sender's chat ID from that event EXACTLY as given (e.g. 12025550101@c.us or 12025550102@lid) \u2014 do NOT reformat it into a phone number. To start a new conversation, use a phone number in E.164 format (e.g., +12025550100).",
+          "placeholder": "+12025550100",
+          "title": "To (Phone or Chat)",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter a phone number / chat ID",
+            "field_name": "to",
+            "placeholder": "Select a chat...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "whatsapp_chat"
+        },
+        "latitude": {
+          "description": "Location latitude (e.g., 37.7749)",
+          "placeholder": "37.7749",
+          "title": "Latitude",
+          "type": "string"
+        },
+        "longitude": {
+          "description": "Location longitude (e.g., -122.4194)",
+          "placeholder": "-122.4194",
+          "title": "Longitude",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Location name",
+          "placeholder": "My Office",
+          "title": "Name (Optional)"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Location address",
+          "placeholder": "123 Main St, San Francisco, CA",
+          "title": "Address (Optional)"
+        }
+      },
+      "required": [
+        "to",
+        "latitude",
+        "longitude"
+      ],
+      "title": "WhatsAppSendLocationConfig",
+      "type": "object"
+    },
+    "WhatsAppSendMultiProductConfig": {
+      "description": "Send multiple products message",
+      "properties": {
+        "operation": {
+          "const": "send_multi_product_message",
+          "default": "send_multi_product_message",
+          "title": "Send Multi Product Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Send Multi Product Message",
+          "x-is-trigger": false,
+          "x-supported-credential-types": [
+            "whatsapp_access_token"
+          ]
+        },
+        "to": {
+          "description": "Recipient phone number in E.164 format",
+          "placeholder": "+12025550100",
+          "title": "To (Phone Number)",
+          "type": "string"
+        },
+        "catalog_id": {
+          "description": "Your Meta Commerce catalog ID",
+          "placeholder": "1234567890",
+          "title": "Catalog ID",
+          "type": "string"
+        },
+        "product_ids": {
+          "description": "JSON array of product IDs (max 30): [\"SKU_1\", \"SKU_2\", \"SKU_3\"]",
+          "placeholder": "[\"SKU_1\", \"SKU_2\", \"SKU_3\"]",
+          "title": "Product IDs (JSON Array)",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "header": {
+          "default": "Our Products",
+          "description": "Section header text",
+          "placeholder": "Our Products",
+          "title": "Header Text",
+          "type": "string"
+        },
+        "body": {
+          "description": "Message text",
+          "placeholder": "Browse our collection!",
+          "title": "Message Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "to",
+        "catalog_id",
+        "product_ids",
+        "body"
+      ],
+      "title": "WhatsAppSendMultiProductConfig",
+      "type": "object"
+    },
+    "WhatsAppSendProductConfig": {
+      "description": "Send a single product message",
+      "properties": {
+        "operation": {
+          "const": "send_product_message",
+          "default": "send_product_message",
+          "title": "Send Product Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Send Product Message",
+          "x-is-trigger": false,
+          "x-supported-credential-types": [
+            "whatsapp_access_token"
+          ]
+        },
+        "to": {
+          "description": "Recipient phone number in E.164 format",
+          "placeholder": "+12025550100",
+          "title": "To (Phone Number)",
+          "type": "string"
+        },
+        "catalog_id": {
+          "description": "Your Meta Commerce catalog ID",
+          "placeholder": "1234567890",
+          "title": "Catalog ID",
+          "type": "string"
+        },
+        "product_id": {
+          "description": "Product ID from your catalog",
+          "placeholder": "SKU_123",
+          "title": "Product ID",
+          "type": "string"
+        },
+        "body": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional message text",
+          "placeholder": "Check out this product!",
+          "title": "Message Body (Optional)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "to",
+        "catalog_id",
+        "product_id"
+      ],
+      "title": "WhatsAppSendProductConfig",
+      "type": "object"
+    },
+    "WhatsAppSendReactionConfig": {
+      "description": "Send a reaction (emoji) to a message",
+      "properties": {
+        "operation": {
+          "const": "send_reaction_emoji",
+          "default": "send_reaction_emoji",
+          "title": "Send Reaction Emoji",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Send Reaction Emoji",
+          "x-is-trigger": false
+        },
+        "to": {
+          "description": "Recipient chat. When replying to an incoming message (e.g. from a WhatsApp trigger event), pass the sender's chat ID from that event EXACTLY as given (e.g. 12025550101@c.us or 12025550102@lid) \u2014 do NOT reformat it into a phone number. To start a new conversation, use a phone number in E.164 format (e.g., +12025550100).",
+          "placeholder": "+12025550100",
+          "title": "To (Phone or Chat)",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter a phone number / chat ID",
+            "field_name": "to",
+            "placeholder": "Select a chat...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "whatsapp_chat"
+        },
+        "message_id": {
+          "description": "WhatsApp message ID to react to (wamid)",
+          "placeholder": "wamid.xxx...",
+          "title": "Message ID",
+          "type": "string"
+        },
+        "emoji": {
+          "description": "Single emoji character (use empty string to remove reaction)",
+          "placeholder": "\ud83d\udc4d",
+          "title": "Emoji",
+          "type": "string"
+        }
+      },
+      "required": [
+        "to",
+        "message_id",
+        "emoji"
+      ],
+      "title": "WhatsAppSendReactionConfig",
+      "type": "object"
+    },
+    "WhatsAppSendTemplateConfig": {
+      "description": "Send a pre-approved template message",
+      "properties": {
+        "operation": {
+          "const": "send_template_message",
+          "default": "send_template_message",
+          "title": "Send Template Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Template",
+          "x-display-name": "Send Template Message",
+          "x-is-trigger": false,
+          "x-supported-credential-types": [
+            "whatsapp_access_token"
+          ]
+        },
+        "to": {
+          "description": "Recipient phone number in E.164 format",
+          "placeholder": "+12025550100",
+          "title": "To (Phone Number)",
+          "type": "string"
+        },
+        "template_name": {
+          "description": "Name of the approved message template",
+          "placeholder": "hello_world",
+          "title": "Template Name",
+          "type": "string"
+        },
+        "language_code": {
+          "default": "en_US",
+          "description": "Template language code (e.g., en_US, es_ES, pt_BR)",
+          "placeholder": "en_US",
+          "title": "Language Code",
+          "type": "string"
+        },
+        "parameters": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array of parameter values for template variables (e.g., [{\"type\":\"text\",\"text\":\"John\"}])",
+          "placeholder": "[{\"type\":\"text\",\"text\":\"value1\"},{\"type\":\"text\",\"text\":\"value2\"}]",
+          "title": "Template Parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "to",
+        "template_name"
+      ],
+      "title": "WhatsAppSendTemplateConfig",
+      "type": "object"
+    },
+    "WhatsAppSendTextConfig": {
+      "description": "Send a text message",
+      "properties": {
+        "operation": {
+          "const": "send_text_message",
+          "default": "send_text_message",
+          "title": "Send Text Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Send Text Message",
+          "x-is-trigger": false
+        },
+        "to": {
+          "description": "Recipient chat. When replying to an incoming message (e.g. from a WhatsApp trigger event), pass the sender's chat ID from that event EXACTLY as given (e.g. 12025550101@c.us or 12025550102@lid) \u2014 do NOT reformat it into a phone number. To start a new conversation, use a phone number in E.164 format (e.g., +12025550100).",
+          "placeholder": "+12025550100",
+          "title": "To (Phone or Chat)",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter a phone number / chat ID",
+            "field_name": "to",
+            "placeholder": "Select a chat...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "whatsapp_chat"
+        },
+        "body": {
+          "description": "Text message content (up to 4096 characters)",
+          "placeholder": "Enter your message...",
+          "title": "Message Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "reply_to_message_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Send as a reply to this message (from a trigger payload or Get Chat Messages)",
+          "placeholder": "wamid.xxx... / message id",
+          "title": "Reply To (Message ID)"
+        },
+        "preview_url": {
+          "default": false,
+          "description": "Enable URL preview in message",
+          "title": "Preview URL",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "to",
+        "body"
+      ],
+      "title": "WhatsAppSendTextConfig",
+      "type": "object"
+    },
+    "WhatsAppSendVideoConfig": {
+      "description": "Send a video message",
+      "properties": {
+        "operation": {
+          "const": "send_video_message",
+          "default": "send_video_message",
+          "title": "Send Video Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Send Video Message",
+          "x-is-trigger": false
+        },
+        "to": {
+          "description": "Recipient chat. When replying to an incoming message (e.g. from a WhatsApp trigger event), pass the sender's chat ID from that event EXACTLY as given (e.g. 12025550101@c.us or 12025550102@lid) \u2014 do NOT reformat it into a phone number. To start a new conversation, use a phone number in E.164 format (e.g., +12025550100).",
+          "placeholder": "+12025550100",
+          "title": "To (Phone or Chat)",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter a phone number / chat ID",
+            "field_name": "to",
+            "placeholder": "Select a chat...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "whatsapp_chat"
+        },
+        "video_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The video to send \u2014 upload a file, paste a URL, or reference an upstream file (e.g. {{http-1.response.url}}). Use this OR media_id.",
+          "placeholder": "https://example.com/video.mp4",
+          "title": "Video URL",
+          "ui:accept": "video/*",
+          "ui:widget": "media_upload"
+        },
+        "media_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Uploaded media ID from WhatsApp (use this OR video_url)",
+          "placeholder": "Leave empty if using URL",
+          "title": "Media ID"
+        },
+        "caption": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Video caption",
+          "placeholder": "Enter caption...",
+          "title": "Caption (Optional)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "to"
+      ],
+      "title": "WhatsAppSendVideoConfig",
+      "type": "object"
+    },
+    "WhatsAppUpdateBusinessProfileConfig": {
+      "description": "Update business profile information",
+      "properties": {
+        "operation": {
+          "const": "update_business_profile",
+          "default": "update_business_profile",
+          "title": "Update Business Profile",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Profile",
+          "x-display-name": "Update Business Profile",
+          "x-is-trigger": false,
+          "x-supported-credential-types": [
+            "whatsapp_access_token"
+          ]
+        },
+        "about": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Business description (max 139 chars)",
+          "placeholder": "We are a...",
+          "title": "About (Optional)",
+          "ui:widget": "textarea"
+        },
+        "address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Business address (max 256 chars)",
+          "placeholder": "123 Main St, City",
+          "title": "Address (Optional)"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Extended business description (max 512 chars)",
+          "placeholder": "Full business description...",
+          "title": "Description (Optional)",
+          "ui:widget": "textarea"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Business email address",
+          "placeholder": "business@example.com",
+          "title": "Email (Optional)"
+        },
+        "vertical": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Business category",
+          "enum": [
+            "AUTO",
+            "BEAUTY",
+            "APPAREL",
+            "EDU",
+            "ENTERTAIN",
+            "EVENT_PLAN",
+            "FINANCE",
+            "GROCERY",
+            "GOVT",
+            "HOTEL",
+            "HEALTH",
+            "NONPROFIT",
+            "PROF_SERVICES",
+            "RETAIL",
+            "TRAVEL",
+            "RESTAURANT",
+            "NOT_A_BIZ"
+          ],
+          "enumNames": [
+            "Automotive",
+            "Beauty/Spa/Salon",
+            "Apparel/Clothing",
+            "Education",
+            "Entertainment",
+            "Event Planning",
+            "Finance/Banking",
+            "Grocery",
+            "Government",
+            "Hotel/Lodging",
+            "Healthcare",
+            "Nonprofit",
+            "Professional Services",
+            "Retail",
+            "Travel/Transportation",
+            "Restaurant",
+            "Not a Business"
+          ],
+          "title": "Vertical/Industry (Optional)"
+        },
+        "websites": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of website URLs",
+          "placeholder": "https://example.com,https://shop.example.com",
+          "title": "Websites (Optional)"
+        }
+      },
+      "title": "WhatsAppUpdateBusinessProfileConfig",
+      "type": "object"
+    },
+    "WhatsAppUploadMediaConfig": {
+      "description": "Upload media to WhatsApp",
+      "properties": {
+        "operation": {
+          "const": "upload_media",
+          "default": "upload_media",
+          "title": "Upload Media",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Media",
+          "x-display-name": "Upload Media",
+          "x-is-trigger": false,
+          "x-supported-credential-types": [
+            "whatsapp_access_token"
+          ]
+        },
+        "media_url": {
+          "description": "The media to upload \u2014 upload a file, paste a URL, or reference an upstream file (e.g. {{http-1.response.url}}). Max 100MB.",
+          "placeholder": "https://example.com/image.jpg",
+          "title": "Media URL",
+          "type": "string",
+          "ui:accept": "image/*,video/*",
+          "ui:widget": "media_upload"
+        },
+        "media_type": {
+          "description": "MIME type of the media (e.g., image/jpeg, video/mp4, application/pdf)",
+          "enum": [
+            "image/jpeg",
+            "image/png",
+            "video/mp4",
+            "video/3gpp",
+            "audio/aac",
+            "audio/mp4",
+            "audio/mpeg",
+            "audio/amr",
+            "audio/ogg",
+            "application/pdf",
+            "text/plain"
+          ],
+          "enumNames": [
+            "Image (JPEG)",
+            "Image (PNG)",
+            "Video (MP4)",
+            "Video (3GPP)",
+            "Audio (AAC)",
+            "Audio (MP4)",
+            "Audio (MP3)",
+            "Audio (AMR)",
+            "Audio (OGG)",
+            "Document (PDF)",
+            "Document (TXT)"
+          ],
+          "title": "Media Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "media_url",
+        "media_type"
+      ],
+      "title": "WhatsAppUploadMediaConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for WhatsApp node including credentials",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_message_template": "#/$defs/WhatsAppCreateTemplateConfig",
+          "delete_media": "#/$defs/WhatsAppDeleteMediaConfig",
+          "delete_message_template": "#/$defs/WhatsAppDeleteTemplateConfig",
+          "download_media": "#/$defs/WhatsAppDownloadMediaConfig",
+          "edit_message": "#/$defs/WhatsAppEditMessageConfig",
+          "get_account_info": "#/$defs/WhatsAppGetAccountInfoConfig",
+          "get_account_profile": "#/$defs/WhatsAppGetProfileConfig",
+          "get_business_profile": "#/$defs/WhatsAppGetBusinessProfileConfig",
+          "get_chat_messages": "#/$defs/WhatsAppGetChatMessagesConfig",
+          "get_media_url": "#/$defs/WhatsAppGetMediaUrlConfig",
+          "get_message_template": "#/$defs/WhatsAppGetTemplateConfig",
+          "get_phone_number_info": "#/$defs/WhatsAppGetPhoneInfoConfig",
+          "list_account_phone_numbers": "#/$defs/WhatsAppListPhoneNumbersConfig",
+          "list_contacts": "#/$defs/WhatsAppListContactsConfig",
+          "list_message_templates": "#/$defs/WhatsAppListTemplatesConfig",
+          "list_recent_chats": "#/$defs/WhatsAppGetChatsConfig",
+          "mark_chat_read": "#/$defs/WhatsAppMarkChatReadConfig",
+          "mark_message_read": "#/$defs/WhatsAppMarkReadConfig",
+          "receive_message": "#/$defs/WhatsAppReceiveMessageConfig",
+          "receive_status_update": "#/$defs/WhatsAppReceiveStatusConfig",
+          "register_phone_number": "#/$defs/WhatsAppRegisterPhoneConfig",
+          "request_verification_code": "#/$defs/WhatsAppRequestCodeConfig",
+          "send_audio_message": "#/$defs/WhatsAppSendAudioConfig",
+          "send_catalog_message": "#/$defs/WhatsAppSendCatalogConfig",
+          "send_contact_card": "#/$defs/WhatsAppSendContactConfig",
+          "send_document_message": "#/$defs/WhatsAppSendDocumentConfig",
+          "send_image_message": "#/$defs/WhatsAppSendImageConfig",
+          "send_interactive_buttons": "#/$defs/WhatsAppSendButtonsConfig",
+          "send_interactive_list": "#/$defs/WhatsAppSendListConfig",
+          "send_location_message": "#/$defs/WhatsAppSendLocationConfig",
+          "send_multi_product_message": "#/$defs/WhatsAppSendMultiProductConfig",
+          "send_product_message": "#/$defs/WhatsAppSendProductConfig",
+          "send_reaction_emoji": "#/$defs/WhatsAppSendReactionConfig",
+          "send_template_message": "#/$defs/WhatsAppSendTemplateConfig",
+          "send_text_message": "#/$defs/WhatsAppSendTextConfig",
+          "send_video_message": "#/$defs/WhatsAppSendVideoConfig",
+          "update_business_profile": "#/$defs/WhatsAppUpdateBusinessProfileConfig",
+          "upload_media": "#/$defs/WhatsAppUploadMediaConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/WhatsAppSendTextConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppSendTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppSendImageConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppSendVideoConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppSendDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppSendAudioConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppSendLocationConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppSendContactConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppSendButtonsConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppSendListConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppSendReactionConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppMarkReadConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppUploadMediaConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppGetMediaUrlConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppDownloadMediaConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppDeleteMediaConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppGetBusinessProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppUpdateBusinessProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppRegisterPhoneConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppRequestCodeConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppGetPhoneInfoConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppListTemplatesConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppGetTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppCreateTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppDeleteTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppSendCatalogConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppSendProductConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppSendMultiProductConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppGetAccountInfoConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppListPhoneNumbersConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppGetChatsConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppGetChatMessagesConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppEditMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppMarkChatReadConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppGetProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppReceiveMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppReceiveStatusConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/WhatsAppQRCredential"
+        },
+        {
+          "$ref": "#/$defs/WhatsAppAccessTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Whatsapp Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Send order confirmation message using approved template",
+    "Reply to customer inquiry with shipping tracking info",
+    "Send invoice PDF as media attachment to customer",
+    "Create interactive menu for product selection",
+    "List templates and send personalized promotional message",
+    "Update business profile with hours and contact info",
+    "Mark messages as read after handling customer support",
+    "Read recent messages from a chat and summarize them"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

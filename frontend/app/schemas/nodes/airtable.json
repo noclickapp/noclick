@@ -1,0 +1,1679 @@
+{
+  "$defs": {
+    "AirtableCreateCommentConfig": {
+      "description": "Create a comment on a record",
+      "properties": {
+        "operation": {
+          "const": "create_record_comment",
+          "default": "create_record_comment",
+          "title": "Create Record Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment",
+          "x-display-name": "Create Record Comment",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "add comment",
+            "comment on record",
+            "post comment",
+            "leave comment"
+          ]
+        },
+        "base_id": {
+          "description": "The ID of the base",
+          "title": "Base ID",
+          "type": "string"
+        },
+        "table_id_or_name": {
+          "description": "Table ID or name",
+          "title": "Table",
+          "type": "string"
+        },
+        "record_id": {
+          "description": "The ID of the record",
+          "title": "Record ID",
+          "type": "string"
+        },
+        "text": {
+          "description": "The comment text (supports @mentions with user IDs)",
+          "title": "Comment Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "base_id",
+        "table_id_or_name",
+        "record_id",
+        "text"
+      ],
+      "title": "AirtableCreateCommentConfig",
+      "type": "object"
+    },
+    "AirtableCreateFieldConfig": {
+      "description": "Create a new field in a table",
+      "properties": {
+        "operation": {
+          "const": "create_table_field",
+          "default": "create_table_field",
+          "title": "Create Table Field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Table",
+          "x-display-name": "Create Table Field",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "add field",
+            "new column",
+            "add column",
+            "create field",
+            "new field"
+          ]
+        },
+        "base_id": {
+          "description": "The ID of the base",
+          "title": "Base ID",
+          "type": "string"
+        },
+        "table_id": {
+          "description": "The ID of the table",
+          "title": "Table ID",
+          "type": "string"
+        },
+        "name": {
+          "description": "Name for the new field",
+          "title": "Field Name",
+          "type": "string"
+        },
+        "field_type": {
+          "description": "Type of field (singleLineText, multilineText, number, checkbox, etc.)",
+          "enum": [
+            "singleLineText",
+            "email",
+            "url",
+            "multilineText",
+            "number",
+            "percent",
+            "currency",
+            "singleSelect",
+            "multipleSelects",
+            "singleCollaborator",
+            "multipleCollaborators",
+            "multipleRecordLinks",
+            "date",
+            "dateTime",
+            "phoneNumber",
+            "multipleAttachments",
+            "checkbox",
+            "formula",
+            "createdTime",
+            "rollup",
+            "count",
+            "lookup",
+            "multipleLookupValues",
+            "autoNumber",
+            "barcode",
+            "rating",
+            "richText",
+            "duration",
+            "lastModifiedTime",
+            "button",
+            "createdBy",
+            "lastModifiedBy",
+            "externalSyncSource"
+          ],
+          "title": "Field Type",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Description of the field",
+          "title": "Description"
+        },
+        "options": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Field type-specific options (e.g., choices for select fields)",
+          "title": "Options"
+        }
+      },
+      "required": [
+        "base_id",
+        "table_id",
+        "name",
+        "field_type"
+      ],
+      "title": "AirtableCreateFieldConfig",
+      "type": "object"
+    },
+    "AirtableCreateRecordsConfig": {
+      "description": "Create one or more records (batch create up to 10)",
+      "properties": {
+        "operation": {
+          "const": "create_multiple_records",
+          "default": "create_multiple_records",
+          "title": "Create Multiple Records",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Record",
+          "x-display-name": "Create Multiple Records",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "create records",
+            "batch create",
+            "add rows",
+            "insert records",
+            "bulk add records",
+            "add multiple rows"
+          ]
+        },
+        "base_id": {
+          "description": "The ID of the base",
+          "title": "Base ID",
+          "type": "string"
+        },
+        "table_id_or_name": {
+          "description": "Table ID or name",
+          "title": "Table",
+          "type": "string"
+        },
+        "records": {
+          "description": "Array of records to create [{fields: {Field1: 'value1', ...}}]. Max 10 per request.",
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "title": "Records",
+          "type": "array"
+        },
+        "typecast": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Automatically convert strings to appropriate types",
+          "title": "Typecast"
+        },
+        "return_fields_by_field_id": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Return field values keyed by field ID instead of name",
+          "title": "Return Fields by ID"
+        }
+      },
+      "required": [
+        "base_id",
+        "table_id_or_name",
+        "records"
+      ],
+      "title": "AirtableCreateRecordsConfig",
+      "type": "object"
+    },
+    "AirtableCreateTableConfig": {
+      "description": "Create a new table in a base",
+      "properties": {
+        "operation": {
+          "const": "create_new_table",
+          "default": "create_new_table",
+          "title": "Create New Table",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Table",
+          "x-display-name": "Create New Table",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new table",
+            "add table",
+            "make table",
+            "create table in base"
+          ]
+        },
+        "base_id": {
+          "description": "The ID of the base",
+          "title": "Base ID",
+          "type": "string"
+        },
+        "name": {
+          "description": "Name for the new table",
+          "title": "Table Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Description of the table",
+          "title": "Description"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "items": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Array of field definitions [{name, type, options}]",
+          "title": "Fields"
+        }
+      },
+      "required": [
+        "base_id",
+        "name"
+      ],
+      "title": "AirtableCreateTableConfig",
+      "type": "object"
+    },
+    "AirtableCreateWebhookConfig": {
+      "description": "Create a webhook for a base",
+      "properties": {
+        "operation": {
+          "const": "create_base_webhook",
+          "default": "create_base_webhook",
+          "title": "Create Base Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhook",
+          "x-display-name": "Create Base Webhook",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "add webhook",
+            "new webhook",
+            "register webhook",
+            "setup webhook"
+          ]
+        },
+        "base_id": {
+          "description": "The ID of the base",
+          "title": "Base ID",
+          "type": "string"
+        },
+        "notification_url": {
+          "description": "URL to receive webhook notifications",
+          "title": "Notification URL",
+          "type": "string"
+        },
+        "specification": {
+          "additionalProperties": true,
+          "description": "Webhook specification defining what changes to watch",
+          "title": "Specification",
+          "type": "object"
+        }
+      },
+      "required": [
+        "base_id",
+        "notification_url",
+        "specification"
+      ],
+      "title": "AirtableCreateWebhookConfig",
+      "type": "object"
+    },
+    "AirtableDeleteCommentConfig": {
+      "description": "Delete a comment",
+      "properties": {
+        "operation": {
+          "const": "delete_record_comment",
+          "default": "delete_record_comment",
+          "title": "Delete Record Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment",
+          "x-display-name": "Delete Record Comment",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove comment",
+            "delete comment"
+          ]
+        },
+        "base_id": {
+          "description": "The ID of the base",
+          "title": "Base ID",
+          "type": "string"
+        },
+        "table_id_or_name": {
+          "description": "Table ID or name",
+          "title": "Table",
+          "type": "string"
+        },
+        "record_id": {
+          "description": "The ID of the record",
+          "title": "Record ID",
+          "type": "string"
+        },
+        "comment_id": {
+          "description": "The ID of the comment to delete",
+          "title": "Comment ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "base_id",
+        "table_id_or_name",
+        "record_id",
+        "comment_id"
+      ],
+      "title": "AirtableDeleteCommentConfig",
+      "type": "object"
+    },
+    "AirtableDeleteRecordConfig": {
+      "description": "Delete a single record by ID",
+      "properties": {
+        "operation": {
+          "const": "delete_single_record",
+          "default": "delete_single_record",
+          "title": "Delete Single Record",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Record",
+          "x-display-name": "Delete Single Record",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "delete record",
+            "remove one row",
+            "single record delete",
+            "delete one record"
+          ]
+        },
+        "base_id": {
+          "description": "The ID of the base",
+          "title": "Base ID",
+          "type": "string"
+        },
+        "table_id_or_name": {
+          "description": "Table ID or name",
+          "title": "Table",
+          "type": "string"
+        },
+        "record_id": {
+          "description": "The ID of the record to delete",
+          "title": "Record ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "base_id",
+        "table_id_or_name",
+        "record_id"
+      ],
+      "title": "AirtableDeleteRecordConfig",
+      "type": "object"
+    },
+    "AirtableDeleteRecordsConfig": {
+      "description": "Delete one or more records (batch delete up to 10)",
+      "properties": {
+        "operation": {
+          "const": "delete_multiple_records",
+          "default": "delete_multiple_records",
+          "title": "Delete Multiple Records",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Record",
+          "x-display-name": "Delete Multiple Records",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "delete records",
+            "batch delete",
+            "bulk delete",
+            "remove rows",
+            "delete many records"
+          ]
+        },
+        "base_id": {
+          "description": "The ID of the base",
+          "title": "Base ID",
+          "type": "string"
+        },
+        "table_id_or_name": {
+          "description": "Table ID or name",
+          "title": "Table",
+          "type": "string"
+        },
+        "record_ids": {
+          "description": "Array of record IDs to delete. Max 10 per request.",
+          "items": {
+            "type": "string"
+          },
+          "title": "Record IDs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "base_id",
+        "table_id_or_name",
+        "record_ids"
+      ],
+      "title": "AirtableDeleteRecordsConfig",
+      "type": "object"
+    },
+    "AirtableDeleteWebhookConfig": {
+      "description": "Delete a webhook",
+      "properties": {
+        "operation": {
+          "const": "delete_base_webhook",
+          "default": "delete_base_webhook",
+          "title": "Delete Base Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhook",
+          "x-display-name": "Delete Base Webhook",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove webhook",
+            "delete webhook"
+          ]
+        },
+        "base_id": {
+          "description": "The ID of the base",
+          "title": "Base ID",
+          "type": "string"
+        },
+        "webhook_id": {
+          "description": "The ID of the webhook to delete",
+          "title": "Webhook ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "base_id",
+        "webhook_id"
+      ],
+      "title": "AirtableDeleteWebhookConfig",
+      "type": "object"
+    },
+    "AirtableEnableWebhookNotificationsConfig": {
+      "description": "Enable notifications for a webhook",
+      "properties": {
+        "operation": {
+          "const": "enable_webhook_notifications",
+          "default": "enable_webhook_notifications",
+          "title": "Enable Webhook Notifications",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhook",
+          "x-display-name": "Enable Webhook Notifications",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "turn on notifications",
+            "enable notifications",
+            "webhook notifications on"
+          ]
+        },
+        "base_id": {
+          "description": "The ID of the base",
+          "title": "Base ID",
+          "type": "string"
+        },
+        "webhook_id": {
+          "description": "The ID of the webhook",
+          "title": "Webhook ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "base_id",
+        "webhook_id"
+      ],
+      "title": "AirtableEnableWebhookNotificationsConfig",
+      "type": "object"
+    },
+    "AirtableGetBaseSchemaConfig": {
+      "description": "Get the schema (tables and fields) of a base",
+      "properties": {
+        "operation": {
+          "const": "fetch_base_schema",
+          "default": "fetch_base_schema",
+          "title": "Fetch Base Schema",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Base",
+          "x-display-name": "Fetch Base Schema",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "base schema",
+            "tables and fields",
+            "base structure",
+            "list tables",
+            "schema of base"
+          ]
+        },
+        "base_id": {
+          "description": "The ID of the base (starts with 'app')",
+          "title": "Base ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "base_id"
+      ],
+      "title": "AirtableGetBaseSchemaConfig",
+      "type": "object"
+    },
+    "AirtableGetRecordConfig": {
+      "description": "Get a single record by ID",
+      "properties": {
+        "operation": {
+          "const": "fetch_single_record",
+          "default": "fetch_single_record",
+          "title": "Fetch Single Record",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Record",
+          "x-display-name": "Fetch Single Record",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "get record",
+            "single record",
+            "one record",
+            "record by id",
+            "fetch one row"
+          ]
+        },
+        "base_id": {
+          "description": "The ID of the base",
+          "title": "Base ID",
+          "type": "string"
+        },
+        "table_id_or_name": {
+          "description": "Table ID or name",
+          "title": "Table",
+          "type": "string"
+        },
+        "record_id": {
+          "description": "The ID of the record (starts with 'rec')",
+          "title": "Record ID",
+          "type": "string"
+        },
+        "cell_format": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "json",
+          "description": "Format for cell values",
+          "enum": [
+            "json",
+            "string"
+          ],
+          "title": "Cell Format"
+        }
+      },
+      "required": [
+        "base_id",
+        "table_id_or_name",
+        "record_id"
+      ],
+      "title": "AirtableGetRecordConfig",
+      "type": "object"
+    },
+    "AirtableListBasesConfig": {
+      "description": "List all accessible bases",
+      "properties": {
+        "operation": {
+          "const": "list_accessible_bases",
+          "default": "list_accessible_bases",
+          "title": "List Accessible Bases",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Base",
+          "x-display-name": "List Accessible Bases",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "my bases",
+            "list bases",
+            "available bases",
+            "workspace bases",
+            "show bases"
+          ]
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination offset from previous response",
+          "title": "Offset"
+        }
+      },
+      "title": "AirtableListBasesConfig",
+      "type": "object"
+    },
+    "AirtableListCommentsConfig": {
+      "description": "List comments on a record",
+      "properties": {
+        "operation": {
+          "const": "list_record_comments",
+          "default": "list_record_comments",
+          "title": "List Record Comments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment",
+          "x-display-name": "List Record Comments",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "get comments",
+            "record comments",
+            "list comments",
+            "view comments"
+          ]
+        },
+        "base_id": {
+          "description": "The ID of the base",
+          "title": "Base ID",
+          "type": "string"
+        },
+        "table_id_or_name": {
+          "description": "Table ID or name",
+          "title": "Table",
+          "type": "string"
+        },
+        "record_id": {
+          "description": "The ID of the record",
+          "title": "Record ID",
+          "type": "string"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination offset from previous response",
+          "title": "Offset"
+        }
+      },
+      "required": [
+        "base_id",
+        "table_id_or_name",
+        "record_id"
+      ],
+      "title": "AirtableListCommentsConfig",
+      "type": "object"
+    },
+    "AirtableListRecordsConfig": {
+      "description": "List records from a table with filtering, sorting, and pagination",
+      "properties": {
+        "operation": {
+          "const": "list_table_records",
+          "default": "list_table_records",
+          "title": "List Table Records",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Record",
+          "x-display-name": "List Table Records",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "list records",
+            "get rows",
+            "query records",
+            "filter records",
+            "fetch rows",
+            "search records"
+          ]
+        },
+        "base_id": {
+          "description": "The ID of the base",
+          "title": "Base ID",
+          "type": "string"
+        },
+        "table_id_or_name": {
+          "description": "Table ID or name",
+          "title": "Table",
+          "type": "string"
+        },
+        "view": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "View ID or name to filter records",
+          "title": "View"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "description": "Number of records per page (max 100)",
+          "title": "Page Size"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination offset from previous response",
+          "title": "Offset"
+        },
+        "filter_by_formula": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Airtable formula to filter records (e.g., {Status}='Active')",
+          "title": "Filter Formula"
+        },
+        "sort_field": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Field name to sort by",
+          "title": "Sort Field"
+        },
+        "sort_direction": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "asc",
+          "description": "Sort direction",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Sort Direction"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "List of field names to include in response",
+          "title": "Fields"
+        },
+        "max_records": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum total records to return",
+          "title": "Max Records"
+        },
+        "cell_format": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "json",
+          "description": "Format for cell values",
+          "enum": [
+            "json",
+            "string"
+          ],
+          "title": "Cell Format"
+        },
+        "time_zone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Time zone for date/time fields (e.g., 'America/New_York')",
+          "title": "Time Zone"
+        },
+        "user_locale": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Locale for formatting (e.g., 'en-us')",
+          "title": "User Locale"
+        }
+      },
+      "required": [
+        "base_id",
+        "table_id_or_name"
+      ],
+      "title": "AirtableListRecordsConfig",
+      "type": "object"
+    },
+    "AirtableListWebhookPayloadsConfig": {
+      "description": "List payloads for a webhook",
+      "properties": {
+        "operation": {
+          "const": "list_webhook_payloads",
+          "default": "list_webhook_payloads",
+          "title": "List Webhook Payloads",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhook",
+          "x-display-name": "List Webhook Payloads",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "webhook payloads",
+            "webhook deliveries",
+            "payload history",
+            "list payloads"
+          ]
+        },
+        "base_id": {
+          "description": "The ID of the base",
+          "title": "Base ID",
+          "type": "string"
+        },
+        "webhook_id": {
+          "description": "The ID of the webhook",
+          "title": "Webhook ID",
+          "type": "string"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from previous response",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "base_id",
+        "webhook_id"
+      ],
+      "title": "AirtableListWebhookPayloadsConfig",
+      "type": "object"
+    },
+    "AirtableListWebhooksConfig": {
+      "description": "List all webhooks for a base",
+      "properties": {
+        "operation": {
+          "const": "list_base_webhooks",
+          "default": "list_base_webhooks",
+          "title": "List Base Webhooks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhook",
+          "x-display-name": "List Base Webhooks",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "list webhooks",
+            "view webhooks",
+            "show webhooks",
+            "base webhooks"
+          ]
+        },
+        "base_id": {
+          "description": "The ID of the base",
+          "title": "Base ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "base_id"
+      ],
+      "title": "AirtableListWebhooksConfig",
+      "type": "object"
+    },
+    "AirtableOAuthCredential": {
+      "description": "OAuth 2.0 credential for Airtable.\nTokens are obtained via OAuth flow, not entered manually.\n\nRegister OAuth app at: https://airtable.com/create/oauth",
+      "properties": {
+        "credential_type": {
+          "const": "airtable_oauth",
+          "default": "airtable_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "OAuth 2.0 access token from Airtable",
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "description": "OAuth 2.0 refresh token for automatic renewal",
+          "title": "Refresh Token",
+          "type": "string"
+        },
+        "expires_at": {
+          "description": "ISO 8601 timestamp when access token expires",
+          "title": "Token Expiry",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Email address of the connected Airtable account",
+          "title": "Account Email"
+        }
+      },
+      "required": [
+        "access_token",
+        "refresh_token",
+        "expires_at"
+      ],
+      "title": "AirtableOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-oauth-provider": "airtable",
+      "x-oauth-scopes": [
+        "data.records:read",
+        "data.records:write",
+        "data.recordComments:read",
+        "data.recordComments:write",
+        "schema.bases:read",
+        "schema.bases:write",
+        "webhook:manage"
+      ]
+    },
+    "AirtablePATCredential": {
+      "description": "Personal Access Token credential for Airtable.\n\nGet your PAT at: https://airtable.com/create/tokens",
+      "properties": {
+        "credential_type": {
+          "const": "airtable_pat",
+          "default": "airtable_pat",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "personal_access_token": {
+          "description": "Your Airtable Personal Access Token (PAT)",
+          "title": "Personal Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "personal_access_token"
+      ],
+      "title": "AirtablePATCredential",
+      "type": "object",
+      "x-credential-url": "https://airtable.com/create/tokens"
+    },
+    "AirtableRefreshWebhookConfig": {
+      "description": "Refresh a webhook to extend its expiration",
+      "properties": {
+        "operation": {
+          "const": "refresh_webhook_expiration",
+          "default": "refresh_webhook_expiration",
+          "title": "Refresh Webhook Expiration",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhook",
+          "x-display-name": "Refresh Webhook Expiration",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "extend webhook",
+            "renew webhook",
+            "refresh webhook",
+            "keep webhook alive"
+          ]
+        },
+        "base_id": {
+          "description": "The ID of the base",
+          "title": "Base ID",
+          "type": "string"
+        },
+        "webhook_id": {
+          "description": "The ID of the webhook to refresh",
+          "title": "Webhook ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "base_id",
+        "webhook_id"
+      ],
+      "title": "AirtableRefreshWebhookConfig",
+      "type": "object"
+    },
+    "AirtableUpdateCommentConfig": {
+      "description": "Update a comment",
+      "properties": {
+        "operation": {
+          "const": "update_record_comment",
+          "default": "update_record_comment",
+          "title": "Update Record Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment",
+          "x-display-name": "Update Record Comment",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "edit comment",
+            "change comment",
+            "modify comment"
+          ]
+        },
+        "base_id": {
+          "description": "The ID of the base",
+          "title": "Base ID",
+          "type": "string"
+        },
+        "table_id_or_name": {
+          "description": "Table ID or name",
+          "title": "Table",
+          "type": "string"
+        },
+        "record_id": {
+          "description": "The ID of the record",
+          "title": "Record ID",
+          "type": "string"
+        },
+        "comment_id": {
+          "description": "The ID of the comment to update",
+          "title": "Comment ID",
+          "type": "string"
+        },
+        "text": {
+          "description": "New comment text",
+          "title": "Comment Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "base_id",
+        "table_id_or_name",
+        "record_id",
+        "comment_id",
+        "text"
+      ],
+      "title": "AirtableUpdateCommentConfig",
+      "type": "object"
+    },
+    "AirtableUpdateFieldConfig": {
+      "description": "Update a field's name or description",
+      "properties": {
+        "operation": {
+          "const": "update_table_field",
+          "default": "update_table_field",
+          "title": "Update Table Field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Table",
+          "x-display-name": "Update Table Field",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "rename field",
+            "edit field",
+            "rename column",
+            "field name",
+            "modify column"
+          ]
+        },
+        "base_id": {
+          "description": "The ID of the base",
+          "title": "Base ID",
+          "type": "string"
+        },
+        "table_id": {
+          "description": "The ID of the table",
+          "title": "Table ID",
+          "type": "string"
+        },
+        "field_id": {
+          "description": "The ID of the field to update",
+          "title": "Field ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New name for the field",
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New description for the field",
+          "title": "Description"
+        }
+      },
+      "required": [
+        "base_id",
+        "table_id",
+        "field_id"
+      ],
+      "title": "AirtableUpdateFieldConfig",
+      "type": "object"
+    },
+    "AirtableUpdateRecordConfig": {
+      "description": "Update a single record by ID",
+      "properties": {
+        "operation": {
+          "const": "update_single_record",
+          "default": "update_single_record",
+          "title": "Update Single Record",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Record",
+          "x-display-name": "Update Single Record",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "update record",
+            "edit one row",
+            "single record update",
+            "change record",
+            "update one record"
+          ]
+        },
+        "base_id": {
+          "description": "The ID of the base",
+          "title": "Base ID",
+          "type": "string"
+        },
+        "table_id_or_name": {
+          "description": "Table ID or name",
+          "title": "Table",
+          "type": "string"
+        },
+        "record_id": {
+          "description": "The ID of the record to update",
+          "title": "Record ID",
+          "type": "string"
+        },
+        "fields": {
+          "additionalProperties": true,
+          "description": "Field values to update {Field1: 'value1', ...}",
+          "title": "Fields",
+          "type": "object"
+        },
+        "typecast": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Automatically convert strings to appropriate types",
+          "title": "Typecast"
+        }
+      },
+      "required": [
+        "base_id",
+        "table_id_or_name",
+        "record_id",
+        "fields"
+      ],
+      "title": "AirtableUpdateRecordConfig",
+      "type": "object"
+    },
+    "AirtableUpdateRecordsConfig": {
+      "description": "Update one or more records (batch update up to 10)",
+      "properties": {
+        "operation": {
+          "const": "update_multiple_records",
+          "default": "update_multiple_records",
+          "title": "Update Multiple Records",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Record",
+          "x-display-name": "Update Multiple Records",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "update records",
+            "batch update",
+            "bulk update",
+            "edit multiple rows",
+            "update many records"
+          ]
+        },
+        "base_id": {
+          "description": "The ID of the base",
+          "title": "Base ID",
+          "type": "string"
+        },
+        "table_id_or_name": {
+          "description": "Table ID or name",
+          "title": "Table",
+          "type": "string"
+        },
+        "records": {
+          "description": "Array of records to update [{id: 'recXXX', fields: {...}}]. Max 10 per request.",
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "title": "Records",
+          "type": "array"
+        },
+        "typecast": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Automatically convert strings to appropriate types",
+          "title": "Typecast"
+        },
+        "return_fields_by_field_id": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Return field values keyed by field ID instead of name",
+          "title": "Return Fields by ID"
+        }
+      },
+      "required": [
+        "base_id",
+        "table_id_or_name",
+        "records"
+      ],
+      "title": "AirtableUpdateRecordsConfig",
+      "type": "object"
+    },
+    "AirtableUpdateTableConfig": {
+      "description": "Update a table's name or description",
+      "properties": {
+        "operation": {
+          "const": "update_table_metadata",
+          "default": "update_table_metadata",
+          "title": "Update Table Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Table",
+          "x-display-name": "Update Table Metadata",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "rename table",
+            "table name",
+            "table description",
+            "edit table"
+          ]
+        },
+        "base_id": {
+          "description": "The ID of the base",
+          "title": "Base ID",
+          "type": "string"
+        },
+        "table_id": {
+          "description": "The ID of the table to update",
+          "title": "Table ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New name for the table",
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New description for the table",
+          "title": "Description"
+        }
+      },
+      "required": [
+        "base_id",
+        "table_id"
+      ],
+      "title": "AirtableUpdateTableConfig",
+      "type": "object"
+    },
+    "AirtableUpsertRecordsConfig": {
+      "description": "Create or update records based on field matching (upsert)",
+      "properties": {
+        "operation": {
+          "const": "upsert_records_by_field_match",
+          "default": "upsert_records_by_field_match",
+          "title": "Upsert Records by Field Match",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Record",
+          "x-display-name": "Upsert Records by Field Match",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "upsert records",
+            "create or update",
+            "match and update",
+            "sync records",
+            "merge records"
+          ]
+        },
+        "base_id": {
+          "description": "The ID of the base",
+          "title": "Base ID",
+          "type": "string"
+        },
+        "table_id_or_name": {
+          "description": "Table ID or name",
+          "title": "Table",
+          "type": "string"
+        },
+        "records": {
+          "description": "Array of records to upsert [{fields: {...}}]. Max 10 per request.",
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "title": "Records",
+          "type": "array"
+        },
+        "fields_to_merge_on": {
+          "description": "Field names to use for matching existing records",
+          "items": {
+            "type": "string"
+          },
+          "title": "Fields to Merge On",
+          "type": "array"
+        },
+        "typecast": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Automatically convert strings to appropriate types",
+          "title": "Typecast"
+        }
+      },
+      "required": [
+        "base_id",
+        "table_id_or_name",
+        "records",
+        "fields_to_merge_on"
+      ],
+      "title": "AirtableUpsertRecordsConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for Airtable node including credentials",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_base_webhook": "#/$defs/AirtableCreateWebhookConfig",
+          "create_multiple_records": "#/$defs/AirtableCreateRecordsConfig",
+          "create_new_table": "#/$defs/AirtableCreateTableConfig",
+          "create_record_comment": "#/$defs/AirtableCreateCommentConfig",
+          "create_table_field": "#/$defs/AirtableCreateFieldConfig",
+          "delete_base_webhook": "#/$defs/AirtableDeleteWebhookConfig",
+          "delete_multiple_records": "#/$defs/AirtableDeleteRecordsConfig",
+          "delete_record_comment": "#/$defs/AirtableDeleteCommentConfig",
+          "delete_single_record": "#/$defs/AirtableDeleteRecordConfig",
+          "enable_webhook_notifications": "#/$defs/AirtableEnableWebhookNotificationsConfig",
+          "fetch_base_schema": "#/$defs/AirtableGetBaseSchemaConfig",
+          "fetch_single_record": "#/$defs/AirtableGetRecordConfig",
+          "list_accessible_bases": "#/$defs/AirtableListBasesConfig",
+          "list_base_webhooks": "#/$defs/AirtableListWebhooksConfig",
+          "list_record_comments": "#/$defs/AirtableListCommentsConfig",
+          "list_table_records": "#/$defs/AirtableListRecordsConfig",
+          "list_webhook_payloads": "#/$defs/AirtableListWebhookPayloadsConfig",
+          "refresh_webhook_expiration": "#/$defs/AirtableRefreshWebhookConfig",
+          "update_multiple_records": "#/$defs/AirtableUpdateRecordsConfig",
+          "update_record_comment": "#/$defs/AirtableUpdateCommentConfig",
+          "update_single_record": "#/$defs/AirtableUpdateRecordConfig",
+          "update_table_field": "#/$defs/AirtableUpdateFieldConfig",
+          "update_table_metadata": "#/$defs/AirtableUpdateTableConfig",
+          "upsert_records_by_field_match": "#/$defs/AirtableUpsertRecordsConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/AirtableListBasesConfig"
+        },
+        {
+          "$ref": "#/$defs/AirtableGetBaseSchemaConfig"
+        },
+        {
+          "$ref": "#/$defs/AirtableCreateTableConfig"
+        },
+        {
+          "$ref": "#/$defs/AirtableUpdateTableConfig"
+        },
+        {
+          "$ref": "#/$defs/AirtableCreateFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/AirtableUpdateFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/AirtableListRecordsConfig"
+        },
+        {
+          "$ref": "#/$defs/AirtableGetRecordConfig"
+        },
+        {
+          "$ref": "#/$defs/AirtableCreateRecordsConfig"
+        },
+        {
+          "$ref": "#/$defs/AirtableUpdateRecordsConfig"
+        },
+        {
+          "$ref": "#/$defs/AirtableUpdateRecordConfig"
+        },
+        {
+          "$ref": "#/$defs/AirtableDeleteRecordsConfig"
+        },
+        {
+          "$ref": "#/$defs/AirtableDeleteRecordConfig"
+        },
+        {
+          "$ref": "#/$defs/AirtableUpsertRecordsConfig"
+        },
+        {
+          "$ref": "#/$defs/AirtableListCommentsConfig"
+        },
+        {
+          "$ref": "#/$defs/AirtableCreateCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/AirtableUpdateCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/AirtableDeleteCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/AirtableListWebhooksConfig"
+        },
+        {
+          "$ref": "#/$defs/AirtableCreateWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/AirtableDeleteWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/AirtableListWebhookPayloadsConfig"
+        },
+        {
+          "$ref": "#/$defs/AirtableRefreshWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/AirtableEnableWebhookNotificationsConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AirtablePATCredential"
+        },
+        {
+          "$ref": "#/$defs/AirtableOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Airtable Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Create a new record in the \"Customers\" table with name and email",
+    "Update the status field of record rec_12345 to \"Completed\"",
+    "List all records from the \"Projects\" base with a limit of 50",
+    "Delete a record by ID and return the deletion timestamp",
+    "Add a comment to record rec_67890 with the approval status",
+    "Create a webhook that triggers on record updates in the \"Sales\" table",
+    "Get the schema of the base to extract all table and field definitions"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

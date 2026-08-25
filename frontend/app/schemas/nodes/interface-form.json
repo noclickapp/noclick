@@ -1,0 +1,251 @@
+{
+  "$defs": {
+    "FormConfig": {
+      "description": "Configuration for the form node.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Auto-generated webhook ID (read-only)",
+          "title": "Webhook ID",
+          "ui:hidden": true,
+          "ui:widget": "readonly"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Public URL where the form is accessible",
+          "title": "Form URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "",
+          "description": "Title shown at the top of the form",
+          "title": "Form Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "",
+          "description": "Describe what this form is for (shown to users)",
+          "title": "Form Description"
+        },
+        "fields": {
+          "description": "Input fields shown in the form",
+          "items": {
+            "$ref": "#/$defs/FormField"
+          },
+          "title": "Form Fields",
+          "type": "array",
+          "ui:widget": "form_fields"
+        },
+        "values": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Persisted field values, editable in the form block",
+          "title": "Stored Values",
+          "ui:hidden": true
+        }
+      },
+      "title": "FormConfig",
+      "type": "object"
+    },
+    "FormField": {
+      "description": "Definition of a single form input field.",
+      "properties": {
+        "name": {
+          "description": "Field identifier (must be valid identifier, used in workflow references)",
+          "minLength": 1,
+          "pattern": "^[a-zA-Z_][a-zA-Z0-9_]*$",
+          "title": "Field Name",
+          "type": "string"
+        },
+        "type": {
+          "default": "string",
+          "description": "Data type of the field. 'file' collects an uploaded file (any type \u2014 PDF, image, audio, video, arbitrary data) and yields its public URL in the submission payload. 'list' is a multi-value string list; 'schedule' renders the schedule builder.",
+          "enum": [
+            "string",
+            "number",
+            "boolean",
+            "object",
+            "array",
+            "list",
+            "select",
+            "schedule",
+            "credential",
+            "file"
+          ],
+          "title": "Type",
+          "type": "string"
+        },
+        "label": {
+          "default": "",
+          "description": "Display label shown to users",
+          "title": "Label",
+          "type": "string"
+        },
+        "description": {
+          "default": "",
+          "description": "Help text shown below the field",
+          "title": "Description",
+          "type": "string"
+        },
+        "required": {
+          "default": false,
+          "description": "Whether this field must be provided",
+          "title": "Required",
+          "type": "boolean"
+        },
+        "options": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "string"
+                  },
+                  {
+                    "additionalProperties": {
+                      "type": "string"
+                    },
+                    "type": "object"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Available options for select/dropdown fields. Either strings or {label, value} objects.",
+          "title": "Options"
+        },
+        "credential_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Credential type to collect (e.g., 'google_sheets_oauth'). Only used when type is 'credential'.",
+          "title": "Credential Type"
+        },
+        "default": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Default Value",
+          "description": "Default value if no persisted value exists"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "FormField",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the form node (no credentials).",
+  "properties": {
+    "config": {
+      "$ref": "#/$defs/FormConfig",
+      "description": "Node-specific configuration"
+    },
+    "credentials": {
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials",
+      "type": "null"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Interface-form Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Add fields to collect user email and company name",
+    "Make this form publicly accessible with a shareable link",
+    "Change the form title and description for clarity",
+    "Add a dropdown select field with predefined options",
+    "Make all fields required for form submission",
+    "Add a schedule or multi-value list field with a default value",
+    "Create a settings form whose values feed downstream nodes"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

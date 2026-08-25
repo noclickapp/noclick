@@ -1,0 +1,67 @@
+{
+  "$defs": {
+    "LogInnerConfig": {
+      "description": "Configuration for the log node.",
+      "properties": {
+        "message": {
+          "description": "Log message. Supports references like {{node.field}}.",
+          "placeholder": "Posted {{twitter.tweet_url}} to Twitter",
+          "title": "Message",
+          "type": "string",
+          "ui:rows": 3,
+          "ui:widget": "textarea"
+        },
+        "level": {
+          "default": "info",
+          "description": "Log level for visual styling in the activity feed",
+          "enum": [
+            "info",
+            "success",
+            "warning",
+            "error"
+          ],
+          "enumNames": [
+            "Info",
+            "Success",
+            "Warning",
+            "Error"
+          ],
+          "title": "Level",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "message"
+      ],
+      "title": "LogInnerConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for log node (no credentials needed).",
+  "properties": {
+    "config": {
+      "$ref": "#/$defs/LogInnerConfig",
+      "description": "Node-specific configuration"
+    },
+    "credentials": {
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials",
+      "type": "null"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Log Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Change level to success and update message for completion milestone",
+    "Log error details with level=error when upstream node fails",
+    "Update message to show item count and reference {{http.total_processed}}",
+    "Set level to warning when rate limit detected in response",
+    "Log successful API call with URL and status code reference"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

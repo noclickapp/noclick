@@ -1,0 +1,3842 @@
+{
+  "$defs": {
+    "WordPressApplicationPasswordCredential": {
+      "description": "Application Password credential for self-hosted WordPress.\n\nCreate Application Passwords in WordPress admin: Users \u2192 Profile \u2192 Application Passwords\nRequires WordPress 5.6+ and HTTPS.",
+      "properties": {
+        "credential_type": {
+          "const": "wordpress_application_password",
+          "default": "wordpress_application_password",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "site_url": {
+          "description": "Your WordPress site URL (e.g., https://example.com)",
+          "placeholder": "https://example.com",
+          "title": "WordPress Site URL",
+          "type": "string"
+        },
+        "username": {
+          "description": "Your WordPress username",
+          "title": "WordPress Username",
+          "type": "string"
+        },
+        "application_password": {
+          "description": "Application Password created in WordPress",
+          "title": "Application Password",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "site_url",
+        "username",
+        "application_password"
+      ],
+      "title": "WordPressApplicationPasswordCredential",
+      "type": "object",
+      "x-credential-instructions": "Go to Users \u2192 Your Profile \u2192 Application Passwords in WordPress admin",
+      "x-credential-url": "https://wordpress.org/support/article/application-passwords/"
+    },
+    "WordPressBasicAuthCredential": {
+      "description": "Basic Authentication credential for WordPress.\n\nNote: Requires Basic Auth plugin for WordPress.\nNot recommended for production use.",
+      "properties": {
+        "credential_type": {
+          "const": "wordpress_basic_auth",
+          "default": "wordpress_basic_auth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "site_url": {
+          "description": "Your WordPress site URL (e.g., https://example.com)",
+          "placeholder": "https://example.com",
+          "title": "WordPress Site URL",
+          "type": "string"
+        },
+        "username": {
+          "description": "Your WordPress username",
+          "title": "WordPress Username",
+          "type": "string"
+        },
+        "password": {
+          "description": "Your WordPress password",
+          "title": "WordPress Password",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "site_url",
+        "username",
+        "password"
+      ],
+      "title": "WordPressBasicAuthCredential",
+      "type": "object",
+      "x-credential-instructions": "Install Basic-Auth plugin (not recommended for production)",
+      "x-credential-url": "https://github.com/WP-API/Basic-Auth"
+    },
+    "WordPressCreateCategoryConfig": {
+      "description": "Create a new category",
+      "properties": {
+        "operation": {
+          "const": "create_category",
+          "default": "create_category",
+          "title": "Create Category",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Category",
+          "x-display-name": "Create Category",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Category name",
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Category description",
+          "title": "Description",
+          "ui:widget": "textarea"
+        },
+        "slug": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL slug for the category",
+          "title": "Slug"
+        },
+        "parent": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Parent category ID",
+          "title": "Parent Category ID"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "WordPressCreateCategoryConfig",
+      "type": "object"
+    },
+    "WordPressCreateCommentConfig": {
+      "description": "Create a new comment",
+      "properties": {
+        "operation": {
+          "const": "create_post_comment",
+          "default": "create_post_comment",
+          "title": "Create Post Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment",
+          "x-display-name": "Create Post Comment",
+          "x-is-trigger": false
+        },
+        "post_id": {
+          "description": "Post ID to comment on",
+          "title": "Post ID",
+          "type": "integer"
+        },
+        "content": {
+          "description": "Comment content",
+          "title": "Content",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "author_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comment author name",
+          "title": "Author Name"
+        },
+        "author_email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comment author email",
+          "title": "Author Email"
+        },
+        "author_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comment author URL",
+          "title": "Author URL"
+        },
+        "parent": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Parent comment ID for replies",
+          "title": "Parent Comment ID"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comment status",
+          "enum": [
+            "hold",
+            "approve",
+            "spam",
+            "trash"
+          ],
+          "title": "Status"
+        }
+      },
+      "required": [
+        "post_id",
+        "content"
+      ],
+      "title": "WordPressCreateCommentConfig",
+      "type": "object"
+    },
+    "WordPressCreatePageConfig": {
+      "description": "Create a new page",
+      "properties": {
+        "operation": {
+          "const": "create_page",
+          "default": "create_page",
+          "title": "Create Page",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Page",
+          "x-display-name": "Create Page",
+          "x-is-trigger": false
+        },
+        "title": {
+          "description": "Page title",
+          "title": "Title",
+          "type": "string"
+        },
+        "content": {
+          "description": "Page content",
+          "title": "Content",
+          "type": "string",
+          "ui:rows": 10,
+          "ui:widget": "textarea"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "draft",
+          "description": "Page status",
+          "enum": [
+            "publish",
+            "future",
+            "draft",
+            "pending",
+            "private"
+          ],
+          "title": "Status"
+        },
+        "parent": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Parent page ID",
+          "title": "Parent Page ID"
+        },
+        "slug": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL slug for the page",
+          "title": "Slug"
+        },
+        "menu_order": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Order in page list",
+          "title": "Menu Order"
+        },
+        "featured_media": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Featured image media ID",
+          "title": "Featured Media ID"
+        },
+        "author": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Author user ID",
+          "title": "Author ID"
+        },
+        "excerpt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page excerpt",
+          "title": "Excerpt",
+          "ui:widget": "textarea"
+        },
+        "comment_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Allow comments",
+          "enum": [
+            "open",
+            "closed"
+          ],
+          "title": "Comment Status"
+        },
+        "template": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page template filename",
+          "title": "Page Template"
+        }
+      },
+      "required": [
+        "title",
+        "content"
+      ],
+      "title": "WordPressCreatePageConfig",
+      "type": "object"
+    },
+    "WordPressCreatePostConfig": {
+      "description": "Create a new post",
+      "properties": {
+        "operation": {
+          "const": "create_post",
+          "default": "create_post",
+          "title": "Create Post",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Create Post",
+          "x-is-trigger": false
+        },
+        "title": {
+          "description": "Post title",
+          "title": "Title",
+          "type": "string"
+        },
+        "content": {
+          "description": "Post content (HTML or blocks)",
+          "title": "Content",
+          "type": "string",
+          "ui:rows": 10,
+          "ui:widget": "textarea"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "draft",
+          "description": "Post status",
+          "enum": [
+            "publish",
+            "future",
+            "draft",
+            "pending",
+            "private"
+          ],
+          "title": "Status"
+        },
+        "excerpt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Post excerpt",
+          "title": "Excerpt",
+          "ui:widget": "textarea"
+        },
+        "author": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Author user ID",
+          "title": "Author ID"
+        },
+        "featured_media": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Featured image media ID",
+          "title": "Featured Media ID"
+        },
+        "categories": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Array of category IDs",
+          "title": "Categories"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Array of tag IDs",
+          "title": "Tags"
+        },
+        "slug": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL slug for the post",
+          "title": "Slug"
+        },
+        "date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Publication date (ISO 8601)",
+          "title": "Publish Date"
+        },
+        "comment_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Allow comments",
+          "enum": [
+            "open",
+            "closed"
+          ],
+          "title": "Comment Status"
+        },
+        "ping_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Allow pingbacks",
+          "enum": [
+            "open",
+            "closed"
+          ],
+          "title": "Ping Status"
+        },
+        "format": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Post format",
+          "enum": [
+            "standard",
+            "aside",
+            "chat",
+            "gallery",
+            "link",
+            "image",
+            "quote",
+            "status",
+            "video",
+            "audio"
+          ],
+          "title": "Post Format"
+        },
+        "sticky": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Mark as sticky post",
+          "title": "Sticky"
+        }
+      },
+      "required": [
+        "title",
+        "content"
+      ],
+      "title": "WordPressCreatePostConfig",
+      "type": "object"
+    },
+    "WordPressCreateTagConfig": {
+      "description": "Create a new tag",
+      "properties": {
+        "operation": {
+          "const": "create_tag",
+          "default": "create_tag",
+          "title": "Create Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tag",
+          "x-display-name": "Create Tag",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Tag name",
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Tag description",
+          "title": "Description",
+          "ui:widget": "textarea"
+        },
+        "slug": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL slug for the tag",
+          "title": "Slug"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "WordPressCreateTagConfig",
+      "type": "object"
+    },
+    "WordPressCreateUserConfig": {
+      "description": "Create a new user",
+      "properties": {
+        "operation": {
+          "const": "create_user",
+          "default": "create_user",
+          "title": "Create User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Create User",
+          "x-is-trigger": false
+        },
+        "username": {
+          "description": "Login name for the user",
+          "title": "Username",
+          "type": "string"
+        },
+        "email": {
+          "description": "Email address",
+          "title": "Email",
+          "type": "string"
+        },
+        "password": {
+          "description": "Password for the user",
+          "title": "Password",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "User first name",
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "User last name",
+          "title": "Last Name"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "User website URL",
+          "title": "Website URL"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "User biographical info",
+          "title": "Bio/Description",
+          "ui:widget": "textarea"
+        },
+        "roles": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "User roles array",
+          "title": "Roles"
+        }
+      },
+      "required": [
+        "username",
+        "email",
+        "password"
+      ],
+      "title": "WordPressCreateUserConfig",
+      "type": "object"
+    },
+    "WordPressDeleteCategoryConfig": {
+      "description": "Delete a category",
+      "properties": {
+        "operation": {
+          "const": "delete_category",
+          "default": "delete_category",
+          "title": "Delete Category",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Category",
+          "x-display-name": "Delete Category",
+          "x-is-trigger": false
+        },
+        "category_id": {
+          "description": "The ID of the category to delete",
+          "title": "Category ID",
+          "type": "integer"
+        },
+        "force": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Permanently delete",
+          "title": "Force Delete"
+        }
+      },
+      "required": [
+        "category_id"
+      ],
+      "title": "WordPressDeleteCategoryConfig",
+      "type": "object"
+    },
+    "WordPressDeleteCommentConfig": {
+      "description": "Delete a comment",
+      "properties": {
+        "operation": {
+          "const": "delete_comment",
+          "default": "delete_comment",
+          "title": "Delete Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment",
+          "x-display-name": "Delete Comment",
+          "x-is-trigger": false
+        },
+        "comment_id": {
+          "description": "The ID of the comment to delete",
+          "title": "Comment ID",
+          "type": "integer"
+        },
+        "force": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Permanently delete (bypass trash)",
+          "title": "Force Delete"
+        }
+      },
+      "required": [
+        "comment_id"
+      ],
+      "title": "WordPressDeleteCommentConfig",
+      "type": "object"
+    },
+    "WordPressDeleteMediaConfig": {
+      "description": "Delete a media item",
+      "properties": {
+        "operation": {
+          "const": "delete_media_item",
+          "default": "delete_media_item",
+          "title": "Delete Media Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Media",
+          "x-display-name": "Delete Media Item",
+          "x-is-trigger": false
+        },
+        "media_id": {
+          "description": "The ID of the media item to delete",
+          "title": "Media ID",
+          "type": "integer"
+        },
+        "force": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Permanently delete (bypass trash)",
+          "title": "Force Delete"
+        }
+      },
+      "required": [
+        "media_id"
+      ],
+      "title": "WordPressDeleteMediaConfig",
+      "type": "object"
+    },
+    "WordPressDeletePageConfig": {
+      "description": "Delete a page",
+      "properties": {
+        "operation": {
+          "const": "delete_page",
+          "default": "delete_page",
+          "title": "Delete Page",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Page",
+          "x-display-name": "Delete Page",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The ID of the page to delete",
+          "title": "Page ID",
+          "type": "integer"
+        },
+        "force": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Permanently delete (bypass trash)",
+          "title": "Force Delete"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "WordPressDeletePageConfig",
+      "type": "object"
+    },
+    "WordPressDeletePostConfig": {
+      "description": "Delete a post",
+      "properties": {
+        "operation": {
+          "const": "delete_post",
+          "default": "delete_post",
+          "title": "Delete Post",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Delete Post",
+          "x-is-trigger": false
+        },
+        "post_id": {
+          "description": "The ID of the post to delete",
+          "title": "Post ID",
+          "type": "integer"
+        },
+        "force": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Permanently delete (bypass trash)",
+          "title": "Force Delete"
+        }
+      },
+      "required": [
+        "post_id"
+      ],
+      "title": "WordPressDeletePostConfig",
+      "type": "object"
+    },
+    "WordPressDeleteTagConfig": {
+      "description": "Delete a tag",
+      "properties": {
+        "operation": {
+          "const": "delete_tag",
+          "default": "delete_tag",
+          "title": "Delete Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tag",
+          "x-display-name": "Delete Tag",
+          "x-is-trigger": false
+        },
+        "tag_id": {
+          "description": "The ID of the tag to delete",
+          "title": "Tag ID",
+          "type": "integer"
+        },
+        "force": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Permanently delete",
+          "title": "Force Delete"
+        }
+      },
+      "required": [
+        "tag_id"
+      ],
+      "title": "WordPressDeleteTagConfig",
+      "type": "object"
+    },
+    "WordPressDeleteUserConfig": {
+      "description": "Delete a user",
+      "properties": {
+        "operation": {
+          "const": "delete_user",
+          "default": "delete_user",
+          "title": "Delete User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Delete User",
+          "x-is-trigger": false
+        },
+        "user_id": {
+          "description": "The ID of the user to delete",
+          "title": "User ID",
+          "type": "integer"
+        },
+        "reassign": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reassign posts to this user ID",
+          "title": "Reassign To User ID"
+        },
+        "force": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "Required to be true for user deletion",
+          "title": "Force Delete"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "WordPressDeleteUserConfig",
+      "type": "object"
+    },
+    "WordPressGetCategoryConfig": {
+      "description": "Get a single category by ID",
+      "properties": {
+        "operation": {
+          "const": "get_category",
+          "default": "get_category",
+          "title": "Get Category",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Category",
+          "x-display-name": "Get Category",
+          "x-is-trigger": false
+        },
+        "category_id": {
+          "description": "The ID of the category to retrieve",
+          "title": "Category ID",
+          "type": "integer"
+        },
+        "context": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "view",
+          "description": "Scope of response",
+          "enum": [
+            "view",
+            "embed",
+            "edit"
+          ],
+          "title": "Context"
+        }
+      },
+      "required": [
+        "category_id"
+      ],
+      "title": "WordPressGetCategoryConfig",
+      "type": "object"
+    },
+    "WordPressGetCommentConfig": {
+      "description": "Get a single comment by ID",
+      "properties": {
+        "operation": {
+          "const": "get_comment",
+          "default": "get_comment",
+          "title": "Get Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment",
+          "x-display-name": "Get Comment",
+          "x-is-trigger": false
+        },
+        "comment_id": {
+          "description": "The ID of the comment to retrieve",
+          "title": "Comment ID",
+          "type": "integer"
+        },
+        "context": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "view",
+          "description": "Scope of response",
+          "enum": [
+            "view",
+            "embed",
+            "edit"
+          ],
+          "title": "Context"
+        }
+      },
+      "required": [
+        "comment_id"
+      ],
+      "title": "WordPressGetCommentConfig",
+      "type": "object"
+    },
+    "WordPressGetMediaConfig": {
+      "description": "Get a single media item by ID",
+      "properties": {
+        "operation": {
+          "const": "get_media_item",
+          "default": "get_media_item",
+          "title": "Get Media Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Media",
+          "x-display-name": "Get Media Item",
+          "x-is-trigger": false
+        },
+        "media_id": {
+          "description": "The ID of the media item to retrieve",
+          "title": "Media ID",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "media_id"
+      ],
+      "title": "WordPressGetMediaConfig",
+      "type": "object"
+    },
+    "WordPressGetPageConfig": {
+      "description": "Get a single page by ID",
+      "properties": {
+        "operation": {
+          "const": "get_page",
+          "default": "get_page",
+          "title": "Get Page",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Page",
+          "x-display-name": "Get Page",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The ID of the page to retrieve",
+          "title": "Page ID",
+          "type": "integer"
+        },
+        "context": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "view",
+          "description": "Scope of response",
+          "enum": [
+            "view",
+            "embed",
+            "edit"
+          ],
+          "title": "Context"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "WordPressGetPageConfig",
+      "type": "object"
+    },
+    "WordPressGetPostConfig": {
+      "description": "Get a single post by ID",
+      "properties": {
+        "operation": {
+          "const": "get_post",
+          "default": "get_post",
+          "title": "Get Post",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Get Post",
+          "x-is-trigger": false
+        },
+        "post_id": {
+          "description": "The ID of the post to retrieve",
+          "title": "Post ID",
+          "type": "integer"
+        },
+        "context": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "view",
+          "description": "Scope of response",
+          "enum": [
+            "view",
+            "embed",
+            "edit"
+          ],
+          "title": "Context"
+        },
+        "password": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Password for password-protected post",
+          "title": "Password",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "post_id"
+      ],
+      "title": "WordPressGetPostConfig",
+      "type": "object"
+    },
+    "WordPressGetSettingsConfig": {
+      "description": "Get site settings",
+      "properties": {
+        "operation": {
+          "const": "get_site_settings",
+          "default": "get_site_settings",
+          "title": "Get Site Settings",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Site Settings",
+          "x-display-name": "Get Site Settings",
+          "x-is-trigger": false
+        }
+      },
+      "title": "WordPressGetSettingsConfig",
+      "type": "object"
+    },
+    "WordPressGetTagConfig": {
+      "description": "Get a single tag by ID",
+      "properties": {
+        "operation": {
+          "const": "get_tag",
+          "default": "get_tag",
+          "title": "Get Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tag",
+          "x-display-name": "Get Tag",
+          "x-is-trigger": false
+        },
+        "tag_id": {
+          "description": "The ID of the tag to retrieve",
+          "title": "Tag ID",
+          "type": "integer"
+        },
+        "context": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "view",
+          "description": "Scope of response",
+          "enum": [
+            "view",
+            "embed",
+            "edit"
+          ],
+          "title": "Context"
+        }
+      },
+      "required": [
+        "tag_id"
+      ],
+      "title": "WordPressGetTagConfig",
+      "type": "object"
+    },
+    "WordPressGetUserConfig": {
+      "description": "Get a single user by ID",
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Get User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Get User",
+          "x-is-trigger": false
+        },
+        "user_id": {
+          "description": "The ID of the user to retrieve",
+          "title": "User ID",
+          "type": "integer"
+        },
+        "context": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "view",
+          "description": "Scope of response",
+          "enum": [
+            "view",
+            "embed",
+            "edit"
+          ],
+          "title": "Context"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "WordPressGetUserConfig",
+      "type": "object"
+    },
+    "WordPressListCategoriesConfig": {
+      "description": "List categories",
+      "properties": {
+        "operation": {
+          "const": "list_categories",
+          "default": "list_categories",
+          "title": "List Categories",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Category",
+          "x-display-name": "List Categories",
+          "x-is-trigger": false
+        },
+        "context": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "view",
+          "description": "Scope of response",
+          "enum": [
+            "view",
+            "embed",
+            "edit"
+          ],
+          "title": "Context"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Page number for pagination",
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "description": "Number of categories per page (max 100)",
+          "title": "Per Page"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search term to filter categories",
+          "title": "Search"
+        },
+        "hide_empty": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Hide categories with no posts",
+          "title": "Hide Empty"
+        },
+        "parent": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by parent category ID",
+          "title": "Parent Category ID"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "asc",
+          "description": "Sort order",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Order"
+        },
+        "orderby": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "name",
+          "description": "Sort field",
+          "enum": [
+            "id",
+            "include",
+            "name",
+            "slug",
+            "term_group",
+            "description",
+            "count"
+          ],
+          "title": "Order By"
+        }
+      },
+      "title": "WordPressListCategoriesConfig",
+      "type": "object"
+    },
+    "WordPressListCommentsConfig": {
+      "description": "List comments",
+      "properties": {
+        "operation": {
+          "const": "list_comments",
+          "default": "list_comments",
+          "title": "List Comments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment",
+          "x-display-name": "List Comments",
+          "x-is-trigger": false
+        },
+        "context": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "view",
+          "description": "Scope of response",
+          "enum": [
+            "view",
+            "embed",
+            "edit"
+          ],
+          "title": "Context"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Page number for pagination",
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "description": "Number of comments per page (max 100)",
+          "title": "Per Page"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search term to filter comments",
+          "title": "Search"
+        },
+        "post_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by post ID",
+          "title": "Post ID"
+        },
+        "parent": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by parent comment ID",
+          "title": "Parent Comment ID"
+        },
+        "author": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by author user ID",
+          "title": "Author ID"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "approve",
+          "description": "Comment status",
+          "enum": [
+            "hold",
+            "approve",
+            "spam",
+            "trash",
+            "all"
+          ],
+          "title": "Status"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "desc",
+          "description": "Sort order",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Order"
+        },
+        "orderby": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "date_gmt",
+          "description": "Sort field",
+          "enum": [
+            "date",
+            "date_gmt",
+            "id",
+            "include",
+            "post",
+            "parent",
+            "type"
+          ],
+          "title": "Order By"
+        }
+      },
+      "title": "WordPressListCommentsConfig",
+      "type": "object"
+    },
+    "WordPressListMediaConfig": {
+      "description": "List media items",
+      "properties": {
+        "operation": {
+          "const": "list_media_items",
+          "default": "list_media_items",
+          "title": "List Media Items",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Media",
+          "x-display-name": "List Media Items",
+          "x-is-trigger": false
+        },
+        "context": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "view",
+          "description": "Scope of response",
+          "enum": [
+            "view",
+            "embed",
+            "edit"
+          ],
+          "title": "Context"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Page number for pagination",
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "description": "Number of items per page (max 100)",
+          "title": "Per Page"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search term to filter media",
+          "title": "Search"
+        },
+        "media_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by media type",
+          "enum": [
+            "image",
+            "video",
+            "audio",
+            "application"
+          ],
+          "title": "Media Type"
+        },
+        "mime_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by MIME type",
+          "title": "MIME Type"
+        }
+      },
+      "title": "WordPressListMediaConfig",
+      "type": "object"
+    },
+    "WordPressListPagesConfig": {
+      "description": "List pages with filtering and pagination",
+      "properties": {
+        "operation": {
+          "const": "list_pages",
+          "default": "list_pages",
+          "title": "List Pages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Page",
+          "x-display-name": "List Pages",
+          "x-is-trigger": false
+        },
+        "context": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "view",
+          "description": "Scope of response",
+          "enum": [
+            "view",
+            "embed",
+            "edit"
+          ],
+          "title": "Context"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Page number for pagination",
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "description": "Number of pages per page (max 100)",
+          "title": "Per Page"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search term to filter pages",
+          "title": "Search"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "publish",
+          "description": "Page status",
+          "enum": [
+            "publish",
+            "future",
+            "draft",
+            "pending",
+            "private",
+            "trash",
+            "any"
+          ],
+          "title": "Status"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "desc",
+          "description": "Sort order",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Order"
+        },
+        "orderby": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "date",
+          "description": "Sort field",
+          "enum": [
+            "author",
+            "date",
+            "id",
+            "include",
+            "modified",
+            "parent",
+            "relevance",
+            "slug",
+            "title",
+            "menu_order"
+          ],
+          "title": "Order By"
+        },
+        "parent": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by parent page ID",
+          "title": "Parent ID"
+        }
+      },
+      "title": "WordPressListPagesConfig",
+      "type": "object"
+    },
+    "WordPressListPostsConfig": {
+      "description": "List posts with filtering, sorting, and pagination",
+      "properties": {
+        "operation": {
+          "const": "list_posts",
+          "default": "list_posts",
+          "title": "List Posts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "List Posts",
+          "x-is-trigger": false
+        },
+        "context": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "view",
+          "description": "Scope of response",
+          "enum": [
+            "view",
+            "embed",
+            "edit"
+          ],
+          "title": "Context"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Page number for pagination",
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "description": "Number of posts per page (max 100)",
+          "title": "Per Page"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search term to filter posts",
+          "title": "Search"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Posts published after this date (ISO 8601)",
+          "title": "After Date"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Posts published before this date (ISO 8601)",
+          "title": "Before Date"
+        },
+        "author": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by author ID",
+          "title": "Author ID"
+        },
+        "categories": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated category IDs",
+          "title": "Categories"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated tag IDs",
+          "title": "Tags"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "publish",
+          "description": "Post status",
+          "enum": [
+            "publish",
+            "future",
+            "draft",
+            "pending",
+            "private",
+            "trash",
+            "any"
+          ],
+          "title": "Status"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "desc",
+          "description": "Sort order",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Order"
+        },
+        "orderby": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "date",
+          "description": "Sort field",
+          "enum": [
+            "author",
+            "date",
+            "id",
+            "include",
+            "modified",
+            "parent",
+            "relevance",
+            "slug",
+            "title"
+          ],
+          "title": "Order By"
+        }
+      },
+      "title": "WordPressListPostsConfig",
+      "type": "object"
+    },
+    "WordPressListTagsConfig": {
+      "description": "List tags",
+      "properties": {
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "List Tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tag",
+          "x-display-name": "List Tags",
+          "x-is-trigger": false
+        },
+        "context": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "view",
+          "description": "Scope of response",
+          "enum": [
+            "view",
+            "embed",
+            "edit"
+          ],
+          "title": "Context"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Page number for pagination",
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "description": "Number of tags per page (max 100)",
+          "title": "Per Page"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search term to filter tags",
+          "title": "Search"
+        },
+        "hide_empty": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Hide tags with no posts",
+          "title": "Hide Empty"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "asc",
+          "description": "Sort order",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Order"
+        },
+        "orderby": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "name",
+          "description": "Sort field",
+          "enum": [
+            "id",
+            "include",
+            "name",
+            "slug",
+            "term_group",
+            "description",
+            "count"
+          ],
+          "title": "Order By"
+        }
+      },
+      "title": "WordPressListTagsConfig",
+      "type": "object"
+    },
+    "WordPressListUsersConfig": {
+      "description": "List users",
+      "properties": {
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "List Users",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "List Users",
+          "x-is-trigger": false
+        },
+        "context": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "view",
+          "description": "Scope of response",
+          "enum": [
+            "view",
+            "embed",
+            "edit"
+          ],
+          "title": "Context"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Page number for pagination",
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "description": "Number of users per page (max 100)",
+          "title": "Per Page"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search term to filter users",
+          "title": "Search"
+        },
+        "roles": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of roles",
+          "title": "Roles"
+        },
+        "order": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "asc",
+          "description": "Sort order",
+          "enum": [
+            "asc",
+            "desc"
+          ],
+          "title": "Order"
+        },
+        "orderby": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "name",
+          "description": "Sort field",
+          "enum": [
+            "id",
+            "include",
+            "name",
+            "registered_date",
+            "slug",
+            "email",
+            "url"
+          ],
+          "title": "Order By"
+        }
+      },
+      "title": "WordPressListUsersConfig",
+      "type": "object"
+    },
+    "WordPressOAuthCredential": {
+      "description": "OAuth 2.0 credential for WordPress.com sites.\nTokens are obtained via OAuth flow, not entered manually.\n\nRegister OAuth app at: https://developer.wordpress.com/apps/",
+      "properties": {
+        "credential_type": {
+          "const": "wordpress_oauth",
+          "default": "wordpress_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "OAuth 2.0 access token from WordPress.com",
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "OAuth 2.0 refresh token for automatic renewal",
+          "title": "Refresh Token"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 timestamp when access token expires",
+          "title": "Token Expiry"
+        },
+        "site_id": {
+          "description": "WordPress.com site ID or domain",
+          "title": "WordPress.com Site ID",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Email address of the connected WordPress.com account",
+          "title": "Account Email"
+        }
+      },
+      "required": [
+        "access_token",
+        "site_id"
+      ],
+      "title": "WordPressOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-oauth-custom-client-help": "Register your OAuth app at https://developer.wordpress.com/apps/",
+      "x-oauth-provider": "wordpress",
+      "x-oauth-scopes": [
+        "global"
+      ],
+      "x-oauth-supports-custom-client": true
+    },
+    "WordPressSearchConfig": {
+      "description": "Search across all content types",
+      "properties": {
+        "operation": {
+          "const": "search_content",
+          "default": "search_content",
+          "title": "Search Content",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Search Content",
+          "x-is-trigger": false
+        },
+        "search_term": {
+          "description": "Search query",
+          "title": "Search Term",
+          "type": "string"
+        },
+        "context": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "view",
+          "description": "Scope of response",
+          "enum": [
+            "view",
+            "embed"
+          ],
+          "title": "Context"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Page number for pagination",
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "description": "Number of results per page (max 100)",
+          "title": "Per Page"
+        },
+        "search_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by content type",
+          "enum": [
+            "post",
+            "page",
+            "attachment"
+          ],
+          "title": "Type"
+        },
+        "subtype": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by subtype (post type or attachment MIME type)",
+          "title": "Subtype"
+        }
+      },
+      "required": [
+        "search_term"
+      ],
+      "title": "WordPressSearchConfig",
+      "type": "object"
+    },
+    "WordPressUpdateCategoryConfig": {
+      "description": "Update an existing category",
+      "properties": {
+        "operation": {
+          "const": "update_category",
+          "default": "update_category",
+          "title": "Update Category",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Category",
+          "x-display-name": "Update Category",
+          "x-is-trigger": false
+        },
+        "category_id": {
+          "description": "The ID of the category to update",
+          "title": "Category ID",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Category name",
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Category description",
+          "title": "Description",
+          "ui:widget": "textarea"
+        },
+        "slug": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL slug for the category",
+          "title": "Slug"
+        },
+        "parent": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Parent category ID",
+          "title": "Parent Category ID"
+        }
+      },
+      "required": [
+        "category_id"
+      ],
+      "title": "WordPressUpdateCategoryConfig",
+      "type": "object"
+    },
+    "WordPressUpdateCommentConfig": {
+      "description": "Update an existing comment",
+      "properties": {
+        "operation": {
+          "const": "update_comment",
+          "default": "update_comment",
+          "title": "Update Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment",
+          "x-display-name": "Update Comment",
+          "x-is-trigger": false
+        },
+        "comment_id": {
+          "description": "The ID of the comment to update",
+          "title": "Comment ID",
+          "type": "integer"
+        },
+        "content": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comment content",
+          "title": "Content",
+          "ui:widget": "textarea"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comment status",
+          "enum": [
+            "hold",
+            "approve",
+            "spam",
+            "trash"
+          ],
+          "title": "Status"
+        },
+        "author_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comment author name",
+          "title": "Author Name"
+        },
+        "author_email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comment author email",
+          "title": "Author Email"
+        },
+        "author_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comment author URL",
+          "title": "Author URL"
+        }
+      },
+      "required": [
+        "comment_id"
+      ],
+      "title": "WordPressUpdateCommentConfig",
+      "type": "object"
+    },
+    "WordPressUpdateMediaConfig": {
+      "description": "Update media metadata",
+      "properties": {
+        "operation": {
+          "const": "update_media_metadata",
+          "default": "update_media_metadata",
+          "title": "Update Media Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Media",
+          "x-display-name": "Update Media Metadata",
+          "x-is-trigger": false
+        },
+        "media_id": {
+          "description": "The ID of the media item to update",
+          "title": "Media ID",
+          "type": "integer"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Media title",
+          "title": "Title"
+        },
+        "caption": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Media caption",
+          "title": "Caption",
+          "ui:widget": "textarea"
+        },
+        "alt_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Alternative text for accessibility",
+          "title": "Alt Text"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Media description",
+          "title": "Description",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "media_id"
+      ],
+      "title": "WordPressUpdateMediaConfig",
+      "type": "object"
+    },
+    "WordPressUpdatePageConfig": {
+      "description": "Update an existing page",
+      "properties": {
+        "operation": {
+          "const": "update_page",
+          "default": "update_page",
+          "title": "Update Page",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Page",
+          "x-display-name": "Update Page",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The ID of the page to update",
+          "title": "Page ID",
+          "type": "integer"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page title",
+          "title": "Title"
+        },
+        "content": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page content",
+          "title": "Content",
+          "ui:rows": 10,
+          "ui:widget": "textarea"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page status",
+          "enum": [
+            "publish",
+            "future",
+            "draft",
+            "pending",
+            "private"
+          ],
+          "title": "Status"
+        },
+        "parent": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Parent page ID",
+          "title": "Parent Page ID"
+        },
+        "slug": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL slug for the page",
+          "title": "Slug"
+        },
+        "menu_order": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Order in page list",
+          "title": "Menu Order"
+        },
+        "featured_media": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Featured image media ID",
+          "title": "Featured Media ID"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "WordPressUpdatePageConfig",
+      "type": "object"
+    },
+    "WordPressUpdatePostConfig": {
+      "description": "Update an existing post",
+      "properties": {
+        "operation": {
+          "const": "update_post",
+          "default": "update_post",
+          "title": "Update Post",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Update Post",
+          "x-is-trigger": false
+        },
+        "post_id": {
+          "description": "The ID of the post to update",
+          "title": "Post ID",
+          "type": "integer"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Post title",
+          "title": "Title"
+        },
+        "content": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Post content",
+          "title": "Content",
+          "ui:rows": 10,
+          "ui:widget": "textarea"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Post status",
+          "enum": [
+            "publish",
+            "future",
+            "draft",
+            "pending",
+            "private"
+          ],
+          "title": "Status"
+        },
+        "excerpt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Post excerpt",
+          "title": "Excerpt",
+          "ui:widget": "textarea"
+        },
+        "author": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Author user ID",
+          "title": "Author ID"
+        },
+        "featured_media": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Featured image media ID",
+          "title": "Featured Media ID"
+        },
+        "categories": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Array of category IDs",
+          "title": "Categories"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Array of tag IDs",
+          "title": "Tags"
+        },
+        "slug": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL slug for the post",
+          "title": "Slug"
+        },
+        "comment_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Allow comments",
+          "enum": [
+            "open",
+            "closed"
+          ],
+          "title": "Comment Status"
+        },
+        "ping_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Allow pingbacks",
+          "enum": [
+            "open",
+            "closed"
+          ],
+          "title": "Ping Status"
+        },
+        "format": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Post format",
+          "enum": [
+            "standard",
+            "aside",
+            "chat",
+            "gallery",
+            "link",
+            "image",
+            "quote",
+            "status",
+            "video",
+            "audio"
+          ],
+          "title": "Post Format"
+        },
+        "sticky": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Mark as sticky post",
+          "title": "Sticky"
+        }
+      },
+      "required": [
+        "post_id"
+      ],
+      "title": "WordPressUpdatePostConfig",
+      "type": "object"
+    },
+    "WordPressUpdateSettingsConfig": {
+      "description": "Update site settings",
+      "properties": {
+        "operation": {
+          "const": "update_site_settings",
+          "default": "update_site_settings",
+          "title": "Update Site Settings",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Site Settings",
+          "x-display-name": "Update Site Settings",
+          "x-is-trigger": false
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Site title",
+          "title": "Site Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Site tagline/description",
+          "title": "Site Tagline"
+        },
+        "timezone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Timezone (e.g., America/New_York)",
+          "title": "Timezone"
+        },
+        "date_format": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Date format string",
+          "title": "Date Format"
+        },
+        "time_format": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Time format string",
+          "title": "Time Format"
+        },
+        "start_of_week": {
+          "anyOf": [
+            {
+              "maximum": 6,
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Day number (0=Sunday, 6=Saturday)",
+          "title": "Start of Week"
+        },
+        "language": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Site language code",
+          "title": "Language"
+        },
+        "use_smilies": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Convert text emoticons to graphics",
+          "title": "Convert Emoticons"
+        },
+        "default_category": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Default post category ID",
+          "title": "Default Category"
+        },
+        "default_post_format": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Default post format",
+          "title": "Default Post Format"
+        },
+        "posts_per_page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of posts to show per page",
+          "title": "Posts Per Page"
+        }
+      },
+      "title": "WordPressUpdateSettingsConfig",
+      "type": "object"
+    },
+    "WordPressUpdateTagConfig": {
+      "description": "Update an existing tag",
+      "properties": {
+        "operation": {
+          "const": "update_tag",
+          "default": "update_tag",
+          "title": "Update Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tag",
+          "x-display-name": "Update Tag",
+          "x-is-trigger": false
+        },
+        "tag_id": {
+          "description": "The ID of the tag to update",
+          "title": "Tag ID",
+          "type": "integer"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Tag name",
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Tag description",
+          "title": "Description",
+          "ui:widget": "textarea"
+        },
+        "slug": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL slug for the tag",
+          "title": "Slug"
+        }
+      },
+      "required": [
+        "tag_id"
+      ],
+      "title": "WordPressUpdateTagConfig",
+      "type": "object"
+    },
+    "WordPressUpdateUserConfig": {
+      "description": "Update an existing user",
+      "properties": {
+        "operation": {
+          "const": "update_user",
+          "default": "update_user",
+          "title": "Update User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Update User",
+          "x-is-trigger": false
+        },
+        "user_id": {
+          "description": "The ID of the user to update",
+          "title": "User ID",
+          "type": "integer"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Email address",
+          "title": "Email"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "User first name",
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "User last name",
+          "title": "Last Name"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "User website URL",
+          "title": "Website URL"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "User biographical info",
+          "title": "Bio/Description",
+          "ui:widget": "textarea"
+        },
+        "roles": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "User roles array",
+          "title": "Roles"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "WordPressUpdateUserConfig",
+      "type": "object"
+    },
+    "WordPressUploadMediaConfig": {
+      "description": "Upload a new media file",
+      "properties": {
+        "operation": {
+          "const": "upload_media_file",
+          "default": "upload_media_file",
+          "title": "Upload Media File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Media",
+          "x-display-name": "Upload Media File",
+          "x-is-trigger": false
+        },
+        "file_url": {
+          "description": "The file to upload to the media library \u2014 upload a file, paste a URL, or reference an upstream file (e.g. {{http-1.response.url}}).",
+          "title": "File URL",
+          "type": "string",
+          "ui:widget": "media_upload"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Media title",
+          "title": "Title"
+        },
+        "caption": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Media caption",
+          "title": "Caption",
+          "ui:widget": "textarea"
+        },
+        "alt_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Alternative text for accessibility",
+          "title": "Alt Text"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Media description",
+          "title": "Description",
+          "ui:widget": "textarea"
+        },
+        "post_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Attach media to this post ID",
+          "title": "Post ID"
+        }
+      },
+      "required": [
+        "file_url"
+      ],
+      "title": "WordPressUploadMediaConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for WordPress node including credentials",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_category": "#/$defs/WordPressCreateCategoryConfig",
+          "create_page": "#/$defs/WordPressCreatePageConfig",
+          "create_post": "#/$defs/WordPressCreatePostConfig",
+          "create_post_comment": "#/$defs/WordPressCreateCommentConfig",
+          "create_tag": "#/$defs/WordPressCreateTagConfig",
+          "create_user": "#/$defs/WordPressCreateUserConfig",
+          "delete_category": "#/$defs/WordPressDeleteCategoryConfig",
+          "delete_comment": "#/$defs/WordPressDeleteCommentConfig",
+          "delete_media_item": "#/$defs/WordPressDeleteMediaConfig",
+          "delete_page": "#/$defs/WordPressDeletePageConfig",
+          "delete_post": "#/$defs/WordPressDeletePostConfig",
+          "delete_tag": "#/$defs/WordPressDeleteTagConfig",
+          "delete_user": "#/$defs/WordPressDeleteUserConfig",
+          "get_category": "#/$defs/WordPressGetCategoryConfig",
+          "get_comment": "#/$defs/WordPressGetCommentConfig",
+          "get_media_item": "#/$defs/WordPressGetMediaConfig",
+          "get_page": "#/$defs/WordPressGetPageConfig",
+          "get_post": "#/$defs/WordPressGetPostConfig",
+          "get_site_settings": "#/$defs/WordPressGetSettingsConfig",
+          "get_tag": "#/$defs/WordPressGetTagConfig",
+          "get_user": "#/$defs/WordPressGetUserConfig",
+          "list_categories": "#/$defs/WordPressListCategoriesConfig",
+          "list_comments": "#/$defs/WordPressListCommentsConfig",
+          "list_media_items": "#/$defs/WordPressListMediaConfig",
+          "list_pages": "#/$defs/WordPressListPagesConfig",
+          "list_posts": "#/$defs/WordPressListPostsConfig",
+          "list_tags": "#/$defs/WordPressListTagsConfig",
+          "list_users": "#/$defs/WordPressListUsersConfig",
+          "search_content": "#/$defs/WordPressSearchConfig",
+          "update_category": "#/$defs/WordPressUpdateCategoryConfig",
+          "update_comment": "#/$defs/WordPressUpdateCommentConfig",
+          "update_media_metadata": "#/$defs/WordPressUpdateMediaConfig",
+          "update_page": "#/$defs/WordPressUpdatePageConfig",
+          "update_post": "#/$defs/WordPressUpdatePostConfig",
+          "update_site_settings": "#/$defs/WordPressUpdateSettingsConfig",
+          "update_tag": "#/$defs/WordPressUpdateTagConfig",
+          "update_user": "#/$defs/WordPressUpdateUserConfig",
+          "upload_media_file": "#/$defs/WordPressUploadMediaConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/WordPressListPostsConfig"
+        },
+        {
+          "$ref": "#/$defs/WordPressGetPostConfig"
+        },
+        {
+          "$ref": "#/$defs/WordPressCreatePostConfig"
+        },
+        {
+          "$ref": "#/$defs/WordPressUpdatePostConfig"
+        },
+        {
+          "$ref": "#/$defs/WordPressDeletePostConfig"
+        },
+        {
+          "$ref": "#/$defs/WordPressListPagesConfig"
+        },
+        {
+          "$ref": "#/$defs/WordPressGetPageConfig"
+        },
+        {
+          "$ref": "#/$defs/WordPressCreatePageConfig"
+        },
+        {
+          "$ref": "#/$defs/WordPressUpdatePageConfig"
+        },
+        {
+          "$ref": "#/$defs/WordPressDeletePageConfig"
+        },
+        {
+          "$ref": "#/$defs/WordPressListMediaConfig"
+        },
+        {
+          "$ref": "#/$defs/WordPressGetMediaConfig"
+        },
+        {
+          "$ref": "#/$defs/WordPressUploadMediaConfig"
+        },
+        {
+          "$ref": "#/$defs/WordPressUpdateMediaConfig"
+        },
+        {
+          "$ref": "#/$defs/WordPressDeleteMediaConfig"
+        },
+        {
+          "$ref": "#/$defs/WordPressListUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/WordPressGetUserConfig"
+        },
+        {
+          "$ref": "#/$defs/WordPressCreateUserConfig"
+        },
+        {
+          "$ref": "#/$defs/WordPressUpdateUserConfig"
+        },
+        {
+          "$ref": "#/$defs/WordPressDeleteUserConfig"
+        },
+        {
+          "$ref": "#/$defs/WordPressListCommentsConfig"
+        },
+        {
+          "$ref": "#/$defs/WordPressGetCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/WordPressCreateCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/WordPressUpdateCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/WordPressDeleteCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/WordPressListCategoriesConfig"
+        },
+        {
+          "$ref": "#/$defs/WordPressGetCategoryConfig"
+        },
+        {
+          "$ref": "#/$defs/WordPressCreateCategoryConfig"
+        },
+        {
+          "$ref": "#/$defs/WordPressUpdateCategoryConfig"
+        },
+        {
+          "$ref": "#/$defs/WordPressDeleteCategoryConfig"
+        },
+        {
+          "$ref": "#/$defs/WordPressListTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/WordPressGetTagConfig"
+        },
+        {
+          "$ref": "#/$defs/WordPressCreateTagConfig"
+        },
+        {
+          "$ref": "#/$defs/WordPressUpdateTagConfig"
+        },
+        {
+          "$ref": "#/$defs/WordPressDeleteTagConfig"
+        },
+        {
+          "$ref": "#/$defs/WordPressSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/WordPressGetSettingsConfig"
+        },
+        {
+          "$ref": "#/$defs/WordPressUpdateSettingsConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/WordPressOAuthCredential"
+        },
+        {
+          "$ref": "#/$defs/WordPressApplicationPasswordCredential"
+        },
+        {
+          "$ref": "#/$defs/WordPressBasicAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Wordpress Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Publish a blog post with featured image and categories",
+    "Upload product photo to media library with description",
+    "Create new user account with subscriber role",
+    "Search posts matching keyword and get featured images",
+    "Update about page content and publish",
+    "Delete spam comments and approve pending reviews",
+    "Create product category with description and slug"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

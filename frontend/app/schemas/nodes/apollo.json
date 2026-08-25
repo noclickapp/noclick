@@ -1,0 +1,3265 @@
+{
+  "$defs": {
+    "ApolloAPIKeyCredential": {
+      "description": "API Key credential for Apollo.io.\n\nGet your API key at: https://developer.apollo.io/keys#/keys",
+      "properties": {
+        "credential_type": {
+          "const": "apollo_api_key",
+          "default": "apollo_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Your Apollo.io API Key",
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "ApolloAPIKeyCredential",
+      "type": "object",
+      "x-credential-url": "https://developer.apollo.io/keys#/keys"
+    },
+    "ApolloAddContactsToSequenceConfig": {
+      "description": "Add contacts to a sequence",
+      "properties": {
+        "operation": {
+          "const": "add_contacts_to_outreach_sequence",
+          "default": "add_contacts_to_outreach_sequence",
+          "title": "Add Contacts to Outreach Sequence",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact",
+          "x-display-name": "Add Contacts to Outreach Sequence",
+          "x-is-trigger": false
+        },
+        "sequence_id": {
+          "description": "ID of the sequence",
+          "title": "Sequence ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "sequence_id",
+            "placeholder": "Select sequence...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "contact_ids": {
+          "description": "IDs of contacts to add",
+          "items": {
+            "type": "string"
+          },
+          "title": "Contact IDs",
+          "type": "array"
+        },
+        "emailer_campaign_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of the emailer campaign (if using email)",
+          "title": "Emailer Campaign ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "sequence_id",
+            "placeholder": "Select sequence...",
+            "searchable": true
+          }
+        },
+        "send_email_from_email_account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of the email account to send from",
+          "title": "Email Account ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "email_account_id",
+            "placeholder": "Select email account...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "sequence_id",
+        "contact_ids"
+      ],
+      "title": "ApolloAddContactsToSequenceConfig",
+      "type": "object"
+    },
+    "ApolloBulkCreateAccountsConfig": {
+      "description": "Create multiple accounts at once",
+      "properties": {
+        "operation": {
+          "const": "create_multiple_accounts",
+          "default": "create_multiple_accounts",
+          "title": "Create Multiple Accounts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Create Multiple Accounts",
+          "x-is-trigger": false
+        },
+        "accounts": {
+          "description": "Array of account objects to create. Each object can have: name, domain, phone_number, raw_address, owner_id",
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "title": "Accounts",
+          "type": "array"
+        }
+      },
+      "required": [
+        "accounts"
+      ],
+      "title": "ApolloBulkCreateAccountsConfig",
+      "type": "object"
+    },
+    "ApolloBulkCreateContactsConfig": {
+      "description": "Create multiple contacts at once",
+      "properties": {
+        "operation": {
+          "const": "create_multiple_contacts",
+          "default": "create_multiple_contacts",
+          "title": "Create Multiple Contacts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact",
+          "x-display-name": "Create Multiple Contacts",
+          "x-is-trigger": false
+        },
+        "contacts": {
+          "description": "Array of contact objects to create. Each object can have: first_name, last_name, email, title, organization_name, account_id, phone_numbers, owner_id, label_names",
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "title": "Contacts",
+          "type": "array"
+        },
+        "run_dedupe": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Enable deduplication to update existing contacts instead of creating duplicates",
+          "title": "Run Deduplication"
+        }
+      },
+      "required": [
+        "contacts"
+      ],
+      "title": "ApolloBulkCreateContactsConfig",
+      "type": "object"
+    },
+    "ApolloBulkOrganizationEnrichmentConfig": {
+      "description": "Enrich data for up to 10 organizations at once",
+      "properties": {
+        "operation": {
+          "const": "enrich_multiple_organizations",
+          "default": "enrich_multiple_organizations",
+          "title": "Enrich Multiple Organizations",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "Enrich Multiple Organizations",
+          "x-is-trigger": false
+        },
+        "domains": {
+          "description": "Array of organization domains to enrich (max 10)",
+          "items": {
+            "type": "string"
+          },
+          "title": "Domains",
+          "type": "array"
+        }
+      },
+      "required": [
+        "domains"
+      ],
+      "title": "ApolloBulkOrganizationEnrichmentConfig",
+      "type": "object"
+    },
+    "ApolloBulkPeopleEnrichmentConfig": {
+      "description": "Enrich data for up to 10 people at once",
+      "properties": {
+        "operation": {
+          "const": "enrich_multiple_people",
+          "default": "enrich_multiple_people",
+          "title": "Enrich Multiple People",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Person",
+          "x-display-name": "Enrich Multiple People",
+          "x-is-trigger": false
+        },
+        "details": {
+          "description": "Array of people to enrich (max 10). Each object can have: first_name, last_name, email, domain, organization_name, linkedin_url",
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "title": "People Details",
+          "type": "array"
+        },
+        "reveal_personal_emails": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Include personal email addresses in results",
+          "title": "Reveal Personal Emails"
+        },
+        "reveal_phone_number": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Include phone numbers in results",
+          "title": "Reveal Phone Number"
+        }
+      },
+      "required": [
+        "details"
+      ],
+      "title": "ApolloBulkPeopleEnrichmentConfig",
+      "type": "object"
+    },
+    "ApolloBulkUpdateAccountsConfig": {
+      "description": "Update multiple accounts at once",
+      "properties": {
+        "operation": {
+          "const": "update_multiple_accounts",
+          "default": "update_multiple_accounts",
+          "title": "Update Multiple Accounts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Update Multiple Accounts",
+          "x-is-trigger": false
+        },
+        "accounts": {
+          "description": "Array of account objects with updates. Each object must include 'id' and fields to update",
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "title": "Accounts",
+          "type": "array"
+        }
+      },
+      "required": [
+        "accounts"
+      ],
+      "title": "ApolloBulkUpdateAccountsConfig",
+      "type": "object"
+    },
+    "ApolloBulkUpdateContactsConfig": {
+      "description": "Update multiple contacts at once",
+      "properties": {
+        "operation": {
+          "const": "update_multiple_contacts",
+          "default": "update_multiple_contacts",
+          "title": "Update Multiple Contacts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact",
+          "x-display-name": "Update Multiple Contacts",
+          "x-is-trigger": false
+        },
+        "contacts": {
+          "description": "Array of contact objects with updates. Each object must include 'id' and fields to update",
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "title": "Contacts",
+          "type": "array"
+        }
+      },
+      "required": [
+        "contacts"
+      ],
+      "title": "ApolloBulkUpdateContactsConfig",
+      "type": "object"
+    },
+    "ApolloCreateAccountConfig": {
+      "description": "Create a new account in Apollo",
+      "properties": {
+        "operation": {
+          "const": "create_account",
+          "default": "create_account",
+          "title": "Create Account",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Create Account",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Name of the account/company",
+          "title": "Account Name",
+          "type": "string"
+        },
+        "domain": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Company domain",
+          "title": "Domain"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Company phone number",
+          "title": "Phone Number"
+        },
+        "raw_address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Company address",
+          "title": "Address"
+        },
+        "owner_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "User ID of the account owner",
+          "title": "Owner ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "owner_id",
+            "placeholder": "Select owner...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "ApolloCreateAccountConfig",
+      "type": "object"
+    },
+    "ApolloCreateCallRecordConfig": {
+      "description": "Create a call record",
+      "properties": {
+        "operation": {
+          "const": "create_call_activity_record",
+          "default": "create_call_activity_record",
+          "title": "Create Call Activity Record",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Activity",
+          "x-display-name": "Create Call Activity Record",
+          "x-is-trigger": false
+        },
+        "contact_id": {
+          "description": "ID of the contact the call was with",
+          "title": "Contact ID",
+          "type": "string"
+        },
+        "user_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of the user who made the call",
+          "title": "User ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "owner_id",
+            "placeholder": "Select user...",
+            "searchable": true
+          }
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Phone number called",
+          "title": "Phone Number"
+        },
+        "duration": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Call duration in seconds",
+          "title": "Duration (seconds)"
+        },
+        "outcome": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Call outcome",
+          "enum": [
+            "connected",
+            "no_answer",
+            "voicemail",
+            "wrong_number",
+            "busy"
+          ],
+          "title": "Outcome"
+        },
+        "direction": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "outbound",
+          "description": "Call direction",
+          "enum": [
+            "inbound",
+            "outbound"
+          ],
+          "title": "Direction"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Notes about the call",
+          "title": "Note",
+          "ui:widget": "textarea"
+        },
+        "called_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When the call occurred (ISO 8601)",
+          "title": "Called At"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "ApolloCreateCallRecordConfig",
+      "type": "object"
+    },
+    "ApolloCreateContactConfig": {
+      "description": "Create a new contact",
+      "properties": {
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Create Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact",
+          "x-display-name": "Create Contact",
+          "x-is-trigger": false
+        },
+        "first_name": {
+          "description": "Contact's first name",
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "description": "Contact's last name",
+          "title": "Last Name",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact's email address",
+          "title": "Email"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact's job title",
+          "title": "Job Title"
+        },
+        "organization_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact's company name",
+          "title": "Organization Name"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Link to existing account",
+          "title": "Account ID"
+        },
+        "phone_numbers": {
+          "anyOf": [
+            {
+              "items": {
+                "additionalProperties": {
+                  "type": "string"
+                },
+                "type": "object"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Array of phone numbers [{raw_number: '...', type: 'mobile'}]",
+          "title": "Phone Numbers"
+        },
+        "owner_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "User ID of the contact owner",
+          "title": "Owner ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "owner_id",
+            "placeholder": "Select owner...",
+            "searchable": true
+          }
+        },
+        "label_names": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Label names to apply to contact",
+          "title": "Labels"
+        }
+      },
+      "required": [
+        "first_name",
+        "last_name"
+      ],
+      "title": "ApolloCreateContactConfig",
+      "type": "object"
+    },
+    "ApolloCreateCustomFieldConfig": {
+      "description": "Create a custom field",
+      "properties": {
+        "operation": {
+          "const": "create_custom_field",
+          "default": "create_custom_field",
+          "title": "Create Custom Field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspace Configuration",
+          "x-display-name": "Create Custom Field",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Name of the custom field",
+          "title": "Field Name",
+          "type": "string"
+        },
+        "field_type": {
+          "description": "Type of entity this field applies to",
+          "enum": [
+            "contact",
+            "account",
+            "opportunity"
+          ],
+          "title": "Field Type",
+          "type": "string"
+        },
+        "widget_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "text",
+          "description": "Input widget type for the field",
+          "enum": [
+            "text",
+            "textarea",
+            "number",
+            "date",
+            "dropdown",
+            "checkbox"
+          ],
+          "title": "Widget Type"
+        },
+        "options": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Options for dropdown fields",
+          "title": "Options"
+        }
+      },
+      "required": [
+        "name",
+        "field_type"
+      ],
+      "title": "ApolloCreateCustomFieldConfig",
+      "type": "object"
+    },
+    "ApolloCreateDealConfig": {
+      "description": "Create a new deal",
+      "properties": {
+        "operation": {
+          "const": "create_deal",
+          "default": "create_deal",
+          "title": "Create Deal",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Deal",
+          "x-display-name": "Create Deal",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Name of the deal",
+          "title": "Deal Name",
+          "type": "string"
+        },
+        "deal_stage_id": {
+          "description": "ID of the deal stage",
+          "title": "Deal Stage ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "deal_stage_id",
+            "placeholder": "Select deal stage...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "amount": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Deal value",
+          "title": "Amount"
+        },
+        "closed_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expected close date (ISO 8601)",
+          "title": "Close Date"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Associated account ID",
+          "title": "Account ID"
+        },
+        "contact_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Associated contact IDs",
+          "title": "Contact IDs"
+        },
+        "owner_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Deal owner user ID",
+          "title": "Owner ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "owner_id",
+            "placeholder": "Select owner...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "name",
+        "deal_stage_id"
+      ],
+      "title": "ApolloCreateDealConfig",
+      "type": "object"
+    },
+    "ApolloCreateTaskConfig": {
+      "description": "Create a new task",
+      "properties": {
+        "operation": {
+          "const": "create_task",
+          "default": "create_task",
+          "title": "Create Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Activity",
+          "x-display-name": "Create Task",
+          "x-is-trigger": false
+        },
+        "contact_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Associated contact ID",
+          "title": "Contact ID"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Associated account ID",
+          "title": "Account ID"
+        },
+        "user_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "User to assign the task to",
+          "title": "Assigned User ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "owner_id",
+            "placeholder": "Select user...",
+            "searchable": true
+          }
+        },
+        "due_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Task due date (ISO 8601)",
+          "title": "Due Date"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "normal",
+          "description": "Task priority",
+          "enum": [
+            "high",
+            "normal",
+            "low"
+          ],
+          "title": "Priority"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Task description/notes",
+          "title": "Note",
+          "ui:widget": "textarea"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "action_item",
+          "description": "Task type",
+          "enum": [
+            "action_item",
+            "call",
+            "email",
+            "linkedin_interact"
+          ],
+          "title": "Type"
+        }
+      },
+      "title": "ApolloCreateTaskConfig",
+      "type": "object"
+    },
+    "ApolloGetCustomFieldsConfig": {
+      "description": "Get all custom fields in the organization",
+      "properties": {
+        "operation": {
+          "const": "get_organization_custom_fields",
+          "default": "get_organization_custom_fields",
+          "title": "Get Organization Custom Fields",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspace Configuration",
+          "x-display-name": "Get Organization Custom Fields",
+          "x-is-trigger": false
+        },
+        "field_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by field type",
+          "enum": [
+            "contact",
+            "account",
+            "opportunity"
+          ],
+          "title": "Field Type"
+        }
+      },
+      "title": "ApolloGetCustomFieldsConfig",
+      "type": "object"
+    },
+    "ApolloGetEmailAccountsConfig": {
+      "description": "Get list of email accounts",
+      "properties": {
+        "operation": {
+          "const": "get_email_account_list",
+          "default": "get_email_account_list",
+          "title": "Get Email Account List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sequence and Email",
+          "x-display-name": "Get Email Account List",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ApolloGetEmailAccountsConfig",
+      "type": "object"
+    },
+    "ApolloGetEmailStatsConfig": {
+      "description": "Get email statistics for a sequence",
+      "properties": {
+        "operation": {
+          "const": "get_sequence_email_statistics",
+          "default": "get_sequence_email_statistics",
+          "title": "Get Sequence Email Statistics",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sequence and Email",
+          "x-display-name": "Get Sequence Email Statistics",
+          "x-is-trigger": false
+        },
+        "sequence_id": {
+          "description": "ID of the sequence to get stats for",
+          "title": "Sequence ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "sequence_id",
+            "placeholder": "Select sequence...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "sequence_id"
+      ],
+      "title": "ApolloGetEmailStatsConfig",
+      "type": "object"
+    },
+    "ApolloGetListsConfig": {
+      "description": "Get all lists in the organization",
+      "properties": {
+        "operation": {
+          "const": "get_organization_lists",
+          "default": "get_organization_lists",
+          "title": "Get Organization Lists",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspace Configuration",
+          "x-display-name": "Get Organization Lists",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ApolloGetListsConfig",
+      "type": "object"
+    },
+    "ApolloGetOrganizationInfoConfig": {
+      "description": "Get complete information for an organization",
+      "properties": {
+        "operation": {
+          "const": "get_organization_details",
+          "default": "get_organization_details",
+          "title": "Get Organization Details",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "Get Organization Details",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "description": "Apollo organization ID",
+          "title": "Organization ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "ApolloGetOrganizationInfoConfig",
+      "type": "object"
+    },
+    "ApolloGetUsageStatsConfig": {
+      "description": "Get API usage statistics and rate limits",
+      "properties": {
+        "operation": {
+          "const": "get_api_usage_and_limits",
+          "default": "get_api_usage_and_limits",
+          "title": "Get Api Usage and Limits",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspace Configuration",
+          "x-display-name": "Get Api Usage and Limits",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ApolloGetUsageStatsConfig",
+      "type": "object"
+    },
+    "ApolloGetUsersConfig": {
+      "description": "Get list of users in the organization",
+      "properties": {
+        "operation": {
+          "const": "get_organization_users",
+          "default": "get_organization_users",
+          "title": "Get Organization Users",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspace Configuration",
+          "x-display-name": "Get Organization Users",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ApolloGetUsersConfig",
+      "type": "object"
+    },
+    "ApolloListAccountStagesConfig": {
+      "description": "List all account stages",
+      "properties": {
+        "operation": {
+          "const": "list_account_stages",
+          "default": "list_account_stages",
+          "title": "List Account Stages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "List Account Stages",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ApolloListAccountStagesConfig",
+      "type": "object"
+    },
+    "ApolloListContactStagesConfig": {
+      "description": "List all contact stages",
+      "properties": {
+        "operation": {
+          "const": "list_contact_stages",
+          "default": "list_contact_stages",
+          "title": "List Contact Stages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact",
+          "x-display-name": "List Contact Stages",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ApolloListContactStagesConfig",
+      "type": "object"
+    },
+    "ApolloListDealStagesConfig": {
+      "description": "List all deal stages",
+      "properties": {
+        "operation": {
+          "const": "list_deal_stages",
+          "default": "list_deal_stages",
+          "title": "List Deal Stages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Deal",
+          "x-display-name": "List Deal Stages",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ApolloListDealStagesConfig",
+      "type": "object"
+    },
+    "ApolloListDealsConfig": {
+      "description": "List all deals",
+      "properties": {
+        "operation": {
+          "const": "list_deals",
+          "default": "list_deals",
+          "title": "List Deals",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Deal",
+          "x-display-name": "List Deals",
+          "x-is-trigger": false
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Page number",
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "description": "Results per page",
+          "title": "Per Page"
+        }
+      },
+      "title": "ApolloListDealsConfig",
+      "type": "object"
+    },
+    "ApolloOAuthCredential": {
+      "description": "OAuth 2.0 credential for Apollo.io.",
+      "properties": {
+        "credential_type": {
+          "const": "apollo_oauth",
+          "default": "apollo_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "OAuth access token",
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "OAuth refresh token",
+          "title": "Refresh Token"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 expiry timestamp",
+          "title": "Expires At"
+        },
+        "scope": {
+          "default": "",
+          "description": "Granted OAuth scopes",
+          "title": "Scope",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Connected Apollo account email",
+          "title": "Email"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "ApolloOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-oauth-provider": "apollo",
+      "x-oauth-scopes": [
+        "read_user_profile",
+        "people_match",
+        "people_bulk_match",
+        "organizations_enrich",
+        "organizations_bulk_enrich",
+        "organizations_search",
+        "organization_read",
+        "mixed_people_api_search",
+        "mixed_companies_search",
+        "contacts_search",
+        "contact_read",
+        "contact_write",
+        "contact_update",
+        "contacts_bulk_create",
+        "contacts_bulk_update",
+        "contact_stages_list",
+        "contact_stages_update",
+        "contact_owners_update",
+        "account_read",
+        "account_write",
+        "account_update",
+        "accounts_search",
+        "account_bulk_create",
+        "account_stages_list",
+        "account_stages_update",
+        "account_owners_update",
+        "opportunity_read",
+        "opportunity_write",
+        "opportunity_update",
+        "opportunities_list",
+        "opportunity_stages_list",
+        "emailer_campaigns_search",
+        "emailer_campaigns_create",
+        "emailer_campaigns_update",
+        "emailer_campaigns_add_contact_ids",
+        "emailer_campaigns_remove_or_stop_contact_ids",
+        "emailer_schedules_list",
+        "emailer_messages_search",
+        "tasks_create",
+        "tasks_list",
+        "notes_list",
+        "users_list",
+        "tags_list",
+        "custom_fields_list",
+        "custom_field_write",
+        "lists_create",
+        "lists_update",
+        "lists_add_entities",
+        "lists_remove_entities",
+        "organizations_job_posting",
+        "organizations_news_articles",
+        "person_read"
+      ]
+    },
+    "ApolloOrganizationEnrichmentConfig": {
+      "description": "Enrich data for a single organization",
+      "properties": {
+        "operation": {
+          "const": "enrich_single_organization",
+          "default": "enrich_single_organization",
+          "title": "Enrich Single Organization",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "Enrich Single Organization",
+          "x-is-trigger": false
+        },
+        "domain": {
+          "description": "Organization's domain (e.g., apollo.io)",
+          "title": "Domain",
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "ApolloOrganizationEnrichmentConfig",
+      "type": "object"
+    },
+    "ApolloOrganizationJobPostingsConfig": {
+      "description": "Get job postings for an organization",
+      "properties": {
+        "operation": {
+          "const": "get_organization_job_postings",
+          "default": "get_organization_job_postings",
+          "title": "Get Organization Job Postings",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "Get Organization Job Postings",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "description": "Apollo organization ID",
+          "title": "Organization ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "ApolloOrganizationJobPostingsConfig",
+      "type": "object"
+    },
+    "ApolloOrganizationSearchConfig": {
+      "description": "Search for organizations in Apollo's database",
+      "properties": {
+        "operation": {
+          "const": "search_organizations_in_apollo",
+          "default": "search_organizations_in_apollo",
+          "title": "Search Organizations in Apollo",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "Search Organizations in Apollo",
+          "x-is-trigger": false
+        },
+        "q_organization_keyword_tags": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Organization keyword tags to search for",
+          "title": "Keyword Tags"
+        },
+        "organization_locations": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by organization locations",
+          "title": "Locations"
+        },
+        "organization_num_employees_ranges": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by employee count ranges",
+          "items": {
+            "enum": [
+              "1,10",
+              "11,20",
+              "21,50",
+              "51,100",
+              "101,200",
+              "201,500",
+              "501,1000",
+              "1001,2000",
+              "2001,5000",
+              "5001,10000",
+              "10001,"
+            ]
+          },
+          "title": "Employee Count Ranges"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Page number",
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "description": "Results per page (max 100)",
+          "title": "Per Page"
+        }
+      },
+      "title": "ApolloOrganizationSearchConfig",
+      "type": "object"
+    },
+    "ApolloPeopleEnrichmentConfig": {
+      "description": "Enrich data for a single person",
+      "properties": {
+        "operation": {
+          "const": "enrich_single_person",
+          "default": "enrich_single_person",
+          "title": "Enrich Single Person",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Person",
+          "x-display-name": "Enrich Single Person",
+          "x-is-trigger": false
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Person's first name",
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Person's last name",
+          "title": "Last Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Person's email address",
+          "title": "Email"
+        },
+        "domain": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Company domain (e.g., apollo.io)",
+          "title": "Domain"
+        },
+        "organization_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Name of the person's organization",
+          "title": "Organization Name"
+        },
+        "linkedin_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Person's LinkedIn profile URL",
+          "title": "LinkedIn URL"
+        },
+        "reveal_personal_emails": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Include personal email addresses in results",
+          "title": "Reveal Personal Emails"
+        },
+        "reveal_phone_number": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Include phone numbers in results",
+          "title": "Reveal Phone Number"
+        }
+      },
+      "title": "ApolloPeopleEnrichmentConfig",
+      "type": "object"
+    },
+    "ApolloPeopleSearchConfig": {
+      "description": "Search Apollo's database for prospects",
+      "properties": {
+        "operation": {
+          "const": "search_people_in_apollo",
+          "default": "search_people_in_apollo",
+          "title": "Search People in Apollo",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Person",
+          "x-display-name": "Search People in Apollo",
+          "x-is-trigger": false
+        },
+        "q_keywords": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Keywords to search for in person profiles",
+          "title": "Keywords"
+        },
+        "person_titles": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by job titles (e.g., ['CEO', 'CTO'])",
+          "title": "Job Titles"
+        },
+        "person_seniorities": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by seniority levels",
+          "items": {
+            "enum": [
+              "owner",
+              "founder",
+              "c_suite",
+              "partner",
+              "vp",
+              "head",
+              "director",
+              "manager",
+              "senior",
+              "entry",
+              "intern"
+            ]
+          },
+          "title": "Seniorities"
+        },
+        "person_locations": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by locations (e.g., ['San Francisco, CA', 'New York, NY'])",
+          "title": "Locations"
+        },
+        "organization_domains": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by company domains",
+          "title": "Organization Domains"
+        },
+        "organization_num_employees_ranges": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by employee count ranges",
+          "items": {
+            "enum": [
+              "1,10",
+              "11,20",
+              "21,50",
+              "51,100",
+              "101,200",
+              "201,500",
+              "501,1000",
+              "1001,2000",
+              "2001,5000",
+              "5001,10000",
+              "10001,"
+            ]
+          },
+          "title": "Employee Count Ranges"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Page number (1-indexed)",
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "description": "Results per page (max 100)",
+          "title": "Per Page"
+        }
+      },
+      "title": "ApolloPeopleSearchConfig",
+      "type": "object"
+    },
+    "ApolloSearchAccountsConfig": {
+      "description": "Search for accounts",
+      "properties": {
+        "operation": {
+          "const": "search_accounts",
+          "default": "search_accounts",
+          "title": "Search Accounts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Search Accounts",
+          "x-is-trigger": false
+        },
+        "q_organization_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search by organization name",
+          "title": "Organization Name"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Page number",
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "description": "Results per page",
+          "title": "Per Page"
+        }
+      },
+      "title": "ApolloSearchAccountsConfig",
+      "type": "object"
+    },
+    "ApolloSearchCallsConfig": {
+      "description": "Search for call records",
+      "properties": {
+        "operation": {
+          "const": "search_call_records",
+          "default": "search_call_records",
+          "title": "Search Call Records",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Activity",
+          "x-display-name": "Search Call Records",
+          "x-is-trigger": false
+        },
+        "contact_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by contact ID",
+          "title": "Contact ID"
+        },
+        "user_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by user ID",
+          "title": "User ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "owner_id",
+            "placeholder": "Select user...",
+            "searchable": true
+          }
+        },
+        "outcome": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by outcome",
+          "enum": [
+            "connected",
+            "no_answer",
+            "voicemail",
+            "wrong_number",
+            "busy"
+          ],
+          "title": "Outcome"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Page number",
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "description": "Results per page",
+          "title": "Per Page"
+        }
+      },
+      "title": "ApolloSearchCallsConfig",
+      "type": "object"
+    },
+    "ApolloSearchContactsConfig": {
+      "description": "Search for contacts",
+      "properties": {
+        "operation": {
+          "const": "search_contacts",
+          "default": "search_contacts",
+          "title": "Search Contacts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact",
+          "x-display-name": "Search Contacts",
+          "x-is-trigger": false
+        },
+        "q_keywords": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Keywords to search for",
+          "title": "Keywords"
+        },
+        "contact_stage_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by contact stage IDs",
+          "title": "Stage IDs",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "contact_stage_ids",
+            "placeholder": "Select stages...",
+            "searchable": true
+          }
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Page number",
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "description": "Results per page",
+          "title": "Per Page"
+        }
+      },
+      "title": "ApolloSearchContactsConfig",
+      "type": "object"
+    },
+    "ApolloSearchEmailsConfig": {
+      "description": "Search for outreach emails in sequences",
+      "properties": {
+        "operation": {
+          "const": "search_sequence_emails",
+          "default": "search_sequence_emails",
+          "title": "Search Sequence Emails",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sequence and Email",
+          "x-display-name": "Search Sequence Emails",
+          "x-is-trigger": false
+        },
+        "emailer_campaign_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by sequence/emailer campaign ID",
+          "title": "Sequence ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "sequence_id",
+            "placeholder": "Select sequence...",
+            "searchable": true
+          }
+        },
+        "contact_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by contact ID",
+          "title": "Contact ID"
+        },
+        "email_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by email status",
+          "enum": [
+            "sent",
+            "opened",
+            "clicked",
+            "replied",
+            "bounced",
+            "scheduled"
+          ],
+          "title": "Email Status"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Page number",
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "description": "Results per page",
+          "title": "Per Page"
+        }
+      },
+      "title": "ApolloSearchEmailsConfig",
+      "type": "object"
+    },
+    "ApolloSearchNewsArticlesConfig": {
+      "description": "Search for news articles about organizations",
+      "properties": {
+        "operation": {
+          "const": "search_organization_news_articles",
+          "default": "search_organization_news_articles",
+          "title": "Search Organization News Articles",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "News",
+          "x-display-name": "Search Organization News Articles",
+          "x-is-trigger": false
+        },
+        "organization_ids": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by organization IDs",
+          "title": "Organization IDs"
+        },
+        "q_keywords": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Keywords to search for in news articles",
+          "title": "Keywords"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Page number",
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "description": "Results per page (max 100)",
+          "title": "Per Page"
+        }
+      },
+      "title": "ApolloSearchNewsArticlesConfig",
+      "type": "object"
+    },
+    "ApolloSearchSequencesConfig": {
+      "description": "Search for sequences",
+      "properties": {
+        "operation": {
+          "const": "search_outreach_sequences",
+          "default": "search_outreach_sequences",
+          "title": "Search Outreach Sequences",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sequence and Email",
+          "x-display-name": "Search Outreach Sequences",
+          "x-is-trigger": false
+        },
+        "q_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search by sequence name",
+          "title": "Name"
+        }
+      },
+      "title": "ApolloSearchSequencesConfig",
+      "type": "object"
+    },
+    "ApolloSearchTasksConfig": {
+      "description": "Search for tasks",
+      "properties": {
+        "operation": {
+          "const": "search_tasks",
+          "default": "search_tasks",
+          "title": "Search Tasks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Activity",
+          "x-display-name": "Search Tasks",
+          "x-is-trigger": false
+        },
+        "user_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by assigned user",
+          "title": "User ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "owner_id",
+            "placeholder": "Select user...",
+            "searchable": true
+          }
+        },
+        "contact_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by associated contact",
+          "title": "Contact ID"
+        },
+        "open_factor_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by open factor",
+          "title": "Open Factor ID"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Page number",
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "description": "Results per page",
+          "title": "Per Page"
+        }
+      },
+      "title": "ApolloSearchTasksConfig",
+      "type": "object"
+    },
+    "ApolloUpdateAccountConfig": {
+      "description": "Update an existing account",
+      "properties": {
+        "operation": {
+          "const": "update_account_details",
+          "default": "update_account_details",
+          "title": "Update Account Details",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Update Account Details",
+          "x-is-trigger": false
+        },
+        "account_id": {
+          "description": "ID of the account to update",
+          "title": "Account ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New name for the account",
+          "title": "Account Name"
+        },
+        "domain": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New domain",
+          "title": "Domain"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New phone number",
+          "title": "Phone Number"
+        },
+        "raw_address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New address",
+          "title": "Address"
+        },
+        "owner_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New owner user ID",
+          "title": "Owner ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "owner_id",
+            "placeholder": "Select owner...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "account_id"
+      ],
+      "title": "ApolloUpdateAccountConfig",
+      "type": "object"
+    },
+    "ApolloUpdateAccountOwnersConfig": {
+      "description": "Update owner for multiple accounts",
+      "properties": {
+        "operation": {
+          "const": "update_account_ownership",
+          "default": "update_account_ownership",
+          "title": "Update Account Ownership",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Update Account Ownership",
+          "x-is-trigger": false
+        },
+        "account_ids": {
+          "description": "IDs of accounts to update",
+          "items": {
+            "type": "string"
+          },
+          "title": "Account IDs",
+          "type": "array"
+        },
+        "owner_id": {
+          "description": "New owner user ID to assign",
+          "title": "Owner ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "owner_id",
+            "placeholder": "Select owner...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "account_ids",
+        "owner_id"
+      ],
+      "title": "ApolloUpdateAccountOwnersConfig",
+      "type": "object"
+    },
+    "ApolloUpdateAccountStagesConfig": {
+      "description": "Update account stage for multiple accounts",
+      "properties": {
+        "operation": {
+          "const": "update_account_stage_bulk",
+          "default": "update_account_stage_bulk",
+          "title": "Update Account Stage Bulk",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Update Account Stage Bulk",
+          "x-is-trigger": false
+        },
+        "account_ids": {
+          "description": "IDs of accounts to update",
+          "items": {
+            "type": "string"
+          },
+          "title": "Account IDs",
+          "type": "array"
+        },
+        "account_stage_id": {
+          "description": "New account stage ID to set",
+          "title": "Account Stage ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "account_stage_id",
+            "placeholder": "Select stage...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "account_ids",
+        "account_stage_id"
+      ],
+      "title": "ApolloUpdateAccountStagesConfig",
+      "type": "object"
+    },
+    "ApolloUpdateCallRecordConfig": {
+      "description": "Update a call record",
+      "properties": {
+        "operation": {
+          "const": "update_call_record",
+          "default": "update_call_record",
+          "title": "Update Call Record",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Activity",
+          "x-display-name": "Update Call Record",
+          "x-is-trigger": false
+        },
+        "call_id": {
+          "description": "ID of the call record to update",
+          "title": "Call ID",
+          "type": "string"
+        },
+        "duration": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New call duration in seconds",
+          "title": "Duration (seconds)"
+        },
+        "outcome": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New call outcome",
+          "enum": [
+            "connected",
+            "no_answer",
+            "voicemail",
+            "wrong_number",
+            "busy"
+          ],
+          "title": "Outcome"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New notes about the call",
+          "title": "Note",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "call_id"
+      ],
+      "title": "ApolloUpdateCallRecordConfig",
+      "type": "object"
+    },
+    "ApolloUpdateContactConfig": {
+      "description": "Update an existing contact",
+      "properties": {
+        "operation": {
+          "const": "update_contact_details",
+          "default": "update_contact_details",
+          "title": "Update Contact Details",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact",
+          "x-display-name": "Update Contact Details",
+          "x-is-trigger": false
+        },
+        "contact_id": {
+          "description": "ID of the contact to update",
+          "title": "Contact ID",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New first name",
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New last name",
+          "title": "Last Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New email address",
+          "title": "Email"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New job title",
+          "title": "Job Title"
+        },
+        "organization_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New company name",
+          "title": "Organization Name"
+        },
+        "account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Link to account",
+          "title": "Account ID"
+        },
+        "owner_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New owner user ID",
+          "title": "Owner ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "owner_id",
+            "placeholder": "Select owner...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "ApolloUpdateContactConfig",
+      "type": "object"
+    },
+    "ApolloUpdateContactOwnersConfig": {
+      "description": "Update owner for multiple contacts",
+      "properties": {
+        "operation": {
+          "const": "update_contact_ownership",
+          "default": "update_contact_ownership",
+          "title": "Update Contact Ownership",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact",
+          "x-display-name": "Update Contact Ownership",
+          "x-is-trigger": false
+        },
+        "contact_ids": {
+          "description": "IDs of contacts to update",
+          "items": {
+            "type": "string"
+          },
+          "title": "Contact IDs",
+          "type": "array"
+        },
+        "owner_id": {
+          "description": "New owner user ID to assign",
+          "title": "Owner ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "owner_id",
+            "placeholder": "Select owner...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "contact_ids",
+        "owner_id"
+      ],
+      "title": "ApolloUpdateContactOwnersConfig",
+      "type": "object"
+    },
+    "ApolloUpdateContactSequenceStatusConfig": {
+      "description": "Update a contact's status in a sequence",
+      "properties": {
+        "operation": {
+          "const": "update_contact_sequence_status",
+          "default": "update_contact_sequence_status",
+          "title": "Update Contact Sequence Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact",
+          "x-display-name": "Update Contact Sequence Status",
+          "x-is-trigger": false
+        },
+        "contact_id": {
+          "description": "ID of the contact",
+          "title": "Contact ID",
+          "type": "string"
+        },
+        "sequence_id": {
+          "description": "ID of the sequence",
+          "title": "Sequence ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "sequence_id",
+            "placeholder": "Select sequence...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "status": {
+          "description": "New status for the contact",
+          "enum": [
+            "active",
+            "paused",
+            "finished",
+            "bounced"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id",
+        "sequence_id",
+        "status"
+      ],
+      "title": "ApolloUpdateContactSequenceStatusConfig",
+      "type": "object"
+    },
+    "ApolloUpdateContactStagesConfig": {
+      "description": "Update contact stage for multiple contacts",
+      "properties": {
+        "operation": {
+          "const": "update_contact_stage_bulk",
+          "default": "update_contact_stage_bulk",
+          "title": "Update Contact Stage Bulk",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact",
+          "x-display-name": "Update Contact Stage Bulk",
+          "x-is-trigger": false
+        },
+        "contact_ids": {
+          "description": "IDs of contacts to update",
+          "items": {
+            "type": "string"
+          },
+          "title": "Contact IDs",
+          "type": "array"
+        },
+        "contact_stage_id": {
+          "description": "New contact stage ID to set",
+          "title": "Contact Stage ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "contact_stage_id",
+            "placeholder": "Select stage...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "contact_ids",
+        "contact_stage_id"
+      ],
+      "title": "ApolloUpdateContactStagesConfig",
+      "type": "object"
+    },
+    "ApolloUpdateDealConfig": {
+      "description": "Update an existing deal",
+      "properties": {
+        "operation": {
+          "const": "update_deal_details",
+          "default": "update_deal_details",
+          "title": "Update Deal Details",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Deal",
+          "x-display-name": "Update Deal Details",
+          "x-is-trigger": false
+        },
+        "deal_id": {
+          "description": "ID of the deal to update",
+          "title": "Deal ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New deal name",
+          "title": "Deal Name"
+        },
+        "deal_stage_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New deal stage ID",
+          "title": "Deal Stage ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "deal_stage_id",
+            "placeholder": "Select deal stage...",
+            "searchable": true
+          }
+        },
+        "amount": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New deal value",
+          "title": "Amount"
+        },
+        "closed_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New expected close date",
+          "title": "Close Date"
+        },
+        "owner_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New owner user ID",
+          "title": "Owner ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "owner_id",
+            "placeholder": "Select owner...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "deal_id"
+      ],
+      "title": "ApolloUpdateDealConfig",
+      "type": "object"
+    },
+    "ApolloViewAccountConfig": {
+      "description": "View a single account",
+      "properties": {
+        "operation": {
+          "const": "get_account_details",
+          "default": "get_account_details",
+          "title": "Get Account Details",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Account Details",
+          "x-is-trigger": false
+        },
+        "account_id": {
+          "description": "ID of the account to view",
+          "title": "Account ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "account_id"
+      ],
+      "title": "ApolloViewAccountConfig",
+      "type": "object"
+    },
+    "ApolloViewContactConfig": {
+      "description": "View a single contact",
+      "properties": {
+        "operation": {
+          "const": "get_contact_details",
+          "default": "get_contact_details",
+          "title": "Get Contact Details",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact",
+          "x-display-name": "Get Contact Details",
+          "x-is-trigger": false
+        },
+        "contact_id": {
+          "description": "ID of the contact to view",
+          "title": "Contact ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "ApolloViewContactConfig",
+      "type": "object"
+    },
+    "ApolloViewDealConfig": {
+      "description": "View a single deal",
+      "properties": {
+        "operation": {
+          "const": "get_deal_details",
+          "default": "get_deal_details",
+          "title": "Get Deal Details",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Deal",
+          "x-display-name": "Get Deal Details",
+          "x-is-trigger": false
+        },
+        "deal_id": {
+          "description": "ID of the deal to view",
+          "title": "Deal ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "deal_id"
+      ],
+      "title": "ApolloViewDealConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for Apollo node including credentials",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_contacts_to_outreach_sequence": "#/$defs/ApolloAddContactsToSequenceConfig",
+          "create_account": "#/$defs/ApolloCreateAccountConfig",
+          "create_call_activity_record": "#/$defs/ApolloCreateCallRecordConfig",
+          "create_contact": "#/$defs/ApolloCreateContactConfig",
+          "create_custom_field": "#/$defs/ApolloCreateCustomFieldConfig",
+          "create_deal": "#/$defs/ApolloCreateDealConfig",
+          "create_multiple_accounts": "#/$defs/ApolloBulkCreateAccountsConfig",
+          "create_multiple_contacts": "#/$defs/ApolloBulkCreateContactsConfig",
+          "create_task": "#/$defs/ApolloCreateTaskConfig",
+          "enrich_multiple_organizations": "#/$defs/ApolloBulkOrganizationEnrichmentConfig",
+          "enrich_multiple_people": "#/$defs/ApolloBulkPeopleEnrichmentConfig",
+          "enrich_single_organization": "#/$defs/ApolloOrganizationEnrichmentConfig",
+          "enrich_single_person": "#/$defs/ApolloPeopleEnrichmentConfig",
+          "get_account_details": "#/$defs/ApolloViewAccountConfig",
+          "get_api_usage_and_limits": "#/$defs/ApolloGetUsageStatsConfig",
+          "get_contact_details": "#/$defs/ApolloViewContactConfig",
+          "get_deal_details": "#/$defs/ApolloViewDealConfig",
+          "get_email_account_list": "#/$defs/ApolloGetEmailAccountsConfig",
+          "get_organization_custom_fields": "#/$defs/ApolloGetCustomFieldsConfig",
+          "get_organization_details": "#/$defs/ApolloGetOrganizationInfoConfig",
+          "get_organization_job_postings": "#/$defs/ApolloOrganizationJobPostingsConfig",
+          "get_organization_lists": "#/$defs/ApolloGetListsConfig",
+          "get_organization_users": "#/$defs/ApolloGetUsersConfig",
+          "get_sequence_email_statistics": "#/$defs/ApolloGetEmailStatsConfig",
+          "list_account_stages": "#/$defs/ApolloListAccountStagesConfig",
+          "list_contact_stages": "#/$defs/ApolloListContactStagesConfig",
+          "list_deal_stages": "#/$defs/ApolloListDealStagesConfig",
+          "list_deals": "#/$defs/ApolloListDealsConfig",
+          "search_accounts": "#/$defs/ApolloSearchAccountsConfig",
+          "search_call_records": "#/$defs/ApolloSearchCallsConfig",
+          "search_contacts": "#/$defs/ApolloSearchContactsConfig",
+          "search_organization_news_articles": "#/$defs/ApolloSearchNewsArticlesConfig",
+          "search_organizations_in_apollo": "#/$defs/ApolloOrganizationSearchConfig",
+          "search_outreach_sequences": "#/$defs/ApolloSearchSequencesConfig",
+          "search_people_in_apollo": "#/$defs/ApolloPeopleSearchConfig",
+          "search_sequence_emails": "#/$defs/ApolloSearchEmailsConfig",
+          "search_tasks": "#/$defs/ApolloSearchTasksConfig",
+          "update_account_details": "#/$defs/ApolloUpdateAccountConfig",
+          "update_account_ownership": "#/$defs/ApolloUpdateAccountOwnersConfig",
+          "update_account_stage_bulk": "#/$defs/ApolloUpdateAccountStagesConfig",
+          "update_call_record": "#/$defs/ApolloUpdateCallRecordConfig",
+          "update_contact_details": "#/$defs/ApolloUpdateContactConfig",
+          "update_contact_ownership": "#/$defs/ApolloUpdateContactOwnersConfig",
+          "update_contact_sequence_status": "#/$defs/ApolloUpdateContactSequenceStatusConfig",
+          "update_contact_stage_bulk": "#/$defs/ApolloUpdateContactStagesConfig",
+          "update_deal_details": "#/$defs/ApolloUpdateDealConfig",
+          "update_multiple_accounts": "#/$defs/ApolloBulkUpdateAccountsConfig",
+          "update_multiple_contacts": "#/$defs/ApolloBulkUpdateContactsConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ApolloPeopleEnrichmentConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloBulkPeopleEnrichmentConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloOrganizationEnrichmentConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloBulkOrganizationEnrichmentConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloPeopleSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloOrganizationSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloOrganizationJobPostingsConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloGetOrganizationInfoConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloSearchNewsArticlesConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloCreateAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloUpdateAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloSearchAccountsConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloViewAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloListAccountStagesConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloBulkCreateAccountsConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloBulkUpdateAccountsConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloUpdateAccountStagesConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloUpdateAccountOwnersConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloCreateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloUpdateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloSearchContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloViewContactConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloListContactStagesConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloBulkCreateContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloBulkUpdateContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloUpdateContactStagesConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloUpdateContactOwnersConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloCreateDealConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloListDealsConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloViewDealConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloUpdateDealConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloListDealStagesConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloSearchSequencesConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloAddContactsToSequenceConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloUpdateContactSequenceStatusConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloSearchEmailsConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloGetEmailStatsConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloCreateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloSearchTasksConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloCreateCallRecordConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloSearchCallsConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloUpdateCallRecordConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloGetUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloGetEmailAccountsConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloGetUsageStatsConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloGetListsConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloGetCustomFieldsConfig"
+        },
+        {
+          "$ref": "#/$defs/ApolloCreateCustomFieldConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ApolloAPIKeyCredential"
+        },
+        {
+          "$ref": "#/$defs/ApolloOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Apollo Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Enrich a list of emails with company info and job titles",
+    "Search for prospects by job title and company in USA",
+    "Create a new contact and add to \"Q3 Outreach\" sequence",
+    "Bulk update contact status to \"qualified\" and set call date",
+    "Search organizations by revenue and industry sectors",
+    "Create a deal with forecast close date and probability",
+    "Get email and call stats for a specific outreach sequence"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -1,0 +1,5877 @@
+{
+  "$defs": {
+    "AsanaAddCommentConfig": {
+      "description": "Add a comment (story) to a task.",
+      "properties": {
+        "operation": {
+          "const": "add_comment",
+          "default": "add_comment",
+          "title": "Add Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comments",
+          "x-display-name": "Add Comment",
+          "x-is-trigger": false
+        },
+        "task_gid": {
+          "description": "The task to comment on.",
+          "title": "Task GID",
+          "type": "string"
+        },
+        "text": {
+          "description": "The comment text to post on the task.",
+          "title": "Comment",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "task_gid",
+        "text"
+      ],
+      "title": "AsanaAddCommentConfig",
+      "type": "object"
+    },
+    "AsanaAddCustomFieldToProjectConfig": {
+      "description": "Add a custom field to a project.",
+      "properties": {
+        "operation": {
+          "const": "add_custom_field_to_project",
+          "default": "add_custom_field_to_project",
+          "title": "Add Custom Field to Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Fields",
+          "x-display-name": "Add Custom Field to Project",
+          "x-is-trigger": false
+        },
+        "project_gid": {
+          "description": "The project to add the custom field to.",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project gid",
+            "field_name": "project_gid",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_project"
+        },
+        "custom_field_gid": {
+          "description": "The custom field to add.",
+          "title": "Custom Field GID",
+          "type": "string"
+        },
+        "is_important": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether this custom field is important (shows in list view).",
+          "enum": [
+            "",
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Default",
+            "Yes",
+            "No"
+          ],
+          "title": "Mark as Important",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "project_gid",
+        "custom_field_gid"
+      ],
+      "title": "AsanaAddCustomFieldToProjectConfig",
+      "type": "object"
+    },
+    "AsanaAddDependenciesToTaskConfig": {
+      "description": "Set tasks that must be completed before this task (dependencies).",
+      "properties": {
+        "operation": {
+          "const": "add_task_dependencies",
+          "default": "add_task_dependencies",
+          "title": "Add Task Dependencies",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Add Task Dependencies",
+          "x-is-trigger": false
+        },
+        "task_gid": {
+          "description": "The task to add dependencies to.",
+          "title": "Task GID",
+          "type": "string"
+        },
+        "dependencies": {
+          "description": "Comma-separated GIDs of tasks that must be completed before this task.",
+          "title": "Dependency Task GIDs",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_gid",
+        "dependencies"
+      ],
+      "title": "AsanaAddDependenciesToTaskConfig",
+      "type": "object"
+    },
+    "AsanaAddFollowersConfig": {
+      "description": "Add followers to a task.",
+      "properties": {
+        "operation": {
+          "const": "add_followers",
+          "default": "add_followers",
+          "title": "Add Followers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Add Followers",
+          "x-is-trigger": false
+        },
+        "task_gid": {
+          "description": "The task to add followers to.",
+          "title": "Task GID",
+          "type": "string"
+        },
+        "followers": {
+          "description": "User gids or emails to add as followers, comma-separated.",
+          "title": "Followers",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_gid",
+        "followers"
+      ],
+      "title": "AsanaAddFollowersConfig",
+      "type": "object"
+    },
+    "AsanaAddGoalFollowersConfig": {
+      "description": "Add followers / collaborators to a goal.",
+      "properties": {
+        "operation": {
+          "const": "add_goal_followers",
+          "default": "add_goal_followers",
+          "title": "Add Goal Followers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Goals",
+          "x-display-name": "Add Goal Followers",
+          "x-is-trigger": false
+        },
+        "goal_gid": {
+          "description": "The goal to add followers to.",
+          "title": "Goal GID",
+          "type": "string"
+        },
+        "followers": {
+          "description": "Comma-separated user gids or emails to add.",
+          "title": "Followers",
+          "type": "string"
+        }
+      },
+      "required": [
+        "goal_gid",
+        "followers"
+      ],
+      "title": "AsanaAddGoalFollowersConfig",
+      "type": "object"
+    },
+    "AsanaAddPortfolioItemConfig": {
+      "description": "Add a project to a portfolio.",
+      "properties": {
+        "operation": {
+          "const": "add_portfolio_item",
+          "default": "add_portfolio_item",
+          "title": "Add Item to Portfolio",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Portfolios",
+          "x-display-name": "Add Item to Portfolio",
+          "x-is-trigger": false
+        },
+        "portfolio_gid": {
+          "description": "The portfolio to add the project to.",
+          "title": "Portfolio GID",
+          "type": "string"
+        },
+        "item": {
+          "description": "The project to add to the portfolio.",
+          "title": "Project GID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "portfolio_gid",
+        "item"
+      ],
+      "title": "AsanaAddPortfolioItemConfig",
+      "type": "object"
+    },
+    "AsanaAddPortfolioMembersConfig": {
+      "description": "Add members to a portfolio.",
+      "properties": {
+        "operation": {
+          "const": "add_portfolio_members",
+          "default": "add_portfolio_members",
+          "title": "Add Portfolio Members",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Portfolios",
+          "x-display-name": "Add Portfolio Members",
+          "x-is-trigger": false
+        },
+        "portfolio_gid": {
+          "description": "The portfolio to add members to.",
+          "title": "Portfolio GID",
+          "type": "string"
+        },
+        "members": {
+          "description": "Comma-separated user gids or emails to add.",
+          "title": "Members",
+          "type": "string"
+        }
+      },
+      "required": [
+        "portfolio_gid",
+        "members"
+      ],
+      "title": "AsanaAddPortfolioMembersConfig",
+      "type": "object"
+    },
+    "AsanaAddProjectFollowersConfig": {
+      "description": "Add followers to a project.",
+      "properties": {
+        "operation": {
+          "const": "add_project_followers",
+          "default": "add_project_followers",
+          "title": "Add Project Followers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Add Project Followers",
+          "x-is-trigger": false
+        },
+        "project_gid": {
+          "description": "The project to add followers to.",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project gid",
+            "field_name": "project_gid",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_project"
+        },
+        "followers": {
+          "description": "Comma-separated user gids or emails to add.",
+          "title": "Followers",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_gid",
+        "followers"
+      ],
+      "title": "AsanaAddProjectFollowersConfig",
+      "type": "object"
+    },
+    "AsanaAddProjectMemberConfig": {
+      "description": "Add users to a project as members.",
+      "properties": {
+        "operation": {
+          "const": "add_project_member",
+          "default": "add_project_member",
+          "title": "Add Project Member",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Add Project Member",
+          "x-is-trigger": false
+        },
+        "project_gid": {
+          "description": "The project to add members to.",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project gid",
+            "field_name": "project_gid",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_project"
+        },
+        "members": {
+          "description": "Comma-separated user gids or emails to add.",
+          "title": "Members",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_gid",
+        "members"
+      ],
+      "title": "AsanaAddProjectMemberConfig",
+      "type": "object"
+    },
+    "AsanaAddTagToTaskConfig": {
+      "description": "Tag a task.",
+      "properties": {
+        "operation": {
+          "const": "add_tag_to_task",
+          "default": "add_tag_to_task",
+          "title": "Add Tag to Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "Add Tag to Task",
+          "x-is-trigger": false
+        },
+        "task_gid": {
+          "description": "The task to tag.",
+          "title": "Task GID",
+          "type": "string"
+        },
+        "tag_gid": {
+          "description": "The tag to add to the task.",
+          "title": "Tag",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste tag gid",
+            "field_name": "tag_gid",
+            "placeholder": "Select a tag...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_tag"
+        }
+      },
+      "required": [
+        "task_gid",
+        "tag_gid"
+      ],
+      "title": "AsanaAddTagToTaskConfig",
+      "type": "object"
+    },
+    "AsanaAddTaskDependentsConfig": {
+      "description": "Mark tasks as depending on this task (add dependents).",
+      "properties": {
+        "operation": {
+          "const": "add_task_dependents",
+          "default": "add_task_dependents",
+          "title": "Add Task Dependents",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Add Task Dependents",
+          "x-is-trigger": false
+        },
+        "task_gid": {
+          "description": "The task to add dependents to.",
+          "title": "Task GID",
+          "type": "string"
+        },
+        "dependents": {
+          "description": "Comma-separated GIDs of tasks that depend on this task.",
+          "title": "Dependent Task GIDs",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_gid",
+        "dependents"
+      ],
+      "title": "AsanaAddTaskDependentsConfig",
+      "type": "object"
+    },
+    "AsanaAddTaskToProjectConfig": {
+      "description": "Add a task to a project (optionally into a section).",
+      "properties": {
+        "operation": {
+          "const": "add_task_to_project",
+          "default": "add_task_to_project",
+          "title": "Add Task to Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Add Task to Project",
+          "x-is-trigger": false
+        },
+        "task_gid": {
+          "description": "The task to add.",
+          "title": "Task GID",
+          "type": "string"
+        },
+        "project_gid": {
+          "description": "The project to add the task to.",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project gid",
+            "field_name": "project_gid",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_project"
+        },
+        "section_gid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Place the task in this section (optional).",
+          "title": "Section",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste section gid",
+            "depends_on": "project_gid",
+            "field_name": "section_gid",
+            "placeholder": "Select a section...",
+            "searchable": true
+          },
+          "x-resource-type": "asana_section"
+        }
+      },
+      "required": [
+        "task_gid",
+        "project_gid"
+      ],
+      "title": "AsanaAddTaskToProjectConfig",
+      "type": "object"
+    },
+    "AsanaAddTaskToSectionConfig": {
+      "description": "Move/place a task into a project section.",
+      "properties": {
+        "operation": {
+          "const": "add_task_to_section",
+          "default": "add_task_to_section",
+          "title": "Add Task to Section",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Add Task to Section",
+          "x-is-trigger": false
+        },
+        "section_gid": {
+          "description": "The section to place the task in.",
+          "title": "Section",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste section gid",
+            "field_name": "section_gid",
+            "placeholder": "Select a section...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_section"
+        },
+        "task_gid": {
+          "description": "The task to move into the section.",
+          "title": "Task GID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "section_gid",
+        "task_gid"
+      ],
+      "title": "AsanaAddTaskToSectionConfig",
+      "type": "object"
+    },
+    "AsanaAddTeamMemberConfig": {
+      "description": "Add a user to a team.",
+      "properties": {
+        "operation": {
+          "const": "add_team_member",
+          "default": "add_team_member",
+          "title": "Add Team Member",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspaces",
+          "x-display-name": "Add Team Member",
+          "x-is-trigger": false
+        },
+        "team_gid": {
+          "description": "The team to add the user to.",
+          "title": "Team",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste team gid",
+            "field_name": "team_gid",
+            "placeholder": "Select a team...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_team"
+        },
+        "user": {
+          "description": "The user's gid or email address.",
+          "title": "User GID / Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "team_gid",
+        "user"
+      ],
+      "title": "AsanaAddTeamMemberConfig",
+      "type": "object"
+    },
+    "AsanaAddWorkspaceUserConfig": {
+      "description": "Add a user (invite them) to a workspace or organization.",
+      "properties": {
+        "operation": {
+          "const": "add_workspace_user",
+          "default": "add_workspace_user",
+          "title": "Add Workspace User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspaces",
+          "x-display-name": "Add Workspace User",
+          "x-is-trigger": false
+        },
+        "workspace_gid": {
+          "description": "The workspace to add the user to.",
+          "title": "Workspace",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workspace gid",
+            "field_name": "workspace_gid",
+            "placeholder": "Select a workspace...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_workspace"
+        },
+        "user": {
+          "description": "The user to add.",
+          "title": "User GID / Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace_gid",
+        "user"
+      ],
+      "title": "AsanaAddWorkspaceUserConfig",
+      "type": "object"
+    },
+    "AsanaCreateCustomFieldConfig": {
+      "description": "Create a custom field definition in a workspace.",
+      "properties": {
+        "operation": {
+          "const": "create_custom_field",
+          "default": "create_custom_field",
+          "title": "Create Custom Field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Fields",
+          "x-display-name": "Create Custom Field",
+          "x-is-trigger": false
+        },
+        "workspace_gid": {
+          "description": "The workspace to create the custom field in.",
+          "title": "Workspace",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workspace gid",
+            "field_name": "workspace_gid",
+            "placeholder": "Select a workspace...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_workspace"
+        },
+        "name": {
+          "description": "The name of the custom field.",
+          "title": "Name",
+          "type": "string"
+        },
+        "field_type": {
+          "default": "text",
+          "description": "The type of data this field stores.",
+          "enum": [
+            "text",
+            "number",
+            "enum",
+            "multi_enum",
+            "date",
+            "people"
+          ],
+          "enumNames": [
+            "Text",
+            "Number",
+            "Enum (single select)",
+            "Multi-enum (multi select)",
+            "Date",
+            "People"
+          ],
+          "title": "Field Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Help text for this field.",
+          "title": "Description"
+        },
+        "precision": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For number fields: decimal precision (0-6).",
+          "title": "Precision"
+        }
+      },
+      "required": [
+        "workspace_gid",
+        "name"
+      ],
+      "title": "AsanaCreateCustomFieldConfig",
+      "type": "object"
+    },
+    "AsanaCreateGoalConfig": {
+      "description": "Create a goal in a workspace or team.",
+      "properties": {
+        "operation": {
+          "const": "create_goal",
+          "default": "create_goal",
+          "title": "Create Goal",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Goals",
+          "x-display-name": "Create Goal",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "The goal name.",
+          "title": "Name",
+          "type": "string"
+        },
+        "workspace_gid": {
+          "description": "The workspace to create the goal in.",
+          "title": "Workspace",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workspace gid",
+            "field_name": "workspace_gid",
+            "placeholder": "Select a workspace...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_workspace"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Goal description.",
+          "title": "Notes",
+          "ui:widget": "textarea"
+        },
+        "team_gid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Team to associate the goal with (leave blank for workspace-level).",
+          "title": "Team GID"
+        },
+        "due_on": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Goal due date in YYYY-MM-DD format.",
+          "title": "Due On"
+        },
+        "start_on": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Goal start date in YYYY-MM-DD format.",
+          "title": "Start On"
+        }
+      },
+      "required": [
+        "name",
+        "workspace_gid"
+      ],
+      "title": "AsanaCreateGoalConfig",
+      "type": "object"
+    },
+    "AsanaCreatePortfolioConfig": {
+      "description": "Create a new portfolio.",
+      "properties": {
+        "operation": {
+          "const": "create_portfolio",
+          "default": "create_portfolio",
+          "title": "Create Portfolio",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Portfolios",
+          "x-display-name": "Create Portfolio",
+          "x-is-trigger": false
+        },
+        "workspace_gid": {
+          "description": "The workspace to create the portfolio in.",
+          "title": "Workspace",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workspace gid",
+            "field_name": "workspace_gid",
+            "placeholder": "Select a workspace...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_workspace"
+        },
+        "name": {
+          "description": "The name of the portfolio.",
+          "title": "Name",
+          "type": "string"
+        },
+        "public": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether the portfolio is visible to all workspace members.",
+          "enum": [
+            "",
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Default",
+            "Public",
+            "Private"
+          ],
+          "title": "Public",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "workspace_gid",
+        "name"
+      ],
+      "title": "AsanaCreatePortfolioConfig",
+      "type": "object"
+    },
+    "AsanaCreateProjectBriefConfig": {
+      "description": "Create a project brief (rich-text overview for a project).",
+      "properties": {
+        "operation": {
+          "const": "create_project_brief",
+          "default": "create_project_brief",
+          "title": "Create Project Brief",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Create Project Brief",
+          "x-is-trigger": false
+        },
+        "project_gid": {
+          "description": "The project to create the brief for.",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project gid",
+            "field_name": "project_gid",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_project"
+        },
+        "title": {
+          "description": "The title of the project brief.",
+          "title": "Title",
+          "type": "string"
+        },
+        "html_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The rich-text body of the brief in HTML format.",
+          "title": "HTML Content",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "project_gid",
+        "title"
+      ],
+      "title": "AsanaCreateProjectBriefConfig",
+      "type": "object"
+    },
+    "AsanaCreateProjectConfig": {
+      "description": "Create a new project in a workspace (optionally in a team).",
+      "properties": {
+        "operation": {
+          "const": "create_project",
+          "default": "create_project",
+          "title": "Create Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-creates-resource": true,
+          "x-display-name": "Create Project",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.gid",
+          "x-resource-type": "asana_project"
+        },
+        "workspace_gid": {
+          "description": "The workspace to create the project in.",
+          "title": "Workspace",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workspace gid",
+            "field_name": "workspace_gid",
+            "placeholder": "Select a workspace...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_workspace"
+        },
+        "name": {
+          "description": "The name of the new project.",
+          "title": "Name",
+          "type": "string"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Project description / notes.",
+          "title": "Notes",
+          "ui:widget": "textarea"
+        },
+        "team_gid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The team to add the project to (required for organization workspaces).",
+          "title": "Team",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste team gid",
+            "depends_on": "workspace_gid",
+            "field_name": "team_gid",
+            "placeholder": "Select a team...",
+            "searchable": true
+          },
+          "x-resource-type": "asana_team"
+        }
+      },
+      "required": [
+        "workspace_gid",
+        "name"
+      ],
+      "title": "AsanaCreateProjectConfig",
+      "type": "object"
+    },
+    "AsanaCreateProjectFromTemplateConfig": {
+      "description": "Instantiate a new project from a project template.",
+      "properties": {
+        "operation": {
+          "const": "create_project_from_template",
+          "default": "create_project_from_template",
+          "title": "Create Project from Template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Create Project from Template",
+          "x-is-trigger": false
+        },
+        "project_template_gid": {
+          "description": "The project template to instantiate.",
+          "title": "Template GID",
+          "type": "string"
+        },
+        "name": {
+          "description": "Name for the new project.",
+          "title": "Project Name",
+          "type": "string"
+        },
+        "team": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Team to own the new project.",
+          "title": "Team GID"
+        },
+        "public": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether the new project is public to the team.",
+          "enum": [
+            "",
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Default",
+            "Public",
+            "Private"
+          ],
+          "title": "Public",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "project_template_gid",
+        "name"
+      ],
+      "title": "AsanaCreateProjectFromTemplateConfig",
+      "type": "object"
+    },
+    "AsanaCreateProjectStatusConfig": {
+      "description": "Post a status update on a project (On Track, At Risk, Off Track).",
+      "properties": {
+        "operation": {
+          "const": "create_project_status",
+          "default": "create_project_status",
+          "title": "Create Project Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Create Project Status",
+          "x-is-trigger": false
+        },
+        "project_gid": {
+          "description": "The project to post the status on.",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project gid",
+            "field_name": "project_gid",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_project"
+        },
+        "title": {
+          "description": "A short title for this status update.",
+          "title": "Title",
+          "type": "string"
+        },
+        "text": {
+          "description": "The longer status message.",
+          "title": "Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "color": {
+          "default": "green",
+          "description": "The status color representing project health.",
+          "enum": [
+            "green",
+            "yellow",
+            "red",
+            "blue"
+          ],
+          "enumNames": [
+            "On Track (green)",
+            "At Risk (yellow)",
+            "Off Track (red)",
+            "No Status (blue)"
+          ],
+          "title": "Color",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "project_gid",
+        "title",
+        "text"
+      ],
+      "title": "AsanaCreateProjectStatusConfig",
+      "type": "object"
+    },
+    "AsanaCreateSectionConfig": {
+      "description": "Create a section in a project.",
+      "properties": {
+        "operation": {
+          "const": "create_section",
+          "default": "create_section",
+          "title": "Create Section",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-creates-resource": true,
+          "x-display-name": "Create Section",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.gid",
+          "x-resource-type": "asana_section"
+        },
+        "project_gid": {
+          "description": "The project to add the section to.",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project gid",
+            "field_name": "project_gid",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_project"
+        },
+        "name": {
+          "description": "The name of the new section.",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_gid",
+        "name"
+      ],
+      "title": "AsanaCreateSectionConfig",
+      "type": "object"
+    },
+    "AsanaCreateStatusUpdateConfig": {
+      "description": "Create a status update for a project, portfolio, or goal (modern API).",
+      "properties": {
+        "operation": {
+          "const": "create_status_update",
+          "default": "create_status_update",
+          "title": "Create Status Update",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Create Status Update",
+          "x-is-trigger": false
+        },
+        "parent_gid": {
+          "description": "The gid of the project, portfolio, or goal to post the update on.",
+          "title": "Parent GID",
+          "type": "string"
+        },
+        "title": {
+          "description": "Short title for the status update.",
+          "title": "Title",
+          "type": "string"
+        },
+        "text": {
+          "description": "The status message body.",
+          "title": "Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "status_type": {
+          "default": "on_track",
+          "description": "The health/status color for this update.",
+          "enum": [
+            "on_track",
+            "at_risk",
+            "off_track",
+            "at_completion",
+            "achieved",
+            "partial",
+            "missed",
+            "dropped",
+            "no_status"
+          ],
+          "enumNames": [
+            "On Track",
+            "At Risk",
+            "Off Track",
+            "At Completion",
+            "Achieved",
+            "Partial",
+            "Missed",
+            "Dropped",
+            "No Status"
+          ],
+          "title": "Status",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "parent_gid",
+        "title",
+        "text"
+      ],
+      "title": "AsanaCreateStatusUpdateConfig",
+      "type": "object"
+    },
+    "AsanaCreateSubtaskConfig": {
+      "description": "Create a subtask under a parent task.",
+      "properties": {
+        "operation": {
+          "const": "create_subtask",
+          "default": "create_subtask",
+          "title": "Create Subtask",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Create Subtask",
+          "x-is-trigger": false
+        },
+        "task_gid": {
+          "description": "The parent task to add the subtask under.",
+          "title": "Parent Task GID",
+          "type": "string"
+        },
+        "name": {
+          "description": "The name of the subtask.",
+          "title": "Name",
+          "type": "string"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Subtask description / notes.",
+          "title": "Notes",
+          "ui:widget": "textarea"
+        },
+        "assignee": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "User gid or email to assign the subtask to.",
+          "title": "Assignee"
+        }
+      },
+      "required": [
+        "task_gid",
+        "name"
+      ],
+      "title": "AsanaCreateSubtaskConfig",
+      "type": "object"
+    },
+    "AsanaCreateTagConfig": {
+      "description": "Create a new tag in a workspace.",
+      "properties": {
+        "operation": {
+          "const": "create_tag",
+          "default": "create_tag",
+          "title": "Create Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-creates-resource": true,
+          "x-display-name": "Create Tag",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.gid",
+          "x-resource-type": "asana_tag"
+        },
+        "workspace_gid": {
+          "description": "The workspace to create the tag in.",
+          "title": "Workspace",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workspace gid",
+            "field_name": "workspace_gid",
+            "placeholder": "Select a workspace...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_workspace"
+        },
+        "name": {
+          "description": "The name of the new tag.",
+          "title": "Name",
+          "type": "string"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional tag color (e.g. dark-pink, dark-green, dark-blue, dark-red, dark-teal, dark-brown, dark-orange, dark-purple, dark-warm-gray, light-pink, light-green, light-blue, light-red, light-teal, light-brown, light-orange, light-purple, light-warm-gray).",
+          "title": "Color"
+        }
+      },
+      "required": [
+        "workspace_gid",
+        "name"
+      ],
+      "title": "AsanaCreateTagConfig",
+      "type": "object"
+    },
+    "AsanaCreateTaskConfig": {
+      "description": "Create a task (name, notes, assignee, due date, projects).",
+      "properties": {
+        "operation": {
+          "const": "create_task",
+          "default": "create_task",
+          "title": "Create Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Create Task",
+          "x-is-trigger": false
+        },
+        "workspace_gid": {
+          "description": "The workspace to create the task in.",
+          "title": "Workspace",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workspace gid",
+            "field_name": "workspace_gid",
+            "placeholder": "Select a workspace...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_workspace"
+        },
+        "name": {
+          "description": "The name/title of the task.",
+          "title": "Name",
+          "type": "string"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Task description / notes.",
+          "title": "Notes",
+          "ui:widget": "textarea"
+        },
+        "assignee": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "User gid or email to assign the task to.",
+          "title": "Assignee"
+        },
+        "due_on": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Due date in YYYY-MM-DD format.",
+          "title": "Due On"
+        },
+        "projects": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Project gids to add the task to, comma-separated.",
+          "title": "Projects"
+        }
+      },
+      "required": [
+        "workspace_gid",
+        "name"
+      ],
+      "title": "AsanaCreateTaskConfig",
+      "type": "object"
+    },
+    "AsanaCreateTaskFromTemplateConfig": {
+      "description": "Instantiate a task from a task template.",
+      "properties": {
+        "operation": {
+          "const": "create_task_from_template",
+          "default": "create_task_from_template",
+          "title": "Create Task from Template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Create Task from Template",
+          "x-is-trigger": false
+        },
+        "task_template_gid": {
+          "description": "The task template to instantiate.",
+          "title": "Task Template GID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_template_gid"
+      ],
+      "title": "AsanaCreateTaskFromTemplateConfig",
+      "type": "object"
+    },
+    "AsanaCreateTimeTrackingEntryConfig": {
+      "description": "Log a time entry on a task.",
+      "properties": {
+        "operation": {
+          "const": "create_time_tracking_entry",
+          "default": "create_time_tracking_entry",
+          "title": "Create Time Tracking Entry",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Time Tracking",
+          "x-display-name": "Create Time Tracking Entry",
+          "x-is-trigger": false
+        },
+        "task_gid": {
+          "description": "The task to log time on.",
+          "title": "Task GID",
+          "type": "string"
+        },
+        "duration_minutes": {
+          "description": "Time logged in minutes (e.g. 90 for 1h 30m).",
+          "title": "Duration (minutes)",
+          "type": "string"
+        },
+        "entered_on": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Date the time was logged, YYYY-MM-DD. Defaults to today.",
+          "title": "Date"
+        }
+      },
+      "required": [
+        "task_gid",
+        "duration_minutes"
+      ],
+      "title": "AsanaCreateTimeTrackingEntryConfig",
+      "type": "object"
+    },
+    "AsanaDeleteAttachmentConfig": {
+      "description": "Delete a file attachment.",
+      "properties": {
+        "operation": {
+          "const": "delete_attachment",
+          "default": "delete_attachment",
+          "title": "Delete Attachment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Attachments",
+          "x-display-name": "Delete Attachment",
+          "x-is-trigger": false
+        },
+        "attachment_gid": {
+          "description": "The attachment to delete.",
+          "title": "Attachment GID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "attachment_gid"
+      ],
+      "title": "AsanaDeleteAttachmentConfig",
+      "type": "object"
+    },
+    "AsanaDeleteCustomFieldConfig": {
+      "description": "Delete a custom field definition from the workspace.",
+      "properties": {
+        "operation": {
+          "const": "delete_custom_field",
+          "default": "delete_custom_field",
+          "title": "Delete Custom Field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Fields",
+          "x-display-name": "Delete Custom Field",
+          "x-is-trigger": false
+        },
+        "custom_field_gid": {
+          "description": "The custom field to delete.",
+          "title": "Custom Field GID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "custom_field_gid"
+      ],
+      "title": "AsanaDeleteCustomFieldConfig",
+      "type": "object"
+    },
+    "AsanaDeleteGoalConfig": {
+      "description": "Delete a goal.",
+      "properties": {
+        "operation": {
+          "const": "delete_goal",
+          "default": "delete_goal",
+          "title": "Delete Goal",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Goals",
+          "x-display-name": "Delete Goal",
+          "x-is-trigger": false
+        },
+        "goal_gid": {
+          "description": "The goal to delete.",
+          "title": "Goal GID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "goal_gid"
+      ],
+      "title": "AsanaDeleteGoalConfig",
+      "type": "object"
+    },
+    "AsanaDeletePortfolioConfig": {
+      "description": "Delete a portfolio.",
+      "properties": {
+        "operation": {
+          "const": "delete_portfolio",
+          "default": "delete_portfolio",
+          "title": "Delete Portfolio",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Portfolios",
+          "x-display-name": "Delete Portfolio",
+          "x-is-trigger": false
+        },
+        "portfolio_gid": {
+          "description": "The portfolio to delete.",
+          "title": "Portfolio GID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "portfolio_gid"
+      ],
+      "title": "AsanaDeletePortfolioConfig",
+      "type": "object"
+    },
+    "AsanaDeleteProjectBriefConfig": {
+      "description": "Delete a project brief.",
+      "properties": {
+        "operation": {
+          "const": "delete_project_brief",
+          "default": "delete_project_brief",
+          "title": "Delete Project Brief",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Delete Project Brief",
+          "x-is-trigger": false
+        },
+        "project_brief_gid": {
+          "description": "The project brief to delete.",
+          "title": "Brief GID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_brief_gid"
+      ],
+      "title": "AsanaDeleteProjectBriefConfig",
+      "type": "object"
+    },
+    "AsanaDeleteProjectConfig": {
+      "description": "Delete a project.",
+      "properties": {
+        "operation": {
+          "const": "delete_project",
+          "default": "delete_project",
+          "title": "Delete Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Delete Project",
+          "x-is-trigger": false
+        },
+        "project_gid": {
+          "description": "The gid of the project to delete.",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project gid",
+            "field_name": "project_gid",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_project"
+        }
+      },
+      "required": [
+        "project_gid"
+      ],
+      "title": "AsanaDeleteProjectConfig",
+      "type": "object"
+    },
+    "AsanaDeleteProjectStatusConfig": {
+      "description": "Delete a project status update.",
+      "properties": {
+        "operation": {
+          "const": "delete_project_status",
+          "default": "delete_project_status",
+          "title": "Delete Project Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Delete Project Status",
+          "x-is-trigger": false
+        },
+        "project_status_gid": {
+          "description": "The project status update to delete.",
+          "title": "Project Status GID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_status_gid"
+      ],
+      "title": "AsanaDeleteProjectStatusConfig",
+      "type": "object"
+    },
+    "AsanaDeleteSectionConfig": {
+      "description": "Delete a section from a project.",
+      "properties": {
+        "operation": {
+          "const": "delete_section",
+          "default": "delete_section",
+          "title": "Delete Section",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Delete Section",
+          "x-is-trigger": false
+        },
+        "section_gid": {
+          "description": "The section to delete.",
+          "title": "Section GID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "section_gid"
+      ],
+      "title": "AsanaDeleteSectionConfig",
+      "type": "object"
+    },
+    "AsanaDeleteStatusUpdateConfig": {
+      "description": "Delete a status update.",
+      "properties": {
+        "operation": {
+          "const": "delete_status_update",
+          "default": "delete_status_update",
+          "title": "Delete Status Update",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Delete Status Update",
+          "x-is-trigger": false
+        },
+        "status_update_gid": {
+          "description": "The status update to delete.",
+          "title": "Status Update GID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "status_update_gid"
+      ],
+      "title": "AsanaDeleteStatusUpdateConfig",
+      "type": "object"
+    },
+    "AsanaDeleteStoryConfig": {
+      "description": "Delete a comment (story) from a task.",
+      "properties": {
+        "operation": {
+          "const": "delete_story",
+          "default": "delete_story",
+          "title": "Delete Story / Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Delete Story / Comment",
+          "x-is-trigger": false
+        },
+        "story_gid": {
+          "description": "The story (comment) to delete.",
+          "title": "Story GID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "story_gid"
+      ],
+      "title": "AsanaDeleteStoryConfig",
+      "type": "object"
+    },
+    "AsanaDeleteTagConfig": {
+      "description": "Delete a tag.",
+      "properties": {
+        "operation": {
+          "const": "delete_tag",
+          "default": "delete_tag",
+          "title": "Delete Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "Delete Tag",
+          "x-is-trigger": false
+        },
+        "tag_gid": {
+          "description": "The tag to delete.",
+          "title": "Tag",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste tag gid",
+            "field_name": "tag_gid",
+            "placeholder": "Select a tag...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_tag"
+        }
+      },
+      "required": [
+        "tag_gid"
+      ],
+      "title": "AsanaDeleteTagConfig",
+      "type": "object"
+    },
+    "AsanaDeleteTaskConfig": {
+      "description": "Delete a task.",
+      "properties": {
+        "operation": {
+          "const": "delete_task",
+          "default": "delete_task",
+          "title": "Delete Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Delete Task",
+          "x-is-trigger": false
+        },
+        "task_gid": {
+          "description": "The gid of the task to delete.",
+          "title": "Task GID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_gid"
+      ],
+      "title": "AsanaDeleteTaskConfig",
+      "type": "object"
+    },
+    "AsanaDeleteTimeTrackingEntryConfig": {
+      "description": "Delete a time tracking entry.",
+      "properties": {
+        "operation": {
+          "const": "delete_time_tracking_entry",
+          "default": "delete_time_tracking_entry",
+          "title": "Delete Time Tracking Entry",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Time Tracking",
+          "x-display-name": "Delete Time Tracking Entry",
+          "x-is-trigger": false
+        },
+        "time_tracking_entry_gid": {
+          "description": "The time tracking entry to delete.",
+          "title": "Entry GID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "time_tracking_entry_gid"
+      ],
+      "title": "AsanaDeleteTimeTrackingEntryConfig",
+      "type": "object"
+    },
+    "AsanaDuplicateProjectConfig": {
+      "description": "Duplicate a project (creates an async Job \u2014 poll the returned job_gid for completion).",
+      "properties": {
+        "operation": {
+          "const": "duplicate_project",
+          "default": "duplicate_project",
+          "title": "Duplicate Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Duplicate Project",
+          "x-is-trigger": false
+        },
+        "project_gid": {
+          "description": "The project to duplicate.",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project gid",
+            "field_name": "project_gid",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_project"
+        },
+        "name": {
+          "description": "The name for the duplicated project.",
+          "title": "New Name",
+          "type": "string"
+        },
+        "team": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The team for the new project (optional).",
+          "title": "Team GID"
+        },
+        "include": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of fields to copy. Options: members, notes, task_assignee, task_attachments, task_dates, task_dependencies, task_followers, task_notes, task_projects, task_subtasks, task_tags.",
+          "title": "Include"
+        }
+      },
+      "required": [
+        "project_gid",
+        "name"
+      ],
+      "title": "AsanaDuplicateProjectConfig",
+      "type": "object"
+    },
+    "AsanaDuplicateTaskConfig": {
+      "description": "Duplicate a task (optionally into the same project under a new name).",
+      "properties": {
+        "operation": {
+          "const": "duplicate_task",
+          "default": "duplicate_task",
+          "title": "Duplicate Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Duplicate Task",
+          "x-is-trigger": false
+        },
+        "task_gid": {
+          "description": "The task to duplicate.",
+          "title": "Task GID",
+          "type": "string"
+        },
+        "name": {
+          "description": "The name for the duplicated task.",
+          "title": "New Name",
+          "type": "string"
+        },
+        "include": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of fields to carry into the copy. Options: assignee, attachments, dates, dependencies, followers, notes, parent, projects, subtasks, tags.",
+          "title": "Include"
+        }
+      },
+      "required": [
+        "task_gid",
+        "name"
+      ],
+      "title": "AsanaDuplicateTaskConfig",
+      "type": "object"
+    },
+    "AsanaGetCustomFieldConfig": {
+      "description": "Get a custom field definition.",
+      "properties": {
+        "operation": {
+          "const": "get_custom_field",
+          "default": "get_custom_field",
+          "title": "Get Custom Field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Fields",
+          "x-display-name": "Get Custom Field",
+          "x-is-trigger": false
+        },
+        "custom_field_gid": {
+          "description": "The custom field definition to retrieve.",
+          "title": "Custom Field GID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "custom_field_gid"
+      ],
+      "title": "AsanaGetCustomFieldConfig",
+      "type": "object"
+    },
+    "AsanaGetGoalConfig": {
+      "description": "Get a single goal's details.",
+      "properties": {
+        "operation": {
+          "const": "get_goal",
+          "default": "get_goal",
+          "title": "Get Goal",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Goals",
+          "x-display-name": "Get Goal",
+          "x-is-trigger": false
+        },
+        "goal_gid": {
+          "description": "The goal to retrieve.",
+          "title": "Goal GID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "goal_gid"
+      ],
+      "title": "AsanaGetGoalConfig",
+      "type": "object"
+    },
+    "AsanaGetGoalParentGoalsConfig": {
+      "description": "List parent goals for a goal (supporting relationship traversal).",
+      "properties": {
+        "operation": {
+          "const": "get_goal_parent_goals",
+          "default": "get_goal_parent_goals",
+          "title": "Get Parent Goals",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Goals",
+          "x-display-name": "Get Parent Goals",
+          "x-is-trigger": false
+        },
+        "goal_gid": {
+          "description": "The goal to get parent goals for.",
+          "title": "Goal GID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "goal_gid"
+      ],
+      "title": "AsanaGetGoalParentGoalsConfig",
+      "type": "object"
+    },
+    "AsanaGetJobConfig": {
+      "description": "Poll an async job (e.g. from duplicate_project / create_project_from_template).\n\nReturns the job status and a ``new_project`` link when complete.",
+      "properties": {
+        "operation": {
+          "const": "get_job",
+          "default": "get_job",
+          "title": "Get Job Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Get Job Status",
+          "x-is-trigger": false
+        },
+        "job_gid": {
+          "description": "The gid of the async job to poll.",
+          "title": "Job GID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_gid"
+      ],
+      "title": "AsanaGetJobConfig",
+      "type": "object"
+    },
+    "AsanaGetMeConfig": {
+      "description": "Get the authenticated user (handy for testing credentials).",
+      "properties": {
+        "operation": {
+          "const": "get_me",
+          "default": "get_me",
+          "title": "Get Current User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Get Current User",
+          "x-is-trigger": false
+        }
+      },
+      "title": "AsanaGetMeConfig",
+      "type": "object"
+    },
+    "AsanaGetPortfolioConfig": {
+      "description": "Get a single portfolio's details.",
+      "properties": {
+        "operation": {
+          "const": "get_portfolio",
+          "default": "get_portfolio",
+          "title": "Get Portfolio",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Portfolios",
+          "x-display-name": "Get Portfolio",
+          "x-is-trigger": false
+        },
+        "portfolio_gid": {
+          "description": "The portfolio to retrieve.",
+          "title": "Portfolio GID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "portfolio_gid"
+      ],
+      "title": "AsanaGetPortfolioConfig",
+      "type": "object"
+    },
+    "AsanaGetPortfolioItemsConfig": {
+      "description": "List projects (items) in a portfolio.",
+      "properties": {
+        "operation": {
+          "const": "get_portfolio_items",
+          "default": "get_portfolio_items",
+          "title": "Get Portfolio Items",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Portfolios",
+          "x-display-name": "Get Portfolio Items",
+          "x-is-trigger": false
+        },
+        "portfolio_gid": {
+          "description": "The portfolio to list items (projects) from.",
+          "title": "Portfolio GID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "portfolio_gid"
+      ],
+      "title": "AsanaGetPortfolioItemsConfig",
+      "type": "object"
+    },
+    "AsanaGetProjectBriefConfig": {
+      "description": "Get a project brief.",
+      "properties": {
+        "operation": {
+          "const": "get_project_brief",
+          "default": "get_project_brief",
+          "title": "Get Project Brief",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Get Project Brief",
+          "x-is-trigger": false
+        },
+        "project_brief_gid": {
+          "description": "The project brief to retrieve.",
+          "title": "Brief GID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_brief_gid"
+      ],
+      "title": "AsanaGetProjectBriefConfig",
+      "type": "object"
+    },
+    "AsanaGetProjectConfig": {
+      "description": "Get a single project's details.",
+      "properties": {
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "title": "Get Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Get Project",
+          "x-is-trigger": false
+        },
+        "project_gid": {
+          "description": "The gid of the project to retrieve.",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project gid",
+            "field_name": "project_gid",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_project"
+        }
+      },
+      "required": [
+        "project_gid"
+      ],
+      "title": "AsanaGetProjectConfig",
+      "type": "object"
+    },
+    "AsanaGetProjectCustomFieldsConfig": {
+      "description": "List custom field settings (definitions) attached to a project.",
+      "properties": {
+        "operation": {
+          "const": "get_project_custom_fields",
+          "default": "get_project_custom_fields",
+          "title": "Get Project Custom Fields",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Fields",
+          "x-display-name": "Get Project Custom Fields",
+          "x-is-trigger": false
+        },
+        "project_gid": {
+          "description": "The project to retrieve custom field settings from.",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project gid",
+            "field_name": "project_gid",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_project"
+        }
+      },
+      "required": [
+        "project_gid"
+      ],
+      "title": "AsanaGetProjectCustomFieldsConfig",
+      "type": "object"
+    },
+    "AsanaGetProjectMembersConfig": {
+      "description": "List members/memberships of a project.",
+      "properties": {
+        "operation": {
+          "const": "get_project_members",
+          "default": "get_project_members",
+          "title": "Get Project Members",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Get Project Members",
+          "x-is-trigger": false
+        },
+        "project_gid": {
+          "description": "The project to list members of.",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project gid",
+            "field_name": "project_gid",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_project"
+        }
+      },
+      "required": [
+        "project_gid"
+      ],
+      "title": "AsanaGetProjectMembersConfig",
+      "type": "object"
+    },
+    "AsanaGetProjectStatusesConfig": {
+      "description": "List status updates on a project.",
+      "properties": {
+        "operation": {
+          "const": "get_project_statuses",
+          "default": "get_project_statuses",
+          "title": "Get Project Statuses",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Get Project Statuses",
+          "x-is-trigger": false
+        },
+        "project_gid": {
+          "description": "The project to get status updates for.",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project gid",
+            "field_name": "project_gid",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_project"
+        }
+      },
+      "required": [
+        "project_gid"
+      ],
+      "title": "AsanaGetProjectStatusesConfig",
+      "type": "object"
+    },
+    "AsanaGetProjectTaskCountsConfig": {
+      "description": "Get task counts for a project (total, completed, incomplete, etc.).",
+      "properties": {
+        "operation": {
+          "const": "get_project_task_counts",
+          "default": "get_project_task_counts",
+          "title": "Get Project Task Counts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Get Project Task Counts",
+          "x-is-trigger": false
+        },
+        "project_gid": {
+          "description": "The project to get task counts for.",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project gid",
+            "field_name": "project_gid",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_project"
+        }
+      },
+      "required": [
+        "project_gid"
+      ],
+      "title": "AsanaGetProjectTaskCountsConfig",
+      "type": "object"
+    },
+    "AsanaGetSectionConfig": {
+      "description": "Get a single section by its gid.",
+      "properties": {
+        "operation": {
+          "const": "get_section",
+          "default": "get_section",
+          "title": "Get Section",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Get Section",
+          "x-is-trigger": false
+        },
+        "section_gid": {
+          "description": "The section's gid.",
+          "title": "Section GID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste section gid",
+            "field_name": "section_gid",
+            "placeholder": "Select a section...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_section"
+        }
+      },
+      "required": [
+        "section_gid"
+      ],
+      "title": "AsanaGetSectionConfig",
+      "type": "object"
+    },
+    "AsanaGetSectionTasksConfig": {
+      "description": "List tasks in a specific section.",
+      "properties": {
+        "operation": {
+          "const": "get_section_tasks",
+          "default": "get_section_tasks",
+          "title": "Get Tasks in Section",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Get Tasks in Section",
+          "x-is-trigger": false
+        },
+        "section_gid": {
+          "description": "The section to list tasks from.",
+          "title": "Section",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste section gid",
+            "field_name": "section_gid",
+            "placeholder": "Select a section...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_section"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "100",
+          "description": "Max tasks to return (1-100).",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "section_gid"
+      ],
+      "title": "AsanaGetSectionTasksConfig",
+      "type": "object"
+    },
+    "AsanaGetStatusUpdatesConfig": {
+      "description": "List status updates for a project, portfolio, or goal (modern API).",
+      "properties": {
+        "operation": {
+          "const": "get_status_updates",
+          "default": "get_status_updates",
+          "title": "Get Status Updates",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Get Status Updates",
+          "x-is-trigger": false
+        },
+        "parent_gid": {
+          "description": "The gid of the project, portfolio, or goal to retrieve status updates for.",
+          "title": "Parent GID",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "50",
+          "description": "Max updates to return (1-100).",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "parent_gid"
+      ],
+      "title": "AsanaGetStatusUpdatesConfig",
+      "type": "object"
+    },
+    "AsanaGetStoryConfig": {
+      "description": "Get a single story (comment or activity event) by its gid.",
+      "properties": {
+        "operation": {
+          "const": "get_story",
+          "default": "get_story",
+          "title": "Get Story / Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comments",
+          "x-display-name": "Get Story / Comment",
+          "x-is-trigger": false
+        },
+        "story_gid": {
+          "description": "The story (comment/event) to retrieve.",
+          "title": "Story GID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "story_gid"
+      ],
+      "title": "AsanaGetStoryConfig",
+      "type": "object"
+    },
+    "AsanaGetTagConfig": {
+      "description": "Get a tag by its gid.",
+      "properties": {
+        "operation": {
+          "const": "get_tag",
+          "default": "get_tag",
+          "title": "Get Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "Get Tag",
+          "x-is-trigger": false
+        },
+        "tag_gid": {
+          "description": "The tag's gid.",
+          "title": "Tag",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste tag gid",
+            "field_name": "tag_gid",
+            "placeholder": "Select a tag...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_tag"
+        }
+      },
+      "required": [
+        "tag_gid"
+      ],
+      "title": "AsanaGetTagConfig",
+      "type": "object"
+    },
+    "AsanaGetTagsForTaskConfig": {
+      "description": "List all tags on a task.",
+      "properties": {
+        "operation": {
+          "const": "get_tags_for_task",
+          "default": "get_tags_for_task",
+          "title": "Get Tags for Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "Get Tags for Task",
+          "x-is-trigger": false
+        },
+        "task_gid": {
+          "description": "The task to retrieve tags from.",
+          "title": "Task GID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_gid"
+      ],
+      "title": "AsanaGetTagsForTaskConfig",
+      "type": "object"
+    },
+    "AsanaGetTaskAttachmentsConfig": {
+      "description": "List file attachments on a task.",
+      "properties": {
+        "operation": {
+          "const": "get_task_attachments",
+          "default": "get_task_attachments",
+          "title": "Get Task Attachments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Attachments",
+          "x-display-name": "Get Task Attachments",
+          "x-is-trigger": false
+        },
+        "task_gid": {
+          "description": "The task to list attachments of.",
+          "title": "Task GID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_gid"
+      ],
+      "title": "AsanaGetTaskAttachmentsConfig",
+      "type": "object"
+    },
+    "AsanaGetTaskConfig": {
+      "description": "Get a single task with its fields.",
+      "properties": {
+        "operation": {
+          "const": "get_task",
+          "default": "get_task",
+          "title": "Get Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Get Task",
+          "x-is-trigger": false
+        },
+        "task_gid": {
+          "description": "The gid of the task to retrieve.",
+          "title": "Task GID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_gid"
+      ],
+      "title": "AsanaGetTaskConfig",
+      "type": "object"
+    },
+    "AsanaGetTaskDependenciesConfig": {
+      "description": "Get tasks that a task depends on (its dependencies).",
+      "properties": {
+        "operation": {
+          "const": "get_task_dependencies",
+          "default": "get_task_dependencies",
+          "title": "Get Task Dependencies",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Get Task Dependencies",
+          "x-is-trigger": false
+        },
+        "task_gid": {
+          "description": "The task to get dependencies for.",
+          "title": "Task GID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_gid"
+      ],
+      "title": "AsanaGetTaskDependenciesConfig",
+      "type": "object"
+    },
+    "AsanaGetTaskDependentsConfig": {
+      "description": "Get tasks that depend on this task (dependents / blocking tasks).",
+      "properties": {
+        "operation": {
+          "const": "get_task_dependents",
+          "default": "get_task_dependents",
+          "title": "Get Task Dependents",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Get Task Dependents",
+          "x-is-trigger": false
+        },
+        "task_gid": {
+          "description": "The task whose dependents to retrieve.",
+          "title": "Task GID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_gid"
+      ],
+      "title": "AsanaGetTaskDependentsConfig",
+      "type": "object"
+    },
+    "AsanaGetTaskProjectsConfig": {
+      "description": "List projects that a task belongs to.",
+      "properties": {
+        "operation": {
+          "const": "get_task_projects",
+          "default": "get_task_projects",
+          "title": "Get Projects for Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Get Projects for Task",
+          "x-is-trigger": false
+        },
+        "task_gid": {
+          "description": "The task to list projects for.",
+          "title": "Task GID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_gid"
+      ],
+      "title": "AsanaGetTaskProjectsConfig",
+      "type": "object"
+    },
+    "AsanaGetTasksForTagConfig": {
+      "description": "List tasks that have a specific tag.",
+      "properties": {
+        "operation": {
+          "const": "get_tasks_for_tag",
+          "default": "get_tasks_for_tag",
+          "title": "Get Tasks for Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "Get Tasks for Tag",
+          "x-is-trigger": false
+        },
+        "tag_gid": {
+          "description": "The tag whose tasks to retrieve.",
+          "title": "Tag",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste tag gid",
+            "field_name": "tag_gid",
+            "placeholder": "Select a tag...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_tag"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "100",
+          "description": "Max tasks to return (1-100).",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "tag_gid"
+      ],
+      "title": "AsanaGetTasksForTagConfig",
+      "type": "object"
+    },
+    "AsanaGetTeamConfig": {
+      "description": "Get a team's details.",
+      "properties": {
+        "operation": {
+          "const": "get_team",
+          "default": "get_team",
+          "title": "Get Team",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspaces",
+          "x-display-name": "Get Team",
+          "x-is-trigger": false
+        },
+        "team_gid": {
+          "description": "The gid of the team to retrieve.",
+          "title": "Team",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste team gid",
+            "field_name": "team_gid",
+            "placeholder": "Select a team...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_team"
+        }
+      },
+      "required": [
+        "team_gid"
+      ],
+      "title": "AsanaGetTeamConfig",
+      "type": "object"
+    },
+    "AsanaGetTeamMembersConfig": {
+      "description": "List users in a team.",
+      "properties": {
+        "operation": {
+          "const": "get_team_members",
+          "default": "get_team_members",
+          "title": "Get Team Members",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspaces",
+          "x-display-name": "Get Team Members",
+          "x-is-trigger": false
+        },
+        "team_gid": {
+          "description": "The team to list members of.",
+          "title": "Team",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste team gid",
+            "field_name": "team_gid",
+            "placeholder": "Select a team...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_team"
+        }
+      },
+      "required": [
+        "team_gid"
+      ],
+      "title": "AsanaGetTeamMembersConfig",
+      "type": "object"
+    },
+    "AsanaGetTimeTrackingEntriesConfig": {
+      "description": "List time tracking entries on a task.",
+      "properties": {
+        "operation": {
+          "const": "get_time_tracking_entries",
+          "default": "get_time_tracking_entries",
+          "title": "Get Time Tracking Entries",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Time Tracking",
+          "x-display-name": "Get Time Tracking Entries",
+          "x-is-trigger": false
+        },
+        "task_gid": {
+          "description": "The task to list time tracking entries for.",
+          "title": "Task GID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_gid"
+      ],
+      "title": "AsanaGetTimeTrackingEntriesConfig",
+      "type": "object"
+    },
+    "AsanaGetUserConfig": {
+      "description": "Get a specific user by their gid.",
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Get User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Get User",
+          "x-is-trigger": false
+        },
+        "user_gid": {
+          "description": "The user's gid, or 'me' for the authenticated user.",
+          "title": "User GID / me",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_gid"
+      ],
+      "title": "AsanaGetUserConfig",
+      "type": "object"
+    },
+    "AsanaGetUserTaskListConfig": {
+      "description": "Get a user's personal 'My Tasks' task list.",
+      "properties": {
+        "operation": {
+          "const": "get_user_task_list",
+          "default": "get_user_task_list",
+          "title": "Get User Task List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Get User Task List",
+          "x-is-trigger": false
+        },
+        "user_gid": {
+          "description": "The user's gid, or 'me' for the authenticated user.",
+          "title": "User GID / me",
+          "type": "string"
+        },
+        "workspace_gid": {
+          "description": "The workspace to find the user's task list in.",
+          "title": "Workspace",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workspace gid",
+            "field_name": "workspace_gid",
+            "placeholder": "Select a workspace...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_workspace"
+        }
+      },
+      "required": [
+        "user_gid",
+        "workspace_gid"
+      ],
+      "title": "AsanaGetUserTaskListConfig",
+      "type": "object"
+    },
+    "AsanaGetUserTaskListTasksConfig": {
+      "description": "List tasks in a user's My Tasks list.",
+      "properties": {
+        "operation": {
+          "const": "get_user_task_list_tasks",
+          "default": "get_user_task_list_tasks",
+          "title": "Get My Tasks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Get My Tasks",
+          "x-is-trigger": false
+        },
+        "user_task_list_gid": {
+          "description": "The task list gid (from Get User Task List).",
+          "title": "Task List GID",
+          "type": "string"
+        },
+        "completed_since": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only return tasks completed since this ISO 8601 time (use 'now' for incomplete tasks only).",
+          "title": "Completed Since"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "100",
+          "description": "Max tasks to return (1-100).",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "user_task_list_gid"
+      ],
+      "title": "AsanaGetUserTaskListTasksConfig",
+      "type": "object"
+    },
+    "AsanaListCommentsConfig": {
+      "description": "List stories (comments + activity) on a task.",
+      "properties": {
+        "operation": {
+          "const": "list_comments",
+          "default": "list_comments",
+          "title": "List Comments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comments",
+          "x-display-name": "List Comments",
+          "x-is-trigger": false
+        },
+        "task_gid": {
+          "description": "The task to list comments/stories on.",
+          "title": "Task GID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_gid"
+      ],
+      "title": "AsanaListCommentsConfig",
+      "type": "object"
+    },
+    "AsanaListCustomFieldsConfig": {
+      "description": "List custom fields available in a workspace.",
+      "properties": {
+        "operation": {
+          "const": "list_custom_fields",
+          "default": "list_custom_fields",
+          "title": "List Custom Fields",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspaces",
+          "x-display-name": "List Custom Fields",
+          "x-is-trigger": false
+        },
+        "workspace_gid": {
+          "description": "The workspace to list custom fields from.",
+          "title": "Workspace",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workspace gid",
+            "field_name": "workspace_gid",
+            "placeholder": "Select a workspace...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_workspace"
+        }
+      },
+      "required": [
+        "workspace_gid"
+      ],
+      "title": "AsanaListCustomFieldsConfig",
+      "type": "object"
+    },
+    "AsanaListGoalsConfig": {
+      "description": "List goals in a workspace (requires premium/business plan).",
+      "properties": {
+        "operation": {
+          "const": "list_goals",
+          "default": "list_goals",
+          "title": "List Goals",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Goals",
+          "x-display-name": "List Goals",
+          "x-is-trigger": false
+        },
+        "workspace_gid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter goals to this workspace.",
+          "title": "Workspace",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workspace gid",
+            "field_name": "workspace_gid",
+            "placeholder": "Select a workspace...",
+            "searchable": true
+          },
+          "x-resource-type": "asana_workspace"
+        },
+        "team_gid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter goals to this team.",
+          "title": "Team GID"
+        },
+        "is_workspace_level": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only workspace-level (not team) goals.",
+          "enum": [
+            "",
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "All",
+            "Workspace-level only",
+            "Team goals only"
+          ],
+          "title": "Workspace Level Only",
+          "x-enum-searchable": true
+        }
+      },
+      "title": "AsanaListGoalsConfig",
+      "type": "object"
+    },
+    "AsanaListPortfoliosConfig": {
+      "description": "List portfolios accessible to a user in a workspace.",
+      "properties": {
+        "operation": {
+          "const": "list_portfolios",
+          "default": "list_portfolios",
+          "title": "List Portfolios",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Portfolios",
+          "x-display-name": "List Portfolios",
+          "x-is-trigger": false
+        },
+        "workspace_gid": {
+          "description": "The workspace to list portfolios in.",
+          "title": "Workspace",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workspace gid",
+            "field_name": "workspace_gid",
+            "placeholder": "Select a workspace...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_workspace"
+        },
+        "owner": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by owner user gid (or 'me' for the authenticated user).",
+          "title": "Owner"
+        }
+      },
+      "required": [
+        "workspace_gid"
+      ],
+      "title": "AsanaListPortfoliosConfig",
+      "type": "object"
+    },
+    "AsanaListProjectSectionsConfig": {
+      "description": "List sections within a project.",
+      "properties": {
+        "operation": {
+          "const": "list_sections",
+          "default": "list_sections",
+          "title": "List Sections",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "List Sections",
+          "x-is-trigger": false
+        },
+        "project_gid": {
+          "description": "The project to list sections from.",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project gid",
+            "field_name": "project_gid",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_project"
+        }
+      },
+      "required": [
+        "project_gid"
+      ],
+      "title": "AsanaListProjectSectionsConfig",
+      "type": "object"
+    },
+    "AsanaListProjectTasksConfig": {
+      "description": "List tasks belonging to a project.",
+      "properties": {
+        "operation": {
+          "const": "list_project_tasks",
+          "default": "list_project_tasks",
+          "title": "List Tasks in Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "List Tasks in Project",
+          "x-is-trigger": false
+        },
+        "project_gid": {
+          "description": "The project to list tasks from.",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project gid",
+            "field_name": "project_gid",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_project"
+        },
+        "completed_since": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only return tasks completed since this ISO 8601 time (use 'now' for incomplete only).",
+          "title": "Completed Since"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "100",
+          "description": "Max number of tasks to return (1-100).",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "project_gid"
+      ],
+      "title": "AsanaListProjectTasksConfig",
+      "type": "object"
+    },
+    "AsanaListProjectTemplatesConfig": {
+      "description": "List project templates available in a workspace or team.",
+      "properties": {
+        "operation": {
+          "const": "list_project_templates",
+          "default": "list_project_templates",
+          "title": "List Project Templates",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "List Project Templates",
+          "x-is-trigger": false
+        },
+        "workspace_gid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter templates to this workspace.",
+          "title": "Workspace",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workspace gid",
+            "field_name": "workspace_gid",
+            "placeholder": "Select a workspace...",
+            "searchable": true
+          },
+          "x-resource-type": "asana_workspace"
+        },
+        "team_gid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter templates to this team (alternative to workspace).",
+          "title": "Team GID"
+        }
+      },
+      "title": "AsanaListProjectTemplatesConfig",
+      "type": "object"
+    },
+    "AsanaListProjectsConfig": {
+      "description": "List projects, optionally filtered by workspace.",
+      "properties": {
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "title": "List Projects",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "List Projects",
+          "x-is-trigger": false
+        },
+        "workspace_gid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter projects to this workspace (optional).",
+          "title": "Workspace",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workspace gid",
+            "field_name": "workspace_gid",
+            "placeholder": "Select a workspace...",
+            "searchable": true
+          },
+          "x-resource-type": "asana_workspace"
+        },
+        "archived": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by archived status.",
+          "enum": [
+            "",
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Any",
+            "Archived only",
+            "Active only"
+          ],
+          "title": "Archived",
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "100",
+          "description": "Max number of projects to return (1-100).",
+          "title": "Limit"
+        }
+      },
+      "title": "AsanaListProjectsConfig",
+      "type": "object"
+    },
+    "AsanaListSubtasksConfig": {
+      "description": "List a task's subtasks.",
+      "properties": {
+        "operation": {
+          "const": "list_subtasks",
+          "default": "list_subtasks",
+          "title": "List Subtasks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "List Subtasks",
+          "x-is-trigger": false
+        },
+        "task_gid": {
+          "description": "The parent task to list subtasks of.",
+          "title": "Task GID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_gid"
+      ],
+      "title": "AsanaListSubtasksConfig",
+      "type": "object"
+    },
+    "AsanaListTagsConfig": {
+      "description": "List tags in a workspace.",
+      "properties": {
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "List Tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "List Tags",
+          "x-is-trigger": false
+        },
+        "workspace_gid": {
+          "description": "The workspace to list tags from.",
+          "title": "Workspace",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workspace gid",
+            "field_name": "workspace_gid",
+            "placeholder": "Select a workspace...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_workspace"
+        }
+      },
+      "required": [
+        "workspace_gid"
+      ],
+      "title": "AsanaListTagsConfig",
+      "type": "object"
+    },
+    "AsanaListTaskTemplatesConfig": {
+      "description": "List task templates in a project.",
+      "properties": {
+        "operation": {
+          "const": "list_task_templates",
+          "default": "list_task_templates",
+          "title": "List Task Templates",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "List Task Templates",
+          "x-is-trigger": false
+        },
+        "project_gid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter templates to this project.",
+          "title": "Project",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project gid",
+            "field_name": "project_gid",
+            "placeholder": "Select a project...",
+            "searchable": true
+          },
+          "x-resource-type": "asana_project"
+        }
+      },
+      "title": "AsanaListTaskTemplatesConfig",
+      "type": "object"
+    },
+    "AsanaListTeamsConfig": {
+      "description": "List teams in an organization.",
+      "properties": {
+        "operation": {
+          "const": "list_teams",
+          "default": "list_teams",
+          "title": "List Teams",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspaces",
+          "x-display-name": "List Teams",
+          "x-is-trigger": false
+        },
+        "workspace_gid": {
+          "description": "The organization workspace to list teams from.",
+          "title": "Workspace",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workspace gid",
+            "field_name": "workspace_gid",
+            "placeholder": "Select a workspace...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_workspace"
+        }
+      },
+      "required": [
+        "workspace_gid"
+      ],
+      "title": "AsanaListTeamsConfig",
+      "type": "object"
+    },
+    "AsanaListUsersConfig": {
+      "description": "List users in a workspace (resolve assignees/followers).",
+      "properties": {
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "List Users",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "List Users",
+          "x-is-trigger": false
+        },
+        "workspace_gid": {
+          "description": "The workspace to list users from.",
+          "title": "Workspace",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workspace gid",
+            "field_name": "workspace_gid",
+            "placeholder": "Select a workspace...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_workspace"
+        }
+      },
+      "required": [
+        "workspace_gid"
+      ],
+      "title": "AsanaListUsersConfig",
+      "type": "object"
+    },
+    "AsanaListWorkspaceMembersConfig": {
+      "description": "List all member records for a workspace.",
+      "properties": {
+        "operation": {
+          "const": "list_workspace_members",
+          "default": "list_workspace_members",
+          "title": "List Workspace Members",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspaces",
+          "x-display-name": "List Workspace Members",
+          "x-is-trigger": false
+        },
+        "workspace_gid": {
+          "description": "The workspace to list membership records from.",
+          "title": "Workspace",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workspace gid",
+            "field_name": "workspace_gid",
+            "placeholder": "Select a workspace...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_workspace"
+        }
+      },
+      "required": [
+        "workspace_gid"
+      ],
+      "title": "AsanaListWorkspaceMembersConfig",
+      "type": "object"
+    },
+    "AsanaListWorkspacesConfig": {
+      "description": "List workspaces and organizations the user can access.",
+      "properties": {
+        "operation": {
+          "const": "list_workspaces",
+          "default": "list_workspaces",
+          "title": "List Workspaces",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspaces",
+          "x-display-name": "List Workspaces",
+          "x-is-trigger": false
+        }
+      },
+      "title": "AsanaListWorkspacesConfig",
+      "type": "object"
+    },
+    "AsanaOAuthCredential": {
+      "description": "OAuth 2.0 credential for Asana (authorization_code flow).\n\nTokens are obtained via the OAuth flow, not entered manually. Asana access\ntokens expire after 1 hour and are auto-refreshed via the long-lived\nrefresh token.\n\nRegister an OAuth app at: https://app.asana.com/0/my-apps",
+      "properties": {
+        "credential_type": {
+          "const": "asana_oauth",
+          "default": "asana_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "Asana OAuth access token (Bearer).",
+          "title": "Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refresh Token"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Expiry"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Email"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "AsanaOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://app.asana.com/0/my-apps",
+      "x-oauth-provider": "asana",
+      "x-oauth-scopes": [
+        "default"
+      ]
+    },
+    "AsanaPATCredential": {
+      "description": "Personal Access Token credential for Asana.",
+      "properties": {
+        "credential_type": {
+          "const": "asana_pat",
+          "default": "asana_pat",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "Your Asana Personal Access Token from the Developer Console (My Apps).",
+          "title": "Personal Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "AsanaPATCredential",
+      "type": "object",
+      "x-credential-url": "https://app.asana.com/0/my-apps"
+    },
+    "AsanaRemoveCustomFieldFromProjectConfig": {
+      "description": "Remove a custom field from a project.",
+      "properties": {
+        "operation": {
+          "const": "remove_custom_field_from_project",
+          "default": "remove_custom_field_from_project",
+          "title": "Remove Custom Field from Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Fields",
+          "x-display-name": "Remove Custom Field from Project",
+          "x-is-trigger": false
+        },
+        "project_gid": {
+          "description": "The project to remove the custom field from.",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project gid",
+            "field_name": "project_gid",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_project"
+        },
+        "custom_field_gid": {
+          "description": "The custom field to remove.",
+          "title": "Custom Field GID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_gid",
+        "custom_field_gid"
+      ],
+      "title": "AsanaRemoveCustomFieldFromProjectConfig",
+      "type": "object"
+    },
+    "AsanaRemoveDependenciesFromTaskConfig": {
+      "description": "Remove task dependencies.",
+      "properties": {
+        "operation": {
+          "const": "remove_task_dependencies",
+          "default": "remove_task_dependencies",
+          "title": "Remove Task Dependencies",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Remove Task Dependencies",
+          "x-is-trigger": false
+        },
+        "task_gid": {
+          "description": "The task to remove dependencies from.",
+          "title": "Task GID",
+          "type": "string"
+        },
+        "dependencies": {
+          "description": "Comma-separated GIDs of dependency tasks to remove.",
+          "title": "Dependency Task GIDs",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_gid",
+        "dependencies"
+      ],
+      "title": "AsanaRemoveDependenciesFromTaskConfig",
+      "type": "object"
+    },
+    "AsanaRemoveFollowersConfig": {
+      "description": "Remove followers from a task.",
+      "properties": {
+        "operation": {
+          "const": "remove_followers",
+          "default": "remove_followers",
+          "title": "Remove Followers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Remove Followers",
+          "x-is-trigger": false
+        },
+        "task_gid": {
+          "description": "The task to remove followers from.",
+          "title": "Task GID",
+          "type": "string"
+        },
+        "followers": {
+          "description": "User gids or emails to remove from followers, comma-separated.",
+          "title": "Followers",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_gid",
+        "followers"
+      ],
+      "title": "AsanaRemoveFollowersConfig",
+      "type": "object"
+    },
+    "AsanaRemoveGoalFollowersConfig": {
+      "description": "Remove followers / collaborators from a goal.",
+      "properties": {
+        "operation": {
+          "const": "remove_goal_followers",
+          "default": "remove_goal_followers",
+          "title": "Remove Goal Followers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Goals",
+          "x-display-name": "Remove Goal Followers",
+          "x-is-trigger": false
+        },
+        "goal_gid": {
+          "description": "The goal to remove followers from.",
+          "title": "Goal GID",
+          "type": "string"
+        },
+        "followers": {
+          "description": "Comma-separated user gids or emails to remove.",
+          "title": "Followers",
+          "type": "string"
+        }
+      },
+      "required": [
+        "goal_gid",
+        "followers"
+      ],
+      "title": "AsanaRemoveGoalFollowersConfig",
+      "type": "object"
+    },
+    "AsanaRemovePortfolioItemConfig": {
+      "description": "Remove a project from a portfolio.",
+      "properties": {
+        "operation": {
+          "const": "remove_portfolio_item",
+          "default": "remove_portfolio_item",
+          "title": "Remove Item from Portfolio",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Portfolios",
+          "x-display-name": "Remove Item from Portfolio",
+          "x-is-trigger": false
+        },
+        "portfolio_gid": {
+          "description": "The portfolio to remove the project from.",
+          "title": "Portfolio GID",
+          "type": "string"
+        },
+        "item": {
+          "description": "The project to remove from the portfolio.",
+          "title": "Project GID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "portfolio_gid",
+        "item"
+      ],
+      "title": "AsanaRemovePortfolioItemConfig",
+      "type": "object"
+    },
+    "AsanaRemovePortfolioMembersConfig": {
+      "description": "Remove members from a portfolio.",
+      "properties": {
+        "operation": {
+          "const": "remove_portfolio_members",
+          "default": "remove_portfolio_members",
+          "title": "Remove Portfolio Members",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Portfolios",
+          "x-display-name": "Remove Portfolio Members",
+          "x-is-trigger": false
+        },
+        "portfolio_gid": {
+          "description": "The portfolio to remove members from.",
+          "title": "Portfolio GID",
+          "type": "string"
+        },
+        "members": {
+          "description": "Comma-separated user gids or emails to remove.",
+          "title": "Members",
+          "type": "string"
+        }
+      },
+      "required": [
+        "portfolio_gid",
+        "members"
+      ],
+      "title": "AsanaRemovePortfolioMembersConfig",
+      "type": "object"
+    },
+    "AsanaRemoveProjectFollowersConfig": {
+      "description": "Remove followers from a project.",
+      "properties": {
+        "operation": {
+          "const": "remove_project_followers",
+          "default": "remove_project_followers",
+          "title": "Remove Project Followers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Remove Project Followers",
+          "x-is-trigger": false
+        },
+        "project_gid": {
+          "description": "The project to remove followers from.",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project gid",
+            "field_name": "project_gid",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_project"
+        },
+        "followers": {
+          "description": "Comma-separated user gids or emails to remove.",
+          "title": "Followers",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_gid",
+        "followers"
+      ],
+      "title": "AsanaRemoveProjectFollowersConfig",
+      "type": "object"
+    },
+    "AsanaRemoveProjectMemberConfig": {
+      "description": "Remove users from a project.",
+      "properties": {
+        "operation": {
+          "const": "remove_project_member",
+          "default": "remove_project_member",
+          "title": "Remove Project Member",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Remove Project Member",
+          "x-is-trigger": false
+        },
+        "project_gid": {
+          "description": "The project to remove members from.",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project gid",
+            "field_name": "project_gid",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_project"
+        },
+        "members": {
+          "description": "Comma-separated user gids or emails to remove.",
+          "title": "Members",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_gid",
+        "members"
+      ],
+      "title": "AsanaRemoveProjectMemberConfig",
+      "type": "object"
+    },
+    "AsanaRemoveTagFromTaskConfig": {
+      "description": "Remove a tag from a task.",
+      "properties": {
+        "operation": {
+          "const": "remove_tag_from_task",
+          "default": "remove_tag_from_task",
+          "title": "Remove Tag from Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "Remove Tag from Task",
+          "x-is-trigger": false
+        },
+        "task_gid": {
+          "description": "The task to remove the tag from.",
+          "title": "Task GID",
+          "type": "string"
+        },
+        "tag_gid": {
+          "description": "The tag to remove.",
+          "title": "Tag",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste tag gid",
+            "field_name": "tag_gid",
+            "placeholder": "Select a tag...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_tag"
+        }
+      },
+      "required": [
+        "task_gid",
+        "tag_gid"
+      ],
+      "title": "AsanaRemoveTagFromTaskConfig",
+      "type": "object"
+    },
+    "AsanaRemoveTaskDependentsConfig": {
+      "description": "Remove dependent tasks from this task.",
+      "properties": {
+        "operation": {
+          "const": "remove_task_dependents",
+          "default": "remove_task_dependents",
+          "title": "Remove Task Dependents",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Remove Task Dependents",
+          "x-is-trigger": false
+        },
+        "task_gid": {
+          "description": "The task to remove dependents from.",
+          "title": "Task GID",
+          "type": "string"
+        },
+        "dependents": {
+          "description": "Comma-separated GIDs of dependent tasks to remove.",
+          "title": "Dependent Task GIDs",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_gid",
+        "dependents"
+      ],
+      "title": "AsanaRemoveTaskDependentsConfig",
+      "type": "object"
+    },
+    "AsanaRemoveTaskFromProjectConfig": {
+      "description": "Remove a task from a project.",
+      "properties": {
+        "operation": {
+          "const": "remove_task_from_project",
+          "default": "remove_task_from_project",
+          "title": "Remove Task from Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Remove Task from Project",
+          "x-is-trigger": false
+        },
+        "task_gid": {
+          "description": "The task to remove.",
+          "title": "Task GID",
+          "type": "string"
+        },
+        "project_gid": {
+          "description": "The project to remove the task from.",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project gid",
+            "field_name": "project_gid",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_project"
+        }
+      },
+      "required": [
+        "task_gid",
+        "project_gid"
+      ],
+      "title": "AsanaRemoveTaskFromProjectConfig",
+      "type": "object"
+    },
+    "AsanaRemoveTeamMemberConfig": {
+      "description": "Remove a user from a team.",
+      "properties": {
+        "operation": {
+          "const": "remove_team_member",
+          "default": "remove_team_member",
+          "title": "Remove Team Member",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspaces",
+          "x-display-name": "Remove Team Member",
+          "x-is-trigger": false
+        },
+        "team_gid": {
+          "description": "The team to remove the user from.",
+          "title": "Team",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste team gid",
+            "field_name": "team_gid",
+            "placeholder": "Select a team...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_team"
+        },
+        "user": {
+          "description": "The user's gid or email address.",
+          "title": "User GID / Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "team_gid",
+        "user"
+      ],
+      "title": "AsanaRemoveTeamMemberConfig",
+      "type": "object"
+    },
+    "AsanaRemoveWorkspaceUserConfig": {
+      "description": "Remove a user from a workspace or organization.",
+      "properties": {
+        "operation": {
+          "const": "remove_workspace_user",
+          "default": "remove_workspace_user",
+          "title": "Remove Workspace User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspaces",
+          "x-display-name": "Remove Workspace User",
+          "x-is-trigger": false
+        },
+        "workspace_gid": {
+          "description": "The workspace to remove the user from.",
+          "title": "Workspace",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workspace gid",
+            "field_name": "workspace_gid",
+            "placeholder": "Select a workspace...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_workspace"
+        },
+        "user": {
+          "description": "The user to remove.",
+          "title": "User GID / Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace_gid",
+        "user"
+      ],
+      "title": "AsanaRemoveWorkspaceUserConfig",
+      "type": "object"
+    },
+    "AsanaSaveProjectAsTemplateConfig": {
+      "description": "Save an existing project as a project template.",
+      "properties": {
+        "operation": {
+          "const": "save_project_as_template",
+          "default": "save_project_as_template",
+          "title": "Save Project as Template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Save Project as Template",
+          "x-is-trigger": false
+        },
+        "project_gid": {
+          "description": "The project to save as a template.",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project gid",
+            "field_name": "project_gid",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_project"
+        },
+        "name": {
+          "description": "The name for the new template.",
+          "title": "Template Name",
+          "type": "string"
+        },
+        "workspace_gid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The workspace to scope the template to (required when team is not set).",
+          "title": "Workspace",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workspace gid",
+            "field_name": "workspace_gid",
+            "placeholder": "Select a workspace...",
+            "searchable": true
+          },
+          "x-resource-type": "asana_workspace"
+        },
+        "public": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether the template is available to the entire workspace.",
+          "enum": [
+            "",
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Default",
+            "Public",
+            "Private"
+          ],
+          "title": "Public",
+          "x-enum-searchable": true
+        },
+        "team": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The team to scope the template to.",
+          "title": "Team GID"
+        }
+      },
+      "required": [
+        "project_gid",
+        "name"
+      ],
+      "title": "AsanaSaveProjectAsTemplateConfig",
+      "type": "object"
+    },
+    "AsanaSearchTasksConfig": {
+      "description": "Search tasks in a workspace by text.",
+      "properties": {
+        "operation": {
+          "const": "search_tasks",
+          "default": "search_tasks",
+          "title": "Search Tasks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Search Tasks",
+          "x-is-trigger": false
+        },
+        "workspace_gid": {
+          "description": "The workspace to search within.",
+          "title": "Workspace",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workspace gid",
+            "field_name": "workspace_gid",
+            "placeholder": "Select a workspace...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_workspace"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full-text search query across task names/descriptions.",
+          "title": "Text"
+        },
+        "completed": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by completion status.",
+          "enum": [
+            "",
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Any",
+            "Completed",
+            "Incomplete"
+          ],
+          "title": "Completed",
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "50",
+          "description": "Max number of tasks to return (1-100).",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "workspace_gid"
+      ],
+      "title": "AsanaSearchTasksConfig",
+      "type": "object"
+    },
+    "AsanaSetGoalMetricConfig": {
+      "description": "Set a metric on a goal (defines how goal progress is measured).",
+      "properties": {
+        "operation": {
+          "const": "set_goal_metric",
+          "default": "set_goal_metric",
+          "title": "Set Goal Metric",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Goals",
+          "x-display-name": "Set Goal Metric",
+          "x-is-trigger": false
+        },
+        "goal_gid": {
+          "description": "The goal to set a metric on.",
+          "title": "Goal GID",
+          "type": "string"
+        },
+        "metric_type": {
+          "default": "number",
+          "description": "How goal progress is measured.",
+          "enum": [
+            "number",
+            "percentage",
+            "currency"
+          ],
+          "enumNames": [
+            "Number",
+            "Percentage",
+            "Currency"
+          ],
+          "title": "Metric Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "target_value": {
+          "description": "The numeric target for the metric (e.g. 100).",
+          "title": "Target Value",
+          "type": "string"
+        },
+        "initial_value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Starting value (defaults to 0).",
+          "title": "Initial Value"
+        },
+        "unit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unit label for number metrics (e.g. 'users', 'deals').",
+          "title": "Unit"
+        }
+      },
+      "required": [
+        "goal_gid",
+        "target_value"
+      ],
+      "title": "AsanaSetGoalMetricConfig",
+      "type": "object"
+    },
+    "AsanaSetTaskCustomFieldConfig": {
+      "description": "Set a custom field value on a task.",
+      "properties": {
+        "operation": {
+          "const": "set_task_custom_field",
+          "default": "set_task_custom_field",
+          "title": "Set Task Custom Field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Fields",
+          "x-display-name": "Set Task Custom Field",
+          "x-is-trigger": false
+        },
+        "task_gid": {
+          "description": "The task to update.",
+          "title": "Task GID",
+          "type": "string"
+        },
+        "custom_field_gid": {
+          "description": "The gid of the custom field to set.",
+          "title": "Custom Field GID",
+          "type": "string"
+        },
+        "value": {
+          "description": "The value to set. For text fields: the text string. For number fields: a number. For enum fields: the enum option gid. For multi-enum fields: comma-separated enum option gids.",
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_gid",
+        "custom_field_gid",
+        "value"
+      ],
+      "title": "AsanaSetTaskCustomFieldConfig",
+      "type": "object"
+    },
+    "AsanaSetTaskParentConfig": {
+      "description": "Set or change the parent task of a task (makes it a subtask).",
+      "properties": {
+        "operation": {
+          "const": "set_task_parent",
+          "default": "set_task_parent",
+          "title": "Set Task Parent",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Set Task Parent",
+          "x-is-trigger": false
+        },
+        "task_gid": {
+          "description": "The task to reparent.",
+          "title": "Task GID",
+          "type": "string"
+        },
+        "parent": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The new parent task gid, or leave blank to make it a top-level task.",
+          "title": "Parent Task GID"
+        }
+      },
+      "required": [
+        "task_gid"
+      ],
+      "title": "AsanaSetTaskParentConfig",
+      "type": "object"
+    },
+    "AsanaTriggerConfig": {
+      "description": "Fire the workflow when an Asana resource changes.\n\nAsana webhooks are registered against the NoClick webhook URL via the Asana\nAPI; events arrive signed with ``X-Hook-Signature`` (hex HMAC-SHA256 keyed\nby the handshake secret).",
+      "properties": {
+        "operation": {
+          "const": "on_resource_change",
+          "default": "on_resource_change",
+          "title": "On Resource Change",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Resource Change",
+          "x-is-trigger": true
+        },
+        "resource_gid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The gid of the Asana resource (task, project, section, etc.) to watch. When set, the trigger registers an Asana webhook (POST /webhooks) on it with your selected event filters.",
+          "title": "Resource to Watch"
+        },
+        "event_types": {
+          "default": "*",
+          "description": "Comma-separated list of Asana event actions that fire this trigger. Use `*` (default) for all events. Options: `added` (a resource was created), `changed` (a resource was modified), `removed` (a resource was detached from a parent), `deleted` (a resource was deleted), `undeleted` (a deletion was undone). Selected actions become the webhook's `filters` so Asana only delivers matching events, and are re-checked on each inbound delivery.",
+          "enum": [
+            "*",
+            "added",
+            "changed",
+            "removed",
+            "deleted",
+            "undeleted"
+          ],
+          "enumNames": [
+            "All events",
+            "Added (resource created)",
+            "Changed (resource modified)",
+            "Removed (detached from a parent)",
+            "Deleted (resource deleted)",
+            "Undeleted (deletion undone)"
+          ],
+          "title": "Event Types",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Register this URL as the target of an Asana webhook (POST /webhooks) on the resource you want to watch.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        }
+      },
+      "title": "AsanaTriggerConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "AsanaTriggerRuleConfig": {
+      "description": "Trigger a rule that uses an 'incoming web request' trigger.",
+      "properties": {
+        "operation": {
+          "const": "trigger_rule",
+          "default": "trigger_rule",
+          "title": "Trigger Rule",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspaces",
+          "x-display-name": "Trigger Rule",
+          "x-is-trigger": false
+        },
+        "rule_trigger_gid": {
+          "description": "The gid of the 'incoming web request' rule trigger.",
+          "title": "Rule Trigger GID",
+          "type": "string"
+        },
+        "action_data": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object to pass as action data to the rule.",
+          "title": "Action Data (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "rule_trigger_gid"
+      ],
+      "title": "AsanaTriggerRuleConfig",
+      "type": "object"
+    },
+    "AsanaTypeaheadSearchConfig": {
+      "description": "Search across all object types in a workspace (typeahead / autocomplete).",
+      "properties": {
+        "operation": {
+          "const": "typeahead_search",
+          "default": "typeahead_search",
+          "title": "Typeahead Search",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspaces",
+          "x-display-name": "Typeahead Search",
+          "x-is-trigger": false,
+          "x-keywords": "search find autocomplete lookup objects"
+        },
+        "workspace_gid": {
+          "description": "The workspace to search within.",
+          "title": "Workspace",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workspace gid",
+            "field_name": "workspace_gid",
+            "placeholder": "Select a workspace...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_workspace"
+        },
+        "query": {
+          "description": "The search string (typeahead / prefix match).",
+          "title": "Query",
+          "type": "string"
+        },
+        "resource_type": {
+          "default": "task",
+          "description": "The type of object to search for.",
+          "enum": [
+            "task",
+            "project",
+            "section",
+            "tag",
+            "user",
+            "portfolio",
+            "goal"
+          ],
+          "enumNames": [
+            "Tasks",
+            "Projects",
+            "Sections",
+            "Tags",
+            "Users",
+            "Portfolios",
+            "Goals"
+          ],
+          "title": "Resource Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "count": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Max number of results to return.",
+          "title": "Max Results"
+        }
+      },
+      "required": [
+        "workspace_gid",
+        "query"
+      ],
+      "title": "AsanaTypeaheadSearchConfig",
+      "type": "object"
+    },
+    "AsanaUpdateCustomFieldConfig": {
+      "description": "Update a custom field's name, description, or settings.",
+      "properties": {
+        "operation": {
+          "const": "update_custom_field",
+          "default": "update_custom_field",
+          "title": "Update Custom Field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Fields",
+          "x-display-name": "Update Custom Field",
+          "x-is-trigger": false
+        },
+        "custom_field_gid": {
+          "description": "The custom field to update.",
+          "title": "Custom Field GID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New name for the custom field.",
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New description.",
+          "title": "Description"
+        }
+      },
+      "required": [
+        "custom_field_gid"
+      ],
+      "title": "AsanaUpdateCustomFieldConfig",
+      "type": "object"
+    },
+    "AsanaUpdateGoalConfig": {
+      "description": "Update a goal's name, status, notes, or dates.",
+      "properties": {
+        "operation": {
+          "const": "update_goal",
+          "default": "update_goal",
+          "title": "Update Goal",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Goals",
+          "x-display-name": "Update Goal",
+          "x-is-trigger": false
+        },
+        "goal_gid": {
+          "description": "The goal to update.",
+          "title": "Goal GID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New goal name.",
+          "title": "Name"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New goal notes.",
+          "title": "Notes",
+          "ui:widget": "textarea"
+        },
+        "due_on": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New due date YYYY-MM-DD.",
+          "title": "Due On"
+        },
+        "start_on": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New start date YYYY-MM-DD.",
+          "title": "Start On"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Goal status color.",
+          "enum": [
+            "",
+            "green",
+            "yellow",
+            "red",
+            "missed",
+            "achieved"
+          ],
+          "enumNames": [
+            "No change",
+            "On Track",
+            "At Risk",
+            "Off Track",
+            "Missed",
+            "Achieved"
+          ],
+          "title": "Status",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "goal_gid"
+      ],
+      "title": "AsanaUpdateGoalConfig",
+      "type": "object"
+    },
+    "AsanaUpdateGoalMetricConfig": {
+      "description": "Update the current value of a goal's metric.",
+      "properties": {
+        "operation": {
+          "const": "update_goal_metric",
+          "default": "update_goal_metric",
+          "title": "Update Goal Metric Value",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Goals",
+          "x-display-name": "Update Goal Metric Value",
+          "x-is-trigger": false
+        },
+        "goal_gid": {
+          "description": "The goal whose metric to update.",
+          "title": "Goal GID",
+          "type": "string"
+        },
+        "current_value": {
+          "description": "The new current progress value.",
+          "title": "Current Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "goal_gid",
+        "current_value"
+      ],
+      "title": "AsanaUpdateGoalMetricConfig",
+      "type": "object"
+    },
+    "AsanaUpdatePortfolioConfig": {
+      "description": "Update a portfolio's name or public setting.",
+      "properties": {
+        "operation": {
+          "const": "update_portfolio",
+          "default": "update_portfolio",
+          "title": "Update Portfolio",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Portfolios",
+          "x-display-name": "Update Portfolio",
+          "x-is-trigger": false
+        },
+        "portfolio_gid": {
+          "description": "The portfolio to update.",
+          "title": "Portfolio GID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New portfolio name.",
+          "title": "Name"
+        },
+        "public": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether the portfolio is visible to all workspace members.",
+          "enum": [
+            "",
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "No change",
+            "Public",
+            "Private"
+          ],
+          "title": "Public",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "portfolio_gid"
+      ],
+      "title": "AsanaUpdatePortfolioConfig",
+      "type": "object"
+    },
+    "AsanaUpdateProjectBriefConfig": {
+      "description": "Update a project brief's title or content.",
+      "properties": {
+        "operation": {
+          "const": "update_project_brief",
+          "default": "update_project_brief",
+          "title": "Update Project Brief",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Update Project Brief",
+          "x-is-trigger": false
+        },
+        "project_brief_gid": {
+          "description": "The project brief to update.",
+          "title": "Brief GID",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New title for the brief.",
+          "title": "Title"
+        },
+        "html_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New HTML content for the brief.",
+          "title": "HTML Content",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "project_brief_gid"
+      ],
+      "title": "AsanaUpdateProjectBriefConfig",
+      "type": "object"
+    },
+    "AsanaUpdateProjectConfig": {
+      "description": "Update a project's name, notes, or archived status.",
+      "properties": {
+        "operation": {
+          "const": "update_project",
+          "default": "update_project",
+          "title": "Update Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Update Project",
+          "x-is-trigger": false
+        },
+        "project_gid": {
+          "description": "The gid of the project to update.",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project gid",
+            "field_name": "project_gid",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_project"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New project name.",
+          "title": "Name"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New project notes.",
+          "title": "Notes",
+          "ui:widget": "textarea"
+        },
+        "archived": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Archive or unarchive the project.",
+          "enum": [
+            "",
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "No change",
+            "Archive",
+            "Unarchive"
+          ],
+          "title": "Archived",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "project_gid"
+      ],
+      "title": "AsanaUpdateProjectConfig",
+      "type": "object"
+    },
+    "AsanaUpdateSectionConfig": {
+      "description": "Rename or update a section.",
+      "properties": {
+        "operation": {
+          "const": "update_section",
+          "default": "update_section",
+          "title": "Update Section",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Update Section",
+          "x-is-trigger": false
+        },
+        "section_gid": {
+          "description": "The section to update.",
+          "title": "Section GID",
+          "type": "string"
+        },
+        "name": {
+          "description": "The new name for the section.",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "section_gid",
+        "name"
+      ],
+      "title": "AsanaUpdateSectionConfig",
+      "type": "object"
+    },
+    "AsanaUpdateStoryConfig": {
+      "description": "Edit the text of a comment (story) on a task.",
+      "properties": {
+        "operation": {
+          "const": "update_story",
+          "default": "update_story",
+          "title": "Update Story / Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Update Story / Comment",
+          "x-is-trigger": false
+        },
+        "story_gid": {
+          "description": "The story (comment) to edit.",
+          "title": "Story GID",
+          "type": "string"
+        },
+        "text": {
+          "description": "The updated comment text.",
+          "title": "Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "story_gid",
+        "text"
+      ],
+      "title": "AsanaUpdateStoryConfig",
+      "type": "object"
+    },
+    "AsanaUpdateTagConfig": {
+      "description": "Update a tag's name or color.",
+      "properties": {
+        "operation": {
+          "const": "update_tag",
+          "default": "update_tag",
+          "title": "Update Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "Update Tag",
+          "x-is-trigger": false
+        },
+        "tag_gid": {
+          "description": "The tag to update.",
+          "title": "Tag",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste tag gid",
+            "field_name": "tag_gid",
+            "placeholder": "Select a tag...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "asana_tag"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New tag name.",
+          "title": "Name"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Tag color (e.g. dark-pink, dark-green, dark-blue, light-red, light-teal, light-orange, light-purple, none).",
+          "title": "Color"
+        }
+      },
+      "required": [
+        "tag_gid"
+      ],
+      "title": "AsanaUpdateTagConfig",
+      "type": "object"
+    },
+    "AsanaUpdateTaskConfig": {
+      "description": "Update a task (rename, reassign, complete, set due date).",
+      "properties": {
+        "operation": {
+          "const": "update_task",
+          "default": "update_task",
+          "title": "Update Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Update Task",
+          "x-is-trigger": false
+        },
+        "task_gid": {
+          "description": "The gid of the task to update.",
+          "title": "Task GID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New task name.",
+          "title": "Name"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New task notes.",
+          "title": "Notes",
+          "ui:widget": "textarea"
+        },
+        "assignee": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "User gid or email to reassign the task to.",
+          "title": "Assignee"
+        },
+        "due_on": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New due date in YYYY-MM-DD format.",
+          "title": "Due On"
+        },
+        "completed": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Mark the task complete or incomplete.",
+          "enum": [
+            "",
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "No change",
+            "Mark complete",
+            "Mark incomplete"
+          ],
+          "title": "Completed",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "task_gid"
+      ],
+      "title": "AsanaUpdateTaskConfig",
+      "type": "object"
+    },
+    "AsanaUpdateTimeTrackingEntryConfig": {
+      "description": "Update the duration or date of an existing time tracking entry.",
+      "properties": {
+        "operation": {
+          "const": "update_time_tracking_entry",
+          "default": "update_time_tracking_entry",
+          "title": "Update Time Tracking Entry",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Time Tracking",
+          "x-display-name": "Update Time Tracking Entry",
+          "x-is-trigger": false
+        },
+        "time_tracking_entry_gid": {
+          "description": "The time tracking entry to update.",
+          "title": "Entry GID",
+          "type": "string"
+        },
+        "duration_minutes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New duration in minutes.",
+          "title": "Duration (minutes)"
+        },
+        "entered_on": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New date for the entry, YYYY-MM-DD.",
+          "title": "Date"
+        }
+      },
+      "required": [
+        "time_tracking_entry_gid"
+      ],
+      "title": "AsanaUpdateTimeTrackingEntryConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the Asana node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_comment": "#/$defs/AsanaAddCommentConfig",
+          "add_custom_field_to_project": "#/$defs/AsanaAddCustomFieldToProjectConfig",
+          "add_followers": "#/$defs/AsanaAddFollowersConfig",
+          "add_goal_followers": "#/$defs/AsanaAddGoalFollowersConfig",
+          "add_portfolio_item": "#/$defs/AsanaAddPortfolioItemConfig",
+          "add_portfolio_members": "#/$defs/AsanaAddPortfolioMembersConfig",
+          "add_project_followers": "#/$defs/AsanaAddProjectFollowersConfig",
+          "add_project_member": "#/$defs/AsanaAddProjectMemberConfig",
+          "add_tag_to_task": "#/$defs/AsanaAddTagToTaskConfig",
+          "add_task_dependencies": "#/$defs/AsanaAddDependenciesToTaskConfig",
+          "add_task_dependents": "#/$defs/AsanaAddTaskDependentsConfig",
+          "add_task_to_project": "#/$defs/AsanaAddTaskToProjectConfig",
+          "add_task_to_section": "#/$defs/AsanaAddTaskToSectionConfig",
+          "add_team_member": "#/$defs/AsanaAddTeamMemberConfig",
+          "add_workspace_user": "#/$defs/AsanaAddWorkspaceUserConfig",
+          "create_custom_field": "#/$defs/AsanaCreateCustomFieldConfig",
+          "create_goal": "#/$defs/AsanaCreateGoalConfig",
+          "create_portfolio": "#/$defs/AsanaCreatePortfolioConfig",
+          "create_project": "#/$defs/AsanaCreateProjectConfig",
+          "create_project_brief": "#/$defs/AsanaCreateProjectBriefConfig",
+          "create_project_from_template": "#/$defs/AsanaCreateProjectFromTemplateConfig",
+          "create_project_status": "#/$defs/AsanaCreateProjectStatusConfig",
+          "create_section": "#/$defs/AsanaCreateSectionConfig",
+          "create_status_update": "#/$defs/AsanaCreateStatusUpdateConfig",
+          "create_subtask": "#/$defs/AsanaCreateSubtaskConfig",
+          "create_tag": "#/$defs/AsanaCreateTagConfig",
+          "create_task": "#/$defs/AsanaCreateTaskConfig",
+          "create_task_from_template": "#/$defs/AsanaCreateTaskFromTemplateConfig",
+          "create_time_tracking_entry": "#/$defs/AsanaCreateTimeTrackingEntryConfig",
+          "delete_attachment": "#/$defs/AsanaDeleteAttachmentConfig",
+          "delete_custom_field": "#/$defs/AsanaDeleteCustomFieldConfig",
+          "delete_goal": "#/$defs/AsanaDeleteGoalConfig",
+          "delete_portfolio": "#/$defs/AsanaDeletePortfolioConfig",
+          "delete_project": "#/$defs/AsanaDeleteProjectConfig",
+          "delete_project_brief": "#/$defs/AsanaDeleteProjectBriefConfig",
+          "delete_project_status": "#/$defs/AsanaDeleteProjectStatusConfig",
+          "delete_section": "#/$defs/AsanaDeleteSectionConfig",
+          "delete_status_update": "#/$defs/AsanaDeleteStatusUpdateConfig",
+          "delete_story": "#/$defs/AsanaDeleteStoryConfig",
+          "delete_tag": "#/$defs/AsanaDeleteTagConfig",
+          "delete_task": "#/$defs/AsanaDeleteTaskConfig",
+          "delete_time_tracking_entry": "#/$defs/AsanaDeleteTimeTrackingEntryConfig",
+          "duplicate_project": "#/$defs/AsanaDuplicateProjectConfig",
+          "duplicate_task": "#/$defs/AsanaDuplicateTaskConfig",
+          "get_custom_field": "#/$defs/AsanaGetCustomFieldConfig",
+          "get_goal": "#/$defs/AsanaGetGoalConfig",
+          "get_goal_parent_goals": "#/$defs/AsanaGetGoalParentGoalsConfig",
+          "get_job": "#/$defs/AsanaGetJobConfig",
+          "get_me": "#/$defs/AsanaGetMeConfig",
+          "get_portfolio": "#/$defs/AsanaGetPortfolioConfig",
+          "get_portfolio_items": "#/$defs/AsanaGetPortfolioItemsConfig",
+          "get_project": "#/$defs/AsanaGetProjectConfig",
+          "get_project_brief": "#/$defs/AsanaGetProjectBriefConfig",
+          "get_project_custom_fields": "#/$defs/AsanaGetProjectCustomFieldsConfig",
+          "get_project_members": "#/$defs/AsanaGetProjectMembersConfig",
+          "get_project_statuses": "#/$defs/AsanaGetProjectStatusesConfig",
+          "get_project_task_counts": "#/$defs/AsanaGetProjectTaskCountsConfig",
+          "get_section": "#/$defs/AsanaGetSectionConfig",
+          "get_section_tasks": "#/$defs/AsanaGetSectionTasksConfig",
+          "get_status_updates": "#/$defs/AsanaGetStatusUpdatesConfig",
+          "get_story": "#/$defs/AsanaGetStoryConfig",
+          "get_tag": "#/$defs/AsanaGetTagConfig",
+          "get_tags_for_task": "#/$defs/AsanaGetTagsForTaskConfig",
+          "get_task": "#/$defs/AsanaGetTaskConfig",
+          "get_task_attachments": "#/$defs/AsanaGetTaskAttachmentsConfig",
+          "get_task_dependencies": "#/$defs/AsanaGetTaskDependenciesConfig",
+          "get_task_dependents": "#/$defs/AsanaGetTaskDependentsConfig",
+          "get_task_projects": "#/$defs/AsanaGetTaskProjectsConfig",
+          "get_tasks_for_tag": "#/$defs/AsanaGetTasksForTagConfig",
+          "get_team": "#/$defs/AsanaGetTeamConfig",
+          "get_team_members": "#/$defs/AsanaGetTeamMembersConfig",
+          "get_time_tracking_entries": "#/$defs/AsanaGetTimeTrackingEntriesConfig",
+          "get_user": "#/$defs/AsanaGetUserConfig",
+          "get_user_task_list": "#/$defs/AsanaGetUserTaskListConfig",
+          "get_user_task_list_tasks": "#/$defs/AsanaGetUserTaskListTasksConfig",
+          "list_comments": "#/$defs/AsanaListCommentsConfig",
+          "list_custom_fields": "#/$defs/AsanaListCustomFieldsConfig",
+          "list_goals": "#/$defs/AsanaListGoalsConfig",
+          "list_portfolios": "#/$defs/AsanaListPortfoliosConfig",
+          "list_project_tasks": "#/$defs/AsanaListProjectTasksConfig",
+          "list_project_templates": "#/$defs/AsanaListProjectTemplatesConfig",
+          "list_projects": "#/$defs/AsanaListProjectsConfig",
+          "list_sections": "#/$defs/AsanaListProjectSectionsConfig",
+          "list_subtasks": "#/$defs/AsanaListSubtasksConfig",
+          "list_tags": "#/$defs/AsanaListTagsConfig",
+          "list_task_templates": "#/$defs/AsanaListTaskTemplatesConfig",
+          "list_teams": "#/$defs/AsanaListTeamsConfig",
+          "list_users": "#/$defs/AsanaListUsersConfig",
+          "list_workspace_members": "#/$defs/AsanaListWorkspaceMembersConfig",
+          "list_workspaces": "#/$defs/AsanaListWorkspacesConfig",
+          "on_resource_change": "#/$defs/AsanaTriggerConfig",
+          "remove_custom_field_from_project": "#/$defs/AsanaRemoveCustomFieldFromProjectConfig",
+          "remove_followers": "#/$defs/AsanaRemoveFollowersConfig",
+          "remove_goal_followers": "#/$defs/AsanaRemoveGoalFollowersConfig",
+          "remove_portfolio_item": "#/$defs/AsanaRemovePortfolioItemConfig",
+          "remove_portfolio_members": "#/$defs/AsanaRemovePortfolioMembersConfig",
+          "remove_project_followers": "#/$defs/AsanaRemoveProjectFollowersConfig",
+          "remove_project_member": "#/$defs/AsanaRemoveProjectMemberConfig",
+          "remove_tag_from_task": "#/$defs/AsanaRemoveTagFromTaskConfig",
+          "remove_task_dependencies": "#/$defs/AsanaRemoveDependenciesFromTaskConfig",
+          "remove_task_dependents": "#/$defs/AsanaRemoveTaskDependentsConfig",
+          "remove_task_from_project": "#/$defs/AsanaRemoveTaskFromProjectConfig",
+          "remove_team_member": "#/$defs/AsanaRemoveTeamMemberConfig",
+          "remove_workspace_user": "#/$defs/AsanaRemoveWorkspaceUserConfig",
+          "save_project_as_template": "#/$defs/AsanaSaveProjectAsTemplateConfig",
+          "search_tasks": "#/$defs/AsanaSearchTasksConfig",
+          "set_goal_metric": "#/$defs/AsanaSetGoalMetricConfig",
+          "set_task_custom_field": "#/$defs/AsanaSetTaskCustomFieldConfig",
+          "set_task_parent": "#/$defs/AsanaSetTaskParentConfig",
+          "trigger_rule": "#/$defs/AsanaTriggerRuleConfig",
+          "typeahead_search": "#/$defs/AsanaTypeaheadSearchConfig",
+          "update_custom_field": "#/$defs/AsanaUpdateCustomFieldConfig",
+          "update_goal": "#/$defs/AsanaUpdateGoalConfig",
+          "update_goal_metric": "#/$defs/AsanaUpdateGoalMetricConfig",
+          "update_portfolio": "#/$defs/AsanaUpdatePortfolioConfig",
+          "update_project": "#/$defs/AsanaUpdateProjectConfig",
+          "update_project_brief": "#/$defs/AsanaUpdateProjectBriefConfig",
+          "update_section": "#/$defs/AsanaUpdateSectionConfig",
+          "update_story": "#/$defs/AsanaUpdateStoryConfig",
+          "update_tag": "#/$defs/AsanaUpdateTagConfig",
+          "update_task": "#/$defs/AsanaUpdateTaskConfig",
+          "update_time_tracking_entry": "#/$defs/AsanaUpdateTimeTrackingEntryConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/AsanaGetMeConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaListUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaGetUserConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaListWorkspacesConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaListTeamsConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaListCustomFieldsConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaListWorkspaceMembersConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaAddWorkspaceUserConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaRemoveWorkspaceUserConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaTypeaheadSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaGetTeamConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaGetTeamMembersConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaAddTeamMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaRemoveTeamMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaListProjectsConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaGetProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaCreateProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaUpdateProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaDeleteProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaDuplicateProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaGetProjectMembersConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaAddProjectMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaRemoveProjectMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaAddProjectFollowersConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaRemoveProjectFollowersConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaGetProjectTaskCountsConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaGetProjectStatusesConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaCreateProjectStatusConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaDeleteProjectStatusConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaGetStatusUpdatesConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaCreateStatusUpdateConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaDeleteStatusUpdateConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaGetProjectBriefConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaCreateProjectBriefConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaUpdateProjectBriefConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaDeleteProjectBriefConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaListProjectTemplatesConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaCreateProjectFromTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaSaveProjectAsTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaGetJobConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaGetProjectCustomFieldsConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaListProjectSectionsConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaGetSectionConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaCreateSectionConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaUpdateSectionConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaDeleteSectionConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaGetSectionTasksConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaSearchTasksConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaGetTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaCreateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaUpdateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaDeleteTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaDuplicateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaListProjectTasksConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaAddTaskToProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaRemoveTaskFromProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaAddTaskToSectionConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaSetTaskParentConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaGetTaskProjectsConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaListSubtasksConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaCreateSubtaskConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaGetTaskDependenciesConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaAddDependenciesToTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaRemoveDependenciesFromTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaGetTaskDependentsConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaAddTaskDependentsConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaRemoveTaskDependentsConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaAddFollowersConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaRemoveFollowersConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaGetTasksForTagConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaListTaskTemplatesConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaCreateTaskFromTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaAddCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaListCommentsConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaGetStoryConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaUpdateStoryConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaDeleteStoryConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaListTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaGetTagConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaCreateTagConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaUpdateTagConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaDeleteTagConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaAddTagToTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaRemoveTagFromTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaGetTagsForTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaGetCustomFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaCreateCustomFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaUpdateCustomFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaDeleteCustomFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaSetTaskCustomFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaAddCustomFieldToProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaRemoveCustomFieldFromProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaGetTaskAttachmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaDeleteAttachmentConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaGetTimeTrackingEntriesConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaCreateTimeTrackingEntryConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaUpdateTimeTrackingEntryConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaDeleteTimeTrackingEntryConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaGetUserTaskListConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaGetUserTaskListTasksConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaListPortfoliosConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaGetPortfolioConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaCreatePortfolioConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaUpdatePortfolioConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaDeletePortfolioConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaGetPortfolioItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaAddPortfolioItemConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaRemovePortfolioItemConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaAddPortfolioMembersConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaRemovePortfolioMembersConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaListGoalsConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaGetGoalConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaCreateGoalConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaUpdateGoalConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaDeleteGoalConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaGetGoalParentGoalsConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaSetGoalMetricConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaUpdateGoalMetricConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaAddGoalFollowersConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaRemoveGoalFollowersConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaTriggerRuleConfig"
+        },
+        {
+          "$ref": "#/$defs/AsanaTriggerConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AsanaOAuthCredential"
+        },
+        {
+          "$ref": "#/$defs/AsanaPATCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Asana Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Create an Asana task when a form is submitted",
+    "List all incomplete tasks in a project",
+    "Add a comment to a task when a deal is won",
+    "Mark a task complete and reassign it",
+    "Trigger a workflow whenever a task in a project changes"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

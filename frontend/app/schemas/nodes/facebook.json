@@ -1,0 +1,3478 @@
+{
+  "$defs": {
+    "FacebookAccessTokenCredential": {
+      "description": "Manually supplied Facebook Page or user access token (no OAuth popup).",
+      "properties": {
+        "credential_type": {
+          "const": "facebook_access_token",
+          "default": "facebook_access_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "Facebook Page or user access token",
+          "title": "Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 expiry, if the token expires",
+          "title": "Token Expiry"
+        },
+        "app_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "App secret for appsecret_proof on apps that require secure server requests.",
+          "title": "App Secret (Optional)",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "FacebookAccessTokenCredential",
+      "type": "object"
+    },
+    "FacebookOAuthCredential": {
+      "description": "Facebook Login OAuth token (user token; Page tokens are derived from it).",
+      "properties": {
+        "credential_type": {
+          "const": "facebook_oauth",
+          "default": "facebook_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "Long-lived Facebook user or Page access token",
+          "title": "Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 expiry of the long-lived token",
+          "title": "Token Expiry"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Connected Facebook account email",
+          "title": "Account Email"
+        },
+        "facebook_user_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Connected Facebook user ID",
+          "title": "Facebook User ID"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "FacebookOAuthCredential",
+      "type": "object",
+      "x-credential-hidden": true,
+      "x-credential-preview-flag": "meta-oauth-preview",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://developers.facebook.com/apps/",
+      "x-oauth-provider": "facebook_pages",
+      "x-oauth-scopes": [
+        "public_profile",
+        "email",
+        "pages_show_list",
+        "pages_read_engagement",
+        "pages_read_user_content",
+        "pages_manage_posts",
+        "pages_manage_engagement",
+        "pages_manage_metadata",
+        "pages_messaging",
+        "read_insights"
+      ]
+    },
+    "FbCreateCommentConfig": {
+      "description": "Comment on a post/photo/video (or reply to a comment).",
+      "properties": {
+        "operation": {
+          "const": "create_comment",
+          "default": "create_comment",
+          "title": "Create Comment",
+          "type": "string",
+          "x-category": "Engagement",
+          "x-display-name": "Create Comment",
+          "x-is-trigger": false
+        },
+        "object_id": {
+          "description": "The object (or parent comment) ID.",
+          "title": "Object ID",
+          "type": "string"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comment text.",
+          "title": "Message"
+        },
+        "attachment_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional image URL to attach.",
+          "title": "Attachment URL"
+        }
+      },
+      "required": [
+        "object_id"
+      ],
+      "title": "FbCreateCommentConfig",
+      "type": "object"
+    },
+    "FbDeleteCommentConfig": {
+      "description": "Delete a comment.",
+      "properties": {
+        "operation": {
+          "const": "delete_comment",
+          "default": "delete_comment",
+          "title": "Delete Comment",
+          "type": "string",
+          "x-category": "Engagement",
+          "x-display-name": "Delete Comment",
+          "x-is-trigger": false
+        },
+        "comment_id": {
+          "description": "The comment ID.",
+          "title": "Comment ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "comment_id"
+      ],
+      "title": "FbDeleteCommentConfig",
+      "type": "object"
+    },
+    "FbDeletePostConfig": {
+      "description": "Delete a post.",
+      "properties": {
+        "operation": {
+          "const": "delete_post",
+          "default": "delete_post",
+          "title": "Delete Post",
+          "type": "string",
+          "x-category": "Posts",
+          "x-display-name": "Delete Post",
+          "x-is-trigger": false
+        },
+        "post_id": {
+          "description": "The post ID to delete.",
+          "title": "Post ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "post_id"
+      ],
+      "title": "FbDeletePostConfig",
+      "type": "object"
+    },
+    "FbGetMeConfig": {
+      "description": "Get the authenticated user's basic profile.",
+      "properties": {
+        "operation": {
+          "const": "get_me",
+          "default": "get_me",
+          "title": "Get My Profile",
+          "type": "string",
+          "x-category": "Account",
+          "x-display-name": "Get My Profile",
+          "x-is-trigger": false
+        },
+        "fields": {
+          "default": "id,name,email",
+          "description": "Comma-separated profile fields.",
+          "title": "Fields",
+          "type": "string"
+        }
+      },
+      "title": "FbGetMeConfig",
+      "type": "object"
+    },
+    "FbGetMessengerProfileConfig": {
+      "description": "Get the current Messenger Profile fields.",
+      "properties": {
+        "operation": {
+          "const": "get_messenger_profile",
+          "default": "get_messenger_profile",
+          "title": "Get Messenger Profile",
+          "type": "string",
+          "x-category": "Messenger",
+          "x-display-name": "Get Messenger Profile",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The Page ID.",
+          "title": "Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Page ID",
+            "field_name": "page_id",
+            "placeholder": "Select a Page...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "fields": {
+          "default": "get_started,persistent_menu,greeting,ice_breakers",
+          "description": "Comma-separated profile fields.",
+          "title": "Fields",
+          "type": "string"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "FbGetMessengerProfileConfig",
+      "type": "object"
+    },
+    "FbGetPageConfig": {
+      "description": "Get a Page's fields/details.",
+      "properties": {
+        "operation": {
+          "const": "get_page",
+          "default": "get_page",
+          "title": "Get Page",
+          "type": "string",
+          "x-category": "Pages",
+          "x-display-name": "Get Page",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The Page ID.",
+          "title": "Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Page ID",
+            "field_name": "page_id",
+            "placeholder": "Select a Page...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "fields": {
+          "default": "id,name,about,category,fan_count,link,phone,website,emails,location",
+          "description": "Comma-separated Page fields to return.",
+          "title": "Fields",
+          "type": "string"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "FbGetPageConfig",
+      "type": "object"
+    },
+    "FbGetPostConfig": {
+      "description": "Get a single post.",
+      "properties": {
+        "operation": {
+          "const": "get_post",
+          "default": "get_post",
+          "title": "Get Post",
+          "type": "string",
+          "x-category": "Posts",
+          "x-display-name": "Get Post",
+          "x-is-trigger": false
+        },
+        "post_id": {
+          "description": "The post ID (e.g. {page-id}_{post-id}).",
+          "title": "Post ID",
+          "type": "string"
+        },
+        "fields": {
+          "default": "id,message,created_time,permalink_url,attachments,shares",
+          "description": "Comma-separated fields.",
+          "title": "Fields",
+          "type": "string"
+        }
+      },
+      "required": [
+        "post_id"
+      ],
+      "title": "FbGetPostConfig",
+      "type": "object"
+    },
+    "FbGetReactionsConfig": {
+      "description": "Get reactions on a post/comment.",
+      "properties": {
+        "operation": {
+          "const": "get_reactions",
+          "default": "get_reactions",
+          "title": "Get Reactions",
+          "type": "string",
+          "x-category": "Engagement",
+          "x-display-name": "Get Reactions",
+          "x-is-trigger": false
+        },
+        "object_id": {
+          "description": "The post/comment ID.",
+          "title": "Object ID",
+          "type": "string"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by reaction type.",
+          "enum": [
+            "LIKE",
+            "LOVE",
+            "WOW",
+            "HAHA",
+            "SAD",
+            "ANGRY",
+            "CARE"
+          ],
+          "title": "Type",
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max reactions per page.",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "object_id"
+      ],
+      "title": "FbGetReactionsConfig",
+      "type": "object"
+    },
+    "FbGetUserProfileConfig": {
+      "description": "Get a Messenger user's profile by PSID.",
+      "properties": {
+        "operation": {
+          "const": "get_user_profile",
+          "default": "get_user_profile",
+          "title": "Get User Profile",
+          "type": "string",
+          "x-category": "Messenger",
+          "x-display-name": "Get User Profile",
+          "x-is-trigger": false
+        },
+        "psid": {
+          "description": "The user's Page-scoped ID.",
+          "title": "PSID",
+          "type": "string"
+        },
+        "fields": {
+          "default": "first_name,last_name,profile_pic,locale,timezone",
+          "description": "Comma-separated profile fields.",
+          "title": "Fields",
+          "type": "string"
+        }
+      },
+      "required": [
+        "psid"
+      ],
+      "title": "FbGetUserProfileConfig",
+      "type": "object"
+    },
+    "FbGraphRequestConfig": {
+      "description": "Make an arbitrary Graph API request (escape hatch).",
+      "properties": {
+        "operation": {
+          "const": "graph_request",
+          "default": "graph_request",
+          "title": "Custom Graph Request",
+          "type": "string",
+          "x-category": "Advanced",
+          "x-display-name": "Custom Graph Request",
+          "x-is-trigger": false
+        },
+        "endpoint": {
+          "description": "Path after the version, e.g. /me/accounts.",
+          "title": "Endpoint",
+          "type": "string"
+        },
+        "method": {
+          "default": "GET",
+          "description": "HTTP method.",
+          "enum": [
+            "GET",
+            "POST",
+            "DELETE"
+          ],
+          "title": "Method",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "params_json": {
+          "default": "{}",
+          "description": "Query parameters as a JSON object.",
+          "title": "Query Params (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "data_json": {
+          "default": "{}",
+          "description": "Form body as a JSON object.",
+          "title": "Body (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "endpoint"
+      ],
+      "title": "FbGraphRequestConfig",
+      "type": "object"
+    },
+    "FbHandoverConfig": {
+      "description": "Handover Protocol: pass / take / request thread control.",
+      "properties": {
+        "operation": {
+          "const": "thread_control",
+          "default": "thread_control",
+          "title": "Thread Control (Handover)",
+          "type": "string",
+          "x-category": "Messenger",
+          "x-display-name": "Thread Control (Handover)",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The Page ID.",
+          "title": "Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Page ID",
+            "field_name": "page_id",
+            "placeholder": "Select a Page...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "action": {
+          "default": "pass_thread_control",
+          "description": "The handover action.",
+          "enum": [
+            "pass_thread_control",
+            "take_thread_control",
+            "request_thread_control"
+          ],
+          "title": "Action",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "recipient_id": {
+          "description": "The conversation's PSID.",
+          "title": "Recipient PSID",
+          "type": "string"
+        },
+        "target_app_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "App to pass control to (for pass_thread_control).",
+          "title": "Target App ID"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional metadata string.",
+          "title": "Metadata"
+        }
+      },
+      "required": [
+        "page_id",
+        "recipient_id"
+      ],
+      "title": "FbHandoverConfig",
+      "type": "object"
+    },
+    "FbHideCommentConfig": {
+      "description": "Hide or unhide a comment.",
+      "properties": {
+        "operation": {
+          "const": "hide_comment",
+          "default": "hide_comment",
+          "title": "Hide / Unhide Comment",
+          "type": "string",
+          "x-category": "Engagement",
+          "x-display-name": "Hide / Unhide Comment",
+          "x-is-trigger": false
+        },
+        "comment_id": {
+          "description": "The comment ID.",
+          "title": "Comment ID",
+          "type": "string"
+        },
+        "hide": {
+          "default": "true",
+          "description": "'true' to hide, 'false' to unhide.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "title": "Hide",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "comment_id"
+      ],
+      "title": "FbHideCommentConfig",
+      "type": "object"
+    },
+    "FbLikeObjectConfig": {
+      "description": "Like an object (post/comment) as the Page.",
+      "properties": {
+        "operation": {
+          "const": "like_object",
+          "default": "like_object",
+          "title": "Like Object",
+          "type": "string",
+          "x-category": "Engagement",
+          "x-display-name": "Like Object",
+          "x-is-trigger": false
+        },
+        "object_id": {
+          "description": "The post/comment ID to like.",
+          "title": "Object ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "object_id"
+      ],
+      "title": "FbLikeObjectConfig",
+      "type": "object"
+    },
+    "FbListAlbumsConfig": {
+      "description": "List a Page's photo albums.",
+      "properties": {
+        "operation": {
+          "const": "list_albums",
+          "default": "list_albums",
+          "title": "List Albums",
+          "type": "string",
+          "x-category": "Media",
+          "x-display-name": "List Albums",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The Page ID.",
+          "title": "Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Page ID",
+            "field_name": "page_id",
+            "placeholder": "Select a Page...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "fields": {
+          "default": "id,name,count,created_time",
+          "description": "Comma-separated album fields.",
+          "title": "Fields",
+          "type": "string"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "FbListAlbumsConfig",
+      "type": "object"
+    },
+    "FbListPagesConfig": {
+      "description": "List the Facebook Pages the user manages (with Page access tokens).",
+      "properties": {
+        "operation": {
+          "const": "list_pages",
+          "default": "list_pages",
+          "title": "List My Pages",
+          "type": "string",
+          "x-category": "Account",
+          "x-display-name": "List My Pages",
+          "x-is-trigger": false
+        },
+        "fields": {
+          "default": "id,name,access_token,category,tasks",
+          "description": "Comma-separated Page fields.",
+          "title": "Fields",
+          "type": "string"
+        }
+      },
+      "title": "FbListPagesConfig",
+      "type": "object"
+    },
+    "FbListPostsConfig": {
+      "description": "List a Page's own published posts.",
+      "properties": {
+        "operation": {
+          "const": "list_posts",
+          "default": "list_posts",
+          "title": "List Posts",
+          "type": "string",
+          "x-category": "Posts",
+          "x-display-name": "List Posts",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The Page ID.",
+          "title": "Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Page ID",
+            "field_name": "page_id",
+            "placeholder": "Select a Page...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "fields": {
+          "default": "id,message,created_time,permalink_url",
+          "description": "Comma-separated fields.",
+          "title": "Fields",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max posts per page.",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "FbListPostsConfig",
+      "type": "object"
+    },
+    "FbListReelsConfig": {
+      "description": "List a Page's Reels.",
+      "properties": {
+        "operation": {
+          "const": "list_reels",
+          "default": "list_reels",
+          "title": "List Reels",
+          "type": "string",
+          "x-category": "Media",
+          "x-display-name": "List Reels",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The Page ID.",
+          "title": "Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Page ID",
+            "field_name": "page_id",
+            "placeholder": "Select a Page...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "fields": {
+          "default": "id,title,description,created_time,permalink_url",
+          "description": "Comma-separated fields.",
+          "title": "Fields",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max reels per page.",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "FbListReelsConfig",
+      "type": "object"
+    },
+    "FbListVideosConfig": {
+      "description": "List a Page's videos.",
+      "properties": {
+        "operation": {
+          "const": "list_videos",
+          "default": "list_videos",
+          "title": "List Videos",
+          "type": "string",
+          "x-category": "Media",
+          "x-display-name": "List Videos",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The Page ID.",
+          "title": "Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Page ID",
+            "field_name": "page_id",
+            "placeholder": "Select a Page...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "fields": {
+          "default": "id,title,description,created_time,permalink_url",
+          "description": "Comma-separated fields.",
+          "title": "Fields",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max videos per page.",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "FbListVideosConfig",
+      "type": "object"
+    },
+    "FbPageInsightsConfig": {
+      "description": "Get Page-level insights.",
+      "properties": {
+        "operation": {
+          "const": "page_insights",
+          "default": "page_insights",
+          "title": "Page Insights",
+          "type": "string",
+          "x-category": "Insights",
+          "x-display-name": "Page Insights",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The Page ID.",
+          "title": "Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Page ID",
+            "field_name": "page_id",
+            "placeholder": "Select a Page...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "metric": {
+          "default": "page_post_engagements,page_views_total,page_follows",
+          "description": "Comma-separated Page metrics (Graph v25 removed page_impressions/page_fans).",
+          "title": "Metric",
+          "type": "string"
+        },
+        "period": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "day",
+          "description": "Aggregation period.",
+          "enum": [
+            "day",
+            "week",
+            "days_28",
+            "month",
+            "lifetime"
+          ],
+          "title": "Period",
+          "x-enum-searchable": true
+        },
+        "since": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start date (Unix or YYYY-MM-DD).",
+          "title": "Since"
+        },
+        "until": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End date (Unix or YYYY-MM-DD).",
+          "title": "Until"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "FbPageInsightsConfig",
+      "type": "object"
+    },
+    "FbPostAttachmentsConfig": {
+      "description": "Get a post's attachments (media/links).",
+      "properties": {
+        "operation": {
+          "const": "get_post_attachments",
+          "default": "get_post_attachments",
+          "title": "Get Post Attachments",
+          "type": "string",
+          "x-category": "Posts",
+          "x-display-name": "Get Post Attachments",
+          "x-is-trigger": false
+        },
+        "post_id": {
+          "description": "The post ID.",
+          "title": "Post ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "post_id"
+      ],
+      "title": "FbPostAttachmentsConfig",
+      "type": "object"
+    },
+    "FbPostInsightsConfig": {
+      "description": "Get post-level insights.",
+      "properties": {
+        "operation": {
+          "const": "post_insights",
+          "default": "post_insights",
+          "title": "Post Insights",
+          "type": "string",
+          "x-category": "Insights",
+          "x-display-name": "Post Insights",
+          "x-is-trigger": false
+        },
+        "post_id": {
+          "description": "The post ID.",
+          "title": "Post ID",
+          "type": "string"
+        },
+        "metric": {
+          "default": "post_clicks,post_reactions_by_type_total,post_activity_by_action_type",
+          "description": "Comma-separated post metrics (Graph v25 removed post_impressions/post_engaged_users).",
+          "title": "Metric",
+          "type": "string"
+        }
+      },
+      "required": [
+        "post_id"
+      ],
+      "title": "FbPostInsightsConfig",
+      "type": "object"
+    },
+    "FbPrivateReplyConfig": {
+      "description": "Send a private (Messenger) reply to a comment.",
+      "properties": {
+        "operation": {
+          "const": "private_reply",
+          "default": "private_reply",
+          "title": "Private Reply to Comment",
+          "type": "string",
+          "x-category": "Engagement",
+          "x-display-name": "Private Reply to Comment",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The Page ID.",
+          "title": "Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Page ID",
+            "field_name": "page_id",
+            "placeholder": "Select a Page...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "comment_id": {
+          "description": "The comment to reply to privately.",
+          "title": "Comment ID",
+          "type": "string"
+        },
+        "message": {
+          "description": "The private reply text.",
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "page_id",
+        "comment_id",
+        "message"
+      ],
+      "title": "FbPrivateReplyConfig",
+      "type": "object"
+    },
+    "FbPublishPhotoStoryConfig": {
+      "description": "Publish a photo Story to a Page (upload unpublished photo \u2192 create story).",
+      "properties": {
+        "operation": {
+          "const": "publish_photo_story",
+          "default": "publish_photo_story",
+          "title": "Publish Photo Story",
+          "type": "string",
+          "x-category": "Media",
+          "x-display-name": "Publish Photo Story",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The Page ID.",
+          "title": "Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Page ID",
+            "field_name": "page_id",
+            "placeholder": "Select a Page...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "url": {
+          "description": "Publicly reachable image URL to publish as a Story.",
+          "title": "Image URL",
+          "type": "string"
+        }
+      },
+      "required": [
+        "page_id",
+        "url"
+      ],
+      "title": "FbPublishPhotoStoryConfig",
+      "type": "object"
+    },
+    "FbPublishPostConfig": {
+      "description": "Publish (or schedule) a post to a Page's feed.",
+      "properties": {
+        "operation": {
+          "const": "publish_post",
+          "default": "publish_post",
+          "title": "Publish Post",
+          "type": "string",
+          "x-category": "Posts",
+          "x-display-name": "Publish Post",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The Page ID.",
+          "title": "Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Page ID",
+            "field_name": "page_id",
+            "placeholder": "Select a Page...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Post text.",
+          "title": "Message"
+        },
+        "link": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL to attach (with link preview).",
+          "title": "Link"
+        },
+        "scheduled_publish_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unix timestamp to schedule; sets published=false.",
+          "title": "Scheduled Time"
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "Extra feed fields (place, tags, targeting, child_attachments).",
+          "title": "Additional Fields (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "FbPublishPostConfig",
+      "type": "object"
+    },
+    "FbPublishReelConfig": {
+      "description": "Publish a Reel to a Page from a hosted video URL (resumable start \u2192 upload \u2192 finish).",
+      "properties": {
+        "operation": {
+          "const": "publish_reel",
+          "default": "publish_reel",
+          "title": "Publish Reel",
+          "type": "string",
+          "x-category": "Media",
+          "x-display-name": "Publish Reel",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The Page ID.",
+          "title": "Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Page ID",
+            "field_name": "page_id",
+            "placeholder": "Select a Page...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "file_url": {
+          "description": "Publicly reachable video URL to publish as a Reel.",
+          "title": "Video URL",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reel caption/description.",
+          "title": "Description"
+        }
+      },
+      "required": [
+        "page_id",
+        "file_url"
+      ],
+      "title": "FbPublishReelConfig",
+      "type": "object"
+    },
+    "FbPublishVideoStoryConfig": {
+      "description": "Publish a video Story to a Page from a hosted video URL (resumable start \u2192 upload \u2192 finish).",
+      "properties": {
+        "operation": {
+          "const": "publish_video_story",
+          "default": "publish_video_story",
+          "title": "Publish Video Story",
+          "type": "string",
+          "x-category": "Media",
+          "x-display-name": "Publish Video Story",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The Page ID.",
+          "title": "Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Page ID",
+            "field_name": "page_id",
+            "placeholder": "Select a Page...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "file_url": {
+          "description": "Publicly reachable video URL to publish as a Story.",
+          "title": "Video URL",
+          "type": "string"
+        }
+      },
+      "required": [
+        "page_id",
+        "file_url"
+      ],
+      "title": "FbPublishVideoStoryConfig",
+      "type": "object"
+    },
+    "FbReadCommentsConfig": {
+      "description": "Read comments on a post/photo/video.",
+      "properties": {
+        "operation": {
+          "const": "read_comments",
+          "default": "read_comments",
+          "title": "Read Comments",
+          "type": "string",
+          "x-category": "Engagement",
+          "x-display-name": "Read Comments",
+          "x-is-trigger": false
+        },
+        "object_id": {
+          "description": "The post/photo/video/comment ID.",
+          "title": "Object ID",
+          "type": "string"
+        },
+        "fields": {
+          "default": "id,message,from,created_time,like_count,comment_count",
+          "description": "Comma-separated fields.",
+          "title": "Fields",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max comments per page.",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "object_id"
+      ],
+      "title": "FbReadCommentsConfig",
+      "type": "object"
+    },
+    "FbReadFeedConfig": {
+      "description": "Read a Page's feed (posts, statuses, links).",
+      "properties": {
+        "operation": {
+          "const": "read_feed",
+          "default": "read_feed",
+          "title": "Read Feed",
+          "type": "string",
+          "x-category": "Posts",
+          "x-display-name": "Read Feed",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The Page ID.",
+          "title": "Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Page ID",
+            "field_name": "page_id",
+            "placeholder": "Select a Page...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "fields": {
+          "default": "id,message,created_time,permalink_url,from",
+          "description": "Comma-separated fields.",
+          "title": "Fields",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max posts per page.",
+          "title": "Limit"
+        },
+        "since": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start date (Unix or YYYY-MM-DD).",
+          "title": "Since"
+        },
+        "until": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End date (Unix or YYYY-MM-DD).",
+          "title": "Until"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "FbReadFeedConfig",
+      "type": "object"
+    },
+    "FbReadObjectConfig": {
+      "description": "Read any Graph object by ID.",
+      "properties": {
+        "operation": {
+          "const": "read_object",
+          "default": "read_object",
+          "title": "Read Object",
+          "type": "string",
+          "x-category": "Advanced",
+          "x-display-name": "Read Object",
+          "x-is-trigger": false
+        },
+        "object_id": {
+          "description": "Any Graph object ID.",
+          "title": "Object ID",
+          "type": "string"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated fields (optional).",
+          "title": "Fields"
+        }
+      },
+      "required": [
+        "object_id"
+      ],
+      "title": "FbReadObjectConfig",
+      "type": "object"
+    },
+    "FbSendAttachmentConfig": {
+      "description": "Send a media attachment (image/audio/video/file) by URL over Messenger.",
+      "properties": {
+        "operation": {
+          "const": "send_attachment",
+          "default": "send_attachment",
+          "title": "Send Attachment",
+          "type": "string",
+          "x-category": "Messenger",
+          "x-display-name": "Send Attachment",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The Page ID.",
+          "title": "Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Page ID",
+            "field_name": "page_id",
+            "placeholder": "Select a Page...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "recipient_id": {
+          "description": "The recipient's PSID.",
+          "title": "Recipient PSID",
+          "type": "string"
+        },
+        "attachment_type": {
+          "default": "image",
+          "description": "Attachment media type.",
+          "enum": [
+            "image",
+            "audio",
+            "video",
+            "file"
+          ],
+          "title": "Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "url": {
+          "description": "Publicly reachable media URL.",
+          "title": "URL",
+          "type": "string"
+        },
+        "is_reusable": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "false",
+          "description": "Cache for reuse via attachment_id.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "title": "Reusable",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "page_id",
+        "recipient_id",
+        "url"
+      ],
+      "title": "FbSendAttachmentConfig",
+      "type": "object"
+    },
+    "FbSendMessageConfig": {
+      "description": "Send a Messenger message (text or raw message object) to a recipient.",
+      "properties": {
+        "operation": {
+          "const": "send_message",
+          "default": "send_message",
+          "title": "Send Message",
+          "type": "string",
+          "x-category": "Messenger",
+          "x-display-name": "Send Message",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The Page ID.",
+          "title": "Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Page ID",
+            "field_name": "page_id",
+            "placeholder": "Select a Page...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "recipient_id": {
+          "description": "The recipient's Page-scoped ID (PSID).",
+          "title": "Recipient PSID",
+          "type": "string"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Message text (leave blank if using Message JSON).",
+          "title": "Text"
+        },
+        "message_json": {
+          "default": "{}",
+          "description": "Full message object (attachment/template/quick_replies). Overrides Text if set.",
+          "title": "Message JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "messaging_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "RESPONSE",
+          "description": "Messaging type; MESSAGE_TAG requires a Tag.",
+          "enum": [
+            "RESPONSE",
+            "UPDATE",
+            "MESSAGE_TAG"
+          ],
+          "title": "Messaging Type",
+          "x-enum-searchable": true
+        },
+        "tag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Message tag (required for MESSAGE_TAG).",
+          "enum": [
+            "CONFIRMED_EVENT_UPDATE",
+            "POST_PURCHASE_UPDATE",
+            "ACCOUNT_UPDATE",
+            "HUMAN_AGENT"
+          ],
+          "title": "Message Tag",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "page_id",
+        "recipient_id"
+      ],
+      "title": "FbSendMessageConfig",
+      "type": "object"
+    },
+    "FbSenderActionConfig": {
+      "description": "Send a sender action (typing indicator / mark seen).",
+      "properties": {
+        "operation": {
+          "const": "send_sender_action",
+          "default": "send_sender_action",
+          "title": "Send Sender Action",
+          "type": "string",
+          "x-category": "Messenger",
+          "x-display-name": "Send Sender Action",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The Page ID.",
+          "title": "Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Page ID",
+            "field_name": "page_id",
+            "placeholder": "Select a Page...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "recipient_id": {
+          "description": "The recipient's PSID.",
+          "title": "Recipient PSID",
+          "type": "string"
+        },
+        "sender_action": {
+          "default": "typing_on",
+          "description": "The sender action.",
+          "enum": [
+            "typing_on",
+            "typing_off",
+            "mark_seen"
+          ],
+          "title": "Action",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "page_id",
+        "recipient_id"
+      ],
+      "title": "FbSenderActionConfig",
+      "type": "object"
+    },
+    "FbSetMessengerProfileConfig": {
+      "description": "Set the Messenger Profile (get started / persistent menu / greeting / ice breakers).",
+      "properties": {
+        "operation": {
+          "const": "set_messenger_profile",
+          "default": "set_messenger_profile",
+          "title": "Set Messenger Profile",
+          "type": "string",
+          "x-category": "Messenger",
+          "x-display-name": "Set Messenger Profile",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The Page ID.",
+          "title": "Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Page ID",
+            "field_name": "page_id",
+            "placeholder": "Select a Page...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "profile_json": {
+          "default": "{}",
+          "description": "e.g. {\"get_started\":{\"payload\":\"START\"},\"persistent_menu\":[...],\"greeting\":[...]}.",
+          "title": "Profile JSON",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "FbSetMessengerProfileConfig",
+      "type": "object"
+    },
+    "FbSubscribeWebhooksConfig": {
+      "description": "Subscribe the app to a Page's webhook fields.",
+      "properties": {
+        "operation": {
+          "const": "subscribe_page_webhooks",
+          "default": "subscribe_page_webhooks",
+          "title": "Subscribe Page Webhooks",
+          "type": "string",
+          "x-category": "Pages",
+          "x-display-name": "Subscribe Page Webhooks",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The Page ID.",
+          "title": "Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Page ID",
+            "field_name": "page_id",
+            "placeholder": "Select a Page...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "subscribed_fields": {
+          "default": "feed,messages,messaging_postbacks,mention,ratings",
+          "description": "Comma-separated webhook fields to subscribe to.",
+          "title": "Subscribed Fields",
+          "type": "string"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "FbSubscribeWebhooksConfig",
+      "type": "object"
+    },
+    "FbTrigger_on_any_facebook_event": {
+      "properties": {
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Paste this into your Meta app's webhook config.",
+          "title": "Callback URL",
+          "ui:copyable": true,
+          "ui:widget": "webhook"
+        },
+        "verify_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token Meta echoes during the subscription handshake.",
+          "title": "Verify Token"
+        },
+        "app_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "App secret for X-Hub-Signature-256 verification.",
+          "title": "App Secret",
+          "ui:widget": "password"
+        },
+        "operation": {
+          "const": "on_any_facebook_event",
+          "default": "on_any_facebook_event",
+          "title": "On Any Facebook Event",
+          "type": "string",
+          "x-category": "Triggers",
+          "x-display-name": "On Any Facebook Event",
+          "x-is-trigger": true,
+          "x-webhook-field": "*"
+        }
+      },
+      "title": "FbTrigger_on_any_facebook_event",
+      "type": "object"
+    },
+    "FbTrigger_on_feed": {
+      "properties": {
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Paste this into your Meta app's webhook config.",
+          "title": "Callback URL",
+          "ui:copyable": true,
+          "ui:widget": "webhook"
+        },
+        "verify_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token Meta echoes during the subscription handshake.",
+          "title": "Verify Token"
+        },
+        "app_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "App secret for X-Hub-Signature-256 verification.",
+          "title": "App Secret",
+          "ui:widget": "password"
+        },
+        "operation": {
+          "const": "on_feed",
+          "default": "on_feed",
+          "title": "On Feed Activity",
+          "type": "string",
+          "x-category": "Triggers",
+          "x-display-name": "On Feed Activity",
+          "x-is-trigger": true,
+          "x-webhook-field": "feed"
+        }
+      },
+      "title": "FbTrigger_on_feed",
+      "type": "object"
+    },
+    "FbTrigger_on_mention": {
+      "properties": {
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Paste this into your Meta app's webhook config.",
+          "title": "Callback URL",
+          "ui:copyable": true,
+          "ui:widget": "webhook"
+        },
+        "verify_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token Meta echoes during the subscription handshake.",
+          "title": "Verify Token"
+        },
+        "app_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "App secret for X-Hub-Signature-256 verification.",
+          "title": "App Secret",
+          "ui:widget": "password"
+        },
+        "operation": {
+          "const": "on_mention",
+          "default": "on_mention",
+          "title": "On Page Mention",
+          "type": "string",
+          "x-category": "Triggers",
+          "x-display-name": "On Page Mention",
+          "x-is-trigger": true,
+          "x-webhook-field": "mention"
+        }
+      },
+      "title": "FbTrigger_on_mention",
+      "type": "object"
+    },
+    "FbTrigger_on_message_deliveries": {
+      "properties": {
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Paste this into your Meta app's webhook config.",
+          "title": "Callback URL",
+          "ui:copyable": true,
+          "ui:widget": "webhook"
+        },
+        "verify_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token Meta echoes during the subscription handshake.",
+          "title": "Verify Token"
+        },
+        "app_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "App secret for X-Hub-Signature-256 verification.",
+          "title": "App Secret",
+          "ui:widget": "password"
+        },
+        "operation": {
+          "const": "on_message_deliveries",
+          "default": "on_message_deliveries",
+          "title": "On Message Delivered",
+          "type": "string",
+          "x-category": "Triggers",
+          "x-display-name": "On Message Delivered",
+          "x-is-trigger": true,
+          "x-webhook-field": "message_deliveries"
+        }
+      },
+      "title": "FbTrigger_on_message_deliveries",
+      "type": "object"
+    },
+    "FbTrigger_on_message_reactions": {
+      "properties": {
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Paste this into your Meta app's webhook config.",
+          "title": "Callback URL",
+          "ui:copyable": true,
+          "ui:widget": "webhook"
+        },
+        "verify_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token Meta echoes during the subscription handshake.",
+          "title": "Verify Token"
+        },
+        "app_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "App secret for X-Hub-Signature-256 verification.",
+          "title": "App Secret",
+          "ui:widget": "password"
+        },
+        "operation": {
+          "const": "on_message_reactions",
+          "default": "on_message_reactions",
+          "title": "On Message Reaction",
+          "type": "string",
+          "x-category": "Triggers",
+          "x-display-name": "On Message Reaction",
+          "x-is-trigger": true,
+          "x-webhook-field": "message_reactions"
+        }
+      },
+      "title": "FbTrigger_on_message_reactions",
+      "type": "object"
+    },
+    "FbTrigger_on_message_reads": {
+      "properties": {
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Paste this into your Meta app's webhook config.",
+          "title": "Callback URL",
+          "ui:copyable": true,
+          "ui:widget": "webhook"
+        },
+        "verify_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token Meta echoes during the subscription handshake.",
+          "title": "Verify Token"
+        },
+        "app_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "App secret for X-Hub-Signature-256 verification.",
+          "title": "App Secret",
+          "ui:widget": "password"
+        },
+        "operation": {
+          "const": "on_message_reads",
+          "default": "on_message_reads",
+          "title": "On Message Read",
+          "type": "string",
+          "x-category": "Triggers",
+          "x-display-name": "On Message Read",
+          "x-is-trigger": true,
+          "x-webhook-field": "message_reads"
+        }
+      },
+      "title": "FbTrigger_on_message_reads",
+      "type": "object"
+    },
+    "FbTrigger_on_messages": {
+      "properties": {
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Paste this into your Meta app's webhook config.",
+          "title": "Callback URL",
+          "ui:copyable": true,
+          "ui:widget": "webhook"
+        },
+        "verify_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token Meta echoes during the subscription handshake.",
+          "title": "Verify Token"
+        },
+        "app_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "App secret for X-Hub-Signature-256 verification.",
+          "title": "App Secret",
+          "ui:widget": "password"
+        },
+        "operation": {
+          "const": "on_messages",
+          "default": "on_messages",
+          "title": "On Message",
+          "type": "string",
+          "x-category": "Triggers",
+          "x-display-name": "On Message",
+          "x-is-trigger": true,
+          "x-webhook-field": "messages"
+        }
+      },
+      "title": "FbTrigger_on_messages",
+      "type": "object"
+    },
+    "FbTrigger_on_messaging_postbacks": {
+      "properties": {
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Paste this into your Meta app's webhook config.",
+          "title": "Callback URL",
+          "ui:copyable": true,
+          "ui:widget": "webhook"
+        },
+        "verify_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token Meta echoes during the subscription handshake.",
+          "title": "Verify Token"
+        },
+        "app_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "App secret for X-Hub-Signature-256 verification.",
+          "title": "App Secret",
+          "ui:widget": "password"
+        },
+        "operation": {
+          "const": "on_messaging_postbacks",
+          "default": "on_messaging_postbacks",
+          "title": "On Postback",
+          "type": "string",
+          "x-category": "Triggers",
+          "x-display-name": "On Postback",
+          "x-is-trigger": true,
+          "x-webhook-field": "messaging_postbacks"
+        }
+      },
+      "title": "FbTrigger_on_messaging_postbacks",
+      "type": "object"
+    },
+    "FbTrigger_on_messaging_referrals": {
+      "properties": {
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Paste this into your Meta app's webhook config.",
+          "title": "Callback URL",
+          "ui:copyable": true,
+          "ui:widget": "webhook"
+        },
+        "verify_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token Meta echoes during the subscription handshake.",
+          "title": "Verify Token"
+        },
+        "app_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "App secret for X-Hub-Signature-256 verification.",
+          "title": "App Secret",
+          "ui:widget": "password"
+        },
+        "operation": {
+          "const": "on_messaging_referrals",
+          "default": "on_messaging_referrals",
+          "title": "On Referral",
+          "type": "string",
+          "x-category": "Triggers",
+          "x-display-name": "On Referral",
+          "x-is-trigger": true,
+          "x-webhook-field": "messaging_referrals"
+        }
+      },
+      "title": "FbTrigger_on_messaging_referrals",
+      "type": "object"
+    },
+    "FbTrigger_on_ratings": {
+      "properties": {
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Paste this into your Meta app's webhook config.",
+          "title": "Callback URL",
+          "ui:copyable": true,
+          "ui:widget": "webhook"
+        },
+        "verify_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token Meta echoes during the subscription handshake.",
+          "title": "Verify Token"
+        },
+        "app_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "App secret for X-Hub-Signature-256 verification.",
+          "title": "App Secret",
+          "ui:widget": "password"
+        },
+        "operation": {
+          "const": "on_ratings",
+          "default": "on_ratings",
+          "title": "On New Rating",
+          "type": "string",
+          "x-category": "Triggers",
+          "x-display-name": "On New Rating",
+          "x-is-trigger": true,
+          "x-webhook-field": "ratings"
+        }
+      },
+      "title": "FbTrigger_on_ratings",
+      "type": "object"
+    },
+    "FbTrigger_on_standby": {
+      "properties": {
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Paste this into your Meta app's webhook config.",
+          "title": "Callback URL",
+          "ui:copyable": true,
+          "ui:widget": "webhook"
+        },
+        "verify_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token Meta echoes during the subscription handshake.",
+          "title": "Verify Token"
+        },
+        "app_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "App secret for X-Hub-Signature-256 verification.",
+          "title": "App Secret",
+          "ui:widget": "password"
+        },
+        "operation": {
+          "const": "on_standby",
+          "default": "on_standby",
+          "title": "On Standby (Handover)",
+          "type": "string",
+          "x-category": "Triggers",
+          "x-display-name": "On Standby (Handover)",
+          "x-is-trigger": true,
+          "x-webhook-field": "standby"
+        }
+      },
+      "title": "FbTrigger_on_standby",
+      "type": "object"
+    },
+    "FbUnlikeObjectConfig": {
+      "description": "Remove the Page's like from an object.",
+      "properties": {
+        "operation": {
+          "const": "unlike_object",
+          "default": "unlike_object",
+          "title": "Unlike Object",
+          "type": "string",
+          "x-category": "Engagement",
+          "x-display-name": "Unlike Object",
+          "x-is-trigger": false
+        },
+        "object_id": {
+          "description": "The post/comment ID to unlike.",
+          "title": "Object ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "object_id"
+      ],
+      "title": "FbUnlikeObjectConfig",
+      "type": "object"
+    },
+    "FbUnsubscribeWebhooksConfig": {
+      "description": "Unsubscribe the app from a Page's webhooks.",
+      "properties": {
+        "operation": {
+          "const": "unsubscribe_page_webhooks",
+          "default": "unsubscribe_page_webhooks",
+          "title": "Unsubscribe Page Webhooks",
+          "type": "string",
+          "x-category": "Pages",
+          "x-display-name": "Unsubscribe Page Webhooks",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The Page ID.",
+          "title": "Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Page ID",
+            "field_name": "page_id",
+            "placeholder": "Select a Page...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "FbUnsubscribeWebhooksConfig",
+      "type": "object"
+    },
+    "FbUpdateCommentConfig": {
+      "description": "Edit a comment.",
+      "properties": {
+        "operation": {
+          "const": "update_comment",
+          "default": "update_comment",
+          "title": "Update Comment",
+          "type": "string",
+          "x-category": "Engagement",
+          "x-display-name": "Update Comment",
+          "x-is-trigger": false
+        },
+        "comment_id": {
+          "description": "The comment ID.",
+          "title": "Comment ID",
+          "type": "string"
+        },
+        "message": {
+          "description": "New comment text.",
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "comment_id",
+        "message"
+      ],
+      "title": "FbUpdateCommentConfig",
+      "type": "object"
+    },
+    "FbUpdatePageConfig": {
+      "description": "Update a Page's settings/metadata (about, phone, website, hours, etc.).",
+      "properties": {
+        "operation": {
+          "const": "update_page",
+          "default": "update_page",
+          "title": "Update Page",
+          "type": "string",
+          "x-category": "Pages",
+          "x-display-name": "Update Page",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The Page ID.",
+          "title": "Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Page ID",
+            "field_name": "page_id",
+            "placeholder": "Select a Page...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "fields_json": {
+          "default": "{}",
+          "description": "Fields to update, e.g. {\"about\":\"...\",\"phone\":\"...\",\"website\":\"...\"}.",
+          "title": "Fields (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "FbUpdatePageConfig",
+      "type": "object"
+    },
+    "FbUpdatePostConfig": {
+      "description": "Edit a post's message.",
+      "properties": {
+        "operation": {
+          "const": "update_post",
+          "default": "update_post",
+          "title": "Update Post",
+          "type": "string",
+          "x-category": "Posts",
+          "x-display-name": "Update Post",
+          "x-is-trigger": false
+        },
+        "post_id": {
+          "description": "The post ID to edit.",
+          "title": "Post ID",
+          "type": "string"
+        },
+        "message": {
+          "description": "New post text.",
+          "title": "Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "post_id",
+        "message"
+      ],
+      "title": "FbUpdatePostConfig",
+      "type": "object"
+    },
+    "FbUploadMessageAttachmentConfig": {
+      "description": "Upload a reusable Messenger attachment; returns an attachment_id.",
+      "properties": {
+        "operation": {
+          "const": "upload_message_attachment",
+          "default": "upload_message_attachment",
+          "title": "Upload Message Attachment",
+          "type": "string",
+          "x-category": "Messenger",
+          "x-display-name": "Upload Message Attachment",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The Page ID.",
+          "title": "Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Page ID",
+            "field_name": "page_id",
+            "placeholder": "Select a Page...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "attachment_type": {
+          "default": "image",
+          "description": "Attachment media type.",
+          "enum": [
+            "image",
+            "audio",
+            "video",
+            "file"
+          ],
+          "title": "Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "url": {
+          "description": "Publicly reachable media URL.",
+          "title": "URL",
+          "type": "string"
+        }
+      },
+      "required": [
+        "page_id",
+        "url"
+      ],
+      "title": "FbUploadMessageAttachmentConfig",
+      "type": "object"
+    },
+    "FbUploadPhotoConfig": {
+      "description": "Upload a photo to a Page (by URL).",
+      "properties": {
+        "operation": {
+          "const": "upload_photo",
+          "default": "upload_photo",
+          "title": "Upload Photo",
+          "type": "string",
+          "x-category": "Media",
+          "x-display-name": "Upload Photo",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The Page ID.",
+          "title": "Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Page ID",
+            "field_name": "page_id",
+            "placeholder": "Select a Page...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "url": {
+          "description": "Publicly reachable image URL.",
+          "title": "Image URL",
+          "type": "string"
+        },
+        "caption": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Photo caption.",
+          "title": "Caption"
+        },
+        "published": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "true",
+          "description": "Publish now, or upload unpublished for later attachment.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "title": "Published",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "page_id",
+        "url"
+      ],
+      "title": "FbUploadPhotoConfig",
+      "type": "object"
+    },
+    "FbUploadVideoConfig": {
+      "description": "Upload a video to a Page (by URL).",
+      "properties": {
+        "operation": {
+          "const": "upload_video",
+          "default": "upload_video",
+          "title": "Upload Video",
+          "type": "string",
+          "x-category": "Media",
+          "x-display-name": "Upload Video",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The Page ID.",
+          "title": "Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Page ID",
+            "field_name": "page_id",
+            "placeholder": "Select a Page...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "file_url": {
+          "description": "Publicly reachable video URL.",
+          "title": "Video URL",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Video title.",
+          "title": "Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Video description.",
+          "title": "Description"
+        }
+      },
+      "required": [
+        "page_id",
+        "file_url"
+      ],
+      "title": "FbUploadVideoConfig",
+      "type": "object"
+    },
+    "Fb_get_blocked_Config": {
+      "properties": {
+        "operation": {
+          "const": "get_blocked",
+          "default": "get_blocked",
+          "title": "Get Blocked Users",
+          "type": "string",
+          "x-category": "Pages",
+          "x-display-name": "Get Blocked Users",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The Page ID.",
+          "title": "Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Page ID",
+            "field_name": "page_id",
+            "placeholder": "Select a Page...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated fields (optional).",
+          "title": "Fields"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max items per page.",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "Fb_get_blocked_Config",
+      "type": "object"
+    },
+    "Fb_get_conversations_Config": {
+      "properties": {
+        "operation": {
+          "const": "get_conversations",
+          "default": "get_conversations",
+          "title": "Get Conversations (Inbox)",
+          "type": "string",
+          "x-category": "Pages",
+          "x-display-name": "Get Conversations (Inbox)",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The Page ID.",
+          "title": "Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Page ID",
+            "field_name": "page_id",
+            "placeholder": "Select a Page...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated fields (optional).",
+          "title": "Fields"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max items per page.",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "Fb_get_conversations_Config",
+      "type": "object"
+    },
+    "Fb_get_events_Config": {
+      "properties": {
+        "operation": {
+          "const": "get_events",
+          "default": "get_events",
+          "title": "Get Page Events",
+          "type": "string",
+          "x-category": "Pages",
+          "x-display-name": "Get Page Events",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The Page ID.",
+          "title": "Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Page ID",
+            "field_name": "page_id",
+            "placeholder": "Select a Page...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated fields (optional).",
+          "title": "Fields"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max items per page.",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "Fb_get_events_Config",
+      "type": "object"
+    },
+    "Fb_get_ratings_Config": {
+      "properties": {
+        "operation": {
+          "const": "get_ratings",
+          "default": "get_ratings",
+          "title": "Get Page Ratings",
+          "type": "string",
+          "x-category": "Pages",
+          "x-display-name": "Get Page Ratings",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The Page ID.",
+          "title": "Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Page ID",
+            "field_name": "page_id",
+            "placeholder": "Select a Page...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated fields (optional).",
+          "title": "Fields"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max items per page.",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "Fb_get_ratings_Config",
+      "type": "object"
+    },
+    "Fb_get_roles_Config": {
+      "properties": {
+        "operation": {
+          "const": "get_roles",
+          "default": "get_roles",
+          "title": "Get Page Roles",
+          "type": "string",
+          "x-category": "Pages",
+          "x-display-name": "Get Page Roles",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The Page ID.",
+          "title": "Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Page ID",
+            "field_name": "page_id",
+            "placeholder": "Select a Page...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated fields (optional).",
+          "title": "Fields"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max items per page.",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "Fb_get_roles_Config",
+      "type": "object"
+    },
+    "Fb_get_settings_Config": {
+      "properties": {
+        "operation": {
+          "const": "get_settings",
+          "default": "get_settings",
+          "title": "Get Page Settings",
+          "type": "string",
+          "x-category": "Pages",
+          "x-display-name": "Get Page Settings",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The Page ID.",
+          "title": "Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Page ID",
+            "field_name": "page_id",
+            "placeholder": "Select a Page...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated fields (optional).",
+          "title": "Fields"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max items per page.",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "Fb_get_settings_Config",
+      "type": "object"
+    },
+    "Fb_get_tagged_Config": {
+      "properties": {
+        "operation": {
+          "const": "get_tagged",
+          "default": "get_tagged",
+          "title": "Get Tagged Content",
+          "type": "string",
+          "x-category": "Pages",
+          "x-display-name": "Get Tagged Content",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The Page ID.",
+          "title": "Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Page ID",
+            "field_name": "page_id",
+            "placeholder": "Select a Page...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated fields (optional).",
+          "title": "Fields"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max items per page.",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "Fb_get_tagged_Config",
+      "type": "object"
+    },
+    "Fb_list_live_videos_Config": {
+      "properties": {
+        "operation": {
+          "const": "list_live_videos",
+          "default": "list_live_videos",
+          "title": "List Live Videos",
+          "type": "string",
+          "x-category": "Pages",
+          "x-display-name": "List Live Videos",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The Page ID.",
+          "title": "Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Page ID",
+            "field_name": "page_id",
+            "placeholder": "Select a Page...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated fields (optional).",
+          "title": "Fields"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max items per page.",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "Fb_list_live_videos_Config",
+      "type": "object"
+    },
+    "Fb_list_page_subscriptions_Config": {
+      "properties": {
+        "operation": {
+          "const": "list_page_subscriptions",
+          "default": "list_page_subscriptions",
+          "title": "List Webhook Subscriptions",
+          "type": "string",
+          "x-category": "Pages",
+          "x-display-name": "List Webhook Subscriptions",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The Page ID.",
+          "title": "Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Page ID",
+            "field_name": "page_id",
+            "placeholder": "Select a Page...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated fields (optional).",
+          "title": "Fields"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max items per page.",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "Fb_list_page_subscriptions_Config",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_comment": "#/$defs/FbCreateCommentConfig",
+          "delete_comment": "#/$defs/FbDeleteCommentConfig",
+          "delete_post": "#/$defs/FbDeletePostConfig",
+          "get_blocked": "#/$defs/Fb_get_blocked_Config",
+          "get_conversations": "#/$defs/Fb_get_conversations_Config",
+          "get_events": "#/$defs/Fb_get_events_Config",
+          "get_me": "#/$defs/FbGetMeConfig",
+          "get_messenger_profile": "#/$defs/FbGetMessengerProfileConfig",
+          "get_page": "#/$defs/FbGetPageConfig",
+          "get_post": "#/$defs/FbGetPostConfig",
+          "get_post_attachments": "#/$defs/FbPostAttachmentsConfig",
+          "get_ratings": "#/$defs/Fb_get_ratings_Config",
+          "get_reactions": "#/$defs/FbGetReactionsConfig",
+          "get_roles": "#/$defs/Fb_get_roles_Config",
+          "get_settings": "#/$defs/Fb_get_settings_Config",
+          "get_tagged": "#/$defs/Fb_get_tagged_Config",
+          "get_user_profile": "#/$defs/FbGetUserProfileConfig",
+          "graph_request": "#/$defs/FbGraphRequestConfig",
+          "hide_comment": "#/$defs/FbHideCommentConfig",
+          "like_object": "#/$defs/FbLikeObjectConfig",
+          "list_albums": "#/$defs/FbListAlbumsConfig",
+          "list_live_videos": "#/$defs/Fb_list_live_videos_Config",
+          "list_page_subscriptions": "#/$defs/Fb_list_page_subscriptions_Config",
+          "list_pages": "#/$defs/FbListPagesConfig",
+          "list_posts": "#/$defs/FbListPostsConfig",
+          "list_reels": "#/$defs/FbListReelsConfig",
+          "list_videos": "#/$defs/FbListVideosConfig",
+          "on_any_facebook_event": "#/$defs/FbTrigger_on_any_facebook_event",
+          "on_feed": "#/$defs/FbTrigger_on_feed",
+          "on_mention": "#/$defs/FbTrigger_on_mention",
+          "on_message_deliveries": "#/$defs/FbTrigger_on_message_deliveries",
+          "on_message_reactions": "#/$defs/FbTrigger_on_message_reactions",
+          "on_message_reads": "#/$defs/FbTrigger_on_message_reads",
+          "on_messages": "#/$defs/FbTrigger_on_messages",
+          "on_messaging_postbacks": "#/$defs/FbTrigger_on_messaging_postbacks",
+          "on_messaging_referrals": "#/$defs/FbTrigger_on_messaging_referrals",
+          "on_ratings": "#/$defs/FbTrigger_on_ratings",
+          "on_standby": "#/$defs/FbTrigger_on_standby",
+          "page_insights": "#/$defs/FbPageInsightsConfig",
+          "post_insights": "#/$defs/FbPostInsightsConfig",
+          "private_reply": "#/$defs/FbPrivateReplyConfig",
+          "publish_photo_story": "#/$defs/FbPublishPhotoStoryConfig",
+          "publish_post": "#/$defs/FbPublishPostConfig",
+          "publish_reel": "#/$defs/FbPublishReelConfig",
+          "publish_video_story": "#/$defs/FbPublishVideoStoryConfig",
+          "read_comments": "#/$defs/FbReadCommentsConfig",
+          "read_feed": "#/$defs/FbReadFeedConfig",
+          "read_object": "#/$defs/FbReadObjectConfig",
+          "send_attachment": "#/$defs/FbSendAttachmentConfig",
+          "send_message": "#/$defs/FbSendMessageConfig",
+          "send_sender_action": "#/$defs/FbSenderActionConfig",
+          "set_messenger_profile": "#/$defs/FbSetMessengerProfileConfig",
+          "subscribe_page_webhooks": "#/$defs/FbSubscribeWebhooksConfig",
+          "thread_control": "#/$defs/FbHandoverConfig",
+          "unlike_object": "#/$defs/FbUnlikeObjectConfig",
+          "unsubscribe_page_webhooks": "#/$defs/FbUnsubscribeWebhooksConfig",
+          "update_comment": "#/$defs/FbUpdateCommentConfig",
+          "update_page": "#/$defs/FbUpdatePageConfig",
+          "update_post": "#/$defs/FbUpdatePostConfig",
+          "upload_message_attachment": "#/$defs/FbUploadMessageAttachmentConfig",
+          "upload_photo": "#/$defs/FbUploadPhotoConfig",
+          "upload_video": "#/$defs/FbUploadVideoConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/FbTrigger_on_feed"
+        },
+        {
+          "$ref": "#/$defs/FbTrigger_on_mention"
+        },
+        {
+          "$ref": "#/$defs/FbTrigger_on_ratings"
+        },
+        {
+          "$ref": "#/$defs/FbTrigger_on_messages"
+        },
+        {
+          "$ref": "#/$defs/FbTrigger_on_messaging_postbacks"
+        },
+        {
+          "$ref": "#/$defs/FbTrigger_on_messaging_referrals"
+        },
+        {
+          "$ref": "#/$defs/FbTrigger_on_message_reactions"
+        },
+        {
+          "$ref": "#/$defs/FbTrigger_on_message_deliveries"
+        },
+        {
+          "$ref": "#/$defs/FbTrigger_on_message_reads"
+        },
+        {
+          "$ref": "#/$defs/FbTrigger_on_standby"
+        },
+        {
+          "$ref": "#/$defs/FbTrigger_on_any_facebook_event"
+        },
+        {
+          "$ref": "#/$defs/FbGetMeConfig"
+        },
+        {
+          "$ref": "#/$defs/FbListPagesConfig"
+        },
+        {
+          "$ref": "#/$defs/FbGetPageConfig"
+        },
+        {
+          "$ref": "#/$defs/FbUpdatePageConfig"
+        },
+        {
+          "$ref": "#/$defs/FbPublishPostConfig"
+        },
+        {
+          "$ref": "#/$defs/FbReadFeedConfig"
+        },
+        {
+          "$ref": "#/$defs/FbListPostsConfig"
+        },
+        {
+          "$ref": "#/$defs/FbGetPostConfig"
+        },
+        {
+          "$ref": "#/$defs/FbUpdatePostConfig"
+        },
+        {
+          "$ref": "#/$defs/FbDeletePostConfig"
+        },
+        {
+          "$ref": "#/$defs/FbPostAttachmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/FbUploadPhotoConfig"
+        },
+        {
+          "$ref": "#/$defs/FbListAlbumsConfig"
+        },
+        {
+          "$ref": "#/$defs/FbUploadVideoConfig"
+        },
+        {
+          "$ref": "#/$defs/FbListVideosConfig"
+        },
+        {
+          "$ref": "#/$defs/FbPublishReelConfig"
+        },
+        {
+          "$ref": "#/$defs/FbListReelsConfig"
+        },
+        {
+          "$ref": "#/$defs/FbPublishPhotoStoryConfig"
+        },
+        {
+          "$ref": "#/$defs/FbPublishVideoStoryConfig"
+        },
+        {
+          "$ref": "#/$defs/FbReadCommentsConfig"
+        },
+        {
+          "$ref": "#/$defs/FbCreateCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/FbUpdateCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/FbDeleteCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/FbHideCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/FbPrivateReplyConfig"
+        },
+        {
+          "$ref": "#/$defs/FbLikeObjectConfig"
+        },
+        {
+          "$ref": "#/$defs/FbUnlikeObjectConfig"
+        },
+        {
+          "$ref": "#/$defs/FbGetReactionsConfig"
+        },
+        {
+          "$ref": "#/$defs/FbPageInsightsConfig"
+        },
+        {
+          "$ref": "#/$defs/FbPostInsightsConfig"
+        },
+        {
+          "$ref": "#/$defs/Fb_get_roles_Config"
+        },
+        {
+          "$ref": "#/$defs/Fb_get_settings_Config"
+        },
+        {
+          "$ref": "#/$defs/Fb_get_blocked_Config"
+        },
+        {
+          "$ref": "#/$defs/Fb_get_events_Config"
+        },
+        {
+          "$ref": "#/$defs/Fb_get_ratings_Config"
+        },
+        {
+          "$ref": "#/$defs/Fb_get_tagged_Config"
+        },
+        {
+          "$ref": "#/$defs/Fb_get_conversations_Config"
+        },
+        {
+          "$ref": "#/$defs/Fb_list_live_videos_Config"
+        },
+        {
+          "$ref": "#/$defs/Fb_list_page_subscriptions_Config"
+        },
+        {
+          "$ref": "#/$defs/FbSubscribeWebhooksConfig"
+        },
+        {
+          "$ref": "#/$defs/FbUnsubscribeWebhooksConfig"
+        },
+        {
+          "$ref": "#/$defs/FbSendMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/FbSendAttachmentConfig"
+        },
+        {
+          "$ref": "#/$defs/FbSenderActionConfig"
+        },
+        {
+          "$ref": "#/$defs/FbUploadMessageAttachmentConfig"
+        },
+        {
+          "$ref": "#/$defs/FbGetUserProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/FbSetMessengerProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/FbGetMessengerProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/FbHandoverConfig"
+        },
+        {
+          "$ref": "#/$defs/FbReadObjectConfig"
+        },
+        {
+          "$ref": "#/$defs/FbGraphRequestConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FacebookOAuthCredential"
+        },
+        {
+          "$ref": "#/$defs/FacebookAccessTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Facebook Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Publish a post to my Facebook Page",
+    "Reply to a comment on my Page",
+    "Send a Messenger message to a user",
+    "Pull my Page's insights",
+    "Trigger a workflow when someone messages my Page"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -1,0 +1,75 @@
+# One-click deploy to Render: one service, plus a free Supabase project for the
+# database and authentication.
+#
+# The whole application runs in a single container — backend, app and front door
+# on one port (docker/single-origin.Dockerfile). It has no persistent disk, so
+# the database lives elsewhere; create a project at supabase.com first, and
+# Render will ask for the values below.
+#
+# Deploy directly with:
+#   https://render.com/deploy?repo=https://github.com/noclickapp/noclick
+
+services:
+  - type: web
+    name: noclick
+    runtime: docker
+    dockerfilePath: ./docker/single-origin.Dockerfile
+    dockerContext: .
+    # The scheduler and the realtime relay run inside this process, so the
+    # instance count is one by design — see docs/self-hosting.md.
+    numInstances: 1
+    plan: standard
+    healthCheckPath: /health
+    # Applies the schema and creates both private object-storage buckets.
+    # Idempotent, so it is safe on every deploy.
+    preDeployCommand: python /app/docker/bootstrap.py
+    envVars:
+      # ── From your Supabase project ──────────────────────────────────────────
+      # Settings → Database → Connection string. Use the pooler URL for
+      # POSTGRES_POOLER_URL and the direct one for POSTGRES_URL.
+      - key: POSTGRES_URL
+        sync: false
+      - key: POSTGRES_POOLER_URL
+        sync: false
+      # Project settings → API. For a managed Supabase project, the JWKS URL
+      # is $SUPABASE_URL/auth/v1/.well-known/jwks.json.
+      - key: SUPABASE_URL
+        sync: false
+      - key: SUPABASE_ANON_KEY
+        sync: false
+      - key: SUPABASE_SECRET_KEY
+        sync: false
+      - key: SUPABASE_JWK_URL
+        sync: false
+
+      # ── This instance's keys ────────────────────────────────────────────────
+      # A Fernet key, and the one value you must generate yourself and keep a
+      # copy of — every stored integration credential is encrypted with it and
+      # unreadable without it:
+      #   python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+      - key: CREDENTIALS_ENCRYPTION_KEY
+        sync: false
+      - key: WORKFLOW_JWT_SECRET
+        generateValue: true
+      - key: CRON_SCHEDULER_SECRET
+        generateValue: true
+      - key: SESSION_SECRET
+        generateValue: true
+
+      # No Turnstile keys on a self-hosted instance, and a captcha keyed to
+      # another domain would never issue a token — which would leave sign-up
+      # permanently broken.
+      - key: VITE_DISABLE_CAPTCHA
+        value: "true"
+
+      # ── Optional ────────────────────────────────────────────────────────────
+      # S3-compatible storage for uploaded files. File features stay disabled
+      # until all three are set; any S3 provider works.
+      - key: OBJECT_STORAGE_ENDPOINT
+        sync: false
+      - key: OBJECT_STORAGE_ACCESS_KEY_ID
+        sync: false
+      - key: OBJECT_STORAGE_SECRET_ACCESS_KEY
+        sync: false
+      - key: OBJECT_STORAGE_REGION
+        value: us-east-1

@@ -1,0 +1,465 @@
+{
+  "$defs": {
+    "GoogleSlidesAddSlideConfig": {
+      "description": "Configuration for adding a new slide",
+      "properties": {
+        "operation": {
+          "const": "add_presentation_slide",
+          "default": "add_presentation_slide",
+          "description": "Add a new slide",
+          "title": "Add Presentation Slide",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Slide",
+          "x-display-name": "Add Presentation Slide",
+          "x-is-trigger": false
+        },
+        "presentation_id": {
+          "description": "Select a Google Slides presentation",
+          "title": "Presentation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste presentation ID",
+            "field_name": "presentation_id",
+            "placeholder": "Select a presentation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_presentation"
+        },
+        "layout": {
+          "anyOf": [
+            {
+              "enum": [
+                "BLANK",
+                "TITLE",
+                "TITLE_AND_BODY",
+                "TITLE_AND_TWO_COLUMNS",
+                "TITLE_ONLY",
+                "ONE_COLUMN_TEXT",
+                "MAIN_POINT",
+                "BIG_NUMBER"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "BLANK",
+          "description": "Predefined layout for the new slide",
+          "title": "Layout",
+          "enum": [
+            "BLANK",
+            "TITLE",
+            "TITLE_AND_BODY",
+            "TITLE_AND_TWO_COLUMNS",
+            "TITLE_ONLY",
+            "ONE_COLUMN_TEXT",
+            "MAIN_POINT",
+            "BIG_NUMBER"
+          ],
+          "x-enum-searchable": true
+        },
+        "insertion_index": {
+          "anyOf": [
+            {
+              "minimum": 0,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Position to insert the slide (0 = first). Leave empty for end.",
+          "title": "Position"
+        }
+      },
+      "required": [
+        "presentation_id"
+      ],
+      "title": "GoogleSlidesAddSlideConfig",
+      "type": "object"
+    },
+    "GoogleSlidesCreatePresentationConfig": {
+      "description": "Configuration for creating a new presentation",
+      "properties": {
+        "operation": {
+          "const": "create_new_presentation",
+          "default": "create_new_presentation",
+          "description": "Create a new presentation",
+          "title": "Create New Presentation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Presentation",
+          "x-creates-resource": true,
+          "x-display-name": "Create New Presentation",
+          "x-is-trigger": false,
+          "x-resource-id-path": "presentation.presentationId",
+          "x-resource-type": "google_presentation"
+        },
+        "title": {
+          "description": "Title for the new presentation",
+          "placeholder": "My Presentation",
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "GoogleSlidesCreatePresentationConfig",
+      "type": "object"
+    },
+    "GoogleSlidesDeleteSlideConfig": {
+      "description": "Configuration for deleting a slide",
+      "properties": {
+        "operation": {
+          "const": "delete_presentation_slide",
+          "default": "delete_presentation_slide",
+          "description": "Delete a slide",
+          "title": "Delete Presentation Slide",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Slide",
+          "x-display-name": "Delete Presentation Slide",
+          "x-is-trigger": false
+        },
+        "presentation_id": {
+          "description": "Select a Google Slides presentation",
+          "title": "Presentation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste presentation ID",
+            "field_name": "presentation_id",
+            "placeholder": "Select a presentation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_presentation"
+        },
+        "page_id": {
+          "description": "The ID of the slide to delete",
+          "placeholder": "Slide ID",
+          "title": "Page ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "presentation_id",
+        "page_id"
+      ],
+      "title": "GoogleSlidesDeleteSlideConfig",
+      "type": "object"
+    },
+    "GoogleSlidesGetPageConfig": {
+      "description": "Configuration for getting a specific slide/page",
+      "properties": {
+        "operation": {
+          "const": "get_slide_page",
+          "default": "get_slide_page",
+          "description": "Get a specific slide",
+          "title": "Get Slide Page",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Slide",
+          "x-display-name": "Get Slide Page",
+          "x-is-trigger": false
+        },
+        "presentation_id": {
+          "description": "Select a Google Slides presentation",
+          "title": "Presentation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste presentation ID",
+            "field_name": "presentation_id",
+            "placeholder": "Select a presentation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_presentation"
+        },
+        "page_id": {
+          "description": "The ID of the slide/page to retrieve",
+          "placeholder": "Slide ID",
+          "title": "Page ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "presentation_id",
+        "page_id"
+      ],
+      "title": "GoogleSlidesGetPageConfig",
+      "type": "object"
+    },
+    "GoogleSlidesGetPresentationConfig": {
+      "description": "Configuration for getting a presentation",
+      "properties": {
+        "operation": {
+          "const": "get_presentation_metadata",
+          "default": "get_presentation_metadata",
+          "description": "Get a presentation",
+          "title": "Get Presentation Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Presentation",
+          "x-display-name": "Get Presentation Metadata",
+          "x-is-trigger": false
+        },
+        "presentation_id": {
+          "description": "Select a Google Slides presentation",
+          "title": "Presentation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste presentation ID",
+            "field_name": "presentation_id",
+            "placeholder": "Select a presentation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_presentation"
+        }
+      },
+      "required": [
+        "presentation_id"
+      ],
+      "title": "GoogleSlidesGetPresentationConfig",
+      "type": "object"
+    },
+    "GoogleSlidesGetThumbnailConfig": {
+      "description": "Configuration for getting a slide thumbnail",
+      "properties": {
+        "operation": {
+          "const": "get_slide_thumbnail",
+          "default": "get_slide_thumbnail",
+          "description": "Get a slide thumbnail image",
+          "title": "Get Slide Thumbnail",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Slide",
+          "x-display-name": "Get Slide Thumbnail",
+          "x-is-trigger": false
+        },
+        "presentation_id": {
+          "description": "Select a Google Slides presentation",
+          "title": "Presentation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste presentation ID",
+            "field_name": "presentation_id",
+            "placeholder": "Select a presentation...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_presentation"
+        },
+        "page_id": {
+          "description": "The ID of the slide to get thumbnail for",
+          "placeholder": "Slide ID",
+          "title": "Page ID",
+          "type": "string"
+        },
+        "thumbnail_size": {
+          "anyOf": [
+            {
+              "enum": [
+                "SMALL",
+                "MEDIUM",
+                "LARGE"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "MEDIUM",
+          "description": "Size of the thumbnail image",
+          "title": "Thumbnail Size",
+          "enum": [
+            "SMALL",
+            "MEDIUM",
+            "LARGE"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "presentation_id",
+        "page_id"
+      ],
+      "title": "GoogleSlidesGetThumbnailConfig",
+      "type": "object"
+    },
+    "GoogleSlidesListPresentationsConfig": {
+      "description": "Configuration for listing presentations from Google Drive",
+      "properties": {
+        "operation": {
+          "const": "list_google_drive_presentations",
+          "default": "list_google_drive_presentations",
+          "description": "List Google Slides presentations",
+          "title": "List Google Drive Presentations",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Presentation",
+          "x-display-name": "List Google Drive Presentations",
+          "x-is-trigger": false
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "description": "Maximum number of presentations to return (1-100)",
+          "title": "Page Size"
+        },
+        "search_query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search term to filter presentations by name",
+          "placeholder": "Presentation name (optional)",
+          "title": "Search Query"
+        }
+      },
+      "title": "GoogleSlidesListPresentationsConfig",
+      "type": "object"
+    },
+    "GoogleSlidesOAuthCredential": {
+      "description": "OAuth credential for Google Slides access.\nTokens are obtained via OAuth flow, not entered manually.",
+      "properties": {
+        "credential_type": {
+          "const": "google_slides_oauth",
+          "default": "google_slides_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "OAuth 2.0 access token from Google",
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "description": "OAuth 2.0 refresh token for automatic renewal",
+          "title": "Refresh Token",
+          "type": "string"
+        },
+        "expires_at": {
+          "description": "ISO 8601 timestamp when access token expires",
+          "title": "Token Expiry",
+          "type": "string"
+        },
+        "email": {
+          "description": "Email address of the connected Google account",
+          "title": "Google Account",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "email"
+      ],
+      "title": "GoogleSlidesOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-oauth-provider": "google",
+      "x-oauth-scopes": [
+        "https://www.googleapis.com/auth/presentations",
+        "https://www.googleapis.com/auth/drive"
+      ]
+    }
+  },
+  "description": "Full configuration for Google Slides node including credentials",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_presentation_slide": "#/$defs/GoogleSlidesAddSlideConfig",
+          "create_new_presentation": "#/$defs/GoogleSlidesCreatePresentationConfig",
+          "delete_presentation_slide": "#/$defs/GoogleSlidesDeleteSlideConfig",
+          "get_presentation_metadata": "#/$defs/GoogleSlidesGetPresentationConfig",
+          "get_slide_page": "#/$defs/GoogleSlidesGetPageConfig",
+          "get_slide_thumbnail": "#/$defs/GoogleSlidesGetThumbnailConfig",
+          "list_google_drive_presentations": "#/$defs/GoogleSlidesListPresentationsConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GoogleSlidesListPresentationsConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleSlidesGetPresentationConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleSlidesCreatePresentationConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleSlidesGetPageConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleSlidesAddSlideConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleSlidesDeleteSlideConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleSlidesGetThumbnailConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GoogleSlidesOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Google-slides Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Create a new Q2 earnings presentation and add title slide",
+    "Add 5 new slides to the product roadmap deck with bullet points",
+    "Get all slides from the sales pitch and extract content for PDF",
+    "Delete old slides from 2024 and reorganize remaining content",
+    "List all presentations in the Campaigns folder and count total slides",
+    "Get thumbnail of the first slide from investor deck for preview",
+    "Move the latest template to shared folder and add team members"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

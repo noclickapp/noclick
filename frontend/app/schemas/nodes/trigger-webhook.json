@@ -1,0 +1,280 @@
+{
+  "$defs": {
+    "WebhookAuthentication": {
+      "enum": [
+        "none",
+        "basic",
+        "header",
+        "jwt"
+      ],
+      "title": "WebhookAuthentication",
+      "type": "string"
+    },
+    "WebhookHttpMethod": {
+      "enum": [
+        "GET",
+        "POST",
+        "PUT",
+        "PATCH",
+        "DELETE"
+      ],
+      "title": "WebhookHttpMethod",
+      "type": "string"
+    },
+    "WebhookResponseMode": {
+      "enum": [
+        "immediately",
+        "last_node"
+      ],
+      "title": "WebhookResponseMode",
+      "type": "string"
+    },
+    "WebhookTriggerConfig": {
+      "description": "Configuration for webhook trigger node",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Auto-generated webhook ID (read-only)",
+          "title": "Webhook ID",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The URL to send webhooks to (auto-generated)",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "http_method": {
+          "$ref": "#/$defs/WebhookHttpMethod",
+          "default": "POST",
+          "description": "HTTP method this webhook accepts.",
+          "enumLabels": [
+            "GET",
+            "POST",
+            "PUT",
+            "PATCH",
+            "DELETE"
+          ],
+          "title": "HTTP Method"
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Secret for HMAC-SHA256 signature verification. Leave empty for no verification.",
+          "placeholder": "Optional webhook secret",
+          "title": "Secret (Optional)",
+          "ui:widget": "password"
+        },
+        "authentication": {
+          "$ref": "#/$defs/WebhookAuthentication",
+          "default": "none",
+          "description": "Require callers to authenticate before this webhook runs.",
+          "enumLabels": [
+            "None",
+            "Basic Auth",
+            "Header Auth",
+            "JWT Auth"
+          ],
+          "title": "Authentication"
+        },
+        "respond": {
+          "$ref": "#/$defs/WebhookResponseMode",
+          "default": "immediately",
+          "description": "Choose when and how the webhook HTTP response is returned.",
+          "enumLabels": [
+            "Immediately",
+            "When Last Node Finishes"
+          ],
+          "title": "Respond"
+        },
+        "basic_auth_username": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Username required for Basic Auth.",
+          "title": "Username",
+          "ui:show-if": {
+            "contains": "basic",
+            "field": "authentication"
+          }
+        },
+        "basic_auth_password": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Password required for Basic Auth.",
+          "title": "Password",
+          "ui:show-if": {
+            "contains": "basic",
+            "field": "authentication"
+          },
+          "ui:widget": "password"
+        },
+        "header_auth_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Header that must be present for Header Auth.",
+          "placeholder": "x-webhook-token",
+          "title": "Header Name",
+          "ui:show-if": {
+            "contains": "header",
+            "field": "authentication"
+          }
+        },
+        "header_auth_value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expected header value for Header Auth.",
+          "title": "Header Value",
+          "ui:show-if": {
+            "contains": "header",
+            "field": "authentication"
+          },
+          "ui:widget": "password"
+        },
+        "jwt_auth_header": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "authorization",
+          "description": "Header containing a Bearer JWT.",
+          "placeholder": "authorization",
+          "title": "JWT Header",
+          "ui:show-if": {
+            "contains": "jwt",
+            "field": "authentication"
+          }
+        },
+        "jwt_auth_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Shared secret used to verify HS256 JWTs.",
+          "title": "JWT Secret",
+          "ui:show-if": {
+            "contains": "jwt",
+            "field": "authentication"
+          },
+          "ui:widget": "password"
+        }
+      },
+      "title": "WebhookTriggerConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for webhook trigger node (no credentials needed)",
+  "properties": {
+    "config": {
+      "$ref": "#/$defs/WebhookTriggerConfig",
+      "description": "Node-specific configuration"
+    },
+    "credentials": {
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials",
+      "type": "null"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Trigger-webhook Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Accept webhook requests from Slack notifications",
+    "Trigger this workflow when a GitHub webhook fires",
+    "Add a secret for HMAC signature verification",
+    "Copy and paste the webhook URL to use elsewhere",
+    "Receive data from external HTTP POST requests",
+    "Extract webhook headers and query parameters"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

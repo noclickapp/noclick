@@ -1,0 +1,10 @@
+-r requirements.txt
+
+pydantic-to-typescript==2.0.0
+pytest==9.1.1
+pytest-asyncio==1.4.0
+pytest-timeout==2.4.0
+pytest-xdist==3.8.0
+# The OAuth flow tests mock provider HTTP with it. Without respx they skip,
+# and a skipped test reports green.
+respx==0.22.0

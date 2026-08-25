@@ -1,0 +1,2249 @@
+{
+  "$defs": {
+    "LoopsAPIKeyCredential": {
+      "description": "API Key credential for Loops.",
+      "properties": {
+        "credential_type": {
+          "const": "loops_api_key",
+          "default": "loops_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Your Loops API key from Settings -> API -> Generate key. Passed as a Bearer token.",
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "LoopsAPIKeyCredential",
+      "type": "object",
+      "x-credential-url": "https://app.loops.so/settings?page=api"
+    },
+    "LoopsCompleteUploadConfig": {
+      "description": "Finalize a previously initiated upload and get the public URL.",
+      "properties": {
+        "operation": {
+          "const": "complete_upload",
+          "default": "complete_upload",
+          "title": "Complete Upload",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Uploads",
+          "x-display-name": "Complete Upload",
+          "x-is-trigger": false
+        },
+        "upload_id": {
+          "description": "The upload ID returned by Create Image Upload",
+          "title": "Upload ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "upload_id"
+      ],
+      "title": "LoopsCompleteUploadConfig",
+      "type": "object"
+    },
+    "LoopsCreateCampaignConfig": {
+      "description": "Create a new draft campaign.",
+      "properties": {
+        "operation": {
+          "const": "create_campaign",
+          "default": "create_campaign",
+          "title": "Create Campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaigns",
+          "x-display-name": "Create Campaign",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "The name of the campaign",
+          "title": "Name",
+          "type": "string"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The email subject line",
+          "title": "Subject"
+        },
+        "from_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The sender display name",
+          "title": "From Name"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "LoopsCreateCampaignConfig",
+      "type": "object"
+    },
+    "LoopsCreateCampaignGroupConfig": {
+      "description": "Create a new campaign group.",
+      "properties": {
+        "operation": {
+          "const": "create_campaign_group",
+          "default": "create_campaign_group",
+          "title": "Create Campaign Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaign Groups",
+          "x-display-name": "Create Campaign Group",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "The name of the campaign group",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "LoopsCreateCampaignGroupConfig",
+      "type": "object"
+    },
+    "LoopsCreateContactConfig": {
+      "description": "Add a new contact (by email) to the audience.",
+      "properties": {
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Create Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Create Contact",
+          "x-is-trigger": false
+        },
+        "email": {
+          "description": "The contact's email address",
+          "title": "Email",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact's first name",
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact's last name",
+          "title": "Last Name"
+        },
+        "user_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Your own unique identifier for this contact",
+          "title": "User ID"
+        },
+        "subscribed": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "true",
+          "description": "Whether the contact is subscribed to email",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Subscribed",
+          "x-enum-searchable": true
+        },
+        "mailing_list_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Subscribe the contact to this mailing list",
+          "title": "Mailing List",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a mailing list ID",
+            "field_name": "mailing_list_id",
+            "placeholder": "Select a mailing list...",
+            "searchable": true
+          },
+          "x-resource-type": "loops_mailing_list"
+        },
+        "properties": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom Properties (JSON)",
+          "description": "Additional contact properties as a JSON object, e.g. {\"plan\": \"pro\"}",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "LoopsCreateContactConfig",
+      "type": "object"
+    },
+    "LoopsCreateContactPropertyConfig": {
+      "description": "Define a new custom contact property.",
+      "properties": {
+        "operation": {
+          "const": "create_contact_property",
+          "default": "create_contact_property",
+          "title": "Create Contact Property",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact Properties",
+          "x-display-name": "Create Contact Property",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "The name of the new property",
+          "title": "Name",
+          "type": "string"
+        },
+        "property_type": {
+          "description": "The data type of the property",
+          "enum": [
+            "string",
+            "number",
+            "boolean",
+            "date"
+          ],
+          "enumNames": [
+            "String",
+            "Number",
+            "Boolean",
+            "Date"
+          ],
+          "title": "Type",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "name",
+        "property_type"
+      ],
+      "title": "LoopsCreateContactPropertyConfig",
+      "type": "object"
+    },
+    "LoopsCreateTransactionalEmailConfig": {
+      "description": "Create a new transactional email template.",
+      "properties": {
+        "operation": {
+          "const": "create_transactional_email",
+          "default": "create_transactional_email",
+          "title": "Create Transactional Email",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Transactional",
+          "x-creates-resource": true,
+          "x-display-name": "Create Transactional Email",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "loops_transactional"
+        },
+        "name": {
+          "description": "The name of the transactional email",
+          "title": "Name",
+          "type": "string"
+        },
+        "group_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Assign to a transactional group",
+          "title": "Group ID"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "LoopsCreateTransactionalEmailConfig",
+      "type": "object"
+    },
+    "LoopsCreateTransactionalGroupConfig": {
+      "description": "Create a new transactional group.",
+      "properties": {
+        "operation": {
+          "const": "create_transactional_group",
+          "default": "create_transactional_group",
+          "title": "Create Transactional Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Transactional Groups",
+          "x-display-name": "Create Transactional Group",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "The name of the transactional group",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "LoopsCreateTransactionalGroupConfig",
+      "type": "object"
+    },
+    "LoopsCreateUploadConfig": {
+      "description": "Upload an image asset to Loops via the platform upload component.",
+      "properties": {
+        "operation": {
+          "const": "create_upload",
+          "default": "create_upload",
+          "title": "Upload Image",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Uploads",
+          "x-display-name": "Upload Image",
+          "x-is-trigger": false
+        },
+        "image": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Image file to upload to Loops (JPEG, PNG, or WebP)",
+          "title": "Image",
+          "ui:widget": "veo_image_upload"
+        }
+      },
+      "title": "LoopsCreateUploadConfig",
+      "type": "object"
+    },
+    "LoopsDeleteContactConfig": {
+      "description": "Remove a contact from the audience by email or userId.",
+      "properties": {
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Delete Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Delete Contact",
+          "x-is-trigger": false
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Delete the contact with this email",
+          "title": "Email"
+        },
+        "user_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Delete the contact with this userId",
+          "title": "User ID"
+        }
+      },
+      "title": "LoopsDeleteContactConfig",
+      "type": "object"
+    },
+    "LoopsEnsureTransactionalEmailDraftConfig": {
+      "description": "Ensure a transactional email is in draft state (revert from published if needed).",
+      "properties": {
+        "operation": {
+          "const": "ensure_transactional_email_draft",
+          "default": "ensure_transactional_email_draft",
+          "title": "Ensure Transactional Email Draft",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Transactional",
+          "x-display-name": "Ensure Transactional Email Draft",
+          "x-is-trigger": false
+        },
+        "transactional_id": {
+          "description": "The id of the transactional email",
+          "title": "Transactional ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "transactional_id"
+      ],
+      "title": "LoopsEnsureTransactionalEmailDraftConfig",
+      "type": "object"
+    },
+    "LoopsFindContactConfig": {
+      "description": "Look up a contact by email or userId.",
+      "properties": {
+        "operation": {
+          "const": "find_contact",
+          "default": "find_contact",
+          "title": "Find Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Find Contact",
+          "x-is-trigger": false
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Find a contact by email",
+          "title": "Email"
+        },
+        "user_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Find a contact by userId",
+          "title": "User ID"
+        }
+      },
+      "title": "LoopsFindContactConfig",
+      "type": "object"
+    },
+    "LoopsGetAudienceSegmentConfig": {
+      "description": "Retrieve a single audience segment by id.",
+      "properties": {
+        "operation": {
+          "const": "get_audience_segment",
+          "default": "get_audience_segment",
+          "title": "Get Audience Segment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience",
+          "x-display-name": "Get Audience Segment",
+          "x-is-trigger": false
+        },
+        "segment_id": {
+          "description": "The id of the audience segment to retrieve",
+          "title": "Segment ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "segment_id"
+      ],
+      "title": "LoopsGetAudienceSegmentConfig",
+      "type": "object"
+    },
+    "LoopsGetCampaignConfig": {
+      "description": "Retrieve a single campaign by id.",
+      "properties": {
+        "operation": {
+          "const": "get_campaign",
+          "default": "get_campaign",
+          "title": "Get Campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaigns",
+          "x-display-name": "Get Campaign",
+          "x-is-trigger": false
+        },
+        "campaign_id": {
+          "description": "The id of the campaign to retrieve",
+          "title": "Campaign ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "LoopsGetCampaignConfig",
+      "type": "object"
+    },
+    "LoopsGetCampaignGroupConfig": {
+      "description": "Retrieve a single campaign group by id.",
+      "properties": {
+        "operation": {
+          "const": "get_campaign_group",
+          "default": "get_campaign_group",
+          "title": "Get Campaign Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaign Groups",
+          "x-display-name": "Get Campaign Group",
+          "x-is-trigger": false
+        },
+        "group_id": {
+          "description": "The id of the campaign group to retrieve",
+          "title": "Group ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "LoopsGetCampaignGroupConfig",
+      "type": "object"
+    },
+    "LoopsGetComponentConfig": {
+      "description": "Retrieve a single reusable email component by id.",
+      "properties": {
+        "operation": {
+          "const": "get_component",
+          "default": "get_component",
+          "title": "Get Component",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Design",
+          "x-display-name": "Get Component",
+          "x-is-trigger": false
+        },
+        "component_id": {
+          "description": "The id of the component to retrieve",
+          "title": "Component ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "component_id"
+      ],
+      "title": "LoopsGetComponentConfig",
+      "type": "object"
+    },
+    "LoopsGetEmailMessageConfig": {
+      "description": "Retrieve an email message (campaign content) with compiled output.",
+      "properties": {
+        "operation": {
+          "const": "get_email_message",
+          "default": "get_email_message",
+          "title": "Get Email Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Messages",
+          "x-display-name": "Get Email Message",
+          "x-is-trigger": false
+        },
+        "email_message_id": {
+          "description": "The id of the email message to retrieve",
+          "title": "Email Message ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email_message_id"
+      ],
+      "title": "LoopsGetEmailMessageConfig",
+      "type": "object"
+    },
+    "LoopsGetSuppressionConfig": {
+      "description": "Check whether a contact is suppressed and the removal quota.",
+      "properties": {
+        "operation": {
+          "const": "get_suppression",
+          "default": "get_suppression",
+          "title": "Get Suppression Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Get Suppression Status",
+          "x-is-trigger": false
+        },
+        "email": {
+          "description": "The contact's email address to check",
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "LoopsGetSuppressionConfig",
+      "type": "object"
+    },
+    "LoopsGetThemeConfig": {
+      "description": "Retrieve a single email theme by id.",
+      "properties": {
+        "operation": {
+          "const": "get_theme",
+          "default": "get_theme",
+          "title": "Get Theme",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Design",
+          "x-display-name": "Get Theme",
+          "x-is-trigger": false
+        },
+        "theme_id": {
+          "description": "The id of the theme to retrieve",
+          "title": "Theme ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "theme_id"
+      ],
+      "title": "LoopsGetThemeConfig",
+      "type": "object"
+    },
+    "LoopsGetTransactionalConfig": {
+      "description": "Retrieve a single transactional email by id.",
+      "properties": {
+        "operation": {
+          "const": "get_transactional",
+          "default": "get_transactional",
+          "title": "Get Transactional Email",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Transactional",
+          "x-display-name": "Get Transactional Email",
+          "x-is-trigger": false
+        },
+        "transactional_id": {
+          "description": "The id of the transactional email to retrieve",
+          "title": "Transactional ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "transactional_id"
+      ],
+      "title": "LoopsGetTransactionalConfig",
+      "type": "object"
+    },
+    "LoopsGetTransactionalGroupConfig": {
+      "description": "Retrieve a single transactional group by id.",
+      "properties": {
+        "operation": {
+          "const": "get_transactional_group",
+          "default": "get_transactional_group",
+          "title": "Get Transactional Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Transactional Groups",
+          "x-display-name": "Get Transactional Group",
+          "x-is-trigger": false
+        },
+        "group_id": {
+          "description": "The id of the transactional group to retrieve",
+          "title": "Group ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "LoopsGetTransactionalGroupConfig",
+      "type": "object"
+    },
+    "LoopsGetWorkflowConfig": {
+      "description": "Retrieve a single automation workflow by id (alpha).",
+      "properties": {
+        "operation": {
+          "const": "get_workflow",
+          "default": "get_workflow",
+          "title": "Get Workflow",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workflows",
+          "x-display-name": "Get Workflow",
+          "x-is-trigger": false
+        },
+        "workflow_id": {
+          "description": "The id of the automation workflow",
+          "title": "Workflow ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workflow_id"
+      ],
+      "title": "LoopsGetWorkflowConfig",
+      "type": "object"
+    },
+    "LoopsGetWorkflowNodeConfig": {
+      "description": "Retrieve a single node inside an automation workflow (alpha).",
+      "properties": {
+        "operation": {
+          "const": "get_workflow_node",
+          "default": "get_workflow_node",
+          "title": "Get Workflow Node",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workflows",
+          "x-display-name": "Get Workflow Node",
+          "x-is-trigger": false
+        },
+        "workflow_id": {
+          "description": "The id of the parent workflow",
+          "title": "Workflow ID",
+          "type": "string"
+        },
+        "node_id": {
+          "description": "The id of the node within the workflow",
+          "title": "Node ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workflow_id",
+        "node_id"
+      ],
+      "title": "LoopsGetWorkflowNodeConfig",
+      "type": "object"
+    },
+    "LoopsListAudienceSegmentsConfig": {
+      "description": "List audience segments (paginated).",
+      "properties": {
+        "operation": {
+          "const": "list_audience_segments",
+          "default": "list_audience_segments",
+          "title": "List Audience Segments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience",
+          "x-display-name": "List Audience Segments",
+          "x-is-trigger": false
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Number of results per page (max 50)",
+          "title": "Per Page"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from a prior response",
+          "title": "Cursor"
+        }
+      },
+      "title": "LoopsListAudienceSegmentsConfig",
+      "type": "object"
+    },
+    "LoopsListCampaignGroupsConfig": {
+      "description": "List campaign groups (paginated).",
+      "properties": {
+        "operation": {
+          "const": "list_campaign_groups",
+          "default": "list_campaign_groups",
+          "title": "List Campaign Groups",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaign Groups",
+          "x-display-name": "List Campaign Groups",
+          "x-is-trigger": false
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Number of results per page (max 50)",
+          "title": "Per Page"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from a prior response",
+          "title": "Cursor"
+        }
+      },
+      "title": "LoopsListCampaignGroupsConfig",
+      "type": "object"
+    },
+    "LoopsListCampaignsConfig": {
+      "description": "List campaigns (paginated).",
+      "properties": {
+        "operation": {
+          "const": "list_campaigns",
+          "default": "list_campaigns",
+          "title": "List Campaigns",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaigns",
+          "x-display-name": "List Campaigns",
+          "x-is-trigger": false
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Number of results per page (max 50)",
+          "title": "Per Page"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from a prior response",
+          "title": "Cursor"
+        }
+      },
+      "title": "LoopsListCampaignsConfig",
+      "type": "object"
+    },
+    "LoopsListComponentsConfig": {
+      "description": "List reusable email components (paginated).",
+      "properties": {
+        "operation": {
+          "const": "list_components",
+          "default": "list_components",
+          "title": "List Components",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Design",
+          "x-display-name": "List Components",
+          "x-is-trigger": false
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Number of results per page (max 50)",
+          "title": "Per Page"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from a prior response",
+          "title": "Cursor"
+        }
+      },
+      "title": "LoopsListComponentsConfig",
+      "type": "object"
+    },
+    "LoopsListContactPropertiesConfig": {
+      "description": "List all contact properties for the team.",
+      "properties": {
+        "operation": {
+          "const": "list_contact_properties",
+          "default": "list_contact_properties",
+          "title": "List Contact Properties",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact Properties",
+          "x-display-name": "List Contact Properties",
+          "x-is-trigger": false
+        },
+        "list_filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by property origin",
+          "enum": [
+            "",
+            "all",
+            "custom"
+          ],
+          "enumNames": [
+            "All",
+            "All",
+            "Custom only"
+          ],
+          "title": "Filter",
+          "x-enum-searchable": true
+        }
+      },
+      "title": "LoopsListContactPropertiesConfig",
+      "type": "object"
+    },
+    "LoopsListMailingListsConfig": {
+      "description": "Retrieve the account's mailing lists.",
+      "properties": {
+        "operation": {
+          "const": "list_mailing_lists",
+          "default": "list_mailing_lists",
+          "title": "List Mailing Lists",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Mailing Lists",
+          "x-display-name": "List Mailing Lists",
+          "x-is-trigger": false
+        }
+      },
+      "title": "LoopsListMailingListsConfig",
+      "type": "object"
+    },
+    "LoopsListSendingIpsConfig": {
+      "description": "Retrieve the team's dedicated sending IP addresses.",
+      "properties": {
+        "operation": {
+          "const": "list_sending_ips",
+          "default": "list_sending_ips",
+          "title": "List Dedicated Sending IPs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "List Dedicated Sending IPs",
+          "x-is-trigger": false
+        }
+      },
+      "title": "LoopsListSendingIpsConfig",
+      "type": "object"
+    },
+    "LoopsListThemesConfig": {
+      "description": "List email themes (paginated).",
+      "properties": {
+        "operation": {
+          "const": "list_themes",
+          "default": "list_themes",
+          "title": "List Themes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Design",
+          "x-display-name": "List Themes",
+          "x-is-trigger": false
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Number of results per page (max 50)",
+          "title": "Per Page"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from a prior response",
+          "title": "Cursor"
+        }
+      },
+      "title": "LoopsListThemesConfig",
+      "type": "object"
+    },
+    "LoopsListTransactionalConfig": {
+      "description": "List transactional emails (paginated).",
+      "properties": {
+        "operation": {
+          "const": "list_transactional",
+          "default": "list_transactional",
+          "title": "List Transactional Emails",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Transactional",
+          "x-display-name": "List Transactional Emails",
+          "x-is-trigger": false
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Number of results per page (max 50)",
+          "title": "Per Page"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from a prior response",
+          "title": "Cursor"
+        }
+      },
+      "title": "LoopsListTransactionalConfig",
+      "type": "object"
+    },
+    "LoopsListTransactionalGroupsConfig": {
+      "description": "List transactional groups (paginated).",
+      "properties": {
+        "operation": {
+          "const": "list_transactional_groups",
+          "default": "list_transactional_groups",
+          "title": "List Transactional Groups",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Transactional Groups",
+          "x-display-name": "List Transactional Groups",
+          "x-is-trigger": false
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Number of results per page (max 50)",
+          "title": "Per Page"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from a prior response",
+          "title": "Cursor"
+        }
+      },
+      "title": "LoopsListTransactionalGroupsConfig",
+      "type": "object"
+    },
+    "LoopsListWorkflowsConfig": {
+      "description": "List automation workflows (alpha, paginated).",
+      "properties": {
+        "operation": {
+          "const": "list_workflows",
+          "default": "list_workflows",
+          "title": "List Workflows",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workflows",
+          "x-display-name": "List Workflows",
+          "x-is-trigger": false
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Number of results per page (max 50)",
+          "title": "Per Page"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from a prior response",
+          "title": "Cursor"
+        }
+      },
+      "title": "LoopsListWorkflowsConfig",
+      "type": "object"
+    },
+    "LoopsPublishTransactionalEmailConfig": {
+      "description": "Publish a transactional email template so it can be sent.",
+      "properties": {
+        "operation": {
+          "const": "publish_transactional_email",
+          "default": "publish_transactional_email",
+          "title": "Publish Transactional Email",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Transactional",
+          "x-display-name": "Publish Transactional Email",
+          "x-is-trigger": false
+        },
+        "transactional_id": {
+          "description": "The id of the transactional email to publish",
+          "title": "Transactional ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "transactional_id"
+      ],
+      "title": "LoopsPublishTransactionalEmailConfig",
+      "type": "object"
+    },
+    "LoopsRemoveSuppressionConfig": {
+      "description": "Restore (un-suppress) a previously suppressed contact.",
+      "properties": {
+        "operation": {
+          "const": "remove_suppression",
+          "default": "remove_suppression",
+          "title": "Remove Suppression",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Remove Suppression",
+          "x-is-trigger": false
+        },
+        "email": {
+          "description": "The contact's email address to un-suppress",
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "LoopsRemoveSuppressionConfig",
+      "type": "object"
+    },
+    "LoopsSendEmailMessagePreviewConfig": {
+      "description": "Send a preview of an email message to one or more addresses.",
+      "properties": {
+        "operation": {
+          "const": "send_email_message_preview",
+          "default": "send_email_message_preview",
+          "title": "Send Email Message Preview",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Messages",
+          "x-display-name": "Send Email Message Preview",
+          "x-is-trigger": false
+        },
+        "email_message_id": {
+          "description": "The id of the email message to preview",
+          "title": "Email Message ID",
+          "type": "string"
+        },
+        "emails": {
+          "description": "Email addresses to send the preview to, as a JSON array, e.g. [\"you@example.com\"]",
+          "title": "Preview Recipients (JSON array)",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "data_variables": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Template data variables for the preview, as a JSON object",
+          "title": "Data Variables (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "email_message_id",
+        "emails"
+      ],
+      "title": "LoopsSendEmailMessagePreviewConfig",
+      "type": "object"
+    },
+    "LoopsSendEventConfig": {
+      "description": "Send an event for a contact to trigger event-based loops.",
+      "properties": {
+        "operation": {
+          "const": "send_event",
+          "default": "send_event",
+          "title": "Send Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "Send Event",
+          "x-is-trigger": false
+        },
+        "event_name": {
+          "description": "The name of the event to fire",
+          "title": "Event Name",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The contact's email (or use User ID)",
+          "title": "Email"
+        },
+        "user_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The contact's userId (or use Email)",
+          "title": "User ID"
+        },
+        "event_properties": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Event properties as a JSON object, e.g. {\"plan\": \"pro\"}",
+          "title": "Event Properties (JSON)",
+          "ui:widget": "textarea"
+        },
+        "contact_properties": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact properties to set alongside the event, as a JSON object",
+          "title": "Contact Properties (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "event_name"
+      ],
+      "title": "LoopsSendEventConfig",
+      "type": "object"
+    },
+    "LoopsSendTransactionalConfig": {
+      "description": "Send a published transactional email to a contact.",
+      "properties": {
+        "operation": {
+          "const": "send_transactional",
+          "default": "send_transactional",
+          "title": "Send Transactional Email",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Transactional",
+          "x-display-name": "Send Transactional Email",
+          "x-is-trigger": false
+        },
+        "transactional_id": {
+          "description": "The transactional email to send (must be published)",
+          "title": "Transactional Email",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a transactional ID",
+            "field_name": "transactional_id",
+            "placeholder": "Select a transactional email...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "loops_transactional"
+        },
+        "email": {
+          "description": "The recipient's email address",
+          "title": "Email",
+          "type": "string"
+        },
+        "data_variables": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Template data variables as a JSON object, e.g. {\"name\": \"Ada\"}",
+          "title": "Data Variables (JSON)",
+          "ui:widget": "textarea"
+        },
+        "add_to_audience": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "false",
+          "description": "Add the recipient as a contact if they don't exist",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Add to Audience",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "transactional_id",
+        "email"
+      ],
+      "title": "LoopsSendTransactionalConfig",
+      "type": "object"
+    },
+    "LoopsTestApiKeyConfig": {
+      "description": "Verify the API key is valid and return the team name.",
+      "properties": {
+        "operation": {
+          "const": "test_api_key",
+          "default": "test_api_key",
+          "title": "Test API Key",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Test API Key",
+          "x-is-trigger": false
+        }
+      },
+      "title": "LoopsTestApiKeyConfig",
+      "type": "object"
+    },
+    "LoopsUpdateCampaignConfig": {
+      "description": "Update a draft campaign's details.",
+      "properties": {
+        "operation": {
+          "const": "update_campaign",
+          "default": "update_campaign",
+          "title": "Update Campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaigns",
+          "x-display-name": "Update Campaign",
+          "x-is-trigger": false
+        },
+        "campaign_id": {
+          "description": "The id of the campaign to update",
+          "title": "Campaign ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The campaign name",
+          "title": "Name"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The email subject line",
+          "title": "Subject"
+        },
+        "from_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The sender display name",
+          "title": "From Name"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "LoopsUpdateCampaignConfig",
+      "type": "object"
+    },
+    "LoopsUpdateCampaignGroupConfig": {
+      "description": "Update an existing campaign group.",
+      "properties": {
+        "operation": {
+          "const": "update_campaign_group",
+          "default": "update_campaign_group",
+          "title": "Update Campaign Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaign Groups",
+          "x-display-name": "Update Campaign Group",
+          "x-is-trigger": false
+        },
+        "group_id": {
+          "description": "The id of the campaign group to update",
+          "title": "Group ID",
+          "type": "string"
+        },
+        "name": {
+          "description": "The new name for the campaign group",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "group_id",
+        "name"
+      ],
+      "title": "LoopsUpdateCampaignGroupConfig",
+      "type": "object"
+    },
+    "LoopsUpdateContactConfig": {
+      "description": "Update an existing contact's properties (upserts if not found).",
+      "properties": {
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Update Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Update Contact",
+          "x-is-trigger": false
+        },
+        "email": {
+          "description": "The contact's email address (used to match)",
+          "title": "Email",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact's first name",
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact's last name",
+          "title": "Last Name"
+        },
+        "user_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Your own unique identifier for this contact",
+          "title": "User ID"
+        },
+        "subscribed": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether the contact is subscribed to email",
+          "enum": [
+            "",
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "No change",
+            "Yes",
+            "No"
+          ],
+          "title": "Subscribed",
+          "x-enum-searchable": true
+        },
+        "mailing_list_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Subscribe the contact to this mailing list",
+          "title": "Mailing List",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a mailing list ID",
+            "field_name": "mailing_list_id",
+            "placeholder": "Select a mailing list...",
+            "searchable": true
+          },
+          "x-resource-type": "loops_mailing_list"
+        },
+        "properties": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom Properties (JSON)",
+          "description": "Additional contact properties as a JSON object, e.g. {\"plan\": \"pro\"}",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "LoopsUpdateContactConfig",
+      "type": "object"
+    },
+    "LoopsUpdateEmailMessageConfig": {
+      "description": "Update subject, sender, preview text, or content of an email message.",
+      "properties": {
+        "operation": {
+          "const": "update_email_message",
+          "default": "update_email_message",
+          "title": "Update Email Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Messages",
+          "x-display-name": "Update Email Message",
+          "x-is-trigger": false
+        },
+        "email_message_id": {
+          "description": "The id of the email message to update",
+          "title": "Email Message ID",
+          "type": "string"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The email subject line",
+          "title": "Subject"
+        },
+        "from_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The sender display name",
+          "title": "From Name"
+        },
+        "preview_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The email preview text",
+          "title": "Preview Text"
+        },
+        "content": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The email content as a JSON object",
+          "title": "Content (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "email_message_id"
+      ],
+      "title": "LoopsUpdateEmailMessageConfig",
+      "type": "object"
+    },
+    "LoopsUpdateTransactionalEmailConfig": {
+      "description": "Update an existing transactional email template's name or group.",
+      "properties": {
+        "operation": {
+          "const": "update_transactional_email",
+          "default": "update_transactional_email",
+          "title": "Update Transactional Email",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Transactional",
+          "x-display-name": "Update Transactional Email",
+          "x-is-trigger": false
+        },
+        "transactional_id": {
+          "description": "The id of the transactional email to update",
+          "title": "Transactional ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The transactional email name",
+          "title": "Name"
+        },
+        "group_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Assign to a transactional group",
+          "title": "Group ID"
+        }
+      },
+      "required": [
+        "transactional_id"
+      ],
+      "title": "LoopsUpdateTransactionalEmailConfig",
+      "type": "object"
+    },
+    "LoopsUpdateTransactionalGroupConfig": {
+      "description": "Update an existing transactional group.",
+      "properties": {
+        "operation": {
+          "const": "update_transactional_group",
+          "default": "update_transactional_group",
+          "title": "Update Transactional Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Transactional Groups",
+          "x-display-name": "Update Transactional Group",
+          "x-is-trigger": false
+        },
+        "group_id": {
+          "description": "The id of the transactional group to update",
+          "title": "Group ID",
+          "type": "string"
+        },
+        "name": {
+          "description": "The new name for the transactional group",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "group_id",
+        "name"
+      ],
+      "title": "LoopsUpdateTransactionalGroupConfig",
+      "type": "object"
+    },
+    "LoopsWebhookTriggerConfig": {
+      "description": "Receive outbound webhook events from Loops (Settings \u2192 Webhooks in the Loops dashboard).",
+      "properties": {
+        "operation": {
+          "const": "on_loops_event",
+          "default": "on_loops_event",
+          "title": "On Loops Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Loops Event",
+          "x-is-trigger": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Copy this URL and paste it in Loops dashboard \u2192 Settings \u2192 Webhooks. Then enter the Signing Secret shown by Loops below.",
+          "title": "Webhook URL",
+          "ui:placeholder": "Auto-generated",
+          "ui:widget": "webhook"
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Signing secret from Loops dashboard \u2192 Settings \u2192 Webhooks.",
+          "title": "Signing Secret",
+          "ui:placeholder": "whsec_...",
+          "ui:widget": "password"
+        },
+        "event_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "contact.created",
+                "contact.unsubscribed",
+                "contact.deleted",
+                "contact.mailingList.subscribed",
+                "contact.mailingList.unsubscribed",
+                "campaign.email.sent",
+                "loop.email.sent",
+                "transactional.email.sent",
+                "email.delivered",
+                "email.softBounced",
+                "email.hardBounced",
+                "email.opened",
+                "email.clicked",
+                "email.unsubscribed",
+                "email.resubscribed",
+                "email.spamReported",
+                "testing.testEvent"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only process events of this type. Leave empty to receive all events.",
+          "title": "Event Type Filter",
+          "x-enum-searchable": true,
+          "enum": [
+            "contact.created",
+            "contact.unsubscribed",
+            "contact.deleted",
+            "contact.mailingList.subscribed",
+            "contact.mailingList.unsubscribed",
+            "campaign.email.sent",
+            "loop.email.sent",
+            "transactional.email.sent",
+            "email.delivered",
+            "email.softBounced",
+            "email.hardBounced",
+            "email.opened",
+            "email.clicked",
+            "email.unsubscribed",
+            "email.resubscribed",
+            "email.spamReported",
+            "testing.testEvent"
+          ]
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        }
+      },
+      "title": "LoopsWebhookTriggerConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the Loops node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "complete_upload": "#/$defs/LoopsCompleteUploadConfig",
+          "create_campaign": "#/$defs/LoopsCreateCampaignConfig",
+          "create_campaign_group": "#/$defs/LoopsCreateCampaignGroupConfig",
+          "create_contact": "#/$defs/LoopsCreateContactConfig",
+          "create_contact_property": "#/$defs/LoopsCreateContactPropertyConfig",
+          "create_transactional_email": "#/$defs/LoopsCreateTransactionalEmailConfig",
+          "create_transactional_group": "#/$defs/LoopsCreateTransactionalGroupConfig",
+          "create_upload": "#/$defs/LoopsCreateUploadConfig",
+          "delete_contact": "#/$defs/LoopsDeleteContactConfig",
+          "ensure_transactional_email_draft": "#/$defs/LoopsEnsureTransactionalEmailDraftConfig",
+          "find_contact": "#/$defs/LoopsFindContactConfig",
+          "get_audience_segment": "#/$defs/LoopsGetAudienceSegmentConfig",
+          "get_campaign": "#/$defs/LoopsGetCampaignConfig",
+          "get_campaign_group": "#/$defs/LoopsGetCampaignGroupConfig",
+          "get_component": "#/$defs/LoopsGetComponentConfig",
+          "get_email_message": "#/$defs/LoopsGetEmailMessageConfig",
+          "get_suppression": "#/$defs/LoopsGetSuppressionConfig",
+          "get_theme": "#/$defs/LoopsGetThemeConfig",
+          "get_transactional": "#/$defs/LoopsGetTransactionalConfig",
+          "get_transactional_group": "#/$defs/LoopsGetTransactionalGroupConfig",
+          "get_workflow": "#/$defs/LoopsGetWorkflowConfig",
+          "get_workflow_node": "#/$defs/LoopsGetWorkflowNodeConfig",
+          "list_audience_segments": "#/$defs/LoopsListAudienceSegmentsConfig",
+          "list_campaign_groups": "#/$defs/LoopsListCampaignGroupsConfig",
+          "list_campaigns": "#/$defs/LoopsListCampaignsConfig",
+          "list_components": "#/$defs/LoopsListComponentsConfig",
+          "list_contact_properties": "#/$defs/LoopsListContactPropertiesConfig",
+          "list_mailing_lists": "#/$defs/LoopsListMailingListsConfig",
+          "list_sending_ips": "#/$defs/LoopsListSendingIpsConfig",
+          "list_themes": "#/$defs/LoopsListThemesConfig",
+          "list_transactional": "#/$defs/LoopsListTransactionalConfig",
+          "list_transactional_groups": "#/$defs/LoopsListTransactionalGroupsConfig",
+          "list_workflows": "#/$defs/LoopsListWorkflowsConfig",
+          "on_loops_event": "#/$defs/LoopsWebhookTriggerConfig",
+          "publish_transactional_email": "#/$defs/LoopsPublishTransactionalEmailConfig",
+          "remove_suppression": "#/$defs/LoopsRemoveSuppressionConfig",
+          "send_email_message_preview": "#/$defs/LoopsSendEmailMessagePreviewConfig",
+          "send_event": "#/$defs/LoopsSendEventConfig",
+          "send_transactional": "#/$defs/LoopsSendTransactionalConfig",
+          "test_api_key": "#/$defs/LoopsTestApiKeyConfig",
+          "update_campaign": "#/$defs/LoopsUpdateCampaignConfig",
+          "update_campaign_group": "#/$defs/LoopsUpdateCampaignGroupConfig",
+          "update_contact": "#/$defs/LoopsUpdateContactConfig",
+          "update_email_message": "#/$defs/LoopsUpdateEmailMessageConfig",
+          "update_transactional_email": "#/$defs/LoopsUpdateTransactionalEmailConfig",
+          "update_transactional_group": "#/$defs/LoopsUpdateTransactionalGroupConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/LoopsTestApiKeyConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsCreateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsUpdateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsFindContactConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsDeleteContactConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsGetSuppressionConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsRemoveSuppressionConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsCreateContactPropertyConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsListContactPropertiesConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsListMailingListsConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsSendEventConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsSendTransactionalConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsListTransactionalConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsGetTransactionalConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsCreateTransactionalEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsUpdateTransactionalEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsEnsureTransactionalEmailDraftConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsPublishTransactionalEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsListCampaignsConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsCreateCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsGetCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsUpdateCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsListCampaignGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsGetCampaignGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsCreateCampaignGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsUpdateCampaignGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsListTransactionalGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsGetTransactionalGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsCreateTransactionalGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsUpdateTransactionalGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsGetEmailMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsUpdateEmailMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsSendEmailMessagePreviewConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsListThemesConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsGetThemeConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsListComponentsConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsGetComponentConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsListAudienceSegmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsGetAudienceSegmentConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsCreateUploadConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsCompleteUploadConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsListWorkflowsConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsGetWorkflowConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsGetWorkflowNodeConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsListSendingIpsConfig"
+        },
+        {
+          "$ref": "#/$defs/LoopsWebhookTriggerConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/LoopsAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Loops Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Add a new contact to Loops when a user signs up",
+    "Send a 'trial_started' event to Loops to fire a lifecycle email",
+    "Send a transactional password-reset email through Loops",
+    "Find a Loops contact by email to check their subscription status",
+    "Create a draft Loops campaign for a product launch"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

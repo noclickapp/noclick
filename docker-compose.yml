@@ -1,0 +1,263 @@
+# NoClick Community — the whole stack, no external accounts.
+#
+#   ./scripts/noclick-setup.sh   # writes .env with freshly generated secrets
+#   docker compose up -d --build
+#
+# The default URLs use `*.localhost` names on purpose. The frontend server, the
+# backend and the browser all resolve the same string: browsers and libc map
+# `*.localhost` to the loopback address, and the Docker network resolves the
+# same name to the container. A single-hostname setup would need one of them to
+# be wrong. Point them at real DNS names to publish the instance.
+
+name: noclick
+
+x-restart: &restart
+  restart: unless-stopped
+
+services:
+  db:
+    <<: *restart
+    # Stock Postgres. The Supabase-shaped roles, schema and claim accessors the
+    # API layer needs are created by the init script — see it for why that is
+    # ~60 lines rather than a 1.5 GB customised image.
+    image: postgres:15-alpine
+    environment:
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?set POSTGRES_PASSWORD — run ./scripts/noclick-setup.sh}
+      POSTGRES_USER: postgres
+      POSTGRES_DB: postgres
+    volumes:
+      - db-data:/var/lib/postgresql/data
+      - ./docker/db/01-supabase-compat.sh:/docker-entrypoint-initdb.d/01-supabase-compat.sh:ro
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+    # Deliberately not published: nothing outside this network should reach the
+    # database. Use `docker compose exec db psql -U postgres` for a shell.
+
+  auth:
+    <<: *restart
+    image: supabase/gotrue:v2.196.0
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      GOTRUE_API_HOST: 0.0.0.0
+      GOTRUE_API_PORT: "9999"
+      # GoTrue reads this one without the GOTRUE_ prefix.
+      API_EXTERNAL_URL: ${NOCLICK_SUPABASE_URL:-http://supabase.localhost:8001}
+      GOTRUE_API_EXTERNAL_URL: ${NOCLICK_SUPABASE_URL:-http://supabase.localhost:8001}
+      GOTRUE_DB_DRIVER: postgres
+      GOTRUE_DB_DATABASE_URL: postgres://supabase_auth_admin:${POSTGRES_PASSWORD}@db:5432/postgres
+      GOTRUE_SITE_URL: ${NOCLICK_APP_URL:-http://localhost:3000}
+      GOTRUE_URI_ALLOW_LIST: ${NOCLICK_APP_URL:-http://localhost:3000}/**
+      GOTRUE_JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET — run ./scripts/noclick-setup.sh}
+      GOTRUE_JWT_EXP: "3600"
+      GOTRUE_JWT_AUD: authenticated
+      GOTRUE_JWT_DEFAULT_GROUP_NAME: authenticated
+      GOTRUE_JWT_ADMIN_ROLES: service_role
+      GOTRUE_DISABLE_SIGNUP: ${NOCLICK_DISABLE_SIGNUP:-false}
+      GOTRUE_EXTERNAL_EMAIL_ENABLED: "true"
+      GOTRUE_MAILER_AUTOCONFIRM: ${NOCLICK_AUTOCONFIRM_EMAIL:-true}
+      # Enriches the access token with the caller's organization. The function
+      # ships in the schema migration, so it exists before the first sign-in.
+      GOTRUE_HOOK_CUSTOM_ACCESS_TOKEN_ENABLED: "true"
+      GOTRUE_HOOK_CUSTOM_ACCESS_TOKEN_URI: pg-functions://postgres/public/custom_access_token_hook
+      GOTRUE_SMTP_HOST: ${SMTP_HOST:-}
+      # GoTrue parses this as an integer even when no mail server is set up.
+      GOTRUE_SMTP_PORT: ${SMTP_PORT:-587}
+      GOTRUE_SMTP_USER: ${SMTP_USERNAME:-}
+      GOTRUE_SMTP_PASS: ${SMTP_PASSWORD:-}
+      GOTRUE_SMTP_ADMIN_EMAIL: ${FROM_EMAIL:-}
+      GOTRUE_LOG_LEVEL: info
+
+  rest:
+    <<: *restart
+    image: postgrest/postgrest:v16.1
+    depends_on:
+      bootstrap:
+        condition: service_completed_successfully
+    environment:
+      PGRST_DB_URI: postgres://authenticator:${POSTGRES_PASSWORD}@db:5432/postgres
+      PGRST_DB_SCHEMAS: public
+      PGRST_DB_ANON_ROLE: anon
+      PGRST_JWT_SECRET: ${JWT_SECRET}
+      PGRST_DB_USE_LEGACY_GUCS: "false"
+      PGRST_APP_SETTINGS_JWT_SECRET: ${JWT_SECRET}
+      PGRST_APP_SETTINGS_JWT_EXP: "3600"
+
+  # One origin for auth and PostgREST, because supabase-js addresses one origin.
+  gateway:
+    <<: *restart
+    image: nginx:1.27-alpine
+    depends_on:
+      auth:
+        condition: service_started
+    volumes:
+      - ./docker/gateway/nginx.conf:/etc/nginx/nginx.conf:ro
+    ports:
+      - "${NOCLICK_SUPABASE_PORT:-8001}:8001"
+    networks:
+      default:
+        aliases:
+          - supabase.localhost
+
+  storage:
+    <<: *restart
+    image: minio/minio:RELEASE.2025-09-07T16-13-09Z
+    command: server /data --address ":9000"
+    environment:
+      MINIO_ROOT_USER: ${OBJECT_STORAGE_ACCESS_KEY_ID:?set OBJECT_STORAGE_ACCESS_KEY_ID — run ./scripts/noclick-setup.sh}
+      MINIO_ROOT_PASSWORD: ${OBJECT_STORAGE_SECRET_ACCESS_KEY:?set OBJECT_STORAGE_SECRET_ACCESS_KEY — run ./scripts/noclick-setup.sh}
+    volumes:
+      - storage-data:/data
+    ports:
+      # Published because the browser uploads and downloads directly against
+      # presigned URLs; nothing here is readable without one.
+      - "${NOCLICK_STORAGE_PORT:-9000}:9000"
+    networks:
+      default:
+        aliases:
+          - storage.localhost
+
+  # Applies the schema and creates both private storage buckets, then exits.
+  bootstrap:
+    image: ${NOCLICK_BACKEND_IMAGE:-ghcr.io/noclickapp/noclick-backend:${NOCLICK_VERSION:-latest}}
+    build:
+      context: .
+      dockerfile: docker/backend.Dockerfile
+    depends_on:
+      db:
+        condition: service_healthy
+      auth:
+        condition: service_started
+      storage:
+        condition: service_started
+    restart: "no"
+    working_dir: /app
+    command: ["python", "docker/bootstrap.py"]
+    volumes:
+      # The image bakes these in so it is self-contained, but compose always has
+      # the repository right here — and applying a stale copy of a migration
+      # someone just edited is a confusing way to spend an afternoon.
+      - ./infra/supabase/migrations:/app/infra/supabase/migrations:ro
+    environment:
+      POSTGRES_URL: postgres://postgres:${POSTGRES_PASSWORD}@db:5432/postgres
+      OBJECT_STORAGE_ENDPOINT: http://storage:9000
+      OBJECT_STORAGE_ACCESS_KEY_ID: ${OBJECT_STORAGE_ACCESS_KEY_ID}
+      OBJECT_STORAGE_SECRET_ACCESS_KEY: ${OBJECT_STORAGE_SECRET_ACCESS_KEY}
+      OBJECT_STORAGE_REGION: ${OBJECT_STORAGE_REGION:-us-east-1}
+
+  backend:
+    <<: *restart
+    image: ${NOCLICK_BACKEND_IMAGE:-ghcr.io/noclickapp/noclick-backend:${NOCLICK_VERSION:-latest}}
+    build:
+      context: .
+      dockerfile: docker/backend.Dockerfile
+    depends_on:
+      bootstrap:
+        condition: service_completed_successfully
+    environment:
+      POSTGRES_URL: postgres://postgres:${POSTGRES_PASSWORD}@db:5432/postgres
+      POSTGRES_POOLER_URL: postgres://postgres:${POSTGRES_PASSWORD}@db:5432/postgres
+      SUPABASE_URL: ${NOCLICK_SUPABASE_URL:-http://supabase.localhost:8001}
+      SUPABASE_JWT_SECRET: ${JWT_SECRET}
+      SUPABASE_SECRET_KEY: ${SERVICE_ROLE_KEY:?set SERVICE_ROLE_KEY — run ./scripts/noclick-setup.sh}
+      CREDENTIALS_ENCRYPTION_KEY: ${CREDENTIALS_ENCRYPTION_KEY:?set CREDENTIALS_ENCRYPTION_KEY — run ./scripts/noclick-setup.sh}
+      WORKFLOW_JWT_SECRET: ${WORKFLOW_JWT_SECRET:?set WORKFLOW_JWT_SECRET — run ./scripts/noclick-setup.sh}
+      FRONTEND_URL: ${NOCLICK_APP_URL:-http://localhost:3000}
+      SOCKET_CORS_ORIGINS: ${NOCLICK_EXTRA_CORS_ORIGINS:-}
+      # The scheduler runs inside this process; it calls its own API.
+      CRON_SCHEDULER_URL: http://127.0.0.1:8000/local-cron
+      CRON_SCHEDULER_SECRET: ${CRON_SCHEDULER_SECRET:?set CRON_SCHEDULER_SECRET — run ./scripts/noclick-setup.sh}
+      PUBLIC_API_URL: ${NOCLICK_API_URL:-http://api.localhost:8000}
+      PUBLIC_WEBHOOK_URL: ${NOCLICK_API_URL:-http://api.localhost:8000}
+      APP_WEBHOOK_BASE_URL: ${NOCLICK_API_URL:-http://api.localhost:8000}
+      MCP_BASE_URL: ${NOCLICK_API_URL:-http://api.localhost:8000}
+      OBJECT_STORAGE_ENDPOINT: ${NOCLICK_STORAGE_URL:-http://storage.localhost:9000}
+      OBJECT_STORAGE_ACCESS_KEY_ID: ${OBJECT_STORAGE_ACCESS_KEY_ID}
+      OBJECT_STORAGE_SECRET_ACCESS_KEY: ${OBJECT_STORAGE_SECRET_ACCESS_KEY}
+      OBJECT_STORAGE_REGION: ${OBJECT_STORAGE_REGION:-us-east-1}
+      REDIS_URL: ${REDIS_URL:-}
+      RESEND_API_KEY: ${RESEND_API_KEY:-}
+      FROM_EMAIL: ${FROM_EMAIL:-}
+      INVITE_FROM_EMAIL: ${INVITE_FROM_EMAIL:-}
+      HONEYCOMB_API_KEY: ${HONEYCOMB_API_KEY:-}
+      OUTBOUND_ALLOW_PRIVATE_IPS: ${OUTBOUND_ALLOW_PRIVATE_IPS:-}
+      HTTP_NODE_ALLOW_PRIVATE_IPS: ${HTTP_NODE_ALLOW_PRIVATE_IPS:-}
+      INBOUND_EMAIL_DOMAIN: ${INBOUND_EMAIL_DOMAIN:-}
+      EMAIL_RELAY_SECRET: ${EMAIL_RELAY_SECRET:-}
+      GEOIP_LOOKUP_URL: ${GEOIP_LOOKUP_URL:-}
+      WAHOOKS_API_KEY: ${WAHOOKS_API_KEY:-}
+      OPENAI_API_KEY: ${OPENAI_API_KEY:-}
+      OPENROUTER_API_KEY: ${OPENROUTER_API_KEY:-}
+      GEMINI_API_KEY: ${GEMINI_API_KEY:-}
+    volumes:
+      - backend-state:/var/lib/noclick
+    ports:
+      - "${NOCLICK_API_PORT:-8000}:8000"
+    networks:
+      default:
+        aliases:
+          - api.localhost
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request;urllib.request.urlopen('http://127.0.0.1:8000/health',timeout=5)"]
+      interval: 10s
+      timeout: 5s
+      retries: 20
+      start_period: 60s
+
+  frontend:
+    <<: *restart
+    image: ${NOCLICK_FRONTEND_IMAGE:-noclick/frontend:local}
+    build:
+      context: .
+      dockerfile: docker/frontend.Dockerfile
+      args:
+        # Compiled into the browser bundle — `docker compose up --build` after
+        # changing any of these.
+        VITE_API_URL: ${NOCLICK_API_URL:-http://api.localhost:8000}
+        VITE_RELAY_URL: ${NOCLICK_RELAY_URL:-ws://api.localhost:8000/relay}
+        VITE_PUBLIC_URL: ${NOCLICK_APP_URL:-http://localhost:3000}
+        VITE_DISABLE_CAPTCHA: ${NOCLICK_DISABLE_CAPTCHA:-true}
+        VITE_INBOUND_EMAIL_DOMAIN: ${INBOUND_EMAIL_DOMAIN:-}
+    depends_on:
+      backend:
+        condition: service_started
+    environment:
+      PORT: "3000"
+      NODE_ENV: production
+      VITE_PUBLIC_URL: ${NOCLICK_APP_URL:-http://localhost:3000}
+      VITE_API_URL: ${NOCLICK_API_URL:-http://api.localhost:8000}
+      # Read at request time by the sign-in action, not only compiled into the
+      # bundle: without it the server asks a Turnstile function this stack does
+      # not run, and every sign-in fails the captcha check.
+      VITE_DISABLE_CAPTCHA: ${NOCLICK_DISABLE_CAPTCHA:-true}
+      VITE_INBOUND_EMAIL_DOMAIN: ${INBOUND_EMAIL_DOMAIN:-}
+      FRONTEND_URL: ${NOCLICK_APP_URL:-http://localhost:3000}
+      SUPABASE_URL: ${NOCLICK_SUPABASE_URL:-http://supabase.localhost:8001}
+      SUPABASE_ANON_KEY: ${ANON_KEY:?set ANON_KEY — run ./scripts/noclick-setup.sh}
+      # Server-only. Never prefix a secret with VITE_; that publishes it.
+      SUPABASE_SECRET_KEY: ${SERVICE_ROLE_KEY}
+      SESSION_SECRET: ${SESSION_SECRET:?set SESSION_SECRET — run ./scripts/noclick-setup.sh}
+    ports:
+      - "${NOCLICK_APP_PORT:-3000}:3000"
+
+  # `docker compose --profile redis up -d` — optional Redis-compatible cache.
+  # Keep the profile/service name for backwards compatibility; the server is
+  # Valkey, the BSD-licensed community fork of Redis.
+  redis:
+    <<: *restart
+    image: valkey/valkey:8.1.3-alpine@sha256:d827e7f7552cdee40cc7482dbae9da020f42bc47669af6f71182a4ef76a22773
+    profiles: [redis]
+    command: ["valkey-server", "--save", "60", "1", "--appendonly", "no"]
+    volumes:
+      - redis-data:/data
+
+volumes:
+  db-data:
+  storage-data:
+  backend-state:
+  redis-data:

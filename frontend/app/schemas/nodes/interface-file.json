@@ -1,0 +1,68 @@
+{
+  "$defs": {
+    "FileConfig": {
+      "description": "Configuration for the universal file interface component.",
+      "properties": {
+        "src": {
+          "default": "",
+          "title": "Source URL",
+          "type": "string",
+          "ui:placeholder": "https://example.com/file.pdf"
+        },
+        "resource_id": {
+          "default": "",
+          "title": "Resource ID",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "file_name": {
+          "default": "",
+          "title": "File Name",
+          "type": "string",
+          "ui:placeholder": "document.pdf"
+        },
+        "alt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Alt Text",
+          "ui:placeholder": "File description"
+        }
+      },
+      "title": "FileConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for file interface node (no credentials).",
+  "properties": {
+    "config": {
+      "$ref": "#/$defs/FileConfig",
+      "description": "Node-specific configuration"
+    },
+    "credentials": {
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials",
+      "type": "null"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Interface-file Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Set the file source URL dynamically from upstream data",
+    "Use an uploaded file resource (image, audio, video, PDF, or any file)",
+    "Change the displayed file name or alt text",
+    "Display a generated image, audio clip, or video",
+    "Set a default file from config or upstream"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

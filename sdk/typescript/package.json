@@ -1,0 +1,64 @@
+{
+  "name": "noclick",
+  "version": "0.1.0",
+  "description": "SDK for building custom interfaces and external apps that interact with NoClick workflows",
+  "type": "module",
+  "main": "dist/sdk.esm.js",
+  "types": "src/index.ts",
+  "bin": {
+    "noclick": "bin/noclick.mjs"
+  },
+  "exports": {
+    ".": {
+      "import": "./dist/sdk.esm.js",
+      "types": "./src/index.ts"
+    },
+    "./react": {
+      "import": "./dist/sdk.esm.js",
+      "types": "./src/react.ts"
+    }
+  },
+  "files": [
+    "bin/",
+    "dist/",
+    "src/",
+    "LICENSE.md",
+    "README.md"
+  ],
+  "scripts": {
+    "build": "node build.js",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "prepublishOnly": "node build.js"
+  },
+  "keywords": [
+    "noclick",
+    "workflow",
+    "automation",
+    "sdk"
+  ],
+  "license": "SEE LICENSE IN LICENSE.md",
+  "homepage": "https://docs.noclick.com/sdk/overview",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/noclickapp/noclick",
+    "directory": "sdk/typescript"
+  },
+  "devDependencies": {
+    "esbuild": "^0.28.2",
+    "jsdom": "^26.1.0",
+    "react": "^19.2.4",
+    "react-dom": "^19.2.4",
+    "socket.io-client": "^4.8.1",
+    "vitest": "^3.2.4"
+  },
+  "peerDependencies": {
+    "react": ">=18",
+    "socket.io-client": ">=4.0"
+  },
+  "peerDependenciesMeta": {
+    "socket.io-client": {
+      "optional": true
+    }
+  }
+}

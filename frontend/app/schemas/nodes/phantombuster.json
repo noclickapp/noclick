@@ -1,0 +1,2055 @@
+{
+  "$defs": {
+    "PhantomBusterAiAdviceConfig": {
+      "description": "Get AI advice (PhantomBuster-hosted AI).",
+      "properties": {
+        "operation": {
+          "const": "ai_advice",
+          "default": "ai_advice",
+          "title": "AI Advice",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "AI & Utilities",
+          "x-display-name": "AI Advice",
+          "x-is-trigger": false
+        },
+        "payload": {
+          "description": "JSON request body for the AI advice call",
+          "title": "Payload (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "payload"
+      ],
+      "title": "PhantomBusterAiAdviceConfig",
+      "type": "object"
+    },
+    "PhantomBusterAiCompletionConfig": {
+      "description": "Generate an AI text completion (PhantomBuster-hosted AI).",
+      "properties": {
+        "operation": {
+          "const": "ai_completion",
+          "default": "ai_completion",
+          "title": "AI Completion",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "AI & Utilities",
+          "x-display-name": "AI Completion",
+          "x-is-trigger": false
+        },
+        "prompt": {
+          "description": "The prompt to generate a completion for",
+          "title": "Prompt",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "PhantomBusterAiCompletionConfig",
+      "type": "object"
+    },
+    "PhantomBusterAiTaskConfig": {
+      "description": "Run an AI task (PhantomBuster-hosted AI).",
+      "properties": {
+        "operation": {
+          "const": "ai_task",
+          "default": "ai_task",
+          "title": "AI Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "AI & Utilities",
+          "x-display-name": "AI Task",
+          "x-is-trigger": false
+        },
+        "payload": {
+          "description": "JSON request body for the AI task call",
+          "title": "Payload (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "payload"
+      ],
+      "title": "PhantomBusterAiTaskConfig",
+      "type": "object"
+    },
+    "PhantomBusterApiKeyCredential": {
+      "description": "API Key credential for PhantomBuster.",
+      "properties": {
+        "credential_type": {
+          "const": "phantombuster_api_key",
+          "default": "phantombuster_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Your PhantomBuster workspace API key. Reveal it in Settings under the API key section.",
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "PhantomBusterApiKeyCredential",
+      "type": "object",
+      "x-credential-url": "https://phantombuster.com/settings"
+    },
+    "PhantomBusterAttachContainerConfig": {
+      "description": "Attach to a running container and return its live output stream.",
+      "properties": {
+        "operation": {
+          "const": "attach_container",
+          "default": "attach_container",
+          "title": "Attach To Container",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Containers",
+          "x-display-name": "Attach To Container",
+          "x-is-trigger": false
+        },
+        "container_id": {
+          "description": "The running container to attach to",
+          "title": "Container ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "container_id"
+      ],
+      "title": "PhantomBusterAttachContainerConfig",
+      "type": "object"
+    },
+    "PhantomBusterCreateBranchConfig": {
+      "description": "Create a script branch.",
+      "properties": {
+        "operation": {
+          "const": "create_branch",
+          "default": "create_branch",
+          "title": "Create Branch",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Branches",
+          "x-display-name": "Create Branch",
+          "x-is-trigger": false
+        },
+        "payload": {
+          "description": "JSON body describing the branch to create",
+          "title": "Payload (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "payload"
+      ],
+      "title": "PhantomBusterCreateBranchConfig",
+      "type": "object"
+    },
+    "PhantomBusterDeleteAgentConfig": {
+      "description": "Permanently remove an agent.",
+      "properties": {
+        "operation": {
+          "const": "delete_agent",
+          "default": "delete_agent",
+          "title": "Delete Agent",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Agents",
+          "x-display-name": "Delete Agent",
+          "x-is-trigger": false
+        },
+        "agent_id": {
+          "description": "The ID of the agent to delete",
+          "title": "Agent",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste agent ID",
+            "field_name": "agent_id",
+            "placeholder": "Select an agent...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "agent_id"
+      ],
+      "title": "PhantomBusterDeleteAgentConfig",
+      "type": "object"
+    },
+    "PhantomBusterDeleteBranchConfig": {
+      "description": "Delete a script branch.",
+      "properties": {
+        "operation": {
+          "const": "delete_branch",
+          "default": "delete_branch",
+          "title": "Delete Branch",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Branches",
+          "x-display-name": "Delete Branch",
+          "x-is-trigger": false
+        },
+        "payload": {
+          "description": "JSON body identifying the branch to delete",
+          "title": "Payload (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "payload"
+      ],
+      "title": "PhantomBusterDeleteBranchConfig",
+      "type": "object"
+    },
+    "PhantomBusterDeleteLeadListConfig": {
+      "description": "Delete a lead list.",
+      "properties": {
+        "operation": {
+          "const": "delete_lead_list",
+          "default": "delete_lead_list",
+          "title": "Delete Lead List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Org Storage",
+          "x-display-name": "Delete Lead List",
+          "x-is-trigger": false
+        },
+        "list_id": {
+          "description": "The id of the lead list to delete",
+          "title": "List ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste list ID",
+            "field_name": "list_id",
+            "placeholder": "Select a lead list...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "PhantomBusterDeleteLeadListConfig",
+      "type": "object"
+    },
+    "PhantomBusterDeleteLeadsConfig": {
+      "description": "Delete multiple leads by identifier.",
+      "properties": {
+        "operation": {
+          "const": "delete_leads",
+          "default": "delete_leads",
+          "title": "Delete Leads",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Org Storage",
+          "x-display-name": "Delete Leads",
+          "x-is-trigger": false
+        },
+        "leads_payload": {
+          "description": "JSON object identifying the leads to delete",
+          "title": "Leads Payload (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "leads_payload"
+      ],
+      "title": "PhantomBusterDeleteLeadsConfig",
+      "type": "object"
+    },
+    "PhantomBusterDeleteScriptConfig": {
+      "description": "Remove a script.",
+      "properties": {
+        "operation": {
+          "const": "delete_script",
+          "default": "delete_script",
+          "title": "Delete Script",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Scripts",
+          "x-display-name": "Delete Script",
+          "x-is-trigger": false
+        },
+        "script_id": {
+          "description": "The ID of the script to delete",
+          "title": "Script ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste script ID",
+            "field_name": "script_id",
+            "placeholder": "Select a script...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "script_id"
+      ],
+      "title": "PhantomBusterDeleteScriptConfig",
+      "type": "object"
+    },
+    "PhantomBusterDiffBranchConfig": {
+      "description": "Diff a branch against production.",
+      "properties": {
+        "operation": {
+          "const": "diff_branch",
+          "default": "diff_branch",
+          "title": "Diff Branch",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Branches",
+          "x-display-name": "Diff Branch",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "The branch to diff",
+          "title": "Branch Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "PhantomBusterDiffBranchConfig",
+      "type": "object"
+    },
+    "PhantomBusterExportAgentUsageConfig": {
+      "description": "Export per-agent usage as a report.",
+      "properties": {
+        "operation": {
+          "const": "export_agent_usage",
+          "default": "export_agent_usage",
+          "title": "Export Agent Usage",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "Export Agent Usage",
+          "x-is-trigger": false
+        },
+        "query_params": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON of query params (e.g. date range) per the docs",
+          "title": "Query Parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "PhantomBusterExportAgentUsageConfig",
+      "type": "object"
+    },
+    "PhantomBusterExportContainerUsageConfig": {
+      "description": "Export per-container usage as a report.",
+      "properties": {
+        "operation": {
+          "const": "export_container_usage",
+          "default": "export_container_usage",
+          "title": "Export Container Usage",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "Export Container Usage",
+          "x-is-trigger": false
+        },
+        "query_params": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON of query params (e.g. date range) per the docs",
+          "title": "Query Parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "PhantomBusterExportContainerUsageConfig",
+      "type": "object"
+    },
+    "PhantomBusterGenerateIdentityTokenConfig": {
+      "description": "Generate a token + magic link for the user to connect an identity.",
+      "properties": {
+        "operation": {
+          "const": "generate_identity_token",
+          "default": "generate_identity_token",
+          "title": "Generate Identity Token",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Identities",
+          "x-display-name": "Generate Identity Token",
+          "x-is-trigger": false
+        }
+      },
+      "title": "PhantomBusterGenerateIdentityTokenConfig",
+      "type": "object"
+    },
+    "PhantomBusterGetAgentConfig": {
+      "description": "Fetch a single agent's details and configuration.",
+      "properties": {
+        "operation": {
+          "const": "get_agent",
+          "default": "get_agent",
+          "title": "Get Agent",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Agents",
+          "x-display-name": "Get Agent",
+          "x-is-trigger": false
+        },
+        "agent_id": {
+          "description": "The ID of the agent (Phantom) to fetch",
+          "title": "Agent",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste agent ID",
+            "field_name": "agent_id",
+            "placeholder": "Select an agent...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "agent_id"
+      ],
+      "title": "PhantomBusterGetAgentConfig",
+      "type": "object"
+    },
+    "PhantomBusterGetAgentOutputConfig": {
+      "description": "Fetch the incremental console output of an agent's most-recent run.",
+      "properties": {
+        "operation": {
+          "const": "get_agent_output",
+          "default": "get_agent_output",
+          "title": "Get Agent Output",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Agents",
+          "x-display-name": "Get Agent Output",
+          "x-is-trigger": false
+        },
+        "agent_id": {
+          "description": "The agent whose latest run output to fetch",
+          "title": "Agent",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste agent ID",
+            "field_name": "agent_id",
+            "placeholder": "Select an agent...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "agent_id"
+      ],
+      "title": "PhantomBusterGetAgentOutputConfig",
+      "type": "object"
+    },
+    "PhantomBusterGetContainerConfig": {
+      "description": "Fetch a single container's status/metadata for one run.",
+      "properties": {
+        "operation": {
+          "const": "get_container",
+          "default": "get_container",
+          "title": "Get Container",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Containers",
+          "x-display-name": "Get Container",
+          "x-is-trigger": false
+        },
+        "container_id": {
+          "description": "The ID of the container (run) to fetch",
+          "title": "Container ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "container_id"
+      ],
+      "title": "PhantomBusterGetContainerConfig",
+      "type": "object"
+    },
+    "PhantomBusterGetContainerOutputConfig": {
+      "description": "Retrieve console output / progress / result-object URL for a run.",
+      "properties": {
+        "operation": {
+          "const": "get_container_output",
+          "default": "get_container_output",
+          "title": "Get Container Output",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Containers",
+          "x-display-name": "Get Container Output",
+          "x-is-trigger": false
+        },
+        "container_id": {
+          "description": "The ID of the container (run) whose output to retrieve",
+          "title": "Container ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "container_id"
+      ],
+      "title": "PhantomBusterGetContainerOutputConfig",
+      "type": "object"
+    },
+    "PhantomBusterGetContainerResultObjectConfig": {
+      "description": "Retrieve the structured result object (the scraped data) for a run.",
+      "properties": {
+        "operation": {
+          "const": "get_container_result_object",
+          "default": "get_container_result_object",
+          "title": "Get Container Result",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Containers",
+          "x-display-name": "Get Container Result",
+          "x-is-trigger": false
+        },
+        "container_id": {
+          "description": "The container (run) whose result object to fetch",
+          "title": "Container ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "container_id"
+      ],
+      "title": "PhantomBusterGetContainerResultObjectConfig",
+      "type": "object"
+    },
+    "PhantomBusterGetCrmAccessConfig": {
+      "description": "Fetch the org's CRM integration access.",
+      "properties": {
+        "operation": {
+          "const": "get_crm_access",
+          "default": "get_crm_access",
+          "title": "Get CRM Access",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "Get CRM Access",
+          "x-is-trigger": false
+        }
+      },
+      "title": "PhantomBusterGetCrmAccessConfig",
+      "type": "object"
+    },
+    "PhantomBusterGetCrmResourcesConfig": {
+      "description": "Fetch the org's CRM resources.",
+      "properties": {
+        "operation": {
+          "const": "get_crm_resources",
+          "default": "get_crm_resources",
+          "title": "Get CRM Resources",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "Get CRM Resources",
+          "x-is-trigger": false
+        },
+        "query_params": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON of query params per the docs (optional)",
+          "title": "Query Parameters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "PhantomBusterGetCrmResourcesConfig",
+      "type": "object"
+    },
+    "PhantomBusterGetLeadListConfig": {
+      "description": "Fetch a single lead list by id.",
+      "properties": {
+        "operation": {
+          "const": "get_lead_list",
+          "default": "get_lead_list",
+          "title": "Get Lead List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Org Storage",
+          "x-display-name": "Get Lead List",
+          "x-is-trigger": false
+        },
+        "list_id": {
+          "description": "The id of the lead list to fetch",
+          "title": "List ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste list ID",
+            "field_name": "list_id",
+            "placeholder": "Select a lead list...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "PhantomBusterGetLeadListConfig",
+      "type": "object"
+    },
+    "PhantomBusterGetLeadsByListConfig": {
+      "description": "Fetch the leads contained in a lead list.",
+      "properties": {
+        "operation": {
+          "const": "get_leads_by_list",
+          "default": "get_leads_by_list",
+          "title": "Get Leads By List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Org Storage",
+          "x-display-name": "Get Leads By List",
+          "x-is-trigger": false
+        },
+        "list_id": {
+          "description": "The id of the lead list whose leads to fetch",
+          "title": "List ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste list ID",
+            "field_name": "list_id",
+            "placeholder": "Select a lead list...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "PhantomBusterGetLeadsByListConfig",
+      "type": "object"
+    },
+    "PhantomBusterGetOrgConfig": {
+      "description": "Fetch organization/workspace details.",
+      "properties": {
+        "operation": {
+          "const": "get_org",
+          "default": "get_org",
+          "title": "Get Organization",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "Get Organization",
+          "x-is-trigger": false
+        }
+      },
+      "title": "PhantomBusterGetOrgConfig",
+      "type": "object"
+    },
+    "PhantomBusterGetOrgResourcesConfig": {
+      "description": "Fetch resource/quota allocation for the org.",
+      "properties": {
+        "operation": {
+          "const": "get_org_resources",
+          "default": "get_org_resources",
+          "title": "Get Org Resources",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "Get Org Resources",
+          "x-is-trigger": false
+        }
+      },
+      "title": "PhantomBusterGetOrgResourcesConfig",
+      "type": "object"
+    },
+    "PhantomBusterGetScriptCodeConfig": {
+      "description": "Retrieve the raw code of a script.",
+      "properties": {
+        "operation": {
+          "const": "get_script_code",
+          "default": "get_script_code",
+          "title": "Get Script Code",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Scripts",
+          "x-display-name": "Get Script Code",
+          "x-is-trigger": false
+        },
+        "script_id": {
+          "description": "The ID of the script whose code to retrieve",
+          "title": "Script ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste script ID",
+            "field_name": "script_id",
+            "placeholder": "Select a script...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "script_id"
+      ],
+      "title": "PhantomBusterGetScriptCodeConfig",
+      "type": "object"
+    },
+    "PhantomBusterGetScriptConfig": {
+      "description": "Fetch metadata for a single script.",
+      "properties": {
+        "operation": {
+          "const": "get_script",
+          "default": "get_script",
+          "title": "Get Script",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Scripts",
+          "x-display-name": "Get Script",
+          "x-is-trigger": false
+        },
+        "script_id": {
+          "description": "The ID of the script to fetch",
+          "title": "Script ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste script ID",
+            "field_name": "script_id",
+            "placeholder": "Select a script...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "script_id"
+      ],
+      "title": "PhantomBusterGetScriptConfig",
+      "type": "object"
+    },
+    "PhantomBusterGetUserConfig": {
+      "description": "Fetch the current account info, plan/quota, and running agents.",
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Get Account",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Account",
+          "x-is-trigger": false
+        }
+      },
+      "title": "PhantomBusterGetUserConfig",
+      "type": "object"
+    },
+    "PhantomBusterIpLocationConfig": {
+      "description": "Resolve geographic location from an IP address.",
+      "properties": {
+        "operation": {
+          "const": "ip_location",
+          "default": "ip_location",
+          "title": "IP Geolocation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "AI & Utilities",
+          "x-display-name": "IP Geolocation",
+          "x-is-trigger": false
+        },
+        "ip": {
+          "description": "The IP address to geolocate",
+          "title": "IP Address",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ip"
+      ],
+      "title": "PhantomBusterIpLocationConfig",
+      "type": "object"
+    },
+    "PhantomBusterLaunchAgentConfig": {
+      "description": "Start an agent run; returns a container ID.",
+      "properties": {
+        "operation": {
+          "const": "launch_agent",
+          "default": "launch_agent",
+          "title": "Launch Agent",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Agents",
+          "x-display-name": "Launch Agent",
+          "x-is-trigger": false
+        },
+        "agent_id": {
+          "description": "The ID of the agent (Phantom) to launch",
+          "title": "Agent",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste agent ID",
+            "field_name": "agent_id",
+            "placeholder": "Select an agent...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "argument": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object of argument overrides passed to the Phantom",
+          "title": "Argument (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "agent_id"
+      ],
+      "title": "PhantomBusterLaunchAgentConfig",
+      "type": "object"
+    },
+    "PhantomBusterLaunchAgentSoonConfig": {
+      "description": "Queue the agent to launch as soon as a slot is free.",
+      "properties": {
+        "operation": {
+          "const": "launch_agent_soon",
+          "default": "launch_agent_soon",
+          "title": "Launch Agent (Queued)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Agents",
+          "x-display-name": "Launch Agent (Queued)",
+          "x-is-trigger": false
+        },
+        "agent_id": {
+          "description": "The ID of the agent (Phantom) to queue",
+          "title": "Agent",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste agent ID",
+            "field_name": "agent_id",
+            "placeholder": "Select an agent...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "minutes": {
+          "default": "0",
+          "description": "Launch within this many minutes (0 = as soon as a slot is free). A manual launch before then cancels it.",
+          "title": "Delay (minutes)",
+          "type": "string"
+        },
+        "argument": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object of argument overrides passed to the Phantom",
+          "title": "Argument (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "agent_id"
+      ],
+      "title": "PhantomBusterLaunchAgentSoonConfig",
+      "type": "object"
+    },
+    "PhantomBusterLaunchAgentSyncConfig": {
+      "description": "Launch and block until completion, returning the result inline.",
+      "properties": {
+        "operation": {
+          "const": "launch_agent_sync",
+          "default": "launch_agent_sync",
+          "title": "Launch Agent (Sync)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Agents",
+          "x-display-name": "Launch Agent (Sync)",
+          "x-is-trigger": false
+        },
+        "agent_id": {
+          "description": "The ID of the agent (Phantom) to launch synchronously",
+          "title": "Agent",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste agent ID",
+            "field_name": "agent_id",
+            "placeholder": "Select an agent...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "argument": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object of argument overrides passed to the Phantom",
+          "title": "Argument (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "agent_id"
+      ],
+      "title": "PhantomBusterLaunchAgentSyncConfig",
+      "type": "object"
+    },
+    "PhantomBusterListAgentGroupsConfig": {
+      "description": "List the org's agent groups (folders).",
+      "properties": {
+        "operation": {
+          "const": "list_agent_groups",
+          "default": "list_agent_groups",
+          "title": "List Agent Groups",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "List Agent Groups",
+          "x-is-trigger": false
+        }
+      },
+      "title": "PhantomBusterListAgentGroupsConfig",
+      "type": "object"
+    },
+    "PhantomBusterListAgentsConfig": {
+      "description": "List every agent (Phantom) in the workspace.",
+      "properties": {
+        "operation": {
+          "const": "list_agents",
+          "default": "list_agents",
+          "title": "List Agents",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Agents",
+          "x-display-name": "List Agents",
+          "x-is-trigger": false
+        }
+      },
+      "title": "PhantomBusterListAgentsConfig",
+      "type": "object"
+    },
+    "PhantomBusterListBranchesConfig": {
+      "description": "List script branches.",
+      "properties": {
+        "operation": {
+          "const": "list_branches",
+          "default": "list_branches",
+          "title": "List Branches",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Branches",
+          "x-display-name": "List Branches",
+          "x-is-trigger": false
+        }
+      },
+      "title": "PhantomBusterListBranchesConfig",
+      "type": "object"
+    },
+    "PhantomBusterListBuyerPersonasConfig": {
+      "description": "List buyer personas.",
+      "properties": {
+        "operation": {
+          "const": "list_buyer_personas",
+          "default": "list_buyer_personas",
+          "title": "List Buyer Personas",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Strategic",
+          "x-display-name": "List Buyer Personas",
+          "x-is-trigger": false
+        }
+      },
+      "title": "PhantomBusterListBuyerPersonasConfig",
+      "type": "object"
+    },
+    "PhantomBusterListContainersConfig": {
+      "description": "List execution containers (run history) for an agent.",
+      "properties": {
+        "operation": {
+          "const": "list_containers",
+          "default": "list_containers",
+          "title": "List Containers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Containers",
+          "x-display-name": "List Containers",
+          "x-is-trigger": false
+        },
+        "agent_id": {
+          "description": "The ID of the agent whose run history to list",
+          "title": "Agent",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste agent ID",
+            "field_name": "agent_id",
+            "placeholder": "Select an agent...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "agent_id"
+      ],
+      "title": "PhantomBusterListContainersConfig",
+      "type": "object"
+    },
+    "PhantomBusterListDeletedAgentsConfig": {
+      "description": "List soft-deleted agents in the workspace.",
+      "properties": {
+        "operation": {
+          "const": "list_deleted_agents",
+          "default": "list_deleted_agents",
+          "title": "List Deleted Agents",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Agents",
+          "x-display-name": "List Deleted Agents",
+          "x-is-trigger": false
+        }
+      },
+      "title": "PhantomBusterListDeletedAgentsConfig",
+      "type": "object"
+    },
+    "PhantomBusterListIcpsConfig": {
+      "description": "List Ideal Customer Profiles (ICPs).",
+      "properties": {
+        "operation": {
+          "const": "list_icps",
+          "default": "list_icps",
+          "title": "List ICPs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Strategic",
+          "x-display-name": "List ICPs",
+          "x-is-trigger": false
+        }
+      },
+      "title": "PhantomBusterListIcpsConfig",
+      "type": "object"
+    },
+    "PhantomBusterListLeadListsConfig": {
+      "description": "List all saved lead lists in the workspace.",
+      "properties": {
+        "operation": {
+          "const": "list_lead_lists",
+          "default": "list_lead_lists",
+          "title": "List Lead Lists",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Org Storage",
+          "x-display-name": "List Lead Lists",
+          "x-is-trigger": false
+        }
+      },
+      "title": "PhantomBusterListLeadListsConfig",
+      "type": "object"
+    },
+    "PhantomBusterListRunningContainersConfig": {
+      "description": "List all currently-running containers across the organization.",
+      "properties": {
+        "operation": {
+          "const": "list_running_containers",
+          "default": "list_running_containers",
+          "title": "List Running Containers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "List Running Containers",
+          "x-is-trigger": false
+        }
+      },
+      "title": "PhantomBusterListRunningContainersConfig",
+      "type": "object"
+    },
+    "PhantomBusterListScriptsConfig": {
+      "description": "List all scripts (Phantom definitions) in the workspace.",
+      "properties": {
+        "operation": {
+          "const": "list_scripts",
+          "default": "list_scripts",
+          "title": "List Scripts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Scripts",
+          "x-display-name": "List Scripts",
+          "x-is-trigger": false
+        }
+      },
+      "title": "PhantomBusterListScriptsConfig",
+      "type": "object"
+    },
+    "PhantomBusterReceiveWebhookConfig": {
+      "description": "Receive per-Phantom completion notifications from PhantomBuster.",
+      "properties": {
+        "operation": {
+          "const": "receive_webhook",
+          "default": "receive_webhook",
+          "title": "On Phantom Finished",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Phantom Finished",
+          "x-is-trigger": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Paste this URL into your Phantom's notification webhook setting; it POSTs run results here when the Phantom finishes.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        }
+      },
+      "title": "PhantomBusterReceiveWebhookConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "PhantomBusterReleaseBranchConfig": {
+      "description": "Release (deploy) a branch to production.",
+      "properties": {
+        "operation": {
+          "const": "release_branch",
+          "default": "release_branch",
+          "title": "Release Branch",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Branches",
+          "x-display-name": "Release Branch",
+          "x-is-trigger": false
+        },
+        "payload": {
+          "description": "JSON body describing the branch release",
+          "title": "Payload (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "payload"
+      ],
+      "title": "PhantomBusterReleaseBranchConfig",
+      "type": "object"
+    },
+    "PhantomBusterSaveAgentConfig": {
+      "description": "Create or update an agent's configuration/arguments.",
+      "properties": {
+        "operation": {
+          "const": "save_agent",
+          "default": "save_agent",
+          "title": "Save Agent",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Agents",
+          "x-display-name": "Save Agent",
+          "x-is-trigger": false
+        },
+        "agent_payload": {
+          "description": "JSON object describing the agent to create or update (include id to update)",
+          "title": "Agent Payload (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "agent_payload"
+      ],
+      "title": "PhantomBusterSaveAgentConfig",
+      "type": "object"
+    },
+    "PhantomBusterSaveAgentGroupsConfig": {
+      "description": "Create/update the org's agent groups.",
+      "properties": {
+        "operation": {
+          "const": "save_agent_groups",
+          "default": "save_agent_groups",
+          "title": "Save Agent Groups",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "Save Agent Groups",
+          "x-is-trigger": false
+        },
+        "payload": {
+          "description": "JSON body describing the agent groups to save",
+          "title": "Payload (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "payload"
+      ],
+      "title": "PhantomBusterSaveAgentGroupsConfig",
+      "type": "object"
+    },
+    "PhantomBusterSaveCrmContactConfig": {
+      "description": "Upsert a CRM contact.",
+      "properties": {
+        "operation": {
+          "const": "save_crm_contact",
+          "default": "save_crm_contact",
+          "title": "Save CRM Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "Save CRM Contact",
+          "x-is-trigger": false
+        },
+        "payload": {
+          "description": "JSON body describing the CRM contact to save",
+          "title": "Payload (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "payload"
+      ],
+      "title": "PhantomBusterSaveCrmContactConfig",
+      "type": "object"
+    },
+    "PhantomBusterSaveIdentityConfig": {
+      "description": "Save an identity (session cookies for logged-in scraping).",
+      "properties": {
+        "operation": {
+          "const": "save_identity",
+          "default": "save_identity",
+          "title": "Save Identity",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Identities",
+          "x-display-name": "Save Identity",
+          "x-is-trigger": false
+        },
+        "payload": {
+          "description": "JSON body describing the identity/session to save",
+          "title": "Payload (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "payload"
+      ],
+      "title": "PhantomBusterSaveIdentityConfig",
+      "type": "object"
+    },
+    "PhantomBusterSaveIdentityEventConfig": {
+      "description": "Record an identity event.",
+      "properties": {
+        "operation": {
+          "const": "save_identity_event",
+          "default": "save_identity_event",
+          "title": "Save Identity Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Identities",
+          "x-display-name": "Save Identity Event",
+          "x-is-trigger": false
+        },
+        "payload": {
+          "description": "JSON body describing the identity event",
+          "title": "Payload (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "payload"
+      ],
+      "title": "PhantomBusterSaveIdentityEventConfig",
+      "type": "object"
+    },
+    "PhantomBusterSaveIdentityWithTokenConfig": {
+      "description": "Save an identity using a connection token.",
+      "properties": {
+        "operation": {
+          "const": "save_identity_with_token",
+          "default": "save_identity_with_token",
+          "title": "Save Identity With Token",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Identities",
+          "x-display-name": "Save Identity With Token",
+          "x-is-trigger": false
+        },
+        "payload": {
+          "description": "JSON body including the connection token and identity data",
+          "title": "Payload (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "payload"
+      ],
+      "title": "PhantomBusterSaveIdentityWithTokenConfig",
+      "type": "object"
+    },
+    "PhantomBusterSaveLeadListConfig": {
+      "description": "Create or update a lead list.",
+      "properties": {
+        "operation": {
+          "const": "save_lead_list",
+          "default": "save_lead_list",
+          "title": "Save Lead List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Org Storage",
+          "x-display-name": "Save Lead List",
+          "x-is-trigger": false
+        },
+        "list_payload": {
+          "description": "JSON object describing the lead list to create or update",
+          "title": "List Payload (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "list_payload"
+      ],
+      "title": "PhantomBusterSaveLeadListConfig",
+      "type": "object"
+    },
+    "PhantomBusterSaveLeadsConfig": {
+      "description": "Store / upsert lead records into workspace storage.",
+      "properties": {
+        "operation": {
+          "const": "save_leads",
+          "default": "save_leads",
+          "title": "Save Leads",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Org Storage",
+          "x-display-name": "Save Leads",
+          "x-is-trigger": false
+        },
+        "leads_payload": {
+          "description": "JSON object/array of lead records to store or upsert",
+          "title": "Leads Payload (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "leads_payload"
+      ],
+      "title": "PhantomBusterSaveLeadsConfig",
+      "type": "object"
+    },
+    "PhantomBusterSaveManyLeadsConfig": {
+      "description": "Upsert multiple leads (1-20) into workspace storage in one call.",
+      "properties": {
+        "operation": {
+          "const": "save_many_leads",
+          "default": "save_many_leads",
+          "title": "Save Many Leads",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Org Storage",
+          "x-display-name": "Save Many Leads",
+          "x-is-trigger": false
+        },
+        "leads_payload": {
+          "description": "JSON object with a leads array (1-20 records, each with linkedinProfileUrl)",
+          "title": "Leads Payload (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "leads_payload"
+      ],
+      "title": "PhantomBusterSaveManyLeadsConfig",
+      "type": "object"
+    },
+    "PhantomBusterSaveScriptConfig": {
+      "description": "Create or update a script's code/metadata.",
+      "properties": {
+        "operation": {
+          "const": "save_script",
+          "default": "save_script",
+          "title": "Save Script",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Scripts",
+          "x-display-name": "Save Script",
+          "x-is-trigger": false
+        },
+        "script_payload": {
+          "description": "JSON object describing the script to create or update (include id to update)",
+          "title": "Script Payload (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "script_payload"
+      ],
+      "title": "PhantomBusterSaveScriptConfig",
+      "type": "object"
+    },
+    "PhantomBusterScriptAccessListConfig": {
+      "description": "Set a script's access list.",
+      "properties": {
+        "operation": {
+          "const": "set_script_access_list",
+          "default": "set_script_access_list",
+          "title": "Set Script Access List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Scripts",
+          "x-display-name": "Set Script Access List",
+          "x-is-trigger": false
+        },
+        "payload": {
+          "description": "JSON body describing the script id and its access list",
+          "title": "Payload (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "payload"
+      ],
+      "title": "PhantomBusterScriptAccessListConfig",
+      "type": "object"
+    },
+    "PhantomBusterScriptVisibilityConfig": {
+      "description": "Set a script's visibility.",
+      "properties": {
+        "operation": {
+          "const": "set_script_visibility",
+          "default": "set_script_visibility",
+          "title": "Set Script Visibility",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Scripts",
+          "x-display-name": "Set Script Visibility",
+          "x-is-trigger": false
+        },
+        "payload": {
+          "description": "JSON body, e.g. {\"id\": \"...\", \"visibility\": \"private|public|unlisted\"}",
+          "title": "Payload (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "payload"
+      ],
+      "title": "PhantomBusterScriptVisibilityConfig",
+      "type": "object"
+    },
+    "PhantomBusterSearchIdentitiesConfig": {
+      "description": "Search stored identities.",
+      "properties": {
+        "operation": {
+          "const": "search_identities",
+          "default": "search_identities",
+          "title": "Search Identities",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Identities",
+          "x-display-name": "Search Identities",
+          "x-is-trigger": false
+        },
+        "payload": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON search filter (empty returns all)",
+          "title": "Search Body (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "PhantomBusterSearchIdentitiesConfig",
+      "type": "object"
+    },
+    "PhantomBusterSerpSearchConfig": {
+      "description": "Run a SERP (search-engine results) scrape via BrightData.",
+      "properties": {
+        "operation": {
+          "const": "serp_search",
+          "default": "serp_search",
+          "title": "SERP Search",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "AI & Utilities",
+          "x-display-name": "SERP Search",
+          "x-is-trigger": false
+        },
+        "query_params": {
+          "description": "JSON of the SERP query params per the docs (e.g. search terms / engine options)",
+          "title": "Query Parameters (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "query_params"
+      ],
+      "title": "PhantomBusterSerpSearchConfig",
+      "type": "object"
+    },
+    "PhantomBusterSolveHcaptchaConfig": {
+      "description": "Submit an hCaptcha challenge for solving.",
+      "properties": {
+        "operation": {
+          "const": "solve_hcaptcha",
+          "default": "solve_hcaptcha",
+          "title": "Solve hCaptcha",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "AI & Utilities",
+          "x-display-name": "Solve hCaptcha",
+          "x-is-trigger": false
+        },
+        "site_key": {
+          "description": "The hCaptcha site key for the challenge",
+          "title": "Site Key",
+          "type": "string"
+        },
+        "page_url": {
+          "description": "The URL of the page presenting the hCaptcha",
+          "title": "Page URL",
+          "type": "string"
+        }
+      },
+      "required": [
+        "site_key",
+        "page_url"
+      ],
+      "title": "PhantomBusterSolveHcaptchaConfig",
+      "type": "object"
+    },
+    "PhantomBusterSolveRecaptchaConfig": {
+      "description": "Submit a reCAPTCHA challenge for solving.",
+      "properties": {
+        "operation": {
+          "const": "solve_recaptcha",
+          "default": "solve_recaptcha",
+          "title": "Solve reCAPTCHA",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "AI & Utilities",
+          "x-display-name": "Solve reCAPTCHA",
+          "x-is-trigger": false
+        },
+        "site_key": {
+          "description": "The reCAPTCHA site key for the challenge",
+          "title": "Site Key",
+          "type": "string"
+        },
+        "page_url": {
+          "description": "The URL of the page presenting the reCAPTCHA",
+          "title": "Page URL",
+          "type": "string"
+        },
+        "version": {
+          "default": "v2",
+          "description": "reCAPTCHA version",
+          "enum": [
+            "v2",
+            "v3"
+          ],
+          "enumNames": [
+            "v2",
+            "v3"
+          ],
+          "title": "Version",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "site_key",
+        "page_url"
+      ],
+      "title": "PhantomBusterSolveRecaptchaConfig",
+      "type": "object"
+    },
+    "PhantomBusterStopAgentConfig": {
+      "description": "Abort a running agent / its container.",
+      "properties": {
+        "operation": {
+          "const": "stop_agent",
+          "default": "stop_agent",
+          "title": "Stop Agent",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Agents",
+          "x-display-name": "Stop Agent",
+          "x-is-trigger": false
+        },
+        "agent_id": {
+          "description": "The ID of the running agent to stop",
+          "title": "Agent",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste agent ID",
+            "field_name": "agent_id",
+            "placeholder": "Select an agent...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "agent_id"
+      ],
+      "title": "PhantomBusterStopAgentConfig",
+      "type": "object"
+    },
+    "PhantomBusterUnscheduleAllConfig": {
+      "description": "Remove all schedules from the org's agents.",
+      "properties": {
+        "operation": {
+          "const": "unschedule_all",
+          "default": "unschedule_all",
+          "title": "Unschedule All Agents",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Agents",
+          "x-display-name": "Unschedule All Agents",
+          "x-is-trigger": false
+        }
+      },
+      "title": "PhantomBusterUnscheduleAllConfig",
+      "type": "object"
+    },
+    "PhantomBusterUpdateUserConfig": {
+      "description": "Update the current user's profile fields.",
+      "properties": {
+        "operation": {
+          "const": "update_user",
+          "default": "update_user",
+          "title": "Update Account",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Update Account",
+          "x-is-trigger": false
+        },
+        "user_payload": {
+          "description": "JSON object of profile fields to update (firstName, lastName, phone, company, job)",
+          "title": "User Payload (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "user_payload"
+      ],
+      "title": "PhantomBusterUpdateUserConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the PhantomBuster node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "ai_advice": "#/$defs/PhantomBusterAiAdviceConfig",
+          "ai_completion": "#/$defs/PhantomBusterAiCompletionConfig",
+          "ai_task": "#/$defs/PhantomBusterAiTaskConfig",
+          "attach_container": "#/$defs/PhantomBusterAttachContainerConfig",
+          "create_branch": "#/$defs/PhantomBusterCreateBranchConfig",
+          "delete_agent": "#/$defs/PhantomBusterDeleteAgentConfig",
+          "delete_branch": "#/$defs/PhantomBusterDeleteBranchConfig",
+          "delete_lead_list": "#/$defs/PhantomBusterDeleteLeadListConfig",
+          "delete_leads": "#/$defs/PhantomBusterDeleteLeadsConfig",
+          "delete_script": "#/$defs/PhantomBusterDeleteScriptConfig",
+          "diff_branch": "#/$defs/PhantomBusterDiffBranchConfig",
+          "export_agent_usage": "#/$defs/PhantomBusterExportAgentUsageConfig",
+          "export_container_usage": "#/$defs/PhantomBusterExportContainerUsageConfig",
+          "generate_identity_token": "#/$defs/PhantomBusterGenerateIdentityTokenConfig",
+          "get_agent": "#/$defs/PhantomBusterGetAgentConfig",
+          "get_agent_output": "#/$defs/PhantomBusterGetAgentOutputConfig",
+          "get_container": "#/$defs/PhantomBusterGetContainerConfig",
+          "get_container_output": "#/$defs/PhantomBusterGetContainerOutputConfig",
+          "get_container_result_object": "#/$defs/PhantomBusterGetContainerResultObjectConfig",
+          "get_crm_access": "#/$defs/PhantomBusterGetCrmAccessConfig",
+          "get_crm_resources": "#/$defs/PhantomBusterGetCrmResourcesConfig",
+          "get_lead_list": "#/$defs/PhantomBusterGetLeadListConfig",
+          "get_leads_by_list": "#/$defs/PhantomBusterGetLeadsByListConfig",
+          "get_org": "#/$defs/PhantomBusterGetOrgConfig",
+          "get_org_resources": "#/$defs/PhantomBusterGetOrgResourcesConfig",
+          "get_script": "#/$defs/PhantomBusterGetScriptConfig",
+          "get_script_code": "#/$defs/PhantomBusterGetScriptCodeConfig",
+          "get_user": "#/$defs/PhantomBusterGetUserConfig",
+          "ip_location": "#/$defs/PhantomBusterIpLocationConfig",
+          "launch_agent": "#/$defs/PhantomBusterLaunchAgentConfig",
+          "launch_agent_soon": "#/$defs/PhantomBusterLaunchAgentSoonConfig",
+          "launch_agent_sync": "#/$defs/PhantomBusterLaunchAgentSyncConfig",
+          "list_agent_groups": "#/$defs/PhantomBusterListAgentGroupsConfig",
+          "list_agents": "#/$defs/PhantomBusterListAgentsConfig",
+          "list_branches": "#/$defs/PhantomBusterListBranchesConfig",
+          "list_buyer_personas": "#/$defs/PhantomBusterListBuyerPersonasConfig",
+          "list_containers": "#/$defs/PhantomBusterListContainersConfig",
+          "list_deleted_agents": "#/$defs/PhantomBusterListDeletedAgentsConfig",
+          "list_icps": "#/$defs/PhantomBusterListIcpsConfig",
+          "list_lead_lists": "#/$defs/PhantomBusterListLeadListsConfig",
+          "list_running_containers": "#/$defs/PhantomBusterListRunningContainersConfig",
+          "list_scripts": "#/$defs/PhantomBusterListScriptsConfig",
+          "receive_webhook": "#/$defs/PhantomBusterReceiveWebhookConfig",
+          "release_branch": "#/$defs/PhantomBusterReleaseBranchConfig",
+          "save_agent": "#/$defs/PhantomBusterSaveAgentConfig",
+          "save_agent_groups": "#/$defs/PhantomBusterSaveAgentGroupsConfig",
+          "save_crm_contact": "#/$defs/PhantomBusterSaveCrmContactConfig",
+          "save_identity": "#/$defs/PhantomBusterSaveIdentityConfig",
+          "save_identity_event": "#/$defs/PhantomBusterSaveIdentityEventConfig",
+          "save_identity_with_token": "#/$defs/PhantomBusterSaveIdentityWithTokenConfig",
+          "save_lead_list": "#/$defs/PhantomBusterSaveLeadListConfig",
+          "save_leads": "#/$defs/PhantomBusterSaveLeadsConfig",
+          "save_many_leads": "#/$defs/PhantomBusterSaveManyLeadsConfig",
+          "save_script": "#/$defs/PhantomBusterSaveScriptConfig",
+          "search_identities": "#/$defs/PhantomBusterSearchIdentitiesConfig",
+          "serp_search": "#/$defs/PhantomBusterSerpSearchConfig",
+          "set_script_access_list": "#/$defs/PhantomBusterScriptAccessListConfig",
+          "set_script_visibility": "#/$defs/PhantomBusterScriptVisibilityConfig",
+          "solve_hcaptcha": "#/$defs/PhantomBusterSolveHcaptchaConfig",
+          "solve_recaptcha": "#/$defs/PhantomBusterSolveRecaptchaConfig",
+          "stop_agent": "#/$defs/PhantomBusterStopAgentConfig",
+          "unschedule_all": "#/$defs/PhantomBusterUnscheduleAllConfig",
+          "update_user": "#/$defs/PhantomBusterUpdateUserConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/PhantomBusterGetUserConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterUpdateUserConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterListAgentsConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterGetAgentConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterGetAgentOutputConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterListDeletedAgentsConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterLaunchAgentConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterLaunchAgentSoonConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterLaunchAgentSyncConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterStopAgentConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterSaveAgentConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterDeleteAgentConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterUnscheduleAllConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterListContainersConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterGetContainerConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterGetContainerOutputConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterGetContainerResultObjectConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterAttachContainerConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterListScriptsConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterGetScriptConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterGetScriptCodeConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterSaveScriptConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterDeleteScriptConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterScriptVisibilityConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterScriptAccessListConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterListBranchesConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterDiffBranchConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterCreateBranchConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterDeleteBranchConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterReleaseBranchConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterGetOrgConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterGetOrgResourcesConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterListRunningContainersConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterListAgentGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterSaveAgentGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterExportAgentUsageConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterExportContainerUsageConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterGetCrmAccessConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterGetCrmResourcesConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterSaveCrmContactConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterSaveLeadsConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterSaveManyLeadsConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterDeleteLeadsConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterGetLeadsByListConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterListLeadListsConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterGetLeadListConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterSaveLeadListConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterDeleteLeadListConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterSaveIdentityConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterSaveIdentityWithTokenConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterGenerateIdentityTokenConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterSearchIdentitiesConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterSaveIdentityEventConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterListIcpsConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterListBuyerPersonasConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterAiCompletionConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterAiAdviceConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterAiTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterSolveHcaptchaConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterSolveRecaptchaConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterSerpSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterIpLocationConfig"
+        },
+        {
+          "$ref": "#/$defs/PhantomBusterReceiveWebhookConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PhantomBusterApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Phantombuster Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "List all my Phantoms",
+    "Launch a LinkedIn scraping Phantom with custom arguments",
+    "Get the output of a finished Phantom run",
+    "Check my PhantomBuster account quota",
+    "Trigger a workflow when a Phantom finishes running"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

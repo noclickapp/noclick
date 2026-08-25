@@ -1,0 +1,642 @@
+{
+  "$defs": {
+    "GoogleSearchConsoleAddSiteConfig": {
+      "description": "Add a new property to Google Search Console.",
+      "properties": {
+        "operation": {
+          "const": "add_site",
+          "default": "add_site",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sites",
+          "x-creates-resource": true,
+          "x-display-name": "Add Site",
+          "x-is-trigger": false,
+          "x-resource-id-path": "site_url",
+          "x-resource-type": "google_search_console_site"
+        },
+        "site_url": {
+          "description": "Property to add \u2014 use https://example.com/ for URL-prefix or sc-domain:example.com for domain property",
+          "placeholder": "https://example.com/",
+          "title": "Site URL",
+          "type": "string"
+        }
+      },
+      "required": [
+        "site_url"
+      ],
+      "title": "GoogleSearchConsoleAddSiteConfig",
+      "type": "object"
+    },
+    "GoogleSearchConsoleDeleteSiteConfig": {
+      "description": "Remove a property from your Google Search Console account.",
+      "properties": {
+        "operation": {
+          "const": "delete_site",
+          "default": "delete_site",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sites",
+          "x-display-name": "Delete Site",
+          "x-is-trigger": false
+        },
+        "site_url": {
+          "description": "Property to remove from your Search Console account",
+          "title": "Site URL",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter site URL",
+            "field_name": "site_url",
+            "placeholder": "Select a verified property...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_search_console_site"
+        }
+      },
+      "required": [
+        "site_url"
+      ],
+      "title": "GoogleSearchConsoleDeleteSiteConfig",
+      "type": "object"
+    },
+    "GoogleSearchConsoleDeleteSitemapConfig": {
+      "description": "Remove a sitemap from the Sitemaps report in Google Search Console.",
+      "properties": {
+        "operation": {
+          "const": "delete_sitemap",
+          "default": "delete_sitemap",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sitemaps",
+          "x-display-name": "Delete Sitemap",
+          "x-is-trigger": false
+        },
+        "site_url": {
+          "description": "Verified property the sitemap belongs to",
+          "title": "Site URL",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter site URL",
+            "field_name": "site_url",
+            "placeholder": "Select a verified property...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_search_console_site"
+        },
+        "sitemap_url": {
+          "description": "Full URL of the sitemap to remove from Search Console",
+          "placeholder": "https://example.com/sitemap.xml",
+          "title": "Sitemap URL",
+          "type": "string"
+        }
+      },
+      "required": [
+        "site_url",
+        "sitemap_url"
+      ],
+      "title": "GoogleSearchConsoleDeleteSitemapConfig",
+      "type": "object"
+    },
+    "GoogleSearchConsoleGetSiteConfig": {
+      "description": "Get permission level and details for a specific verified property.",
+      "properties": {
+        "operation": {
+          "const": "get_site",
+          "default": "get_site",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sites",
+          "x-display-name": "Get Site",
+          "x-is-trigger": false
+        },
+        "site_url": {
+          "description": "Property URL to look up (e.g. https://example.com/ or sc-domain:example.com)",
+          "title": "Site URL",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter site URL",
+            "field_name": "site_url",
+            "placeholder": "Select a verified property...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_search_console_site"
+        }
+      },
+      "required": [
+        "site_url"
+      ],
+      "title": "GoogleSearchConsoleGetSiteConfig",
+      "type": "object"
+    },
+    "GoogleSearchConsoleGetSitemapConfig": {
+      "description": "Get submission status, error counts, and URL coverage for a specific sitemap.",
+      "properties": {
+        "operation": {
+          "const": "get_sitemap",
+          "default": "get_sitemap",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sitemaps",
+          "x-display-name": "Get Sitemap",
+          "x-is-trigger": false
+        },
+        "site_url": {
+          "description": "Verified property the sitemap belongs to",
+          "title": "Site URL",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter site URL",
+            "field_name": "site_url",
+            "placeholder": "Select a verified property...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_search_console_site"
+        },
+        "sitemap_url": {
+          "description": "Full URL of the sitemap to retrieve details for",
+          "placeholder": "https://example.com/sitemap.xml",
+          "title": "Sitemap URL",
+          "type": "string"
+        }
+      },
+      "required": [
+        "site_url",
+        "sitemap_url"
+      ],
+      "title": "GoogleSearchConsoleGetSitemapConfig",
+      "type": "object"
+    },
+    "GoogleSearchConsoleInspectUrlConfig": {
+      "description": "Inspect indexing status, crawl state, and mobile usability for a URL.",
+      "properties": {
+        "operation": {
+          "const": "inspect_url",
+          "default": "inspect_url",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "URL Inspection",
+          "x-display-name": "Inspect URL",
+          "x-is-trigger": false
+        },
+        "site_url": {
+          "description": "Verified property the inspected URL belongs to",
+          "title": "Site URL",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter site URL",
+            "field_name": "site_url",
+            "placeholder": "Select a verified property...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_search_console_site"
+        },
+        "inspection_url": {
+          "description": "Exact page URL to inspect (must belong to the selected site)",
+          "placeholder": "https://example.com/blog/article",
+          "title": "URL to Inspect",
+          "type": "string"
+        }
+      },
+      "required": [
+        "site_url",
+        "inspection_url"
+      ],
+      "title": "GoogleSearchConsoleInspectUrlConfig",
+      "type": "object"
+    },
+    "GoogleSearchConsoleListSitemapsConfig": {
+      "description": "List all submitted sitemaps for a verified site with coverage statistics.",
+      "properties": {
+        "operation": {
+          "const": "list_sitemaps",
+          "default": "list_sitemaps",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sitemaps",
+          "x-display-name": "List Sitemaps",
+          "x-is-trigger": false
+        },
+        "site_url": {
+          "description": "Verified property to list sitemaps for",
+          "title": "Site URL",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter site URL",
+            "field_name": "site_url",
+            "placeholder": "Select a verified property...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_search_console_site"
+        }
+      },
+      "required": [
+        "site_url"
+      ],
+      "title": "GoogleSearchConsoleListSitemapsConfig",
+      "type": "object"
+    },
+    "GoogleSearchConsoleListSitesConfig": {
+      "description": "List all verified Google Search Console properties for the account.",
+      "properties": {
+        "operation": {
+          "const": "list_sites",
+          "default": "list_sites",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sites",
+          "x-display-name": "List Sites",
+          "x-is-trigger": false
+        }
+      },
+      "title": "GoogleSearchConsoleListSitesConfig",
+      "type": "object"
+    },
+    "GoogleSearchConsoleMobileFriendlyTestConfig": {
+      "description": "Run Google's Mobile-Friendly Test on any public URL \u2014 no verified property required.",
+      "properties": {
+        "operation": {
+          "const": "mobile_friendly_test",
+          "default": "mobile_friendly_test",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "URL Testing",
+          "x-display-name": "Mobile Friendly Test",
+          "x-is-trigger": false
+        },
+        "url": {
+          "description": "Public URL to test for mobile usability",
+          "placeholder": "https://example.com/page",
+          "title": "URL",
+          "type": "string"
+        },
+        "request_screenshot": {
+          "default": "false",
+          "description": "Whether to include a rendered screenshot of the page in the response",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Screenshot",
+          "type": "string",
+          "x-enum-searchable": false
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "GoogleSearchConsoleMobileFriendlyTestConfig",
+      "type": "object"
+    },
+    "GoogleSearchConsoleOAuthCredential": {
+      "description": "OAuth credential for Google Search Console access.",
+      "properties": {
+        "credential_type": {
+          "const": "google_search_console_oauth",
+          "default": "google_search_console_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "OAuth 2.0 access token from Google",
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "description": "OAuth 2.0 refresh token for automatic renewal",
+          "title": "Refresh Token",
+          "type": "string"
+        },
+        "expires_at": {
+          "description": "ISO 8601 timestamp when access token expires",
+          "title": "Token Expiry",
+          "type": "string"
+        },
+        "email": {
+          "description": "Email address of the connected Google account",
+          "title": "Google Account",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "email"
+      ],
+      "title": "GoogleSearchConsoleOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-oauth-provider": "google",
+      "x-oauth-scopes": [
+        "https://www.googleapis.com/auth/webmasters"
+      ]
+    },
+    "GoogleSearchConsoleQueryAnalyticsConfig": {
+      "description": "Query search performance data: clicks, impressions, CTR, and position.",
+      "properties": {
+        "operation": {
+          "const": "query_search_analytics",
+          "default": "query_search_analytics",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Analytics",
+          "x-display-name": "Query Search Analytics",
+          "x-is-trigger": false
+        },
+        "site_url": {
+          "description": "Verified property (e.g. https://example.com/ or sc-domain:example.com)",
+          "title": "Site URL",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter site URL",
+            "field_name": "site_url",
+            "placeholder": "Select a verified property...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_search_console_site"
+        },
+        "start_date": {
+          "default": "30daysAgo",
+          "description": "Start date in YYYY-MM-DD or relative format (today, yesterday, 30daysAgo)",
+          "placeholder": "30daysAgo",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "default": "yesterday",
+          "description": "End date in YYYY-MM-DD or relative format (today, yesterday, 7daysAgo)",
+          "placeholder": "yesterday",
+          "title": "End Date",
+          "type": "string"
+        },
+        "dimensions": {
+          "default": "query",
+          "description": "Comma-separated dimensions: query, page, country, device, date, searchAppearance",
+          "placeholder": "query, page, country",
+          "title": "Dimensions",
+          "type": "string"
+        },
+        "search_type": {
+          "default": "web",
+          "description": "Type of search results to include",
+          "enum": [
+            "web",
+            "image",
+            "video",
+            "news",
+            "discover",
+            "googleNews"
+          ],
+          "title": "Search Type",
+          "type": "string",
+          "x-enum-searchable": false
+        },
+        "row_limit": {
+          "default": "1000",
+          "description": "Rows per API page (1\u201325000); large datasets are auto-paginated",
+          "placeholder": "1000",
+          "title": "Rows Per Page",
+          "type": "string"
+        },
+        "max_rows": {
+          "default": "10000",
+          "description": "Maximum total rows to return across all pages",
+          "placeholder": "10000",
+          "title": "Max Total Rows",
+          "type": "string"
+        },
+        "filter_dimension": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Dimension to filter by (e.g. country, query, page, device)",
+          "placeholder": "country (optional)",
+          "title": "Filter Dimension",
+          "ui:category": "Filters"
+        },
+        "filter_operator": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comparison operator for the filter",
+          "enum": [
+            "equals",
+            "notEquals",
+            "contains",
+            "notContains",
+            "includingRegex",
+            "excludingRegex"
+          ],
+          "title": "Filter Operator",
+          "ui:category": "Filters",
+          "x-enum-searchable": false
+        },
+        "filter_expression": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Value to filter against (e.g. usa for country equals usa, MOBILE for device)",
+          "placeholder": "usa (optional)",
+          "title": "Filter Value",
+          "ui:category": "Filters"
+        },
+        "data_state": {
+          "default": "final",
+          "description": "Whether to include fresh but potentially partial data",
+          "enum": [
+            "final",
+            "all"
+          ],
+          "title": "Data State",
+          "type": "string",
+          "x-enum-searchable": false
+        }
+      },
+      "required": [
+        "site_url"
+      ],
+      "title": "GoogleSearchConsoleQueryAnalyticsConfig",
+      "type": "object"
+    },
+    "GoogleSearchConsoleSubmitSitemapConfig": {
+      "description": "Submit or re-submit a sitemap URL to Google Search Console.",
+      "properties": {
+        "operation": {
+          "const": "submit_sitemap",
+          "default": "submit_sitemap",
+          "title": "Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sitemaps",
+          "x-display-name": "Submit Sitemap",
+          "x-is-trigger": false
+        },
+        "site_url": {
+          "description": "Verified property to submit the sitemap for",
+          "title": "Site URL",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter site URL",
+            "field_name": "site_url",
+            "placeholder": "Select a verified property...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_search_console_site"
+        },
+        "sitemap_url": {
+          "description": "Full URL of the sitemap to submit (e.g. https://example.com/sitemap.xml)",
+          "placeholder": "https://example.com/sitemap.xml",
+          "title": "Sitemap URL",
+          "type": "string"
+        }
+      },
+      "required": [
+        "site_url",
+        "sitemap_url"
+      ],
+      "title": "GoogleSearchConsoleSubmitSitemapConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_site": "#/$defs/GoogleSearchConsoleAddSiteConfig",
+          "delete_site": "#/$defs/GoogleSearchConsoleDeleteSiteConfig",
+          "delete_sitemap": "#/$defs/GoogleSearchConsoleDeleteSitemapConfig",
+          "get_site": "#/$defs/GoogleSearchConsoleGetSiteConfig",
+          "get_sitemap": "#/$defs/GoogleSearchConsoleGetSitemapConfig",
+          "inspect_url": "#/$defs/GoogleSearchConsoleInspectUrlConfig",
+          "list_sitemaps": "#/$defs/GoogleSearchConsoleListSitemapsConfig",
+          "list_sites": "#/$defs/GoogleSearchConsoleListSitesConfig",
+          "mobile_friendly_test": "#/$defs/GoogleSearchConsoleMobileFriendlyTestConfig",
+          "query_search_analytics": "#/$defs/GoogleSearchConsoleQueryAnalyticsConfig",
+          "submit_sitemap": "#/$defs/GoogleSearchConsoleSubmitSitemapConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GoogleSearchConsoleQueryAnalyticsConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleSearchConsoleInspectUrlConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleSearchConsoleListSitemapsConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleSearchConsoleSubmitSitemapConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleSearchConsoleDeleteSitemapConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleSearchConsoleGetSitemapConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleSearchConsoleListSitesConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleSearchConsoleGetSiteConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleSearchConsoleAddSiteConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleSearchConsoleDeleteSiteConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleSearchConsoleMobileFriendlyTestConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GoogleSearchConsoleOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Google-search-console Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Get top 100 queries for my site over the last 30 days ranked by impressions",
+    "Pull search performance by page to find high-impression but low-CTR pages",
+    "Check if my homepage is indexed and what Google uses as the canonical URL",
+    "Get search analytics by country to see geographic traffic distribution",
+    "List all sitemaps and compare submitted vs indexed page counts",
+    "Submit updated sitemap after publishing new content",
+    "Get performance by device type to compare mobile vs desktop CTR and position",
+    "List all verified Search Console properties in the account",
+    "Get permission level for a specific Search Console property",
+    "Add a new domain property to Search Console",
+    "Remove an old property from Search Console",
+    "Get submission status and URL counts for a specific sitemap",
+    "Delete an outdated sitemap from the Sitemaps report",
+    "Run a mobile-friendly test on a landing page before launch"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

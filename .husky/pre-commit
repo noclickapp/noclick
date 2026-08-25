@@ -1,0 +1,16 @@
+#!/bin/sh
+
+# Keep generated schemas/types synchronized, then format and lint staged files.
+repo_root=$(git rev-parse --show-toplevel)
+
+if ! (cd "$repo_root/backend" && python scripts/generate_socket_types.py --quiet); then
+    echo "Schema/type generation failed. Run 'make generate-types' for details."
+    exit 1
+fi
+
+git add \
+    "$repo_root/frontend/app/schemas/nodes/"*.json \
+    "$repo_root/frontend/app/types/"*.generated.ts 2>/dev/null || true
+
+cd "$repo_root"
+npx lint-staged

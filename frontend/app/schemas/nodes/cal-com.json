@@ -1,0 +1,1786 @@
+{
+  "$defs": {
+    "CalComApiKeyCredential": {
+      "description": "API Key credential for Cal.com.",
+      "properties": {
+        "credential_type": {
+          "const": "cal_com_api_key",
+          "default": "cal_com_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Your Cal.com API key (starts with cal_) from Settings -> Developer -> API Keys",
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "CalComApiKeyCredential",
+      "type": "object",
+      "x-credential-url": "https://app.cal.com/settings/developer/api-keys"
+    },
+    "CalComBookingTriggerConfig": {
+      "description": "Fire the workflow when a Cal.com webhook event occurs.\n\nThe ``event_types`` field selects which of Cal.com's webhook triggers fire\nthis workflow. Cal.com delivers each subscribed event to the webhook URL and\ntags it with a ``triggerEvent`` field; only the selected events run the flow.",
+      "properties": {
+        "operation": {
+          "const": "on_booking_event",
+          "default": "on_booking_event",
+          "title": "On Booking Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Booking Event",
+          "x-is-trigger": true
+        },
+        "event_types": {
+          "default": "*",
+          "description": "Which Cal.com event(s) fire this workflow. Choose 'All booking events' to fire on every event, or pick a specific one. To fire on several specific events, enter their identifiers comma-separated (e.g. BOOKING_CREATED,BOOKING_CANCELLED). Available events: BOOKING_CREATED (a booking is scheduled), BOOKING_RESCHEDULED (a booking is moved to a new time), BOOKING_CANCELLED (a booking is cancelled), BOOKING_REQUESTED (a booking needs host confirmation), BOOKING_REJECTED (the host declines a pending booking), BOOKING_PAYMENT_INITIATED (payment processing begins), BOOKING_PAID (payment completes), BOOKING_NO_SHOW_UPDATED (attendee no-show status changes), MEETING_STARTED (scheduled start time reached), MEETING_ENDED (scheduled end time reached), RECORDING_READY (a meeting recording is available), RECORDING_TRANSCRIPTION_GENERATED (a recording transcription completes), INSTANT_MEETING (an instant meeting is initiated), FORM_SUBMITTED (a routing form is completed), FORM_SUBMITTED_NO_EVENT (a form is submitted with no booking), OOO_CREATED (an out-of-office entry is created).",
+          "enum": [
+            "*",
+            "BOOKING_CREATED",
+            "BOOKING_RESCHEDULED",
+            "BOOKING_CANCELLED",
+            "BOOKING_REQUESTED",
+            "BOOKING_REJECTED",
+            "BOOKING_PAYMENT_INITIATED",
+            "BOOKING_PAID",
+            "BOOKING_NO_SHOW_UPDATED",
+            "MEETING_STARTED",
+            "MEETING_ENDED",
+            "RECORDING_READY",
+            "RECORDING_TRANSCRIPTION_GENERATED",
+            "INSTANT_MEETING",
+            "FORM_SUBMITTED",
+            "FORM_SUBMITTED_NO_EVENT",
+            "OOO_CREATED"
+          ],
+          "enumNames": [
+            "All booking events",
+            "Booking created",
+            "Booking rescheduled",
+            "Booking cancelled",
+            "Booking requested (needs confirmation)",
+            "Booking rejected",
+            "Booking payment initiated",
+            "Booking paid",
+            "Booking no-show updated",
+            "Meeting started",
+            "Meeting ended",
+            "Recording ready",
+            "Recording transcription generated",
+            "Instant meeting",
+            "Form submitted",
+            "Form submitted (no booking)",
+            "Out-of-office created"
+          ],
+          "title": "Trigger Events",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cal.com posts booking events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        }
+      },
+      "title": "CalComBookingTriggerConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "CalComCancelBookingConfig": {
+      "description": "Cancel an existing booking.",
+      "properties": {
+        "operation": {
+          "const": "cancel_booking",
+          "default": "cancel_booking",
+          "title": "Cancel Booking",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bookings",
+          "x-display-name": "Cancel Booking",
+          "x-is-trigger": false
+        },
+        "booking_uid": {
+          "description": "UID of the booking to cancel",
+          "title": "Booking UID",
+          "type": "string"
+        },
+        "cancellation_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional cancellation reason",
+          "title": "Reason"
+        }
+      },
+      "required": [
+        "booking_uid"
+      ],
+      "title": "CalComCancelBookingConfig",
+      "type": "object"
+    },
+    "CalComConfirmBookingConfig": {
+      "description": "Confirm a booking that requires host confirmation.",
+      "properties": {
+        "operation": {
+          "const": "confirm_booking",
+          "default": "confirm_booking",
+          "title": "Confirm Booking",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bookings",
+          "x-display-name": "Confirm Booking",
+          "x-is-trigger": false
+        },
+        "booking_uid": {
+          "description": "UID of the booking to confirm",
+          "title": "Booking UID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "booking_uid"
+      ],
+      "title": "CalComConfirmBookingConfig",
+      "type": "object"
+    },
+    "CalComCreateBookingConfig": {
+      "description": "Book a slot for an event type.",
+      "properties": {
+        "operation": {
+          "const": "create_booking",
+          "default": "create_booking",
+          "title": "Create Booking",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bookings",
+          "x-display-name": "Create Booking",
+          "x-is-trigger": false
+        },
+        "event_type_id": {
+          "description": "The event type to book",
+          "title": "Event Type",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste event type ID",
+            "field_name": "event_type_id",
+            "placeholder": "Select an event type...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "cal_com_event_type"
+        },
+        "start": {
+          "description": "Booking start time. ISO 8601 / RFC 3339: YYYY-MM-DDTHH:MM:SSZ (Z = UTC), e.g. 2026-07-01T10:00:00Z",
+          "title": "Start Time",
+          "type": "string",
+          "ui:placeholder": "2026-07-01T10:00:00Z",
+          "ui:widget": "datetime"
+        },
+        "attendee_name": {
+          "description": "Name of the attendee",
+          "title": "Attendee Name",
+          "type": "string"
+        },
+        "attendee_email": {
+          "description": "Email of the attendee",
+          "title": "Attendee Email",
+          "type": "string"
+        },
+        "attendee_timezone": {
+          "default": "UTC",
+          "description": "IANA timezone (e.g. America/New_York)",
+          "title": "Attendee Timezone",
+          "type": "string"
+        },
+        "guests": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Additional guest emails, comma-separated",
+          "title": "Guests"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Booking notes / additional information",
+          "title": "Notes",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "event_type_id",
+        "start",
+        "attendee_name",
+        "attendee_email"
+      ],
+      "title": "CalComCreateBookingConfig",
+      "type": "object"
+    },
+    "CalComCreateEventTypeConfig": {
+      "description": "Create a new event type.",
+      "properties": {
+        "operation": {
+          "const": "create_event_type",
+          "default": "create_event_type",
+          "title": "Create Event Type",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Event Types",
+          "x-creates-resource": true,
+          "x-display-name": "Create Event Type",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "cal_com_event_type"
+        },
+        "title": {
+          "description": "Event type title",
+          "title": "Title",
+          "type": "string"
+        },
+        "slug": {
+          "description": "URL slug (e.g. 30min)",
+          "title": "Slug",
+          "type": "string"
+        },
+        "length_minutes": {
+          "description": "Duration in minutes",
+          "title": "Length (minutes)",
+          "type": "string",
+          "ui:placeholder": "30"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description",
+          "ui:widget": "textarea"
+        },
+        "advanced_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object merged into the request, e.g. {\"locations\":[{\"type\":\"integration\",\"integration\":\"cal-video\"}],\"hidden\":false}",
+          "title": "Advanced Options (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "title",
+        "slug",
+        "length_minutes"
+      ],
+      "title": "CalComCreateEventTypeConfig",
+      "type": "object"
+    },
+    "CalComCreateOOOConfig": {
+      "description": "Create an out-of-office entry.",
+      "properties": {
+        "operation": {
+          "const": "create_ooo",
+          "default": "create_ooo",
+          "title": "Create Out-of-Office",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Out of Office",
+          "x-display-name": "Create Out-of-Office",
+          "x-is-trigger": false
+        },
+        "start": {
+          "description": "Start datetime. ISO 8601 UTC: YYYY-MM-DDTHH:MM:SSZ",
+          "title": "Start",
+          "type": "string",
+          "ui:placeholder": "2026-07-01T00:00:00Z",
+          "ui:widget": "datetime"
+        },
+        "end": {
+          "description": "End datetime. ISO 8601 UTC: YYYY-MM-DDTHH:MM:SSZ",
+          "title": "End",
+          "type": "string",
+          "ui:placeholder": "2026-07-08T00:00:00Z",
+          "ui:widget": "datetime"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "unspecified",
+            "vacation",
+            "travel",
+            "sick",
+            "public_holiday"
+          ],
+          "enumNames": [
+            "Unspecified",
+            "Vacation",
+            "Travel",
+            "Sick",
+            "Public holiday"
+          ],
+          "title": "Reason",
+          "x-enum-searchable": true
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes",
+          "ui:widget": "textarea"
+        },
+        "to_user_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional user id covering for you",
+          "title": "Covering User ID"
+        }
+      },
+      "required": [
+        "start",
+        "end"
+      ],
+      "title": "CalComCreateOOOConfig",
+      "type": "object"
+    },
+    "CalComCreateScheduleConfig": {
+      "description": "Create an availability schedule.",
+      "properties": {
+        "operation": {
+          "const": "create_schedule",
+          "default": "create_schedule",
+          "title": "Create Schedule",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Schedules",
+          "x-display-name": "Create Schedule",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Schedule name",
+          "title": "Name",
+          "type": "string"
+        },
+        "timezone": {
+          "default": "UTC",
+          "description": "IANA timezone, e.g. America/New_York",
+          "title": "Timezone",
+          "type": "string"
+        },
+        "is_default": {
+          "default": "false",
+          "description": "Make this the default schedule",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Set as Default",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "availability_json": {
+          "description": "JSON array of weekly availability, e.g. [{\"days\":[\"Monday\",\"Tuesday\"],\"startTime\":\"09:00\",\"endTime\":\"17:00\"}]",
+          "title": "Availability (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "overrides_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON array, e.g. [{\"date\":\"2026-12-25\",\"startTime\":\"00:00\",\"endTime\":\"00:00\"}]",
+          "title": "Date Overrides (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "name",
+        "availability_json"
+      ],
+      "title": "CalComCreateScheduleConfig",
+      "type": "object"
+    },
+    "CalComDeclineBookingConfig": {
+      "description": "Decline a booking that requires host confirmation.",
+      "properties": {
+        "operation": {
+          "const": "decline_booking",
+          "default": "decline_booking",
+          "title": "Decline Booking",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bookings",
+          "x-display-name": "Decline Booking",
+          "x-is-trigger": false
+        },
+        "booking_uid": {
+          "description": "UID of the booking to decline",
+          "title": "Booking UID",
+          "type": "string"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional reason for declining",
+          "title": "Reason"
+        }
+      },
+      "required": [
+        "booking_uid"
+      ],
+      "title": "CalComDeclineBookingConfig",
+      "type": "object"
+    },
+    "CalComDeleteEventTypeConfig": {
+      "description": "Delete an event type.",
+      "properties": {
+        "operation": {
+          "const": "delete_event_type",
+          "default": "delete_event_type",
+          "title": "Delete Event Type",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Event Types",
+          "x-display-name": "Delete Event Type",
+          "x-is-trigger": false
+        },
+        "event_type_id": {
+          "description": "The event type to delete",
+          "title": "Event Type",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste event type ID",
+            "field_name": "event_type_id",
+            "placeholder": "Select an event type...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "cal_com_event_type"
+        }
+      },
+      "required": [
+        "event_type_id"
+      ],
+      "title": "CalComDeleteEventTypeConfig",
+      "type": "object"
+    },
+    "CalComDeleteOOOConfig": {
+      "description": "Delete an out-of-office entry.",
+      "properties": {
+        "operation": {
+          "const": "delete_ooo",
+          "default": "delete_ooo",
+          "title": "Delete Out-of-Office",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Out of Office",
+          "x-display-name": "Delete Out-of-Office",
+          "x-is-trigger": false
+        },
+        "ooo_id": {
+          "description": "The out-of-office entry id to delete",
+          "title": "Entry ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ooo_id"
+      ],
+      "title": "CalComDeleteOOOConfig",
+      "type": "object"
+    },
+    "CalComDeleteScheduleConfig": {
+      "description": "Delete an availability schedule.",
+      "properties": {
+        "operation": {
+          "const": "delete_schedule",
+          "default": "delete_schedule",
+          "title": "Delete Schedule",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Schedules",
+          "x-display-name": "Delete Schedule",
+          "x-is-trigger": false
+        },
+        "schedule_id": {
+          "description": "The schedule to delete",
+          "title": "Schedule ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schedule_id"
+      ],
+      "title": "CalComDeleteScheduleConfig",
+      "type": "object"
+    },
+    "CalComGetBookingConfig": {
+      "description": "Retrieve a single booking by its UID.",
+      "properties": {
+        "operation": {
+          "const": "get_booking",
+          "default": "get_booking",
+          "title": "Get Booking",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bookings",
+          "x-display-name": "Get Booking",
+          "x-is-trigger": false
+        },
+        "booking_uid": {
+          "description": "The UID of the booking to retrieve",
+          "title": "Booking UID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "booking_uid"
+      ],
+      "title": "CalComGetBookingConfig",
+      "type": "object"
+    },
+    "CalComGetEventTypeConfig": {
+      "description": "Retrieve a single event type by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_event_type",
+          "default": "get_event_type",
+          "title": "Get Event Type",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Event Types",
+          "x-display-name": "Get Event Type",
+          "x-is-trigger": false
+        },
+        "event_type_id": {
+          "description": "The event type to retrieve",
+          "title": "Event Type",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste event type ID",
+            "field_name": "event_type_id",
+            "placeholder": "Select an event type...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "cal_com_event_type"
+        }
+      },
+      "required": [
+        "event_type_id"
+      ],
+      "title": "CalComGetEventTypeConfig",
+      "type": "object"
+    },
+    "CalComGetMeConfig": {
+      "description": "Retrieve the authenticated user's profile.",
+      "properties": {
+        "operation": {
+          "const": "get_me",
+          "default": "get_me",
+          "title": "Get My Profile",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Profile",
+          "x-display-name": "Get My Profile",
+          "x-is-trigger": false
+        }
+      },
+      "title": "CalComGetMeConfig",
+      "type": "object"
+    },
+    "CalComGetRecordingsConfig": {
+      "description": "Get the Cal Video recordings for a booking.",
+      "properties": {
+        "operation": {
+          "const": "get_recordings",
+          "default": "get_recordings",
+          "title": "Get Recordings",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bookings",
+          "x-display-name": "Get Recordings",
+          "x-is-trigger": false
+        },
+        "booking_uid": {
+          "description": "UID of the booking",
+          "title": "Booking UID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "booking_uid"
+      ],
+      "title": "CalComGetRecordingsConfig",
+      "type": "object"
+    },
+    "CalComGetScheduleConfig": {
+      "description": "Retrieve a single availability schedule by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_schedule",
+          "default": "get_schedule",
+          "title": "Get Schedule",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Schedules",
+          "x-display-name": "Get Schedule",
+          "x-is-trigger": false
+        },
+        "schedule_id": {
+          "description": "The schedule to retrieve",
+          "title": "Schedule ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schedule_id"
+      ],
+      "title": "CalComGetScheduleConfig",
+      "type": "object"
+    },
+    "CalComGetSlotsConfig": {
+      "description": "Get available booking slots for an event type within a date range.",
+      "properties": {
+        "operation": {
+          "const": "get_slots",
+          "default": "get_slots",
+          "title": "Get Available Slots",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Availability",
+          "x-display-name": "Get Available Slots",
+          "x-is-trigger": false
+        },
+        "event_type_id": {
+          "description": "The event type to check availability for",
+          "title": "Event Type",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste event type ID",
+            "field_name": "event_type_id",
+            "placeholder": "Select an event type...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "cal_com_event_type"
+        },
+        "start": {
+          "description": "Start of the availability window. ISO 8601 / RFC 3339: YYYY-MM-DDTHH:MM:SSZ (Z = UTC), e.g. 2026-07-01T00:00:00Z",
+          "title": "Range Start",
+          "type": "string",
+          "ui:placeholder": "2026-07-01T00:00:00Z",
+          "ui:widget": "datetime"
+        },
+        "end": {
+          "description": "End of the availability window. ISO 8601 / RFC 3339: YYYY-MM-DDTHH:MM:SSZ (Z = UTC), e.g. 2026-07-08T00:00:00Z",
+          "title": "Range End",
+          "type": "string",
+          "ui:placeholder": "2026-07-08T00:00:00Z",
+          "ui:widget": "datetime"
+        },
+        "timezone": {
+          "default": "UTC",
+          "description": "IANA timezone for the returned slots, e.g. UTC or America/New_York",
+          "title": "Timezone",
+          "type": "string",
+          "ui:placeholder": "UTC"
+        }
+      },
+      "required": [
+        "event_type_id",
+        "start",
+        "end"
+      ],
+      "title": "CalComGetSlotsConfig",
+      "type": "object"
+    },
+    "CalComListBookingsConfig": {
+      "description": "List bookings, optionally filtered by status, attendee, or date range.",
+      "properties": {
+        "operation": {
+          "const": "list_bookings",
+          "default": "list_bookings",
+          "title": "List Bookings",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bookings",
+          "x-display-name": "List Bookings",
+          "x-is-trigger": false
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by status",
+          "enum": [
+            "",
+            "upcoming",
+            "recurring",
+            "past",
+            "cancelled",
+            "unconfirmed"
+          ],
+          "enumNames": [
+            "Any",
+            "Upcoming",
+            "Recurring",
+            "Past",
+            "Cancelled",
+            "Unconfirmed"
+          ],
+          "title": "Status",
+          "x-enum-searchable": true
+        },
+        "attendee_email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter to bookings with this attendee email",
+          "title": "Attendee Email"
+        },
+        "after_start": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Lower bound for booking start. ISO 8601 / RFC 3339: YYYY-MM-DDTHH:MM:SSZ (Z = UTC), e.g. 2026-07-01T00:00:00Z",
+          "title": "Starts After",
+          "ui:placeholder": "2026-07-01T00:00:00Z",
+          "ui:widget": "datetime"
+        },
+        "before_end": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Upper bound for booking end. ISO 8601 / RFC 3339: YYYY-MM-DDTHH:MM:SSZ (Z = UTC), e.g. 2026-07-08T00:00:00Z",
+          "title": "Ends Before",
+          "ui:placeholder": "2026-07-08T00:00:00Z",
+          "ui:widget": "datetime"
+        },
+        "take": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "50",
+          "description": "Max number of bookings to return (1-100)",
+          "title": "Limit"
+        }
+      },
+      "title": "CalComListBookingsConfig",
+      "type": "object"
+    },
+    "CalComListEventTypesConfig": {
+      "description": "List event types for the authenticated user.",
+      "properties": {
+        "operation": {
+          "const": "list_event_types",
+          "default": "list_event_types",
+          "title": "List Event Types",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Event Types",
+          "x-display-name": "List Event Types",
+          "x-is-trigger": false
+        },
+        "username": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter to a specific Cal.com username (optional)",
+          "title": "Username"
+        }
+      },
+      "title": "CalComListEventTypesConfig",
+      "type": "object"
+    },
+    "CalComListOOOConfig": {
+      "description": "List your out-of-office entries.",
+      "properties": {
+        "operation": {
+          "const": "list_ooo",
+          "default": "list_ooo",
+          "title": "List Out-of-Office",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Out of Office",
+          "x-display-name": "List Out-of-Office",
+          "x-is-trigger": false
+        },
+        "take": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "50",
+          "description": "Max entries to return",
+          "title": "Limit"
+        }
+      },
+      "title": "CalComListOOOConfig",
+      "type": "object"
+    },
+    "CalComListSchedulesConfig": {
+      "description": "List availability schedules for the authenticated user.",
+      "properties": {
+        "operation": {
+          "const": "list_schedules",
+          "default": "list_schedules",
+          "title": "List Schedules",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Schedules",
+          "x-display-name": "List Schedules",
+          "x-is-trigger": false
+        }
+      },
+      "title": "CalComListSchedulesConfig",
+      "type": "object"
+    },
+    "CalComListWebhooksConfig": {
+      "description": "List the webhooks registered on your account.",
+      "properties": {
+        "operation": {
+          "const": "list_webhooks",
+          "default": "list_webhooks",
+          "title": "List Webhooks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "List Webhooks",
+          "x-is-trigger": false
+        },
+        "take": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "50",
+          "description": "Max webhooks to return (1-250)",
+          "title": "Limit"
+        }
+      },
+      "title": "CalComListWebhooksConfig",
+      "type": "object"
+    },
+    "CalComMarkNoShowConfig": {
+      "description": "Mark the host and/or attendees as absent (no-show) for a booking.",
+      "properties": {
+        "operation": {
+          "const": "mark_no_show",
+          "default": "mark_no_show",
+          "title": "Mark No-Show",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bookings",
+          "x-display-name": "Mark No-Show",
+          "x-is-trigger": false
+        },
+        "booking_uid": {
+          "description": "UID of the booking",
+          "title": "Booking UID",
+          "type": "string"
+        },
+        "host_absent": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "false",
+          "description": "Mark the host as absent",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Host Absent",
+          "x-enum-searchable": true
+        },
+        "attendees_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON array marking attendees absent, e.g. [{\"email\":\"a@x.com\",\"absent\":true}]",
+          "title": "Attendees (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "booking_uid"
+      ],
+      "title": "CalComMarkNoShowConfig",
+      "type": "object"
+    },
+    "CalComOAuthCredential": {
+      "description": "OAuth 2.0 credential for Cal.com.\n\nTokens are obtained via the OAuth flow, not entered manually. Cal.com access\ntokens expire after 30 minutes and are refreshed via the stored refresh\ntoken. The access token is a drop-in Bearer replacement for the API key.\n\nCreate an OAuth client at: https://app.cal.com/settings/developer/oauth-clients",
+      "properties": {
+        "credential_type": {
+          "const": "cal_com_oauth",
+          "default": "cal_com_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refresh Token"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Expiry"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Email"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "CalComOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-oauth-provider": "calcom",
+      "x-oauth-scopes": [
+        "BOOKING_READ",
+        "BOOKING_WRITE",
+        "EVENT_TYPE_READ",
+        "EVENT_TYPE_WRITE",
+        "SCHEDULE_READ",
+        "SCHEDULE_WRITE",
+        "PROFILE_READ",
+        "PROFILE_WRITE",
+        "WEBHOOK_READ",
+        "WEBHOOK_WRITE"
+      ]
+    },
+    "CalComRescheduleBookingConfig": {
+      "description": "Reschedule a booking to a new start time.",
+      "properties": {
+        "operation": {
+          "const": "reschedule_booking",
+          "default": "reschedule_booking",
+          "title": "Reschedule Booking",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bookings",
+          "x-display-name": "Reschedule Booking",
+          "x-is-trigger": false
+        },
+        "booking_uid": {
+          "description": "UID of the booking to reschedule",
+          "title": "Booking UID",
+          "type": "string"
+        },
+        "start": {
+          "description": "New start time. ISO 8601 / RFC 3339: YYYY-MM-DDTHH:MM:SSZ (Z = UTC), e.g. 2026-07-01T10:00:00Z",
+          "title": "New Start Time",
+          "type": "string",
+          "ui:placeholder": "2026-07-01T10:00:00Z",
+          "ui:widget": "datetime"
+        },
+        "reschedule_reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional reschedule reason",
+          "title": "Reason"
+        }
+      },
+      "required": [
+        "booking_uid",
+        "start"
+      ],
+      "title": "CalComRescheduleBookingConfig",
+      "type": "object"
+    },
+    "CalComReserveSlotConfig": {
+      "description": "Reserve (hold) a slot for an event type before confirming a booking.",
+      "properties": {
+        "operation": {
+          "const": "reserve_slot",
+          "default": "reserve_slot",
+          "title": "Reserve Slot",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Availability",
+          "x-display-name": "Reserve Slot",
+          "x-is-trigger": false
+        },
+        "event_type_id": {
+          "description": "The event type to reserve a slot for",
+          "title": "Event Type",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste event type ID",
+            "field_name": "event_type_id",
+            "placeholder": "Select an event type...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "cal_com_event_type"
+        },
+        "slot_start": {
+          "description": "Slot start datetime. ISO 8601 UTC: YYYY-MM-DDTHH:MM:SSZ",
+          "title": "Slot Start",
+          "type": "string",
+          "ui:placeholder": "2026-07-01T10:00:00Z",
+          "ui:widget": "datetime"
+        },
+        "reservation_duration": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "How long to hold the slot (default 5)",
+          "title": "Hold Duration (minutes)"
+        }
+      },
+      "required": [
+        "event_type_id",
+        "slot_start"
+      ],
+      "title": "CalComReserveSlotConfig",
+      "type": "object"
+    },
+    "CalComUpdateEventTypeConfig": {
+      "description": "Update an existing event type (only the fields you set change).",
+      "properties": {
+        "operation": {
+          "const": "update_event_type",
+          "default": "update_event_type",
+          "title": "Update Event Type",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Event Types",
+          "x-display-name": "Update Event Type",
+          "x-is-trigger": false
+        },
+        "event_type_id": {
+          "description": "The event type to update",
+          "title": "Event Type",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste event type ID",
+            "field_name": "event_type_id",
+            "placeholder": "Select an event type...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "cal_com_event_type"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "slug": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Slug"
+        },
+        "length_minutes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Length (minutes)"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description",
+          "ui:widget": "textarea"
+        },
+        "hidden": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Hide this event type from your booking page",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Hidden",
+          "x-enum-searchable": true
+        },
+        "advanced_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object merged into the update request",
+          "title": "Advanced Options (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "event_type_id"
+      ],
+      "title": "CalComUpdateEventTypeConfig",
+      "type": "object"
+    },
+    "CalComUpdateMeConfig": {
+      "description": "Update the authenticated user's profile (only the fields you set change).",
+      "properties": {
+        "operation": {
+          "const": "update_me",
+          "default": "update_me",
+          "title": "Update My Profile",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Profile",
+          "x-display-name": "Update My Profile",
+          "x-is-trigger": false
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "timezone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "IANA timezone",
+          "title": "Timezone"
+        },
+        "bio": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Bio",
+          "ui:widget": "textarea"
+        },
+        "advanced_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object merged into the request, e.g. {\"weekStart\":\"Monday\",\"timeFormat\":24}",
+          "title": "Advanced Options (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "CalComUpdateMeConfig",
+      "type": "object"
+    },
+    "CalComUpdateScheduleConfig": {
+      "description": "Update an availability schedule (only the fields you set change).",
+      "properties": {
+        "operation": {
+          "const": "update_schedule",
+          "default": "update_schedule",
+          "title": "Update Schedule",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Schedules",
+          "x-display-name": "Update Schedule",
+          "x-is-trigger": false
+        },
+        "schedule_id": {
+          "description": "The schedule to update",
+          "title": "Schedule ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        },
+        "timezone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "IANA timezone",
+          "title": "Timezone"
+        },
+        "is_default": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Set as Default",
+          "x-enum-searchable": true
+        },
+        "availability_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON array (replaces weekly availability)",
+          "title": "Availability (JSON)",
+          "ui:widget": "textarea"
+        },
+        "overrides_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON array of date overrides",
+          "title": "Date Overrides (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "schedule_id"
+      ],
+      "title": "CalComUpdateScheduleConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the Cal.com node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_booking": "#/$defs/CalComCancelBookingConfig",
+          "confirm_booking": "#/$defs/CalComConfirmBookingConfig",
+          "create_booking": "#/$defs/CalComCreateBookingConfig",
+          "create_event_type": "#/$defs/CalComCreateEventTypeConfig",
+          "create_ooo": "#/$defs/CalComCreateOOOConfig",
+          "create_schedule": "#/$defs/CalComCreateScheduleConfig",
+          "decline_booking": "#/$defs/CalComDeclineBookingConfig",
+          "delete_event_type": "#/$defs/CalComDeleteEventTypeConfig",
+          "delete_ooo": "#/$defs/CalComDeleteOOOConfig",
+          "delete_schedule": "#/$defs/CalComDeleteScheduleConfig",
+          "get_booking": "#/$defs/CalComGetBookingConfig",
+          "get_event_type": "#/$defs/CalComGetEventTypeConfig",
+          "get_me": "#/$defs/CalComGetMeConfig",
+          "get_recordings": "#/$defs/CalComGetRecordingsConfig",
+          "get_schedule": "#/$defs/CalComGetScheduleConfig",
+          "get_slots": "#/$defs/CalComGetSlotsConfig",
+          "list_bookings": "#/$defs/CalComListBookingsConfig",
+          "list_event_types": "#/$defs/CalComListEventTypesConfig",
+          "list_ooo": "#/$defs/CalComListOOOConfig",
+          "list_schedules": "#/$defs/CalComListSchedulesConfig",
+          "list_webhooks": "#/$defs/CalComListWebhooksConfig",
+          "mark_no_show": "#/$defs/CalComMarkNoShowConfig",
+          "on_booking_event": "#/$defs/CalComBookingTriggerConfig",
+          "reschedule_booking": "#/$defs/CalComRescheduleBookingConfig",
+          "reserve_slot": "#/$defs/CalComReserveSlotConfig",
+          "update_event_type": "#/$defs/CalComUpdateEventTypeConfig",
+          "update_me": "#/$defs/CalComUpdateMeConfig",
+          "update_schedule": "#/$defs/CalComUpdateScheduleConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CalComListBookingsConfig"
+        },
+        {
+          "$ref": "#/$defs/CalComGetBookingConfig"
+        },
+        {
+          "$ref": "#/$defs/CalComCreateBookingConfig"
+        },
+        {
+          "$ref": "#/$defs/CalComCancelBookingConfig"
+        },
+        {
+          "$ref": "#/$defs/CalComRescheduleBookingConfig"
+        },
+        {
+          "$ref": "#/$defs/CalComListEventTypesConfig"
+        },
+        {
+          "$ref": "#/$defs/CalComGetEventTypeConfig"
+        },
+        {
+          "$ref": "#/$defs/CalComGetSlotsConfig"
+        },
+        {
+          "$ref": "#/$defs/CalComListSchedulesConfig"
+        },
+        {
+          "$ref": "#/$defs/CalComGetMeConfig"
+        },
+        {
+          "$ref": "#/$defs/CalComConfirmBookingConfig"
+        },
+        {
+          "$ref": "#/$defs/CalComDeclineBookingConfig"
+        },
+        {
+          "$ref": "#/$defs/CalComMarkNoShowConfig"
+        },
+        {
+          "$ref": "#/$defs/CalComGetRecordingsConfig"
+        },
+        {
+          "$ref": "#/$defs/CalComCreateEventTypeConfig"
+        },
+        {
+          "$ref": "#/$defs/CalComUpdateEventTypeConfig"
+        },
+        {
+          "$ref": "#/$defs/CalComDeleteEventTypeConfig"
+        },
+        {
+          "$ref": "#/$defs/CalComGetScheduleConfig"
+        },
+        {
+          "$ref": "#/$defs/CalComCreateScheduleConfig"
+        },
+        {
+          "$ref": "#/$defs/CalComUpdateScheduleConfig"
+        },
+        {
+          "$ref": "#/$defs/CalComDeleteScheduleConfig"
+        },
+        {
+          "$ref": "#/$defs/CalComListOOOConfig"
+        },
+        {
+          "$ref": "#/$defs/CalComCreateOOOConfig"
+        },
+        {
+          "$ref": "#/$defs/CalComDeleteOOOConfig"
+        },
+        {
+          "$ref": "#/$defs/CalComUpdateMeConfig"
+        },
+        {
+          "$ref": "#/$defs/CalComListWebhooksConfig"
+        },
+        {
+          "$ref": "#/$defs/CalComReserveSlotConfig"
+        },
+        {
+          "$ref": "#/$defs/CalComBookingTriggerConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CalComOAuthCredential"
+        },
+        {
+          "$ref": "#/$defs/CalComApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Cal-com Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "List all upcoming bookings",
+    "Create a booking for a discovery call event type",
+    "Cancel a booking when a deal is lost",
+    "Get available slots for next week",
+    "Trigger a workflow whenever a new booking is created"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

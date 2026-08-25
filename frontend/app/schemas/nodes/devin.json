@@ -1,0 +1,1158 @@
+{
+  "$defs": {
+    "DevinApiKeyCredential": {
+      "description": "API Key (Service User key) credential for Devin.",
+      "properties": {
+        "credential_type": {
+          "const": "devin_api_key",
+          "default": "devin_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Your Devin Service User API key (starts with apk_ for v1 or cog_ for v3) from Settings -> Service users / API keys",
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "DevinApiKeyCredential",
+      "type": "object",
+      "x-credential-url": "https://app.devin.ai/settings/api-keys"
+    },
+    "DevinCreateKnowledgeConfig": {
+      "description": "Create a new knowledge entry.",
+      "properties": {
+        "operation": {
+          "const": "create_knowledge",
+          "default": "create_knowledge",
+          "title": "Create Knowledge",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Knowledge",
+          "x-display-name": "Create Knowledge",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Name of the knowledge entry",
+          "title": "Name",
+          "type": "string"
+        },
+        "body": {
+          "description": "The knowledge content",
+          "title": "Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "trigger_description": {
+          "description": "When this knowledge should be surfaced to Devin",
+          "title": "Trigger Description",
+          "type": "string"
+        },
+        "parent_folder_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Folder to place the knowledge entry in",
+          "title": "Parent Folder ID"
+        }
+      },
+      "required": [
+        "name",
+        "body",
+        "trigger_description"
+      ],
+      "title": "DevinCreateKnowledgeConfig",
+      "type": "object"
+    },
+    "DevinCreatePlaybookConfig": {
+      "description": "Create a new team playbook.",
+      "properties": {
+        "operation": {
+          "const": "create_playbook",
+          "default": "create_playbook",
+          "title": "Create Playbook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Playbooks",
+          "x-creates-resource": true,
+          "x-display-name": "Create Playbook",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "devin_playbook"
+        },
+        "title": {
+          "description": "Title of the playbook",
+          "title": "Title",
+          "type": "string"
+        },
+        "body": {
+          "description": "The playbook instructions",
+          "title": "Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "title",
+        "body"
+      ],
+      "title": "DevinCreatePlaybookConfig",
+      "type": "object"
+    },
+    "DevinCreateSecretConfig": {
+      "description": "Create a new org secret for use in sessions.",
+      "properties": {
+        "operation": {
+          "const": "create_secret",
+          "default": "create_secret",
+          "title": "Create Secret",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Secrets",
+          "x-display-name": "Create Secret",
+          "x-is-trigger": false
+        },
+        "key": {
+          "description": "The secret key / name",
+          "title": "Key",
+          "type": "string"
+        },
+        "value": {
+          "description": "The secret value",
+          "title": "Value",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "secret_type": {
+          "default": "key-value",
+          "description": "Secret type",
+          "enum": [
+            "cookie",
+            "key-value",
+            "totp"
+          ],
+          "enumNames": [
+            "Cookie",
+            "Key-Value",
+            "TOTP"
+          ],
+          "title": "Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "note": {
+          "default": "",
+          "description": "Human-readable description of what this secret is for",
+          "title": "Note",
+          "type": "string"
+        },
+        "sensitive": {
+          "default": "true",
+          "description": "Whether to mask this secret's value in logs and UI",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes (masked)",
+            "No (visible)"
+          ],
+          "title": "Sensitive",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "key",
+        "value"
+      ],
+      "title": "DevinCreateSecretConfig",
+      "type": "object"
+    },
+    "DevinCreateSessionConfig": {
+      "description": "Start a new Devin session from a task prompt.",
+      "properties": {
+        "operation": {
+          "const": "create_session",
+          "default": "create_session",
+          "title": "Create Session",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sessions",
+          "x-creates-resource": true,
+          "x-display-name": "Create Session",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.session_id",
+          "x-resource-type": "devin_session"
+        },
+        "prompt": {
+          "description": "The task / instructions for Devin to work on",
+          "title": "Prompt",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional human-readable title for the session",
+          "title": "Title"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated tags to attach to the session",
+          "title": "Tags"
+        },
+        "snapshot_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Machine snapshot to start the session from",
+          "title": "Snapshot ID"
+        },
+        "playbook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Playbook to run for this session",
+          "title": "Playbook ID"
+        },
+        "knowledge_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated knowledge note IDs to attach",
+          "title": "Knowledge IDs"
+        },
+        "secret_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated org secret IDs to expose to the session",
+          "title": "Secret IDs"
+        },
+        "max_acu_limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cap on Agent Compute Units this session may consume",
+          "title": "Max ACU Limit"
+        },
+        "output_schema": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON Schema (Draft 7) the session's structured output must conform to",
+          "title": "Structured Output Schema",
+          "ui:widget": "textarea"
+        },
+        "idempotent": {
+          "default": "false",
+          "description": "De-duplicate retried creation requests",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Idempotent",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "unlisted": {
+          "default": "false",
+          "description": "Hide this session from the org session list",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Unlisted",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "DevinCreateSessionConfig",
+      "type": "object"
+    },
+    "DevinDeleteKnowledgeConfig": {
+      "description": "Delete a knowledge entry.",
+      "properties": {
+        "operation": {
+          "const": "delete_knowledge",
+          "default": "delete_knowledge",
+          "title": "Delete Knowledge",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Knowledge",
+          "x-display-name": "Delete Knowledge",
+          "x-is-trigger": false
+        },
+        "note_id": {
+          "description": "The knowledge entry to delete",
+          "title": "Note ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "note_id"
+      ],
+      "title": "DevinDeleteKnowledgeConfig",
+      "type": "object"
+    },
+    "DevinDeleteSecretConfig": {
+      "description": "Permanently delete a secret by ID.",
+      "properties": {
+        "operation": {
+          "const": "delete_secret",
+          "default": "delete_secret",
+          "title": "Delete Secret",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Secrets",
+          "x-display-name": "Delete Secret",
+          "x-is-trigger": false
+        },
+        "secret_id": {
+          "description": "The secret to delete",
+          "title": "Secret ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "secret_id"
+      ],
+      "title": "DevinDeleteSecretConfig",
+      "type": "object"
+    },
+    "DevinGetPlaybookConfig": {
+      "description": "Retrieve a specific playbook's details.",
+      "properties": {
+        "operation": {
+          "const": "get_playbook",
+          "default": "get_playbook",
+          "title": "Get Playbook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Playbooks",
+          "x-display-name": "Get Playbook",
+          "x-is-trigger": false
+        },
+        "playbook_id": {
+          "description": "The playbook to retrieve",
+          "title": "Playbook ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste playbook ID",
+            "field_name": "playbook_id",
+            "placeholder": "Select a playbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "devin_playbook"
+        }
+      },
+      "required": [
+        "playbook_id"
+      ],
+      "title": "DevinGetPlaybookConfig",
+      "type": "object"
+    },
+    "DevinGetSelfConfig": {
+      "description": "Return information about the authenticated API key / principal (v3).",
+      "properties": {
+        "operation": {
+          "const": "get_self",
+          "default": "get_self",
+          "title": "Get Self",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Self",
+          "x-is-trigger": false
+        }
+      },
+      "title": "DevinGetSelfConfig",
+      "type": "object"
+    },
+    "DevinGetSessionConfig": {
+      "description": "Retrieve a session's status, output, structured output, and metadata.",
+      "properties": {
+        "operation": {
+          "const": "get_session",
+          "default": "get_session",
+          "title": "Get Session",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sessions",
+          "x-display-name": "Get Session",
+          "x-is-trigger": false
+        },
+        "session_id": {
+          "description": "The session (devin) ID to retrieve",
+          "title": "Session ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste session ID",
+            "field_name": "session_id",
+            "placeholder": "Select a session...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "devin_session"
+        }
+      },
+      "required": [
+        "session_id"
+      ],
+      "title": "DevinGetSessionConfig",
+      "type": "object"
+    },
+    "DevinListKnowledgeConfig": {
+      "description": "List all knowledge notes and folders for the organization.",
+      "properties": {
+        "operation": {
+          "const": "list_knowledge",
+          "default": "list_knowledge",
+          "title": "List Knowledge",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Knowledge",
+          "x-display-name": "List Knowledge",
+          "x-is-trigger": false
+        }
+      },
+      "title": "DevinListKnowledgeConfig",
+      "type": "object"
+    },
+    "DevinListPlaybooksConfig": {
+      "description": "List all playbooks accessible to the organization.",
+      "properties": {
+        "operation": {
+          "const": "list_playbooks",
+          "default": "list_playbooks",
+          "title": "List Playbooks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Playbooks",
+          "x-display-name": "List Playbooks",
+          "x-is-trigger": false
+        }
+      },
+      "title": "DevinListPlaybooksConfig",
+      "type": "object"
+    },
+    "DevinListSecretsConfig": {
+      "description": "List metadata for all org secrets (values are never returned).",
+      "properties": {
+        "operation": {
+          "const": "list_secrets",
+          "default": "list_secrets",
+          "title": "List Secrets",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Secrets",
+          "x-display-name": "List Secrets",
+          "x-is-trigger": false
+        }
+      },
+      "title": "DevinListSecretsConfig",
+      "type": "object"
+    },
+    "DevinListSessionsConfig": {
+      "description": "List Devin sessions for the organization.",
+      "properties": {
+        "operation": {
+          "const": "list_sessions",
+          "default": "list_sessions",
+          "title": "List Sessions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sessions",
+          "x-display-name": "List Sessions",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "50",
+          "description": "Max number of sessions to return",
+          "title": "Limit"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of sessions to skip (pagination)",
+          "title": "Offset"
+        }
+      },
+      "title": "DevinListSessionsConfig",
+      "type": "object"
+    },
+    "DevinOnSessionFinishedConfig": {
+      "description": "Poll-based trigger that fires when a Devin session newly reaches a\nterminal status (finished / blocked / expired / stopped).\n\nDevin has no outbound webhooks, so this provisions a webhook + cron schedule\n(the wake-up signal) and polls GET /v1/sessions on each tick, emitting only\nsessions whose (session_id, status) pair has not been seen before.",
+      "properties": {
+        "operation": {
+          "const": "on_session_finished",
+          "default": "on_session_finished",
+          "title": "On Session Finished",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Session Finished",
+          "x-is-trigger": true
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only fire for sessions carrying ALL of these comma-separated tags (optional)",
+          "placeholder": "ci,release (optional)",
+          "title": "Filter by Tags"
+        },
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": {
+            "frequency": "minutes",
+            "interval": 5,
+            "hour": 9,
+            "minute": 0,
+            "dayOfWeek": 1,
+            "dayOfMonth": 1
+          },
+          "description": "How often to poll Devin for finished sessions",
+          "title": "Check Frequency",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "max_results": {
+          "default": 50,
+          "description": "Maximum number of sessions to scan per check (1-100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Max Sessions",
+          "type": "integer",
+          "ui:hidden": true
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:copyable": true,
+          "ui:hidden": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Check",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "last_seen_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Seen Ids",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        }
+      },
+      "title": "DevinOnSessionFinishedConfig",
+      "type": "object"
+    },
+    "DevinSendMessageConfig": {
+      "description": "Send a follow-up message to an active session (auto-resumes if suspended).",
+      "properties": {
+        "operation": {
+          "const": "send_message",
+          "default": "send_message",
+          "title": "Send Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sessions",
+          "x-display-name": "Send Message",
+          "x-is-trigger": false
+        },
+        "session_id": {
+          "description": "The session to send the message to",
+          "title": "Session ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste session ID",
+            "field_name": "session_id",
+            "placeholder": "Select a session...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "devin_session"
+        },
+        "message": {
+          "description": "The follow-up instruction / message",
+          "title": "Message",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "session_id",
+        "message"
+      ],
+      "title": "DevinSendMessageConfig",
+      "type": "object"
+    },
+    "DevinTerminateSessionConfig": {
+      "description": "Terminate an active session (cannot be resumed afterward).",
+      "properties": {
+        "operation": {
+          "const": "terminate_session",
+          "default": "terminate_session",
+          "title": "Terminate Session",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sessions",
+          "x-display-name": "Terminate Session",
+          "x-is-trigger": false
+        },
+        "session_id": {
+          "description": "The session to terminate",
+          "title": "Session ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste session ID",
+            "field_name": "session_id",
+            "placeholder": "Select a session...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "devin_session"
+        }
+      },
+      "required": [
+        "session_id"
+      ],
+      "title": "DevinTerminateSessionConfig",
+      "type": "object"
+    },
+    "DevinUpdateKnowledgeConfig": {
+      "description": "Update an existing knowledge entry.",
+      "properties": {
+        "operation": {
+          "const": "update_knowledge",
+          "default": "update_knowledge",
+          "title": "Update Knowledge",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Knowledge",
+          "x-display-name": "Update Knowledge",
+          "x-is-trigger": false
+        },
+        "note_id": {
+          "description": "The knowledge entry to update",
+          "title": "Note ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New name for the entry",
+          "title": "Name"
+        },
+        "body": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New knowledge content",
+          "title": "Body",
+          "ui:widget": "textarea"
+        },
+        "trigger_description": {
+          "description": "When Devin should apply this knowledge note",
+          "title": "Trigger Description",
+          "type": "string"
+        }
+      },
+      "required": [
+        "note_id",
+        "trigger_description"
+      ],
+      "title": "DevinUpdateKnowledgeConfig",
+      "type": "object"
+    },
+    "DevinUpdateTagsConfig": {
+      "description": "Replace the tags associated with a session (max 50).",
+      "properties": {
+        "operation": {
+          "const": "update_tags",
+          "default": "update_tags",
+          "title": "Update Session Tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sessions",
+          "x-display-name": "Update Session Tags",
+          "x-is-trigger": false
+        },
+        "session_id": {
+          "description": "The session whose tags to replace",
+          "title": "Session ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste session ID",
+            "field_name": "session_id",
+            "placeholder": "Select a session...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "devin_session"
+        },
+        "tags": {
+          "description": "Comma-separated tags that replace the current set",
+          "title": "Tags",
+          "type": "string"
+        }
+      },
+      "required": [
+        "session_id",
+        "tags"
+      ],
+      "title": "DevinUpdateTagsConfig",
+      "type": "object"
+    },
+    "DevinUploadAttachmentConfig": {
+      "description": "Upload a file for Devin to work with; returns a reference URL for a prompt.",
+      "properties": {
+        "operation": {
+          "const": "upload_attachment",
+          "default": "upload_attachment",
+          "title": "Upload Attachment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Attachments",
+          "x-display-name": "Upload Attachment",
+          "x-is-trigger": false
+        },
+        "file_name": {
+          "description": "Name to give the uploaded file (e.g. spec.txt)",
+          "title": "File Name",
+          "type": "string"
+        },
+        "content": {
+          "description": "Text content of the file to upload",
+          "title": "Content",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "file_name",
+        "content"
+      ],
+      "title": "DevinUploadAttachmentConfig",
+      "type": "object"
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the Devin node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_knowledge": "#/$defs/DevinCreateKnowledgeConfig",
+          "create_playbook": "#/$defs/DevinCreatePlaybookConfig",
+          "create_secret": "#/$defs/DevinCreateSecretConfig",
+          "create_session": "#/$defs/DevinCreateSessionConfig",
+          "delete_knowledge": "#/$defs/DevinDeleteKnowledgeConfig",
+          "delete_secret": "#/$defs/DevinDeleteSecretConfig",
+          "get_playbook": "#/$defs/DevinGetPlaybookConfig",
+          "get_self": "#/$defs/DevinGetSelfConfig",
+          "get_session": "#/$defs/DevinGetSessionConfig",
+          "list_knowledge": "#/$defs/DevinListKnowledgeConfig",
+          "list_playbooks": "#/$defs/DevinListPlaybooksConfig",
+          "list_secrets": "#/$defs/DevinListSecretsConfig",
+          "list_sessions": "#/$defs/DevinListSessionsConfig",
+          "on_session_finished": "#/$defs/DevinOnSessionFinishedConfig",
+          "send_message": "#/$defs/DevinSendMessageConfig",
+          "terminate_session": "#/$defs/DevinTerminateSessionConfig",
+          "update_knowledge": "#/$defs/DevinUpdateKnowledgeConfig",
+          "update_tags": "#/$defs/DevinUpdateTagsConfig",
+          "upload_attachment": "#/$defs/DevinUploadAttachmentConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/DevinCreateSessionConfig"
+        },
+        {
+          "$ref": "#/$defs/DevinListSessionsConfig"
+        },
+        {
+          "$ref": "#/$defs/DevinGetSessionConfig"
+        },
+        {
+          "$ref": "#/$defs/DevinSendMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/DevinUpdateTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/DevinTerminateSessionConfig"
+        },
+        {
+          "$ref": "#/$defs/DevinUploadAttachmentConfig"
+        },
+        {
+          "$ref": "#/$defs/DevinListKnowledgeConfig"
+        },
+        {
+          "$ref": "#/$defs/DevinCreateKnowledgeConfig"
+        },
+        {
+          "$ref": "#/$defs/DevinUpdateKnowledgeConfig"
+        },
+        {
+          "$ref": "#/$defs/DevinDeleteKnowledgeConfig"
+        },
+        {
+          "$ref": "#/$defs/DevinListPlaybooksConfig"
+        },
+        {
+          "$ref": "#/$defs/DevinGetPlaybookConfig"
+        },
+        {
+          "$ref": "#/$defs/DevinCreatePlaybookConfig"
+        },
+        {
+          "$ref": "#/$defs/DevinListSecretsConfig"
+        },
+        {
+          "$ref": "#/$defs/DevinCreateSecretConfig"
+        },
+        {
+          "$ref": "#/$defs/DevinDeleteSecretConfig"
+        },
+        {
+          "$ref": "#/$defs/DevinGetSelfConfig"
+        },
+        {
+          "$ref": "#/$defs/DevinOnSessionFinishedConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DevinApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Devin Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Create a Devin session to fix a failing test in the repo",
+    "Poll a Devin session until it finishes and read its output",
+    "Send a follow-up instruction to an active Devin session",
+    "Create a knowledge note Devin should use for the project",
+    "List all Devin sessions for the organization"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -1,0 +1,673 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+html,
+body {
+    /* Token-driven so light mode can flip it; `.dark` resolves to pure black,
+       matching the previous hardcoded bg-black. */
+    @apply bg-background;
+    min-height: 100%;
+}
+
+/* Global low-res scaling via root font-size. Most of the chrome was designed
+   at >=1440 and feels squished on 1280-1366 laptops. Tailwind's spacing/text
+   utilities are rem-based, so dropping the root font-size from 16px to 13.6px
+   (85%) cascades through paddings, gaps, text, and rem-sized widths/heights
+   — uniformly shrinking the UI. Crucially this leaves the coordinate system
+   intact (unlike CSS `zoom`), so drag handlers (ReactFlow node drag, panel
+   resize, sidebar resize) continue to work because clientX and element rects
+   stay in the same un-scaled pixel space.
+
+   Pixel-based values (vw/vh, explicit `px`, JS-computed pixel widths) don't
+   shrink — those are audited and converted to rem-aware values per-component
+   where they're load-bearing. */
+/* min-width: 769px so mobile (<=768px, the project's mobile breakpoint per
+   useIsMobile) keeps the default 16px root font — mobile has its own layout
+   that was already tuned for narrow viewports and doesn't need shrinking. */
+@media (min-width: 769px) and (max-width: 1366px) {
+    html {
+        font-size: 13.6px;
+    }
+}
+@media (min-width: 769px) and (max-width: 1152px) {
+    html {
+        font-size: 12px;
+    }
+}
+
+.text-gradient {
+    background-clip: text;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+}
+
+@keyframes twinkle {
+    0%,
+    100% {
+        opacity: 0.2;
+    }
+    50% {
+        opacity: 1;
+    }
+}
+
+.animate-twinkle {
+    will-change: opacity;
+    transform: translate3d(0, 0, 0);
+    backface-visibility: hidden;
+}
+
+@layer base {
+    /* Zinc-hued light palette — pairs with the zinc-based dark chrome. The page
+       background is slightly off-white so white cards/popovers read as raised
+       surfaces; accent sits below muted so hover states stay visible. */
+    :root {
+        --background: 240 10% 98%;
+        --foreground: 240 10% 3.9%;
+        --card: 0 0% 100%;
+        --card-foreground: 240 10% 3.9%;
+        /* Sunken/recessed surface (folder sidebar, setup views, logs): white in
+           light like a card, the deeper zinc-950 in dark — the third dark
+           near-black level below --card (zinc-900) and above --background (#000). */
+        --sunken: 0 0% 100%;
+        --popover: 0 0% 100%;
+        --popover-foreground: 240 10% 3.9%;
+        /* Light-mode accent: a neutral dark gray (user call, after trying blue
+           then pure near-black — a softer charcoal reads less heavy while
+           staying a monochrome inverted CTA). Dark keeps the white primary. */
+        --primary: 240 6% 22%;
+        --primary-foreground: 0 0% 98%;
+        --secondary: 240 4.8% 94%;
+        --secondary-foreground: 240 5.9% 10%;
+        --muted: 240 4.8% 95.9%;
+        --muted-foreground: 240 3.8% 46.1%;
+        /* Input placeholders. Light = muted-foreground (unchanged). Dark is
+           intentionally DIMMER than muted-foreground (zinc-600, not zinc-400) so
+           placeholder text recedes — the tokenization pass had made it read as
+           real muted text. */
+        --placeholder: 240 3.8% 46.1%;
+        --accent: 240 5% 91%;
+        --accent-foreground: 240 5.9% 10%;
+        --destructive: 0 84.2% 60.2%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 240 5.9% 90%;
+        --input: 240 5.9% 90%;
+        --ring: 240 10% 3.9%;
+        --chart-1: 12 76% 61%;
+        --chart-2: 173 58% 39%;
+        --chart-3: 197 37% 24%;
+        --chart-4: 43 74% 66%;
+        --chart-5: 27 87% 67%;
+        /* Usage-chart chrome (visx JS props can't use dark: variants). Badge
+           text mixes its hue toward this target for legibility. */
+        --usage-chart-bg: 0 0% 100%;
+        --usage-badge-mix: black;
+        /* Canvas chrome: edges/grid read these so light gets soft grays while
+           dark keeps the original white edges / zinc-800 grid. */
+        --canvas-edge: 240 5% 62%;
+        --canvas-grid: 240 6% 82%;
+        /* Canvas surface — a hair darker than the page bg in light so white
+           (bg-card) nodes read as raised; the original zinc-950 in dark. */
+        --canvas-bg: 240 6% 95%;
+        /* Scales the black-shadow alphas of skeuomorphic chrome (canvas FABs,
+           3D buttons): full strength in dark, softened on light surfaces. */
+        --shadow-scale: 0.2;
+        /* Node-icon drop shadows: depth cue on the dark canvas, none in light. */
+        --icon-shadow-scale: 0;
+        /* Send-button focus ring: invisible in light (the accent fill carries
+           the emphasis), the original white ring in dark. */
+        --send-ring: 0 0% 98% / 0;
+        /* Running send-button spinner beam. It sits just OUTSIDE the charcoal
+           fill, on the panel — a mid-gray reads on the light panel AND stays
+           distinct from the dark fill (a near-black beam merged into it and
+           looked like a bulge). White in dark (see .dark). */
+        --send-beam: 240 4% 46%;
+        /* Canvas FAB dome gradient (inline styles can't use dark: variants).
+           Light: the neutral surface ladder; dark pins the original metallic
+           zinc-600 -> zinc-700 -> zinc-900 stops. */
+        --fab-top: 240 4.8% 94%;
+        --fab-mid: 240 4.8% 95.9%;
+        --fab-base: 0 0% 100%;
+        --fab-pill-from: 240 4.8% 94%;
+        --fab-pill-to: 0 0% 100%;
+        /* "Thinking" shimmer stops. Light: a readable muted-gray resting text
+           (matches muted-foreground) with a charcoal crest sweeping across —
+           darkening is the light-mode analog of the dark theme's white gleam. */
+        --pulse-base: 240 4% 46%;
+        --pulse-crest: 240 6% 16%;
+        --radius: 0.5rem;
+    }
+    /* Tuned to the app's existing dark chrome so token-converted components
+       render pixel-identical in dark mode: background = the old bg-black,
+       card = zinc-900, popover = the #1a1a1a menus, accent/secondary/muted =
+       the #252528 hover fill, border = zinc-800, muted-foreground = zinc-400. */
+    .dark {
+        /* Pure black, the app's dominant page background (canvas, chat sidebar,
+           navbar, body). The few surfaces that were zinc-950 (#09090b) — the
+           folder sidebar, setup views, logs — opt into that explicitly via
+           `dark:bg-zinc-950`, since one token can't be both #000 and #09090b. */
+        --background: 0 0% 0%;
+        --foreground: 0 0% 98%;
+        --card: 240 6% 10%;
+        --card-foreground: 0 0% 98%;
+        --sunken: 240 10% 3.9%; /* zinc-950 #09090b */
+        --popover: 0 0% 10%;
+        --popover-foreground: 0 0% 98%;
+        --primary: 0 0% 98%;
+        --primary-foreground: 240 5.9% 10%;
+        --secondary: 240 4% 15%;
+        --secondary-foreground: 0 0% 98%;
+        --muted: 240 4% 13%;
+        --muted-foreground: 240 5% 64.9%;
+        --placeholder: 240 5% 34%; /* zinc-600 — dim placeholder (see :root note) */
+        --accent: 240 5% 17%;
+        --accent-foreground: 0 0% 98%;
+        --destructive: 0 62.8% 30.6%;
+        --destructive-foreground: 0 0% 98%;
+        --border: 240 3.7% 15.9%;
+        --input: 240 3.7% 15.9%;
+        --ring: 240 4.9% 83.9%;
+        --chart-1: 220 70% 50%;
+        --chart-2: 160 60% 45%;
+        --chart-3: 30 80% 55%;
+        --chart-4: 280 65% 60%;
+        --chart-5: 340 75% 55%;
+        /* zinc-950 — the usage chart's original dark panel, kept exact. */
+        --usage-chart-bg: 240 10% 3.9%;
+        --usage-badge-mix: white;
+        --canvas-edge: 0 0% 98%;
+        --canvas-grid: 240 4% 16%;
+        --canvas-bg: 240 10% 3.9%; /* zinc-950 — the original dark canvas */
+        --shadow-scale: 1;
+        --icon-shadow-scale: 1;
+        --send-ring: 0 0% 98% / 0.5;
+        --send-beam: 0 0% 98%; /* white beam on the dark panel/fill */
+        --fab-top: 240 5% 34%; /* #52525b */
+        --fab-mid: 240 5% 25%; /* #3f3f46 */
+        --fab-base: 240 6% 10%; /* #18181b */
+        --fab-pill-from: 240 5% 26% / 0.4; /* rgba(63,63,70,0.4) */
+        --fab-pill-to: 240 10% 4% / 0.95; /* rgba(9,9,11,0.95) */
+        --pulse-base: 220 9% 65%; /* gray-400 — the original dark shimmer base */
+        --pulse-crest: 0 0% 100%; /* white gleam */
+    }
+}
+
+@layer base {
+    * {
+        @apply border-border;
+    }
+    body {
+        @apply bg-background text-foreground;
+    }
+}
+
+/* opencode's logo is a 3-tone gray pixel-wordmark drawn for DARK surfaces:
+   #F1ECEC (light highlight = the main letterform) / #B7B1B1 (mid) / #4B4646 (dark
+   base). On white the highlight merges away, so the mark looks hollow. invert()
+   keeps all three tones but flips them for a light bg — the highlight becomes
+   near-black (now the visible letterform), the base becomes a subtle light-gray
+   depth accent. Preserves the logo's shaded identity instead of flattening it to
+   one color. One rule, every render path; !important beats inline drop-shadows.
+   Dark is untouched, where the mark already reads. */
+:root:not(.dark) img[src*='opencode'] {
+    filter: invert(1) !important;
+}
+
+/* openclaw's wordmark is white "OPEN" + red "CLAW"/lobster, drawn for DARK
+   surfaces — the white half vanishes on a light node. Inverting would flip the
+   red to cyan, so instead darken via brightness (white → a readable gray) while
+   saturate keeps the reds vivid (grays carry no saturation to boost). Scoped to
+   the wordmark (not openclaw_marker.svg). Light only; dark untouched.
+   !important beats the inline drop-shadow, like opencode. */
+:root:not(.dark) img[src*='openclaw.svg'] {
+    filter: brightness(0.65) saturate(1.4) !important;
+}
+
+/* This is for the data upload progress bar animation */
+@keyframes progress-stripe {
+    0% {
+        background-position: 1rem 0;
+    }
+    100% {
+        background-position: 0 0;
+    }
+}
+
+.animate-progress-stripe {
+    background-size: 1rem 1rem;
+    background-image: linear-gradient(
+        45deg,
+        rgba(0, 0, 0, 0.25) 25%,
+        transparent 25%,
+        transparent 50%,
+        rgba(0, 0, 0, 0.25) 50%,
+        rgba(0, 0, 0, 0.25) 75%,
+        transparent 75%,
+        transparent
+    );
+    animation: progress-stripe 1s linear infinite;
+}
+
+.bg-stripes {
+    @apply bg-white;
+}
+
+/* Monochrome (all-white) brand marks — notion, resend, extend, … — render as a
+   dark glyph in light mode and stay white in dark, so they never vanish on a
+   light node body / chip. One class, applied wherever the mark renders (node
+   img components + SerializedIcon wrappers), standardizes it everywhere.
+   `--brand-invert` is exposed so a consumer that sets its own inline `filter`
+   (e.g. an icon drop-shadow) can COMPOSE the inversion instead of clobbering it:
+   `filter: invert(var(--brand-invert, 0)) drop-shadow(...)`. */
+.brand-mono {
+    --brand-invert: 1;
+    filter: invert(1);
+}
+.dark .brand-mono {
+    --brand-invert: 0;
+    filter: none;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(4px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.animate-fade-in {
+    animation: fadeIn 0.3s ease-out forwards;
+}
+
+@layer base {
+    * {
+        @apply border-border outline-ring/50;
+    }
+    body {
+        @apply bg-background text-foreground;
+    }
+}
+
+/* Reusable left-to-right gradient animation */
+@keyframes gradient-move {
+    0% {
+        background-position: 200% 50%;
+    }
+    100% {
+        background-position: -100% 50%;
+    }
+}
+
+/* "Thinking" text shimmer. Theme-adaptive via dedicated pulse tokens: a soft
+   charcoal crest sweeps a light-gray base in light mode, a white gleam sweeps a
+   gray-400 base in dark — each theme's crest is the more-prominent direction so
+   the wave reads as a shimmer, not a smudge, on both surfaces. */
+.animate-pulse-text {
+    background: linear-gradient(
+        90deg,
+        hsl(var(--pulse-base)) 0%,
+        hsl(var(--pulse-base)) 40%,
+        hsl(var(--pulse-crest)) 50%,
+        hsl(var(--pulse-base)) 60%,
+        hsl(var(--pulse-base)) 100%
+    );
+    background-size: 300% 100%;
+    color: transparent !important;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradient-move 3s linear infinite;
+}
+
+/* Pulse text animation for ViteViewer loading */
+.animate-pulse-loading {
+    background: linear-gradient(
+        90deg,
+        rgb(82 82 91) 0%,
+        /* zinc-600 */ rgb(82 82 91) 35%,
+        rgb(244 244 245) 50%,
+        /* zinc-100 */ rgb(82 82 91) 65%,
+        rgb(82 82 91) 100%
+    );
+    background-size: 300% 100%;
+    color: transparent !important;
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+    animation: gradient-move 2.5s linear infinite;
+}
+
+/* Shimmer animation for loading states */
+@keyframes shimmer {
+    0% {
+        transform: translateX(-100%);
+    }
+    100% {
+        transform: translateX(100%);
+    }
+}
+
+/* Modern shimmer sweep for automation nodes */
+@keyframes shimmer-sweep {
+    0% {
+        transform: translateX(-100%) skewX(-15deg);
+    }
+    100% {
+        transform: translateX(200%) skewX(-15deg);
+    }
+}
+
+/* Rotating conic-gradient border sweep shown while a node is running
+   (Aurora Mono running treatment, used by AutomationNode). */
+@keyframes node-run-sweep {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+/* Spring pop-in for the completion check badge (Aurora Mono completed treatment). */
+@keyframes node-complete-pop {
+    0% {
+        transform: scale(0);
+    }
+    60% {
+        transform: scale(1.25);
+    }
+    100% {
+        transform: scale(1);
+    }
+}
+
+/* One-shot ring that expands and fades when a node completes a live run. */
+@keyframes node-complete-ping {
+    0% {
+        transform: scale(0.9);
+        opacity: 0.7;
+    }
+    80%,
+    100% {
+        transform: scale(1.45);
+        opacity: 0;
+    }
+}
+
+/* Dash animation for racing dot border effect */
+@keyframes dash {
+    0% {
+        stroke-dashoffset: 408;
+    }
+    100% {
+        stroke-dashoffset: 0;
+    }
+}
+
+/* Pulse border animation for loading states */
+@keyframes pulse-border {
+    0%,
+    100% {
+        border-color: rgba(255, 255, 255, 0.3);
+        box-shadow:
+            0 0 0 1px rgba(255, 255, 255, 0.1),
+            0 0 8px rgba(255, 255, 255, 0.2);
+    }
+    50% {
+        border-color: rgba(255, 255, 255, 0.7);
+        box-shadow:
+            0 0 0 1px rgba(255, 255, 255, 0.3),
+            0 0 12px rgba(255, 255, 255, 0.5);
+    }
+}
+
+/* AI editing pulse glow for workflow nodes being edited */
+@keyframes editing-pulse {
+    0%,
+    100% {
+        box-shadow:
+            0 0 15px 3px rgba(59, 130, 246, 0.4),
+            0 0 30px 6px rgba(59, 130, 246, 0.2);
+        opacity: 0.7;
+    }
+    50% {
+        box-shadow:
+            0 0 25px 6px rgba(59, 130, 246, 0.6),
+            0 0 50px 12px rgba(59, 130, 246, 0.35);
+        opacity: 1;
+    }
+}
+
+/* Fade in/out animation for "Live" text - expands, stays, then collapses */
+@keyframes fadeOut {
+    0% {
+        opacity: 0;
+        max-width: 0;
+        margin-left: 0;
+    }
+    15% {
+        opacity: 1;
+        max-width: 50px;
+        margin-left: 6px;
+    }
+    70% {
+        opacity: 1;
+        max-width: 50px;
+        margin-left: 6px;
+    }
+    100% {
+        opacity: 0;
+        max-width: 0;
+        margin-left: 0;
+    }
+}
+
+/* Mobile error toast progress bar — shrinks from full width to zero */
+@keyframes toast-shrink {
+    from {
+        width: 100%;
+    }
+    to {
+        width: 0%;
+    }
+}
+
+/* Border beam animation for Magic UI style border effect */
+@keyframes border-beam {
+    100% {
+        offset-distance: 100%;
+    }
+}
+
+.animate-border-beam {
+    animation: border-beam var(--duration) infinite linear;
+}
+
+/* Hide scrollbar utility - allows scrolling but hides the scrollbar */
+@layer utilities {
+    .scrollbar-hide {
+        -ms-overflow-style: none; /* IE and Edge */
+        scrollbar-width: none; /* Firefox */
+    }
+
+    .scrollbar-hide::-webkit-scrollbar {
+        display: none; /* Chrome, Safari, Opera */
+    }
+}
+
+/* Subtle scrollbar utility for dark theme
+   Usage: Add 'scrollbar-subtle' class to any scrollable element for consistent styling
+   Example: <div className="overflow-y-auto scrollbar-subtle">...</div> */
+@layer utilities {
+    .scrollbar-subtle {
+        scrollbar-width: thin;
+        scrollbar-color: rgba(82, 82, 91, 0.4) transparent;
+    }
+
+    .scrollbar-subtle::-webkit-scrollbar {
+        width: 6px;
+    }
+
+    .scrollbar-subtle::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    .scrollbar-subtle::-webkit-scrollbar-thumb {
+        background: rgba(82, 82, 91, 0.35);
+        border-radius: 9999px;
+    }
+
+    .scrollbar-subtle::-webkit-scrollbar-thumb:hover {
+        background: rgba(82, 82, 91, 0.6);
+    }
+
+    .scrollbar-subtle::-webkit-resizer {
+        border: none;
+        background: linear-gradient(
+            135deg,
+            transparent 55%,
+            rgba(161, 161, 170, 0.5) 55%,
+            rgba(161, 161, 170, 0.5) 60%,
+            transparent 60%,
+            transparent 72%,
+            rgba(161, 161, 170, 0.5) 72%,
+            rgba(161, 161, 170, 0.5) 77%,
+            transparent 77%
+        );
+    }
+}
+
+/* Increase ReactFlow resize line hitbox for better UX */
+/* These styles make the invisible resize edges much easier to grab */
+@layer utilities {
+    .react-flow__resize-control.line.top,
+    .react-flow__resize-control.line.bottom {
+        /* Make horizontal lines much thicker for easier grabbing */
+        min-height: 30px !important;
+    }
+
+    .react-flow__resize-control.line.left,
+    .react-flow__resize-control.line.right {
+        /* Make vertical lines much thicker for easier grabbing */
+        min-width: 30px !important;
+    }
+}
+
+/* Elevate edges above sticky notes (z-index 0-999) but below regular nodes (z-index 1000+) */
+.react-flow__edges {
+    z-index: 999 !important;
+}
+
+/* Smooth animation for React Flow node position changes during AI workflow generation.
+   Only active when .workflow-animating class is present on the container. */
+.workflow-animating .react-flow__node {
+    transition: transform 0.3s ease-out;
+}
+
+/* Performance optimization: Disable expensive CSS effects during drag operations.
+   The .perf-optimizing class is added to the FlowCanvas container during node drag.
+   This overrides workflow-animating transitions when both classes are present. */
+.perf-optimizing .react-flow__node {
+    transition: none !important;
+}
+
+.perf-optimizing .react-flow__node * {
+    transition: none !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+}
+
+/* Disable iframe pointer events during drag/resize/pan to prevent iframes from
+   capturing mouse events (which causes drag-stuck, resize-stuck and
+   pan-stuck bugs when a gesture crosses an interface iframe). */
+.perf-optimizing iframe,
+.nc-resizing iframe,
+.nc-canvas-interacting iframe {
+    pointer-events: none !important;
+}
+
+/* Override react-grid-layout styles for the interface builder dark theme */
+.workflow-interface-grid .react-grid-item {
+    transition: none !important;
+}
+
+.workflow-interface-grid .react-grid-item.react-grid-placeholder {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px dashed rgba(255, 255, 255, 0.25);
+    border-radius: 8px;
+    opacity: 1;
+}
+
+.workflow-interface-grid .react-grid-item > .react-resizable-handle::after {
+    border-right-color: rgba(161, 161, 170, 0.5);
+    border-bottom-color: rgba(161, 161, 170, 0.5);
+}
+
+/* Deep-link highlight animation for scrolling to a specific config field */
+/* Foreground-tinted so the pulse inverts with the theme: near-black on the
+   light canvas, near-white on dark (matching the previous white ring). */
+@keyframes deep-link-pulse {
+    0% {
+        box-shadow: inset 0 0 0 0 hsl(var(--foreground) / 0);
+    }
+    50% {
+        box-shadow: inset 0 0 0 3px hsl(var(--foreground) / 0.6);
+    }
+    100% {
+        box-shadow: inset 0 0 0 0 hsl(var(--foreground) / 0);
+    }
+}
+
+/* Field highlight pulse — used when scrolling to a field from the missing-
+   fields banner or a deep link. The ring is drawn on an overlay pseudo-element
+   so it (a) paints ON TOP of the target's children — an inset shadow on the
+   element itself is hidden behind opaque children like a code editor — and
+   (b) stays within the element's box, so no ancestor scroll container clips
+   it the way an outward shadow would be. */
+.deep-link-highlight {
+    position: relative;
+}
+
+/* --pulse-cycles is set inline by pulseElement (lib/pulseHighlight.ts), which
+   derives the hold time from the same number. Two flashes for a field control
+   the user is about to type into; the missing-fields banner asks for three,
+   being a passive callout rather than a place the cursor is headed. */
+.deep-link-highlight::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: var(--pulse-radius, 8px);
+    pointer-events: none;
+    z-index: 30;
+    animation: deep-link-pulse 0.6s ease-in-out var(--pulse-cycles, 2);
+}
+
+/* Sparkle burst for approval buttons */
+@keyframes sparkle-fly {
+    0% {
+        transform: translate(-50%, -50%) scale(1);
+        opacity: 1;
+    }
+    100% {
+        transform: translate(
+                calc(-50% + var(--spark-x)),
+                calc(-50% + var(--spark-y))
+            )
+            scale(0);
+        opacity: 0;
+    }
+}
+
+/* SVG stroke animations for feedback icons (check/cross) */
+@keyframes circle-draw {
+    to {
+        stroke-dashoffset: 0;
+    }
+}
+@keyframes check-draw {
+    to {
+        stroke-dashoffset: 0;
+    }
+}

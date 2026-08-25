@@ -1,0 +1,6 @@
+-- Local development seed.
+--
+-- Intentionally empty: the open edition provisions its own user on first
+-- boot (single-user local auth), and workflows/credentials are created
+-- through the app. Add fixtures here only if they are safe for every
+-- self-hoster to load.

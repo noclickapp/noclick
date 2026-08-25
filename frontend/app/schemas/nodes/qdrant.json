@@ -1,0 +1,1339 @@
+{
+  "$defs": {
+    "QdrantClearPayloadConfig": {
+      "description": "Remove all payload from points selected by IDs or filter.",
+      "properties": {
+        "operation": {
+          "const": "clear_payload",
+          "default": "clear_payload",
+          "title": "Clear Payload",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Payload",
+          "x-display-name": "Clear Payload",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "wipe payload",
+            "remove all metadata",
+            "clear all fields"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "qdrant_collection"
+        },
+        "ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated point IDs",
+          "title": "Point IDs"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Qdrant JSON filter \u2014 clear payload on matching points",
+          "title": "Filter"
+        }
+      },
+      "required": [
+        "collection"
+      ],
+      "title": "QdrantClearPayloadConfig",
+      "type": "object"
+    },
+    "QdrantCountConfig": {
+      "description": "Count points in a collection, with optional filter.",
+      "properties": {
+        "operation": {
+          "const": "count",
+          "default": "count",
+          "title": "Count Points",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Points",
+          "x-display-name": "Count Points",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "count points",
+            "collection size",
+            "how many points",
+            "filter count"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "qdrant_collection"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Qdrant JSON filter \u2014 counts only matching points if provided",
+          "title": "Filter"
+        },
+        "exact": {
+          "default": "true",
+          "description": "Use exact count (slower) vs approximate count (faster for large collections)",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Exact Count",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "collection"
+      ],
+      "title": "QdrantCountConfig",
+      "type": "object"
+    },
+    "QdrantCreateCollectionConfig": {
+      "description": "Create a new collection.",
+      "properties": {
+        "operation": {
+          "const": "create_collection",
+          "default": "create_collection",
+          "title": "Create Collection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collection",
+          "x-creates-resource": true,
+          "x-display-name": "Create Collection",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new collection",
+            "provision",
+            "setup"
+          ],
+          "x-resource-type": "qdrant_collection"
+        },
+        "name": {
+          "description": "Name for the new collection",
+          "title": "Name",
+          "type": "string"
+        },
+        "size": {
+          "description": "Vector dimensionality (must match your embedding model)",
+          "title": "Vector Size",
+          "type": "integer"
+        },
+        "distance": {
+          "default": "Cosine",
+          "enum": [
+            "Cosine",
+            "Euclid",
+            "Dot",
+            "Manhattan"
+          ],
+          "title": "Distance",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "name",
+        "size"
+      ],
+      "title": "QdrantCreateCollectionConfig",
+      "type": "object"
+    },
+    "QdrantCreatePayloadIndexConfig": {
+      "description": "Create a payload field index to speed up filtered searches.",
+      "properties": {
+        "operation": {
+          "const": "create_payload_index",
+          "default": "create_payload_index",
+          "title": "Create Payload Index",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Index",
+          "x-display-name": "Create Payload Index",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "index field",
+            "add index",
+            "filter performance",
+            "payload index"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "qdrant_collection"
+        },
+        "field_name": {
+          "description": "Payload field to index, e.g. category",
+          "title": "Field Name",
+          "type": "string"
+        },
+        "field_schema": {
+          "default": "keyword",
+          "description": "Index type matching the field's data type",
+          "enum": [
+            "keyword",
+            "integer",
+            "float",
+            "bool",
+            "geo",
+            "text",
+            "datetime",
+            "uuid"
+          ],
+          "title": "Field Type",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "collection",
+        "field_name"
+      ],
+      "title": "QdrantCreatePayloadIndexConfig",
+      "type": "object"
+    },
+    "QdrantCredential": {
+      "description": "API key + cluster URL credential for Qdrant.",
+      "properties": {
+        "credential_type": {
+          "const": "qdrant_api_key",
+          "default": "qdrant_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "url": {
+          "description": "Your Qdrant endpoint, e.g. https://xyz-abc.region.aws.cloud.qdrant.io:6333",
+          "title": "Cluster URL",
+          "type": "string"
+        },
+        "api_key": {
+          "description": "Qdrant API key from your cluster dashboard",
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "url",
+        "api_key"
+      ],
+      "title": "QdrantCredential",
+      "type": "object",
+      "x-credential-url": "https://cloud.qdrant.io/"
+    },
+    "QdrantDeleteCollectionConfig": {
+      "description": "Delete a collection and all its points permanently.",
+      "properties": {
+        "operation": {
+          "const": "delete_collection",
+          "default": "delete_collection",
+          "title": "Delete Collection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collection",
+          "x-display-name": "Delete Collection",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove collection",
+            "drop collection",
+            "destroy collection"
+          ]
+        },
+        "collection": {
+          "description": "Name of the collection to delete. This is irreversible.",
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "qdrant_collection"
+        }
+      },
+      "required": [
+        "collection"
+      ],
+      "title": "QdrantDeleteCollectionConfig",
+      "type": "object"
+    },
+    "QdrantDeleteConfig": {
+      "description": "Delete points by ID or by filter.",
+      "properties": {
+        "operation": {
+          "const": "delete",
+          "default": "delete",
+          "title": "Delete Points",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Points",
+          "x-display-name": "Delete Points",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove",
+            "clear",
+            "purge points"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "qdrant_collection"
+        },
+        "ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Point IDs to delete, comma-separated",
+          "title": "IDs"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Delete points matching a Qdrant JSON filter instead of by ID",
+          "title": "Filter"
+        }
+      },
+      "required": [
+        "collection"
+      ],
+      "title": "QdrantDeleteConfig",
+      "type": "object"
+    },
+    "QdrantDeletePayloadConfig": {
+      "description": "Delete specific payload keys from points.",
+      "properties": {
+        "operation": {
+          "const": "delete_payload",
+          "default": "delete_payload",
+          "title": "Delete Payload Keys",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Payload",
+          "x-display-name": "Delete Payload Keys",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove payload fields",
+            "delete metadata keys",
+            "clear fields"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "qdrant_collection"
+        },
+        "keys": {
+          "description": "Comma-separated payload field names to remove, e.g. temp_field,legacy_tag",
+          "title": "Keys",
+          "type": "string"
+        },
+        "ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated point IDs",
+          "title": "Point IDs"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Qdrant JSON filter \u2014 update matching points instead of by ID",
+          "title": "Filter"
+        }
+      },
+      "required": [
+        "collection",
+        "keys"
+      ],
+      "title": "QdrantDeletePayloadConfig",
+      "type": "object"
+    },
+    "QdrantDeletePayloadIndexConfig": {
+      "description": "Delete a payload field index.",
+      "properties": {
+        "operation": {
+          "const": "delete_payload_index",
+          "default": "delete_payload_index",
+          "title": "Delete Payload Index",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Index",
+          "x-display-name": "Delete Payload Index",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove index",
+            "drop index",
+            "delete field index"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "qdrant_collection"
+        },
+        "field_name": {
+          "description": "Name of the payload field whose index to delete",
+          "title": "Field Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "collection",
+        "field_name"
+      ],
+      "title": "QdrantDeletePayloadIndexConfig",
+      "type": "object"
+    },
+    "QdrantGetCollectionConfig": {
+      "description": "Get detailed info and stats for a single collection.",
+      "properties": {
+        "operation": {
+          "const": "get_collection",
+          "default": "get_collection",
+          "title": "Get Collection Info",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collection",
+          "x-display-name": "Get Collection Info",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "describe collection",
+            "collection info",
+            "collection status",
+            "collection stats"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "qdrant_collection"
+        }
+      },
+      "required": [
+        "collection"
+      ],
+      "title": "QdrantGetCollectionConfig",
+      "type": "object"
+    },
+    "QdrantListCollectionsConfig": {
+      "description": "List all collections.",
+      "properties": {
+        "operation": {
+          "const": "list_collections",
+          "default": "list_collections",
+          "title": "List Collections",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collection",
+          "x-display-name": "List Collections",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "list",
+            "show collections"
+          ]
+        }
+      },
+      "title": "QdrantListCollectionsConfig",
+      "type": "object"
+    },
+    "QdrantQueryConfig": {
+      "description": "Find the most similar points to a query vector (similarity search).",
+      "properties": {
+        "operation": {
+          "const": "query",
+          "default": "query",
+          "title": "Query / Search",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Points",
+          "x-display-name": "Query / Search",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "search",
+            "similarity search",
+            "semantic search",
+            "retrieve",
+            "nearest neighbors",
+            "vector search",
+            "rag"
+          ]
+        },
+        "collection": {
+          "description": "Collection to query",
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "qdrant_collection"
+        },
+        "vector": {
+          "description": "Embedding to search with \u2014 a JSON array of numbers, e.g. [0.1, 0.2, ...]",
+          "title": "Query Vector",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "limit": {
+          "default": 10,
+          "description": "Number of matches to return",
+          "title": "Limit",
+          "type": "integer"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Qdrant JSON filter, e.g. {\"must\": [{\"key\": \"city\", \"match\": {\"value\": \"London\"}}]}",
+          "title": "Filter"
+        },
+        "with_payload": {
+          "default": "true",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Payload",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "with_vector": {
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Vector",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "collection",
+        "vector"
+      ],
+      "title": "QdrantQueryConfig",
+      "type": "object"
+    },
+    "QdrantRecommendConfig": {
+      "description": "Find points similar to positive examples and dissimilar from negative examples.",
+      "properties": {
+        "operation": {
+          "const": "recommend",
+          "default": "recommend",
+          "title": "Recommend Points",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Points",
+          "x-display-name": "Recommend Points",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "recommend",
+            "similar items",
+            "positive negative examples",
+            "collaborative filtering",
+            "more like this"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "qdrant_collection"
+        },
+        "positive": {
+          "description": "JSON array of point IDs or vectors to use as positive examples, e.g. [1, 2] or [[0.1, ...]]",
+          "title": "Positive Examples",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "negative": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array of point IDs or vectors to push results away from",
+          "title": "Negative Examples"
+        },
+        "limit": {
+          "default": 10,
+          "description": "Number of results to return",
+          "title": "Limit",
+          "type": "integer"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Qdrant JSON filter",
+          "title": "Filter"
+        },
+        "with_payload": {
+          "default": "true",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Payload",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "with_vector": {
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Vector",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "score_threshold": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum score cutoff",
+          "title": "Score Threshold"
+        },
+        "strategy": {
+          "default": "average_vector",
+          "enum": [
+            "average_vector",
+            "best_score"
+          ],
+          "title": "Strategy",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "collection",
+        "positive"
+      ],
+      "title": "QdrantRecommendConfig",
+      "type": "object"
+    },
+    "QdrantRetrieveConfig": {
+      "description": "Retrieve points by their IDs.",
+      "properties": {
+        "operation": {
+          "const": "retrieve",
+          "default": "retrieve",
+          "title": "Retrieve Points",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Points",
+          "x-display-name": "Retrieve Points",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "get",
+            "lookup by id",
+            "read points"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "qdrant_collection"
+        },
+        "ids": {
+          "description": "Point IDs to retrieve, comma-separated",
+          "title": "IDs",
+          "type": "string"
+        },
+        "with_payload": {
+          "default": "true",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Payload",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "with_vector": {
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Vector",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "collection",
+        "ids"
+      ],
+      "title": "QdrantRetrieveConfig",
+      "type": "object"
+    },
+    "QdrantScrollConfig": {
+      "description": "Scroll through all points in a collection with optional filter and cursor-based pagination.",
+      "properties": {
+        "operation": {
+          "const": "scroll",
+          "default": "scroll",
+          "title": "Scroll Points",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Points",
+          "x-display-name": "Scroll Points",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "list points",
+            "iterate points",
+            "browse collection",
+            "paginate",
+            "all points"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "qdrant_collection"
+        },
+        "limit": {
+          "default": 10,
+          "description": "Number of points to return per page",
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Point ID to start from (use next_page_offset from previous response for pagination)",
+          "title": "Offset"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Qdrant JSON filter to select only matching points",
+          "title": "Filter"
+        },
+        "with_payload": {
+          "default": "true",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Payload",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "with_vector": {
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Vector",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "order_by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Payload field name to sort by, e.g. \"created_at\"",
+          "title": "Order By"
+        }
+      },
+      "required": [
+        "collection"
+      ],
+      "title": "QdrantScrollConfig",
+      "type": "object"
+    },
+    "QdrantSetPayloadConfig": {
+      "description": "Set (merge) payload fields on points selected by IDs or filter.",
+      "properties": {
+        "operation": {
+          "const": "set_payload",
+          "default": "set_payload",
+          "title": "Set Payload",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Payload",
+          "x-display-name": "Set Payload",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "update payload",
+            "add metadata",
+            "set fields",
+            "update point metadata"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "qdrant_collection"
+        },
+        "payload": {
+          "description": "JSON object with fields to set/merge, e.g. {\"status\": \"processed\", \"score\": 0.9}",
+          "title": "Payload",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated point IDs to update",
+          "title": "Point IDs"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Qdrant JSON filter \u2014 update matching points instead of by ID",
+          "title": "Filter"
+        }
+      },
+      "required": [
+        "collection",
+        "payload"
+      ],
+      "title": "QdrantSetPayloadConfig",
+      "type": "object"
+    },
+    "QdrantUpdateCollectionConfig": {
+      "description": "Update collection parameters (optimizers, HNSW, quantization).",
+      "properties": {
+        "operation": {
+          "const": "update_collection",
+          "default": "update_collection",
+          "title": "Update Collection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collection",
+          "x-display-name": "Update Collection",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "configure collection",
+            "collection settings",
+            "optimizers",
+            "hnsw config"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "qdrant_collection"
+        },
+        "optimizers_config": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object with optimizer settings, e.g. {\"indexing_threshold\": 20000}",
+          "title": "Optimizers Config"
+        },
+        "hnsw_config": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object with HNSW settings, e.g. {\"m\": 16, \"ef_construct\": 100}",
+          "title": "HNSW Config"
+        }
+      },
+      "required": [
+        "collection"
+      ],
+      "title": "QdrantUpdateCollectionConfig",
+      "type": "object"
+    },
+    "QdrantUploadIndexConfig": {
+      "description": "Upload a document file, chunk + embed it, and upsert the points.",
+      "properties": {
+        "operation": {
+          "const": "upload_and_index",
+          "default": "upload_and_index",
+          "title": "Upload & Index Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Points",
+          "x-display-name": "Upload & Index Document",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "upload",
+            "ingest",
+            "index document",
+            "rag",
+            "embed file",
+            "add pdf"
+          ]
+        },
+        "collection": {
+          "description": "Collection to write to",
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "qdrant_collection"
+        },
+        "document": {
+          "description": "Upload a PDF/DOCX/TXT/MD/CSV file (or paste a URL / reference an upstream file). It's chunked, embedded with text-embedding-3-small, and upserted as points.",
+          "title": "Document",
+          "type": "string",
+          "ui:accept": ".pdf,.docx,.txt,.md,.markdown,.csv,.json,.html,.htm",
+          "ui:widget": "media_upload"
+        },
+        "chunk_size": {
+          "default": 1000,
+          "description": "Characters per chunk",
+          "title": "Chunk Size",
+          "type": "integer"
+        },
+        "chunk_overlap": {
+          "default": 200,
+          "description": "Overlapping characters between chunks",
+          "title": "Chunk Overlap",
+          "type": "integer"
+        },
+        "id_prefix": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional prefix for chunk IDs (defaults to the filename)",
+          "title": "ID Prefix"
+        }
+      },
+      "required": [
+        "collection",
+        "document"
+      ],
+      "title": "QdrantUploadIndexConfig",
+      "type": "object"
+    },
+    "QdrantUpsertConfig": {
+      "description": "Insert or overwrite points in a collection.",
+      "properties": {
+        "operation": {
+          "const": "upsert",
+          "default": "upsert",
+          "title": "Upsert Points",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Points",
+          "x-display-name": "Upsert Points",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "insert",
+            "index",
+            "add points",
+            "store",
+            "write",
+            "embed"
+          ]
+        },
+        "collection": {
+          "description": "Collection to write to",
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "qdrant_collection"
+        },
+        "points": {
+          "description": "JSON array of points: [{\"id\": 1, \"vector\": [0.1, ...], \"payload\": {\"source\": \"doc1\"}}]",
+          "title": "Points",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "collection",
+        "points"
+      ],
+      "title": "QdrantUpsertConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the Qdrant node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "clear_payload": "#/$defs/QdrantClearPayloadConfig",
+          "count": "#/$defs/QdrantCountConfig",
+          "create_collection": "#/$defs/QdrantCreateCollectionConfig",
+          "create_payload_index": "#/$defs/QdrantCreatePayloadIndexConfig",
+          "delete": "#/$defs/QdrantDeleteConfig",
+          "delete_collection": "#/$defs/QdrantDeleteCollectionConfig",
+          "delete_payload": "#/$defs/QdrantDeletePayloadConfig",
+          "delete_payload_index": "#/$defs/QdrantDeletePayloadIndexConfig",
+          "get_collection": "#/$defs/QdrantGetCollectionConfig",
+          "list_collections": "#/$defs/QdrantListCollectionsConfig",
+          "query": "#/$defs/QdrantQueryConfig",
+          "recommend": "#/$defs/QdrantRecommendConfig",
+          "retrieve": "#/$defs/QdrantRetrieveConfig",
+          "scroll": "#/$defs/QdrantScrollConfig",
+          "set_payload": "#/$defs/QdrantSetPayloadConfig",
+          "update_collection": "#/$defs/QdrantUpdateCollectionConfig",
+          "upload_and_index": "#/$defs/QdrantUploadIndexConfig",
+          "upsert": "#/$defs/QdrantUpsertConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/QdrantQueryConfig"
+        },
+        {
+          "$ref": "#/$defs/QdrantUpsertConfig"
+        },
+        {
+          "$ref": "#/$defs/QdrantRetrieveConfig"
+        },
+        {
+          "$ref": "#/$defs/QdrantDeleteConfig"
+        },
+        {
+          "$ref": "#/$defs/QdrantScrollConfig"
+        },
+        {
+          "$ref": "#/$defs/QdrantCountConfig"
+        },
+        {
+          "$ref": "#/$defs/QdrantRecommendConfig"
+        },
+        {
+          "$ref": "#/$defs/QdrantListCollectionsConfig"
+        },
+        {
+          "$ref": "#/$defs/QdrantGetCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/QdrantCreateCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/QdrantUpdateCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/QdrantDeleteCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/QdrantSetPayloadConfig"
+        },
+        {
+          "$ref": "#/$defs/QdrantDeletePayloadConfig"
+        },
+        {
+          "$ref": "#/$defs/QdrantClearPayloadConfig"
+        },
+        {
+          "$ref": "#/$defs/QdrantCreatePayloadIndexConfig"
+        },
+        {
+          "$ref": "#/$defs/QdrantDeletePayloadIndexConfig"
+        },
+        {
+          "$ref": "#/$defs/QdrantUploadIndexConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/QdrantCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Qdrant Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Search a Qdrant collection for the points most similar to a query embedding",
+    "Upsert document embeddings into a Qdrant collection with payload metadata",
+    "Delete points matching a payload filter before re-indexing",
+    "Retrieve specific points by ID to inspect their payload",
+    "Create a new collection for a 1536-dimension embedding model"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

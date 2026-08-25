@@ -1,0 +1,3423 @@
+{
+  "$defs": {
+    "MongoDBAggregatConfig": {
+      "properties": {
+        "operation": {
+          "const": "aggregate",
+          "default": "aggregate",
+          "title": "Aggregate",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Aggregation",
+          "x-display-name": "Aggregate",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "pipeline",
+            "group by",
+            "join",
+            "lookup",
+            "unwind",
+            "facet"
+          ]
+        },
+        "database": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the database name",
+            "field_name": "database",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "depends_on": "database",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true
+          },
+          "x-resource-type": "mongodb_collection"
+        },
+        "pipeline": {
+          "description": "Aggregation pipeline as a JSON array, e.g. [{\"$match\": {\"active\": true}}, {\"$group\": {\"_id\": \"$category\", \"count\": {\"$sum\": 1}}}]",
+          "title": "Pipeline",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "allow_disk_use": {
+          "default": "false",
+          "description": "Allow MongoDB to write temporary files to disk for large aggregations exceeding 100MB memory limit",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Allow Disk Use",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "database",
+        "collection",
+        "pipeline"
+      ],
+      "title": "MongoDBAggregatConfig",
+      "type": "object"
+    },
+    "MongoDBAtlasFacetSearchConfig": {
+      "properties": {
+        "operation": {
+          "const": "atlas_facet_search",
+          "default": "atlas_facet_search",
+          "title": "Atlas Facet Search",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Atlas Search",
+          "x-display-name": "Atlas Facet Search",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "facets",
+            "aggregations",
+            "counts",
+            "faceted navigation",
+            "searchMeta"
+          ]
+        },
+        "database": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the database name",
+            "field_name": "database",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "depends_on": "database",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true
+          },
+          "x-resource-type": "mongodb_collection"
+        },
+        "index_name": {
+          "default": "default",
+          "title": "Index Name",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the index name (default = default)",
+            "depends_on": "collection",
+            "field_name": "search_index_name",
+            "placeholder": "Select a search index...",
+            "searchable": true
+          }
+        },
+        "query": {
+          "description": "Text to search for",
+          "title": "Search Query",
+          "type": "string"
+        },
+        "facets": {
+          "description": "Facet definitions as JSON. String facet: {\"genre\": {\"type\": \"string\", \"path\": \"genre\"}} \u2014 IMPORTANT: the indexed field must use \"type\": \"token\" in the Atlas Search index (not \"string\"). Numeric: {\"price\": {\"type\": \"number\", \"path\": \"price\", \"boundaries\": [0, 50, 100, 200]}}. Date: {\"year\": {\"type\": \"date\", \"path\": \"date\", \"boundaries\": [\"2020-01-01\", \"2021-01-01\"]}}",
+          "title": "Facets",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "database",
+        "collection",
+        "query",
+        "facets"
+      ],
+      "title": "MongoDBAtlasFacetSearchConfig",
+      "type": "object"
+    },
+    "MongoDBAtlasTextSearchConfig": {
+      "properties": {
+        "operation": {
+          "const": "atlas_text_search",
+          "default": "atlas_text_search",
+          "title": "Atlas Text Search",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Atlas Search",
+          "x-display-name": "Atlas Text Search",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "full text search",
+            "$search",
+            "lucene",
+            "autocomplete",
+            "fuzzy",
+            "phrase search",
+            "atlas search"
+          ]
+        },
+        "database": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the database name",
+            "field_name": "database",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "depends_on": "database",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true
+          },
+          "x-resource-type": "mongodb_collection"
+        },
+        "index_name": {
+          "default": "default",
+          "title": "Index Name",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the index name (default = default)",
+            "depends_on": "collection",
+            "field_name": "search_index_name",
+            "placeholder": "Select a search index...",
+            "searchable": true
+          }
+        },
+        "query": {
+          "description": "Text to search for",
+          "title": "Search Query",
+          "type": "string"
+        },
+        "search_operator": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full $search operator as JSON for compound, phrase, autocomplete, range, etc. When provided, overrides the Query and Search Fields above. E.g. {\"compound\": {\"must\": [{\"text\": {\"query\": \"coffee\", \"path\": \"name\"}}], \"should\": [{\"text\": {\"query\": \"organic\", \"path\": \"tags\"}}]}}",
+          "title": "Search Operator (Advanced)",
+          "ui:widget": "textarea"
+        },
+        "search_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated field names to search in, e.g. \"title,plot,description\". Leave blank to search all indexed fields.",
+          "title": "Search Fields"
+        },
+        "fuzzy": {
+          "default": "false",
+          "description": "Enable fuzzy matching to tolerate typos and spelling variations",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Fuzzy Search",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "default": 10,
+          "description": "Maximum number of results to return",
+          "title": "Limit",
+          "type": "integer"
+        },
+        "projection": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fields to include/exclude, e.g. {\"title\": 1, \"plot\": 1, \"score\": {\"$meta\": \"searchScore\"}}",
+          "title": "Projection",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "database",
+        "collection",
+        "query"
+      ],
+      "title": "MongoDBAtlasTextSearchConfig",
+      "type": "object"
+    },
+    "MongoDBBulkWriteConfig": {
+      "properties": {
+        "operation": {
+          "const": "bulk_write",
+          "default": "bulk_write",
+          "title": "Bulk Write",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Bulk Write",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "batch",
+            "bulk operations",
+            "mixed writes",
+            "transaction-like"
+          ]
+        },
+        "database": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the database name",
+            "field_name": "database",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "depends_on": "database",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true
+          },
+          "x-resource-type": "mongodb_collection"
+        },
+        "operations": {
+          "description": "JSON array of write-operation dicts, e.g. [{\"insertOne\": {\"document\": {\"x\": 1}}}, {\"updateOne\": {\"filter\": {\"x\": 1}, \"update\": {\"$set\": {\"y\": 2}}}}]",
+          "title": "Operations",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "ordered": {
+          "default": "false",
+          "description": "If true, aborts on first error. If false (recommended for imports), attempts all and collects errors.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes (abort on first error)",
+            "No (attempt all, recommended)"
+          ],
+          "title": "Ordered",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "database",
+        "collection",
+        "operations"
+      ],
+      "title": "MongoDBBulkWriteConfig",
+      "type": "object"
+    },
+    "MongoDBCommandConfig": {
+      "properties": {
+        "operation": {
+          "const": "command",
+          "default": "command",
+          "title": "Run Command",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Database",
+          "x-display-name": "Run Command",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "admin command",
+            "db command",
+            "raw command",
+            "ping",
+            "serverStatus"
+          ]
+        },
+        "database": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the database name",
+            "field_name": "database",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "command": {
+          "description": "Database command as JSON, e.g. {\"ping\": 1} or {\"serverStatus\": 1}",
+          "title": "Command",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "database",
+        "command"
+      ],
+      "title": "MongoDBCommandConfig",
+      "type": "object"
+    },
+    "MongoDBCountDocumentsConfig": {
+      "properties": {
+        "operation": {
+          "const": "count_documents",
+          "default": "count_documents",
+          "title": "Count Documents",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Count Documents",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "count",
+            "total",
+            "how many",
+            "size"
+          ]
+        },
+        "database": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the database name",
+            "field_name": "database",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "depends_on": "database",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true
+          },
+          "x-resource-type": "mongodb_collection"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional query filter as JSON (omit to count all documents)",
+          "title": "Filter",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "database",
+        "collection"
+      ],
+      "title": "MongoDBCountDocumentsConfig",
+      "type": "object"
+    },
+    "MongoDBCreateAtlasSearchIndexConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_atlas_search_index",
+          "default": "create_atlas_search_index",
+          "title": "Create Atlas Search Index",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Atlas Search",
+          "x-display-name": "Create Atlas Search Index",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "full text search",
+            "lucene",
+            "autocomplete",
+            "facet",
+            "atlas search index"
+          ]
+        },
+        "database": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the database name",
+            "field_name": "database",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "depends_on": "database",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true
+          },
+          "x-resource-type": "mongodb_collection"
+        },
+        "index_name": {
+          "default": "default",
+          "description": "Name for the search index (use \"default\" to make it the default)",
+          "title": "Index Name",
+          "type": "string"
+        },
+        "dynamic": {
+          "default": "true",
+          "description": "Auto-index all string fields when enabled. Disable to specify field mappings manually.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Dynamic (auto-index all strings)",
+            "Static (specify fields)"
+          ],
+          "title": "Dynamic Mapping",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "field_mappings": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Field mapping definitions as JSON array per field (used when Dynamic Mapping is disabled). E.g. {\"title\": [{\"type\": \"string\", \"analyzer\": \"lucene.standard\"}], \"plot\": [{\"type\": \"string\"}]}. Use \"type\": \"token\" for fields used in string facets (required by Atlas facet search).",
+          "title": "Field Mappings",
+          "ui:widget": "textarea"
+        },
+        "analyzer": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Default analyzer for string fields, e.g. \"lucene.standard\", \"lucene.english\", \"lucene.whitespace\"",
+          "title": "Analyzer"
+        }
+      },
+      "required": [
+        "database",
+        "collection"
+      ],
+      "title": "MongoDBCreateAtlasSearchIndexConfig",
+      "type": "object"
+    },
+    "MongoDBCreateCollectionConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_collection",
+          "default": "create_collection",
+          "title": "Create Collection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collections",
+          "x-creates-resource": true,
+          "x-display-name": "Create Collection",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new collection",
+            "provision",
+            "create table"
+          ],
+          "x-resource-id-path": "collection",
+          "x-resource-type": "mongodb_collection"
+        },
+        "database": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the database name",
+            "field_name": "database",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "name": {
+          "description": "Name of the new collection",
+          "title": "Collection Name",
+          "type": "string"
+        },
+        "capped": {
+          "default": "false",
+          "description": "Create a fixed-size capped collection",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Capped",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "size": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum size in bytes for a capped collection",
+          "title": "Max Size (bytes)"
+        },
+        "max": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of documents in a capped collection",
+          "title": "Max Documents"
+        },
+        "validator": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON Schema validation document, e.g. {\"$jsonSchema\": {\"bsonType\": \"object\", \"required\": [\"name\"], \"properties\": {\"name\": {\"bsonType\": \"string\"}}}}",
+          "title": "Schema Validator",
+          "ui:widget": "textarea"
+        },
+        "validation_level": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "strict",
+            "moderate",
+            "off"
+          ],
+          "enumNames": [
+            "Strict",
+            "Moderate",
+            "Off"
+          ],
+          "title": "Validation Level",
+          "x-enum-searchable": true
+        },
+        "validation_action": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "error",
+            "warn"
+          ],
+          "enumNames": [
+            "Error (reject)",
+            "Warn (allow + log)"
+          ],
+          "title": "Validation Action",
+          "x-enum-searchable": true
+        },
+        "time_field": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Field containing the date/time for time series collections (MongoDB 5.0+)",
+          "title": "Time Field (Timeseries)"
+        },
+        "meta_field": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Field for time series metadata (labels/tags)",
+          "title": "Meta Field (Timeseries)"
+        },
+        "granularity": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours"
+          ],
+          "enumNames": [
+            "Seconds",
+            "Minutes",
+            "Hours"
+          ],
+          "title": "Granularity (Timeseries)",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "database",
+        "name"
+      ],
+      "title": "MongoDBCreateCollectionConfig",
+      "type": "object"
+    },
+    "MongoDBCreateIndexConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_index",
+          "default": "create_index",
+          "title": "Create Index",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Indexes",
+          "x-creates-resource": true,
+          "x-display-name": "Create Index",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "build index",
+            "add index",
+            "compound index",
+            "ttl index",
+            "text index",
+            "geospatial",
+            "hashed",
+            "partial",
+            "sparse"
+          ],
+          "x-resource-id-path": "index_name",
+          "x-resource-type": "mongodb_index"
+        },
+        "database": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the database name",
+            "field_name": "database",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "depends_on": "database",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true
+          },
+          "x-resource-type": "mongodb_collection"
+        },
+        "keys": {
+          "description": "Index key specification as JSON object. Use 1/-1 for ascending/descending, \"text\" for text search, \"hashed\" for hash sharding, \"2dsphere\"/\"2d\" for geospatial. Examples: {\"email\": 1} {\"field1\": 1, \"field2\": -1} {\"content\": \"text\"} {\"loc\": \"2dsphere\"}",
+          "title": "Keys",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional custom index name",
+          "title": "Index Name"
+        },
+        "unique": {
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Unique",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "sparse": {
+          "default": "false",
+          "description": "Only index documents that contain the indexed field",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Sparse",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "hidden": {
+          "default": "false",
+          "description": "Hide from query planner without dropping (MongoDB 4.4+)",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Hidden",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "expire_after_seconds": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Automatically delete documents after N seconds (TTL index). Must be on a Date field.",
+          "title": "Expire After Seconds (TTL)"
+        },
+        "partial_filter_expression": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only index documents matching this filter, e.g. {\"status\": \"active\"}",
+          "title": "Partial Filter Expression",
+          "ui:widget": "textarea"
+        },
+        "collation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Language-specific string comparison rules as JSON, e.g. {\"locale\": \"en\", \"strength\": 2}",
+          "title": "Collation",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "database",
+        "collection",
+        "keys"
+      ],
+      "title": "MongoDBCreateIndexConfig",
+      "type": "object"
+    },
+    "MongoDBCreateIndexesConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_indexes",
+          "default": "create_indexes",
+          "title": "Create Multiple Indexes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Indexes",
+          "x-display-name": "Create Multiple Indexes",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "batch indexes",
+            "multiple indexes",
+            "setup indexes"
+          ]
+        },
+        "database": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the database name",
+            "field_name": "database",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "depends_on": "database",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true
+          },
+          "x-resource-type": "mongodb_collection"
+        },
+        "indexes": {
+          "description": "JSON array of index spec objects, each with \"keys\" (required) and optional \"name\", \"unique\", \"sparse\", \"expireAfterSeconds\", \"partialFilterExpression\". E.g. [{\"keys\": {\"email\": 1}, \"unique\": true}, {\"keys\": {\"createdAt\": 1}, \"expireAfterSeconds\": 3600}]",
+          "title": "Index Specifications",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "database",
+        "collection",
+        "indexes"
+      ],
+      "title": "MongoDBCreateIndexesConfig",
+      "type": "object"
+    },
+    "MongoDBCreateVectorSearchIndexConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_vector_search_index",
+          "default": "create_vector_search_index",
+          "title": "Create Vector Search Index",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Atlas Vector Search",
+          "x-display-name": "Create Vector Search Index",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "create vector index",
+            "knn index",
+            "atlas search index",
+            "setup embeddings",
+            "vectorSearch"
+          ]
+        },
+        "database": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the database name",
+            "field_name": "database",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "depends_on": "database",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true
+          },
+          "x-resource-type": "mongodb_collection"
+        },
+        "index_name": {
+          "description": "Name for the vector search index",
+          "title": "Index Name",
+          "type": "string"
+        },
+        "path": {
+          "description": "Name of the field storing the embedding vectors",
+          "title": "Vector Field",
+          "type": "string"
+        },
+        "num_dimensions": {
+          "default": 1536,
+          "description": "Number of dimensions in the embedding vectors (e.g. 1536 for text-embedding-3-small, 3072 for text-embedding-3-large, 768 for nomic-embed)",
+          "title": "Dimensions",
+          "type": "integer"
+        },
+        "similarity": {
+          "default": "cosine",
+          "enum": [
+            "euclidean",
+            "cosine",
+            "dotProduct"
+          ],
+          "enumNames": [
+            "Euclidean",
+            "Cosine",
+            "Dot Product"
+          ],
+          "title": "Similarity Function",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "filter_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated field names to index as filter-type (for pre-filtering in vector search). E.g. \"category,status,user_id\". These fields must be boolean, date, number, objectId, string, or UUID.",
+          "title": "Filter Fields"
+        }
+      },
+      "required": [
+        "database",
+        "collection",
+        "index_name",
+        "path"
+      ],
+      "title": "MongoDBCreateVectorSearchIndexConfig",
+      "type": "object"
+    },
+    "MongoDBCredential": {
+      "description": "MongoDB connection string credential.",
+      "properties": {
+        "credential_type": {
+          "const": "mongodb_connection_string",
+          "default": "mongodb_connection_string",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "connection_string": {
+          "description": "MongoDB URI, e.g. mongodb+srv://user:pass@cluster.mongodb.net/ or mongodb://localhost:27017/",
+          "title": "Connection String",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "connection_string"
+      ],
+      "title": "MongoDBCredential",
+      "type": "object",
+      "x-credential-instructions": "Go to MongoDB Atlas \u2192 Database \u2192 Connect \u2192 Drivers, copy the connection string, and replace <password> with your database user password. For self-hosted MongoDB use mongodb://user:pass@host:27017/.",
+      "x-credential-url": "https://cloud.mongodb.com/"
+    },
+    "MongoDBDeleteManyConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_many",
+          "default": "delete_many",
+          "title": "Delete Many Documents",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Delete Many Documents",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "bulk delete",
+            "remove all",
+            "purge",
+            "clear collection"
+          ]
+        },
+        "database": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the database name",
+            "field_name": "database",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "depends_on": "database",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true
+          },
+          "x-resource-type": "mongodb_collection"
+        },
+        "filter": {
+          "description": "Query filter as JSON \u2014 use {} with caution (deletes all documents)",
+          "title": "Filter",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "hint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Index Hint",
+          "ui:widget": "textarea"
+        },
+        "collation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Collation",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "database",
+        "collection",
+        "filter"
+      ],
+      "title": "MongoDBDeleteManyConfig",
+      "type": "object"
+    },
+    "MongoDBDeleteOneConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_one",
+          "default": "delete_one",
+          "title": "Delete One Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Delete One Document",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove",
+            "destroy",
+            "delete by id"
+          ]
+        },
+        "database": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the database name",
+            "field_name": "database",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "depends_on": "database",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true
+          },
+          "x-resource-type": "mongodb_collection"
+        },
+        "filter": {
+          "description": "Query filter as JSON, e.g. {\"_id\": \"abc\"}",
+          "title": "Filter",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "hint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Index Hint",
+          "ui:widget": "textarea"
+        },
+        "collation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Collation",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "database",
+        "collection",
+        "filter"
+      ],
+      "title": "MongoDBDeleteOneConfig",
+      "type": "object"
+    },
+    "MongoDBDeleteSearchIndexConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_search_index",
+          "default": "delete_search_index",
+          "title": "Delete Search Index",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Atlas Vector Search",
+          "x-display-name": "Delete Search Index",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "drop vector index",
+            "remove atlas search index"
+          ]
+        },
+        "database": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the database name",
+            "field_name": "database",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "depends_on": "database",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true
+          },
+          "x-resource-type": "mongodb_collection"
+        },
+        "index_name": {
+          "title": "Index Name",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the index name (default = default)",
+            "depends_on": "collection",
+            "field_name": "search_index_name",
+            "placeholder": "Select a search index...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "database",
+        "collection",
+        "index_name"
+      ],
+      "title": "MongoDBDeleteSearchIndexConfig",
+      "type": "object"
+    },
+    "MongoDBDistinctConfig": {
+      "properties": {
+        "operation": {
+          "const": "distinct",
+          "default": "distinct",
+          "title": "Distinct Values",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Distinct Values",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "unique values",
+            "enum field values",
+            "list distinct",
+            "unique"
+          ]
+        },
+        "database": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the database name",
+            "field_name": "database",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "depends_on": "database",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true
+          },
+          "x-resource-type": "mongodb_collection"
+        },
+        "field": {
+          "description": "Field to get distinct values for, e.g. \"status\" or \"tags\"",
+          "title": "Field Name",
+          "type": "string"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional query filter to restrict which documents are considered, e.g. {\"active\": true}",
+          "title": "Filter",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "database",
+        "collection",
+        "field"
+      ],
+      "title": "MongoDBDistinctConfig",
+      "type": "object"
+    },
+    "MongoDBDropCollectionConfig": {
+      "properties": {
+        "operation": {
+          "const": "drop_collection",
+          "default": "drop_collection",
+          "title": "Drop Collection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collections",
+          "x-display-name": "Drop Collection",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "delete collection",
+            "remove collection",
+            "drop table"
+          ]
+        },
+        "database": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the database name",
+            "field_name": "database",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "depends_on": "database",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true
+          },
+          "x-resource-type": "mongodb_collection"
+        }
+      },
+      "required": [
+        "database",
+        "collection"
+      ],
+      "title": "MongoDBDropCollectionConfig",
+      "type": "object"
+    },
+    "MongoDBDropDatabaseConfig": {
+      "properties": {
+        "operation": {
+          "const": "drop_database",
+          "default": "drop_database",
+          "title": "Drop Database",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Database",
+          "x-display-name": "Drop Database",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "delete database",
+            "remove database"
+          ]
+        },
+        "database": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the database name",
+            "field_name": "database",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "database"
+      ],
+      "title": "MongoDBDropDatabaseConfig",
+      "type": "object"
+    },
+    "MongoDBDropIndexConfig": {
+      "properties": {
+        "operation": {
+          "const": "drop_index",
+          "default": "drop_index",
+          "title": "Drop Index",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Indexes",
+          "x-display-name": "Drop Index",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "delete index",
+            "remove index"
+          ]
+        },
+        "database": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the database name",
+            "field_name": "database",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "depends_on": "database",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true
+          },
+          "x-resource-type": "mongodb_collection"
+        },
+        "index_name": {
+          "title": "Index Name",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the index name",
+            "depends_on": "collection",
+            "field_name": "index_name",
+            "placeholder": "Select an index...",
+            "searchable": true
+          },
+          "x-resource-type": "mongodb_index"
+        }
+      },
+      "required": [
+        "database",
+        "collection",
+        "index_name"
+      ],
+      "title": "MongoDBDropIndexConfig",
+      "type": "object"
+    },
+    "MongoDBDropIndexesConfig": {
+      "properties": {
+        "operation": {
+          "const": "drop_indexes",
+          "default": "drop_indexes",
+          "title": "Drop All Indexes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Indexes",
+          "x-display-name": "Drop All Indexes",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove all indexes",
+            "reset indexes",
+            "clear indexes"
+          ]
+        },
+        "database": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the database name",
+            "field_name": "database",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "depends_on": "database",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true
+          },
+          "x-resource-type": "mongodb_collection"
+        }
+      },
+      "required": [
+        "database",
+        "collection"
+      ],
+      "title": "MongoDBDropIndexesConfig",
+      "type": "object"
+    },
+    "MongoDBEstimatedDocumentCountConfig": {
+      "properties": {
+        "operation": {
+          "const": "estimated_document_count",
+          "default": "estimated_document_count",
+          "title": "Estimated Document Count",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Estimated Document Count",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "fast count",
+            "approximate count",
+            "collection size",
+            "total documents"
+          ]
+        },
+        "database": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the database name",
+            "field_name": "database",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "depends_on": "database",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true
+          },
+          "x-resource-type": "mongodb_collection"
+        }
+      },
+      "required": [
+        "database",
+        "collection"
+      ],
+      "title": "MongoDBEstimatedDocumentCountConfig",
+      "type": "object"
+    },
+    "MongoDBFindConfig": {
+      "properties": {
+        "operation": {
+          "const": "find",
+          "default": "find",
+          "title": "Find Documents",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Find Documents",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "query",
+            "list",
+            "search",
+            "filter",
+            "get many",
+            "fetch"
+          ]
+        },
+        "database": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the database name",
+            "field_name": "database",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "depends_on": "database",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true
+          },
+          "x-resource-type": "mongodb_collection"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "MongoDB query filter as JSON, e.g. {\"status\": \"active\"}",
+          "title": "Filter",
+          "ui:widget": "textarea"
+        },
+        "projection": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fields to include/exclude as JSON, e.g. {\"name\": 1, \"_id\": 0}",
+          "title": "Projection",
+          "ui:widget": "textarea"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort specification as JSON, e.g. {\"createdAt\": -1}",
+          "title": "Sort",
+          "ui:widget": "textarea"
+        },
+        "skip": {
+          "default": 0,
+          "description": "Number of documents to skip",
+          "title": "Skip",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Maximum documents to return (0 = no limit)",
+          "title": "Limit",
+          "type": "integer"
+        },
+        "hint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Force a specific index, e.g. {\"email\": 1} or \"email_1\" (index name)",
+          "title": "Index Hint",
+          "ui:widget": "textarea"
+        },
+        "collation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Language-specific string comparison, e.g. {\"locale\": \"en\", \"strength\": 2}",
+          "title": "Collation",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "database",
+        "collection"
+      ],
+      "title": "MongoDBFindConfig",
+      "type": "object"
+    },
+    "MongoDBFindOneAndDeleteConfig": {
+      "properties": {
+        "operation": {
+          "const": "find_one_and_delete",
+          "default": "find_one_and_delete",
+          "title": "Find One and Delete",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Find One and Delete",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "atomic delete",
+            "find and remove",
+            "delete and return"
+          ]
+        },
+        "database": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the database name",
+            "field_name": "database",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "depends_on": "database",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true
+          },
+          "x-resource-type": "mongodb_collection"
+        },
+        "filter": {
+          "title": "Filter",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "projection": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Projection",
+          "ui:widget": "textarea"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort to determine which document to operate on when multiple match, e.g. {\"createdAt\": 1}",
+          "title": "Sort",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "database",
+        "collection",
+        "filter"
+      ],
+      "title": "MongoDBFindOneAndDeleteConfig",
+      "type": "object"
+    },
+    "MongoDBFindOneAndReplaceConfig": {
+      "properties": {
+        "operation": {
+          "const": "find_one_and_replace",
+          "default": "find_one_and_replace",
+          "title": "Find One and Replace",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Find One and Replace",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "atomic replace",
+            "find and overwrite",
+            "replace and return"
+          ]
+        },
+        "database": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the database name",
+            "field_name": "database",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "depends_on": "database",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true
+          },
+          "x-resource-type": "mongodb_collection"
+        },
+        "filter": {
+          "title": "Filter",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "replacement": {
+          "description": "Full replacement document as JSON (no update operators)",
+          "title": "Replacement",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "upsert": {
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Upsert",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "return_document": {
+          "default": "after",
+          "enum": [
+            "before",
+            "after"
+          ],
+          "enumNames": [
+            "Before",
+            "After"
+          ],
+          "title": "Return Document",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "projection": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Projection",
+          "ui:widget": "textarea"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort to determine which document to operate on when multiple match, e.g. {\"createdAt\": 1}",
+          "title": "Sort",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "database",
+        "collection",
+        "filter",
+        "replacement"
+      ],
+      "title": "MongoDBFindOneAndReplaceConfig",
+      "type": "object"
+    },
+    "MongoDBFindOneAndUpdateConfig": {
+      "properties": {
+        "operation": {
+          "const": "find_one_and_update",
+          "default": "find_one_and_update",
+          "title": "Find One and Update",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Find One and Update",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "atomic update",
+            "find and modify",
+            "update and return"
+          ]
+        },
+        "database": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the database name",
+            "field_name": "database",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "depends_on": "database",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true
+          },
+          "x-resource-type": "mongodb_collection"
+        },
+        "filter": {
+          "title": "Filter",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "update": {
+          "description": "Update operations as JSON, e.g. {\"$set\": {\"status\": \"done\"}}",
+          "title": "Update",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "upsert": {
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Upsert",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "return_document": {
+          "default": "after",
+          "description": "Whether to return the document before or after the update",
+          "enum": [
+            "before",
+            "after"
+          ],
+          "enumNames": [
+            "Before",
+            "After"
+          ],
+          "title": "Return Document",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "projection": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Projection",
+          "ui:widget": "textarea"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort to determine which document to operate on when multiple match, e.g. {\"createdAt\": 1}",
+          "title": "Sort",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "database",
+        "collection",
+        "filter",
+        "update"
+      ],
+      "title": "MongoDBFindOneAndUpdateConfig",
+      "type": "object"
+    },
+    "MongoDBFindOneConfig": {
+      "properties": {
+        "operation": {
+          "const": "find_one",
+          "default": "find_one",
+          "title": "Find One Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Find One Document",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "get",
+            "fetch single",
+            "find by id"
+          ]
+        },
+        "database": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the database name",
+            "field_name": "database",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "depends_on": "database",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true
+          },
+          "x-resource-type": "mongodb_collection"
+        },
+        "filter": {
+          "description": "MongoDB query filter as JSON, e.g. {\"_id\": \"abc\"}",
+          "title": "Filter",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "projection": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fields to include/exclude as JSON, e.g. {\"name\": 1}",
+          "title": "Projection",
+          "ui:widget": "textarea"
+        },
+        "hint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Force a specific index, e.g. {\"email\": 1} or \"email_1\" (index name)",
+          "title": "Index Hint",
+          "ui:widget": "textarea"
+        },
+        "collation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Language-specific string comparison, e.g. {\"locale\": \"en\", \"strength\": 2}",
+          "title": "Collation",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "database",
+        "collection",
+        "filter"
+      ],
+      "title": "MongoDBFindOneConfig",
+      "type": "object"
+    },
+    "MongoDBInsertManyConfig": {
+      "properties": {
+        "operation": {
+          "const": "insert_many",
+          "default": "insert_many",
+          "title": "Insert Many Documents",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Insert Many Documents",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "bulk insert",
+            "batch create",
+            "import",
+            "add multiple"
+          ]
+        },
+        "database": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the database name",
+            "field_name": "database",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "depends_on": "database",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true
+          },
+          "x-resource-type": "mongodb_collection"
+        },
+        "documents": {
+          "description": "JSON array of documents, e.g. [{\"name\": \"Alice\"}, {\"name\": \"Bob\"}]",
+          "title": "Documents",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "ordered": {
+          "default": "false",
+          "description": "If true, aborts on first error. If false (recommended for imports), attempts all and collects errors.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes (abort on first error)",
+            "No (attempt all, recommended)"
+          ],
+          "title": "Ordered",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "database",
+        "collection",
+        "documents"
+      ],
+      "title": "MongoDBInsertManyConfig",
+      "type": "object"
+    },
+    "MongoDBInsertOneConfig": {
+      "properties": {
+        "operation": {
+          "const": "insert_one",
+          "default": "insert_one",
+          "title": "Insert One Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Insert One Document",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "create",
+            "add",
+            "write",
+            "save",
+            "insert"
+          ]
+        },
+        "database": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the database name",
+            "field_name": "database",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "depends_on": "database",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true
+          },
+          "x-resource-type": "mongodb_collection"
+        },
+        "document": {
+          "description": "Document to insert as JSON, e.g. {\"name\": \"Alice\", \"age\": 30}",
+          "title": "Document",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "database",
+        "collection",
+        "document"
+      ],
+      "title": "MongoDBInsertOneConfig",
+      "type": "object"
+    },
+    "MongoDBListCollectionsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_collections",
+          "default": "list_collections",
+          "title": "List Collections",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collections",
+          "x-display-name": "List Collections",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "show collections",
+            "list tables"
+          ]
+        },
+        "database": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the database name",
+            "field_name": "database",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional filter for collection names as JSON",
+          "title": "Filter",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "database"
+      ],
+      "title": "MongoDBListCollectionsConfig",
+      "type": "object"
+    },
+    "MongoDBListDatabasesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_databases",
+          "default": "list_databases",
+          "title": "List Databases",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Database",
+          "x-display-name": "List Databases",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "show databases",
+            "list dbs"
+          ]
+        }
+      },
+      "title": "MongoDBListDatabasesConfig",
+      "type": "object"
+    },
+    "MongoDBListIndexesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_indexes",
+          "default": "list_indexes",
+          "title": "List Indexes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Indexes",
+          "x-display-name": "List Indexes",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "show indexes",
+            "get indexes"
+          ]
+        },
+        "database": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the database name",
+            "field_name": "database",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "depends_on": "database",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true
+          },
+          "x-resource-type": "mongodb_collection"
+        }
+      },
+      "required": [
+        "database",
+        "collection"
+      ],
+      "title": "MongoDBListIndexesConfig",
+      "type": "object"
+    },
+    "MongoDBListSearchIndexesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_search_indexes",
+          "default": "list_search_indexes",
+          "title": "List Search Indexes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Atlas Vector Search",
+          "x-display-name": "List Search Indexes",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "show vector indexes",
+            "atlas search indexes"
+          ]
+        },
+        "database": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the database name",
+            "field_name": "database",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "depends_on": "database",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true
+          },
+          "x-resource-type": "mongodb_collection"
+        }
+      },
+      "required": [
+        "database",
+        "collection"
+      ],
+      "title": "MongoDBListSearchIndexesConfig",
+      "type": "object"
+    },
+    "MongoDBRenameCollectionConfig": {
+      "properties": {
+        "operation": {
+          "const": "rename_collection",
+          "default": "rename_collection",
+          "title": "Rename Collection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collections",
+          "x-display-name": "Rename Collection",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "rename",
+            "move collection",
+            "rename table"
+          ]
+        },
+        "database": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the database name",
+            "field_name": "database",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "depends_on": "database",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true
+          },
+          "x-resource-type": "mongodb_collection"
+        },
+        "new_name": {
+          "description": "New collection name",
+          "title": "New Name",
+          "type": "string"
+        },
+        "drop_target": {
+          "default": "false",
+          "description": "Drop the target collection if it already exists",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Drop Target",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "database",
+        "collection",
+        "new_name"
+      ],
+      "title": "MongoDBRenameCollectionConfig",
+      "type": "object"
+    },
+    "MongoDBReplaceOneConfig": {
+      "properties": {
+        "operation": {
+          "const": "replace_one",
+          "default": "replace_one",
+          "title": "Replace One Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Replace One Document",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "overwrite",
+            "put",
+            "replace document"
+          ]
+        },
+        "database": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the database name",
+            "field_name": "database",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "depends_on": "database",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true
+          },
+          "x-resource-type": "mongodb_collection"
+        },
+        "filter": {
+          "description": "Query filter as JSON",
+          "title": "Filter",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "replacement": {
+          "description": "Full replacement document as JSON (no update operators)",
+          "title": "Replacement",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "upsert": {
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Upsert",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "database",
+        "collection",
+        "filter",
+        "replacement"
+      ],
+      "title": "MongoDBReplaceOneConfig",
+      "type": "object"
+    },
+    "MongoDBUpdateManyConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_many",
+          "default": "update_many",
+          "title": "Update Many Documents",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Update Many Documents",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "bulk update",
+            "update all",
+            "batch edit",
+            "modify multiple"
+          ]
+        },
+        "database": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the database name",
+            "field_name": "database",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "depends_on": "database",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true
+          },
+          "x-resource-type": "mongodb_collection"
+        },
+        "filter": {
+          "description": "Query filter as JSON",
+          "title": "Filter",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "update": {
+          "description": "Update operations as JSON, e.g. {\"$set\": {\"status\": \"archived\"}}",
+          "title": "Update",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "upsert": {
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Upsert",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "array_filters": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filters for positional $[elem] operators as JSON array, e.g. [{\"elem.score\": {\"$gte\": 80}}]",
+          "title": "Array Filters",
+          "ui:widget": "textarea"
+        },
+        "hint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Index to use for the filter query, e.g. {\"status\": 1}",
+          "title": "Index Hint",
+          "ui:widget": "textarea"
+        },
+        "collation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Language-specific string comparison as JSON",
+          "title": "Collation",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "database",
+        "collection",
+        "filter",
+        "update"
+      ],
+      "title": "MongoDBUpdateManyConfig",
+      "type": "object"
+    },
+    "MongoDBUpdateOneConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_one",
+          "default": "update_one",
+          "title": "Update One Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Update One Document",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "edit",
+            "patch",
+            "modify",
+            "set field"
+          ]
+        },
+        "database": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the database name",
+            "field_name": "database",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "depends_on": "database",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true
+          },
+          "x-resource-type": "mongodb_collection"
+        },
+        "filter": {
+          "description": "Query filter as JSON, e.g. {\"_id\": \"abc\"}",
+          "title": "Filter",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "update": {
+          "description": "Update operations as JSON, e.g. {\"$set\": {\"status\": \"active\"}}",
+          "title": "Update",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "upsert": {
+          "default": "false",
+          "description": "Insert if no document matches the filter",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Upsert",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "array_filters": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filters for positional $[elem] operators as JSON array, e.g. [{\"elem.score\": {\"$gte\": 80}}]",
+          "title": "Array Filters",
+          "ui:widget": "textarea"
+        },
+        "hint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Index to use for the filter query, e.g. {\"status\": 1}",
+          "title": "Index Hint",
+          "ui:widget": "textarea"
+        },
+        "collation": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Language-specific string comparison as JSON",
+          "title": "Collation",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "database",
+        "collection",
+        "filter",
+        "update"
+      ],
+      "title": "MongoDBUpdateOneConfig",
+      "type": "object"
+    },
+    "MongoDBUpdateSearchIndexConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_search_index",
+          "default": "update_search_index",
+          "title": "Update Search Index",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Atlas Vector Search",
+          "x-display-name": "Update Search Index",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "modify vector index",
+            "reconfigure search index"
+          ]
+        },
+        "database": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the database name",
+            "field_name": "database",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "depends_on": "database",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true
+          },
+          "x-resource-type": "mongodb_collection"
+        },
+        "index_name": {
+          "title": "Index Name",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the index name (default = default)",
+            "depends_on": "collection",
+            "field_name": "search_index_name",
+            "placeholder": "Select a search index...",
+            "searchable": true
+          }
+        },
+        "definition": {
+          "description": "New index definition as JSON, e.g. {\"mappings\": {\"dynamic\": true}}",
+          "title": "Index Definition",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "database",
+        "collection",
+        "index_name",
+        "definition"
+      ],
+      "title": "MongoDBUpdateSearchIndexConfig",
+      "type": "object"
+    },
+    "MongoDBUploadAndIndexConfig": {
+      "properties": {
+        "operation": {
+          "const": "upload_and_index",
+          "default": "upload_and_index",
+          "title": "Upload & Index Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Atlas Vector Search",
+          "x-display-name": "Upload & Index Document",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "upload",
+            "ingest",
+            "index document",
+            "rag",
+            "embed file",
+            "add pdf",
+            "vector store"
+          ]
+        },
+        "database": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the database name",
+            "field_name": "database",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "depends_on": "database",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true
+          },
+          "x-resource-type": "mongodb_collection"
+        },
+        "document": {
+          "accept": ".pdf,.docx,.txt,.md,.markdown,.csv,.json,.html,.htm",
+          "description": "Upload a PDF/DOCX/TXT/MD/CSV file (or paste a URL / reference an upstream file). It is chunked, embedded with text-embedding-3-small, and inserted.",
+          "title": "Document",
+          "type": "string",
+          "ui:widget": "media_upload"
+        },
+        "vector_field": {
+          "default": "embedding",
+          "description": "Field to store embedding vectors",
+          "title": "Vector Field",
+          "type": "string"
+        },
+        "text_field": {
+          "default": "text",
+          "description": "Field to store the chunk text",
+          "title": "Text Field",
+          "type": "string"
+        },
+        "metadata_field": {
+          "default": "metadata",
+          "description": "Field to store chunk metadata",
+          "title": "Metadata Field",
+          "type": "string"
+        },
+        "chunk_size": {
+          "default": 1000,
+          "description": "Characters per chunk",
+          "title": "Chunk Size",
+          "type": "integer"
+        },
+        "chunk_overlap": {
+          "default": 200,
+          "description": "Overlapping characters between chunks",
+          "title": "Chunk Overlap",
+          "type": "integer"
+        },
+        "id_prefix": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional prefix for chunk IDs (defaults to the filename)",
+          "title": "ID Prefix"
+        }
+      },
+      "required": [
+        "database",
+        "collection",
+        "document"
+      ],
+      "title": "MongoDBUploadAndIndexConfig",
+      "type": "object"
+    },
+    "MongoDBVectorSearchConfig": {
+      "properties": {
+        "operation": {
+          "const": "vector_search",
+          "default": "vector_search",
+          "title": "Vector Search",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Atlas Vector Search",
+          "x-display-name": "Vector Search",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "rag",
+            "semantic search",
+            "similarity search",
+            "nearest neighbors",
+            "knn",
+            "ann",
+            "embedding search"
+          ]
+        },
+        "database": {
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the database name",
+            "field_name": "database",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "depends_on": "database",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true
+          },
+          "x-resource-type": "mongodb_collection"
+        },
+        "index_name": {
+          "title": "Vector Search Index Name",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the index name (default = default)",
+            "depends_on": "collection",
+            "field_name": "search_index_name",
+            "placeholder": "Select a search index...",
+            "searchable": true
+          }
+        },
+        "path": {
+          "description": "Name of the field containing the vector embeddings",
+          "title": "Vector Field Path",
+          "type": "string"
+        },
+        "query_vector": {
+          "description": "Embedding to search with as a JSON array of numbers",
+          "title": "Query Vector",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "num_candidates": {
+          "default": 100,
+          "description": "Candidates to consider per shard (\u2265 limit). Ignored when Exact Search is enabled.",
+          "title": "Num Candidates",
+          "type": "integer"
+        },
+        "limit": {
+          "default": 10,
+          "description": "Number of results to return",
+          "title": "Limit",
+          "type": "integer"
+        },
+        "exact": {
+          "default": "false",
+          "description": "Use exact nearest-neighbor (ENN) instead of approximate (ANN). Slower but 100% accurate. Ignores Num Candidates.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes (ENN)",
+            "No (ANN, recommended)"
+          ],
+          "title": "Exact Search",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "MQL filter on indexed filter-type fields, e.g. {\"category\": \"news\"}. Only fields indexed as type \"filter\" can be used here.",
+          "title": "Pre-Filter",
+          "ui:widget": "textarea"
+        },
+        "project": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fields to include in results. To include the relevance score: {\"title\": 1, \"score\": {\"$meta\": \"vectorSearchScore\"}}",
+          "title": "Projection",
+          "ui:widget": "textarea"
+        },
+        "score_details": {
+          "default": "false",
+          "description": "Include detailed score breakdown per result (accessible via {$meta: 'vectorSearchScoreDetails'})",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Score Details",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "database",
+        "collection",
+        "index_name",
+        "path",
+        "query_vector"
+      ],
+      "title": "MongoDBVectorSearchConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "aggregate": "#/$defs/MongoDBAggregatConfig",
+          "atlas_facet_search": "#/$defs/MongoDBAtlasFacetSearchConfig",
+          "atlas_text_search": "#/$defs/MongoDBAtlasTextSearchConfig",
+          "bulk_write": "#/$defs/MongoDBBulkWriteConfig",
+          "command": "#/$defs/MongoDBCommandConfig",
+          "count_documents": "#/$defs/MongoDBCountDocumentsConfig",
+          "create_atlas_search_index": "#/$defs/MongoDBCreateAtlasSearchIndexConfig",
+          "create_collection": "#/$defs/MongoDBCreateCollectionConfig",
+          "create_index": "#/$defs/MongoDBCreateIndexConfig",
+          "create_indexes": "#/$defs/MongoDBCreateIndexesConfig",
+          "create_vector_search_index": "#/$defs/MongoDBCreateVectorSearchIndexConfig",
+          "delete_many": "#/$defs/MongoDBDeleteManyConfig",
+          "delete_one": "#/$defs/MongoDBDeleteOneConfig",
+          "delete_search_index": "#/$defs/MongoDBDeleteSearchIndexConfig",
+          "distinct": "#/$defs/MongoDBDistinctConfig",
+          "drop_collection": "#/$defs/MongoDBDropCollectionConfig",
+          "drop_database": "#/$defs/MongoDBDropDatabaseConfig",
+          "drop_index": "#/$defs/MongoDBDropIndexConfig",
+          "drop_indexes": "#/$defs/MongoDBDropIndexesConfig",
+          "estimated_document_count": "#/$defs/MongoDBEstimatedDocumentCountConfig",
+          "find": "#/$defs/MongoDBFindConfig",
+          "find_one": "#/$defs/MongoDBFindOneConfig",
+          "find_one_and_delete": "#/$defs/MongoDBFindOneAndDeleteConfig",
+          "find_one_and_replace": "#/$defs/MongoDBFindOneAndReplaceConfig",
+          "find_one_and_update": "#/$defs/MongoDBFindOneAndUpdateConfig",
+          "insert_many": "#/$defs/MongoDBInsertManyConfig",
+          "insert_one": "#/$defs/MongoDBInsertOneConfig",
+          "list_collections": "#/$defs/MongoDBListCollectionsConfig",
+          "list_databases": "#/$defs/MongoDBListDatabasesConfig",
+          "list_indexes": "#/$defs/MongoDBListIndexesConfig",
+          "list_search_indexes": "#/$defs/MongoDBListSearchIndexesConfig",
+          "rename_collection": "#/$defs/MongoDBRenameCollectionConfig",
+          "replace_one": "#/$defs/MongoDBReplaceOneConfig",
+          "update_many": "#/$defs/MongoDBUpdateManyConfig",
+          "update_one": "#/$defs/MongoDBUpdateOneConfig",
+          "update_search_index": "#/$defs/MongoDBUpdateSearchIndexConfig",
+          "upload_and_index": "#/$defs/MongoDBUploadAndIndexConfig",
+          "vector_search": "#/$defs/MongoDBVectorSearchConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/MongoDBFindConfig"
+        },
+        {
+          "$ref": "#/$defs/MongoDBFindOneConfig"
+        },
+        {
+          "$ref": "#/$defs/MongoDBInsertOneConfig"
+        },
+        {
+          "$ref": "#/$defs/MongoDBInsertManyConfig"
+        },
+        {
+          "$ref": "#/$defs/MongoDBUpdateOneConfig"
+        },
+        {
+          "$ref": "#/$defs/MongoDBUpdateManyConfig"
+        },
+        {
+          "$ref": "#/$defs/MongoDBReplaceOneConfig"
+        },
+        {
+          "$ref": "#/$defs/MongoDBDeleteOneConfig"
+        },
+        {
+          "$ref": "#/$defs/MongoDBDeleteManyConfig"
+        },
+        {
+          "$ref": "#/$defs/MongoDBCountDocumentsConfig"
+        },
+        {
+          "$ref": "#/$defs/MongoDBEstimatedDocumentCountConfig"
+        },
+        {
+          "$ref": "#/$defs/MongoDBDistinctConfig"
+        },
+        {
+          "$ref": "#/$defs/MongoDBBulkWriteConfig"
+        },
+        {
+          "$ref": "#/$defs/MongoDBFindOneAndUpdateConfig"
+        },
+        {
+          "$ref": "#/$defs/MongoDBFindOneAndDeleteConfig"
+        },
+        {
+          "$ref": "#/$defs/MongoDBFindOneAndReplaceConfig"
+        },
+        {
+          "$ref": "#/$defs/MongoDBAggregatConfig"
+        },
+        {
+          "$ref": "#/$defs/MongoDBListCollectionsConfig"
+        },
+        {
+          "$ref": "#/$defs/MongoDBCreateCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/MongoDBDropCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/MongoDBRenameCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/MongoDBCreateIndexConfig"
+        },
+        {
+          "$ref": "#/$defs/MongoDBListIndexesConfig"
+        },
+        {
+          "$ref": "#/$defs/MongoDBDropIndexConfig"
+        },
+        {
+          "$ref": "#/$defs/MongoDBDropIndexesConfig"
+        },
+        {
+          "$ref": "#/$defs/MongoDBVectorSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/MongoDBCreateVectorSearchIndexConfig"
+        },
+        {
+          "$ref": "#/$defs/MongoDBListSearchIndexesConfig"
+        },
+        {
+          "$ref": "#/$defs/MongoDBUpdateSearchIndexConfig"
+        },
+        {
+          "$ref": "#/$defs/MongoDBDeleteSearchIndexConfig"
+        },
+        {
+          "$ref": "#/$defs/MongoDBAtlasTextSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/MongoDBCreateAtlasSearchIndexConfig"
+        },
+        {
+          "$ref": "#/$defs/MongoDBAtlasFacetSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/MongoDBListDatabasesConfig"
+        },
+        {
+          "$ref": "#/$defs/MongoDBDropDatabaseConfig"
+        },
+        {
+          "$ref": "#/$defs/MongoDBCommandConfig"
+        },
+        {
+          "$ref": "#/$defs/MongoDBUploadAndIndexConfig"
+        },
+        {
+          "$ref": "#/$defs/MongoDBCreateIndexesConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MongoDBCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Mongodb Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Find all active users in a MongoDB collection",
+    "Insert a new document into a MongoDB collection",
+    "Update documents matching a filter with new field values",
+    "Run a MongoDB aggregation pipeline with $group and $sort",
+    "Perform Atlas Vector Search on an embeddings collection",
+    "Upload a PDF and index it for RAG retrieval in MongoDB Atlas"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

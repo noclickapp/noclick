@@ -1,0 +1,9 @@
+---
+title: "Architecture"
+---
+
+The backend is a FastAPI and Socket.IO service that executes workflows and owns
+authorization. The Remix frontend provides the editor. PostgreSQL stores durable
+state and Supabase provides authentication. Valkey/Redis-compatible caching, auth SMTP, Resend notifications,
+object storage, and an
+OTLP collector are optional operator-configured services.

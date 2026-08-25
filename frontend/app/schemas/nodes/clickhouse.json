@@ -1,0 +1,2370 @@
+{
+  "$defs": {
+    "ClickHouseApiKeyCredential": {
+      "description": "API key credential (Key ID + Key Secret) for the ClickHouse Cloud API.",
+      "properties": {
+        "credential_type": {
+          "const": "clickhouse_api_key",
+          "default": "clickhouse_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "key_id": {
+          "description": "ClickHouse Cloud API Key ID (used as the HTTP Basic username)",
+          "title": "Key ID",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "key_secret": {
+          "description": "ClickHouse Cloud API Key Secret (shown only once at creation; used as the HTTP Basic password)",
+          "title": "Key Secret",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "key_id",
+        "key_secret"
+      ],
+      "title": "ClickHouseApiKeyCredential",
+      "type": "object",
+      "x-credential-instructions": "Create an API key in the ClickHouse Cloud console under Settings -> API Keys -> New API Key. Choose a role (developer = read-only, admin = read/write). Copy the Key ID and Key Secret (the secret is shown only once).",
+      "x-credential-url": "https://console.clickhouse.cloud/"
+    },
+    "ClickHouseCreateClickPipeConfig": {
+      "description": "Create a ClickPipe data-ingestion pipeline.",
+      "properties": {
+        "operation": {
+          "const": "create_clickpipe",
+          "default": "create_clickpipe",
+          "title": "Create ClickPipe",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "ClickPipes",
+          "x-display-name": "Create ClickPipe",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "description": "The organization to create the ClickPipe in",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste organization ID",
+            "field_name": "organization_id",
+            "placeholder": "Select an organization...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "definition": {
+          "description": "JSON object describing the ClickPipe (name, source, destination, etc.)",
+          "title": "ClickPipe Definition (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "organization_id",
+        "definition"
+      ],
+      "title": "ClickHouseCreateClickPipeConfig",
+      "type": "object"
+    },
+    "ClickHouseCreateInvitationConfig": {
+      "description": "Invite a user to the organization.",
+      "properties": {
+        "operation": {
+          "const": "create_invitation",
+          "default": "create_invitation",
+          "title": "Create Invitation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invitations",
+          "x-display-name": "Create Invitation",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "description": "The organization to invite the user into",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste organization ID",
+            "field_name": "organization_id",
+            "placeholder": "Select an organization...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "email": {
+          "description": "Email address to invite",
+          "title": "Email",
+          "type": "string"
+        },
+        "role": {
+          "default": "developer",
+          "description": "Organization role to grant (used for standard roles; ignored when role_ids is set)",
+          "enum": [
+            "developer",
+            "admin"
+          ],
+          "enumNames": [
+            "Developer",
+            "Admin"
+          ],
+          "title": "Role",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "role_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated custom role IDs for orgs that have migrated to Custom Roles (overrides Role)",
+          "title": "Custom Role IDs",
+          "ui:placeholder": "role-uuid-1, role-uuid-2"
+        }
+      },
+      "required": [
+        "organization_id",
+        "email"
+      ],
+      "title": "ClickHouseCreateInvitationConfig",
+      "type": "object"
+    },
+    "ClickHouseCreateKeyConfig": {
+      "description": "Create a new organization API key (returns Key ID + Secret).",
+      "properties": {
+        "operation": {
+          "const": "create_key",
+          "default": "create_key",
+          "title": "Create API Key",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "API Keys",
+          "x-display-name": "Create API Key",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "description": "The organization to create the API key in",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste organization ID",
+            "field_name": "organization_id",
+            "placeholder": "Select an organization...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "name": {
+          "description": "Name for the new API key",
+          "title": "Name",
+          "type": "string"
+        },
+        "role": {
+          "default": "developer",
+          "description": "Permission role for the key (used for standard roles; ignored when role_ids is set)",
+          "enum": [
+            "developer",
+            "admin"
+          ],
+          "enumNames": [
+            "Developer (read-only)",
+            "Admin (read/write)"
+          ],
+          "title": "Role",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "role_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated custom role IDs for orgs that have migrated to Custom Roles (overrides Role)",
+          "title": "Custom Role IDs",
+          "ui:placeholder": "role-uuid-1, role-uuid-2"
+        }
+      },
+      "required": [
+        "organization_id",
+        "name"
+      ],
+      "title": "ClickHouseCreateKeyConfig",
+      "type": "object"
+    },
+    "ClickHouseCreateServiceConfig": {
+      "description": "Provision a new ClickHouse service.",
+      "properties": {
+        "operation": {
+          "const": "create_service",
+          "default": "create_service",
+          "title": "Create Service",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Services",
+          "x-display-name": "Create Service",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "description": "The organization to create the service in",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste organization ID",
+            "field_name": "organization_id",
+            "placeholder": "Select an organization...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "name": {
+          "description": "Name for the new service",
+          "title": "Name",
+          "type": "string"
+        },
+        "provider": {
+          "default": "aws",
+          "description": "Cloud provider to host the service on",
+          "enum": [
+            "aws",
+            "gcp",
+            "azure"
+          ],
+          "enumNames": [
+            "AWS",
+            "Google Cloud",
+            "Azure"
+          ],
+          "title": "Cloud Provider",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "region": {
+          "description": "Cloud region (e.g. us-east-1, eu-west-1)",
+          "title": "Region",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "name",
+        "region"
+      ],
+      "title": "ClickHouseCreateServiceConfig",
+      "type": "object"
+    },
+    "ClickHouseDeleteClickPipeConfig": {
+      "description": "Delete a ClickPipe.",
+      "properties": {
+        "operation": {
+          "const": "delete_clickpipe",
+          "default": "delete_clickpipe",
+          "title": "Delete ClickPipe",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "ClickPipes",
+          "x-display-name": "Delete ClickPipe",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "description": "The organization the ClickPipe belongs to",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste organization ID",
+            "field_name": "organization_id",
+            "placeholder": "Select an organization...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "clickpipe_id": {
+          "description": "The ClickPipe to delete",
+          "title": "ClickPipe ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "clickpipe_id"
+      ],
+      "title": "ClickHouseDeleteClickPipeConfig",
+      "type": "object"
+    },
+    "ClickHouseDeleteInvitationConfig": {
+      "description": "Revoke a pending invitation.",
+      "properties": {
+        "operation": {
+          "const": "delete_invitation",
+          "default": "delete_invitation",
+          "title": "Delete Invitation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invitations",
+          "x-display-name": "Delete Invitation",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "description": "The organization the invitation belongs to",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste organization ID",
+            "field_name": "organization_id",
+            "placeholder": "Select an organization...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "invitation_id": {
+          "description": "The invitation to revoke",
+          "title": "Invitation ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "invitation_id"
+      ],
+      "title": "ClickHouseDeleteInvitationConfig",
+      "type": "object"
+    },
+    "ClickHouseDeleteKeyConfig": {
+      "description": "Delete/revoke an organization API key.",
+      "properties": {
+        "operation": {
+          "const": "delete_key",
+          "default": "delete_key",
+          "title": "Delete API Key",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "API Keys",
+          "x-display-name": "Delete API Key",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "description": "The organization the key belongs to",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste organization ID",
+            "field_name": "organization_id",
+            "placeholder": "Select an organization...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "key_id": {
+          "description": "The API key to delete",
+          "title": "Key ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "key_id"
+      ],
+      "title": "ClickHouseDeleteKeyConfig",
+      "type": "object"
+    },
+    "ClickHouseDeleteQueryEndpointConfig": {
+      "description": "Delete the service's query endpoint.",
+      "properties": {
+        "operation": {
+          "const": "delete_query_endpoint",
+          "default": "delete_query_endpoint",
+          "title": "Delete Query Endpoint",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Query Endpoints",
+          "x-display-name": "Delete Query Endpoint",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "description": "The organization the service belongs to",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste organization ID",
+            "field_name": "organization_id",
+            "placeholder": "Select an organization...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "service_id": {
+          "description": "The service whose endpoint to delete",
+          "title": "Service ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "service_id"
+      ],
+      "title": "ClickHouseDeleteQueryEndpointConfig",
+      "type": "object"
+    },
+    "ClickHouseDeleteServiceConfig": {
+      "description": "Delete a service.",
+      "properties": {
+        "operation": {
+          "const": "delete_service",
+          "default": "delete_service",
+          "title": "Delete Service",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Services",
+          "x-display-name": "Delete Service",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "description": "The organization the service belongs to",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste organization ID",
+            "field_name": "organization_id",
+            "placeholder": "Select an organization...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "service_id": {
+          "description": "The service to delete",
+          "title": "Service ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "service_id"
+      ],
+      "title": "ClickHouseDeleteServiceConfig",
+      "type": "object"
+    },
+    "ClickHouseGetBackupConfig": {
+      "description": "Get details of a single backup.",
+      "properties": {
+        "operation": {
+          "const": "get_backup",
+          "default": "get_backup",
+          "title": "Get Backup",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Backups",
+          "x-display-name": "Get Backup",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste organization ID",
+            "field_name": "organization_id",
+            "placeholder": "Select an organization...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "service_id": {
+          "description": "The service the backup belongs to",
+          "title": "Service ID",
+          "type": "string"
+        },
+        "backup_id": {
+          "description": "The backup to retrieve",
+          "title": "Backup ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "service_id",
+        "backup_id"
+      ],
+      "title": "ClickHouseGetBackupConfig",
+      "type": "object"
+    },
+    "ClickHouseGetBackupConfigurationConfig": {
+      "description": "Read the backup schedule/retention configuration for a service.",
+      "properties": {
+        "operation": {
+          "const": "get_backup_configuration",
+          "default": "get_backup_configuration",
+          "title": "Get Backup Configuration",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Backups",
+          "x-display-name": "Get Backup Configuration",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "description": "The organization the service belongs to",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste organization ID",
+            "field_name": "organization_id",
+            "placeholder": "Select an organization...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "service_id": {
+          "description": "The service whose backup config to read",
+          "title": "Service ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "service_id"
+      ],
+      "title": "ClickHouseGetBackupConfigurationConfig",
+      "type": "object"
+    },
+    "ClickHouseGetClickPipeConfig": {
+      "description": "Get details of a single ClickPipe.",
+      "properties": {
+        "operation": {
+          "const": "get_clickpipe",
+          "default": "get_clickpipe",
+          "title": "Get ClickPipe",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "ClickPipes",
+          "x-display-name": "Get ClickPipe",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "description": "The organization the ClickPipe belongs to",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste organization ID",
+            "field_name": "organization_id",
+            "placeholder": "Select an organization...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "clickpipe_id": {
+          "description": "The ClickPipe to retrieve",
+          "title": "ClickPipe ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "clickpipe_id"
+      ],
+      "title": "ClickHouseGetClickPipeConfig",
+      "type": "object"
+    },
+    "ClickHouseGetInvitationConfig": {
+      "description": "Get a single pending invitation.",
+      "properties": {
+        "operation": {
+          "const": "get_invitation",
+          "default": "get_invitation",
+          "title": "Get Invitation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Members",
+          "x-display-name": "Get Invitation",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste organization ID",
+            "field_name": "organization_id",
+            "placeholder": "Select an organization...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "invitation_id": {
+          "description": "The invitation to retrieve",
+          "title": "Invitation ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "invitation_id"
+      ],
+      "title": "ClickHouseGetInvitationConfig",
+      "type": "object"
+    },
+    "ClickHouseGetMemberConfig": {
+      "description": "Get a single organization member.",
+      "properties": {
+        "operation": {
+          "const": "get_member",
+          "default": "get_member",
+          "title": "Get Member",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Members",
+          "x-display-name": "Get Member",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste organization ID",
+            "field_name": "organization_id",
+            "placeholder": "Select an organization...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "user_id": {
+          "description": "The member's user ID",
+          "title": "User ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "user_id"
+      ],
+      "title": "ClickHouseGetMemberConfig",
+      "type": "object"
+    },
+    "ClickHouseGetOrganizationConfig": {
+      "description": "Get details of a single organization.",
+      "properties": {
+        "operation": {
+          "const": "get_organization",
+          "default": "get_organization",
+          "title": "Get Organization",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organizations",
+          "x-display-name": "Get Organization",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "description": "The organization to retrieve",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste organization ID",
+            "field_name": "organization_id",
+            "placeholder": "Select an organization...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "ClickHouseGetOrganizationConfig",
+      "type": "object"
+    },
+    "ClickHouseGetPrivateEndpointConfigConfig": {
+      "description": "Get the private endpoint configuration info needed to connect via VPC.",
+      "properties": {
+        "operation": {
+          "const": "get_private_endpoint_config",
+          "default": "get_private_endpoint_config",
+          "title": "Get Private Endpoint Config",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Services",
+          "x-display-name": "Get Private Endpoint Config",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste organization ID",
+            "field_name": "organization_id",
+            "placeholder": "Select an organization...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "service_id": {
+          "description": "The service to get private endpoint config for",
+          "title": "Service ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "service_id"
+      ],
+      "title": "ClickHouseGetPrivateEndpointConfigConfig",
+      "type": "object"
+    },
+    "ClickHouseGetPrometheusMetricsConfig": {
+      "description": "Scrape service metrics in Prometheus exposition format.",
+      "properties": {
+        "operation": {
+          "const": "get_prometheus_metrics",
+          "default": "get_prometheus_metrics",
+          "title": "Get Prometheus Metrics",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metrics",
+          "x-display-name": "Get Prometheus Metrics",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "description": "The organization the service belongs to",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste organization ID",
+            "field_name": "organization_id",
+            "placeholder": "Select an organization...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "service_id": {
+          "description": "The service to scrape metrics from",
+          "title": "Service ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "service_id"
+      ],
+      "title": "ClickHouseGetPrometheusMetricsConfig",
+      "type": "object"
+    },
+    "ClickHouseGetQueryEndpointConfig": {
+      "description": "Get the SQL query endpoint config for a service.",
+      "properties": {
+        "operation": {
+          "const": "get_query_endpoint",
+          "default": "get_query_endpoint",
+          "title": "Get Query Endpoint",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Query Endpoints",
+          "x-display-name": "Get Query Endpoint",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "description": "The organization the service belongs to",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste organization ID",
+            "field_name": "organization_id",
+            "placeholder": "Select an organization...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "service_id": {
+          "description": "The service to read the endpoint for",
+          "title": "Service ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "service_id"
+      ],
+      "title": "ClickHouseGetQueryEndpointConfig",
+      "type": "object"
+    },
+    "ClickHouseGetServiceConfig": {
+      "description": "Get details of a single service.",
+      "properties": {
+        "operation": {
+          "const": "get_service",
+          "default": "get_service",
+          "title": "Get Service",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Services",
+          "x-display-name": "Get Service",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "description": "The organization the service belongs to",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste organization ID",
+            "field_name": "organization_id",
+            "placeholder": "Select an organization...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "service_id": {
+          "description": "The service to retrieve",
+          "title": "Service ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "service_id"
+      ],
+      "title": "ClickHouseGetServiceConfig",
+      "type": "object"
+    },
+    "ClickHouseGetUsageCostConfig": {
+      "description": "Retrieve usage/cost data for a date range.",
+      "properties": {
+        "operation": {
+          "const": "get_usage_cost",
+          "default": "get_usage_cost",
+          "title": "Get Usage Cost",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organizations",
+          "x-display-name": "Get Usage Cost",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "description": "The organization to read usage cost for",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste organization ID",
+            "field_name": "organization_id",
+            "placeholder": "Select an organization...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "from_date": {
+          "description": "Start of the usage window (YYYY-MM-DD)",
+          "title": "From Date",
+          "type": "string"
+        },
+        "to_date": {
+          "description": "End of the usage window (YYYY-MM-DD)",
+          "title": "To Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "from_date",
+        "to_date"
+      ],
+      "title": "ClickHouseGetUsageCostConfig",
+      "type": "object"
+    },
+    "ClickHouseListActivitiesConfig": {
+      "description": "List the audit log of organization activities.",
+      "properties": {
+        "operation": {
+          "const": "list_activities",
+          "default": "list_activities",
+          "title": "List Activities",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organizations",
+          "x-display-name": "List Activities",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "description": "The organization whose activity log to read",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste organization ID",
+            "field_name": "organization_id",
+            "placeholder": "Select an organization...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 lower bound for activities (optional)",
+          "title": "From Date"
+        },
+        "to_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 upper bound for activities (optional)",
+          "title": "To Date"
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "ClickHouseListActivitiesConfig",
+      "type": "object"
+    },
+    "ClickHouseListBackupsConfig": {
+      "description": "List backups for a service.",
+      "properties": {
+        "operation": {
+          "const": "list_backups",
+          "default": "list_backups",
+          "title": "List Backups",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Backups",
+          "x-display-name": "List Backups",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "description": "The organization the service belongs to",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste organization ID",
+            "field_name": "organization_id",
+            "placeholder": "Select an organization...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "service_id": {
+          "description": "The service whose backups to list",
+          "title": "Service ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "service_id"
+      ],
+      "title": "ClickHouseListBackupsConfig",
+      "type": "object"
+    },
+    "ClickHouseListClickPipesConfig": {
+      "description": "List ingestion pipelines (ClickPipes) for an organization.",
+      "properties": {
+        "operation": {
+          "const": "list_clickpipes",
+          "default": "list_clickpipes",
+          "title": "List ClickPipes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "ClickPipes",
+          "x-display-name": "List ClickPipes",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "description": "The organization whose ClickPipes to list",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste organization ID",
+            "field_name": "organization_id",
+            "placeholder": "Select an organization...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "ClickHouseListClickPipesConfig",
+      "type": "object"
+    },
+    "ClickHouseListInvitationsConfig": {
+      "description": "List pending organization invitations.",
+      "properties": {
+        "operation": {
+          "const": "list_invitations",
+          "default": "list_invitations",
+          "title": "List Invitations",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invitations",
+          "x-display-name": "List Invitations",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "description": "The organization whose invitations to list",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste organization ID",
+            "field_name": "organization_id",
+            "placeholder": "Select an organization...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "ClickHouseListInvitationsConfig",
+      "type": "object"
+    },
+    "ClickHouseListKeysConfig": {
+      "description": "List organization API keys.",
+      "properties": {
+        "operation": {
+          "const": "list_keys",
+          "default": "list_keys",
+          "title": "List API Keys",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "API Keys",
+          "x-display-name": "List API Keys",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "description": "The organization whose API keys to list",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste organization ID",
+            "field_name": "organization_id",
+            "placeholder": "Select an organization...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "ClickHouseListKeysConfig",
+      "type": "object"
+    },
+    "ClickHouseListMembersConfig": {
+      "description": "List organization members.",
+      "properties": {
+        "operation": {
+          "const": "list_members",
+          "default": "list_members",
+          "title": "List Members",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Members",
+          "x-display-name": "List Members",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "description": "The organization whose members to list",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste organization ID",
+            "field_name": "organization_id",
+            "placeholder": "Select an organization...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "ClickHouseListMembersConfig",
+      "type": "object"
+    },
+    "ClickHouseListOrganizationsConfig": {
+      "description": "List organizations the API key can access.",
+      "properties": {
+        "operation": {
+          "const": "list_organizations",
+          "default": "list_organizations",
+          "title": "List Organizations",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organizations",
+          "x-display-name": "List Organizations",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ClickHouseListOrganizationsConfig",
+      "type": "object"
+    },
+    "ClickHouseListRolesConfig": {
+      "description": "List custom roles defined in the organization (for orgs that have migrated to Custom Roles).",
+      "properties": {
+        "operation": {
+          "const": "list_roles",
+          "default": "list_roles",
+          "title": "List Roles",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Members",
+          "x-display-name": "List Roles",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "description": "The organization whose roles to list",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste organization ID",
+            "field_name": "organization_id",
+            "placeholder": "Select an organization...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "ClickHouseListRolesConfig",
+      "type": "object"
+    },
+    "ClickHouseListServicesConfig": {
+      "description": "List all ClickHouse services in an organization.",
+      "properties": {
+        "operation": {
+          "const": "list_services",
+          "default": "list_services",
+          "title": "List Services",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Services",
+          "x-display-name": "List Services",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "description": "The organization whose services to list",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste organization ID",
+            "field_name": "organization_id",
+            "placeholder": "Select an organization...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "ClickHouseListServicesConfig",
+      "type": "object"
+    },
+    "ClickHouseOnQueryResultsConfig": {
+      "description": "Poll-based trigger: runs on a schedule, fetches the organization activity\naudit log, and emits NEW activities since the last poll.\n\nClickHouse Cloud's management API has no outbound webhooks, so this trigger\npolls the time-ordered `/activities` audit log and dedupes on the activity\n`id` cursor \u2014 each activity is emitted at most once across polls.",
+      "properties": {
+        "operation": {
+          "const": "on_query_results",
+          "default": "on_query_results",
+          "title": "On Scheduled Query Results",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Scheduled Query Results",
+          "x-is-trigger": true
+        },
+        "organization_id": {
+          "description": "The organization whose activity audit log to poll",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste organization ID",
+            "field_name": "organization_id",
+            "placeholder": "Select an organization...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "activity_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only emit activities whose type matches this value (e.g. 'service.create'). Leave blank to emit all.",
+          "placeholder": "service.create",
+          "title": "Activity Type Filter"
+        },
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": {
+            "frequency": "minutes",
+            "interval": 5,
+            "hour": 9,
+            "minute": 0,
+            "dayOfWeek": 1,
+            "dayOfMonth": 1
+          },
+          "description": "How often to poll for new activities",
+          "title": "Check Frequency",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "max_results": {
+          "default": 50,
+          "description": "Maximum number of activities to fetch per poll (1-100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Max Activities",
+          "type": "integer",
+          "ui:hidden": true
+        },
+        "last_seen_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Seen Id",
+          "ui:hidden": true
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:copyable": true,
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Check",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "ClickHouseOnQueryResultsConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "ClickHouseRemoveMemberConfig": {
+      "description": "Remove a member from the organization.",
+      "properties": {
+        "operation": {
+          "const": "remove_member",
+          "default": "remove_member",
+          "title": "Remove Member",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Members",
+          "x-display-name": "Remove Member",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "description": "The organization the member belongs to",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste organization ID",
+            "field_name": "organization_id",
+            "placeholder": "Select an organization...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "user_id": {
+          "description": "The user to remove from the organization",
+          "title": "User ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "user_id"
+      ],
+      "title": "ClickHouseRemoveMemberConfig",
+      "type": "object"
+    },
+    "ClickHouseUpdateBackupConfigurationConfig": {
+      "description": "Update a service's backup schedule and retention settings.",
+      "properties": {
+        "operation": {
+          "const": "update_backup_configuration",
+          "default": "update_backup_configuration",
+          "title": "Update Backup Configuration",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Backups",
+          "x-display-name": "Update Backup Configuration",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste organization ID",
+            "field_name": "organization_id",
+            "placeholder": "Select an organization...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "service_id": {
+          "description": "The service whose backup configuration to update",
+          "title": "Service ID",
+          "type": "string"
+        },
+        "backup_period_in_hours": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "How often to create backups (24 = daily)",
+          "title": "Backup Period (hours)"
+        },
+        "backup_retention_period_in_hours": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "How long to keep backups (e.g. 168 = 7 days)",
+          "title": "Retention Period (hours)"
+        }
+      },
+      "required": [
+        "organization_id",
+        "service_id"
+      ],
+      "title": "ClickHouseUpdateBackupConfigurationConfig",
+      "type": "object"
+    },
+    "ClickHouseUpdateClickPipeStateConfig": {
+      "description": "Start, stop, or pause a ClickPipe.",
+      "properties": {
+        "operation": {
+          "const": "update_clickpipe_state",
+          "default": "update_clickpipe_state",
+          "title": "Update ClickPipe State",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "ClickPipes",
+          "x-display-name": "Update ClickPipe State",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "description": "The organization the ClickPipe belongs to",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste organization ID",
+            "field_name": "organization_id",
+            "placeholder": "Select an organization...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "clickpipe_id": {
+          "description": "The ClickPipe to change state",
+          "title": "ClickPipe ID",
+          "type": "string"
+        },
+        "command": {
+          "default": "start",
+          "description": "State change to apply",
+          "enum": [
+            "start",
+            "stop",
+            "pause",
+            "resume"
+          ],
+          "enumNames": [
+            "Start",
+            "Stop",
+            "Pause",
+            "Resume"
+          ],
+          "title": "Command",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "organization_id",
+        "clickpipe_id"
+      ],
+      "title": "ClickHouseUpdateClickPipeStateConfig",
+      "type": "object"
+    },
+    "ClickHouseUpdateMemberConfig": {
+      "description": "Update a member's role in the organization.",
+      "properties": {
+        "operation": {
+          "const": "update_member",
+          "default": "update_member",
+          "title": "Update Member Role",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Members",
+          "x-display-name": "Update Member Role",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste organization ID",
+            "field_name": "organization_id",
+            "placeholder": "Select an organization...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "user_id": {
+          "description": "The member to update",
+          "title": "User ID",
+          "type": "string"
+        },
+        "role": {
+          "description": "New role for the member (used for standard roles; ignored when role_ids is set)",
+          "enum": [
+            "developer",
+            "admin"
+          ],
+          "enumNames": [
+            "Developer",
+            "Admin"
+          ],
+          "title": "Role",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "role_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated custom role IDs for orgs that have migrated to Custom Roles (overrides Role)",
+          "title": "Custom Role IDs",
+          "ui:placeholder": "role-uuid-1, role-uuid-2"
+        }
+      },
+      "required": [
+        "organization_id",
+        "user_id",
+        "role"
+      ],
+      "title": "ClickHouseUpdateMemberConfig",
+      "type": "object"
+    },
+    "ClickHouseUpdateOrganizationConfig": {
+      "description": "Update organization settings (e.g. name).",
+      "properties": {
+        "operation": {
+          "const": "update_organization",
+          "default": "update_organization",
+          "title": "Update Organization",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organizations",
+          "x-display-name": "Update Organization",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "description": "The organization to update",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste organization ID",
+            "field_name": "organization_id",
+            "placeholder": "Select an organization...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "name": {
+          "description": "New organization name",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "name"
+      ],
+      "title": "ClickHouseUpdateOrganizationConfig",
+      "type": "object"
+    },
+    "ClickHouseUpdateServiceConfig": {
+      "description": "Update service basics (name, etc.).",
+      "properties": {
+        "operation": {
+          "const": "update_service",
+          "default": "update_service",
+          "title": "Update Service",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Services",
+          "x-display-name": "Update Service",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "description": "The organization the service belongs to",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste organization ID",
+            "field_name": "organization_id",
+            "placeholder": "Select an organization...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "service_id": {
+          "description": "The service to update",
+          "title": "Service ID",
+          "type": "string"
+        },
+        "name": {
+          "description": "New service name",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "service_id",
+        "name"
+      ],
+      "title": "ClickHouseUpdateServiceConfig",
+      "type": "object"
+    },
+    "ClickHouseUpdateServicePasswordConfig": {
+      "description": "Reset the service's default database user password.",
+      "properties": {
+        "operation": {
+          "const": "update_service_password",
+          "default": "update_service_password",
+          "title": "Update Service Password",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Services",
+          "x-display-name": "Update Service Password",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "description": "The organization the service belongs to",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste organization ID",
+            "field_name": "organization_id",
+            "placeholder": "Select an organization...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "service_id": {
+          "description": "The service to update",
+          "title": "Service ID",
+          "type": "string"
+        },
+        "new_password_hash": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional sha256 hex hash of the new password. Omit to have ClickHouse generate one.",
+          "title": "New Password Hash"
+        }
+      },
+      "required": [
+        "organization_id",
+        "service_id"
+      ],
+      "title": "ClickHouseUpdateServicePasswordConfig",
+      "type": "object"
+    },
+    "ClickHouseUpdateServiceReplicaScalingConfig": {
+      "description": "Update service autoscaling \u2014 new endpoint replacing the deprecated /scaling path.",
+      "properties": {
+        "operation": {
+          "const": "update_service_replica_scaling",
+          "default": "update_service_replica_scaling",
+          "title": "Update Service Replica Scaling",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Services",
+          "x-display-name": "Update Service Replica Scaling",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste organization ID",
+            "field_name": "organization_id",
+            "placeholder": "Select an organization...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "service_id": {
+          "description": "The service to rescale",
+          "title": "Service ID",
+          "type": "string"
+        },
+        "min_replica_memory_gb": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum memory per replica (e.g. 8, 16, 32)",
+          "title": "Min Memory per Replica (GB)"
+        },
+        "max_replica_memory_gb": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum memory per replica (e.g. 8, 16, 32, 64, 120, 236)",
+          "title": "Max Memory per Replica (GB)"
+        },
+        "num_replicas": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fixed number of replicas (overrides autoscaling)",
+          "title": "Number of Replicas"
+        }
+      },
+      "required": [
+        "organization_id",
+        "service_id"
+      ],
+      "title": "ClickHouseUpdateServiceReplicaScalingConfig",
+      "type": "object"
+    },
+    "ClickHouseUpdateServiceScalingConfig": {
+      "description": "Update service autoscaling min/max replica memory.",
+      "properties": {
+        "operation": {
+          "const": "update_service_scaling",
+          "default": "update_service_scaling",
+          "title": "Update Service Scaling",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Services",
+          "x-display-name": "Update Service Scaling",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "description": "The organization the service belongs to",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste organization ID",
+            "field_name": "organization_id",
+            "placeholder": "Select an organization...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "service_id": {
+          "description": "The service to rescale",
+          "title": "Service ID",
+          "type": "string"
+        },
+        "min_total_memory_gb": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Minimum total cluster memory in GB (e.g. 48, 96, 192)",
+          "title": "Min Total Memory (GB)"
+        },
+        "max_total_memory_gb": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum total cluster memory in GB (e.g. 96, 192, 360)",
+          "title": "Max Total Memory (GB)"
+        }
+      },
+      "required": [
+        "organization_id",
+        "service_id"
+      ],
+      "title": "ClickHouseUpdateServiceScalingConfig",
+      "type": "object"
+    },
+    "ClickHouseUpdateServiceStateConfig": {
+      "description": "Start or stop a service.",
+      "properties": {
+        "operation": {
+          "const": "update_service_state",
+          "default": "update_service_state",
+          "title": "Start / Stop Service",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Services",
+          "x-display-name": "Start / Stop Service",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "description": "The organization the service belongs to",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste organization ID",
+            "field_name": "organization_id",
+            "placeholder": "Select an organization...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "service_id": {
+          "description": "The service to change state",
+          "title": "Service ID",
+          "type": "string"
+        },
+        "command": {
+          "default": "start",
+          "description": "Whether to start or stop the service",
+          "enum": [
+            "start",
+            "stop"
+          ],
+          "enumNames": [
+            "Start",
+            "Stop"
+          ],
+          "title": "Command",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "organization_id",
+        "service_id"
+      ],
+      "title": "ClickHouseUpdateServiceStateConfig",
+      "type": "object"
+    },
+    "ClickHouseUpsertQueryEndpointConfig": {
+      "description": "Create or update a query endpoint to run SQL against the service over HTTPS.",
+      "properties": {
+        "operation": {
+          "const": "upsert_query_endpoint",
+          "default": "upsert_query_endpoint",
+          "title": "Create / Update Query Endpoint",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Query Endpoints",
+          "x-display-name": "Create / Update Query Endpoint",
+          "x-is-trigger": false
+        },
+        "organization_id": {
+          "description": "The organization the service belongs to",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste organization ID",
+            "field_name": "organization_id",
+            "placeholder": "Select an organization...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "service_id": {
+          "description": "The service to attach the endpoint to",
+          "title": "Service ID",
+          "type": "string"
+        },
+        "open_api_keys": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated API key roles allowed (e.g. sql_console_admin, sql_console_read_only)",
+          "title": "Allowed Roles"
+        },
+        "allowed_origins": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated allowed CORS origins",
+          "title": "Allowed Origins"
+        }
+      },
+      "required": [
+        "organization_id",
+        "service_id"
+      ],
+      "title": "ClickHouseUpsertQueryEndpointConfig",
+      "type": "object"
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the ClickHouse node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_clickpipe": "#/$defs/ClickHouseCreateClickPipeConfig",
+          "create_invitation": "#/$defs/ClickHouseCreateInvitationConfig",
+          "create_key": "#/$defs/ClickHouseCreateKeyConfig",
+          "create_service": "#/$defs/ClickHouseCreateServiceConfig",
+          "delete_clickpipe": "#/$defs/ClickHouseDeleteClickPipeConfig",
+          "delete_invitation": "#/$defs/ClickHouseDeleteInvitationConfig",
+          "delete_key": "#/$defs/ClickHouseDeleteKeyConfig",
+          "delete_query_endpoint": "#/$defs/ClickHouseDeleteQueryEndpointConfig",
+          "delete_service": "#/$defs/ClickHouseDeleteServiceConfig",
+          "get_backup": "#/$defs/ClickHouseGetBackupConfig",
+          "get_backup_configuration": "#/$defs/ClickHouseGetBackupConfigurationConfig",
+          "get_clickpipe": "#/$defs/ClickHouseGetClickPipeConfig",
+          "get_invitation": "#/$defs/ClickHouseGetInvitationConfig",
+          "get_member": "#/$defs/ClickHouseGetMemberConfig",
+          "get_organization": "#/$defs/ClickHouseGetOrganizationConfig",
+          "get_private_endpoint_config": "#/$defs/ClickHouseGetPrivateEndpointConfigConfig",
+          "get_prometheus_metrics": "#/$defs/ClickHouseGetPrometheusMetricsConfig",
+          "get_query_endpoint": "#/$defs/ClickHouseGetQueryEndpointConfig",
+          "get_service": "#/$defs/ClickHouseGetServiceConfig",
+          "get_usage_cost": "#/$defs/ClickHouseGetUsageCostConfig",
+          "list_activities": "#/$defs/ClickHouseListActivitiesConfig",
+          "list_backups": "#/$defs/ClickHouseListBackupsConfig",
+          "list_clickpipes": "#/$defs/ClickHouseListClickPipesConfig",
+          "list_invitations": "#/$defs/ClickHouseListInvitationsConfig",
+          "list_keys": "#/$defs/ClickHouseListKeysConfig",
+          "list_members": "#/$defs/ClickHouseListMembersConfig",
+          "list_organizations": "#/$defs/ClickHouseListOrganizationsConfig",
+          "list_roles": "#/$defs/ClickHouseListRolesConfig",
+          "list_services": "#/$defs/ClickHouseListServicesConfig",
+          "on_query_results": "#/$defs/ClickHouseOnQueryResultsConfig",
+          "remove_member": "#/$defs/ClickHouseRemoveMemberConfig",
+          "update_backup_configuration": "#/$defs/ClickHouseUpdateBackupConfigurationConfig",
+          "update_clickpipe_state": "#/$defs/ClickHouseUpdateClickPipeStateConfig",
+          "update_member": "#/$defs/ClickHouseUpdateMemberConfig",
+          "update_organization": "#/$defs/ClickHouseUpdateOrganizationConfig",
+          "update_service": "#/$defs/ClickHouseUpdateServiceConfig",
+          "update_service_password": "#/$defs/ClickHouseUpdateServicePasswordConfig",
+          "update_service_replica_scaling": "#/$defs/ClickHouseUpdateServiceReplicaScalingConfig",
+          "update_service_scaling": "#/$defs/ClickHouseUpdateServiceScalingConfig",
+          "update_service_state": "#/$defs/ClickHouseUpdateServiceStateConfig",
+          "upsert_query_endpoint": "#/$defs/ClickHouseUpsertQueryEndpointConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ClickHouseListOrganizationsConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickHouseGetOrganizationConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickHouseUpdateOrganizationConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickHouseListActivitiesConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickHouseGetUsageCostConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickHouseListServicesConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickHouseCreateServiceConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickHouseGetServiceConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickHouseUpdateServiceConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickHouseDeleteServiceConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickHouseUpdateServiceStateConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickHouseUpdateServiceScalingConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickHouseUpdateServiceReplicaScalingConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickHouseUpdateServicePasswordConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickHouseGetPrivateEndpointConfigConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickHouseGetQueryEndpointConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickHouseUpsertQueryEndpointConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickHouseDeleteQueryEndpointConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickHouseListBackupsConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickHouseGetBackupConfigurationConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickHouseGetBackupConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickHouseUpdateBackupConfigurationConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickHouseListClickPipesConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickHouseCreateClickPipeConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickHouseUpdateClickPipeStateConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickHouseGetClickPipeConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickHouseDeleteClickPipeConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickHouseListRolesConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickHouseListKeysConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickHouseCreateKeyConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickHouseDeleteKeyConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickHouseListMembersConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickHouseRemoveMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickHouseGetMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickHouseUpdateMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickHouseListInvitationsConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickHouseCreateInvitationConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickHouseDeleteInvitationConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickHouseGetInvitationConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickHouseGetPrometheusMetricsConfig"
+        },
+        {
+          "$ref": "#/$defs/ClickHouseOnQueryResultsConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ClickHouseApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Clickhouse Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "List all ClickHouse services in my organization",
+    "Stop a ClickHouse service overnight to save cost",
+    "Get usage cost for the last billing period",
+    "Create a developer API key for a new teammate",
+    "List the audit activities for my organization"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

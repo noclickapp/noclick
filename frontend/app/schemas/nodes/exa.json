@@ -1,0 +1,1439 @@
+{
+  "$defs": {
+    "ExaAnswerConfig": {
+      "description": "Get an LLM-generated answer grounded with citations from an Exa search.",
+      "properties": {
+        "operation": {
+          "const": "answer",
+          "default": "answer",
+          "title": "Answer",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Search",
+          "x-display-name": "Answer",
+          "x-is-trigger": false
+        },
+        "query": {
+          "description": "The question to answer",
+          "title": "Question",
+          "type": "string"
+        },
+        "include_text": {
+          "default": "false",
+          "description": "Include the full text of the citation sources in the response",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Source Text",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "ExaAnswerConfig",
+      "type": "object",
+      "x-credentials-optional": true
+    },
+    "ExaApiKeyCredential": {
+      "description": "API Key credential for Exa.",
+      "properties": {
+        "credential_type": {
+          "const": "exa_api_key",
+          "default": "exa_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Your Exa API key from the API Dashboard (dashboard.exa.ai/api-keys). Sent as the x-api-key header.",
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "ExaApiKeyCredential",
+      "type": "object",
+      "x-credential-url": "https://dashboard.exa.ai/api-keys"
+    },
+    "ExaCancelAgentRunConfig": {
+      "description": "Cancel a queued or running Agent run.",
+      "properties": {
+        "operation": {
+          "const": "cancel_agent_run",
+          "default": "cancel_agent_run",
+          "title": "Cancel Agent Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Agent",
+          "x-display-name": "Cancel Agent Run",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "description": "The ID of the agent run to cancel",
+          "title": "Run ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "ExaCancelAgentRunConfig",
+      "type": "object"
+    },
+    "ExaCreateAgentRunConfig": {
+      "description": "Create an asynchronous Agent run for deep research, list-building, or enrichment.",
+      "properties": {
+        "operation": {
+          "const": "create_agent_run",
+          "default": "create_agent_run",
+          "title": "Create Agent Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Agent",
+          "x-display-name": "Create Agent Run",
+          "x-is-trigger": false
+        },
+        "query": {
+          "description": "The research question or task for the agent run",
+          "title": "Query",
+          "type": "string"
+        },
+        "model": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional model override for the agent run",
+          "title": "Model"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "ExaCreateAgentRunConfig",
+      "type": "object"
+    },
+    "ExaCreateMonitorConfig": {
+      "description": "Create a Monitor that runs a recurring Exa search and delivers results to a webhook.",
+      "properties": {
+        "operation": {
+          "const": "create_monitor",
+          "default": "create_monitor",
+          "title": "Create Monitor",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Monitors",
+          "x-creates-resource": true,
+          "x-display-name": "Create Monitor",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "exa_monitor"
+        },
+        "query": {
+          "description": "The recurring search query",
+          "title": "Query",
+          "type": "string"
+        },
+        "webhook_url": {
+          "description": "URL that monitor results are POSTed to",
+          "title": "Webhook URL",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional name for the monitor",
+          "title": "Name"
+        }
+      },
+      "required": [
+        "query",
+        "webhook_url"
+      ],
+      "title": "ExaCreateMonitorConfig",
+      "type": "object"
+    },
+    "ExaCreateWebsetConfig": {
+      "description": "Create a Webset (search + optional enrichment); begins processing automatically.",
+      "properties": {
+        "operation": {
+          "const": "create_webset",
+          "default": "create_webset",
+          "title": "Create Webset",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Websets",
+          "x-display-name": "Create Webset",
+          "x-is-trigger": false
+        },
+        "query": {
+          "description": "The search query for the webset",
+          "title": "Search Query",
+          "type": "string"
+        },
+        "count": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "10",
+          "description": "Target number of verified items",
+          "title": "Count"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "ExaCreateWebsetConfig",
+      "type": "object"
+    },
+    "ExaCreateWebsetEnrichmentConfig": {
+      "description": "Add an enrichment column (extract/classify a field) to a Webset.",
+      "properties": {
+        "operation": {
+          "const": "create_webset_enrichment",
+          "default": "create_webset_enrichment",
+          "title": "Create Webset Enrichment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Websets",
+          "x-display-name": "Create Webset Enrichment",
+          "x-is-trigger": false
+        },
+        "webset_id": {
+          "description": "The ID of the webset",
+          "title": "Webset ID",
+          "type": "string"
+        },
+        "description": {
+          "description": "What to extract or classify for each item",
+          "title": "Description",
+          "type": "string"
+        },
+        "enrichment_format": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "text",
+          "description": "The enrichment output format",
+          "enum": [
+            "text",
+            "date",
+            "number",
+            "options",
+            "email",
+            "phone"
+          ],
+          "enumNames": [
+            "Text",
+            "Date",
+            "Number",
+            "Options",
+            "Email",
+            "Phone"
+          ],
+          "title": "Format",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "webset_id",
+        "description"
+      ],
+      "title": "ExaCreateWebsetEnrichmentConfig",
+      "type": "object"
+    },
+    "ExaCreateWebsetWebhookConfig": {
+      "description": "Register a webhook to receive Websets event notifications.",
+      "properties": {
+        "operation": {
+          "const": "create_webset_webhook",
+          "default": "create_webset_webhook",
+          "title": "Create Webset Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Websets",
+          "x-display-name": "Create Webset Webhook",
+          "x-is-trigger": false
+        },
+        "webhook_url": {
+          "description": "URL that Websets events are POSTed to",
+          "title": "Webhook URL",
+          "type": "string"
+        },
+        "events": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Event types to subscribe to, comma-separated (default: all)",
+          "title": "Events"
+        }
+      },
+      "required": [
+        "webhook_url"
+      ],
+      "title": "ExaCreateWebsetWebhookConfig",
+      "type": "object"
+    },
+    "ExaDeleteMonitorConfig": {
+      "description": "Delete a monitor (irreversible).",
+      "properties": {
+        "operation": {
+          "const": "delete_monitor",
+          "default": "delete_monitor",
+          "title": "Delete Monitor",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Monitors",
+          "x-display-name": "Delete Monitor",
+          "x-is-trigger": false
+        },
+        "monitor_id": {
+          "description": "The monitor to delete",
+          "title": "Monitor",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste monitor ID",
+            "field_name": "monitor_id",
+            "placeholder": "Select a monitor...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "exa_monitor"
+        }
+      },
+      "required": [
+        "monitor_id"
+      ],
+      "title": "ExaDeleteMonitorConfig",
+      "type": "object"
+    },
+    "ExaDeleteWebsetConfig": {
+      "description": "Delete a Webset.",
+      "properties": {
+        "operation": {
+          "const": "delete_webset",
+          "default": "delete_webset",
+          "title": "Delete Webset",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Websets",
+          "x-display-name": "Delete Webset",
+          "x-is-trigger": false
+        },
+        "webset_id": {
+          "description": "The ID of the webset to delete",
+          "title": "Webset ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "webset_id"
+      ],
+      "title": "ExaDeleteWebsetConfig",
+      "type": "object"
+    },
+    "ExaFindSimilarConfig": {
+      "description": "Find pages semantically similar to a given URL.",
+      "properties": {
+        "operation": {
+          "const": "find_similar",
+          "default": "find_similar",
+          "title": "Find Similar",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Search",
+          "x-display-name": "Find Similar",
+          "x-is-trigger": false
+        },
+        "url": {
+          "description": "The URL to find similar pages for",
+          "title": "URL",
+          "type": "string"
+        },
+        "num_results": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "10",
+          "description": "How many similar results to return (1-100)",
+          "title": "Number of Results"
+        },
+        "exclude_source_domain": {
+          "default": "false",
+          "description": "Exclude results from the same domain as the source URL",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Exclude Source Domain",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "ExaFindSimilarConfig",
+      "type": "object",
+      "x-credentials-optional": true
+    },
+    "ExaGetAgentRunConfig": {
+      "description": "Retrieve an Agent run by ID (status, output, citations).",
+      "properties": {
+        "operation": {
+          "const": "get_agent_run",
+          "default": "get_agent_run",
+          "title": "Get Agent Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Agent",
+          "x-display-name": "Get Agent Run",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "description": "The ID of the agent run to retrieve",
+          "title": "Run ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "ExaGetAgentRunConfig",
+      "type": "object"
+    },
+    "ExaGetContentsConfig": {
+      "description": "Retrieve clean, LLM-ready parsed content for a list of URLs.",
+      "properties": {
+        "operation": {
+          "const": "get_contents",
+          "default": "get_contents",
+          "title": "Get Contents",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Search",
+          "x-display-name": "Get Contents",
+          "x-is-trigger": false
+        },
+        "urls": {
+          "description": "URLs to fetch content for, comma-separated",
+          "title": "URLs",
+          "type": "string"
+        },
+        "include_text": {
+          "default": "true",
+          "description": "Return full parsed page text",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Text",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "include_highlights": {
+          "default": "false",
+          "description": "Return relevant highlighted snippets",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Highlights",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "include_summary": {
+          "default": "false",
+          "description": "Return an LLM-generated summary of each page",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Summary",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "livecrawl": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Content freshness mode",
+          "enum": [
+            "",
+            "never",
+            "fallback",
+            "always",
+            "preferred"
+          ],
+          "enumNames": [
+            "Default",
+            "Never",
+            "Fallback",
+            "Always",
+            "Preferred"
+          ],
+          "title": "Live Crawl",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "urls"
+      ],
+      "title": "ExaGetContentsConfig",
+      "type": "object",
+      "x-credentials-optional": true
+    },
+    "ExaGetMonitorConfig": {
+      "description": "Retrieve a single monitor by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_monitor",
+          "default": "get_monitor",
+          "title": "Get Monitor",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Monitors",
+          "x-display-name": "Get Monitor",
+          "x-is-trigger": false
+        },
+        "monitor_id": {
+          "description": "The monitor to retrieve",
+          "title": "Monitor",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste monitor ID",
+            "field_name": "monitor_id",
+            "placeholder": "Select a monitor...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "exa_monitor"
+        }
+      },
+      "required": [
+        "monitor_id"
+      ],
+      "title": "ExaGetMonitorConfig",
+      "type": "object"
+    },
+    "ExaGetWebsetConfig": {
+      "description": "Retrieve a Webset by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_webset",
+          "default": "get_webset",
+          "title": "Get Webset",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Websets",
+          "x-display-name": "Get Webset",
+          "x-is-trigger": false
+        },
+        "webset_id": {
+          "description": "The ID of the webset to retrieve",
+          "title": "Webset ID",
+          "type": "string"
+        },
+        "expand_items": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Include the webset's items inline",
+          "title": "Expand Items"
+        }
+      },
+      "required": [
+        "webset_id"
+      ],
+      "title": "ExaGetWebsetConfig",
+      "type": "object"
+    },
+    "ExaListAgentRunsConfig": {
+      "description": "Retrieve a paginated list of Agent runs for your team.",
+      "properties": {
+        "operation": {
+          "const": "list_agent_runs",
+          "default": "list_agent_runs",
+          "title": "List Agent Runs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Agent",
+          "x-display-name": "List Agent Runs",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max number of runs to return",
+          "title": "Limit"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor",
+          "title": "Cursor"
+        }
+      },
+      "title": "ExaListAgentRunsConfig",
+      "type": "object"
+    },
+    "ExaListMonitorRunsConfig": {
+      "description": "List runs for a monitor (reverse-chronological).",
+      "properties": {
+        "operation": {
+          "const": "list_monitor_runs",
+          "default": "list_monitor_runs",
+          "title": "List Monitor Runs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Monitors",
+          "x-display-name": "List Monitor Runs",
+          "x-is-trigger": false
+        },
+        "monitor_id": {
+          "description": "The monitor whose runs to list",
+          "title": "Monitor",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste monitor ID",
+            "field_name": "monitor_id",
+            "placeholder": "Select a monitor...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "exa_monitor"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "monitor_id"
+      ],
+      "title": "ExaListMonitorRunsConfig",
+      "type": "object"
+    },
+    "ExaListMonitorsConfig": {
+      "description": "List all monitors for the authenticated team.",
+      "properties": {
+        "operation": {
+          "const": "list_monitors",
+          "default": "list_monitors",
+          "title": "List Monitors",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Monitors",
+          "x-display-name": "List Monitors",
+          "x-is-trigger": false
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor",
+          "title": "Cursor"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max number of monitors to return",
+          "title": "Limit"
+        }
+      },
+      "title": "ExaListMonitorsConfig",
+      "type": "object"
+    },
+    "ExaListWebsetItemsConfig": {
+      "description": "List the verified/enriched result items in a Webset.",
+      "properties": {
+        "operation": {
+          "const": "list_webset_items",
+          "default": "list_webset_items",
+          "title": "List Webset Items",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Websets",
+          "x-display-name": "List Webset Items",
+          "x-is-trigger": false
+        },
+        "webset_id": {
+          "description": "The ID of the webset",
+          "title": "Webset ID",
+          "type": "string"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor",
+          "title": "Cursor"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max number of items to return",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "webset_id"
+      ],
+      "title": "ExaListWebsetItemsConfig",
+      "type": "object"
+    },
+    "ExaListWebsetsConfig": {
+      "description": "List all Websets for the team.",
+      "properties": {
+        "operation": {
+          "const": "list_websets",
+          "default": "list_websets",
+          "title": "List Websets",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Websets",
+          "x-display-name": "List Websets",
+          "x-is-trigger": false
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor",
+          "title": "Cursor"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max number of websets to return",
+          "title": "Limit"
+        }
+      },
+      "title": "ExaListWebsetsConfig",
+      "type": "object"
+    },
+    "ExaListWebsetsEventsConfig": {
+      "description": "List events that have occurred (webset/item/enrichment lifecycle).",
+      "properties": {
+        "operation": {
+          "const": "list_websets_events",
+          "default": "list_websets_events",
+          "title": "List Websets Events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Websets",
+          "x-display-name": "List Websets Events",
+          "x-is-trigger": false
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor",
+          "title": "Cursor"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max number of events to return",
+          "title": "Limit"
+        }
+      },
+      "title": "ExaListWebsetsEventsConfig",
+      "type": "object"
+    },
+    "ExaMonitorTriggerConfig": {
+      "description": "Fire the workflow when an Exa Monitor delivers new search results.\n\nA Monitor (recurring scheduled search) is created via the Exa API and\nconfigured to POST results to this node's webhook URL.",
+      "properties": {
+        "operation": {
+          "const": "on_monitor_results",
+          "default": "on_monitor_results",
+          "title": "On Monitor Results",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Monitor Results",
+          "x-is-trigger": true
+        },
+        "monitor_query": {
+          "description": "The recurring search query the monitor runs",
+          "title": "Search Query",
+          "type": "string"
+        },
+        "cadence": {
+          "default": "0 9 * * *",
+          "description": "How often the monitor runs, as a cron expression (default: daily at 9am UTC)",
+          "title": "Cadence (Cron)",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exa posts new monitor results here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "monitor_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Monitor Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "monitor_query"
+      ],
+      "title": "ExaMonitorTriggerConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "ExaSearchConfig": {
+      "description": "Search the web with Exa's neural/keyword/auto search.",
+      "properties": {
+        "operation": {
+          "const": "search",
+          "default": "search",
+          "title": "Search",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Search",
+          "x-display-name": "Search",
+          "x-is-trigger": false
+        },
+        "query": {
+          "description": "The search query string",
+          "title": "Query",
+          "type": "string"
+        },
+        "search_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "auto",
+          "description": "How to interpret the query",
+          "enum": [
+            "auto",
+            "neural",
+            "keyword",
+            "fast"
+          ],
+          "enumNames": [
+            "Auto",
+            "Neural",
+            "Keyword",
+            "Fast"
+          ],
+          "title": "Search Type",
+          "x-enum-searchable": true
+        },
+        "num_results": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "10",
+          "description": "How many results to return (1-100)",
+          "title": "Number of Results"
+        },
+        "category": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Restrict to a data category (e.g. company, research paper, news, pdf)",
+          "title": "Category"
+        },
+        "include_domains": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only these domains, comma-separated",
+          "title": "Include Domains"
+        },
+        "exclude_domains": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exclude these domains, comma-separated",
+          "title": "Exclude Domains"
+        },
+        "include_text": {
+          "default": "false",
+          "description": "Return parsed page text inline with each result",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Page Text",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "ExaSearchConfig",
+      "type": "object",
+      "x-credentials-optional": true
+    },
+    "ExaTriggerMonitorConfig": {
+      "description": "Trigger a monitor run immediately regardless of schedule.",
+      "properties": {
+        "operation": {
+          "const": "trigger_monitor",
+          "default": "trigger_monitor",
+          "title": "Trigger Monitor",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Monitors",
+          "x-display-name": "Trigger Monitor",
+          "x-is-trigger": false
+        },
+        "monitor_id": {
+          "description": "The monitor to trigger",
+          "title": "Monitor",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste monitor ID",
+            "field_name": "monitor_id",
+            "placeholder": "Select a monitor...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "exa_monitor"
+        }
+      },
+      "required": [
+        "monitor_id"
+      ],
+      "title": "ExaTriggerMonitorConfig",
+      "type": "object"
+    },
+    "ExaUpdateMonitorConfig": {
+      "description": "Update an existing monitor (schedule, search config).",
+      "properties": {
+        "operation": {
+          "const": "update_monitor",
+          "default": "update_monitor",
+          "title": "Update Monitor",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Monitors",
+          "x-display-name": "Update Monitor",
+          "x-is-trigger": false
+        },
+        "monitor_id": {
+          "description": "The monitor to update",
+          "title": "Monitor",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste monitor ID",
+            "field_name": "monitor_id",
+            "placeholder": "Select a monitor...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "exa_monitor"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New search query",
+          "title": "Query"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New monitor name",
+          "title": "Name"
+        }
+      },
+      "required": [
+        "monitor_id"
+      ],
+      "title": "ExaUpdateMonitorConfig",
+      "type": "object"
+    },
+    "ExaUpdateWebsetConfig": {
+      "description": "Update a Webset's metadata/configuration.",
+      "properties": {
+        "operation": {
+          "const": "update_webset",
+          "default": "update_webset",
+          "title": "Update Webset",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Websets",
+          "x-display-name": "Update Webset",
+          "x-is-trigger": false
+        },
+        "webset_id": {
+          "description": "The ID of the webset to update",
+          "title": "Webset ID",
+          "type": "string"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object of metadata to set on the webset",
+          "title": "Metadata (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "webset_id"
+      ],
+      "title": "ExaUpdateWebsetConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the Exa node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "answer": "#/$defs/ExaAnswerConfig",
+          "cancel_agent_run": "#/$defs/ExaCancelAgentRunConfig",
+          "create_agent_run": "#/$defs/ExaCreateAgentRunConfig",
+          "create_monitor": "#/$defs/ExaCreateMonitorConfig",
+          "create_webset": "#/$defs/ExaCreateWebsetConfig",
+          "create_webset_enrichment": "#/$defs/ExaCreateWebsetEnrichmentConfig",
+          "create_webset_webhook": "#/$defs/ExaCreateWebsetWebhookConfig",
+          "delete_monitor": "#/$defs/ExaDeleteMonitorConfig",
+          "delete_webset": "#/$defs/ExaDeleteWebsetConfig",
+          "find_similar": "#/$defs/ExaFindSimilarConfig",
+          "get_agent_run": "#/$defs/ExaGetAgentRunConfig",
+          "get_contents": "#/$defs/ExaGetContentsConfig",
+          "get_monitor": "#/$defs/ExaGetMonitorConfig",
+          "get_webset": "#/$defs/ExaGetWebsetConfig",
+          "list_agent_runs": "#/$defs/ExaListAgentRunsConfig",
+          "list_monitor_runs": "#/$defs/ExaListMonitorRunsConfig",
+          "list_monitors": "#/$defs/ExaListMonitorsConfig",
+          "list_webset_items": "#/$defs/ExaListWebsetItemsConfig",
+          "list_websets": "#/$defs/ExaListWebsetsConfig",
+          "list_websets_events": "#/$defs/ExaListWebsetsEventsConfig",
+          "on_monitor_results": "#/$defs/ExaMonitorTriggerConfig",
+          "search": "#/$defs/ExaSearchConfig",
+          "trigger_monitor": "#/$defs/ExaTriggerMonitorConfig",
+          "update_monitor": "#/$defs/ExaUpdateMonitorConfig",
+          "update_webset": "#/$defs/ExaUpdateWebsetConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ExaSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/ExaGetContentsConfig"
+        },
+        {
+          "$ref": "#/$defs/ExaAnswerConfig"
+        },
+        {
+          "$ref": "#/$defs/ExaFindSimilarConfig"
+        },
+        {
+          "$ref": "#/$defs/ExaCreateAgentRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ExaGetAgentRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ExaListAgentRunsConfig"
+        },
+        {
+          "$ref": "#/$defs/ExaCancelAgentRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ExaCreateMonitorConfig"
+        },
+        {
+          "$ref": "#/$defs/ExaListMonitorsConfig"
+        },
+        {
+          "$ref": "#/$defs/ExaGetMonitorConfig"
+        },
+        {
+          "$ref": "#/$defs/ExaUpdateMonitorConfig"
+        },
+        {
+          "$ref": "#/$defs/ExaDeleteMonitorConfig"
+        },
+        {
+          "$ref": "#/$defs/ExaTriggerMonitorConfig"
+        },
+        {
+          "$ref": "#/$defs/ExaListMonitorRunsConfig"
+        },
+        {
+          "$ref": "#/$defs/ExaCreateWebsetConfig"
+        },
+        {
+          "$ref": "#/$defs/ExaGetWebsetConfig"
+        },
+        {
+          "$ref": "#/$defs/ExaListWebsetsConfig"
+        },
+        {
+          "$ref": "#/$defs/ExaUpdateWebsetConfig"
+        },
+        {
+          "$ref": "#/$defs/ExaDeleteWebsetConfig"
+        },
+        {
+          "$ref": "#/$defs/ExaListWebsetItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/ExaCreateWebsetEnrichmentConfig"
+        },
+        {
+          "$ref": "#/$defs/ExaCreateWebsetWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/ExaListWebsetsEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/ExaMonitorTriggerConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ExaApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Exa Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Search the web for recent articles about AI agents",
+    "Get clean parsed content for a list of URLs",
+    "Answer a question with cited sources from the web",
+    "Find pages similar to a competitor's homepage",
+    "Trigger a workflow whenever a scheduled Exa monitor finds new results"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

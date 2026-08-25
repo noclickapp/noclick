@@ -1,0 +1,7013 @@
+{
+  "$defs": {
+    "KlaviyoAddToListConfig": {
+      "properties": {
+        "operation": {
+          "const": "add_profiles_to_list",
+          "default": "add_profiles_to_list",
+          "title": "Add Profiles to List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lists",
+          "x-display-name": "Add Profiles to List"
+        },
+        "list_id": {
+          "description": "Klaviyo list ID",
+          "title": "List",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "list_id",
+            "placeholder": "Select a list\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "klaviyo_list"
+        },
+        "profile_ids": {
+          "description": "Comma-separated profile IDs",
+          "title": "Profile IDs",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id",
+        "profile_ids"
+      ],
+      "title": "KlaviyoAddToListConfig",
+      "type": "object"
+    },
+    "KlaviyoApiKeyCredential": {
+      "description": "Private API key credential for Klaviyo (HTTP header auth).\n\nCreate one in Klaviyo: Settings \u2192 API keys \u2192 Create Private API Key. Grant\n**Full Access** (or a Custom scope covering the operations you'll use) \u2014 the\nkey's scopes are immutable after creation. Shown once; copy it immediately.",
+      "properties": {
+        "credential_type": {
+          "const": "klaviyo_api_key",
+          "default": "klaviyo_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Klaviyo private API key (starts with pk_). Settings \u2192 API keys.",
+          "title": "Private API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "KlaviyoApiKeyCredential",
+      "type": "object",
+      "x-credential-instructions": "In Klaviyo, go to Settings \u2192 API keys \u2192 Create Private API Key. Give it Full Access (scopes can't be changed later) and paste the pk_ key here.",
+      "x-credential-url": "https://www.klaviyo.com/settings/account/api-keys"
+    },
+    "KlaviyoCloneCampaignConfig": {
+      "properties": {
+        "operation": {
+          "const": "clone_campaign",
+          "default": "clone_campaign",
+          "title": "Clone Campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaigns",
+          "x-display-name": "Clone Campaign"
+        },
+        "campaign_id": {
+          "title": "Campaign ID",
+          "type": "string"
+        },
+        "new_name": {
+          "title": "New Campaign Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id",
+        "new_name"
+      ],
+      "title": "KlaviyoCloneCampaignConfig",
+      "type": "object"
+    },
+    "KlaviyoCloneTemplateConfig": {
+      "properties": {
+        "operation": {
+          "const": "clone_template",
+          "default": "clone_template",
+          "title": "Clone Template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "Clone Template"
+        },
+        "template_id": {
+          "title": "Template ID",
+          "type": "string"
+        },
+        "new_name": {
+          "title": "New Template Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "template_id",
+        "new_name"
+      ],
+      "title": "KlaviyoCloneTemplateConfig",
+      "type": "object"
+    },
+    "KlaviyoCreateCampaignConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_campaign",
+          "default": "create_campaign",
+          "title": "Create Campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaigns",
+          "x-display-name": "Create Campaign"
+        },
+        "attributes_json": {
+          "description": "Campaign attributes (name, audiences, send_strategy, campaign-messages), as JSON",
+          "title": "Attributes (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "attributes_json"
+      ],
+      "title": "KlaviyoCreateCampaignConfig",
+      "type": "object"
+    },
+    "KlaviyoCreateCatalogItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_catalog_item",
+          "default": "create_catalog_item",
+          "title": "Create Catalog Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Catalog",
+          "x-display-name": "Create Catalog Item"
+        },
+        "attributes_json": {
+          "description": "e.g. {\"external_id\":\"SKU123\",\"title\":\"Shirt\",\"description\":\"\u2026\",\"url\":\"https://\u2026\",\"price\":19.99}",
+          "title": "Attributes (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "attributes_json"
+      ],
+      "title": "KlaviyoCreateCatalogItemConfig",
+      "type": "object"
+    },
+    "KlaviyoCreateCouponCodeConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_coupon_code",
+          "default": "create_coupon_code",
+          "title": "Create Coupon Code",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Coupons",
+          "x-display-name": "Create Coupon Code"
+        },
+        "coupon_id": {
+          "description": "The parent coupon's id",
+          "title": "Coupon ID",
+          "type": "string"
+        },
+        "code": {
+          "description": "The unique coupon code value",
+          "title": "Code",
+          "type": "string"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 datetime",
+          "title": "Expires At"
+        }
+      },
+      "required": [
+        "coupon_id",
+        "code"
+      ],
+      "title": "KlaviyoCreateCouponCodeConfig",
+      "type": "object"
+    },
+    "KlaviyoCreateCouponConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_coupon",
+          "default": "create_coupon",
+          "title": "Create Coupon",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Coupons",
+          "x-display-name": "Create Coupon"
+        },
+        "external_id": {
+          "description": "Unique coupon identifier (letters, digits, underscores only \u2014 no hyphens/spaces)",
+          "title": "External ID",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description"
+        }
+      },
+      "required": [
+        "external_id"
+      ],
+      "title": "KlaviyoCreateCouponConfig",
+      "type": "object"
+    },
+    "KlaviyoCreateEventConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_event",
+          "default": "create_event",
+          "title": "Track Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "Track Event"
+        },
+        "metric_name": {
+          "description": "The event/metric name, e.g. 'Placed Order'",
+          "title": "Metric Name",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Profile Email"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Profile Phone"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Profile External ID"
+        },
+        "properties_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Event Properties (JSON)",
+          "ui:widget": "textarea"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Numeric value (e.g. order total)",
+          "title": "Value"
+        }
+      },
+      "required": [
+        "metric_name"
+      ],
+      "title": "KlaviyoCreateEventConfig",
+      "type": "object"
+    },
+    "KlaviyoCreateListConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_list",
+          "default": "create_list",
+          "title": "Create List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lists",
+          "x-creates-resource": true,
+          "x-display-name": "Create List",
+          "x-resource-id-path": "data.data.id",
+          "x-resource-type": "klaviyo_list"
+        },
+        "name": {
+          "title": "List Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "KlaviyoCreateListConfig",
+      "type": "object"
+    },
+    "KlaviyoCreateProfileConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_profile",
+          "default": "create_profile",
+          "title": "Create Profile",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Profiles",
+          "x-display-name": "Create Profile"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "E.164, e.g. +12025550106",
+          "title": "Phone Number"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External ID"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "properties_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom Properties (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "KlaviyoCreateProfileConfig",
+      "type": "object"
+    },
+    "KlaviyoCreateSegmentConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_segment",
+          "default": "create_segment",
+          "title": "Create Segment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Segments",
+          "x-creates-resource": true,
+          "x-display-name": "Create Segment",
+          "x-resource-id-path": "data.data.id",
+          "x-resource-type": "klaviyo_segment"
+        },
+        "name": {
+          "title": "Segment Name",
+          "type": "string"
+        },
+        "definition_json": {
+          "description": "Segment definition (condition_groups), as JSON",
+          "title": "Attributes (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "name",
+        "definition_json"
+      ],
+      "title": "KlaviyoCreateSegmentConfig",
+      "type": "object"
+    },
+    "KlaviyoCreateTagConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_tag",
+          "default": "create_tag",
+          "title": "Create Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "Create Tag"
+        },
+        "name": {
+          "title": "Tag Name",
+          "type": "string"
+        },
+        "tag_group_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional; defaults to the default tag group",
+          "title": "Tag Group ID"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "KlaviyoCreateTagConfig",
+      "type": "object"
+    },
+    "KlaviyoCreateTemplateConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_template",
+          "default": "create_template",
+          "title": "Create Template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-creates-resource": true,
+          "x-display-name": "Create Template",
+          "x-resource-id-path": "data.data.id",
+          "x-resource-type": "klaviyo_template"
+        },
+        "name": {
+          "title": "Template Name",
+          "type": "string"
+        },
+        "html": {
+          "title": "HTML",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "editor_type": {
+          "default": "CODE",
+          "enum": [
+            "CODE",
+            "USER_DRAGGABLE",
+            "SYSTEM_DRAGGABLE"
+          ],
+          "title": "Editor Type",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "name",
+        "html"
+      ],
+      "title": "KlaviyoCreateTemplateConfig",
+      "type": "object"
+    },
+    "KlaviyoCreateWebhookConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_webhook",
+          "default": "create_webhook",
+          "title": "Create Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Create Webhook"
+        },
+        "attributes_json": {
+          "description": "e.g. {\"name\":\"\u2026\",\"endpoint_url\":\"https://\u2026\",\"secret_key\":\"\u2026\",\"topics\":[\"event:klaviyo.opened_email\"]} \u2014 topics become a webhook-topics relationship; enabled is not settable on create",
+          "title": "Attributes (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "attributes_json"
+      ],
+      "title": "KlaviyoCreateWebhookConfig",
+      "type": "object"
+    },
+    "KlaviyoDeleteCampaignConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_campaign",
+          "default": "delete_campaign",
+          "title": "Delete Campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaigns",
+          "x-display-name": "Delete Campaign"
+        },
+        "campaign_id": {
+          "title": "Campaign ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "KlaviyoDeleteCampaignConfig",
+      "type": "object"
+    },
+    "KlaviyoDeleteCatalogItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_catalog_item",
+          "default": "delete_catalog_item",
+          "title": "Delete Catalog Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Catalog",
+          "x-display-name": "Delete Catalog Item"
+        },
+        "item_id": {
+          "title": "Catalog Item ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "KlaviyoDeleteCatalogItemConfig",
+      "type": "object"
+    },
+    "KlaviyoDeleteListConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_list",
+          "default": "delete_list",
+          "title": "Delete List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lists",
+          "x-display-name": "Delete List"
+        },
+        "list_id": {
+          "description": "Klaviyo list ID",
+          "title": "List",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "list_id",
+            "placeholder": "Select a list\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "klaviyo_list"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "KlaviyoDeleteListConfig",
+      "type": "object"
+    },
+    "KlaviyoDeleteSegmentConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_segment",
+          "default": "delete_segment",
+          "title": "Delete Segment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Segments",
+          "x-display-name": "Delete Segment"
+        },
+        "segment_id": {
+          "title": "Segment ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "segment_id"
+      ],
+      "title": "KlaviyoDeleteSegmentConfig",
+      "type": "object"
+    },
+    "KlaviyoDeleteTemplateConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_template",
+          "default": "delete_template",
+          "title": "Delete Template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "Delete Template"
+        },
+        "template_id": {
+          "title": "Template ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "KlaviyoDeleteTemplateConfig",
+      "type": "object"
+    },
+    "KlaviyoDeleteWebhookConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_webhook",
+          "default": "delete_webhook",
+          "title": "Delete Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Delete Webhook"
+        },
+        "webhook_id": {
+          "title": "Webhook ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "KlaviyoDeleteWebhookConfig",
+      "type": "object"
+    },
+    "KlaviyoGetAccountConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Get Account",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Account"
+        }
+      },
+      "title": "KlaviyoGetAccountConfig",
+      "type": "object"
+    },
+    "KlaviyoGetCampaignConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_campaign",
+          "default": "get_campaign",
+          "title": "Get Campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaigns",
+          "x-display-name": "Get Campaign"
+        },
+        "campaign_id": {
+          "title": "Campaign ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "KlaviyoGetCampaignConfig",
+      "type": "object"
+    },
+    "KlaviyoGetCampaignMessagesConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_campaign_messages",
+          "default": "get_campaign_messages",
+          "title": "Get Campaign Messages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaigns",
+          "x-display-name": "Get Campaign Messages"
+        },
+        "campaign_id": {
+          "title": "Campaign ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "KlaviyoGetCampaignMessagesConfig",
+      "type": "object"
+    },
+    "KlaviyoGetCatalogItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_catalog_item",
+          "default": "get_catalog_item",
+          "title": "Get Catalog Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Catalog",
+          "x-display-name": "Get Catalog Item"
+        },
+        "item_id": {
+          "description": "Compound id, e.g. $custom:::$default:::SKU123",
+          "title": "Catalog Item ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "KlaviyoGetCatalogItemConfig",
+      "type": "object"
+    },
+    "KlaviyoGetEventConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_event",
+          "default": "get_event",
+          "title": "Get Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "Get Event"
+        },
+        "event_id": {
+          "title": "Event ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "KlaviyoGetEventConfig",
+      "type": "object"
+    },
+    "KlaviyoGetFlowActionsConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_flow_actions",
+          "default": "get_flow_actions",
+          "title": "Get Flow Actions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Flows",
+          "x-display-name": "Get Flow Actions"
+        },
+        "flow_id": {
+          "title": "Flow ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "flow_id"
+      ],
+      "title": "KlaviyoGetFlowActionsConfig",
+      "type": "object"
+    },
+    "KlaviyoGetFlowConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_flow",
+          "default": "get_flow",
+          "title": "Get Flow",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Flows",
+          "x-display-name": "Get Flow"
+        },
+        "flow_id": {
+          "title": "Flow ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "flow_id",
+            "placeholder": "Select a flow\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "flow_id"
+      ],
+      "title": "KlaviyoGetFlowConfig",
+      "type": "object"
+    },
+    "KlaviyoGetFlowMessagesConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_flow_messages",
+          "default": "get_flow_messages",
+          "title": "Get Flow Messages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Flows",
+          "x-display-name": "Get Flow Messages"
+        },
+        "flow_action_id": {
+          "description": "Messages hang off flow actions, not flows",
+          "title": "Flow Action ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "flow_action_id"
+      ],
+      "title": "KlaviyoGetFlowMessagesConfig",
+      "type": "object"
+    },
+    "KlaviyoGetListConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_list",
+          "default": "get_list",
+          "title": "Get List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lists",
+          "x-display-name": "Get List"
+        },
+        "list_id": {
+          "description": "Klaviyo list ID",
+          "title": "List",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "list_id",
+            "placeholder": "Select a list\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "klaviyo_list"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "KlaviyoGetListConfig",
+      "type": "object"
+    },
+    "KlaviyoGetListProfilesConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_list_profiles",
+          "default": "get_list_profiles",
+          "title": "Get List Profiles",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lists",
+          "x-display-name": "Get List Profiles"
+        },
+        "list_id": {
+          "description": "Klaviyo list ID",
+          "title": "List",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "list_id",
+            "placeholder": "Select a list\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "klaviyo_list"
+        },
+        "page_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Cursor"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "KlaviyoGetListProfilesConfig",
+      "type": "object"
+    },
+    "KlaviyoGetMetricConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_metric",
+          "default": "get_metric",
+          "title": "Get Metric",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metrics",
+          "x-display-name": "Get Metric"
+        },
+        "metric_id": {
+          "description": "Klaviyo metric ID",
+          "title": "Metric",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "metric_id",
+            "placeholder": "Select a metric\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "metric_id"
+      ],
+      "title": "KlaviyoGetMetricConfig",
+      "type": "object"
+    },
+    "KlaviyoGetProfileConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_profile",
+          "default": "get_profile",
+          "title": "Get Profile",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Profiles",
+          "x-display-name": "Get Profile"
+        },
+        "profile_id": {
+          "title": "Profile ID",
+          "type": "string"
+        },
+        "additional_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "e.g. subscriptions,predictive_analytics",
+          "enum": [
+            "",
+            "subscriptions",
+            "predictive_analytics",
+            "subscriptions,predictive_analytics"
+          ],
+          "title": "Additional Fields",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "profile_id"
+      ],
+      "title": "KlaviyoGetProfileConfig",
+      "type": "object"
+    },
+    "KlaviyoGetProfileListsConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_profile_lists",
+          "default": "get_profile_lists",
+          "title": "Get Profile's Lists",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Profiles",
+          "x-display-name": "Get Profile's Lists"
+        },
+        "profile_id": {
+          "title": "Profile ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "profile_id"
+      ],
+      "title": "KlaviyoGetProfileListsConfig",
+      "type": "object"
+    },
+    "KlaviyoGetProfileSegmentsConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_profile_segments",
+          "default": "get_profile_segments",
+          "title": "Get Profile's Segments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Profiles",
+          "x-display-name": "Get Profile's Segments"
+        },
+        "profile_id": {
+          "title": "Profile ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "profile_id"
+      ],
+      "title": "KlaviyoGetProfileSegmentsConfig",
+      "type": "object"
+    },
+    "KlaviyoGetSegmentConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_segment",
+          "default": "get_segment",
+          "title": "Get Segment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Segments",
+          "x-display-name": "Get Segment"
+        },
+        "segment_id": {
+          "title": "Segment ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "segment_id",
+            "placeholder": "Select a segment\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "klaviyo_segment"
+        }
+      },
+      "required": [
+        "segment_id"
+      ],
+      "title": "KlaviyoGetSegmentConfig",
+      "type": "object"
+    },
+    "KlaviyoGetSegmentProfilesConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_segment_profiles",
+          "default": "get_segment_profiles",
+          "title": "Get Segment Profiles",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Segments",
+          "x-display-name": "Get Segment Profiles"
+        },
+        "segment_id": {
+          "title": "Segment ID",
+          "type": "string"
+        },
+        "page_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Cursor"
+        }
+      },
+      "required": [
+        "segment_id"
+      ],
+      "title": "KlaviyoGetSegmentProfilesConfig",
+      "type": "object"
+    },
+    "KlaviyoGetTemplateConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_template",
+          "default": "get_template",
+          "title": "Get Template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "Get Template"
+        },
+        "template_id": {
+          "title": "Template ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "template_id",
+            "placeholder": "Select a template\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "klaviyo_template"
+        }
+      },
+      "required": [
+        "template_id"
+      ],
+      "title": "KlaviyoGetTemplateConfig",
+      "type": "object"
+    },
+    "KlaviyoGetWebhookConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_webhook",
+          "default": "get_webhook",
+          "title": "Get Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Get Webhook"
+        },
+        "webhook_id": {
+          "title": "Webhook ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "KlaviyoGetWebhookConfig",
+      "type": "object"
+    },
+    "KlaviyoListCampaignsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_campaigns",
+          "default": "list_campaigns",
+          "title": "Get Campaigns",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaigns",
+          "x-display-name": "Get Campaigns"
+        },
+        "channel": {
+          "default": "email",
+          "description": "Klaviyo requires a channel filter",
+          "enum": [
+            "email",
+            "sms",
+            "mobile_push"
+          ],
+          "title": "Channel",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "title": "KlaviyoListCampaignsConfig",
+      "type": "object"
+    },
+    "KlaviyoListCatalogItemsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_catalog_items",
+          "default": "list_catalog_items",
+          "title": "Get Catalog Items",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Catalog",
+          "x-display-name": "Get Catalog Items"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Klaviyo filter DSL, e.g. equals(email,\"a@b.com\") or greater-than(created,2026-01-01T00:00:00Z)",
+          "title": "Filter"
+        }
+      },
+      "title": "KlaviyoListCatalogItemsConfig",
+      "type": "object"
+    },
+    "KlaviyoListCouponCodesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_coupon_codes",
+          "default": "list_coupon_codes",
+          "title": "Get Coupon Codes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Coupons",
+          "x-display-name": "Get Coupon Codes"
+        },
+        "filter": {
+          "description": "Required: filter by coupon or profile, e.g. any(coupon.id,[\"SUMMER\"]) or equals(profile.id,\"01H\u2026\")",
+          "title": "Filter",
+          "type": "string"
+        }
+      },
+      "required": [
+        "filter"
+      ],
+      "title": "KlaviyoListCouponCodesConfig",
+      "type": "object"
+    },
+    "KlaviyoListCouponsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_coupons",
+          "default": "list_coupons",
+          "title": "Get Coupons",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Coupons",
+          "x-display-name": "Get Coupons"
+        }
+      },
+      "title": "KlaviyoListCouponsConfig",
+      "type": "object"
+    },
+    "KlaviyoListEventsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_events",
+          "default": "list_events",
+          "title": "Get Events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "Get Events"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Klaviyo filter DSL, e.g. equals(email,\"a@b.com\") or greater-than(created,2026-01-01T00:00:00Z)",
+          "title": "Filter"
+        },
+        "page_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Cursor"
+        }
+      },
+      "title": "KlaviyoListEventsConfig",
+      "type": "object"
+    },
+    "KlaviyoListFlowsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_flows",
+          "default": "list_flows",
+          "title": "Get Flows",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Flows",
+          "x-display-name": "Get Flows"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Klaviyo filter DSL, e.g. equals(email,\"a@b.com\") or greater-than(created,2026-01-01T00:00:00Z)",
+          "title": "Filter"
+        }
+      },
+      "title": "KlaviyoListFlowsConfig",
+      "type": "object"
+    },
+    "KlaviyoListImagesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_images",
+          "default": "list_images",
+          "title": "Get Images",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Images",
+          "x-display-name": "Get Images"
+        }
+      },
+      "title": "KlaviyoListImagesConfig",
+      "type": "object"
+    },
+    "KlaviyoListListsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_lists",
+          "default": "list_lists",
+          "title": "Get Lists",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lists",
+          "x-display-name": "Get Lists"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Klaviyo filter DSL, e.g. equals(email,\"a@b.com\") or greater-than(created,2026-01-01T00:00:00Z)",
+          "title": "Filter"
+        }
+      },
+      "title": "KlaviyoListListsConfig",
+      "type": "object"
+    },
+    "KlaviyoListMetricsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_metrics",
+          "default": "list_metrics",
+          "title": "Get Metrics",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metrics",
+          "x-display-name": "Get Metrics"
+        }
+      },
+      "title": "KlaviyoListMetricsConfig",
+      "type": "object"
+    },
+    "KlaviyoListProfilesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_profiles",
+          "default": "list_profiles",
+          "title": "List Profiles",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Profiles",
+          "x-display-name": "List Profiles"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Klaviyo filter DSL, e.g. equals(email,\"a@b.com\") or greater-than(created,2026-01-01T00:00:00Z)",
+          "title": "Filter"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page (default 20, max 100)",
+          "title": "Page Size"
+        },
+        "page_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cursor from a previous response's links.next",
+          "title": "Page Cursor"
+        }
+      },
+      "title": "KlaviyoListProfilesConfig",
+      "type": "object"
+    },
+    "KlaviyoListSegmentsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_segments",
+          "default": "list_segments",
+          "title": "Get Segments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Segments",
+          "x-display-name": "Get Segments"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Klaviyo filter DSL, e.g. equals(email,\"a@b.com\") or greater-than(created,2026-01-01T00:00:00Z)",
+          "title": "Filter"
+        }
+      },
+      "title": "KlaviyoListSegmentsConfig",
+      "type": "object"
+    },
+    "KlaviyoListTagGroupsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_tag_groups",
+          "default": "list_tag_groups",
+          "title": "Get Tag Groups",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "Get Tag Groups"
+        }
+      },
+      "title": "KlaviyoListTagGroupsConfig",
+      "type": "object"
+    },
+    "KlaviyoListTagsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_tags",
+          "default": "list_tags",
+          "title": "Get Tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "Get Tags"
+        }
+      },
+      "title": "KlaviyoListTagsConfig",
+      "type": "object"
+    },
+    "KlaviyoListTemplatesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_templates",
+          "default": "list_templates",
+          "title": "Get Templates",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "Get Templates"
+        }
+      },
+      "title": "KlaviyoListTemplatesConfig",
+      "type": "object"
+    },
+    "KlaviyoListWebhookTopicsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_webhook_topics",
+          "default": "list_webhook_topics",
+          "title": "Get Webhook Topics",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Get Webhook Topics"
+        }
+      },
+      "title": "KlaviyoListWebhookTopicsConfig",
+      "type": "object"
+    },
+    "KlaviyoListWebhooksConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_webhooks",
+          "default": "list_webhooks",
+          "title": "Get Webhooks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Get Webhooks"
+        }
+      },
+      "title": "KlaviyoListWebhooksConfig",
+      "type": "object"
+    },
+    "KlaviyoMergeProfilesConfig": {
+      "properties": {
+        "operation": {
+          "const": "merge_profiles",
+          "default": "merge_profiles",
+          "title": "Merge Profiles",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Profiles",
+          "x-display-name": "Merge Profiles"
+        },
+        "destination_id": {
+          "description": "The profile kept (source merged into it)",
+          "title": "Destination Profile ID",
+          "type": "string"
+        },
+        "source_id": {
+          "description": "The profile merged away",
+          "title": "Source Profile ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "destination_id",
+        "source_id"
+      ],
+      "title": "KlaviyoMergeProfilesConfig",
+      "type": "object"
+    },
+    "KlaviyoOAuthCredential": {
+      "description": "OAuth 2.0 (PKCE) credential for Klaviyo \u2014 for marketplace/public apps.\n\nAccess tokens expire ~hourly and are auto-refreshed via the refresh token.",
+      "properties": {
+        "credential_type": {
+          "const": "klaviyo_oauth",
+          "default": "klaviyo_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "title": "Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refresh Token"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Expiry"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Name"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "KlaviyoOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://developers.klaviyo.com/en/docs/set_up_oauth",
+      "x-oauth-custom-client-help": "Klaviyo OAuth is for approved marketplace/public apps. Register one in the Klaviyo developer portal, allowlist NoClick's callback as a redirect URI, and paste its client ID + secret \u2014 or use the Private API Key credential instead.",
+      "x-oauth-provider": "klaviyo",
+      "x-oauth-scopes": [
+        "accounts:read",
+        "campaigns:read",
+        "campaigns:write",
+        "catalogs:read",
+        "catalogs:write",
+        "coupons:read",
+        "coupons:write",
+        "coupon-codes:read",
+        "coupon-codes:write",
+        "data-privacy:write",
+        "events:read",
+        "events:write",
+        "flows:read",
+        "flows:write",
+        "images:read",
+        "images:write",
+        "lists:read",
+        "lists:write",
+        "metrics:read",
+        "profiles:read",
+        "profiles:write",
+        "segments:read",
+        "segments:write",
+        "subscriptions:read",
+        "subscriptions:write",
+        "tags:read",
+        "tags:write",
+        "templates:read",
+        "templates:write",
+        "webhooks:read",
+        "webhooks:write"
+      ],
+      "x-oauth-supports-custom-client": true
+    },
+    "KlaviyoOnEmailBouncedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NoClick auto-generates this and registers it with Klaviyo",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_email_bounced",
+          "default": "on_email_bounced",
+          "title": "Email Bounced",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "Email Bounced",
+          "x-is-trigger": true
+        }
+      },
+      "title": "KlaviyoOnEmailBouncedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "KlaviyoOnEmailClickedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NoClick auto-generates this and registers it with Klaviyo",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_email_clicked",
+          "default": "on_email_clicked",
+          "title": "Email Clicked",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "Email Clicked",
+          "x-is-trigger": true
+        }
+      },
+      "title": "KlaviyoOnEmailClickedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "KlaviyoOnEmailClickedToUnsubscribeConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NoClick auto-generates this and registers it with Klaviyo",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_email_clicked_to_unsubscribe",
+          "default": "on_email_clicked_to_unsubscribe",
+          "title": "Email Clicked to Unsubscribe",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "Email Clicked to Unsubscribe",
+          "x-is-trigger": true
+        }
+      },
+      "title": "KlaviyoOnEmailClickedToUnsubscribeConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "KlaviyoOnEmailDroppedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NoClick auto-generates this and registers it with Klaviyo",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_email_dropped",
+          "default": "on_email_dropped",
+          "title": "Email Dropped",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "Email Dropped",
+          "x-is-trigger": true
+        }
+      },
+      "title": "KlaviyoOnEmailDroppedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "KlaviyoOnEmailMarkedSpamConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NoClick auto-generates this and registers it with Klaviyo",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_email_marked_spam",
+          "default": "on_email_marked_spam",
+          "title": "Email Marked as Spam",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "Email Marked as Spam",
+          "x-is-trigger": true
+        }
+      },
+      "title": "KlaviyoOnEmailMarkedSpamConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "KlaviyoOnEmailOpenedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NoClick auto-generates this and registers it with Klaviyo",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_email_opened",
+          "default": "on_email_opened",
+          "title": "Email Opened",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "Email Opened",
+          "x-is-trigger": true
+        }
+      },
+      "title": "KlaviyoOnEmailOpenedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "KlaviyoOnEmailReceivedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NoClick auto-generates this and registers it with Klaviyo",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_email_received",
+          "default": "on_email_received",
+          "title": "Email Received",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "Email Received",
+          "x-is-trigger": true
+        }
+      },
+      "title": "KlaviyoOnEmailReceivedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "KlaviyoOnEventConfig": {
+      "description": "Fire on a custom / account-specific Klaviyo topic (choose from the live list).",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NoClick auto-generates this and registers it with Klaviyo",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_event",
+          "default": "on_event",
+          "title": "On Event (custom topic)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Event (custom topic)",
+          "x-is-trigger": true
+        },
+        "topics": {
+          "default": "event:klaviyo.opened_email",
+          "description": "Comma-separated Klaviyo webhook topic IDs (see Get Webhook Topics), e.g. event:api.your_custom_metric",
+          "title": "Topics",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "topics",
+            "placeholder": "Select topics\u2026",
+            "searchable": true
+          }
+        }
+      },
+      "title": "KlaviyoOnEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "KlaviyoOnManuallySuppressedEmailConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NoClick auto-generates this and registers it with Klaviyo",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_manually_suppressed_email",
+          "default": "on_manually_suppressed_email",
+          "title": "Manually Suppressed from Email Marketing",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "Manually Suppressed from Email Marketing",
+          "x-is-trigger": true
+        }
+      },
+      "title": "KlaviyoOnManuallySuppressedEmailConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "KlaviyoOnManuallyUnsuppressedEmailConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NoClick auto-generates this and registers it with Klaviyo",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_manually_unsuppressed_email",
+          "default": "on_manually_unsuppressed_email",
+          "title": "Manually Unsuppressed from Email Marketing",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "Manually Unsuppressed from Email Marketing",
+          "x-is-trigger": true
+        }
+      },
+      "title": "KlaviyoOnManuallyUnsuppressedEmailConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "KlaviyoOnProfileMergedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NoClick auto-generates this and registers it with Klaviyo",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_profile_merged",
+          "default": "on_profile_merged",
+          "title": "Profile Merged",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "Profile Merged",
+          "x-is-trigger": true
+        }
+      },
+      "title": "KlaviyoOnProfileMergedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "KlaviyoOnPushBouncedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NoClick auto-generates this and registers it with Klaviyo",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_push_bounced",
+          "default": "on_push_bounced",
+          "title": "Push Bounced",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "Push Bounced",
+          "x-is-trigger": true
+        }
+      },
+      "title": "KlaviyoOnPushBouncedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "KlaviyoOnPushOpenedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NoClick auto-generates this and registers it with Klaviyo",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_push_opened",
+          "default": "on_push_opened",
+          "title": "Push Opened",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "Push Opened",
+          "x-is-trigger": true
+        }
+      },
+      "title": "KlaviyoOnPushOpenedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "KlaviyoOnPushReceivedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NoClick auto-generates this and registers it with Klaviyo",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_push_received",
+          "default": "on_push_received",
+          "title": "Push Received",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "Push Received",
+          "x-is-trigger": true
+        }
+      },
+      "title": "KlaviyoOnPushReceivedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "KlaviyoOnReadyToReviewConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NoClick auto-generates this and registers it with Klaviyo",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_ready_to_review",
+          "default": "on_ready_to_review",
+          "title": "Ready to Review",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "Ready to Review",
+          "x-is-trigger": true
+        }
+      },
+      "title": "KlaviyoOnReadyToReviewConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "KlaviyoOnSkippedSendConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NoClick auto-generates this and registers it with Klaviyo",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_skipped_send",
+          "default": "on_skipped_send",
+          "title": "Skipped Send",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "Skipped Send",
+          "x-is-trigger": true
+        }
+      },
+      "title": "KlaviyoOnSkippedSendConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "KlaviyoOnSmsAutoResponseFailedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NoClick auto-generates this and registers it with Klaviyo",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_sms_auto_response_failed",
+          "default": "on_sms_auto_response_failed",
+          "title": "SMS Automated Response Failed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "SMS Automated Response Failed",
+          "x-is-trigger": true
+        }
+      },
+      "title": "KlaviyoOnSmsAutoResponseFailedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "KlaviyoOnSmsAutoResponseReceivedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NoClick auto-generates this and registers it with Klaviyo",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_sms_auto_response_received",
+          "default": "on_sms_auto_response_received",
+          "title": "SMS Automated Response Received",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "SMS Automated Response Received",
+          "x-is-trigger": true
+        }
+      },
+      "title": "KlaviyoOnSmsAutoResponseReceivedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "KlaviyoOnSmsClickedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NoClick auto-generates this and registers it with Klaviyo",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_sms_clicked",
+          "default": "on_sms_clicked",
+          "title": "SMS Clicked",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "SMS Clicked",
+          "x-is-trigger": true
+        }
+      },
+      "title": "KlaviyoOnSmsClickedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "KlaviyoOnSmsFailedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NoClick auto-generates this and registers it with Klaviyo",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_sms_failed",
+          "default": "on_sms_failed",
+          "title": "SMS Failed to Deliver",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "SMS Failed to Deliver",
+          "x-is-trigger": true
+        }
+      },
+      "title": "KlaviyoOnSmsFailedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "KlaviyoOnSmsReceivedConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NoClick auto-generates this and registers it with Klaviyo",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_sms_received",
+          "default": "on_sms_received",
+          "title": "SMS Received",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "SMS Received",
+          "x-is-trigger": true
+        }
+      },
+      "title": "KlaviyoOnSmsReceivedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "KlaviyoOnSmsSentConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NoClick auto-generates this and registers it with Klaviyo",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_sms_sent",
+          "default": "on_sms_sent",
+          "title": "SMS Sent",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "SMS Sent",
+          "x-is-trigger": true
+        }
+      },
+      "title": "KlaviyoOnSmsSentConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "KlaviyoOnSocialCommentConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NoClick auto-generates this and registers it with Klaviyo",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_social_comment",
+          "default": "on_social_comment",
+          "title": "Social Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "Social Comment",
+          "x-is-trigger": true
+        }
+      },
+      "title": "KlaviyoOnSocialCommentConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "KlaviyoOnSocialDmConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NoClick auto-generates this and registers it with Klaviyo",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_social_dm",
+          "default": "on_social_dm",
+          "title": "Social DM",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "Social DM",
+          "x-is-trigger": true
+        }
+      },
+      "title": "KlaviyoOnSocialDmConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "KlaviyoOnSocialUgcConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NoClick auto-generates this and registers it with Klaviyo",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_social_ugc",
+          "default": "on_social_ugc",
+          "title": "Social UGC",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "Social UGC",
+          "x-is-trigger": true
+        }
+      },
+      "title": "KlaviyoOnSocialUgcConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "KlaviyoOnSubmittedRatingConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NoClick auto-generates this and registers it with Klaviyo",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_submitted_rating",
+          "default": "on_submitted_rating",
+          "title": "Submitted Rating",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "Submitted Rating",
+          "x-is-trigger": true
+        }
+      },
+      "title": "KlaviyoOnSubmittedRatingConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "KlaviyoOnSubmittedReviewConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NoClick auto-generates this and registers it with Klaviyo",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_submitted_review",
+          "default": "on_submitted_review",
+          "title": "Submitted Review",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "Submitted Review",
+          "x-is-trigger": true
+        }
+      },
+      "title": "KlaviyoOnSubmittedReviewConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "KlaviyoOnSubscribedEmailConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NoClick auto-generates this and registers it with Klaviyo",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_subscribed_email",
+          "default": "on_subscribed_email",
+          "title": "Subscribed to Email Marketing",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "Subscribed to Email Marketing",
+          "x-is-trigger": true
+        }
+      },
+      "title": "KlaviyoOnSubscribedEmailConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "KlaviyoOnSubscribedSmsConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NoClick auto-generates this and registers it with Klaviyo",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_subscribed_sms",
+          "default": "on_subscribed_sms",
+          "title": "Subscribed to SMS Marketing",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "Subscribed to SMS Marketing",
+          "x-is-trigger": true
+        }
+      },
+      "title": "KlaviyoOnSubscribedSmsConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "KlaviyoOnSubscribedToListConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NoClick auto-generates this and registers it with Klaviyo",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_subscribed_to_list",
+          "default": "on_subscribed_to_list",
+          "title": "Subscribed to List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "Subscribed to List",
+          "x-is-trigger": true
+        }
+      },
+      "title": "KlaviyoOnSubscribedToListConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "KlaviyoOnUnsubscribedEmailConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NoClick auto-generates this and registers it with Klaviyo",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_unsubscribed_email",
+          "default": "on_unsubscribed_email",
+          "title": "Unsubscribed from Email Marketing",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "Unsubscribed from Email Marketing",
+          "x-is-trigger": true
+        }
+      },
+      "title": "KlaviyoOnUnsubscribedEmailConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "KlaviyoOnUnsubscribedSmsConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NoClick auto-generates this and registers it with Klaviyo",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_unsubscribed_sms",
+          "default": "on_unsubscribed_sms",
+          "title": "Unsubscribed from SMS Marketing",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "Unsubscribed from SMS Marketing",
+          "x-is-trigger": true
+        }
+      },
+      "title": "KlaviyoOnUnsubscribedSmsConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "KlaviyoOnUpdatedEmailPreferencesConfig": {
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "NoClick auto-generates this and registers it with Klaviyo",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_updated_email_preferences",
+          "default": "on_updated_email_preferences",
+          "title": "Updated Email Preferences",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "Updated Email Preferences",
+          "x-is-trigger": true
+        }
+      },
+      "title": "KlaviyoOnUpdatedEmailPreferencesConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "KlaviyoQueryMetricAggregatesConfig": {
+      "properties": {
+        "operation": {
+          "const": "query_metric_aggregates",
+          "default": "query_metric_aggregates",
+          "title": "Query Metric Aggregates",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metrics",
+          "x-display-name": "Query Metric Aggregates"
+        },
+        "attributes_json": {
+          "description": "e.g. {\"metric_id\":\"abc\",\"measurements\":[\"count\"],\"interval\":\"day\",\"filter\":[\"greater-or-equal(datetime,2026-01-01T00:00:00)\",\"less-than(datetime,2026-02-01T00:00:00)\"]}",
+          "title": "Attributes (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "attributes_json"
+      ],
+      "title": "KlaviyoQueryMetricAggregatesConfig",
+      "type": "object"
+    },
+    "KlaviyoRemoveFromListConfig": {
+      "properties": {
+        "operation": {
+          "const": "remove_profiles_from_list",
+          "default": "remove_profiles_from_list",
+          "title": "Remove Profiles from List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lists",
+          "x-display-name": "Remove Profiles from List"
+        },
+        "list_id": {
+          "description": "Klaviyo list ID",
+          "title": "List",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "list_id",
+            "placeholder": "Select a list\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "klaviyo_list"
+        },
+        "profile_ids": {
+          "description": "Comma-separated profile IDs",
+          "title": "Profile IDs",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id",
+        "profile_ids"
+      ],
+      "title": "KlaviyoRemoveFromListConfig",
+      "type": "object"
+    },
+    "KlaviyoRenderTemplateConfig": {
+      "properties": {
+        "operation": {
+          "const": "render_template",
+          "default": "render_template",
+          "title": "Render Template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "Render Template"
+        },
+        "template_id": {
+          "title": "Template ID",
+          "type": "string"
+        },
+        "context_json": {
+          "description": "Template variables, e.g. {\"first_name\":\"Ada\"}",
+          "title": "Context (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "template_id",
+        "context_json"
+      ],
+      "title": "KlaviyoRenderTemplateConfig",
+      "type": "object"
+    },
+    "KlaviyoRequestDeletionConfig": {
+      "properties": {
+        "operation": {
+          "const": "request_profile_deletion",
+          "default": "request_profile_deletion",
+          "title": "Request Profile Deletion",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Request Profile Deletion"
+        },
+        "email": {
+          "description": "Email of the profile to delete (GDPR/CCPA; irreversible)",
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "KlaviyoRequestDeletionConfig",
+      "type": "object"
+    },
+    "KlaviyoSendCampaignConfig": {
+      "properties": {
+        "operation": {
+          "const": "send_campaign",
+          "default": "send_campaign",
+          "title": "Send Campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaigns",
+          "x-display-name": "Send Campaign"
+        },
+        "campaign_id": {
+          "description": "Creates a send job for this campaign",
+          "title": "Campaign ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "KlaviyoSendCampaignConfig",
+      "type": "object"
+    },
+    "KlaviyoSubscribeProfilesConfig": {
+      "properties": {
+        "operation": {
+          "const": "subscribe_profiles",
+          "default": "subscribe_profiles",
+          "title": "Subscribe Profiles",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Subscribe Profiles"
+        },
+        "list_id": {
+          "description": "Klaviyo list ID",
+          "title": "List",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "list_id",
+            "placeholder": "Select a list\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "klaviyo_list"
+        },
+        "emails": {
+          "description": "Comma-separated emails to subscribe (marketing consent)",
+          "title": "Emails",
+          "type": "string"
+        },
+        "custom_source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "NoClick workflow",
+          "title": "Consent Source"
+        }
+      },
+      "required": [
+        "list_id",
+        "emails"
+      ],
+      "title": "KlaviyoSubscribeProfilesConfig",
+      "type": "object"
+    },
+    "KlaviyoSuppressProfilesConfig": {
+      "properties": {
+        "operation": {
+          "const": "suppress_profiles",
+          "default": "suppress_profiles",
+          "title": "Suppress Profiles",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Profiles",
+          "x-display-name": "Suppress Profiles"
+        },
+        "emails": {
+          "description": "Comma-separated email addresses to suppress",
+          "title": "Emails",
+          "type": "string"
+        }
+      },
+      "required": [
+        "emails"
+      ],
+      "title": "KlaviyoSuppressProfilesConfig",
+      "type": "object"
+    },
+    "KlaviyoUnsubscribeProfilesConfig": {
+      "properties": {
+        "operation": {
+          "const": "unsubscribe_profiles",
+          "default": "unsubscribe_profiles",
+          "title": "Unsubscribe Profiles",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Unsubscribe Profiles"
+        },
+        "list_id": {
+          "description": "Klaviyo list ID",
+          "title": "List",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "list_id",
+            "placeholder": "Select a list\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "klaviyo_list"
+        },
+        "emails": {
+          "description": "Comma-separated emails to unsubscribe",
+          "title": "Emails",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id",
+        "emails"
+      ],
+      "title": "KlaviyoUnsubscribeProfilesConfig",
+      "type": "object"
+    },
+    "KlaviyoUnsuppressProfilesConfig": {
+      "properties": {
+        "operation": {
+          "const": "unsuppress_profiles",
+          "default": "unsuppress_profiles",
+          "title": "Unsuppress Profiles",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Profiles",
+          "x-display-name": "Unsuppress Profiles"
+        },
+        "emails": {
+          "description": "Comma-separated email addresses to unsuppress",
+          "title": "Emails",
+          "type": "string"
+        }
+      },
+      "required": [
+        "emails"
+      ],
+      "title": "KlaviyoUnsuppressProfilesConfig",
+      "type": "object"
+    },
+    "KlaviyoUpdateCampaignConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_campaign",
+          "default": "update_campaign",
+          "title": "Update Campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaigns",
+          "x-display-name": "Update Campaign"
+        },
+        "campaign_id": {
+          "title": "Campaign ID",
+          "type": "string"
+        },
+        "attributes_json": {
+          "description": "e.g. {\"name\":\"Summer Sale\"}",
+          "title": "Attributes (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "campaign_id",
+        "attributes_json"
+      ],
+      "title": "KlaviyoUpdateCampaignConfig",
+      "type": "object"
+    },
+    "KlaviyoUpdateCatalogItemConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_catalog_item",
+          "default": "update_catalog_item",
+          "title": "Update Catalog Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Catalog",
+          "x-display-name": "Update Catalog Item"
+        },
+        "item_id": {
+          "title": "Catalog Item ID",
+          "type": "string"
+        },
+        "attributes_json": {
+          "description": "e.g. {\"title\":\"New Title\",\"price\":24.99}",
+          "title": "Attributes (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "item_id",
+        "attributes_json"
+      ],
+      "title": "KlaviyoUpdateCatalogItemConfig",
+      "type": "object"
+    },
+    "KlaviyoUpdateFlowStatusConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_flow_status",
+          "default": "update_flow_status",
+          "title": "Update Flow Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Flows",
+          "x-display-name": "Update Flow Status"
+        },
+        "flow_id": {
+          "title": "Flow ID",
+          "type": "string"
+        },
+        "status": {
+          "enum": [
+            "draft",
+            "manual",
+            "live"
+          ],
+          "title": "Status",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "flow_id",
+        "status"
+      ],
+      "title": "KlaviyoUpdateFlowStatusConfig",
+      "type": "object"
+    },
+    "KlaviyoUpdateListConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_list",
+          "default": "update_list",
+          "title": "Update List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lists",
+          "x-display-name": "Update List"
+        },
+        "list_id": {
+          "description": "Klaviyo list ID",
+          "title": "List",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "list_id",
+            "placeholder": "Select a list\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "klaviyo_list"
+        },
+        "name": {
+          "title": "New Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id",
+        "name"
+      ],
+      "title": "KlaviyoUpdateListConfig",
+      "type": "object"
+    },
+    "KlaviyoUpdateProfileConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_profile",
+          "default": "update_profile",
+          "title": "Update Profile",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Profiles",
+          "x-display-name": "Update Profile"
+        },
+        "profile_id": {
+          "title": "Profile ID",
+          "type": "string"
+        },
+        "attributes_json": {
+          "description": "Fields to update, e.g. {\"first_name\":\"Ada\",\"properties\":{\"plan\":\"pro\"}}",
+          "title": "Attributes (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "profile_id",
+        "attributes_json"
+      ],
+      "title": "KlaviyoUpdateProfileConfig",
+      "type": "object"
+    },
+    "KlaviyoUpdateSegmentConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_segment",
+          "default": "update_segment",
+          "title": "Update Segment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Segments",
+          "x-display-name": "Update Segment"
+        },
+        "segment_id": {
+          "title": "Segment ID",
+          "type": "string"
+        },
+        "attributes_json": {
+          "description": "e.g. {\"name\":\"VIPs\"} or {\"definition\":{...}}",
+          "title": "Attributes (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "segment_id",
+        "attributes_json"
+      ],
+      "title": "KlaviyoUpdateSegmentConfig",
+      "type": "object"
+    },
+    "KlaviyoUpdateTemplateConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_template",
+          "default": "update_template",
+          "title": "Update Template",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Templates",
+          "x-display-name": "Update Template"
+        },
+        "template_id": {
+          "title": "Template ID",
+          "type": "string"
+        },
+        "attributes_json": {
+          "description": "e.g. {\"name\":\"Welcome\",\"html\":\"<html>\u2026</html>\"}",
+          "title": "Attributes (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "template_id",
+        "attributes_json"
+      ],
+      "title": "KlaviyoUpdateTemplateConfig",
+      "type": "object"
+    },
+    "KlaviyoUpdateWebhookConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_webhook",
+          "default": "update_webhook",
+          "title": "Update Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Update Webhook"
+        },
+        "webhook_id": {
+          "title": "Webhook ID",
+          "type": "string"
+        },
+        "attributes_json": {
+          "description": "e.g. {\"enabled\":false}",
+          "title": "Attributes (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "webhook_id",
+        "attributes_json"
+      ],
+      "title": "KlaviyoUpdateWebhookConfig",
+      "type": "object"
+    },
+    "KlaviyoUploadImageUrlConfig": {
+      "properties": {
+        "operation": {
+          "const": "upload_image_from_url",
+          "default": "upload_image_from_url",
+          "title": "Upload Image from URL",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Images",
+          "x-display-name": "Upload Image from URL"
+        },
+        "import_from_url": {
+          "description": "Public URL to import the image from",
+          "title": "Image URL",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Name"
+        }
+      },
+      "required": [
+        "import_from_url"
+      ],
+      "title": "KlaviyoUploadImageUrlConfig",
+      "type": "object"
+    },
+    "KlaviyoUpsertProfileConfig": {
+      "properties": {
+        "operation": {
+          "const": "upsert_profile",
+          "default": "upsert_profile",
+          "title": "Create or Update Profile",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Profiles",
+          "x-display-name": "Create or Update Profile"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone Number"
+        },
+        "external_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External ID"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Name"
+        },
+        "properties_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom Properties (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "KlaviyoUpsertProfileConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full Klaviyo node configuration including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_profiles_to_list": "#/$defs/KlaviyoAddToListConfig",
+          "clone_campaign": "#/$defs/KlaviyoCloneCampaignConfig",
+          "clone_template": "#/$defs/KlaviyoCloneTemplateConfig",
+          "create_campaign": "#/$defs/KlaviyoCreateCampaignConfig",
+          "create_catalog_item": "#/$defs/KlaviyoCreateCatalogItemConfig",
+          "create_coupon": "#/$defs/KlaviyoCreateCouponConfig",
+          "create_coupon_code": "#/$defs/KlaviyoCreateCouponCodeConfig",
+          "create_event": "#/$defs/KlaviyoCreateEventConfig",
+          "create_list": "#/$defs/KlaviyoCreateListConfig",
+          "create_profile": "#/$defs/KlaviyoCreateProfileConfig",
+          "create_segment": "#/$defs/KlaviyoCreateSegmentConfig",
+          "create_tag": "#/$defs/KlaviyoCreateTagConfig",
+          "create_template": "#/$defs/KlaviyoCreateTemplateConfig",
+          "create_webhook": "#/$defs/KlaviyoCreateWebhookConfig",
+          "delete_campaign": "#/$defs/KlaviyoDeleteCampaignConfig",
+          "delete_catalog_item": "#/$defs/KlaviyoDeleteCatalogItemConfig",
+          "delete_list": "#/$defs/KlaviyoDeleteListConfig",
+          "delete_segment": "#/$defs/KlaviyoDeleteSegmentConfig",
+          "delete_template": "#/$defs/KlaviyoDeleteTemplateConfig",
+          "delete_webhook": "#/$defs/KlaviyoDeleteWebhookConfig",
+          "get_account": "#/$defs/KlaviyoGetAccountConfig",
+          "get_campaign": "#/$defs/KlaviyoGetCampaignConfig",
+          "get_campaign_messages": "#/$defs/KlaviyoGetCampaignMessagesConfig",
+          "get_catalog_item": "#/$defs/KlaviyoGetCatalogItemConfig",
+          "get_event": "#/$defs/KlaviyoGetEventConfig",
+          "get_flow": "#/$defs/KlaviyoGetFlowConfig",
+          "get_flow_actions": "#/$defs/KlaviyoGetFlowActionsConfig",
+          "get_flow_messages": "#/$defs/KlaviyoGetFlowMessagesConfig",
+          "get_list": "#/$defs/KlaviyoGetListConfig",
+          "get_list_profiles": "#/$defs/KlaviyoGetListProfilesConfig",
+          "get_metric": "#/$defs/KlaviyoGetMetricConfig",
+          "get_profile": "#/$defs/KlaviyoGetProfileConfig",
+          "get_profile_lists": "#/$defs/KlaviyoGetProfileListsConfig",
+          "get_profile_segments": "#/$defs/KlaviyoGetProfileSegmentsConfig",
+          "get_segment": "#/$defs/KlaviyoGetSegmentConfig",
+          "get_segment_profiles": "#/$defs/KlaviyoGetSegmentProfilesConfig",
+          "get_template": "#/$defs/KlaviyoGetTemplateConfig",
+          "get_webhook": "#/$defs/KlaviyoGetWebhookConfig",
+          "list_campaigns": "#/$defs/KlaviyoListCampaignsConfig",
+          "list_catalog_items": "#/$defs/KlaviyoListCatalogItemsConfig",
+          "list_coupon_codes": "#/$defs/KlaviyoListCouponCodesConfig",
+          "list_coupons": "#/$defs/KlaviyoListCouponsConfig",
+          "list_events": "#/$defs/KlaviyoListEventsConfig",
+          "list_flows": "#/$defs/KlaviyoListFlowsConfig",
+          "list_images": "#/$defs/KlaviyoListImagesConfig",
+          "list_lists": "#/$defs/KlaviyoListListsConfig",
+          "list_metrics": "#/$defs/KlaviyoListMetricsConfig",
+          "list_profiles": "#/$defs/KlaviyoListProfilesConfig",
+          "list_segments": "#/$defs/KlaviyoListSegmentsConfig",
+          "list_tag_groups": "#/$defs/KlaviyoListTagGroupsConfig",
+          "list_tags": "#/$defs/KlaviyoListTagsConfig",
+          "list_templates": "#/$defs/KlaviyoListTemplatesConfig",
+          "list_webhook_topics": "#/$defs/KlaviyoListWebhookTopicsConfig",
+          "list_webhooks": "#/$defs/KlaviyoListWebhooksConfig",
+          "merge_profiles": "#/$defs/KlaviyoMergeProfilesConfig",
+          "on_email_bounced": "#/$defs/KlaviyoOnEmailBouncedConfig",
+          "on_email_clicked": "#/$defs/KlaviyoOnEmailClickedConfig",
+          "on_email_clicked_to_unsubscribe": "#/$defs/KlaviyoOnEmailClickedToUnsubscribeConfig",
+          "on_email_dropped": "#/$defs/KlaviyoOnEmailDroppedConfig",
+          "on_email_marked_spam": "#/$defs/KlaviyoOnEmailMarkedSpamConfig",
+          "on_email_opened": "#/$defs/KlaviyoOnEmailOpenedConfig",
+          "on_email_received": "#/$defs/KlaviyoOnEmailReceivedConfig",
+          "on_event": "#/$defs/KlaviyoOnEventConfig",
+          "on_manually_suppressed_email": "#/$defs/KlaviyoOnManuallySuppressedEmailConfig",
+          "on_manually_unsuppressed_email": "#/$defs/KlaviyoOnManuallyUnsuppressedEmailConfig",
+          "on_profile_merged": "#/$defs/KlaviyoOnProfileMergedConfig",
+          "on_push_bounced": "#/$defs/KlaviyoOnPushBouncedConfig",
+          "on_push_opened": "#/$defs/KlaviyoOnPushOpenedConfig",
+          "on_push_received": "#/$defs/KlaviyoOnPushReceivedConfig",
+          "on_ready_to_review": "#/$defs/KlaviyoOnReadyToReviewConfig",
+          "on_skipped_send": "#/$defs/KlaviyoOnSkippedSendConfig",
+          "on_sms_auto_response_failed": "#/$defs/KlaviyoOnSmsAutoResponseFailedConfig",
+          "on_sms_auto_response_received": "#/$defs/KlaviyoOnSmsAutoResponseReceivedConfig",
+          "on_sms_clicked": "#/$defs/KlaviyoOnSmsClickedConfig",
+          "on_sms_failed": "#/$defs/KlaviyoOnSmsFailedConfig",
+          "on_sms_received": "#/$defs/KlaviyoOnSmsReceivedConfig",
+          "on_sms_sent": "#/$defs/KlaviyoOnSmsSentConfig",
+          "on_social_comment": "#/$defs/KlaviyoOnSocialCommentConfig",
+          "on_social_dm": "#/$defs/KlaviyoOnSocialDmConfig",
+          "on_social_ugc": "#/$defs/KlaviyoOnSocialUgcConfig",
+          "on_submitted_rating": "#/$defs/KlaviyoOnSubmittedRatingConfig",
+          "on_submitted_review": "#/$defs/KlaviyoOnSubmittedReviewConfig",
+          "on_subscribed_email": "#/$defs/KlaviyoOnSubscribedEmailConfig",
+          "on_subscribed_sms": "#/$defs/KlaviyoOnSubscribedSmsConfig",
+          "on_subscribed_to_list": "#/$defs/KlaviyoOnSubscribedToListConfig",
+          "on_unsubscribed_email": "#/$defs/KlaviyoOnUnsubscribedEmailConfig",
+          "on_unsubscribed_sms": "#/$defs/KlaviyoOnUnsubscribedSmsConfig",
+          "on_updated_email_preferences": "#/$defs/KlaviyoOnUpdatedEmailPreferencesConfig",
+          "query_metric_aggregates": "#/$defs/KlaviyoQueryMetricAggregatesConfig",
+          "remove_profiles_from_list": "#/$defs/KlaviyoRemoveFromListConfig",
+          "render_template": "#/$defs/KlaviyoRenderTemplateConfig",
+          "request_profile_deletion": "#/$defs/KlaviyoRequestDeletionConfig",
+          "send_campaign": "#/$defs/KlaviyoSendCampaignConfig",
+          "subscribe_profiles": "#/$defs/KlaviyoSubscribeProfilesConfig",
+          "suppress_profiles": "#/$defs/KlaviyoSuppressProfilesConfig",
+          "unsubscribe_profiles": "#/$defs/KlaviyoUnsubscribeProfilesConfig",
+          "unsuppress_profiles": "#/$defs/KlaviyoUnsuppressProfilesConfig",
+          "update_campaign": "#/$defs/KlaviyoUpdateCampaignConfig",
+          "update_catalog_item": "#/$defs/KlaviyoUpdateCatalogItemConfig",
+          "update_flow_status": "#/$defs/KlaviyoUpdateFlowStatusConfig",
+          "update_list": "#/$defs/KlaviyoUpdateListConfig",
+          "update_profile": "#/$defs/KlaviyoUpdateProfileConfig",
+          "update_segment": "#/$defs/KlaviyoUpdateSegmentConfig",
+          "update_template": "#/$defs/KlaviyoUpdateTemplateConfig",
+          "update_webhook": "#/$defs/KlaviyoUpdateWebhookConfig",
+          "upload_image_from_url": "#/$defs/KlaviyoUploadImageUrlConfig",
+          "upsert_profile": "#/$defs/KlaviyoUpsertProfileConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/KlaviyoGetProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoListProfilesConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoCreateProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoUpdateProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoUpsertProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoMergeProfilesConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoGetProfileListsConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoGetProfileSegmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoSuppressProfilesConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoUnsuppressProfilesConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoSubscribeProfilesConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoUnsubscribeProfilesConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoListListsConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoGetListConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoCreateListConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoUpdateListConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoDeleteListConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoGetListProfilesConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoAddToListConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoRemoveFromListConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoListSegmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoGetSegmentConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoCreateSegmentConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoUpdateSegmentConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoDeleteSegmentConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoGetSegmentProfilesConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoListEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoGetEventConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoCreateEventConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoListMetricsConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoGetMetricConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoQueryMetricAggregatesConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoListCampaignsConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoGetCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoCreateCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoUpdateCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoDeleteCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoSendCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoCloneCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoGetCampaignMessagesConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoListFlowsConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoGetFlowConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoUpdateFlowStatusConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoGetFlowActionsConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoGetFlowMessagesConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoListTemplatesConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoGetTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoCreateTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoUpdateTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoDeleteTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoRenderTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoCloneTemplateConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoListCatalogItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoGetCatalogItemConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoCreateCatalogItemConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoUpdateCatalogItemConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoDeleteCatalogItemConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoListCouponsConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoCreateCouponConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoListCouponCodesConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoCreateCouponCodeConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoListTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoCreateTagConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoListTagGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoListImagesConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoUploadImageUrlConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoGetAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoRequestDeletionConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoListWebhooksConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoGetWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoCreateWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoUpdateWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoDeleteWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoListWebhookTopicsConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoOnEventConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoOnEmailOpenedConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoOnEmailClickedConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoOnEmailClickedToUnsubscribeConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoOnEmailReceivedConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoOnEmailBouncedConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoOnEmailDroppedConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoOnEmailMarkedSpamConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoOnSmsReceivedConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoOnSmsSentConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoOnSmsClickedConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoOnSmsFailedConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoOnSmsAutoResponseReceivedConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoOnSmsAutoResponseFailedConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoOnPushOpenedConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoOnPushReceivedConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoOnPushBouncedConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoOnSubscribedEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoOnUnsubscribedEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoOnSubscribedSmsConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoOnUnsubscribedSmsConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoOnSubscribedToListConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoOnUpdatedEmailPreferencesConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoOnManuallySuppressedEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoOnManuallyUnsuppressedEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoOnReadyToReviewConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoOnSubmittedReviewConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoOnSubmittedRatingConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoOnSocialCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoOnSocialDmConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoOnSocialUgcConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoOnProfileMergedConfig"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoOnSkippedSendConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/KlaviyoOAuthCredential"
+        },
+        {
+          "$ref": "#/$defs/KlaviyoApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Klaviyo Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Create or update a Klaviyo profile when a form is submitted",
+    "Subscribe an email to a Klaviyo list",
+    "Track a 'Placed Order' event in Klaviyo",
+    "Send a Klaviyo campaign",
+    "Trigger a workflow when someone opens a Klaviyo email"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

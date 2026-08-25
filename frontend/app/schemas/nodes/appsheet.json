@@ -1,0 +1,869 @@
+{
+  "$defs": {
+    "AppSheetAddRowsConfig": {
+      "description": "Insert one or more new rows into a table.",
+      "properties": {
+        "operation": {
+          "const": "add_rows",
+          "default": "add_rows",
+          "title": "Add Rows",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Rows",
+          "x-display-name": "Add Rows",
+          "x-is-trigger": false
+        },
+        "table_name": {
+          "description": "Name of the table to add rows to (column names are case-sensitive)",
+          "title": "Table Name",
+          "type": "string"
+        },
+        "rows": {
+          "description": "JSON array of row objects keyed by column name, e.g. [{\"FirstName\": \"Jane\", \"LastName\": \"Doe\"}]",
+          "title": "Rows",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "run_as_user_email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Execute as this app user so security filters / USEREMAIL() resolve correctly",
+          "title": "Run As User Email"
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Locale used to validate Date/Time/Decimal values, e.g. en-US",
+          "title": "Locale"
+        },
+        "timezone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Timezone used to validate DateTime values, e.g. Pacific Standard Time",
+          "title": "Timezone"
+        }
+      },
+      "required": [
+        "table_name",
+        "rows"
+      ],
+      "title": "AppSheetAddRowsConfig",
+      "type": "object"
+    },
+    "AppSheetApiKeyCredential": {
+      "description": "Application Access Key credential for a single AppSheet app.",
+      "properties": {
+        "credential_type": {
+          "const": "appsheet_api_key",
+          "default": "appsheet_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "app_id": {
+          "description": "The AppSheet app's unique identifier (shown in the editor URL). The access key is scoped to this app.",
+          "title": "App ID",
+          "type": "string"
+        },
+        "application_access_key": {
+          "description": "Per-app key from Settings -> Integrations -> 'IN: from cloud services to your app' -> Create Application Access Key (looks like V2-...). Enterprise plan required.",
+          "title": "Application Access Key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "region": {
+          "default": "global",
+          "description": "Data-residency region of the app. EU/APAC apps must use their regional host.",
+          "enum": [
+            "global",
+            "eu",
+            "asia-southeast"
+          ],
+          "enumNames": [
+            "Global (www.appsheet.com)",
+            "EU (eu.appsheet.com)",
+            "Asia-Pacific (asia-southeast.appsheet.com)"
+          ],
+          "title": "Region",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "app_id",
+        "application_access_key"
+      ],
+      "title": "AppSheetApiKeyCredential",
+      "type": "object",
+      "x-credential-url": "https://support.google.com/appsheet/answer/10105769"
+    },
+    "AppSheetDeleteRowsConfig": {
+      "description": "Delete existing rows; each row must include the key column value(s).",
+      "properties": {
+        "operation": {
+          "const": "delete_rows",
+          "default": "delete_rows",
+          "title": "Delete Rows",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Rows",
+          "x-display-name": "Delete Rows",
+          "x-is-trigger": false
+        },
+        "table_name": {
+          "description": "Name of the table to delete rows from",
+          "title": "Table Name",
+          "type": "string"
+        },
+        "rows": {
+          "description": "JSON array of row objects; each must include the key column value(s), e.g. [{\"Id\": \"123\"}]",
+          "title": "Rows",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "run_as_user_email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Execute as this app user for security filters",
+          "title": "Run As User Email"
+        }
+      },
+      "required": [
+        "table_name",
+        "rows"
+      ],
+      "title": "AppSheetDeleteRowsConfig",
+      "type": "object"
+    },
+    "AppSheetEditRowsConfig": {
+      "description": "Update existing rows; each row must include the key column(s) plus changed columns.",
+      "properties": {
+        "operation": {
+          "const": "edit_rows",
+          "default": "edit_rows",
+          "title": "Edit Rows",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Rows",
+          "x-display-name": "Edit Rows",
+          "x-is-trigger": false
+        },
+        "table_name": {
+          "description": "Name of the table to edit rows in",
+          "title": "Table Name",
+          "type": "string"
+        },
+        "rows": {
+          "description": "JSON array of row objects; each must include the key column value(s) and the columns to change",
+          "title": "Rows",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "run_as_user_email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Execute as this app user for security filters",
+          "title": "Run As User Email"
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Locale used to validate values, e.g. en-US",
+          "title": "Locale"
+        },
+        "timezone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Timezone used to validate DateTime values",
+          "title": "Timezone"
+        }
+      },
+      "required": [
+        "table_name",
+        "rows"
+      ],
+      "title": "AppSheetEditRowsConfig",
+      "type": "object"
+    },
+    "AppSheetFindAllRowsConfig": {
+      "description": "Return every row in the table (empty Rows, no Selector).",
+      "properties": {
+        "operation": {
+          "const": "find_all_rows",
+          "default": "find_all_rows",
+          "title": "Find All Rows",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Find",
+          "x-display-name": "Find All Rows",
+          "x-is-trigger": false
+        },
+        "table_name": {
+          "description": "Name of the table to read all rows from",
+          "title": "Table Name",
+          "type": "string"
+        },
+        "run_as_user_email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Execute as this app user for security filters",
+          "title": "Run As User Email"
+        }
+      },
+      "required": [
+        "table_name"
+      ],
+      "title": "AppSheetFindAllRowsConfig",
+      "type": "object"
+    },
+    "AppSheetFindRowsConfig": {
+      "description": "Read specific rows by key; provide key values in Rows.",
+      "properties": {
+        "operation": {
+          "const": "find_rows",
+          "default": "find_rows",
+          "title": "Find Rows by Key",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Find",
+          "x-display-name": "Find Rows by Key",
+          "x-is-trigger": false
+        },
+        "table_name": {
+          "description": "Name of the table to read from",
+          "title": "Table Name",
+          "type": "string"
+        },
+        "rows": {
+          "description": "JSON array of row objects holding the key column value(s) to fetch, e.g. [{\"Id\": \"123\"}]",
+          "title": "Rows",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "run_as_user_email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Execute as this app user for security filters",
+          "title": "Run As User Email"
+        }
+      },
+      "required": [
+        "table_name",
+        "rows"
+      ],
+      "title": "AppSheetFindRowsConfig",
+      "type": "object"
+    },
+    "AppSheetFindWithSelectorConfig": {
+      "description": "Read rows matching an AppSheet Selector expression (FILTER/SELECT/ORDERBY/TOP).",
+      "properties": {
+        "operation": {
+          "const": "find_with_selector",
+          "default": "find_with_selector",
+          "title": "Find with Selector",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Find",
+          "x-display-name": "Find with Selector",
+          "x-is-trigger": false
+        },
+        "table_name": {
+          "description": "Name of the table to read from",
+          "title": "Table Name",
+          "type": "string"
+        },
+        "selector": {
+          "description": "AppSheet expression, e.g. Filter(People, [Age] >= 21), OrderBy(People, [LastName], TRUE), or Top(Filter(People,[Age]>=21),10)",
+          "title": "Selector",
+          "type": "string"
+        },
+        "run_as_user_email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Execute as this app user for security filters",
+          "title": "Run As User Email"
+        }
+      },
+      "required": [
+        "table_name",
+        "selector"
+      ],
+      "title": "AppSheetFindWithSelectorConfig",
+      "type": "object"
+    },
+    "AppSheetInvokeActionConfig": {
+      "description": "Run a data-change action predefined in the app against the supplied rows.",
+      "properties": {
+        "operation": {
+          "const": "invoke_action",
+          "default": "invoke_action",
+          "title": "Invoke Custom Action",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "Invoke Custom Action",
+          "x-is-trigger": false
+        },
+        "table_name": {
+          "description": "Name of the table the action operates on",
+          "title": "Table Name",
+          "type": "string"
+        },
+        "action_name": {
+          "description": "Name of the custom action defined in the app",
+          "title": "Action Name",
+          "type": "string"
+        },
+        "rows": {
+          "description": "JSON array of row objects the action runs against, e.g. [{\"Id\": \"123\"}]",
+          "title": "Rows",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "run_as_user_email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Execute as this app user for security filters",
+          "title": "Run As User Email"
+        }
+      },
+      "required": [
+        "table_name",
+        "action_name",
+        "rows"
+      ],
+      "title": "AppSheetInvokeActionConfig",
+      "type": "object"
+    },
+    "AppSheetOnDataChangeConfig": {
+      "description": "Fires on any data change (AppSheet bot event: 'Adds and updates' / 'All changes').",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_data_change",
+          "default": "on_data_change",
+          "title": "On Any Data Change",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Any Data Change",
+          "x-is-trigger": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Point a 'Call a webhook' task at this URL from an AppSheet Automation bot whose event is set to any data change (\"Adds and updates\" / \"All changes\").",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "AppSheetOnDataChangeConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "AppSheetOnRowsAddedConfig": {
+      "description": "Fires when rows are added (AppSheet bot event: 'Adds only').",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_rows_added",
+          "default": "on_rows_added",
+          "title": "On Rows Added",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Rows Added",
+          "x-is-trigger": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Point a 'Call a webhook' task at this URL from an AppSheet Automation bot whose event is set to \"Adds only\" (data change).",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "AppSheetOnRowsAddedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "AppSheetOnRowsDeletedConfig": {
+      "description": "Fires when rows are deleted (AppSheet bot event: 'Deletes only').",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_rows_deleted",
+          "default": "on_rows_deleted",
+          "title": "On Rows Deleted",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Rows Deleted",
+          "x-is-trigger": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Point a 'Call a webhook' task at this URL from an AppSheet Automation bot whose event is set to \"Deletes only\" (data change).",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "AppSheetOnRowsDeletedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "AppSheetOnRowsUpdatedConfig": {
+      "description": "Fires when rows are updated (AppSheet bot event: 'Updates only').",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_rows_updated",
+          "default": "on_rows_updated",
+          "title": "On Rows Updated",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Rows Updated",
+          "x-is-trigger": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Point a 'Call a webhook' task at this URL from an AppSheet Automation bot whose event is set to \"Updates only\" (data change).",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "AppSheetOnRowsUpdatedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "AppSheetOnScheduleConfig": {
+      "description": "Fires on a schedule (AppSheet bot event: 'Scheduled').",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_schedule",
+          "default": "on_schedule",
+          "title": "On Schedule",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Schedule",
+          "x-is-trigger": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Point a 'Call a webhook' task at this URL from an AppSheet Automation bot whose event is set to a Scheduled event.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "AppSheetOnScheduleConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    }
+  },
+  "description": "Full configuration for the AppSheet node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_rows": "#/$defs/AppSheetAddRowsConfig",
+          "delete_rows": "#/$defs/AppSheetDeleteRowsConfig",
+          "edit_rows": "#/$defs/AppSheetEditRowsConfig",
+          "find_all_rows": "#/$defs/AppSheetFindAllRowsConfig",
+          "find_rows": "#/$defs/AppSheetFindRowsConfig",
+          "find_with_selector": "#/$defs/AppSheetFindWithSelectorConfig",
+          "invoke_action": "#/$defs/AppSheetInvokeActionConfig",
+          "on_data_change": "#/$defs/AppSheetOnDataChangeConfig",
+          "on_rows_added": "#/$defs/AppSheetOnRowsAddedConfig",
+          "on_rows_deleted": "#/$defs/AppSheetOnRowsDeletedConfig",
+          "on_rows_updated": "#/$defs/AppSheetOnRowsUpdatedConfig",
+          "on_schedule": "#/$defs/AppSheetOnScheduleConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/AppSheetAddRowsConfig"
+        },
+        {
+          "$ref": "#/$defs/AppSheetEditRowsConfig"
+        },
+        {
+          "$ref": "#/$defs/AppSheetDeleteRowsConfig"
+        },
+        {
+          "$ref": "#/$defs/AppSheetFindRowsConfig"
+        },
+        {
+          "$ref": "#/$defs/AppSheetFindAllRowsConfig"
+        },
+        {
+          "$ref": "#/$defs/AppSheetFindWithSelectorConfig"
+        },
+        {
+          "$ref": "#/$defs/AppSheetInvokeActionConfig"
+        },
+        {
+          "$ref": "#/$defs/AppSheetOnRowsAddedConfig"
+        },
+        {
+          "$ref": "#/$defs/AppSheetOnRowsUpdatedConfig"
+        },
+        {
+          "$ref": "#/$defs/AppSheetOnRowsDeletedConfig"
+        },
+        {
+          "$ref": "#/$defs/AppSheetOnDataChangeConfig"
+        },
+        {
+          "$ref": "#/$defs/AppSheetOnScheduleConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/AppSheetApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Appsheet Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Add a new row to the Orders table in AppSheet",
+    "Edit a customer record by its key column",
+    "Delete rows from a table when a deal is lost",
+    "Find all rows where Age is at least 21 using a FILTER selector",
+    "Trigger a workflow when an AppSheet bot posts a row-change webhook"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -1,0 +1,835 @@
+{
+  "$defs": {
+    "UpstashDeleteConfig": {
+      "description": "Delete vectors by ID.",
+      "properties": {
+        "operation": {
+          "const": "delete",
+          "default": "delete",
+          "title": "Delete Vectors",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Vectors",
+          "x-display-name": "Delete Vectors",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove",
+            "clear",
+            "purge"
+          ]
+        },
+        "ids": {
+          "description": "Vector IDs to delete, comma-separated",
+          "title": "IDs",
+          "type": "string"
+        },
+        "namespace": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Namespace"
+        }
+      },
+      "required": [
+        "ids"
+      ],
+      "title": "UpstashDeleteConfig",
+      "type": "object"
+    },
+    "UpstashFetchConfig": {
+      "description": "Fetch vectors by ID.",
+      "properties": {
+        "operation": {
+          "const": "fetch",
+          "default": "fetch",
+          "title": "Fetch Vectors",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Vectors",
+          "x-display-name": "Fetch Vectors",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "get",
+            "lookup by id",
+            "read vectors"
+          ]
+        },
+        "ids": {
+          "description": "Vector IDs to fetch, comma-separated",
+          "title": "IDs",
+          "type": "string"
+        },
+        "namespace": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Namespace"
+        },
+        "include_metadata": {
+          "default": "true",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Metadata",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "include_vectors": {
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Vectors",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "include_data": {
+          "default": "true",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Data",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "ids"
+      ],
+      "title": "UpstashFetchConfig",
+      "type": "object"
+    },
+    "UpstashInfoConfig": {
+      "description": "Get database stats (vector count, dimension, similarity function).",
+      "properties": {
+        "operation": {
+          "const": "info",
+          "default": "info",
+          "title": "Database Info",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Index",
+          "x-display-name": "Database Info",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "stats",
+            "describe",
+            "count"
+          ]
+        }
+      },
+      "title": "UpstashInfoConfig",
+      "type": "object"
+    },
+    "UpstashQueryConfig": {
+      "description": "Find the most similar vectors to a query vector.",
+      "properties": {
+        "operation": {
+          "const": "query",
+          "default": "query",
+          "title": "Query / Search",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Vectors",
+          "x-display-name": "Query / Search",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "search",
+            "similarity search",
+            "nearest neighbors",
+            "vector search"
+          ]
+        },
+        "vector": {
+          "description": "Embedding to search with \u2014 a JSON array of numbers",
+          "title": "Query Vector",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "top_k": {
+          "default": 10,
+          "description": "Number of matches to return",
+          "title": "Top K",
+          "type": "integer"
+        },
+        "namespace": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Namespace (default if blank)",
+          "title": "Namespace"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Upstash metadata filter string, e.g. country = 'US' AND population > 1000000",
+          "title": "Filter"
+        },
+        "include_metadata": {
+          "default": "true",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Metadata",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "include_vectors": {
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Vectors",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "include_data": {
+          "default": "true",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Data",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "vector"
+      ],
+      "title": "UpstashQueryConfig",
+      "type": "object"
+    },
+    "UpstashQueryTextConfig": {
+      "description": "Search by text \u2014 Upstash embeds the text server-side (requires an\nembedding-enabled database).",
+      "properties": {
+        "operation": {
+          "const": "query_text",
+          "default": "query_text",
+          "title": "Query by Text",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Text",
+          "x-display-name": "Query by Text",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "search text",
+            "semantic search",
+            "rag",
+            "ask",
+            "retrieve documents"
+          ]
+        },
+        "data": {
+          "description": "Text to search with \u2014 embedded server-side by the database's model",
+          "title": "Query Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "top_k": {
+          "default": 10,
+          "description": "Number of matches to return",
+          "title": "Top K",
+          "type": "integer"
+        },
+        "namespace": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Namespace"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Upstash metadata filter string",
+          "title": "Filter"
+        },
+        "include_metadata": {
+          "default": "true",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Metadata",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "include_vectors": {
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Vectors",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "include_data": {
+          "default": "true",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Data",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "data"
+      ],
+      "title": "UpstashQueryTextConfig",
+      "type": "object"
+    },
+    "UpstashRangeConfig": {
+      "description": "Scroll / paginate through all vectors in a namespace using a cursor.",
+      "properties": {
+        "operation": {
+          "const": "range",
+          "default": "range",
+          "title": "List Vectors (Range)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Vectors",
+          "x-display-name": "List Vectors (Range)",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "scroll",
+            "paginate",
+            "list all",
+            "iterate",
+            "cursor"
+          ]
+        },
+        "cursor": {
+          "default": "0",
+          "description": "Pagination cursor \u2014 use '0' to start from the beginning",
+          "title": "Cursor",
+          "type": "string"
+        },
+        "limit": {
+          "default": 100,
+          "description": "Number of vectors per page (max 1000)",
+          "title": "Limit",
+          "type": "integer"
+        },
+        "namespace": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Namespace"
+        },
+        "include_metadata": {
+          "default": "true",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Metadata",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "include_vectors": {
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Vectors",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "include_data": {
+          "default": "true",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Data",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "title": "UpstashRangeConfig",
+      "type": "object"
+    },
+    "UpstashResetConfig": {
+      "description": "Delete all vectors from a namespace (or the entire index if no namespace given).",
+      "properties": {
+        "operation": {
+          "const": "reset",
+          "default": "reset",
+          "title": "Reset Namespace",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Index",
+          "x-display-name": "Reset Namespace",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "clear all",
+            "wipe",
+            "truncate",
+            "empty namespace"
+          ]
+        },
+        "namespace": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Namespace to reset (entire index if blank)",
+          "title": "Namespace"
+        }
+      },
+      "title": "UpstashResetConfig",
+      "type": "object"
+    },
+    "UpstashUpdateConfig": {
+      "description": "Update the metadata and/or data field of an existing vector without re-supplying the embedding.",
+      "properties": {
+        "operation": {
+          "const": "update",
+          "default": "update",
+          "title": "Update Vector Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Vectors",
+          "x-display-name": "Update Vector Metadata",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "patch metadata",
+            "edit",
+            "modify",
+            "update data"
+          ]
+        },
+        "id": {
+          "description": "ID of the vector to update",
+          "title": "Vector ID",
+          "type": "string"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object to set as the new metadata (replaces existing)",
+          "title": "Metadata",
+          "ui:widget": "textarea"
+        },
+        "data": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New text data field value (for embedding-enabled databases)",
+          "title": "Data"
+        },
+        "namespace": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Namespace"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "UpstashUpdateConfig",
+      "type": "object"
+    },
+    "UpstashUploadIndexConfig": {
+      "description": "Upload a document, chunk it, and index it with server-side embedding.",
+      "properties": {
+        "operation": {
+          "const": "upload_and_index",
+          "default": "upload_and_index",
+          "title": "Upload & Index Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Text",
+          "x-display-name": "Upload & Index Document",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "upload",
+            "ingest",
+            "index document",
+            "rag",
+            "embed file",
+            "add pdf"
+          ]
+        },
+        "document": {
+          "description": "Upload a PDF/DOCX/TXT/MD/CSV file (or paste a URL / reference an upstream file). It's chunked and upserted as text \u2014 Upstash embeds it server-side (the database must have an embedding model).",
+          "title": "Document",
+          "type": "string",
+          "ui:accept": ".pdf,.docx,.txt,.md,.markdown,.csv,.json,.html,.htm",
+          "ui:widget": "media_upload"
+        },
+        "namespace": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Namespace"
+        },
+        "chunk_size": {
+          "default": 1000,
+          "description": "Characters per chunk",
+          "title": "Chunk Size",
+          "type": "integer"
+        },
+        "chunk_overlap": {
+          "default": 200,
+          "description": "Overlapping characters between chunks",
+          "title": "Chunk Overlap",
+          "type": "integer"
+        },
+        "id_prefix": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional prefix for chunk IDs (defaults to the filename)",
+          "title": "ID Prefix"
+        }
+      },
+      "required": [
+        "document"
+      ],
+      "title": "UpstashUploadIndexConfig",
+      "type": "object"
+    },
+    "UpstashUpsertConfig": {
+      "description": "Insert or overwrite vectors.",
+      "properties": {
+        "operation": {
+          "const": "upsert",
+          "default": "upsert",
+          "title": "Upsert Vectors",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Vectors",
+          "x-display-name": "Upsert Vectors",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "insert",
+            "index",
+            "add vectors",
+            "store",
+            "write"
+          ]
+        },
+        "vectors": {
+          "description": "JSON array: [{\"id\": \"a\", \"vector\": [0.1, ...], \"metadata\": {...}, \"data\": \"...\"}]",
+          "title": "Vectors",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "namespace": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Namespace"
+        }
+      },
+      "required": [
+        "vectors"
+      ],
+      "title": "UpstashUpsertConfig",
+      "type": "object"
+    },
+    "UpstashUpsertTextConfig": {
+      "description": "Insert text records \u2014 Upstash embeds them server-side (requires an\nembedding-enabled database).",
+      "properties": {
+        "operation": {
+          "const": "upsert_text",
+          "default": "upsert_text",
+          "title": "Upsert Text",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Text",
+          "x-display-name": "Upsert Text",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "insert text",
+            "index documents",
+            "embed",
+            "store text"
+          ]
+        },
+        "items": {
+          "description": "JSON array: [{\"id\": \"a\", \"data\": \"the text to embed\", \"metadata\": {...}}]",
+          "title": "Text Records",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "namespace": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Namespace"
+        }
+      },
+      "required": [
+        "items"
+      ],
+      "title": "UpstashUpsertTextConfig",
+      "type": "object"
+    },
+    "UpstashVectorCredential": {
+      "description": "REST URL + token credential for an Upstash Vector database.",
+      "properties": {
+        "credential_type": {
+          "const": "upstash_vector",
+          "default": "upstash_vector",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "url": {
+          "description": "Your database's UPSTASH_VECTOR_REST_URL, e.g. https://xxx-12345-us1-vector.upstash.io",
+          "title": "REST URL",
+          "type": "string"
+        },
+        "token": {
+          "description": "Your database's UPSTASH_VECTOR_REST_TOKEN",
+          "title": "REST Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "url",
+        "token"
+      ],
+      "title": "UpstashVectorCredential",
+      "type": "object",
+      "x-credential-url": "https://console.upstash.com/vector"
+    }
+  },
+  "description": "Full configuration for the Upstash Vector node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "delete": "#/$defs/UpstashDeleteConfig",
+          "fetch": "#/$defs/UpstashFetchConfig",
+          "info": "#/$defs/UpstashInfoConfig",
+          "query": "#/$defs/UpstashQueryConfig",
+          "query_text": "#/$defs/UpstashQueryTextConfig",
+          "range": "#/$defs/UpstashRangeConfig",
+          "reset": "#/$defs/UpstashResetConfig",
+          "update": "#/$defs/UpstashUpdateConfig",
+          "upload_and_index": "#/$defs/UpstashUploadIndexConfig",
+          "upsert": "#/$defs/UpstashUpsertConfig",
+          "upsert_text": "#/$defs/UpstashUpsertTextConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/UpstashQueryConfig"
+        },
+        {
+          "$ref": "#/$defs/UpstashQueryTextConfig"
+        },
+        {
+          "$ref": "#/$defs/UpstashUpsertConfig"
+        },
+        {
+          "$ref": "#/$defs/UpstashUpsertTextConfig"
+        },
+        {
+          "$ref": "#/$defs/UpstashFetchConfig"
+        },
+        {
+          "$ref": "#/$defs/UpstashDeleteConfig"
+        },
+        {
+          "$ref": "#/$defs/UpstashInfoConfig"
+        },
+        {
+          "$ref": "#/$defs/UpstashResetConfig"
+        },
+        {
+          "$ref": "#/$defs/UpstashRangeConfig"
+        },
+        {
+          "$ref": "#/$defs/UpstashUpdateConfig"
+        },
+        {
+          "$ref": "#/$defs/UpstashUploadIndexConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/UpstashVectorCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Upstash-vector Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Search an Upstash Vector database by text (server-side embedding) for the most relevant documents",
+    "Upsert text records into Upstash so they're embedded and indexed automatically",
+    "Query an Upstash database with a precomputed embedding vector",
+    "Fetch vectors by ID to inspect their metadata",
+    "Delete stale vectors from a namespace"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

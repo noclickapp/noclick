@@ -1,0 +1,453 @@
+{
+  "$defs": {
+    "FilterArrayConfig": {
+      "description": "Keep array items that match a condition.",
+      "properties": {
+        "operation": {
+          "const": "filter_array",
+          "default": "filter_array",
+          "title": "Filter Array",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Array",
+          "x-display-name": "Filter Array",
+          "x-is-trigger": false
+        },
+        "input_data": {
+          "description": "Reference to the data to filter (e.g., {{sheets-1.values}} or {{agent-1.response.items}})",
+          "placeholder": "{{node-id.field}}",
+          "title": "Input Data",
+          "ui:widget": "textarea"
+        },
+        "filter_field": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For arrays of objects, the field name to filter on (e.g., 'age', 'status'). Leave empty to filter direct values.",
+          "placeholder": "field_name",
+          "title": "Field to Filter"
+        },
+        "operator": {
+          "default": "equals",
+          "description": "Comparison operator for filtering",
+          "enum": [
+            "equals",
+            "not_equals",
+            "contains",
+            "not_contains",
+            "starts_with",
+            "ends_with",
+            "greater_than",
+            "greater_than_or_equal",
+            "less_than",
+            "less_than_or_equal",
+            "is_empty",
+            "is_not_empty",
+            "regex_match",
+            "in_list",
+            "not_in_list"
+          ],
+          "enumNames": [
+            "Equals",
+            "Not equals",
+            "Contains",
+            "Does not contain",
+            "Starts with",
+            "Ends with",
+            "Greater than",
+            "Greater than or equal",
+            "Less than",
+            "Less than or equal",
+            "Is empty",
+            "Is not empty",
+            "Regex match",
+            "In list",
+            "Not in list"
+          ],
+          "title": "Operator",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "filter_value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Value to compare against. For 'In list' / 'Not in list', use a comma-separated list.",
+          "placeholder": "value",
+          "title": "Filter Value"
+        },
+        "case_sensitive": {
+          "default": "false",
+          "description": "Whether string comparisons should be case sensitive",
+          "enum": [
+            "false",
+            "true"
+          ],
+          "enumNames": [
+            "No",
+            "Yes"
+          ],
+          "title": "Case Sensitive",
+          "type": "string"
+        }
+      },
+      "required": [
+        "input_data"
+      ],
+      "title": "FilterArrayConfig",
+      "type": "object"
+    },
+    "FilterObjectConfig": {
+      "description": "Keep or remove keys on an object.",
+      "properties": {
+        "operation": {
+          "const": "filter_object",
+          "default": "filter_object",
+          "title": "Filter Object",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Object",
+          "x-display-name": "Filter Object",
+          "x-is-trigger": false
+        },
+        "input_data": {
+          "description": "Reference to the data to filter (e.g., {{sheets-1.values}} or {{agent-1.response.items}})",
+          "placeholder": "{{node-id.field}}",
+          "title": "Input Data",
+          "ui:widget": "textarea"
+        },
+        "keep_keys": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated keys to keep (e.g., 'name,email,age'). Takes priority over Keys to Remove.",
+          "placeholder": "key1,key2,key3",
+          "title": "Keys to Keep"
+        },
+        "remove_keys": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated keys to remove (e.g., 'password,internal_id')",
+          "placeholder": "key1,key2,key3",
+          "title": "Keys to Remove"
+        }
+      },
+      "required": [
+        "input_data"
+      ],
+      "title": "FilterObjectConfig",
+      "type": "object"
+    },
+    "GroupByFieldConfig": {
+      "description": "Group array items into buckets by a field value.",
+      "properties": {
+        "operation": {
+          "const": "group_by_field",
+          "default": "group_by_field",
+          "title": "Group by Field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Array",
+          "x-display-name": "Group by Field",
+          "x-is-trigger": false
+        },
+        "input_data": {
+          "description": "Reference to the data to filter (e.g., {{sheets-1.values}} or {{agent-1.response.items}})",
+          "placeholder": "{{node-id.field}}",
+          "title": "Input Data",
+          "ui:widget": "textarea"
+        },
+        "group_by_field": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Field to group items by (e.g., 'category', 'status')",
+          "placeholder": "field_name",
+          "title": "Group By Field"
+        }
+      },
+      "required": [
+        "input_data"
+      ],
+      "title": "GroupByFieldConfig",
+      "type": "object"
+    },
+    "LimitConfig": {
+      "description": "Limit an array to a number of items.",
+      "properties": {
+        "operation": {
+          "const": "limit",
+          "default": "limit",
+          "title": "Limit",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Array",
+          "x-display-name": "Limit",
+          "x-is-trigger": false
+        },
+        "input_data": {
+          "description": "Reference to the data to filter (e.g., {{sheets-1.values}} or {{agent-1.response.items}})",
+          "placeholder": "{{node-id.field}}",
+          "title": "Input Data",
+          "ui:widget": "textarea"
+        },
+        "limit": {
+          "default": 10,
+          "description": "Maximum number of items to return",
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "offset": {
+          "default": 0,
+          "description": "Number of items to skip before applying the limit (for pagination)",
+          "minimum": 0,
+          "title": "Offset",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "input_data"
+      ],
+      "title": "LimitConfig",
+      "type": "object"
+    },
+    "RemoveDuplicatesConfig": {
+      "description": "Remove duplicate items from an array.",
+      "properties": {
+        "operation": {
+          "const": "remove_duplicates",
+          "default": "remove_duplicates",
+          "title": "Remove Duplicates",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Array",
+          "x-display-name": "Remove Duplicates",
+          "x-is-trigger": false
+        },
+        "input_data": {
+          "description": "Reference to the data to filter (e.g., {{sheets-1.values}} or {{agent-1.response.items}})",
+          "placeholder": "{{node-id.field}}",
+          "title": "Input Data",
+          "ui:widget": "textarea"
+        },
+        "dedupe_field": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For arrays of objects, the field to dedupe on. Leave empty to dedupe whole items.",
+          "placeholder": "field_name",
+          "title": "Deduplication Field"
+        }
+      },
+      "required": [
+        "input_data"
+      ],
+      "title": "RemoveDuplicatesConfig",
+      "type": "object"
+    },
+    "SortConfig": {
+      "description": "Sort array items.",
+      "properties": {
+        "operation": {
+          "const": "sort",
+          "default": "sort",
+          "title": "Sort",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Array",
+          "x-display-name": "Sort",
+          "x-is-trigger": false
+        },
+        "input_data": {
+          "description": "Reference to the data to filter (e.g., {{sheets-1.values}} or {{agent-1.response.items}})",
+          "placeholder": "{{node-id.field}}",
+          "title": "Input Data",
+          "ui:widget": "textarea"
+        },
+        "sort_field": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Field to sort by. Leave empty to sort direct values.",
+          "placeholder": "field_name",
+          "title": "Sort Field"
+        },
+        "sort_order": {
+          "default": "ascending",
+          "description": "Sort direction",
+          "enum": [
+            "ascending",
+            "descending"
+          ],
+          "enumNames": [
+            "Ascending",
+            "Descending"
+          ],
+          "title": "Sort Order",
+          "type": "string"
+        }
+      },
+      "required": [
+        "input_data"
+      ],
+      "title": "SortConfig",
+      "type": "object"
+    },
+    "SplitStringConfig": {
+      "description": "Split a string into an array by a delimiter.",
+      "properties": {
+        "operation": {
+          "const": "split_string",
+          "default": "split_string",
+          "title": "Split String",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Text",
+          "x-display-name": "Split String",
+          "x-is-trigger": false
+        },
+        "input_data": {
+          "description": "Reference to the data to filter (e.g., {{sheets-1.values}} or {{agent-1.response.items}})",
+          "placeholder": "{{node-id.field}}",
+          "title": "Input Data",
+          "ui:widget": "textarea"
+        },
+        "delimiter": {
+          "default": ",",
+          "description": "Character(s) to split the string by",
+          "placeholder": ",",
+          "title": "Delimiter",
+          "type": "string"
+        },
+        "trim_whitespace": {
+          "default": "true",
+          "description": "Remove leading/trailing whitespace from each part",
+          "enum": [
+            "false",
+            "true"
+          ],
+          "enumNames": [
+            "No",
+            "Yes"
+          ],
+          "title": "Trim Whitespace",
+          "type": "string"
+        }
+      },
+      "required": [
+        "input_data"
+      ],
+      "title": "SplitStringConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for filter node (no credentials needed).",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "filter_array": "#/$defs/FilterArrayConfig",
+          "filter_object": "#/$defs/FilterObjectConfig",
+          "group_by_field": "#/$defs/GroupByFieldConfig",
+          "limit": "#/$defs/LimitConfig",
+          "remove_duplicates": "#/$defs/RemoveDuplicatesConfig",
+          "sort": "#/$defs/SortConfig",
+          "split_string": "#/$defs/SplitStringConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/FilterArrayConfig"
+        },
+        {
+          "$ref": "#/$defs/RemoveDuplicatesConfig"
+        },
+        {
+          "$ref": "#/$defs/LimitConfig"
+        },
+        {
+          "$ref": "#/$defs/SortConfig"
+        },
+        {
+          "$ref": "#/$defs/FilterObjectConfig"
+        },
+        {
+          "$ref": "#/$defs/GroupByFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/SplitStringConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials",
+      "type": "null"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Filter Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Filter rows where status equals 'active'",
+    "Remove duplicate records by email address",
+    "Sort results by date in descending order",
+    "Limit results to the first 100 items",
+    "Find items containing a specific keyword",
+    "Extract only name and email fields from objects",
+    "Filter numbers greater than a threshold value",
+    "Group records by their status field",
+    "Split a comma-separated string into a list"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

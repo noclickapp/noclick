@@ -1,0 +1,3768 @@
+{
+  "$defs": {
+    "BDAddGroupMemberConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "add_group_member",
+          "default": "add_group_member",
+          "title": "Add Group Member",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "Add Group Member"
+        },
+        "group_id": {
+          "title": "Group ID",
+          "type": "string"
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "e.g. {\"memberId\":\"\u2026\"} or {\"email\":\"\u2026\"} (pending invite)",
+          "title": "Body (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "organization_id",
+        "group_id"
+      ],
+      "title": "BDAddGroupMemberConfig",
+      "type": "object"
+    },
+    "BDCancelChatMessageConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "cancel_chat_message",
+          "default": "cancel_chat_message",
+          "title": "Cancel Chat Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "AI Chats",
+          "x-display-name": "Cancel Chat Message"
+        },
+        "chat_id": {
+          "title": "Chat ID",
+          "type": "string"
+        },
+        "message_id": {
+          "title": "Message ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "chat_id",
+        "message_id"
+      ],
+      "title": "BDCancelChatMessageConfig",
+      "type": "object"
+    },
+    "BDCreateAutomationConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "create_automation",
+          "default": "create_automation",
+          "title": "Create Automation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Automations",
+          "x-display-name": "Create Automation"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "instructions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Instructions",
+          "ui:widget": "textarea"
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "Optional, e.g. {\"trigger\":{\"type\":\"SCHEDULE\",\"frequency\":\"DAILY\",\"preferredHour\":9},\"notifications\":{\"emailRecipients\":[\"a@b.com\"]}}",
+          "title": "Extra Fields (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "organization_id",
+        "name"
+      ],
+      "title": "BDCreateAutomationConfig",
+      "type": "object"
+    },
+    "BDCreateChartConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "create_chart",
+          "default": "create_chart",
+          "title": "Create Chart",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Charts",
+          "x-display-name": "Create Chart"
+        },
+        "dashboard_id": {
+          "title": "Dashboard",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "dashboard_id",
+            "placeholder": "Select dashboard\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "basedash_dashboard"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "chart_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "TABLE",
+          "enum": [
+            "TABLE",
+            "LINE",
+            "VERTICAL_BAR",
+            "HORIZONTAL_BAR",
+            "SCATTER",
+            "FUNNEL",
+            "NUMBER",
+            "PROGRESS",
+            "IMAGE",
+            "RECORD",
+            "TEXT",
+            "PIE",
+            "ACTIVITY",
+            "MAP",
+            "SANKEY",
+            "DASHBOARD_HEADER",
+            "DASHBOARD_TEXT"
+          ],
+          "title": "Chart Type",
+          "x-enum-searchable": true
+        },
+        "sql_query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "SQL powering the chart",
+          "title": "SQL Query",
+          "ui:widget": "code_editor",
+          "x-code-language": "sql"
+        },
+        "database_connection_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Data Source",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "data_source_id",
+            "placeholder": "Select data source\u2026",
+            "searchable": true
+          },
+          "x-resource-type": "basedash_data_source"
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "Optional, e.g. {\"xAxisProperty\":\"day\",\"yAxisProperty\":\"count\",\"layout\":{\"x\":0,\"y\":0,\"width\":6,\"height\":4}}",
+          "title": "Extra Fields (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "organization_id",
+        "dashboard_id",
+        "name"
+      ],
+      "title": "BDCreateChartConfig",
+      "type": "object"
+    },
+    "BDCreateChatConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "create_chat",
+          "default": "create_chat",
+          "title": "Start Chat",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "AI Chats",
+          "x-display-name": "Start Chat"
+        },
+        "message": {
+          "description": "Prompt for the Basedash AI agent",
+          "title": "Message",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "wait": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "true",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes (synchronous)",
+            "No (async, returns 202)"
+          ],
+          "title": "Wait for Result",
+          "x-enum-searchable": true
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "Optional, e.g. {\"databaseConnectionId\":\"\u2026\"}",
+          "title": "Extra Fields (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "organization_id",
+        "message"
+      ],
+      "title": "BDCreateChatConfig",
+      "type": "object"
+    },
+    "BDCreateDashboardConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "create_dashboard",
+          "default": "create_dashboard",
+          "title": "Create Dashboard",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Dashboards",
+          "x-creates-resource": true,
+          "x-display-name": "Create Dashboard",
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "basedash_dashboard"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "Optional, e.g. {\"description\":\"\u2026\",\"icon\":\"\ud83d\udcca\",\"color\":\"blue\"}",
+          "title": "Extra Fields (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "organization_id",
+        "name"
+      ],
+      "title": "BDCreateDashboardConfig",
+      "type": "object"
+    },
+    "BDCreateDataSourceConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "create_data_source",
+          "default": "create_data_source",
+          "title": "Create Data Source",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Data Sources",
+          "x-creates-resource": true,
+          "x-display-name": "Create Data Source",
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "basedash_data_source"
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "e.g. {\"displayName\":\"Prod\",\"dialect\":\"POSTGRES\",\"host\":\"\u2026\",\"port\":5432,\"databaseName\":\"\u2026\",\"username\":\"\u2026\",\"password\":\"\u2026\"}",
+          "title": "Connection (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "BDCreateDataSourceConfig",
+      "type": "object"
+    },
+    "BDCreateDefinitionConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "create_definition",
+          "default": "create_definition",
+          "title": "Create Definition",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Definitions",
+          "x-display-name": "Create Definition"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        },
+        "sql_query": {
+          "title": "SQL Query",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "sql"
+        },
+        "database_connection_id": {
+          "title": "Data Source",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "data_source_id",
+            "placeholder": "Select data source\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "basedash_data_source"
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "Optional, e.g. {\"description\":\"\u2026\",\"referenceName\":\"active_users\"}",
+          "title": "Extra Fields (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "organization_id",
+        "name",
+        "sql_query",
+        "database_connection_id"
+      ],
+      "title": "BDCreateDefinitionConfig",
+      "type": "object"
+    },
+    "BDCreateGroupConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "create_group",
+          "default": "create_group",
+          "title": "Create Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "Create Group"
+        },
+        "name": {
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "name"
+      ],
+      "title": "BDCreateGroupConfig",
+      "type": "object"
+    },
+    "BDCreateInsightConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "create_insight",
+          "default": "create_insight",
+          "title": "Generate Insight",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Insights",
+          "x-display-name": "Generate Insight"
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "e.g. {\"chartId\":\"\u2026\"} or {\"title\":\"\u2026\",\"sqlQuery\":\"\u2026\",\"databaseConnectionId\":\"\u2026\"}",
+          "title": "Body (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "wait": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes (synchronous)",
+            "No (async)"
+          ],
+          "title": "Wait for Result",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "BDCreateInsightConfig",
+      "type": "object"
+    },
+    "BDCreateMcpServerConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "create_mcp_server",
+          "default": "create_mcp_server",
+          "title": "Create MCP Server",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "MCP Servers",
+          "x-display-name": "Create MCP Server"
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "e.g. {\"displayName\":\"My MCP\",\"serverUrl\":\"https://\u2026\",\"transportType\":\"STREAMABLE_HTTP\"}",
+          "title": "Body (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "BDCreateMcpServerConfig",
+      "type": "object"
+    },
+    "BDCreateOrganizationConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_organization",
+          "default": "create_organization",
+          "title": "Create Organization",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organizations",
+          "x-display-name": "Create Organization"
+        },
+        "name": {
+          "description": "New organization name",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "BDCreateOrganizationConfig",
+      "type": "object"
+    },
+    "BDCreateSkillConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "create_skill",
+          "default": "create_skill",
+          "title": "Create Skill",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Skills",
+          "x-display-name": "Create Skill"
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "e.g. {\"name\":\"\u2026\",\"instructions\":\"\u2026\"}",
+          "title": "Body (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "BDCreateSkillConfig",
+      "type": "object"
+    },
+    "BDCreateTabConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "create_tab",
+          "default": "create_tab",
+          "title": "Create Tab",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Dashboards",
+          "x-display-name": "Create Tab"
+        },
+        "dashboard_id": {
+          "title": "Dashboard",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "dashboard_id",
+            "placeholder": "Select dashboard\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "basedash_dashboard"
+        },
+        "name": {
+          "title": "Tab Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "dashboard_id",
+        "name"
+      ],
+      "title": "BDCreateTabConfig",
+      "type": "object"
+    },
+    "BDDeactivateMemberConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "deactivate_member",
+          "default": "deactivate_member",
+          "title": "Deactivate Member",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Members",
+          "x-display-name": "Deactivate Member"
+        },
+        "member_id": {
+          "title": "Member ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "member_id"
+      ],
+      "title": "BDDeactivateMemberConfig",
+      "type": "object"
+    },
+    "BDDeleteAutomationConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "delete_automation",
+          "default": "delete_automation",
+          "title": "Delete Automation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Automations",
+          "x-display-name": "Delete Automation"
+        },
+        "automation_id": {
+          "title": "Automation ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "automation_id"
+      ],
+      "title": "BDDeleteAutomationConfig",
+      "type": "object"
+    },
+    "BDDeleteChartConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "delete_chart",
+          "default": "delete_chart",
+          "title": "Delete Chart",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Charts",
+          "x-display-name": "Delete Chart"
+        },
+        "chart_id": {
+          "title": "Chart ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "chart_id"
+      ],
+      "title": "BDDeleteChartConfig",
+      "type": "object"
+    },
+    "BDDeleteChatConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "delete_chat",
+          "default": "delete_chat",
+          "title": "Delete Chat",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "AI Chats",
+          "x-display-name": "Delete Chat"
+        },
+        "chat_id": {
+          "title": "Chat ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "chat_id"
+      ],
+      "title": "BDDeleteChatConfig",
+      "type": "object"
+    },
+    "BDDeleteDashboardConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "delete_dashboard",
+          "default": "delete_dashboard",
+          "title": "Delete Dashboard",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Dashboards",
+          "x-display-name": "Delete Dashboard"
+        },
+        "dashboard_id": {
+          "title": "Dashboard",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "dashboard_id",
+            "placeholder": "Select dashboard\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "basedash_dashboard"
+        }
+      },
+      "required": [
+        "organization_id",
+        "dashboard_id"
+      ],
+      "title": "BDDeleteDashboardConfig",
+      "type": "object"
+    },
+    "BDDeleteDataSourceConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "delete_data_source",
+          "default": "delete_data_source",
+          "title": "Delete Data Source",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Data Sources",
+          "x-display-name": "Delete Data Source"
+        },
+        "data_source_id": {
+          "title": "Data Source",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "data_source_id",
+            "placeholder": "Select data source\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "basedash_data_source"
+        }
+      },
+      "required": [
+        "organization_id",
+        "data_source_id"
+      ],
+      "title": "BDDeleteDataSourceConfig",
+      "type": "object"
+    },
+    "BDDeleteDefinitionConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "delete_definition",
+          "default": "delete_definition",
+          "title": "Delete Definition",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Definitions",
+          "x-display-name": "Delete Definition"
+        },
+        "definition_id": {
+          "title": "Definition ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "definition_id"
+      ],
+      "title": "BDDeleteDefinitionConfig",
+      "type": "object"
+    },
+    "BDDeleteGroupConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "delete_group",
+          "default": "delete_group",
+          "title": "Delete Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "Delete Group"
+        },
+        "group_id": {
+          "title": "Group ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "group_id"
+      ],
+      "title": "BDDeleteGroupConfig",
+      "type": "object"
+    },
+    "BDDeleteInsightConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "delete_insight",
+          "default": "delete_insight",
+          "title": "Delete Insight",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Insights",
+          "x-display-name": "Delete Insight"
+        },
+        "insight_id": {
+          "title": "Insight ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "insight_id"
+      ],
+      "title": "BDDeleteInsightConfig",
+      "type": "object"
+    },
+    "BDDeleteMcpServerConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "delete_mcp_server",
+          "default": "delete_mcp_server",
+          "title": "Delete MCP Server",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "MCP Servers",
+          "x-display-name": "Delete MCP Server"
+        },
+        "mcp_server_id": {
+          "title": "MCP Server ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "mcp_server_id"
+      ],
+      "title": "BDDeleteMcpServerConfig",
+      "type": "object"
+    },
+    "BDDeleteSkillConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "delete_skill",
+          "default": "delete_skill",
+          "title": "Delete Skill",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Skills",
+          "x-display-name": "Delete Skill"
+        },
+        "skill_id": {
+          "title": "Skill ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "skill_id"
+      ],
+      "title": "BDDeleteSkillConfig",
+      "type": "object"
+    },
+    "BDDeleteTabConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "delete_tab",
+          "default": "delete_tab",
+          "title": "Delete Tab",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Dashboards",
+          "x-display-name": "Delete Tab"
+        },
+        "dashboard_id": {
+          "title": "Dashboard",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "dashboard_id",
+            "placeholder": "Select dashboard\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "basedash_dashboard"
+        },
+        "tab_id": {
+          "title": "Tab ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "dashboard_id",
+        "tab_id"
+      ],
+      "title": "BDDeleteTabConfig",
+      "type": "object"
+    },
+    "BDGetAiUsageConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_ai_usage",
+          "default": "get_ai_usage",
+          "title": "Get AI Usage",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organizations",
+          "x-display-name": "Get AI Usage"
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "BDGetAiUsageConfig",
+      "type": "object"
+    },
+    "BDGetAuditLogsConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_audit_logs",
+          "default": "get_audit_logs",
+          "title": "Get Audit Logs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organizations",
+          "x-display-name": "Get Audit Logs (Enterprise)"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page (1-100, default 50)",
+          "title": "Limit"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from a previous response's nextCursor",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "BDGetAuditLogsConfig",
+      "type": "object"
+    },
+    "BDGetAutomationConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_automation",
+          "default": "get_automation",
+          "title": "Get Automation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Automations",
+          "x-display-name": "Get Automation"
+        },
+        "automation_id": {
+          "title": "Automation ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "automation_id"
+      ],
+      "title": "BDGetAutomationConfig",
+      "type": "object"
+    },
+    "BDGetAutomationRunConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_automation_run",
+          "default": "get_automation_run",
+          "title": "Get Automation Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Automations",
+          "x-display-name": "Get Automation Run"
+        },
+        "automation_id": {
+          "title": "Automation ID",
+          "type": "string"
+        },
+        "run_id": {
+          "title": "Run ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "automation_id",
+        "run_id"
+      ],
+      "title": "BDGetAutomationRunConfig",
+      "type": "object"
+    },
+    "BDGetChartConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_chart",
+          "default": "get_chart",
+          "title": "Get Chart",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Charts",
+          "x-display-name": "Get Chart"
+        },
+        "chart_id": {
+          "title": "Chart ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "chart_id"
+      ],
+      "title": "BDGetChartConfig",
+      "type": "object"
+    },
+    "BDGetChartImageConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_chart_image",
+          "default": "get_chart_image",
+          "title": "Render Chart Image",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Charts",
+          "x-display-name": "Render Chart Image (PNG)"
+        },
+        "chart_id": {
+          "title": "Chart ID",
+          "type": "string"
+        },
+        "chart_version_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional specific version to render",
+          "title": "Chart Version ID"
+        }
+      },
+      "required": [
+        "organization_id",
+        "chart_id"
+      ],
+      "title": "BDGetChartImageConfig",
+      "type": "object"
+    },
+    "BDGetChatConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_chat",
+          "default": "get_chat",
+          "title": "Get Chat",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "AI Chats",
+          "x-display-name": "Get Chat"
+        },
+        "chat_id": {
+          "title": "Chat ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "chat_id"
+      ],
+      "title": "BDGetChatConfig",
+      "type": "object"
+    },
+    "BDGetChatMessageConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_chat_message",
+          "default": "get_chat_message",
+          "title": "Get Chat Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "AI Chats",
+          "x-display-name": "Get Chat Message"
+        },
+        "chat_id": {
+          "title": "Chat ID",
+          "type": "string"
+        },
+        "message_id": {
+          "title": "Message ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "chat_id",
+        "message_id"
+      ],
+      "title": "BDGetChatMessageConfig",
+      "type": "object"
+    },
+    "BDGetDashboardConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_dashboard",
+          "default": "get_dashboard",
+          "title": "Get Dashboard",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Dashboards",
+          "x-display-name": "Get Dashboard"
+        },
+        "dashboard_id": {
+          "title": "Dashboard",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "dashboard_id",
+            "placeholder": "Select dashboard\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "basedash_dashboard"
+        }
+      },
+      "required": [
+        "organization_id",
+        "dashboard_id"
+      ],
+      "title": "BDGetDashboardConfig",
+      "type": "object"
+    },
+    "BDGetDataSourceAccessConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_data_source_access",
+          "default": "get_data_source_access",
+          "title": "Get Data Source Access",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Data Sources",
+          "x-display-name": "Get Data Source Access"
+        },
+        "data_source_id": {
+          "title": "Data Source",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "data_source_id",
+            "placeholder": "Select data source\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "basedash_data_source"
+        }
+      },
+      "required": [
+        "organization_id",
+        "data_source_id"
+      ],
+      "title": "BDGetDataSourceAccessConfig",
+      "type": "object"
+    },
+    "BDGetDataSourceConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_data_source",
+          "default": "get_data_source",
+          "title": "Get Data Source",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Data Sources",
+          "x-display-name": "Get Data Source"
+        },
+        "data_source_id": {
+          "title": "Data Source",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "data_source_id",
+            "placeholder": "Select data source\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "basedash_data_source"
+        }
+      },
+      "required": [
+        "organization_id",
+        "data_source_id"
+      ],
+      "title": "BDGetDataSourceConfig",
+      "type": "object"
+    },
+    "BDGetDefinitionConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_definition",
+          "default": "get_definition",
+          "title": "Get Definition",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Definitions",
+          "x-display-name": "Get Definition"
+        },
+        "definition_id": {
+          "title": "Definition ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "definition_id"
+      ],
+      "title": "BDGetDefinitionConfig",
+      "type": "object"
+    },
+    "BDGetGroupConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_group",
+          "default": "get_group",
+          "title": "Get Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "Get Group"
+        },
+        "group_id": {
+          "title": "Group ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "group_id"
+      ],
+      "title": "BDGetGroupConfig",
+      "type": "object"
+    },
+    "BDGetInsightConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_insight",
+          "default": "get_insight",
+          "title": "Get Insight",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Insights",
+          "x-display-name": "Get Insight"
+        },
+        "insight_id": {
+          "title": "Insight ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "insight_id"
+      ],
+      "title": "BDGetInsightConfig",
+      "type": "object"
+    },
+    "BDGetMcpServerConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_mcp_server",
+          "default": "get_mcp_server",
+          "title": "Get MCP Server",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "MCP Servers",
+          "x-display-name": "Get MCP Server"
+        },
+        "mcp_server_id": {
+          "title": "MCP Server ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "mcp_server_id"
+      ],
+      "title": "BDGetMcpServerConfig",
+      "type": "object"
+    },
+    "BDGetMemberConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_member",
+          "default": "get_member",
+          "title": "Get Member",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Members",
+          "x-display-name": "Get Member"
+        },
+        "member_id": {
+          "title": "Member ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "member_id"
+      ],
+      "title": "BDGetMemberConfig",
+      "type": "object"
+    },
+    "BDGetOrganizationConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_organization",
+          "default": "get_organization",
+          "title": "Get Organization",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organizations",
+          "x-display-name": "Get Organization"
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "BDGetOrganizationConfig",
+      "type": "object"
+    },
+    "BDGetSkillConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "get_skill",
+          "default": "get_skill",
+          "title": "Get Skill",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Skills",
+          "x-display-name": "Get Skill"
+        },
+        "skill_id": {
+          "title": "Skill ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "organization_id",
+        "skill_id"
+      ],
+      "title": "BDGetSkillConfig",
+      "type": "object"
+    },
+    "BDInviteMemberConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "invite_member",
+          "default": "invite_member",
+          "title": "Invite Member",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Members",
+          "x-display-name": "Invite Member"
+        },
+        "email": {
+          "title": "Email",
+          "type": "string"
+        },
+        "role": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "MEMBER",
+          "enum": [
+            "ADMIN",
+            "MEMBER"
+          ],
+          "title": "Role",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "organization_id",
+        "email"
+      ],
+      "title": "BDInviteMemberConfig",
+      "type": "object"
+    },
+    "BDListAutomationRunsConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "list_automation_runs",
+          "default": "list_automation_runs",
+          "title": "List Automation Runs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Automations",
+          "x-display-name": "List Automation Runs"
+        },
+        "automation_id": {
+          "title": "Automation ID",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page (1-100, default 50)",
+          "title": "Limit"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from a previous response's nextCursor",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "organization_id",
+        "automation_id"
+      ],
+      "title": "BDListAutomationRunsConfig",
+      "type": "object"
+    },
+    "BDListAutomationsConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "list_automations",
+          "default": "list_automations",
+          "title": "List Automations",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Automations",
+          "x-display-name": "List Automations"
+        },
+        "include_archived": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Archived",
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page (1-100, default 50)",
+          "title": "Limit"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from a previous response's nextCursor",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "BDListAutomationsConfig",
+      "type": "object"
+    },
+    "BDListChatMessagesConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "list_chat_messages",
+          "default": "list_chat_messages",
+          "title": "List Chat Messages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "AI Chats",
+          "x-display-name": "List Chat Messages"
+        },
+        "chat_id": {
+          "title": "Chat ID",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page (1-100, default 50)",
+          "title": "Limit"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from a previous response's nextCursor",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "organization_id",
+        "chat_id"
+      ],
+      "title": "BDListChatMessagesConfig",
+      "type": "object"
+    },
+    "BDListChatsConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "list_chats",
+          "default": "list_chats",
+          "title": "List Chats",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "AI Chats",
+          "x-display-name": "List Chats"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page (1-100, default 50)",
+          "title": "Limit"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from a previous response's nextCursor",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "BDListChatsConfig",
+      "type": "object"
+    },
+    "BDListDashboardChartsConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "list_dashboard_charts",
+          "default": "list_dashboard_charts",
+          "title": "List Dashboard Charts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Dashboards",
+          "x-display-name": "List Dashboard Charts"
+        },
+        "dashboard_id": {
+          "title": "Dashboard",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "dashboard_id",
+            "placeholder": "Select dashboard\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "basedash_dashboard"
+        }
+      },
+      "required": [
+        "organization_id",
+        "dashboard_id"
+      ],
+      "title": "BDListDashboardChartsConfig",
+      "type": "object"
+    },
+    "BDListDashboardsConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "list_dashboards",
+          "default": "list_dashboards",
+          "title": "List Dashboards",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Dashboards",
+          "x-display-name": "List Dashboards"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page (1-100, default 50)",
+          "title": "Limit"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from a previous response's nextCursor",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "BDListDashboardsConfig",
+      "type": "object"
+    },
+    "BDListDataSourcesConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "list_data_sources",
+          "default": "list_data_sources",
+          "title": "List Data Sources",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Data Sources",
+          "x-display-name": "List Data Sources"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page (1-100, default 50)",
+          "title": "Limit"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from a previous response's nextCursor",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "BDListDataSourcesConfig",
+      "type": "object"
+    },
+    "BDListDefinitionsConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "list_definitions",
+          "default": "list_definitions",
+          "title": "List Definitions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Definitions",
+          "x-display-name": "List Definitions"
+        },
+        "database_connection_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Data Source",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "data_source_id",
+            "placeholder": "Filter by data source\u2026",
+            "searchable": true
+          },
+          "x-resource-type": "basedash_data_source"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page (1-100, default 50)",
+          "title": "Limit"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from a previous response's nextCursor",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "BDListDefinitionsConfig",
+      "type": "object"
+    },
+    "BDListGroupsConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "list_groups",
+          "default": "list_groups",
+          "title": "List Groups",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "List Groups"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page (1-100, default 50)",
+          "title": "Limit"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from a previous response's nextCursor",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "BDListGroupsConfig",
+      "type": "object"
+    },
+    "BDListInsightsConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "list_insights",
+          "default": "list_insights",
+          "title": "List Insights",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Insights",
+          "x-display-name": "List Insights"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page (1-100, default 50)",
+          "title": "Limit"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from a previous response's nextCursor",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "BDListInsightsConfig",
+      "type": "object"
+    },
+    "BDListMcpServersConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "list_mcp_servers",
+          "default": "list_mcp_servers",
+          "title": "List MCP Servers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "MCP Servers",
+          "x-display-name": "List MCP Servers"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page (1-100, default 50)",
+          "title": "Limit"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from a previous response's nextCursor",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "BDListMcpServersConfig",
+      "type": "object"
+    },
+    "BDListMembersConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "list_members",
+          "default": "list_members",
+          "title": "List Members",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Members",
+          "x-display-name": "List Members"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page (1-100, default 50)",
+          "title": "Limit"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from a previous response's nextCursor",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "BDListMembersConfig",
+      "type": "object"
+    },
+    "BDListOrganizationsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_organizations",
+          "default": "list_organizations",
+          "title": "List Organizations",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organizations",
+          "x-display-name": "List Organizations"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page (1-100, default 50)",
+          "title": "Limit"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from a previous response's nextCursor",
+          "title": "Cursor"
+        }
+      },
+      "title": "BDListOrganizationsConfig",
+      "type": "object"
+    },
+    "BDListSkillsConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "list_skills",
+          "default": "list_skills",
+          "title": "List Skills",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Skills",
+          "x-display-name": "List Skills"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page (1-100, default 50)",
+          "title": "Limit"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from a previous response's nextCursor",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "BDListSkillsConfig",
+      "type": "object"
+    },
+    "BDSendChatMessageConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "send_chat_message",
+          "default": "send_chat_message",
+          "title": "Send Chat Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "AI Chats",
+          "x-display-name": "Send Chat Message"
+        },
+        "chat_id": {
+          "title": "Chat ID",
+          "type": "string"
+        },
+        "message": {
+          "title": "Message",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "wait": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "true",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes (synchronous)",
+            "No (async)"
+          ],
+          "title": "Wait for Result",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "organization_id",
+        "chat_id",
+        "message"
+      ],
+      "title": "BDSendChatMessageConfig",
+      "type": "object"
+    },
+    "BDSetDataSourceAccessConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "set_data_source_access",
+          "default": "set_data_source_access",
+          "title": "Set Data Source Access",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Data Sources",
+          "x-display-name": "Set Data Source Access"
+        },
+        "data_source_id": {
+          "title": "Data Source",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "data_source_id",
+            "placeholder": "Select data source\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "basedash_data_source"
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "e.g. {\"mode\":\"everyone\"} or {\"mode\":\"restricted\",\"groupIds\":[\"\u2026\"]}",
+          "title": "Access Policy (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "organization_id",
+        "data_source_id"
+      ],
+      "title": "BDSetDataSourceAccessConfig",
+      "type": "object"
+    },
+    "BDStartAutomationRunConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "start_automation_run",
+          "default": "start_automation_run",
+          "title": "Start Automation Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Automations",
+          "x-display-name": "Start Automation Run"
+        },
+        "automation_id": {
+          "title": "Automation ID",
+          "type": "string"
+        },
+        "wait": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes (synchronous)",
+            "No (async)"
+          ],
+          "title": "Wait for Result",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "organization_id",
+        "automation_id"
+      ],
+      "title": "BDStartAutomationRunConfig",
+      "type": "object"
+    },
+    "BDUpdateAutomationConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "update_automation",
+          "default": "update_automation",
+          "title": "Update Automation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Automations",
+          "x-display-name": "Update Automation"
+        },
+        "automation_id": {
+          "title": "Automation ID",
+          "type": "string"
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "e.g. {\"active\":false}",
+          "title": "Fields (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "organization_id",
+        "automation_id"
+      ],
+      "title": "BDUpdateAutomationConfig",
+      "type": "object"
+    },
+    "BDUpdateChartConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "update_chart",
+          "default": "update_chart",
+          "title": "Update Chart",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Charts",
+          "x-display-name": "Update Chart"
+        },
+        "chart_id": {
+          "title": "Chart ID",
+          "type": "string"
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "e.g. {\"name\":\"Renamed\",\"sqlQuery\":\"select 1\"}",
+          "title": "Fields (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "organization_id",
+        "chart_id"
+      ],
+      "title": "BDUpdateChartConfig",
+      "type": "object"
+    },
+    "BDUpdateDashboardConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "update_dashboard",
+          "default": "update_dashboard",
+          "title": "Update Dashboard",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Dashboards",
+          "x-display-name": "Update Dashboard"
+        },
+        "dashboard_id": {
+          "title": "Dashboard",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "dashboard_id",
+            "placeholder": "Select dashboard\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "basedash_dashboard"
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "e.g. {\"name\":\"Renamed\",\"color\":\"green\"}",
+          "title": "Fields (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "organization_id",
+        "dashboard_id"
+      ],
+      "title": "BDUpdateDashboardConfig",
+      "type": "object"
+    },
+    "BDUpdateDataSourceConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "update_data_source",
+          "default": "update_data_source",
+          "title": "Update Data Source",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Data Sources",
+          "x-display-name": "Update Data Source"
+        },
+        "data_source_id": {
+          "title": "Data Source",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "data_source_id",
+            "placeholder": "Select data source\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "basedash_data_source"
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "e.g. {\"displayName\":\"Renamed\"}",
+          "title": "Fields (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "organization_id",
+        "data_source_id"
+      ],
+      "title": "BDUpdateDataSourceConfig",
+      "type": "object"
+    },
+    "BDUpdateDefinitionConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "update_definition",
+          "default": "update_definition",
+          "title": "Update Definition",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Definitions",
+          "x-display-name": "Update Definition"
+        },
+        "definition_id": {
+          "title": "Definition ID",
+          "type": "string"
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "e.g. {\"sqlQuery\":\"select 1\"}",
+          "title": "Fields (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "organization_id",
+        "definition_id"
+      ],
+      "title": "BDUpdateDefinitionConfig",
+      "type": "object"
+    },
+    "BDUpdateGroupConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "update_group",
+          "default": "update_group",
+          "title": "Update Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "Update Group"
+        },
+        "group_id": {
+          "title": "Group ID",
+          "type": "string"
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "e.g. {\"name\":\"Renamed\"}",
+          "title": "Fields (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "organization_id",
+        "group_id"
+      ],
+      "title": "BDUpdateGroupConfig",
+      "type": "object"
+    },
+    "BDUpdateMcpServerConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "update_mcp_server",
+          "default": "update_mcp_server",
+          "title": "Update MCP Server",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "MCP Servers",
+          "x-display-name": "Update MCP Server"
+        },
+        "mcp_server_id": {
+          "title": "MCP Server ID",
+          "type": "string"
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "e.g. {\"displayName\":\"Renamed\"}",
+          "title": "Fields (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "organization_id",
+        "mcp_server_id"
+      ],
+      "title": "BDUpdateMcpServerConfig",
+      "type": "object"
+    },
+    "BDUpdateMemberConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "update_member",
+          "default": "update_member",
+          "title": "Update Member",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Members",
+          "x-display-name": "Update Member"
+        },
+        "member_id": {
+          "title": "Member ID",
+          "type": "string"
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "e.g. {\"role\":\"ADMIN\"}",
+          "title": "Fields (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "organization_id",
+        "member_id"
+      ],
+      "title": "BDUpdateMemberConfig",
+      "type": "object"
+    },
+    "BDUpdateOrganizationConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "update_organization",
+          "default": "update_organization",
+          "title": "Update Organization",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organizations",
+          "x-display-name": "Update Organization"
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "Fields to update, e.g. {\"name\":\"New name\",\"insightsEnabled\":true}",
+          "title": "Fields (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "BDUpdateOrganizationConfig",
+      "type": "object"
+    },
+    "BDUpdateSkillConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "update_skill",
+          "default": "update_skill",
+          "title": "Update Skill",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Skills",
+          "x-display-name": "Update Skill"
+        },
+        "skill_id": {
+          "title": "Skill ID",
+          "type": "string"
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "e.g. {\"name\":\"Renamed\"}",
+          "title": "Fields (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "organization_id",
+        "skill_id"
+      ],
+      "title": "BDUpdateSkillConfig",
+      "type": "object"
+    },
+    "BDUpdateTabConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "update_tab",
+          "default": "update_tab",
+          "title": "Update Tab",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Dashboards",
+          "x-display-name": "Update Tab"
+        },
+        "dashboard_id": {
+          "title": "Dashboard",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "dashboard_id",
+            "placeholder": "Select dashboard\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "basedash_dashboard"
+        },
+        "tab_id": {
+          "title": "Tab ID",
+          "type": "string"
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "e.g. {\"name\":\"Overview\",\"sortOrder\":1}",
+          "title": "Fields (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "organization_id",
+        "dashboard_id",
+        "tab_id"
+      ],
+      "title": "BDUpdateTabConfig",
+      "type": "object"
+    },
+    "BDVerifyDataSourceConfig": {
+      "properties": {
+        "organization_id": {
+          "description": "Basedash organization",
+          "title": "Organization",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "organization_id",
+            "placeholder": "Select organization\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "operation": {
+          "const": "verify_data_source",
+          "default": "verify_data_source",
+          "title": "Verify Data Source",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Data Sources",
+          "x-display-name": "Verify Data Source"
+        },
+        "body_json": {
+          "default": "{}",
+          "description": "Connection details to test (same shape as Create)",
+          "title": "Connection (JSON)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "organization_id"
+      ],
+      "title": "BDVerifyDataSourceConfig",
+      "type": "object"
+    },
+    "BasedashApiKeyCredential": {
+      "description": "API key credential for Basedash (Bearer token).\n\nCreate one in Basedash: avatar (top-right) \u2192 API keys \u2192 Create. Shown once \u2014\ncopy it immediately. Most endpoints require admin access to the organization.",
+      "properties": {
+        "api_key": {
+          "description": "Basedash API key (starts with bd_key_)",
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "BasedashApiKeyCredential",
+      "type": "object",
+      "x-credential-instructions": "Basedash \u2192 avatar \u2192 API keys \u2192 Create. Copy the bd_key_\u2026 value (shown once).",
+      "x-credential-url": "https://www.basedash.com/docs/api-reference/overview"
+    }
+  },
+  "description": "Full Basedash node configuration including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_group_member": "#/$defs/BDAddGroupMemberConfig",
+          "cancel_chat_message": "#/$defs/BDCancelChatMessageConfig",
+          "create_automation": "#/$defs/BDCreateAutomationConfig",
+          "create_chart": "#/$defs/BDCreateChartConfig",
+          "create_chat": "#/$defs/BDCreateChatConfig",
+          "create_dashboard": "#/$defs/BDCreateDashboardConfig",
+          "create_data_source": "#/$defs/BDCreateDataSourceConfig",
+          "create_definition": "#/$defs/BDCreateDefinitionConfig",
+          "create_group": "#/$defs/BDCreateGroupConfig",
+          "create_insight": "#/$defs/BDCreateInsightConfig",
+          "create_mcp_server": "#/$defs/BDCreateMcpServerConfig",
+          "create_organization": "#/$defs/BDCreateOrganizationConfig",
+          "create_skill": "#/$defs/BDCreateSkillConfig",
+          "create_tab": "#/$defs/BDCreateTabConfig",
+          "deactivate_member": "#/$defs/BDDeactivateMemberConfig",
+          "delete_automation": "#/$defs/BDDeleteAutomationConfig",
+          "delete_chart": "#/$defs/BDDeleteChartConfig",
+          "delete_chat": "#/$defs/BDDeleteChatConfig",
+          "delete_dashboard": "#/$defs/BDDeleteDashboardConfig",
+          "delete_data_source": "#/$defs/BDDeleteDataSourceConfig",
+          "delete_definition": "#/$defs/BDDeleteDefinitionConfig",
+          "delete_group": "#/$defs/BDDeleteGroupConfig",
+          "delete_insight": "#/$defs/BDDeleteInsightConfig",
+          "delete_mcp_server": "#/$defs/BDDeleteMcpServerConfig",
+          "delete_skill": "#/$defs/BDDeleteSkillConfig",
+          "delete_tab": "#/$defs/BDDeleteTabConfig",
+          "get_ai_usage": "#/$defs/BDGetAiUsageConfig",
+          "get_audit_logs": "#/$defs/BDGetAuditLogsConfig",
+          "get_automation": "#/$defs/BDGetAutomationConfig",
+          "get_automation_run": "#/$defs/BDGetAutomationRunConfig",
+          "get_chart": "#/$defs/BDGetChartConfig",
+          "get_chart_image": "#/$defs/BDGetChartImageConfig",
+          "get_chat": "#/$defs/BDGetChatConfig",
+          "get_chat_message": "#/$defs/BDGetChatMessageConfig",
+          "get_dashboard": "#/$defs/BDGetDashboardConfig",
+          "get_data_source": "#/$defs/BDGetDataSourceConfig",
+          "get_data_source_access": "#/$defs/BDGetDataSourceAccessConfig",
+          "get_definition": "#/$defs/BDGetDefinitionConfig",
+          "get_group": "#/$defs/BDGetGroupConfig",
+          "get_insight": "#/$defs/BDGetInsightConfig",
+          "get_mcp_server": "#/$defs/BDGetMcpServerConfig",
+          "get_member": "#/$defs/BDGetMemberConfig",
+          "get_organization": "#/$defs/BDGetOrganizationConfig",
+          "get_skill": "#/$defs/BDGetSkillConfig",
+          "invite_member": "#/$defs/BDInviteMemberConfig",
+          "list_automation_runs": "#/$defs/BDListAutomationRunsConfig",
+          "list_automations": "#/$defs/BDListAutomationsConfig",
+          "list_chat_messages": "#/$defs/BDListChatMessagesConfig",
+          "list_chats": "#/$defs/BDListChatsConfig",
+          "list_dashboard_charts": "#/$defs/BDListDashboardChartsConfig",
+          "list_dashboards": "#/$defs/BDListDashboardsConfig",
+          "list_data_sources": "#/$defs/BDListDataSourcesConfig",
+          "list_definitions": "#/$defs/BDListDefinitionsConfig",
+          "list_groups": "#/$defs/BDListGroupsConfig",
+          "list_insights": "#/$defs/BDListInsightsConfig",
+          "list_mcp_servers": "#/$defs/BDListMcpServersConfig",
+          "list_members": "#/$defs/BDListMembersConfig",
+          "list_organizations": "#/$defs/BDListOrganizationsConfig",
+          "list_skills": "#/$defs/BDListSkillsConfig",
+          "send_chat_message": "#/$defs/BDSendChatMessageConfig",
+          "set_data_source_access": "#/$defs/BDSetDataSourceAccessConfig",
+          "start_automation_run": "#/$defs/BDStartAutomationRunConfig",
+          "update_automation": "#/$defs/BDUpdateAutomationConfig",
+          "update_chart": "#/$defs/BDUpdateChartConfig",
+          "update_dashboard": "#/$defs/BDUpdateDashboardConfig",
+          "update_data_source": "#/$defs/BDUpdateDataSourceConfig",
+          "update_definition": "#/$defs/BDUpdateDefinitionConfig",
+          "update_group": "#/$defs/BDUpdateGroupConfig",
+          "update_mcp_server": "#/$defs/BDUpdateMcpServerConfig",
+          "update_member": "#/$defs/BDUpdateMemberConfig",
+          "update_organization": "#/$defs/BDUpdateOrganizationConfig",
+          "update_skill": "#/$defs/BDUpdateSkillConfig",
+          "update_tab": "#/$defs/BDUpdateTabConfig",
+          "verify_data_source": "#/$defs/BDVerifyDataSourceConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/BDListOrganizationsConfig"
+        },
+        {
+          "$ref": "#/$defs/BDGetOrganizationConfig"
+        },
+        {
+          "$ref": "#/$defs/BDCreateOrganizationConfig"
+        },
+        {
+          "$ref": "#/$defs/BDUpdateOrganizationConfig"
+        },
+        {
+          "$ref": "#/$defs/BDGetAiUsageConfig"
+        },
+        {
+          "$ref": "#/$defs/BDGetAuditLogsConfig"
+        },
+        {
+          "$ref": "#/$defs/BDListDashboardsConfig"
+        },
+        {
+          "$ref": "#/$defs/BDGetDashboardConfig"
+        },
+        {
+          "$ref": "#/$defs/BDCreateDashboardConfig"
+        },
+        {
+          "$ref": "#/$defs/BDUpdateDashboardConfig"
+        },
+        {
+          "$ref": "#/$defs/BDDeleteDashboardConfig"
+        },
+        {
+          "$ref": "#/$defs/BDListDashboardChartsConfig"
+        },
+        {
+          "$ref": "#/$defs/BDCreateTabConfig"
+        },
+        {
+          "$ref": "#/$defs/BDUpdateTabConfig"
+        },
+        {
+          "$ref": "#/$defs/BDDeleteTabConfig"
+        },
+        {
+          "$ref": "#/$defs/BDCreateChartConfig"
+        },
+        {
+          "$ref": "#/$defs/BDGetChartConfig"
+        },
+        {
+          "$ref": "#/$defs/BDUpdateChartConfig"
+        },
+        {
+          "$ref": "#/$defs/BDDeleteChartConfig"
+        },
+        {
+          "$ref": "#/$defs/BDGetChartImageConfig"
+        },
+        {
+          "$ref": "#/$defs/BDListChatsConfig"
+        },
+        {
+          "$ref": "#/$defs/BDCreateChatConfig"
+        },
+        {
+          "$ref": "#/$defs/BDGetChatConfig"
+        },
+        {
+          "$ref": "#/$defs/BDDeleteChatConfig"
+        },
+        {
+          "$ref": "#/$defs/BDListChatMessagesConfig"
+        },
+        {
+          "$ref": "#/$defs/BDSendChatMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/BDGetChatMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/BDCancelChatMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/BDListAutomationsConfig"
+        },
+        {
+          "$ref": "#/$defs/BDGetAutomationConfig"
+        },
+        {
+          "$ref": "#/$defs/BDCreateAutomationConfig"
+        },
+        {
+          "$ref": "#/$defs/BDUpdateAutomationConfig"
+        },
+        {
+          "$ref": "#/$defs/BDDeleteAutomationConfig"
+        },
+        {
+          "$ref": "#/$defs/BDListAutomationRunsConfig"
+        },
+        {
+          "$ref": "#/$defs/BDStartAutomationRunConfig"
+        },
+        {
+          "$ref": "#/$defs/BDGetAutomationRunConfig"
+        },
+        {
+          "$ref": "#/$defs/BDListDataSourcesConfig"
+        },
+        {
+          "$ref": "#/$defs/BDGetDataSourceConfig"
+        },
+        {
+          "$ref": "#/$defs/BDCreateDataSourceConfig"
+        },
+        {
+          "$ref": "#/$defs/BDUpdateDataSourceConfig"
+        },
+        {
+          "$ref": "#/$defs/BDDeleteDataSourceConfig"
+        },
+        {
+          "$ref": "#/$defs/BDVerifyDataSourceConfig"
+        },
+        {
+          "$ref": "#/$defs/BDGetDataSourceAccessConfig"
+        },
+        {
+          "$ref": "#/$defs/BDSetDataSourceAccessConfig"
+        },
+        {
+          "$ref": "#/$defs/BDListDefinitionsConfig"
+        },
+        {
+          "$ref": "#/$defs/BDGetDefinitionConfig"
+        },
+        {
+          "$ref": "#/$defs/BDCreateDefinitionConfig"
+        },
+        {
+          "$ref": "#/$defs/BDUpdateDefinitionConfig"
+        },
+        {
+          "$ref": "#/$defs/BDDeleteDefinitionConfig"
+        },
+        {
+          "$ref": "#/$defs/BDListInsightsConfig"
+        },
+        {
+          "$ref": "#/$defs/BDGetInsightConfig"
+        },
+        {
+          "$ref": "#/$defs/BDCreateInsightConfig"
+        },
+        {
+          "$ref": "#/$defs/BDDeleteInsightConfig"
+        },
+        {
+          "$ref": "#/$defs/BDListMcpServersConfig"
+        },
+        {
+          "$ref": "#/$defs/BDGetMcpServerConfig"
+        },
+        {
+          "$ref": "#/$defs/BDCreateMcpServerConfig"
+        },
+        {
+          "$ref": "#/$defs/BDUpdateMcpServerConfig"
+        },
+        {
+          "$ref": "#/$defs/BDDeleteMcpServerConfig"
+        },
+        {
+          "$ref": "#/$defs/BDListMembersConfig"
+        },
+        {
+          "$ref": "#/$defs/BDGetMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/BDInviteMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/BDUpdateMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/BDDeactivateMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/BDListGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/BDGetGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/BDCreateGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/BDUpdateGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/BDDeleteGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/BDAddGroupMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/BDListSkillsConfig"
+        },
+        {
+          "$ref": "#/$defs/BDGetSkillConfig"
+        },
+        {
+          "$ref": "#/$defs/BDCreateSkillConfig"
+        },
+        {
+          "$ref": "#/$defs/BDUpdateSkillConfig"
+        },
+        {
+          "$ref": "#/$defs/BDDeleteSkillConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BasedashApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Basedash Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

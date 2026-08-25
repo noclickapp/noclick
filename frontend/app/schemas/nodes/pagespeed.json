@@ -1,0 +1,906 @@
+{
+  "$defs": {
+    "PageSpeedAccessibilityScoreConfig": {
+      "description": "Run with the ACCESSIBILITY category and extract the score + audits.",
+      "properties": {
+        "operation": {
+          "const": "accessibility_score",
+          "default": "accessibility_score",
+          "title": "Accessibility Score",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Scores",
+          "x-display-name": "Accessibility Score",
+          "x-is-trigger": false
+        },
+        "page_url": {
+          "description": "The page to score",
+          "format": "uri",
+          "title": "URL",
+          "type": "string"
+        },
+        "strategy": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "DESKTOP",
+          "description": "Crawler profile to emulate",
+          "enum": [
+            "DESKTOP",
+            "MOBILE"
+          ],
+          "enumNames": [
+            "Desktop",
+            "Mobile"
+          ],
+          "title": "Strategy",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "page_url"
+      ],
+      "title": "PageSpeedAccessibilityScoreConfig",
+      "type": "object"
+    },
+    "PageSpeedAllCategoriesConfig": {
+      "description": "Run all four Lighthouse categories in one call and extract every score.",
+      "properties": {
+        "operation": {
+          "const": "all_categories",
+          "default": "all_categories",
+          "title": "All Category Scores",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Scores",
+          "x-display-name": "All Category Scores",
+          "x-is-trigger": false
+        },
+        "page_url": {
+          "description": "The page to score",
+          "format": "uri",
+          "title": "URL",
+          "type": "string"
+        },
+        "strategy": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "DESKTOP",
+          "description": "Crawler profile to emulate",
+          "enum": [
+            "DESKTOP",
+            "MOBILE"
+          ],
+          "enumNames": [
+            "Desktop",
+            "Mobile"
+          ],
+          "title": "Strategy",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "page_url"
+      ],
+      "title": "PageSpeedAllCategoriesConfig",
+      "type": "object"
+    },
+    "PageSpeedAnalyzeDesktopConfig": {
+      "description": "Run the analysis using the desktop profile.",
+      "properties": {
+        "operation": {
+          "const": "analyze_desktop",
+          "default": "analyze_desktop",
+          "title": "Analyze (Desktop)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Analysis",
+          "x-display-name": "Analyze (Desktop)",
+          "x-is-trigger": false
+        },
+        "page_url": {
+          "description": "The page to analyze using the desktop profile",
+          "format": "uri",
+          "title": "URL",
+          "type": "string"
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "BCP-47 locale for localized audit text",
+          "title": "Locale"
+        }
+      },
+      "required": [
+        "page_url"
+      ],
+      "title": "PageSpeedAnalyzeDesktopConfig",
+      "type": "object"
+    },
+    "PageSpeedAnalyzeMobileConfig": {
+      "description": "Run the analysis using the mobile crawler/emulation profile.",
+      "properties": {
+        "operation": {
+          "const": "analyze_mobile",
+          "default": "analyze_mobile",
+          "title": "Analyze (Mobile)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Analysis",
+          "x-display-name": "Analyze (Mobile)",
+          "x-is-trigger": false
+        },
+        "page_url": {
+          "description": "The page to analyze using the mobile profile",
+          "format": "uri",
+          "title": "URL",
+          "type": "string"
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "BCP-47 locale for localized audit text",
+          "title": "Locale"
+        }
+      },
+      "required": [
+        "page_url"
+      ],
+      "title": "PageSpeedAnalyzeMobileConfig",
+      "type": "object"
+    },
+    "PageSpeedApiKeyCredential": {
+      "description": "API key credential for the Google PageSpeed Insights API.",
+      "properties": {
+        "credential_type": {
+          "const": "pagespeed_api_key",
+          "default": "pagespeed_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Google Cloud API key for the PageSpeed Insights API. Create one at console.cloud.google.com/apis/credentials after enabling the PageSpeed Insights API for your project.",
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "PageSpeedApiKeyCredential",
+      "type": "object",
+      "x-credential-url": "https://console.cloud.google.com/apis/credentials"
+    },
+    "PageSpeedBestPracticesScoreConfig": {
+      "description": "Run with the BEST_PRACTICES category and extract the score + audits.",
+      "properties": {
+        "operation": {
+          "const": "best_practices_score",
+          "default": "best_practices_score",
+          "title": "Best Practices Score",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Scores",
+          "x-display-name": "Best Practices Score",
+          "x-is-trigger": false
+        },
+        "page_url": {
+          "description": "The page to score",
+          "format": "uri",
+          "title": "URL",
+          "type": "string"
+        },
+        "strategy": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "DESKTOP",
+          "description": "Crawler profile to emulate",
+          "enum": [
+            "DESKTOP",
+            "MOBILE"
+          ],
+          "enumNames": [
+            "Desktop",
+            "Mobile"
+          ],
+          "title": "Strategy",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "page_url"
+      ],
+      "title": "PageSpeedBestPracticesScoreConfig",
+      "type": "object"
+    },
+    "PageSpeedCoreWebVitalsConfig": {
+      "description": "Extract real-user Core Web Vitals (CrUX field data) for the specific URL.",
+      "properties": {
+        "operation": {
+          "const": "core_web_vitals",
+          "default": "core_web_vitals",
+          "title": "Core Web Vitals (URL)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Field Data",
+          "x-display-name": "Core Web Vitals (URL)",
+          "x-is-trigger": false
+        },
+        "page_url": {
+          "description": "The page to analyze",
+          "format": "uri",
+          "title": "URL",
+          "type": "string"
+        },
+        "strategy": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "DESKTOP",
+          "description": "Crawler profile to emulate",
+          "enum": [
+            "DESKTOP",
+            "MOBILE"
+          ],
+          "enumNames": [
+            "Desktop",
+            "Mobile"
+          ],
+          "title": "Strategy",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "page_url"
+      ],
+      "title": "PageSpeedCoreWebVitalsConfig",
+      "type": "object"
+    },
+    "PageSpeedGetAuditConfig": {
+      "description": "Extract a single named Lighthouse audit (score + details).",
+      "properties": {
+        "operation": {
+          "const": "get_audit",
+          "default": "get_audit",
+          "title": "Get Audit Details",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lab Data",
+          "x-display-name": "Get Audit Details",
+          "x-is-trigger": false
+        },
+        "page_url": {
+          "description": "The page to analyze",
+          "format": "uri",
+          "title": "URL",
+          "type": "string"
+        },
+        "audit_id": {
+          "description": "Lighthouse audit id. Pick a common one or type any audit id (Lighthouse has ~150).",
+          "enum": [
+            "first-contentful-paint",
+            "largest-contentful-paint",
+            "speed-index",
+            "total-blocking-time",
+            "cumulative-layout-shift",
+            "interactive",
+            "server-response-time",
+            "render-blocking-insight",
+            "lcp-breakdown-insight",
+            "cls-culprits-insight",
+            "image-delivery-insight",
+            "dom-size-insight",
+            "font-display-insight",
+            "third-parties-insight",
+            "duplicated-javascript-insight",
+            "legacy-javascript-insight",
+            "forced-reflow-insight",
+            "network-dependency-tree-insight",
+            "viewport-insight",
+            "cache-insight",
+            "unused-css-rules",
+            "unused-javascript",
+            "unminified-css",
+            "unminified-javascript",
+            "unsized-images",
+            "color-contrast",
+            "image-alt",
+            "label",
+            "link-name",
+            "button-name",
+            "document-title",
+            "html-has-lang",
+            "meta-viewport",
+            "heading-order",
+            "errors-in-console",
+            "is-on-https",
+            "deprecations",
+            "csp-xss",
+            "inspector-issues",
+            "meta-description",
+            "http-status-code",
+            "link-text",
+            "crawlable-anchors",
+            "is-crawlable",
+            "robots-txt",
+            "hreflang",
+            "canonical",
+            "structured-data"
+          ],
+          "title": "Audit ID",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "strategy": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "DESKTOP",
+          "description": "Crawler profile to emulate",
+          "enum": [
+            "DESKTOP",
+            "MOBILE"
+          ],
+          "enumNames": [
+            "Desktop",
+            "Mobile"
+          ],
+          "title": "Strategy",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "page_url",
+        "audit_id"
+      ],
+      "title": "PageSpeedGetAuditConfig",
+      "type": "object"
+    },
+    "PageSpeedLabMetricsConfig": {
+      "description": "Extract lab metrics (FCP, LCP, Speed Index, TBT, CLS, TTI) from Lighthouse.",
+      "properties": {
+        "operation": {
+          "const": "lab_metrics",
+          "default": "lab_metrics",
+          "title": "Lab Metrics",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lab Data",
+          "x-display-name": "Lab Metrics",
+          "x-is-trigger": false
+        },
+        "page_url": {
+          "description": "The page to analyze",
+          "format": "uri",
+          "title": "URL",
+          "type": "string"
+        },
+        "strategy": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "DESKTOP",
+          "description": "Crawler profile to emulate",
+          "enum": [
+            "DESKTOP",
+            "MOBILE"
+          ],
+          "enumNames": [
+            "Desktop",
+            "Mobile"
+          ],
+          "title": "Strategy",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "page_url"
+      ],
+      "title": "PageSpeedLabMetricsConfig",
+      "type": "object"
+    },
+    "PageSpeedLocalizedReportConfig": {
+      "description": "Run with a specific result locale for localized audit text.",
+      "properties": {
+        "operation": {
+          "const": "localized_report",
+          "default": "localized_report",
+          "title": "Localized Report",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Analysis",
+          "x-display-name": "Localized Report",
+          "x-is-trigger": false
+        },
+        "page_url": {
+          "description": "The page to analyze",
+          "format": "uri",
+          "title": "URL",
+          "type": "string"
+        },
+        "locale": {
+          "description": "BCP-47 locale for the response text (e.g. en, es, ja, fr)",
+          "title": "Locale",
+          "type": "string"
+        },
+        "strategy": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "DESKTOP",
+          "description": "Crawler profile to emulate",
+          "enum": [
+            "DESKTOP",
+            "MOBILE"
+          ],
+          "enumNames": [
+            "Desktop",
+            "Mobile"
+          ],
+          "title": "Strategy",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "page_url",
+        "locale"
+      ],
+      "title": "PageSpeedLocalizedReportConfig",
+      "type": "object"
+    },
+    "PageSpeedOpportunitiesConfig": {
+      "description": "Extract performance opportunity audits with estimated ms/byte savings.",
+      "properties": {
+        "operation": {
+          "const": "get_opportunities",
+          "default": "get_opportunities",
+          "title": "Get Opportunities",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lab Data",
+          "x-display-name": "Get Opportunities",
+          "x-is-trigger": false
+        },
+        "page_url": {
+          "description": "The page to analyze",
+          "format": "uri",
+          "title": "URL",
+          "type": "string"
+        },
+        "strategy": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "DESKTOP",
+          "description": "Crawler profile to emulate",
+          "enum": [
+            "DESKTOP",
+            "MOBILE"
+          ],
+          "enumNames": [
+            "Desktop",
+            "Mobile"
+          ],
+          "title": "Strategy",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "page_url"
+      ],
+      "title": "PageSpeedOpportunitiesConfig",
+      "type": "object"
+    },
+    "PageSpeedOriginCoreWebVitalsConfig": {
+      "description": "Extract aggregated CrUX field data for the entire origin (whole site).",
+      "properties": {
+        "operation": {
+          "const": "origin_core_web_vitals",
+          "default": "origin_core_web_vitals",
+          "title": "Origin Core Web Vitals",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Field Data",
+          "x-display-name": "Origin Core Web Vitals",
+          "x-is-trigger": false
+        },
+        "page_url": {
+          "description": "Any URL on the origin to analyze (field data is origin-wide)",
+          "format": "uri",
+          "title": "URL",
+          "type": "string"
+        },
+        "strategy": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "DESKTOP",
+          "description": "Crawler profile to emulate",
+          "enum": [
+            "DESKTOP",
+            "MOBILE"
+          ],
+          "enumNames": [
+            "Desktop",
+            "Mobile"
+          ],
+          "title": "Strategy",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "page_url"
+      ],
+      "title": "PageSpeedOriginCoreWebVitalsConfig",
+      "type": "object"
+    },
+    "PageSpeedPerformanceScoreConfig": {
+      "description": "Run with the PERFORMANCE category and extract the 0-100 Lighthouse score.",
+      "properties": {
+        "operation": {
+          "const": "performance_score",
+          "default": "performance_score",
+          "title": "Performance Score",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Scores",
+          "x-display-name": "Performance Score",
+          "x-is-trigger": false
+        },
+        "page_url": {
+          "description": "The page to score",
+          "format": "uri",
+          "title": "URL",
+          "type": "string"
+        },
+        "strategy": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "DESKTOP",
+          "description": "Crawler profile to emulate",
+          "enum": [
+            "DESKTOP",
+            "MOBILE"
+          ],
+          "enumNames": [
+            "Desktop",
+            "Mobile"
+          ],
+          "title": "Strategy",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "page_url"
+      ],
+      "title": "PageSpeedPerformanceScoreConfig",
+      "type": "object"
+    },
+    "PageSpeedRunAnalysisConfig": {
+      "description": "Run a full Lighthouse + CrUX analysis and return the complete report.",
+      "properties": {
+        "operation": {
+          "const": "run_analysis",
+          "default": "run_analysis",
+          "title": "Run Analysis (Full)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Analysis",
+          "x-display-name": "Run Analysis (Full)",
+          "x-is-trigger": false
+        },
+        "page_url": {
+          "description": "The page to analyze (e.g. https://example.com/)",
+          "format": "uri",
+          "title": "URL",
+          "type": "string"
+        },
+        "strategy": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "DESKTOP",
+          "description": "Crawler profile to emulate",
+          "enum": [
+            "DESKTOP",
+            "MOBILE"
+          ],
+          "enumNames": [
+            "Desktop",
+            "Mobile"
+          ],
+          "title": "Strategy",
+          "x-enum-searchable": true
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "BCP-47 locale for localized audit text (e.g. en, es, ja)",
+          "title": "Locale"
+        }
+      },
+      "required": [
+        "page_url"
+      ],
+      "title": "PageSpeedRunAnalysisConfig",
+      "type": "object"
+    },
+    "PageSpeedScreenshotConfig": {
+      "description": "Extract the final rendered screenshot (base64 data URI) of the page.",
+      "properties": {
+        "operation": {
+          "const": "get_screenshot",
+          "default": "get_screenshot",
+          "title": "Get Screenshot",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lab Data",
+          "x-display-name": "Get Screenshot",
+          "x-is-trigger": false
+        },
+        "page_url": {
+          "description": "The page to analyze",
+          "format": "uri",
+          "title": "URL",
+          "type": "string"
+        },
+        "strategy": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "DESKTOP",
+          "description": "Crawler profile to emulate",
+          "enum": [
+            "DESKTOP",
+            "MOBILE"
+          ],
+          "enumNames": [
+            "Desktop",
+            "Mobile"
+          ],
+          "title": "Strategy",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "page_url"
+      ],
+      "title": "PageSpeedScreenshotConfig",
+      "type": "object"
+    },
+    "PageSpeedSeoScoreConfig": {
+      "description": "Run with the SEO category and extract the SEO score + failing audits.",
+      "properties": {
+        "operation": {
+          "const": "seo_score",
+          "default": "seo_score",
+          "title": "SEO Score",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Scores",
+          "x-display-name": "SEO Score",
+          "x-is-trigger": false
+        },
+        "page_url": {
+          "description": "The page to score",
+          "format": "uri",
+          "title": "URL",
+          "type": "string"
+        },
+        "strategy": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "DESKTOP",
+          "description": "Crawler profile to emulate",
+          "enum": [
+            "DESKTOP",
+            "MOBILE"
+          ],
+          "enumNames": [
+            "Desktop",
+            "Mobile"
+          ],
+          "title": "Strategy",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "page_url"
+      ],
+      "title": "PageSpeedSeoScoreConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the Google PageSpeed node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "accessibility_score": "#/$defs/PageSpeedAccessibilityScoreConfig",
+          "all_categories": "#/$defs/PageSpeedAllCategoriesConfig",
+          "analyze_desktop": "#/$defs/PageSpeedAnalyzeDesktopConfig",
+          "analyze_mobile": "#/$defs/PageSpeedAnalyzeMobileConfig",
+          "best_practices_score": "#/$defs/PageSpeedBestPracticesScoreConfig",
+          "core_web_vitals": "#/$defs/PageSpeedCoreWebVitalsConfig",
+          "get_audit": "#/$defs/PageSpeedGetAuditConfig",
+          "get_opportunities": "#/$defs/PageSpeedOpportunitiesConfig",
+          "get_screenshot": "#/$defs/PageSpeedScreenshotConfig",
+          "lab_metrics": "#/$defs/PageSpeedLabMetricsConfig",
+          "localized_report": "#/$defs/PageSpeedLocalizedReportConfig",
+          "origin_core_web_vitals": "#/$defs/PageSpeedOriginCoreWebVitalsConfig",
+          "performance_score": "#/$defs/PageSpeedPerformanceScoreConfig",
+          "run_analysis": "#/$defs/PageSpeedRunAnalysisConfig",
+          "seo_score": "#/$defs/PageSpeedSeoScoreConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/PageSpeedRunAnalysisConfig"
+        },
+        {
+          "$ref": "#/$defs/PageSpeedAnalyzeMobileConfig"
+        },
+        {
+          "$ref": "#/$defs/PageSpeedAnalyzeDesktopConfig"
+        },
+        {
+          "$ref": "#/$defs/PageSpeedPerformanceScoreConfig"
+        },
+        {
+          "$ref": "#/$defs/PageSpeedAccessibilityScoreConfig"
+        },
+        {
+          "$ref": "#/$defs/PageSpeedSeoScoreConfig"
+        },
+        {
+          "$ref": "#/$defs/PageSpeedBestPracticesScoreConfig"
+        },
+        {
+          "$ref": "#/$defs/PageSpeedAllCategoriesConfig"
+        },
+        {
+          "$ref": "#/$defs/PageSpeedCoreWebVitalsConfig"
+        },
+        {
+          "$ref": "#/$defs/PageSpeedOriginCoreWebVitalsConfig"
+        },
+        {
+          "$ref": "#/$defs/PageSpeedLabMetricsConfig"
+        },
+        {
+          "$ref": "#/$defs/PageSpeedGetAuditConfig"
+        },
+        {
+          "$ref": "#/$defs/PageSpeedOpportunitiesConfig"
+        },
+        {
+          "$ref": "#/$defs/PageSpeedScreenshotConfig"
+        },
+        {
+          "$ref": "#/$defs/PageSpeedLocalizedReportConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PageSpeedApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Pagespeed Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Run a full PageSpeed analysis for my landing page",
+    "Get the mobile performance score for a URL",
+    "Extract Core Web Vitals field data for a page",
+    "List the top performance opportunities for a page",
+    "Get all four Lighthouse category scores in one call"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

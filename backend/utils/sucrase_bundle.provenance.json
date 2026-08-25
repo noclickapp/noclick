@@ -1,0 +1,67 @@
+{
+  "schemaVersion": 1,
+  "artifact": "backend/utils/sucrase_bundle.js",
+  "sha256": "8faa434af09a6c9cc98e58c41c3b890c5fc243c22ebd3443ede7aed2914c06f1",
+  "entrySourceSha256": "f9a7e153b62015cea3296b35f531a793d9a23713e7155c423843647c17ecbb12",
+  "packageLockSha256": "5b570975052309a0dc58a1eea4e4b77e6a95b0b778bbc2ed245d26f9b5dacc01",
+  "buildTool": {
+    "name": "esbuild",
+    "version": "0.25.12"
+  },
+  "buildOptions": {
+    "bundle": true,
+    "charset": "utf8",
+    "format": "iife",
+    "legalComments": "none",
+    "minify": true,
+    "platform": "browser",
+    "target": [
+      "es2020"
+    ],
+    "treeShaking": true
+  },
+  "bundledPackages": [
+    {
+      "name": "@jridgewell/gen-mapping",
+      "version": "0.3.13",
+      "license": "MIT",
+      "repository": "git+https://github.com/jridgewell/sourcemaps.git"
+    },
+    {
+      "name": "@jridgewell/resolve-uri",
+      "version": "3.1.2",
+      "license": "MIT",
+      "repository": "https://github.com/jridgewell/resolve-uri"
+    },
+    {
+      "name": "@jridgewell/sourcemap-codec",
+      "version": "1.5.5",
+      "license": "MIT",
+      "repository": "git+https://github.com/jridgewell/sourcemaps.git"
+    },
+    {
+      "name": "@jridgewell/trace-mapping",
+      "version": "0.3.31",
+      "license": "MIT",
+      "repository": "git+https://github.com/jridgewell/sourcemaps.git"
+    },
+    {
+      "name": "lines-and-columns",
+      "version": "1.2.4",
+      "license": "MIT",
+      "repository": "https://github.com/eventualbuddha/lines-and-columns.git"
+    },
+    {
+      "name": "sucrase",
+      "version": "3.35.1",
+      "license": "MIT",
+      "repository": "https://github.com/alangpierce/sucrase.git"
+    },
+    {
+      "name": "ts-interface-checker",
+      "version": "0.1.13",
+      "license": "Apache-2.0",
+      "repository": "https://github.com/gristlabs/ts-interface-checker"
+    }
+  ]
+}

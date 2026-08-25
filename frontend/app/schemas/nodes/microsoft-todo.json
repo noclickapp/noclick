@@ -1,0 +1,626 @@
+{
+  "$defs": {
+    "MicrosoftTodoOAuthCredential": {
+      "description": "OAuth credential for Microsoft To Do access.\nTokens are obtained via OAuth flow, not entered manually.",
+      "properties": {
+        "credential_type": {
+          "const": "microsoft_todo_oauth",
+          "default": "microsoft_todo_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "OAuth 2.0 access token from Microsoft",
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "description": "OAuth 2.0 refresh token for automatic renewal",
+          "title": "Refresh Token",
+          "type": "string"
+        },
+        "expires_at": {
+          "description": "ISO 8601 timestamp when access token expires",
+          "title": "Token Expiry",
+          "type": "string"
+        },
+        "email": {
+          "description": "Email address of the connected Microsoft account",
+          "title": "Microsoft Account",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "email"
+      ],
+      "title": "MicrosoftTodoOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-oauth-provider": "microsoft",
+      "x-oauth-scopes": [
+        "https://graph.microsoft.com/Tasks.Read",
+        "https://graph.microsoft.com/Tasks.ReadWrite",
+        "https://graph.microsoft.com/User.Read",
+        "offline_access"
+      ]
+    },
+    "TodoCreateTaskConfig": {
+      "description": "Configuration for creating a new task",
+      "properties": {
+        "operation": {
+          "const": "create_task",
+          "default": "create_task",
+          "description": "Create a new task",
+          "title": "Create Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Task",
+          "x-display-name": "Create Task",
+          "x-is-trigger": false
+        },
+        "task_list_id": {
+          "description": "ID of the task list to create task in",
+          "placeholder": "AAMkAGI2...",
+          "title": "Task List ID",
+          "type": "string"
+        },
+        "title": {
+          "description": "Title of the task",
+          "placeholder": "Complete project proposal",
+          "title": "Task Title",
+          "type": "string"
+        },
+        "body": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Task notes/description",
+          "placeholder": "Additional details about the task (optional)",
+          "title": "Task Notes",
+          "ui:widget": "textarea"
+        },
+        "due_date_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Due date in ISO 8601 format (e.g., '2024-01-15T09:00:00Z')",
+          "placeholder": "2024-01-15T09:00:00Z (optional)",
+          "title": "Due Date"
+        },
+        "importance": {
+          "default": "normal",
+          "description": "Task importance level",
+          "enum": [
+            "low",
+            "normal",
+            "high"
+          ],
+          "enumNames": [
+            "Low",
+            "Normal",
+            "High"
+          ],
+          "title": "Importance",
+          "type": "string"
+        },
+        "status": {
+          "default": "notStarted",
+          "description": "Task status",
+          "enum": [
+            "notStarted",
+            "inProgress",
+            "completed",
+            "waitingOnOthers",
+            "deferred"
+          ],
+          "enumNames": [
+            "Not Started",
+            "In Progress",
+            "Completed",
+            "Waiting On Others",
+            "Deferred"
+          ],
+          "title": "Status",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_list_id",
+        "title"
+      ],
+      "title": "TodoCreateTaskConfig",
+      "type": "object"
+    },
+    "TodoCreateTaskListConfig": {
+      "description": "Configuration for creating a new task list",
+      "properties": {
+        "operation": {
+          "const": "create_task_list",
+          "default": "create_task_list",
+          "description": "Create a new task list",
+          "title": "Create Task List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Task List",
+          "x-display-name": "Create Task List",
+          "x-is-trigger": false
+        },
+        "display_name": {
+          "description": "Name for the new task list",
+          "placeholder": "My Tasks",
+          "title": "List Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "display_name"
+      ],
+      "title": "TodoCreateTaskListConfig",
+      "type": "object"
+    },
+    "TodoDeleteTaskConfig": {
+      "description": "Configuration for deleting a task",
+      "properties": {
+        "operation": {
+          "const": "delete_task",
+          "default": "delete_task",
+          "description": "Delete a task",
+          "title": "Delete Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Task",
+          "x-display-name": "Delete Task",
+          "x-is-trigger": false
+        },
+        "task_list_id": {
+          "description": "ID of the task list containing the task",
+          "placeholder": "AAMkAGI2...",
+          "title": "Task List ID",
+          "type": "string"
+        },
+        "task_id": {
+          "description": "ID of the task to delete",
+          "placeholder": "AAMkAGI2...",
+          "title": "Task ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_list_id",
+        "task_id"
+      ],
+      "title": "TodoDeleteTaskConfig",
+      "type": "object"
+    },
+    "TodoDeleteTaskListConfig": {
+      "description": "Configuration for deleting a task list",
+      "properties": {
+        "operation": {
+          "const": "delete_task_list",
+          "default": "delete_task_list",
+          "description": "Delete a task list",
+          "title": "Delete Task List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Task List",
+          "x-display-name": "Delete Task List",
+          "x-is-trigger": false
+        },
+        "task_list_id": {
+          "description": "ID of the task list to delete",
+          "placeholder": "AAMkAGI2...",
+          "title": "Task List ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_list_id"
+      ],
+      "title": "TodoDeleteTaskListConfig",
+      "type": "object"
+    },
+    "TodoGetTaskConfig": {
+      "description": "Configuration for getting a specific task",
+      "properties": {
+        "operation": {
+          "const": "get_task",
+          "default": "get_task",
+          "description": "Get a specific task",
+          "title": "Get Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Task",
+          "x-display-name": "Get Task",
+          "x-is-trigger": false
+        },
+        "task_list_id": {
+          "description": "ID of the task list containing the task",
+          "placeholder": "AAMkAGI2...",
+          "title": "Task List ID",
+          "type": "string"
+        },
+        "task_id": {
+          "description": "ID of the task to retrieve",
+          "placeholder": "AAMkAGI2...",
+          "title": "Task ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_list_id",
+        "task_id"
+      ],
+      "title": "TodoGetTaskConfig",
+      "type": "object"
+    },
+    "TodoGetTaskListConfig": {
+      "description": "Configuration for getting a specific task list",
+      "properties": {
+        "operation": {
+          "const": "get_task_list",
+          "default": "get_task_list",
+          "description": "Get a specific task list",
+          "title": "Get Task List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Task List",
+          "x-display-name": "Get Task List",
+          "x-is-trigger": false
+        },
+        "task_list_id": {
+          "description": "ID of the task list to retrieve",
+          "placeholder": "AAMkAGI2...",
+          "title": "Task List ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_list_id"
+      ],
+      "title": "TodoGetTaskListConfig",
+      "type": "object"
+    },
+    "TodoListTaskListsConfig": {
+      "description": "Configuration for listing all task lists",
+      "properties": {
+        "operation": {
+          "const": "list_task_lists",
+          "default": "list_task_lists",
+          "description": "List all task lists",
+          "title": "List Task Lists",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Task List",
+          "x-display-name": "List Task Lists",
+          "x-is-trigger": false
+        }
+      },
+      "title": "TodoListTaskListsConfig",
+      "type": "object"
+    },
+    "TodoListTasksConfig": {
+      "description": "Configuration for listing tasks in a task list",
+      "properties": {
+        "operation": {
+          "const": "list_tasks",
+          "default": "list_tasks",
+          "description": "List tasks in a task list",
+          "title": "List Tasks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Task",
+          "x-display-name": "List Tasks",
+          "x-is-trigger": false
+        },
+        "task_list_id": {
+          "description": "ID of the task list to list tasks from",
+          "placeholder": "AAMkAGI2...",
+          "title": "Task List ID",
+          "type": "string"
+        },
+        "filter_query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "OData filter query (e.g., 'status eq 'notStarted'', 'importance eq 'high'')",
+          "placeholder": "status eq 'notStarted' (optional)",
+          "title": "Filter"
+        },
+        "order_by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort order for results (e.g., 'dueDateTime/dateTime', 'createdDateTime')",
+          "placeholder": "dueDateTime/dateTime (optional)",
+          "title": "Order By"
+        },
+        "max_results": {
+          "default": 50,
+          "description": "Maximum number of tasks to retrieve (1-100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Max Results",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "task_list_id"
+      ],
+      "title": "TodoListTasksConfig",
+      "type": "object"
+    },
+    "TodoUpdateTaskConfig": {
+      "description": "Configuration for updating a task",
+      "properties": {
+        "operation": {
+          "const": "update_task",
+          "default": "update_task",
+          "description": "Update a task",
+          "title": "Update Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Task",
+          "x-display-name": "Update Task",
+          "x-is-trigger": false
+        },
+        "task_list_id": {
+          "description": "ID of the task list containing the task",
+          "placeholder": "AAMkAGI2...",
+          "title": "Task List ID",
+          "type": "string"
+        },
+        "task_id": {
+          "description": "ID of the task to update",
+          "placeholder": "AAMkAGI2...",
+          "title": "Task ID",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New title for the task (leave empty to keep current)",
+          "placeholder": "Updated task title (optional)",
+          "title": "Task Title"
+        },
+        "body": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New task notes/description (leave empty to keep current)",
+          "placeholder": "Updated task notes (optional)",
+          "title": "Task Notes",
+          "ui:widget": "textarea"
+        },
+        "due_date_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New due date in ISO 8601 format (leave empty to keep current)",
+          "placeholder": "2024-01-15T09:00:00Z (optional)",
+          "title": "Due Date"
+        },
+        "importance": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New importance level (leave empty to keep current)",
+          "enum": [
+            "low",
+            "normal",
+            "high"
+          ],
+          "enumNames": [
+            "Low",
+            "Normal",
+            "High"
+          ],
+          "title": "Importance",
+          "x-enum-searchable": true
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New task status (leave empty to keep current)",
+          "enum": [
+            "notStarted",
+            "inProgress",
+            "completed",
+            "waitingOnOthers",
+            "deferred"
+          ],
+          "enumNames": [
+            "Not Started",
+            "In Progress",
+            "Completed",
+            "Waiting On Others",
+            "Deferred"
+          ],
+          "title": "Status",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "task_list_id",
+        "task_id"
+      ],
+      "title": "TodoUpdateTaskConfig",
+      "type": "object"
+    },
+    "TodoUpdateTaskListConfig": {
+      "description": "Configuration for updating a task list",
+      "properties": {
+        "operation": {
+          "const": "update_task_list",
+          "default": "update_task_list",
+          "description": "Update a task list",
+          "title": "Update Task List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Task List",
+          "x-display-name": "Update Task List",
+          "x-is-trigger": false
+        },
+        "task_list_id": {
+          "description": "ID of the task list to update",
+          "placeholder": "AAMkAGI2...",
+          "title": "Task List ID",
+          "type": "string"
+        },
+        "display_name": {
+          "description": "New name for the task list",
+          "placeholder": "Updated List Name",
+          "title": "New List Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_list_id",
+        "display_name"
+      ],
+      "title": "TodoUpdateTaskListConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for Microsoft To Do node including credentials",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_task": "#/$defs/TodoCreateTaskConfig",
+          "create_task_list": "#/$defs/TodoCreateTaskListConfig",
+          "delete_task": "#/$defs/TodoDeleteTaskConfig",
+          "delete_task_list": "#/$defs/TodoDeleteTaskListConfig",
+          "get_task": "#/$defs/TodoGetTaskConfig",
+          "get_task_list": "#/$defs/TodoGetTaskListConfig",
+          "list_task_lists": "#/$defs/TodoListTaskListsConfig",
+          "list_tasks": "#/$defs/TodoListTasksConfig",
+          "update_task": "#/$defs/TodoUpdateTaskConfig",
+          "update_task_list": "#/$defs/TodoUpdateTaskListConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/TodoListTaskListsConfig"
+        },
+        {
+          "$ref": "#/$defs/TodoCreateTaskListConfig"
+        },
+        {
+          "$ref": "#/$defs/TodoGetTaskListConfig"
+        },
+        {
+          "$ref": "#/$defs/TodoUpdateTaskListConfig"
+        },
+        {
+          "$ref": "#/$defs/TodoDeleteTaskListConfig"
+        },
+        {
+          "$ref": "#/$defs/TodoListTasksConfig"
+        },
+        {
+          "$ref": "#/$defs/TodoCreateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/TodoGetTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/TodoUpdateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/TodoDeleteTaskConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MicrosoftTodoOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Microsoft-todo Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Create a task list named \"Sprint Planning\" for team coordination",
+    "Add a high priority task \"Review Q4 metrics\" due tomorrow at 9 AM",
+    "Mark all completed tasks in \"In Progress\" list as done",
+    "List all tasks from \"Personal\" list that are overdue",
+    "Update task status to completed and add notes about the solution",
+    "Create subtasks for the \"Website Redesign\" project milestone",
+    "Delete the archived \"Old Project\" task list"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -1,0 +1,162 @@
+@keyframes expandGradient {
+    0% {
+        transform: scale(0.1, 1.5);
+        opacity: 0;
+    }
+    50% {
+        opacity: 1;
+    }
+    100% {
+        transform: scale(1, 1);
+        opacity: 1;
+    }
+}
+
+.grainy-gradient {
+    position: relative;
+    z-index: 0;
+}
+
+
+
+.grainy-gradient::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: -800px;
+    background: radial-gradient(circle at -10% 30%,
+        rgba(255, 255, 255, 1) 0%,
+        rgba(250, 250, 250, 0.95) 2.5%,
+        rgba(240, 240, 240, 0.85) 5%,
+        rgba(220, 220, 220, 0.75) 7.5%,
+        rgba(200, 200, 200, 0.65) 10%,
+        rgba(180, 180, 180, 0.55) 12.5%,
+        rgba(160, 160, 160, 0.45) 15%,
+        rgba(140, 140, 140, 0.35) 17.5%,
+        rgba(120, 120, 120, 0.25) 20%,
+        rgba(100, 100, 100, 0.15) 22.5%,
+        rgba(80, 80, 80, 0.08) 25%,
+        rgba(60, 60, 60, 0.04) 27.5%,
+        rgba(40, 40, 40, 0.02) 30%,
+        rgba(20, 20, 20, 0.01) 32.5%,
+        rgba(0, 0, 0, 0) 35%,
+        rgba(0, 0, 0, 0) 100%
+    );
+    z-index: -2;
+    pointer-events: none;
+    animation: expandGradient 1.5s ease-out forwards;
+    transform-origin: -10% 30%;
+    /* Fade out before skeleton area to preserve backdrop-blur effect */
+    mask-image: linear-gradient(to right, black 0%, black 20%, transparent 32%);
+    -webkit-mask-image: linear-gradient(to right, black 0%, black 20%, transparent 32%);
+}
+
+/* Upward-emitting gradient for the footer */
+.footer-gradient {
+    position: relative;
+    z-index: 0;
+    overflow: visible;
+}
+.footer-gradient > * { position: relative; z-index: 1; }
+
+.footer-gradient::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 100%; /* anchor to the top edge by positioning above */
+    height: 20vh;
+    /* Radial gradient centered at the top, spreading upward */
+    background: radial-gradient(ellipse at 50% 100%,
+        rgba(255, 255, 255, 0.20) 0%,
+        rgba(255, 255, 255, 0.14) 8%,
+        rgba(255, 255, 255, 0.10) 16%,
+        rgba(255, 255, 255, 0.06) 30%,
+        rgba(255, 255, 255, 0.03) 45%,
+        rgba(255, 255, 255, 0.015) 60%,
+        rgba(255, 255, 255, 0.0) 85%
+    );
+    background-repeat: no-repeat;
+    background-size: 280% 100%;
+    background-position: center bottom;
+    pointer-events: none;
+    z-index: 0;
+}
+
+.footer-gradient::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    bottom: 100%;
+    height: 24vh;
+    opacity: 0.3;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='200' height='200'%3E%3Cfilter id='grainy'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch' seed='2'/%3E%3CfeColorMatrix type='saturate' values='0'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23grainy)' opacity='0.35'/%3E%3C/svg%3E");
+    background-size: 180px 180px;
+    background-repeat: repeat;
+    pointer-events: none;
+    z-index: 0;
+    mask-image: radial-gradient(ellipse at 50% 100%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.98) 5%, rgba(0,0,0,0.9) 12%, rgba(0,0,0,0.6) 26%, rgba(0,0,0,0.25) 40%, rgba(0,0,0,0) 65%);
+    -webkit-mask-image: radial-gradient(ellipse at 50% 100%, rgba(0,0,0,1) 0%, rgba(0,0,0,0.98) 5%, rgba(0,0,0,0.9) 12%, rgba(0,0,0,0.6) 26%, rgba(0,0,0,0.25) 40%, rgba(0,0,0,0) 65%);
+}
+
+.cosmic-underline-noise {
+    pointer-events: none;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='20'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3' seed='8'/%3E%3CfeComponentTransfer%3E%3CfeFuncA type='linear' slope='.5'/%3E%3C/feComponentTransfer%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' fill='white'/%3E%3C/svg%3E");
+    background-size: 160px 20px;
+    background-repeat: repeat;
+    background-position: center;
+    opacity: 0.38;
+    mix-blend-mode: screen;
+    mask-image: linear-gradient(90deg, transparent 0%, black 20%, black 80%, transparent 100%);
+    -webkit-mask-image: linear-gradient(90deg, transparent 0%, black 20%, black 80%, transparent 100%);
+}
+
+.group:hover .cosmic-underline-noise {
+    opacity: 0.6;
+}
+
+/* Infinite scroll animation for provider icons */
+@keyframes scroll-left {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-50%);
+    }
+}
+
+.animate-scroll-left {
+    animation: scroll-left 30s linear infinite;
+}
+
+/* Smooth scroll animation without jarring reset */
+@keyframes scroll-left-smooth {
+    0% {
+        transform: translateX(0);
+    }
+    100% {
+        transform: translateX(-100%);
+    }
+}
+
+.animate-scroll-left-smooth {
+    animation: scroll-left-smooth 60s linear infinite;
+}
+
+/* Provider scroll container with edge fade */
+.provider-scroll-container {
+    position: relative;
+    mask-image: linear-gradient(to right,
+        transparent 0%,
+        black 150px,
+        black calc(100% - 150px),
+        transparent 100%);
+    -webkit-mask-image: linear-gradient(to right,
+        transparent 0%,
+        black 150px,
+        black calc(100% - 150px),
+        transparent 100%);
+}

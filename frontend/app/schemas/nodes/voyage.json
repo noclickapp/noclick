@@ -1,0 +1,869 @@
+{
+  "$defs": {
+    "VoyageAPIKeyCredential": {
+      "properties": {
+        "credential_type": {
+          "const": "voyage_api_key",
+          "default": "voyage_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Your Voyage AI API key",
+          "title": "Api Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "VoyageAPIKeyCredential",
+      "type": "object",
+      "x-credential-instructions": "Sign up at voyageai.com, then create an API key in the dashboard.",
+      "x-credential-url": "https://dash.voyageai.com/api-keys"
+    },
+    "VoyageBulkDeleteFilesConfig": {
+      "properties": {
+        "operation": {
+          "const": "bulk_delete_files",
+          "default": "bulk_delete_files",
+          "title": "Operation",
+          "type": "string",
+          "x-category": "Files",
+          "x-display-name": "Bulk Delete Files",
+          "x-keywords": [
+            "bulk",
+            "delete",
+            "files",
+            "cleanup"
+          ]
+        },
+        "file_ids": {
+          "description": "JSON array of file IDs to delete. All-or-nothing \u2014 any invalid ID aborts the whole operation.",
+          "title": "File Ids",
+          "type": "string",
+          "ui:rows": 2
+        }
+      },
+      "required": [
+        "file_ids"
+      ],
+      "title": "VoyageBulkDeleteFilesConfig",
+      "type": "object"
+    },
+    "VoyageCancelBatchConfig": {
+      "properties": {
+        "operation": {
+          "const": "cancel_batch",
+          "default": "cancel_batch",
+          "title": "Operation",
+          "type": "string",
+          "x-category": "Batch",
+          "x-display-name": "Cancel Batch Job",
+          "x-keywords": [
+            "cancel",
+            "batch",
+            "stop",
+            "abort"
+          ]
+        },
+        "batch_id": {
+          "description": "Batch job ID to cancel (must be in 'validating' or 'in_progress' status).",
+          "title": "Batch Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "batch_id"
+      ],
+      "title": "VoyageCancelBatchConfig",
+      "type": "object"
+    },
+    "VoyageCreateBatchConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_batch",
+          "default": "create_batch",
+          "title": "Operation",
+          "type": "string",
+          "x-category": "Batch",
+          "x-display-name": "Create Batch Job",
+          "x-keywords": [
+            "batch",
+            "async",
+            "bulk",
+            "inference",
+            "create"
+          ]
+        },
+        "input_file_id": {
+          "description": "File ID returned from a previous upload_file call.",
+          "title": "Input File Id",
+          "type": "string"
+        },
+        "endpoint": {
+          "default": "/v1/embeddings",
+          "description": "Target inference endpoint for this batch.",
+          "enum": [
+            "/v1/embeddings",
+            "/v1/contextualizedembeddings",
+            "/v1/rerank"
+          ],
+          "title": "Endpoint",
+          "type": "string"
+        },
+        "request_params": {
+          "description": "JSON object of inference parameters (model is required). Example: {\"model\":\"voyage-4-large\",\"input_type\":\"document\"}",
+          "title": "Request Params",
+          "type": "string",
+          "ui:rows": 3
+        },
+        "completion_window": {
+          "default": "12h",
+          "description": "Processing time limit. Currently only '12h' is supported.",
+          "title": "Completion Window",
+          "type": "string"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object with up to 16 key-value pairs (keys \u226464 chars, values \u2264512 chars).",
+          "title": "Metadata"
+        }
+      },
+      "required": [
+        "input_file_id",
+        "request_params"
+      ],
+      "title": "VoyageCreateBatchConfig",
+      "type": "object"
+    },
+    "VoyageDeleteFileConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_file",
+          "default": "delete_file",
+          "title": "Operation",
+          "type": "string",
+          "x-category": "Files",
+          "x-display-name": "Delete File",
+          "x-keywords": [
+            "delete",
+            "file",
+            "remove"
+          ]
+        },
+        "file_id": {
+          "description": "ID of the file to delete.",
+          "title": "File Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "VoyageDeleteFileConfig",
+      "type": "object"
+    },
+    "VoyageEmbedConfig": {
+      "properties": {
+        "operation": {
+          "const": "embed",
+          "default": "embed",
+          "title": "Operation",
+          "type": "string",
+          "x-category": "Embeddings",
+          "x-display-name": "Generate Text Embeddings",
+          "x-keywords": [
+            "embed",
+            "vectorize",
+            "encode",
+            "RAG",
+            "semantic search",
+            "dense"
+          ]
+        },
+        "input": {
+          "description": "Text to embed \u2014 plain string or JSON array of strings (max 1,000).",
+          "title": "Input",
+          "type": "string",
+          "ui:rows": 3
+        },
+        "model": {
+          "default": "voyage-4-large",
+          "description": "Embedding model.",
+          "enum": [
+            "voyage-4-large",
+            "voyage-4",
+            "voyage-4-lite",
+            "voyage-4-nano",
+            "voyage-code-3",
+            "voyage-finance-2",
+            "voyage-law-2",
+            "voyage-3-large",
+            "voyage-3.5",
+            "voyage-3.5-lite",
+            "voyage-3",
+            "voyage-3-lite",
+            "voyage-multilingual-2"
+          ],
+          "title": "Model",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "input_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Retrieval context: 'query' or 'document'. Leave empty for symmetric similarity.",
+          "enum": [
+            "query",
+            "document"
+          ],
+          "title": "Input Type",
+          "x-enum-searchable": true
+        },
+        "output_dimension": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Matryoshka output dimension (256/512/1024/2048). Leave empty for model default.",
+          "enum": [
+            256,
+            512,
+            1024,
+            2048
+          ],
+          "title": "Output Dimension"
+        },
+        "output_dtype": {
+          "default": "float",
+          "description": "Output vector data type.",
+          "enum": [
+            "float",
+            "int8",
+            "uint8",
+            "binary",
+            "ubinary"
+          ],
+          "title": "Output Dtype",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "truncation": {
+          "default": "true",
+          "description": "Truncate inputs that exceed the context limit.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Truncation",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "input"
+      ],
+      "title": "VoyageEmbedConfig",
+      "type": "object"
+    },
+    "VoyageEmbedContextualizedConfig": {
+      "properties": {
+        "operation": {
+          "const": "embed_contextualized",
+          "default": "embed_contextualized",
+          "title": "Operation",
+          "type": "string",
+          "x-category": "Embeddings",
+          "x-display-name": "Generate Contextualized Chunk Embeddings",
+          "x-keywords": [
+            "contextualized",
+            "chunk",
+            "RAG",
+            "long document",
+            "late chunking"
+          ]
+        },
+        "inputs": {
+          "description": "JSON array of documents; each document is an array of chunk strings. Example: [[\"chunk 1\",\"chunk 2\"],[\"chunk 3\"]]",
+          "title": "Inputs",
+          "type": "string",
+          "ui:rows": 4
+        },
+        "model": {
+          "default": "voyage-context-4",
+          "description": "Contextualized embedding model.",
+          "enum": [
+            "voyage-context-4",
+            "voyage-context-3"
+          ],
+          "title": "Model",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "input_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "query",
+            "document"
+          ],
+          "title": "Input Type",
+          "x-enum-searchable": true
+        },
+        "output_dimension": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Output dimension (256/512/1024/2048). Leave empty for model default.",
+          "enum": [
+            256,
+            512,
+            1024,
+            2048
+          ],
+          "title": "Output Dimension"
+        },
+        "output_dtype": {
+          "default": "float",
+          "enum": [
+            "float",
+            "int8",
+            "uint8",
+            "binary",
+            "ubinary"
+          ],
+          "title": "Output Dtype",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "inputs"
+      ],
+      "title": "VoyageEmbedContextualizedConfig",
+      "type": "object"
+    },
+    "VoyageEmbedMultimodalConfig": {
+      "properties": {
+        "operation": {
+          "const": "embed_multimodal",
+          "default": "embed_multimodal",
+          "title": "Operation",
+          "type": "string",
+          "x-category": "Embeddings",
+          "x-display-name": "Generate Multimodal Embeddings",
+          "x-keywords": [
+            "multimodal",
+            "image",
+            "video",
+            "embed",
+            "vectorize"
+          ]
+        },
+        "inputs": {
+          "description": "JSON array of multimodal inputs. Each item: {\"content\": [{\"type\":\"text\",\"text\":\"...\"}, {\"type\":\"image_url\",\"image_url\":\"https://...\"}]}",
+          "title": "Inputs",
+          "type": "string",
+          "ui:rows": 5
+        },
+        "model": {
+          "default": "voyage-multimodal-3.5",
+          "description": "Multimodal model. Only voyage-multimodal-3.5 supports video.",
+          "enum": [
+            "voyage-multimodal-3.5",
+            "voyage-multimodal-3"
+          ],
+          "title": "Model",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "input_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Retrieval context: 'query' or 'document'.",
+          "enum": [
+            "query",
+            "document"
+          ],
+          "title": "Input Type",
+          "x-enum-searchable": true
+        },
+        "truncation": {
+          "default": "true",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Truncation",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "inputs"
+      ],
+      "title": "VoyageEmbedMultimodalConfig",
+      "type": "object"
+    },
+    "VoyageGetBatchConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_batch",
+          "default": "get_batch",
+          "title": "Operation",
+          "type": "string",
+          "x-category": "Batch",
+          "x-display-name": "Get Batch Job",
+          "x-keywords": [
+            "get",
+            "retrieve",
+            "batch",
+            "status",
+            "check"
+          ]
+        },
+        "batch_id": {
+          "description": "ID of the batch job.",
+          "title": "Batch Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "batch_id"
+      ],
+      "title": "VoyageGetBatchConfig",
+      "type": "object"
+    },
+    "VoyageGetFileConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_file",
+          "default": "get_file",
+          "title": "Operation",
+          "type": "string",
+          "x-category": "Files",
+          "x-display-name": "Get File",
+          "x-keywords": [
+            "get",
+            "retrieve",
+            "file",
+            "metadata"
+          ]
+        },
+        "file_id": {
+          "description": "ID of the file to retrieve.",
+          "title": "File Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "VoyageGetFileConfig",
+      "type": "object"
+    },
+    "VoyageGetFileContentConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_file_content",
+          "default": "get_file_content",
+          "title": "Operation",
+          "type": "string",
+          "x-category": "Files",
+          "x-display-name": "Get File Content",
+          "x-keywords": [
+            "download",
+            "content",
+            "file",
+            "output",
+            "batch results"
+          ]
+        },
+        "file_id": {
+          "description": "ID of the file to download content from.",
+          "title": "File Id",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "VoyageGetFileContentConfig",
+      "type": "object"
+    },
+    "VoyageListBatchesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_batches",
+          "default": "list_batches",
+          "title": "Operation",
+          "type": "string",
+          "x-category": "Batch",
+          "x-display-name": "List Batch Jobs",
+          "x-keywords": [
+            "list",
+            "batch",
+            "jobs",
+            "status"
+          ]
+        },
+        "limit": {
+          "default": 20,
+          "description": "Max results (1\u2013100).",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor (batch ID from last page).",
+          "title": "After"
+        }
+      },
+      "title": "VoyageListBatchesConfig",
+      "type": "object"
+    },
+    "VoyageListFilesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_files",
+          "default": "list_files",
+          "title": "Operation",
+          "type": "string",
+          "x-category": "Files",
+          "x-display-name": "List Files",
+          "x-keywords": [
+            "list",
+            "files",
+            "batch"
+          ]
+        },
+        "purpose": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by purpose (e.g. 'batch').",
+          "title": "Purpose"
+        },
+        "limit": {
+          "default": 1000,
+          "description": "Max results (1\u201310,000).",
+          "maximum": 10000,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "order": {
+          "default": "desc",
+          "enum": [
+            "desc",
+            "asc"
+          ],
+          "enumNames": [
+            "Newest first",
+            "Oldest first"
+          ],
+          "title": "Order",
+          "type": "string"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor (file ID from last page).",
+          "title": "After"
+        }
+      },
+      "title": "VoyageListFilesConfig",
+      "type": "object"
+    },
+    "VoyageRerankConfig": {
+      "properties": {
+        "operation": {
+          "const": "rerank",
+          "default": "rerank",
+          "title": "Operation",
+          "type": "string",
+          "x-category": "Reranking",
+          "x-display-name": "Rerank Documents",
+          "x-keywords": [
+            "rerank",
+            "relevance",
+            "cross-encoder",
+            "RAG",
+            "search"
+          ]
+        },
+        "query": {
+          "description": "Query text to rank documents against.",
+          "title": "Query",
+          "type": "string"
+        },
+        "documents": {
+          "description": "JSON array of document strings to rerank.",
+          "title": "Documents",
+          "type": "string",
+          "ui:rows": 4
+        },
+        "model": {
+          "default": "rerank-2.5",
+          "description": "Reranking model.",
+          "enum": [
+            "rerank-2.5",
+            "rerank-2.5-lite",
+            "rerank-2",
+            "rerank-2-lite",
+            "rerank-1",
+            "rerank-lite-1"
+          ],
+          "title": "Model",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "top_k": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return only the top K results. Leave empty to return all.",
+          "title": "Top K"
+        },
+        "return_documents": {
+          "default": "true",
+          "description": "Include original document text in results.",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Return Documents",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "truncation": {
+          "default": "true",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Truncation",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "query",
+        "documents"
+      ],
+      "title": "VoyageRerankConfig",
+      "type": "object"
+    },
+    "VoyageUploadFileConfig": {
+      "properties": {
+        "operation": {
+          "const": "upload_file",
+          "default": "upload_file",
+          "title": "Operation",
+          "type": "string",
+          "x-category": "Files",
+          "x-display-name": "Upload Batch File",
+          "x-keywords": [
+            "upload",
+            "batch",
+            "file",
+            "JSONL"
+          ]
+        },
+        "file_content": {
+          "description": "JSONL batch input. Each line: {\"custom_id\":\"req-1\",\"body\":{\"input\":[\"text\"],\"model\":\"voyage-4-large\"}}",
+          "title": "File Content",
+          "type": "string",
+          "ui:rows": 6
+        },
+        "filename": {
+          "default": "batch_input.jsonl",
+          "description": "Filename for the uploaded file.",
+          "title": "Filename",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_content"
+      ],
+      "title": "VoyageUploadFileConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "bulk_delete_files": "#/$defs/VoyageBulkDeleteFilesConfig",
+          "cancel_batch": "#/$defs/VoyageCancelBatchConfig",
+          "create_batch": "#/$defs/VoyageCreateBatchConfig",
+          "delete_file": "#/$defs/VoyageDeleteFileConfig",
+          "embed": "#/$defs/VoyageEmbedConfig",
+          "embed_contextualized": "#/$defs/VoyageEmbedContextualizedConfig",
+          "embed_multimodal": "#/$defs/VoyageEmbedMultimodalConfig",
+          "get_batch": "#/$defs/VoyageGetBatchConfig",
+          "get_file": "#/$defs/VoyageGetFileConfig",
+          "get_file_content": "#/$defs/VoyageGetFileContentConfig",
+          "list_batches": "#/$defs/VoyageListBatchesConfig",
+          "list_files": "#/$defs/VoyageListFilesConfig",
+          "rerank": "#/$defs/VoyageRerankConfig",
+          "upload_file": "#/$defs/VoyageUploadFileConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/VoyageEmbedConfig"
+        },
+        {
+          "$ref": "#/$defs/VoyageEmbedMultimodalConfig"
+        },
+        {
+          "$ref": "#/$defs/VoyageEmbedContextualizedConfig"
+        },
+        {
+          "$ref": "#/$defs/VoyageRerankConfig"
+        },
+        {
+          "$ref": "#/$defs/VoyageUploadFileConfig"
+        },
+        {
+          "$ref": "#/$defs/VoyageListFilesConfig"
+        },
+        {
+          "$ref": "#/$defs/VoyageGetFileConfig"
+        },
+        {
+          "$ref": "#/$defs/VoyageDeleteFileConfig"
+        },
+        {
+          "$ref": "#/$defs/VoyageGetFileContentConfig"
+        },
+        {
+          "$ref": "#/$defs/VoyageBulkDeleteFilesConfig"
+        },
+        {
+          "$ref": "#/$defs/VoyageCreateBatchConfig"
+        },
+        {
+          "$ref": "#/$defs/VoyageListBatchesConfig"
+        },
+        {
+          "$ref": "#/$defs/VoyageGetBatchConfig"
+        },
+        {
+          "$ref": "#/$defs/VoyageCancelBatchConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/VoyageAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Voyage Node Configuration",
+  "type": "object",
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -1,0 +1,3064 @@
+{
+  "$defs": {
+    "ExcelAddChartConfig": {
+      "description": "Create a new chart from data range",
+      "properties": {
+        "operation": {
+          "const": "create_chart",
+          "default": "create_chart",
+          "title": "Create Chart",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Chart",
+          "x-display-name": "Create Chart",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new chart",
+            "make chart",
+            "add graph",
+            "plot data",
+            "insert chart"
+          ]
+        },
+        "workbook_id": {
+          "description": "Select an Excel workbook from your OneDrive",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workbook/file ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "excel_workbook"
+        },
+        "worksheet_name": {
+          "description": "Select worksheet to create chart in",
+          "title": "Worksheet",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter worksheet name",
+            "depends_on": "workbook_id",
+            "field_name": "worksheet_name",
+            "placeholder": "Select a worksheet...",
+            "searchable": true
+          },
+          "x-resource-type": "excel_worksheet"
+        },
+        "chart_type": {
+          "description": "Type of chart to create",
+          "enum": [
+            "ColumnClustered",
+            "ColumnStacked",
+            "Line",
+            "Pie",
+            "XYScatter",
+            "Area",
+            "Bar",
+            "Doughnut"
+          ],
+          "enumNames": [
+            "Column (Clustered)",
+            "Column (Stacked)",
+            "Line",
+            "Pie",
+            "Scatter",
+            "Area",
+            "Bar",
+            "Doughnut"
+          ],
+          "title": "Chart Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "source_data_range": {
+          "description": "Range containing chart data (e.g., 'A1:B10')",
+          "title": "Source Data Range",
+          "type": "string",
+          "ui:placeholder": "A1:B10"
+        },
+        "series_by": {
+          "default": "Auto",
+          "description": "Organize series by rows or columns",
+          "enum": [
+            "Auto",
+            "Columns",
+            "Rows"
+          ],
+          "title": "Series By",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "workbook_id",
+        "worksheet_name",
+        "chart_type",
+        "source_data_range"
+      ],
+      "title": "ExcelAddChartConfig",
+      "type": "object"
+    },
+    "ExcelAddNamedItemConfig": {
+      "description": "Create a named range or constant",
+      "properties": {
+        "operation": {
+          "const": "create_named_item",
+          "default": "create_named_item",
+          "title": "Create Named Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Named Item",
+          "x-display-name": "Create Named Item",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new named range",
+            "define name",
+            "name a range",
+            "add named constant"
+          ]
+        },
+        "workbook_id": {
+          "description": "Select an Excel workbook from your OneDrive",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workbook/file ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "excel_workbook"
+        },
+        "name": {
+          "description": "Name for the item (e.g., 'SalesTotal')",
+          "title": "Name",
+          "type": "string",
+          "ui:placeholder": "MyRange"
+        },
+        "reference": {
+          "description": "Cell reference or formula (e.g., 'Sheet1!$A$1:$A$10' or '=100')",
+          "title": "Reference",
+          "type": "string",
+          "ui:placeholder": "Sheet1!$A$1:$A$10"
+        },
+        "comment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional description of the named item",
+          "title": "Comment (Optional)"
+        }
+      },
+      "required": [
+        "workbook_id",
+        "name",
+        "reference"
+      ],
+      "title": "ExcelAddNamedItemConfig",
+      "type": "object"
+    },
+    "ExcelAddTableColumnConfig": {
+      "description": "Add a column to a table",
+      "properties": {
+        "operation": {
+          "const": "add_table_column",
+          "default": "add_table_column",
+          "title": "Add Table Column",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Table",
+          "x-display-name": "Add Table Column",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new table column",
+            "append column",
+            "insert table column",
+            "add field"
+          ]
+        },
+        "workbook_id": {
+          "description": "Select an Excel workbook from your OneDrive",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workbook/file ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "excel_workbook"
+        },
+        "table_name": {
+          "description": "Name of the table",
+          "title": "Table Name",
+          "type": "string"
+        },
+        "column_name": {
+          "description": "Name for the new column",
+          "title": "Column Name",
+          "type": "string",
+          "ui:placeholder": "New Column"
+        },
+        "values": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional initial values as JSON array (e.g., [100, 200, 300])",
+          "title": "Column Values (JSON Array)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "index": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Zero-based index to insert column (null = append to end)",
+          "title": "Insert at Index (Optional)"
+        }
+      },
+      "required": [
+        "workbook_id",
+        "table_name",
+        "column_name"
+      ],
+      "title": "ExcelAddTableColumnConfig",
+      "type": "object"
+    },
+    "ExcelAddTableConfig": {
+      "description": "Create a new table from a range",
+      "properties": {
+        "operation": {
+          "const": "create_table_from_range",
+          "default": "create_table_from_range",
+          "title": "Create Table from Range",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Table",
+          "x-display-name": "Create Table from Range",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new table",
+            "make table",
+            "range to table",
+            "convert range to table",
+            "format as table"
+          ]
+        },
+        "workbook_id": {
+          "description": "Select an Excel workbook from your OneDrive",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workbook/file ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "excel_workbook"
+        },
+        "worksheet_name": {
+          "description": "Select worksheet containing the data",
+          "title": "Worksheet",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter worksheet name",
+            "depends_on": "workbook_id",
+            "field_name": "worksheet_name",
+            "placeholder": "Select a worksheet...",
+            "searchable": true
+          },
+          "x-resource-type": "excel_worksheet"
+        },
+        "range_address": {
+          "description": "Range to convert to table (e.g., 'A1:D10')",
+          "title": "Range Address",
+          "type": "string",
+          "ui:placeholder": "A1:D10"
+        },
+        "has_headers": {
+          "default": true,
+          "description": "If true, first row becomes table headers",
+          "title": "Has Headers",
+          "type": "boolean"
+        },
+        "table_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Name for the table (auto-generated if not provided)",
+          "title": "Table Name (Optional)"
+        }
+      },
+      "required": [
+        "workbook_id",
+        "worksheet_name",
+        "range_address"
+      ],
+      "title": "ExcelAddTableConfig",
+      "type": "object"
+    },
+    "ExcelAddTableRowConfig": {
+      "description": "Add a row to a table",
+      "properties": {
+        "operation": {
+          "const": "add_table_row",
+          "default": "add_table_row",
+          "title": "Add Table Row",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Table",
+          "x-display-name": "Add Table Row",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new table row",
+            "append row",
+            "insert table row",
+            "add record"
+          ]
+        },
+        "workbook_id": {
+          "description": "Select an Excel workbook from your OneDrive",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workbook/file ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "excel_workbook"
+        },
+        "table_name": {
+          "description": "Name of the table",
+          "title": "Table Name",
+          "type": "string"
+        },
+        "values": {
+          "description": "Row data as JSON array (e.g., [\"John\", 30, \"Developer\"])",
+          "title": "Row Values (JSON Array)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "index": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Zero-based index to insert row (null = append to end)",
+          "title": "Insert at Index (Optional)"
+        }
+      },
+      "required": [
+        "workbook_id",
+        "table_name",
+        "values"
+      ],
+      "title": "ExcelAddTableRowConfig",
+      "type": "object"
+    },
+    "ExcelAddWorksheetConfig": {
+      "description": "Add a new worksheet to the workbook",
+      "properties": {
+        "operation": {
+          "const": "add_worksheet",
+          "default": "add_worksheet",
+          "title": "Add Worksheet",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Worksheet",
+          "x-creates-resource": true,
+          "x-display-name": "Add Worksheet",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new worksheet",
+            "create sheet",
+            "new tab",
+            "insert worksheet"
+          ],
+          "x-resource-id-path": "data.name",
+          "x-resource-type": "excel_worksheet"
+        },
+        "workbook_id": {
+          "description": "Select an Excel workbook from your OneDrive",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workbook/file ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "excel_workbook"
+        },
+        "worksheet_name": {
+          "description": "Name for the new worksheet",
+          "title": "Worksheet Name",
+          "type": "string",
+          "ui:placeholder": "NewSheet"
+        }
+      },
+      "required": [
+        "workbook_id",
+        "worksheet_name"
+      ],
+      "title": "ExcelAddWorksheetConfig",
+      "type": "object"
+    },
+    "ExcelApplyFilterConfig": {
+      "description": "Apply auto-filter to a table column",
+      "properties": {
+        "operation": {
+          "const": "apply_table_column_filter",
+          "default": "apply_table_column_filter",
+          "title": "Apply Table Column Filter",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Filter",
+          "x-display-name": "Apply Table Column Filter",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "filter table column",
+            "auto filter",
+            "add column filter",
+            "set table filter"
+          ]
+        },
+        "workbook_id": {
+          "description": "Select an Excel workbook from your OneDrive",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workbook/file ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "excel_workbook"
+        },
+        "table_name": {
+          "description": "Name of the table",
+          "title": "Table Name",
+          "type": "string"
+        },
+        "column_name": {
+          "description": "Column to filter",
+          "title": "Column Name",
+          "type": "string"
+        },
+        "filter_values": {
+          "description": "Values to show (e.g., [\"Active\", \"Pending\"])",
+          "title": "Filter Values (JSON Array)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "workbook_id",
+        "table_name",
+        "column_name",
+        "filter_values"
+      ],
+      "title": "ExcelApplyFilterConfig",
+      "type": "object"
+    },
+    "ExcelCalculateConfig": {
+      "description": "Recalculate all formulas in the workbook",
+      "properties": {
+        "operation": {
+          "const": "recalculate_workbook",
+          "default": "recalculate_workbook",
+          "title": "Recalculate Workbook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workbook",
+          "x-display-name": "Recalculate Workbook",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "recalc formulas",
+            "recompute workbook",
+            "refresh formulas",
+            "force calculation",
+            "recalculate cells"
+          ]
+        },
+        "workbook_id": {
+          "description": "Select an Excel workbook from your OneDrive",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workbook/file ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "excel_workbook"
+        },
+        "calculation_type": {
+          "default": "Recalculate",
+          "description": "Recalculate (default), Full, or FullRebuild",
+          "enum": [
+            "Recalculate",
+            "Full",
+            "FullRebuild"
+          ],
+          "title": "Calculation Type",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "workbook_id"
+      ],
+      "title": "ExcelCalculateConfig",
+      "type": "object"
+    },
+    "ExcelClearFilterConfig": {
+      "description": "Clear filter from a table column",
+      "properties": {
+        "operation": {
+          "const": "clear_table_column_filter",
+          "default": "clear_table_column_filter",
+          "title": "Clear Table Column Filter",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Filter",
+          "x-display-name": "Clear Table Column Filter",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove table filter",
+            "clear column filter",
+            "reset filter",
+            "unfilter table"
+          ]
+        },
+        "workbook_id": {
+          "description": "Select an Excel workbook from your OneDrive",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workbook/file ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "excel_workbook"
+        },
+        "table_name": {
+          "description": "Name of the table",
+          "title": "Table Name",
+          "type": "string"
+        },
+        "column_name": {
+          "description": "Column to clear filter from",
+          "title": "Column Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workbook_id",
+        "table_name",
+        "column_name"
+      ],
+      "title": "ExcelClearFilterConfig",
+      "type": "object"
+    },
+    "ExcelClearRangeConfig": {
+      "description": "Clear content, format, or both from a range",
+      "properties": {
+        "operation": {
+          "const": "clear_range_contents",
+          "default": "clear_range_contents",
+          "title": "Clear Range Contents",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Range",
+          "x-display-name": "Clear Range Contents",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "clear cells",
+            "empty range",
+            "wipe cells",
+            "erase contents",
+            "clear formatting"
+          ]
+        },
+        "workbook_id": {
+          "description": "Select an Excel workbook from your OneDrive",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workbook/file ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "excel_workbook"
+        },
+        "worksheet_name": {
+          "description": "Select a worksheet/tab within the workbook",
+          "title": "Worksheet",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter worksheet name",
+            "depends_on": "workbook_id",
+            "field_name": "worksheet_name",
+            "placeholder": "Select a worksheet...",
+            "searchable": true
+          },
+          "x-resource-type": "excel_worksheet"
+        },
+        "range_address": {
+          "description": "Cell range to clear",
+          "title": "Range Address",
+          "type": "string",
+          "ui:placeholder": "A1:D10"
+        },
+        "apply_to": {
+          "default": "All",
+          "description": "What to clear: All, Contents, or Formats",
+          "enum": [
+            "All",
+            "Contents",
+            "Formats"
+          ],
+          "title": "Clear Type",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "workbook_id",
+        "worksheet_name",
+        "range_address"
+      ],
+      "title": "ExcelClearRangeConfig",
+      "type": "object"
+    },
+    "ExcelCloseSessionConfig": {
+      "description": "Close a workbook session",
+      "properties": {
+        "operation": {
+          "const": "close_workbook_session",
+          "default": "close_workbook_session",
+          "title": "Close Workbook Session",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Session",
+          "x-display-name": "Close Workbook Session",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "end session",
+            "close editing session",
+            "finish session",
+            "discard session"
+          ]
+        },
+        "workbook_id": {
+          "description": "Select an Excel workbook from your OneDrive",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workbook/file ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "excel_workbook"
+        },
+        "session_id": {
+          "description": "Session ID to close (returned from create_session)",
+          "title": "Session ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workbook_id",
+        "session_id"
+      ],
+      "title": "ExcelCloseSessionConfig",
+      "type": "object"
+    },
+    "ExcelConvertTableToRangeConfig": {
+      "description": "Convert table to normal range (keeps data, removes table structure)",
+      "properties": {
+        "operation": {
+          "const": "convert_table_to_range",
+          "default": "convert_table_to_range",
+          "title": "Convert Table to Range",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Table",
+          "x-display-name": "Convert Table to Range",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "table to range",
+            "unformat table",
+            "remove table structure",
+            "ungroup table"
+          ]
+        },
+        "workbook_id": {
+          "description": "Select an Excel workbook from your OneDrive",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workbook/file ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "excel_workbook"
+        },
+        "table_name": {
+          "description": "Name of the table to convert",
+          "title": "Table Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workbook_id",
+        "table_name"
+      ],
+      "title": "ExcelConvertTableToRangeConfig",
+      "type": "object"
+    },
+    "ExcelCreateSessionConfig": {
+      "description": "Create a workbook session for persistent or non-persistent changes",
+      "properties": {
+        "operation": {
+          "const": "create_workbook_session",
+          "default": "create_workbook_session",
+          "title": "Create Workbook Session",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Session",
+          "x-display-name": "Create Workbook Session",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "start session",
+            "open workbook session",
+            "begin editing session",
+            "persistent session"
+          ]
+        },
+        "workbook_id": {
+          "description": "Select an Excel workbook from your OneDrive",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workbook/file ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "excel_workbook"
+        },
+        "persist_changes": {
+          "default": true,
+          "description": "If true, changes are saved to the file (persistent session). If false, changes are temporary.",
+          "title": "Persist Changes",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "workbook_id"
+      ],
+      "title": "ExcelCreateSessionConfig",
+      "type": "object"
+    },
+    "ExcelDeleteChartConfig": {
+      "description": "Delete a chart from worksheet",
+      "properties": {
+        "operation": {
+          "const": "delete_chart",
+          "default": "delete_chart",
+          "title": "Delete Chart",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Chart",
+          "x-display-name": "Delete Chart",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove chart",
+            "drop chart",
+            "trash chart",
+            "delete graph"
+          ]
+        },
+        "workbook_id": {
+          "description": "Select an Excel workbook from your OneDrive",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workbook/file ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "excel_workbook"
+        },
+        "worksheet_name": {
+          "description": "Select a worksheet/tab within the workbook",
+          "title": "Worksheet",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter worksheet name",
+            "depends_on": "workbook_id",
+            "field_name": "worksheet_name",
+            "placeholder": "Select a worksheet...",
+            "searchable": true
+          },
+          "x-resource-type": "excel_worksheet"
+        },
+        "chart_name": {
+          "description": "Name of the chart to delete",
+          "title": "Chart Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workbook_id",
+        "worksheet_name",
+        "chart_name"
+      ],
+      "title": "ExcelDeleteChartConfig",
+      "type": "object"
+    },
+    "ExcelDeleteRangeConfig": {
+      "description": "Delete cells and shift remaining cells up or left",
+      "properties": {
+        "operation": {
+          "const": "delete_range_and_shift_cells",
+          "default": "delete_range_and_shift_cells",
+          "title": "Delete Range and Shift Cells",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Range",
+          "x-display-name": "Delete Range and Shift Cells",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "delete cells shift",
+            "shift cells up",
+            "shift cells left",
+            "remove cells"
+          ]
+        },
+        "workbook_id": {
+          "description": "Select an Excel workbook from your OneDrive",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workbook/file ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "excel_workbook"
+        },
+        "worksheet_name": {
+          "description": "Select a worksheet/tab within the workbook",
+          "title": "Worksheet",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter worksheet name",
+            "depends_on": "workbook_id",
+            "field_name": "worksheet_name",
+            "placeholder": "Select a worksheet...",
+            "searchable": true
+          },
+          "x-resource-type": "excel_worksheet"
+        },
+        "range_address": {
+          "description": "Cells to delete",
+          "title": "Range Address",
+          "type": "string",
+          "ui:placeholder": "A1:A10"
+        },
+        "shift": {
+          "default": "Up",
+          "description": "Direction to shift remaining cells: Up or Left",
+          "enum": [
+            "Up",
+            "Left"
+          ],
+          "title": "Shift Direction",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "workbook_id",
+        "worksheet_name",
+        "range_address"
+      ],
+      "title": "ExcelDeleteRangeConfig",
+      "type": "object"
+    },
+    "ExcelDeleteTableColumnConfig": {
+      "description": "Delete a column from a table",
+      "properties": {
+        "operation": {
+          "const": "delete_table_column",
+          "default": "delete_table_column",
+          "title": "Delete Table Column",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Table",
+          "x-display-name": "Delete Table Column",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove table column",
+            "drop column",
+            "delete field",
+            "trash table column"
+          ]
+        },
+        "workbook_id": {
+          "description": "Select an Excel workbook from your OneDrive",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workbook/file ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "excel_workbook"
+        },
+        "table_name": {
+          "description": "Name of the table",
+          "title": "Table Name",
+          "type": "string"
+        },
+        "column_name": {
+          "description": "Name of the column to delete",
+          "title": "Column Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workbook_id",
+        "table_name",
+        "column_name"
+      ],
+      "title": "ExcelDeleteTableColumnConfig",
+      "type": "object"
+    },
+    "ExcelDeleteTableConfig": {
+      "description": "Delete a table (converts back to range)",
+      "properties": {
+        "operation": {
+          "const": "delete_table",
+          "default": "delete_table",
+          "title": "Delete Table",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Table",
+          "x-display-name": "Delete Table",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove table",
+            "drop table",
+            "trash table"
+          ]
+        },
+        "workbook_id": {
+          "description": "Select an Excel workbook from your OneDrive",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workbook/file ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "excel_workbook"
+        },
+        "table_name": {
+          "description": "Name of the table to delete",
+          "title": "Table Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workbook_id",
+        "table_name"
+      ],
+      "title": "ExcelDeleteTableConfig",
+      "type": "object"
+    },
+    "ExcelDeleteTableRowConfig": {
+      "description": "Delete a row from a table by index",
+      "properties": {
+        "operation": {
+          "const": "delete_table_row",
+          "default": "delete_table_row",
+          "title": "Delete Table Row",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Table",
+          "x-display-name": "Delete Table Row",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove table row",
+            "drop row by index",
+            "delete record",
+            "trash table row"
+          ]
+        },
+        "workbook_id": {
+          "description": "Select an Excel workbook from your OneDrive",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workbook/file ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "excel_workbook"
+        },
+        "table_name": {
+          "description": "Name of the table",
+          "title": "Table Name",
+          "type": "string"
+        },
+        "index": {
+          "description": "Zero-based index of the row to delete (0 = first data row)",
+          "title": "Row Index",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "workbook_id",
+        "table_name",
+        "index"
+      ],
+      "title": "ExcelDeleteTableRowConfig",
+      "type": "object"
+    },
+    "ExcelDeleteWorksheetConfig": {
+      "description": "Delete a worksheet from the workbook",
+      "properties": {
+        "operation": {
+          "const": "delete_worksheet",
+          "default": "delete_worksheet",
+          "title": "Delete Worksheet",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Worksheet",
+          "x-display-name": "Delete Worksheet",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove worksheet",
+            "delete sheet",
+            "drop tab",
+            "trash worksheet"
+          ]
+        },
+        "workbook_id": {
+          "description": "Select an Excel workbook from your OneDrive",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workbook/file ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "excel_workbook"
+        },
+        "worksheet_name": {
+          "description": "Select the worksheet to delete",
+          "title": "Worksheet",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter worksheet name",
+            "depends_on": "workbook_id",
+            "field_name": "worksheet_name",
+            "placeholder": "Select a worksheet...",
+            "searchable": true
+          },
+          "x-resource-type": "excel_worksheet"
+        }
+      },
+      "required": [
+        "workbook_id",
+        "worksheet_name"
+      ],
+      "title": "ExcelDeleteWorksheetConfig",
+      "type": "object"
+    },
+    "ExcelExecuteFunctionConfig": {
+      "description": "Execute built-in Excel function (300+ functions available)",
+      "properties": {
+        "operation": {
+          "const": "execute_excel_function",
+          "default": "execute_excel_function",
+          "title": "Execute Excel Function",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workbook",
+          "x-display-name": "Execute Excel Function",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "run excel formula",
+            "call function",
+            "vlookup",
+            "sum function",
+            "apply formula",
+            "built in function"
+          ]
+        },
+        "workbook_id": {
+          "description": "Select an Excel workbook from your OneDrive",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workbook/file ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "excel_workbook"
+        },
+        "function_name": {
+          "description": "Excel function name (e.g., 'vlookup', 'sum', 'pmt')",
+          "title": "Function Name",
+          "type": "string",
+          "ui:placeholder": "sum"
+        },
+        "parameters": {
+          "description": "Function arguments as JSON array (e.g., [[1,2,3]] for SUM)",
+          "title": "Function Parameters (JSON Array)",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        }
+      },
+      "required": [
+        "workbook_id",
+        "function_name",
+        "parameters"
+      ],
+      "title": "ExcelExecuteFunctionConfig",
+      "type": "object"
+    },
+    "ExcelFormatRangeConfig": {
+      "description": "Apply formatting to a range (font, fill, borders, alignment)",
+      "properties": {
+        "operation": {
+          "const": "format_range",
+          "default": "format_range",
+          "title": "Format Range",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Range",
+          "x-display-name": "Format Range",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "style cells",
+            "font color",
+            "fill color",
+            "cell borders",
+            "bold cells",
+            "align cells",
+            "background color"
+          ]
+        },
+        "workbook_id": {
+          "description": "Select an Excel workbook from your OneDrive",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workbook/file ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "excel_workbook"
+        },
+        "worksheet_name": {
+          "description": "Select a worksheet/tab within the workbook",
+          "title": "Worksheet",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter worksheet name",
+            "depends_on": "workbook_id",
+            "field_name": "worksheet_name",
+            "placeholder": "Select a worksheet...",
+            "searchable": true
+          },
+          "x-resource-type": "excel_worksheet"
+        },
+        "range_address": {
+          "description": "Cells to format",
+          "title": "Range Address",
+          "type": "string",
+          "ui:placeholder": "A1:D10"
+        },
+        "font_bold": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Make text bold",
+          "title": "Font Bold (Optional)"
+        },
+        "font_italic": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Make text italic",
+          "title": "Font Italic (Optional)"
+        },
+        "font_size": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Font size in points (e.g., 12)",
+          "title": "Font Size (Optional)"
+        },
+        "font_color": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Font color in hex format (e.g., '#FF0000' for red)",
+          "title": "Font Color (Optional)",
+          "ui:placeholder": "#000000"
+        },
+        "background_color": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cell background color in hex (e.g., '#FFFF00' for yellow)",
+          "title": "Background Color (Optional)",
+          "ui:placeholder": "#FFFFFF"
+        },
+        "horizontal_alignment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Text horizontal alignment",
+          "enum": [
+            "General",
+            "Left",
+            "Center",
+            "Right",
+            "Fill",
+            "Justify",
+            "CenterContinuous",
+            "Distributed"
+          ],
+          "title": "Horizontal Alignment (Optional)",
+          "x-enum-searchable": true
+        },
+        "vertical_alignment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Text vertical alignment",
+          "enum": [
+            "Top",
+            "Center",
+            "Bottom",
+            "Justify",
+            "Distributed"
+          ],
+          "title": "Vertical Alignment (Optional)",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "workbook_id",
+        "worksheet_name",
+        "range_address"
+      ],
+      "title": "ExcelFormatRangeConfig",
+      "type": "object"
+    },
+    "ExcelGetChartConfig": {
+      "description": "Get chart details by name",
+      "properties": {
+        "operation": {
+          "const": "get_chart",
+          "default": "get_chart",
+          "title": "Get Chart",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Chart",
+          "x-display-name": "Get Chart",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "chart details",
+            "chart by name",
+            "open chart",
+            "single chart"
+          ]
+        },
+        "workbook_id": {
+          "description": "Select an Excel workbook from your OneDrive",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workbook/file ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "excel_workbook"
+        },
+        "worksheet_name": {
+          "description": "Select a worksheet/tab within the workbook",
+          "title": "Worksheet",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter worksheet name",
+            "depends_on": "workbook_id",
+            "field_name": "worksheet_name",
+            "placeholder": "Select a worksheet...",
+            "searchable": true
+          },
+          "x-resource-type": "excel_worksheet"
+        },
+        "chart_name": {
+          "description": "Name of the chart",
+          "title": "Chart Name",
+          "type": "string",
+          "ui:placeholder": "Chart1"
+        }
+      },
+      "required": [
+        "workbook_id",
+        "worksheet_name",
+        "chart_name"
+      ],
+      "title": "ExcelGetChartConfig",
+      "type": "object"
+    },
+    "ExcelGetChartImageConfig": {
+      "description": "Get chart as base64-encoded PNG image",
+      "properties": {
+        "operation": {
+          "const": "get_chart_image",
+          "default": "get_chart_image",
+          "title": "Get Chart Image",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Chart",
+          "x-display-name": "Get Chart Image",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "chart as image",
+            "export chart png",
+            "chart screenshot",
+            "render chart",
+            "chart picture"
+          ]
+        },
+        "workbook_id": {
+          "description": "Select an Excel workbook from your OneDrive",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workbook/file ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "excel_workbook"
+        },
+        "worksheet_name": {
+          "description": "Select a worksheet/tab within the workbook",
+          "title": "Worksheet",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter worksheet name",
+            "depends_on": "workbook_id",
+            "field_name": "worksheet_name",
+            "placeholder": "Select a worksheet...",
+            "searchable": true
+          },
+          "x-resource-type": "excel_worksheet"
+        },
+        "chart_name": {
+          "description": "Name of the chart",
+          "title": "Chart Name",
+          "type": "string"
+        },
+        "width": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Image width in pixels (maintains aspect ratio if height not set)",
+          "title": "Width (Optional)"
+        },
+        "height": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Image height in pixels",
+          "title": "Height (Optional)"
+        }
+      },
+      "required": [
+        "workbook_id",
+        "worksheet_name",
+        "chart_name"
+      ],
+      "title": "ExcelGetChartImageConfig",
+      "type": "object"
+    },
+    "ExcelGetNamedItemConfig": {
+      "description": "Get value of a named range or item",
+      "properties": {
+        "operation": {
+          "const": "get_named_item",
+          "default": "get_named_item",
+          "title": "Get Named Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Named Item",
+          "x-display-name": "Get Named Item",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "named range value",
+            "read defined name",
+            "get named item",
+            "single named range"
+          ]
+        },
+        "workbook_id": {
+          "description": "Select an Excel workbook from your OneDrive",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workbook/file ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "excel_workbook"
+        },
+        "name": {
+          "description": "Name of the named range or item",
+          "title": "Name",
+          "type": "string",
+          "ui:placeholder": "SalesTotal"
+        }
+      },
+      "required": [
+        "workbook_id",
+        "name"
+      ],
+      "title": "ExcelGetNamedItemConfig",
+      "type": "object"
+    },
+    "ExcelGetRangeConfig": {
+      "description": "Get data from a specific cell range",
+      "properties": {
+        "operation": {
+          "const": "get_range_values",
+          "default": "get_range_values",
+          "title": "Get Range Values",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Range",
+          "x-display-name": "Get Range Values",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "read cells",
+            "read range",
+            "fetch cell data",
+            "get cell values",
+            "pull range"
+          ]
+        },
+        "workbook_id": {
+          "description": "Select an Excel workbook from your OneDrive",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workbook/file ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "excel_workbook"
+        },
+        "worksheet_name": {
+          "description": "Select a worksheet/tab within the workbook",
+          "title": "Worksheet",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter worksheet name",
+            "depends_on": "workbook_id",
+            "field_name": "worksheet_name",
+            "placeholder": "Select a worksheet...",
+            "searchable": true
+          },
+          "x-resource-type": "excel_worksheet"
+        },
+        "range_address": {
+          "description": "Cell range (e.g., 'A1:D10', 'A1', 'A:A')",
+          "title": "Range Address",
+          "type": "string",
+          "ui:placeholder": "A1:D10"
+        },
+        "values_only": {
+          "default": false,
+          "description": "If true, return only values. If false, include formulas.",
+          "title": "Values Only",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "workbook_id",
+        "worksheet_name",
+        "range_address"
+      ],
+      "title": "ExcelGetRangeConfig",
+      "type": "object"
+    },
+    "ExcelGetTableConfig": {
+      "description": "Get table details by name",
+      "properties": {
+        "operation": {
+          "const": "get_table",
+          "default": "get_table",
+          "title": "Get Table",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Table",
+          "x-display-name": "Get Table",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "table details",
+            "table by name",
+            "open table",
+            "single table"
+          ]
+        },
+        "workbook_id": {
+          "description": "Select an Excel workbook from your OneDrive",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workbook/file ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "excel_workbook"
+        },
+        "table_name": {
+          "description": "Name of the table",
+          "title": "Table Name",
+          "type": "string",
+          "ui:placeholder": "Table1"
+        }
+      },
+      "required": [
+        "workbook_id",
+        "table_name"
+      ],
+      "title": "ExcelGetTableConfig",
+      "type": "object"
+    },
+    "ExcelGetUsedRangeConfig": {
+      "description": "Get the used range of a worksheet (all cells with data)",
+      "properties": {
+        "operation": {
+          "const": "get_worksheet_used_range",
+          "default": "get_worksheet_used_range",
+          "title": "Get Worksheet Used Range",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Worksheet",
+          "x-display-name": "Get Worksheet Used Range",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "used range",
+            "data extent",
+            "occupied cells",
+            "filled area",
+            "bounds of data"
+          ]
+        },
+        "workbook_id": {
+          "description": "Select an Excel workbook from your OneDrive",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workbook/file ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "excel_workbook"
+        },
+        "worksheet_name": {
+          "description": "Select a worksheet/tab within the workbook",
+          "title": "Worksheet",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter worksheet name",
+            "depends_on": "workbook_id",
+            "field_name": "worksheet_name",
+            "placeholder": "Select a worksheet...",
+            "searchable": true
+          },
+          "x-resource-type": "excel_worksheet"
+        },
+        "values_only": {
+          "default": false,
+          "description": "If true, return only values. If false, include formulas and formatting.",
+          "title": "Values Only",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "workbook_id",
+        "worksheet_name"
+      ],
+      "title": "ExcelGetUsedRangeConfig",
+      "type": "object"
+    },
+    "ExcelGetWorksheetConfig": {
+      "description": "Get worksheet details by name",
+      "properties": {
+        "operation": {
+          "const": "get_worksheet",
+          "default": "get_worksheet",
+          "title": "Get Worksheet",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Worksheet",
+          "x-display-name": "Get Worksheet",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "worksheet details",
+            "sheet by name",
+            "open sheet",
+            "single worksheet"
+          ]
+        },
+        "workbook_id": {
+          "description": "Select an Excel workbook from your OneDrive",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workbook/file ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "excel_workbook"
+        },
+        "worksheet_name": {
+          "description": "Select a worksheet/tab within the workbook",
+          "title": "Worksheet",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter worksheet name",
+            "depends_on": "workbook_id",
+            "field_name": "worksheet_name",
+            "placeholder": "Select a worksheet...",
+            "searchable": true
+          },
+          "x-resource-type": "excel_worksheet"
+        }
+      },
+      "required": [
+        "workbook_id",
+        "worksheet_name"
+      ],
+      "title": "ExcelGetWorksheetConfig",
+      "type": "object"
+    },
+    "ExcelInsertRangeConfig": {
+      "description": "Insert blank cells and shift existing cells down or right",
+      "properties": {
+        "operation": {
+          "const": "insert_blank_cells_in_range",
+          "default": "insert_blank_cells_in_range",
+          "title": "Insert Blank Cells in Range",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Range",
+          "x-display-name": "Insert Blank Cells in Range",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "insert cells",
+            "shift cells down",
+            "shift cells right",
+            "add empty cells"
+          ]
+        },
+        "workbook_id": {
+          "description": "Select an Excel workbook from your OneDrive",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workbook/file ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "excel_workbook"
+        },
+        "worksheet_name": {
+          "description": "Select a worksheet/tab within the workbook",
+          "title": "Worksheet",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter worksheet name",
+            "depends_on": "workbook_id",
+            "field_name": "worksheet_name",
+            "placeholder": "Select a worksheet...",
+            "searchable": true
+          },
+          "x-resource-type": "excel_worksheet"
+        },
+        "range_address": {
+          "description": "Where to insert cells",
+          "title": "Range Address",
+          "type": "string",
+          "ui:placeholder": "A1:A10"
+        },
+        "shift": {
+          "default": "Down",
+          "description": "Direction to shift existing cells: Down or Right",
+          "enum": [
+            "Down",
+            "Right"
+          ],
+          "title": "Shift Direction",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "workbook_id",
+        "worksheet_name",
+        "range_address"
+      ],
+      "title": "ExcelInsertRangeConfig",
+      "type": "object"
+    },
+    "ExcelListChartsConfig": {
+      "description": "List all charts in a worksheet",
+      "properties": {
+        "operation": {
+          "const": "list_worksheet_charts",
+          "default": "list_worksheet_charts",
+          "title": "List Worksheet Charts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Chart",
+          "x-display-name": "List Worksheet Charts",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "all charts",
+            "list charts",
+            "show charts",
+            "chart names"
+          ]
+        },
+        "workbook_id": {
+          "description": "Select an Excel workbook from your OneDrive",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workbook/file ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "excel_workbook"
+        },
+        "worksheet_name": {
+          "description": "Select a worksheet/tab within the workbook",
+          "title": "Worksheet",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter worksheet name",
+            "depends_on": "workbook_id",
+            "field_name": "worksheet_name",
+            "placeholder": "Select a worksheet...",
+            "searchable": true
+          },
+          "x-resource-type": "excel_worksheet"
+        }
+      },
+      "required": [
+        "workbook_id",
+        "worksheet_name"
+      ],
+      "title": "ExcelListChartsConfig",
+      "type": "object"
+    },
+    "ExcelListNamedItemsConfig": {
+      "description": "List all named ranges and items in the workbook",
+      "properties": {
+        "operation": {
+          "const": "list_named_items",
+          "default": "list_named_items",
+          "title": "List Named Items",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Named Item",
+          "x-display-name": "List Named Items",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "all named ranges",
+            "list named items",
+            "show defined names",
+            "named range names"
+          ]
+        },
+        "workbook_id": {
+          "description": "Select an Excel workbook from your OneDrive",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workbook/file ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "excel_workbook"
+        }
+      },
+      "required": [
+        "workbook_id"
+      ],
+      "title": "ExcelListNamedItemsConfig",
+      "type": "object"
+    },
+    "ExcelListTableColumnsConfig": {
+      "description": "List all columns in a table",
+      "properties": {
+        "operation": {
+          "const": "list_table_columns",
+          "default": "list_table_columns",
+          "title": "List Table Columns",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Table",
+          "x-display-name": "List Table Columns",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "all table columns",
+            "show table columns",
+            "table fields",
+            "read table columns"
+          ]
+        },
+        "workbook_id": {
+          "description": "Select an Excel workbook from your OneDrive",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workbook/file ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "excel_workbook"
+        },
+        "table_name": {
+          "description": "Name of the table",
+          "title": "Table Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workbook_id",
+        "table_name"
+      ],
+      "title": "ExcelListTableColumnsConfig",
+      "type": "object"
+    },
+    "ExcelListTableRowsConfig": {
+      "description": "List all rows in a table",
+      "properties": {
+        "operation": {
+          "const": "list_table_rows",
+          "default": "list_table_rows",
+          "title": "List Table Rows",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Table",
+          "x-display-name": "List Table Rows",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "all table rows",
+            "show table rows",
+            "table records",
+            "read table rows"
+          ]
+        },
+        "workbook_id": {
+          "description": "Select an Excel workbook from your OneDrive",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workbook/file ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "excel_workbook"
+        },
+        "table_name": {
+          "description": "Name of the table",
+          "title": "Table Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workbook_id",
+        "table_name"
+      ],
+      "title": "ExcelListTableRowsConfig",
+      "type": "object"
+    },
+    "ExcelListTablesConfig": {
+      "description": "List all tables in the workbook",
+      "properties": {
+        "operation": {
+          "const": "list_workbook_tables",
+          "default": "list_workbook_tables",
+          "title": "List Workbook Tables",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Table",
+          "x-display-name": "List Workbook Tables",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "all tables",
+            "list tables",
+            "show tables",
+            "table names"
+          ]
+        },
+        "workbook_id": {
+          "description": "Select an Excel workbook from your OneDrive",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workbook/file ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "excel_workbook"
+        }
+      },
+      "required": [
+        "workbook_id"
+      ],
+      "title": "ExcelListTablesConfig",
+      "type": "object"
+    },
+    "ExcelListWorksheetsConfig": {
+      "description": "List all worksheets in a workbook",
+      "properties": {
+        "operation": {
+          "const": "list_workbook_worksheets",
+          "default": "list_workbook_worksheets",
+          "title": "List Workbook Worksheets",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Worksheet",
+          "x-display-name": "List Workbook Worksheets",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "all worksheets",
+            "list sheets",
+            "show tabs",
+            "worksheet names"
+          ]
+        },
+        "workbook_id": {
+          "description": "Select an Excel workbook from your OneDrive",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workbook/file ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "excel_workbook"
+        }
+      },
+      "required": [
+        "workbook_id"
+      ],
+      "title": "ExcelListWorksheetsConfig",
+      "type": "object"
+    },
+    "ExcelMergeRangeConfig": {
+      "description": "Merge cells into a single region",
+      "properties": {
+        "operation": {
+          "const": "merge_range_cells",
+          "default": "merge_range_cells",
+          "title": "Merge Range Cells",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Range",
+          "x-display-name": "Merge Range Cells",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "merge cells",
+            "combine cells",
+            "join cells",
+            "merge region"
+          ]
+        },
+        "workbook_id": {
+          "description": "Select an Excel workbook from your OneDrive",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workbook/file ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "excel_workbook"
+        },
+        "worksheet_name": {
+          "description": "Select a worksheet/tab within the workbook",
+          "title": "Worksheet",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter worksheet name",
+            "depends_on": "workbook_id",
+            "field_name": "worksheet_name",
+            "placeholder": "Select a worksheet...",
+            "searchable": true
+          },
+          "x-resource-type": "excel_worksheet"
+        },
+        "range_address": {
+          "description": "Cells to merge (e.g., 'A1:B2')",
+          "title": "Range Address",
+          "type": "string",
+          "ui:placeholder": "A1:B2"
+        },
+        "across": {
+          "default": false,
+          "description": "If true, merge each row separately. If false, merge all cells.",
+          "title": "Merge Across",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "workbook_id",
+        "worksheet_name",
+        "range_address"
+      ],
+      "title": "ExcelMergeRangeConfig",
+      "type": "object"
+    },
+    "ExcelOAuthCredential": {
+      "description": "Microsoft OAuth credential for Excel (via Graph API).\n\nUses centralized Microsoft OAuth - credentials are automatically created\nwhen users connect their Microsoft account through the OAuth flow.\n\nScopes required:\n- Files.ReadWrite.All: Read and write Excel files\n- User.Read: Get user profile info",
+      "properties": {
+        "credential_type": {
+          "const": "microsoft_excel_oauth",
+          "default": "microsoft_excel_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "OAuth access token",
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "description": "OAuth refresh token for token renewal",
+          "title": "Refresh Token",
+          "type": "string"
+        },
+        "expires_at": {
+          "description": "Token expiry timestamp (ISO 8601)",
+          "title": "Expires At",
+          "type": "string"
+        },
+        "email": {
+          "description": "Microsoft account email address",
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "email"
+      ],
+      "title": "ExcelOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-oauth-provider": "microsoft",
+      "x-oauth-scopes": [
+        "https://graph.microsoft.com/Files.ReadWrite.All",
+        "https://graph.microsoft.com/User.Read"
+      ]
+    },
+    "ExcelRefreshSessionConfig": {
+      "description": "Refresh a workbook session to keep it alive",
+      "properties": {
+        "operation": {
+          "const": "refresh_workbook_session",
+          "default": "refresh_workbook_session",
+          "title": "Refresh Workbook Session",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Session",
+          "x-display-name": "Refresh Workbook Session",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "keep session alive",
+            "renew session",
+            "extend session",
+            "ping session"
+          ]
+        },
+        "workbook_id": {
+          "description": "Select an Excel workbook from your OneDrive",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workbook/file ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "excel_workbook"
+        },
+        "session_id": {
+          "description": "Session ID to refresh",
+          "title": "Session ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workbook_id",
+        "session_id"
+      ],
+      "title": "ExcelRefreshSessionConfig",
+      "type": "object"
+    },
+    "ExcelSortRangeConfig": {
+      "description": "Sort a range by column",
+      "properties": {
+        "operation": {
+          "const": "sort_range_by_column",
+          "default": "sort_range_by_column",
+          "title": "Sort Range by Column",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Range",
+          "x-display-name": "Sort Range by Column",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "sort cells",
+            "sort range",
+            "order range",
+            "arrange cells",
+            "sort by column"
+          ]
+        },
+        "workbook_id": {
+          "description": "Select an Excel workbook from your OneDrive",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workbook/file ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "excel_workbook"
+        },
+        "worksheet_name": {
+          "description": "Select a worksheet/tab within the workbook",
+          "title": "Worksheet",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter worksheet name",
+            "depends_on": "workbook_id",
+            "field_name": "worksheet_name",
+            "placeholder": "Select a worksheet...",
+            "searchable": true
+          },
+          "x-resource-type": "excel_worksheet"
+        },
+        "range_address": {
+          "description": "Range to sort",
+          "title": "Range Address",
+          "type": "string",
+          "ui:placeholder": "A1:D10"
+        },
+        "has_headers": {
+          "default": true,
+          "description": "If true, first row is treated as headers",
+          "title": "Has Headers",
+          "type": "boolean"
+        },
+        "sort_column_index": {
+          "default": 0,
+          "description": "Zero-based column index to sort by (0 = first column)",
+          "title": "Sort Column Index",
+          "type": "integer"
+        },
+        "ascending": {
+          "default": true,
+          "description": "If true, sort A-Z/1-9. If false, sort Z-A/9-1.",
+          "title": "Ascending",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "workbook_id",
+        "worksheet_name",
+        "range_address"
+      ],
+      "title": "ExcelSortRangeConfig",
+      "type": "object"
+    },
+    "ExcelSortTableConfig": {
+      "description": "Sort a table by column",
+      "properties": {
+        "operation": {
+          "const": "sort_table_by_column",
+          "default": "sort_table_by_column",
+          "title": "Sort Table by Column",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Table",
+          "x-display-name": "Sort Table by Column",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "sort table",
+            "order table rows",
+            "arrange table",
+            "sort table by column"
+          ]
+        },
+        "workbook_id": {
+          "description": "Select an Excel workbook from your OneDrive",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workbook/file ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "excel_workbook"
+        },
+        "table_name": {
+          "description": "Name of the table to sort",
+          "title": "Table Name",
+          "type": "string"
+        },
+        "column_name": {
+          "description": "Column to sort by",
+          "title": "Column Name",
+          "type": "string"
+        },
+        "ascending": {
+          "default": true,
+          "description": "If true, sort A-Z. If false, sort Z-A.",
+          "title": "Ascending",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "workbook_id",
+        "table_name",
+        "column_name"
+      ],
+      "title": "ExcelSortTableConfig",
+      "type": "object"
+    },
+    "ExcelUnmergeRangeConfig": {
+      "description": "Unmerge merged cells",
+      "properties": {
+        "operation": {
+          "const": "unmerge_range_cells",
+          "default": "unmerge_range_cells",
+          "title": "Unmerge Range Cells",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Range",
+          "x-display-name": "Unmerge Range Cells",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "unmerge cells",
+            "split merged cells",
+            "separate cells",
+            "undo merge"
+          ]
+        },
+        "workbook_id": {
+          "description": "Select an Excel workbook from your OneDrive",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workbook/file ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "excel_workbook"
+        },
+        "worksheet_name": {
+          "description": "Select a worksheet/tab within the workbook",
+          "title": "Worksheet",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter worksheet name",
+            "depends_on": "workbook_id",
+            "field_name": "worksheet_name",
+            "placeholder": "Select a worksheet...",
+            "searchable": true
+          },
+          "x-resource-type": "excel_worksheet"
+        },
+        "range_address": {
+          "description": "Merged cells to unmerge",
+          "title": "Range Address",
+          "type": "string",
+          "ui:placeholder": "A1:B2"
+        }
+      },
+      "required": [
+        "workbook_id",
+        "worksheet_name",
+        "range_address"
+      ],
+      "title": "ExcelUnmergeRangeConfig",
+      "type": "object"
+    },
+    "ExcelUpdateChartConfig": {
+      "description": "Update chart properties (title, size, position)",
+      "properties": {
+        "operation": {
+          "const": "update_chart",
+          "default": "update_chart",
+          "title": "Update Chart",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Chart",
+          "x-display-name": "Update Chart",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "edit chart",
+            "chart title",
+            "resize chart",
+            "move chart",
+            "chart properties"
+          ]
+        },
+        "workbook_id": {
+          "description": "Select an Excel workbook from your OneDrive",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workbook/file ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "excel_workbook"
+        },
+        "worksheet_name": {
+          "description": "Select a worksheet/tab within the workbook",
+          "title": "Worksheet",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter worksheet name",
+            "depends_on": "workbook_id",
+            "field_name": "worksheet_name",
+            "placeholder": "Select a worksheet...",
+            "searchable": true
+          },
+          "x-resource-type": "excel_worksheet"
+        },
+        "chart_name": {
+          "description": "Name of the chart to update",
+          "title": "Chart Name",
+          "type": "string"
+        },
+        "new_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New name for the chart",
+          "title": "New Name (Optional)"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Title to display on the chart",
+          "title": "Chart Title (Optional)"
+        },
+        "height": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Chart height in points",
+          "title": "Height (Optional)"
+        },
+        "width": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Chart width in points",
+          "title": "Width (Optional)"
+        }
+      },
+      "required": [
+        "workbook_id",
+        "worksheet_name",
+        "chart_name"
+      ],
+      "title": "ExcelUpdateChartConfig",
+      "type": "object"
+    },
+    "ExcelUpdateRangeConfig": {
+      "description": "Update cell values, formulas, or formatting in a range",
+      "properties": {
+        "operation": {
+          "const": "update_range_values",
+          "default": "update_range_values",
+          "title": "Update Range Values",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Range",
+          "x-display-name": "Update Range Values",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "write cells",
+            "set cell values",
+            "put data",
+            "fill range",
+            "enter formulas",
+            "write range"
+          ]
+        },
+        "workbook_id": {
+          "description": "Select an Excel workbook from your OneDrive",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workbook/file ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "excel_workbook"
+        },
+        "worksheet_name": {
+          "description": "Select a worksheet/tab within the workbook",
+          "title": "Worksheet",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter worksheet name",
+            "depends_on": "workbook_id",
+            "field_name": "worksheet_name",
+            "placeholder": "Select a worksheet...",
+            "searchable": true
+          },
+          "x-resource-type": "excel_worksheet"
+        },
+        "range_address": {
+          "description": "Cell range to update (e.g., 'A1:D10')",
+          "title": "Range Address",
+          "type": "string",
+          "ui:placeholder": "A1"
+        },
+        "values": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "2D array of values as JSON (e.g., [[\"Name\", \"Age\"], [\"John\", 30]])",
+          "title": "Values (JSON Array)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "formulas": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "2D array of formulas as JSON (e.g., [[\"=SUM(A1:A10)\"]])",
+          "title": "Formulas (JSON Array)",
+          "ui:widget": "code_editor",
+          "x-code-language": "json"
+        },
+        "number_format": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Excel number format code (e.g., '$#,##0.00', '0.00%', 'mm/dd/yyyy')",
+          "title": "Number Format"
+        }
+      },
+      "required": [
+        "workbook_id",
+        "worksheet_name",
+        "range_address"
+      ],
+      "title": "ExcelUpdateRangeConfig",
+      "type": "object"
+    },
+    "ExcelUpdateWorksheetConfig": {
+      "description": "Update worksheet properties (name, visibility, position)",
+      "properties": {
+        "operation": {
+          "const": "update_worksheet",
+          "default": "update_worksheet",
+          "title": "Update Worksheet",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Worksheet",
+          "x-display-name": "Update Worksheet",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "rename sheet",
+            "hide worksheet",
+            "move tab",
+            "reorder sheet",
+            "worksheet properties"
+          ]
+        },
+        "workbook_id": {
+          "description": "Select an Excel workbook from your OneDrive",
+          "title": "Workbook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workbook/file ID",
+            "field_name": "workbook_id",
+            "placeholder": "Select a workbook...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "excel_workbook"
+        },
+        "worksheet_name": {
+          "description": "Select the worksheet to update",
+          "title": "Current Worksheet",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter worksheet name",
+            "depends_on": "workbook_id",
+            "field_name": "worksheet_name",
+            "placeholder": "Select a worksheet...",
+            "searchable": true
+          },
+          "x-resource-type": "excel_worksheet"
+        },
+        "new_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New name for the worksheet (leave empty to keep current name)",
+          "title": "New Name (Optional)"
+        },
+        "visible": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set worksheet visibility (true/false)",
+          "title": "Visible (Optional)"
+        },
+        "position": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Zero-based position of the worksheet",
+          "title": "Position (Optional)"
+        }
+      },
+      "required": [
+        "workbook_id",
+        "worksheet_name"
+      ],
+      "title": "ExcelUpdateWorksheetConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for Excel node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_table_column": "#/$defs/ExcelAddTableColumnConfig",
+          "add_table_row": "#/$defs/ExcelAddTableRowConfig",
+          "add_worksheet": "#/$defs/ExcelAddWorksheetConfig",
+          "apply_table_column_filter": "#/$defs/ExcelApplyFilterConfig",
+          "clear_range_contents": "#/$defs/ExcelClearRangeConfig",
+          "clear_table_column_filter": "#/$defs/ExcelClearFilterConfig",
+          "close_workbook_session": "#/$defs/ExcelCloseSessionConfig",
+          "convert_table_to_range": "#/$defs/ExcelConvertTableToRangeConfig",
+          "create_chart": "#/$defs/ExcelAddChartConfig",
+          "create_named_item": "#/$defs/ExcelAddNamedItemConfig",
+          "create_table_from_range": "#/$defs/ExcelAddTableConfig",
+          "create_workbook_session": "#/$defs/ExcelCreateSessionConfig",
+          "delete_chart": "#/$defs/ExcelDeleteChartConfig",
+          "delete_range_and_shift_cells": "#/$defs/ExcelDeleteRangeConfig",
+          "delete_table": "#/$defs/ExcelDeleteTableConfig",
+          "delete_table_column": "#/$defs/ExcelDeleteTableColumnConfig",
+          "delete_table_row": "#/$defs/ExcelDeleteTableRowConfig",
+          "delete_worksheet": "#/$defs/ExcelDeleteWorksheetConfig",
+          "execute_excel_function": "#/$defs/ExcelExecuteFunctionConfig",
+          "format_range": "#/$defs/ExcelFormatRangeConfig",
+          "get_chart": "#/$defs/ExcelGetChartConfig",
+          "get_chart_image": "#/$defs/ExcelGetChartImageConfig",
+          "get_named_item": "#/$defs/ExcelGetNamedItemConfig",
+          "get_range_values": "#/$defs/ExcelGetRangeConfig",
+          "get_table": "#/$defs/ExcelGetTableConfig",
+          "get_worksheet": "#/$defs/ExcelGetWorksheetConfig",
+          "get_worksheet_used_range": "#/$defs/ExcelGetUsedRangeConfig",
+          "insert_blank_cells_in_range": "#/$defs/ExcelInsertRangeConfig",
+          "list_named_items": "#/$defs/ExcelListNamedItemsConfig",
+          "list_table_columns": "#/$defs/ExcelListTableColumnsConfig",
+          "list_table_rows": "#/$defs/ExcelListTableRowsConfig",
+          "list_workbook_tables": "#/$defs/ExcelListTablesConfig",
+          "list_workbook_worksheets": "#/$defs/ExcelListWorksheetsConfig",
+          "list_worksheet_charts": "#/$defs/ExcelListChartsConfig",
+          "merge_range_cells": "#/$defs/ExcelMergeRangeConfig",
+          "recalculate_workbook": "#/$defs/ExcelCalculateConfig",
+          "refresh_workbook_session": "#/$defs/ExcelRefreshSessionConfig",
+          "sort_range_by_column": "#/$defs/ExcelSortRangeConfig",
+          "sort_table_by_column": "#/$defs/ExcelSortTableConfig",
+          "unmerge_range_cells": "#/$defs/ExcelUnmergeRangeConfig",
+          "update_chart": "#/$defs/ExcelUpdateChartConfig",
+          "update_range_values": "#/$defs/ExcelUpdateRangeConfig",
+          "update_worksheet": "#/$defs/ExcelUpdateWorksheetConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ExcelCreateSessionConfig"
+        },
+        {
+          "$ref": "#/$defs/ExcelCloseSessionConfig"
+        },
+        {
+          "$ref": "#/$defs/ExcelRefreshSessionConfig"
+        },
+        {
+          "$ref": "#/$defs/ExcelCalculateConfig"
+        },
+        {
+          "$ref": "#/$defs/ExcelExecuteFunctionConfig"
+        },
+        {
+          "$ref": "#/$defs/ExcelListWorksheetsConfig"
+        },
+        {
+          "$ref": "#/$defs/ExcelGetWorksheetConfig"
+        },
+        {
+          "$ref": "#/$defs/ExcelAddWorksheetConfig"
+        },
+        {
+          "$ref": "#/$defs/ExcelUpdateWorksheetConfig"
+        },
+        {
+          "$ref": "#/$defs/ExcelDeleteWorksheetConfig"
+        },
+        {
+          "$ref": "#/$defs/ExcelGetUsedRangeConfig"
+        },
+        {
+          "$ref": "#/$defs/ExcelGetRangeConfig"
+        },
+        {
+          "$ref": "#/$defs/ExcelUpdateRangeConfig"
+        },
+        {
+          "$ref": "#/$defs/ExcelClearRangeConfig"
+        },
+        {
+          "$ref": "#/$defs/ExcelInsertRangeConfig"
+        },
+        {
+          "$ref": "#/$defs/ExcelDeleteRangeConfig"
+        },
+        {
+          "$ref": "#/$defs/ExcelMergeRangeConfig"
+        },
+        {
+          "$ref": "#/$defs/ExcelUnmergeRangeConfig"
+        },
+        {
+          "$ref": "#/$defs/ExcelSortRangeConfig"
+        },
+        {
+          "$ref": "#/$defs/ExcelFormatRangeConfig"
+        },
+        {
+          "$ref": "#/$defs/ExcelListTablesConfig"
+        },
+        {
+          "$ref": "#/$defs/ExcelGetTableConfig"
+        },
+        {
+          "$ref": "#/$defs/ExcelAddTableConfig"
+        },
+        {
+          "$ref": "#/$defs/ExcelDeleteTableConfig"
+        },
+        {
+          "$ref": "#/$defs/ExcelConvertTableToRangeConfig"
+        },
+        {
+          "$ref": "#/$defs/ExcelListTableRowsConfig"
+        },
+        {
+          "$ref": "#/$defs/ExcelAddTableRowConfig"
+        },
+        {
+          "$ref": "#/$defs/ExcelDeleteTableRowConfig"
+        },
+        {
+          "$ref": "#/$defs/ExcelListTableColumnsConfig"
+        },
+        {
+          "$ref": "#/$defs/ExcelAddTableColumnConfig"
+        },
+        {
+          "$ref": "#/$defs/ExcelDeleteTableColumnConfig"
+        },
+        {
+          "$ref": "#/$defs/ExcelSortTableConfig"
+        },
+        {
+          "$ref": "#/$defs/ExcelApplyFilterConfig"
+        },
+        {
+          "$ref": "#/$defs/ExcelClearFilterConfig"
+        },
+        {
+          "$ref": "#/$defs/ExcelListChartsConfig"
+        },
+        {
+          "$ref": "#/$defs/ExcelGetChartConfig"
+        },
+        {
+          "$ref": "#/$defs/ExcelAddChartConfig"
+        },
+        {
+          "$ref": "#/$defs/ExcelUpdateChartConfig"
+        },
+        {
+          "$ref": "#/$defs/ExcelDeleteChartConfig"
+        },
+        {
+          "$ref": "#/$defs/ExcelGetChartImageConfig"
+        },
+        {
+          "$ref": "#/$defs/ExcelListNamedItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/ExcelGetNamedItemConfig"
+        },
+        {
+          "$ref": "#/$defs/ExcelAddNamedItemConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ExcelOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Excel Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Calculate all formulas in the Budget sheet and return results",
+    "List all worksheets in the Q4_Financials.xlsx workbook",
+    "Update range A1:C10 with new sales data and recalculate totals",
+    "Create a new worksheet named \"Dashboard\" in the active workbook",
+    "Add a pivot table summarizing revenue by region and product",
+    "Clear all values in range B2:D100 but preserve formatting",
+    "Insert 5 rows after row 15 for new employee records"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

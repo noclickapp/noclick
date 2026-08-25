@@ -1,0 +1,3948 @@
+{
+  "$defs": {
+    "FirestoreBatchGetConfig": {
+      "description": "Retrieve multiple documents by full name in a single call.",
+      "properties": {
+        "operation": {
+          "const": "batch_get_documents",
+          "default": "batch_get_documents",
+          "title": "Batch Get Documents",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Batch",
+          "x-display-name": "Batch Get Documents",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        },
+        "document_paths": {
+          "description": "Comma-separated document paths relative to the database root, e.g. users/abc, users/def",
+          "title": "Document Paths",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "document_paths"
+      ],
+      "title": "FirestoreBatchGetConfig",
+      "type": "object"
+    },
+    "FirestoreBatchWriteConfig": {
+      "description": "Apply a set of writes in one (non-atomic, best-effort) call.",
+      "properties": {
+        "operation": {
+          "const": "batch_write",
+          "default": "batch_write",
+          "title": "Batch Write",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Batch",
+          "x-display-name": "Batch Write",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        },
+        "writes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "items": {},
+              "type": "array"
+            }
+          ],
+          "description": "JSON array of Firestore Write objects, e.g. [{\"update\": {\"name\": \"projects/p/databases/(default)/documents/users/abc\", \"fields\": {\"age\": {\"integerValue\": \"30\"}}}}]",
+          "placeholder": "[{\"update\": {\"name\": \"...\", \"fields\": {}}}]",
+          "title": "Writes",
+          "ui:accept": ".json,.txt,application/json,text/plain",
+          "ui:widget": "text_upload_textarea"
+        }
+      },
+      "required": [
+        "project_id",
+        "writes"
+      ],
+      "title": "FirestoreBatchWriteConfig",
+      "type": "object"
+    },
+    "FirestoreBeginTransactionConfig": {
+      "description": "Start a read/write transaction; returns a transaction token.",
+      "properties": {
+        "operation": {
+          "const": "begin_transaction",
+          "default": "begin_transaction",
+          "title": "Begin Transaction",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Transactions",
+          "x-display-name": "Begin Transaction",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "FirestoreBeginTransactionConfig",
+      "type": "object"
+    },
+    "FirestoreBulkDeleteDocumentsConfig": {
+      "description": "Bulk delete collection groups in the background.",
+      "properties": {
+        "operation": {
+          "const": "bulk_delete_documents",
+          "default": "bulk_delete_documents",
+          "title": "Bulk Delete Documents",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Databases",
+          "x-display-name": "Bulk Delete Documents",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        },
+        "collection_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional comma-separated collection group IDs",
+          "title": "Collection Group IDs"
+        },
+        "namespace_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional comma-separated namespace IDs",
+          "title": "Namespace IDs"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "FirestoreBulkDeleteDocumentsConfig",
+      "type": "object"
+    },
+    "FirestoreCancelOperationConfig": {
+      "description": "Request cancellation for a long-running operation.",
+      "properties": {
+        "operation": {
+          "const": "cancel_operation",
+          "default": "cancel_operation",
+          "title": "Cancel Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Operations",
+          "x-display-name": "Cancel Operation",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        },
+        "operation_id": {
+          "title": "Operation ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "operation_id"
+      ],
+      "title": "FirestoreCancelOperationConfig",
+      "type": "object"
+    },
+    "FirestoreCloneDatabaseConfig": {
+      "description": "Clone an existing Firestore database from PITR.",
+      "properties": {
+        "operation": {
+          "const": "clone_database",
+          "default": "clone_database",
+          "title": "Clone Database",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Databases",
+          "x-display-name": "Clone Database",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "new_database_id": {
+          "title": "New Database ID",
+          "type": "string"
+        },
+        "clone_request": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
+          "description": "CloneDatabase JSON body without the top-level databaseId if desired",
+          "placeholder": "{\"pitrSnapshot\": {\"sourceDatabase\": \"projects/my-proj/databases/(default)\", \"snapshotTime\": \"2026-06-20T00:00:00Z\"}}",
+          "title": "Clone Request",
+          "ui:accept": ".json,.txt,application/json,text/plain",
+          "ui:widget": "text_upload_textarea"
+        }
+      },
+      "required": [
+        "project_id",
+        "new_database_id",
+        "clone_request"
+      ],
+      "title": "FirestoreCloneDatabaseConfig",
+      "type": "object"
+    },
+    "FirestoreCommitConfig": {
+      "description": "Atomically commit a set of writes (optionally within a transaction).",
+      "properties": {
+        "operation": {
+          "const": "commit",
+          "default": "commit",
+          "title": "Commit",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Transactions",
+          "x-display-name": "Commit",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        },
+        "writes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "items": {},
+              "type": "array"
+            }
+          ],
+          "description": "JSON array of Firestore Write objects to commit atomically",
+          "placeholder": "[{\"update\": {\"name\": \"...\", \"fields\": {}}}]",
+          "title": "Writes",
+          "ui:accept": ".json,.txt,application/json,text/plain",
+          "ui:widget": "text_upload_textarea"
+        },
+        "transaction": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional transaction token from Begin Transaction",
+          "title": "Transaction"
+        }
+      },
+      "required": [
+        "project_id",
+        "writes"
+      ],
+      "title": "FirestoreCommitConfig",
+      "type": "object"
+    },
+    "FirestoreCreateBackupScheduleConfig": {
+      "description": "Create a backup schedule for a Firestore database.",
+      "properties": {
+        "operation": {
+          "const": "create_backup_schedule",
+          "default": "create_backup_schedule",
+          "title": "Create Backup Schedule",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Backups",
+          "x-display-name": "Create Backup Schedule",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        },
+        "backup_schedule": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
+          "description": "BackupSchedule JSON body",
+          "placeholder": "{\"retention\": \"604800s\", \"dailyRecurrence\": {}}",
+          "title": "Backup Schedule",
+          "ui:accept": ".json,.txt,application/json,text/plain",
+          "ui:widget": "text_upload_textarea"
+        }
+      },
+      "required": [
+        "project_id",
+        "backup_schedule"
+      ],
+      "title": "FirestoreCreateBackupScheduleConfig",
+      "type": "object"
+    },
+    "FirestoreCreateDatabaseConfig": {
+      "description": "Create a Firestore database.",
+      "properties": {
+        "operation": {
+          "const": "create_database",
+          "default": "create_database",
+          "title": "Create Database",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Databases",
+          "x-creates-resource": true,
+          "x-display-name": "Create Database",
+          "x-is-trigger": false,
+          "x-resource-type": "firestore_database"
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "new_database_id": {
+          "description": "Database ID to create, e.g. \"analytics\" or \"(default)\"",
+          "title": "New Database ID",
+          "type": "string"
+        },
+        "database": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
+          "description": "Database JSON body",
+          "placeholder": "{\"locationId\": \"us-central\", \"type\": \"FIRESTORE_NATIVE\"}",
+          "title": "Database",
+          "ui:accept": ".json,.txt,application/json,text/plain",
+          "ui:widget": "text_upload_textarea"
+        }
+      },
+      "required": [
+        "project_id",
+        "new_database_id",
+        "database"
+      ],
+      "title": "FirestoreCreateDatabaseConfig",
+      "type": "object"
+    },
+    "FirestoreCreateDocumentConfig": {
+      "description": "Create a new document in a collection.",
+      "properties": {
+        "operation": {
+          "const": "create_document",
+          "default": "create_document",
+          "title": "Create Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Create Document",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        },
+        "collection_path": {
+          "description": "Collection to create the document in, e.g. users",
+          "title": "Collection Path",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste collection path",
+            "depends_on": "database_id",
+            "field_name": "collection_path",
+            "placeholder": "Select a collection...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_collection"
+        },
+        "document_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional id for the new document. Auto-generated if omitted.",
+          "title": "Document ID"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
+          "description": "Typed Firestore fields object, e.g. {\"name\": {\"stringValue\": \"Ada\"}, \"age\": {\"integerValue\": \"30\"}}",
+          "placeholder": "{\"name\": {\"stringValue\": \"Ada\"}}",
+          "title": "Fields",
+          "ui:accept": ".json,.txt,application/json,text/plain",
+          "ui:widget": "text_upload_textarea"
+        }
+      },
+      "required": [
+        "project_id",
+        "collection_path",
+        "fields"
+      ],
+      "title": "FirestoreCreateDocumentConfig",
+      "type": "object"
+    },
+    "FirestoreCreateUserCredsConfig": {
+      "description": "Create a database user creds resource.",
+      "properties": {
+        "operation": {
+          "const": "create_user_creds",
+          "default": "create_user_creds",
+          "title": "Create User Creds",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User Creds",
+          "x-display-name": "Create User Creds",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        },
+        "user_creds_id": {
+          "title": "User Creds ID",
+          "type": "string"
+        },
+        "user_creds": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
+          "description": "UserCreds JSON body",
+          "placeholder": "{\"userName\": \"app_user\", \"userSecret\": \"secret-value\"}",
+          "title": "User Creds",
+          "ui:accept": ".json,.txt,application/json,text/plain",
+          "ui:widget": "text_upload_textarea"
+        }
+      },
+      "required": [
+        "project_id",
+        "user_creds_id",
+        "user_creds"
+      ],
+      "title": "FirestoreCreateUserCredsConfig",
+      "type": "object"
+    },
+    "FirestoreCustomApiCallConfig": {
+      "description": "Raw Firestore REST call escape hatch for newly added or niche endpoints.",
+      "properties": {
+        "operation": {
+          "const": "custom_api_call",
+          "default": "custom_api_call",
+          "title": "Custom API Call",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Advanced",
+          "x-display-name": "Custom API Call",
+          "x-is-trigger": false
+        },
+        "method": {
+          "default": "GET",
+          "enum": [
+            "GET",
+            "POST",
+            "PATCH",
+            "DELETE"
+          ],
+          "title": "HTTP Method",
+          "type": "string"
+        },
+        "path": {
+          "description": "Path relative to https://firestore.googleapis.com/v1/, e.g. \"projects/my-proj/databases/(default)\"",
+          "title": "API Path",
+          "type": "string"
+        },
+        "query_params": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object of query params",
+          "title": "Query Params",
+          "ui:accept": ".json,.txt,application/json,text/plain",
+          "ui:widget": "text_upload_textarea"
+        },
+        "body": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "items": {},
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON request body",
+          "title": "JSON Body",
+          "ui:accept": ".json,.txt,application/json,text/plain",
+          "ui:widget": "text_upload_textarea"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "title": "FirestoreCustomApiCallConfig",
+      "type": "object"
+    },
+    "FirestoreDeleteBackupConfig": {
+      "description": "Delete a Firestore backup.",
+      "properties": {
+        "operation": {
+          "const": "delete_backup",
+          "default": "delete_backup",
+          "title": "Delete Backup",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Backups",
+          "x-display-name": "Delete Backup",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "location_id": {
+          "title": "Location ID",
+          "type": "string"
+        },
+        "backup_id": {
+          "title": "Backup ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "location_id",
+        "backup_id"
+      ],
+      "title": "FirestoreDeleteBackupConfig",
+      "type": "object"
+    },
+    "FirestoreDeleteBackupScheduleConfig": {
+      "description": "Delete a backup schedule.",
+      "properties": {
+        "operation": {
+          "const": "delete_backup_schedule",
+          "default": "delete_backup_schedule",
+          "title": "Delete Backup Schedule",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Backups",
+          "x-display-name": "Delete Backup Schedule",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        },
+        "backup_schedule_id": {
+          "title": "Backup Schedule ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "backup_schedule_id"
+      ],
+      "title": "FirestoreDeleteBackupScheduleConfig",
+      "type": "object"
+    },
+    "FirestoreDeleteDatabaseConfig": {
+      "description": "Delete a Firestore database.",
+      "properties": {
+        "operation": {
+          "const": "delete_database",
+          "default": "delete_database",
+          "title": "Delete Database",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Databases",
+          "x-display-name": "Delete Database",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        },
+        "etag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional etag precondition for delete",
+          "title": "ETag"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "FirestoreDeleteDatabaseConfig",
+      "type": "object"
+    },
+    "FirestoreDeleteDocumentConfig": {
+      "description": "Delete a document.",
+      "properties": {
+        "operation": {
+          "const": "delete_document",
+          "default": "delete_document",
+          "title": "Delete Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Delete Document",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        },
+        "collection_path": {
+          "description": "Collection path, e.g. users",
+          "title": "Collection Path",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste collection path",
+            "depends_on": "database_id",
+            "field_name": "collection_path",
+            "placeholder": "Select a collection...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_collection"
+        },
+        "document_id": {
+          "description": "The id of the document to delete",
+          "title": "Document ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "collection_path",
+        "document_id"
+      ],
+      "title": "FirestoreDeleteDocumentConfig",
+      "type": "object"
+    },
+    "FirestoreDeleteIndexConfig": {
+      "description": "Delete a composite index.",
+      "properties": {
+        "operation": {
+          "const": "delete_index",
+          "default": "delete_index",
+          "title": "Delete Index",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Indexes",
+          "x-display-name": "Delete Index",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        },
+        "collection_id": {
+          "title": "Collection Group",
+          "type": "string"
+        },
+        "index_id": {
+          "title": "Index ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "collection_id",
+        "index_id"
+      ],
+      "title": "FirestoreDeleteIndexConfig",
+      "type": "object"
+    },
+    "FirestoreDeleteOperationConfig": {
+      "description": "Delete interest in a long-running operation result.",
+      "properties": {
+        "operation": {
+          "const": "delete_operation",
+          "default": "delete_operation",
+          "title": "Delete Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Operations",
+          "x-display-name": "Delete Operation",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        },
+        "operation_id": {
+          "title": "Operation ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "operation_id"
+      ],
+      "title": "FirestoreDeleteOperationConfig",
+      "type": "object"
+    },
+    "FirestoreDeleteUserCredsConfig": {
+      "description": "Delete a user creds resource.",
+      "properties": {
+        "operation": {
+          "const": "delete_user_creds",
+          "default": "delete_user_creds",
+          "title": "Delete User Creds",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User Creds",
+          "x-display-name": "Delete User Creds",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        },
+        "user_creds_id": {
+          "title": "User Creds ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "user_creds_id"
+      ],
+      "title": "FirestoreDeleteUserCredsConfig",
+      "type": "object"
+    },
+    "FirestoreDisableUserCredsConfig": {
+      "description": "Disable a user creds resource.",
+      "properties": {
+        "operation": {
+          "const": "disable_user_creds",
+          "default": "disable_user_creds",
+          "title": "Disable User Creds",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User Creds",
+          "x-display-name": "Disable User Creds",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        },
+        "user_creds_id": {
+          "title": "User Creds ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "user_creds_id"
+      ],
+      "title": "FirestoreDisableUserCredsConfig",
+      "type": "object"
+    },
+    "FirestoreEnableUserCredsConfig": {
+      "description": "Enable a user creds resource.",
+      "properties": {
+        "operation": {
+          "const": "enable_user_creds",
+          "default": "enable_user_creds",
+          "title": "Enable User Creds",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User Creds",
+          "x-display-name": "Enable User Creds",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        },
+        "user_creds_id": {
+          "title": "User Creds ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "user_creds_id"
+      ],
+      "title": "FirestoreEnableUserCredsConfig",
+      "type": "object"
+    },
+    "FirestoreExecutePipelineConfig": {
+      "description": "Execute a Firestore pipeline query.",
+      "properties": {
+        "operation": {
+          "const": "execute_pipeline",
+          "default": "execute_pipeline",
+          "title": "Execute Pipeline",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Queries",
+          "x-display-name": "Execute Pipeline",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        },
+        "pipeline_request": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
+          "description": "ExecutePipeline JSON body",
+          "placeholder": "{\"structuredPipeline\": {\"stages\": []}}",
+          "title": "Pipeline Request",
+          "ui:accept": ".json,.txt,application/json,text/plain",
+          "ui:widget": "text_upload_textarea"
+        }
+      },
+      "required": [
+        "project_id",
+        "pipeline_request"
+      ],
+      "title": "FirestoreExecutePipelineConfig",
+      "type": "object"
+    },
+    "FirestoreExportDocumentsConfig": {
+      "description": "Export documents to Cloud Storage.",
+      "properties": {
+        "operation": {
+          "const": "export_documents",
+          "default": "export_documents",
+          "title": "Export Documents",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Databases",
+          "x-display-name": "Export Documents",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        },
+        "output_uri_prefix": {
+          "description": "Cloud Storage URI prefix, e.g. gs://bucket/firestore-export",
+          "title": "Output GCS URI Prefix",
+          "type": "string"
+        },
+        "collection_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional comma-separated collection IDs to export",
+          "title": "Collection IDs"
+        },
+        "namespace_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional comma-separated namespace IDs",
+          "title": "Namespace IDs"
+        }
+      },
+      "required": [
+        "project_id",
+        "output_uri_prefix"
+      ],
+      "title": "FirestoreExportDocumentsConfig",
+      "type": "object"
+    },
+    "FirestoreFirebaseIdTokenCredential": {
+      "description": "Firebase Authentication ID-token credential.\n\nFirestore REST accepts Firebase ID tokens and authorizes them with\nFirestore Security Rules. If `refresh_token` + `api_key` are provided, the\nnode can renew the ID token automatically through Firebase Auth REST.",
+      "properties": {
+        "credential_type": {
+          "const": "firestore_firebase_id_token",
+          "default": "firestore_firebase_id_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "id_token": {
+          "description": "A Firebase Authentication ID token (JWT)",
+          "title": "Firebase ID Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Firebase refresh token for automatic renewal",
+          "title": "Firebase Refresh Token",
+          "ui:widget": "password"
+        },
+        "api_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required to refresh Firebase ID tokens automatically",
+          "title": "Firebase Web API Key",
+          "ui:widget": "password"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional ISO 8601 expiry timestamp for the ID token",
+          "title": "Token Expiry"
+        },
+        "project_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Firebase project ID for reference",
+          "title": "Project ID"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional email of the authenticated Firebase user",
+          "title": "Firebase User Email"
+        }
+      },
+      "required": [
+        "id_token"
+      ],
+      "title": "FirestoreFirebaseIdTokenCredential",
+      "type": "object",
+      "x-credential-url": "https://console.firebase.google.com/project/_/settings/general/"
+    },
+    "FirestoreGetBackupConfig": {
+      "description": "Get one Firestore backup.",
+      "properties": {
+        "operation": {
+          "const": "get_backup",
+          "default": "get_backup",
+          "title": "Get Backup",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Backups",
+          "x-display-name": "Get Backup",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "location_id": {
+          "title": "Location ID",
+          "type": "string"
+        },
+        "backup_id": {
+          "title": "Backup ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "location_id",
+        "backup_id"
+      ],
+      "title": "FirestoreGetBackupConfig",
+      "type": "object"
+    },
+    "FirestoreGetBackupScheduleConfig": {
+      "description": "Get one backup schedule.",
+      "properties": {
+        "operation": {
+          "const": "get_backup_schedule",
+          "default": "get_backup_schedule",
+          "title": "Get Backup Schedule",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Backups",
+          "x-display-name": "Get Backup Schedule",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        },
+        "backup_schedule_id": {
+          "title": "Backup Schedule ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "backup_schedule_id"
+      ],
+      "title": "FirestoreGetBackupScheduleConfig",
+      "type": "object"
+    },
+    "FirestoreGetDatabaseConfig": {
+      "description": "Get metadata/config for a database.",
+      "properties": {
+        "operation": {
+          "const": "get_database",
+          "default": "get_database",
+          "title": "Get Database",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Databases",
+          "x-display-name": "Get Database",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "FirestoreGetDatabaseConfig",
+      "type": "object"
+    },
+    "FirestoreGetDocumentConfig": {
+      "description": "Fetch a single document by its collection and document id.",
+      "properties": {
+        "operation": {
+          "const": "get_document",
+          "default": "get_document",
+          "title": "Get Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Get Document",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        },
+        "collection_path": {
+          "description": "Collection path, e.g. users or users/abc/orders",
+          "title": "Collection Path",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste collection path",
+            "depends_on": "database_id",
+            "field_name": "collection_path",
+            "placeholder": "Select a collection...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_collection"
+        },
+        "document_id": {
+          "description": "The id of the document to fetch",
+          "title": "Document ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "collection_path",
+        "document_id"
+      ],
+      "title": "FirestoreGetDocumentConfig",
+      "type": "object"
+    },
+    "FirestoreGetFieldConfig": {
+      "description": "Get one field configuration.",
+      "properties": {
+        "operation": {
+          "const": "get_field",
+          "default": "get_field",
+          "title": "Get Field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Indexes",
+          "x-display-name": "Get Field",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        },
+        "collection_id": {
+          "title": "Collection Group",
+          "type": "string"
+        },
+        "field_path": {
+          "description": "Field path, e.g. \"age\" or \"*\" for the default field entry",
+          "title": "Field Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "collection_id",
+        "field_path"
+      ],
+      "title": "FirestoreGetFieldConfig",
+      "type": "object"
+    },
+    "FirestoreGetIndexConfig": {
+      "description": "Get a composite index definition.",
+      "properties": {
+        "operation": {
+          "const": "get_index",
+          "default": "get_index",
+          "title": "Get Index",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Indexes",
+          "x-display-name": "Get Index",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        },
+        "collection_id": {
+          "title": "Collection Group",
+          "type": "string"
+        },
+        "index_id": {
+          "title": "Index ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "collection_id",
+        "index_id"
+      ],
+      "title": "FirestoreGetIndexConfig",
+      "type": "object"
+    },
+    "FirestoreGetLocationConfig": {
+      "description": "Get one Firestore-supported location.",
+      "properties": {
+        "operation": {
+          "const": "get_location",
+          "default": "get_location",
+          "title": "Get Location",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Locations",
+          "x-display-name": "Get Location",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "location_id": {
+          "title": "Location ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "location_id"
+      ],
+      "title": "FirestoreGetLocationConfig",
+      "type": "object"
+    },
+    "FirestoreGetOperationConfig": {
+      "description": "Poll the status of a long-running operation (export/import/index build).",
+      "properties": {
+        "operation": {
+          "const": "get_operation",
+          "default": "get_operation",
+          "title": "Get Operation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Operations",
+          "x-display-name": "Get Operation",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        },
+        "operation_id": {
+          "description": "The id of the long-running operation to poll",
+          "title": "Operation ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "operation_id"
+      ],
+      "title": "FirestoreGetOperationConfig",
+      "type": "object"
+    },
+    "FirestoreGetUserCredsConfig": {
+      "description": "Get a database user creds resource.",
+      "properties": {
+        "operation": {
+          "const": "get_user_creds",
+          "default": "get_user_creds",
+          "title": "Get User Creds",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User Creds",
+          "x-display-name": "Get User Creds",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        },
+        "user_creds_id": {
+          "title": "User Creds ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "user_creds_id"
+      ],
+      "title": "FirestoreGetUserCredsConfig",
+      "type": "object"
+    },
+    "FirestoreImportDocumentsConfig": {
+      "description": "Import documents from Cloud Storage.",
+      "properties": {
+        "operation": {
+          "const": "import_documents",
+          "default": "import_documents",
+          "title": "Import Documents",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Databases",
+          "x-display-name": "Import Documents",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        },
+        "input_uri_prefix": {
+          "description": "Cloud Storage URI prefix, e.g. gs://bucket/firestore-export",
+          "title": "Input GCS URI Prefix",
+          "type": "string"
+        },
+        "collection_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional comma-separated collection IDs to import",
+          "title": "Collection IDs"
+        },
+        "namespace_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional comma-separated namespace IDs",
+          "title": "Namespace IDs"
+        }
+      },
+      "required": [
+        "project_id",
+        "input_uri_prefix"
+      ],
+      "title": "FirestoreImportDocumentsConfig",
+      "type": "object"
+    },
+    "FirestoreListBackupSchedulesConfig": {
+      "description": "List backup schedules for a Firestore database.",
+      "properties": {
+        "operation": {
+          "const": "list_backup_schedules",
+          "default": "list_backup_schedules",
+          "title": "List Backup Schedules",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Backups",
+          "x-display-name": "List Backup Schedules",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "50",
+          "title": "Page Size"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Token"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "FirestoreListBackupSchedulesConfig",
+      "type": "object"
+    },
+    "FirestoreListBackupsConfig": {
+      "description": "List Firestore backups in a location.",
+      "properties": {
+        "operation": {
+          "const": "list_backups",
+          "default": "list_backups",
+          "title": "List Backups",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Backups",
+          "x-display-name": "List Backups",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "location_id": {
+          "title": "Location ID",
+          "type": "string"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "50",
+          "title": "Page Size"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Token"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter"
+        }
+      },
+      "required": [
+        "project_id",
+        "location_id"
+      ],
+      "title": "FirestoreListBackupsConfig",
+      "type": "object"
+    },
+    "FirestoreListCollectionIdsConfig": {
+      "description": "List collection IDs under the database root or a document.",
+      "properties": {
+        "operation": {
+          "const": "list_collection_ids",
+          "default": "list_collection_ids",
+          "title": "List Collection IDs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Queries",
+          "x-display-name": "List Collection IDs",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        },
+        "parent_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Document path to list collections under (blank = database root)",
+          "title": "Parent Path"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "100",
+          "description": "Max collection ids to return",
+          "title": "Page Size"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "FirestoreListCollectionIdsConfig",
+      "type": "object"
+    },
+    "FirestoreListDatabasesConfig": {
+      "description": "List databases in the project.",
+      "properties": {
+        "operation": {
+          "const": "list_databases",
+          "default": "list_databases",
+          "title": "List Databases",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Databases",
+          "x-display-name": "List Databases",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "FirestoreListDatabasesConfig",
+      "type": "object"
+    },
+    "FirestoreListDocumentsConfig": {
+      "description": "List documents in a collection.",
+      "properties": {
+        "operation": {
+          "const": "list_documents",
+          "default": "list_documents",
+          "title": "List Documents",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "List Documents",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        },
+        "collection_path": {
+          "description": "Collection (or sub-collection) path to list, e.g. users",
+          "title": "Collection Path",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste collection path",
+            "depends_on": "database_id",
+            "field_name": "collection_path",
+            "placeholder": "Select a collection...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_collection"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "50",
+          "description": "Max documents to return per page",
+          "title": "Page Size"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "nextPageToken from a previous call",
+          "title": "Page Token"
+        },
+        "order_by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Field to order by, e.g. createdAt desc",
+          "title": "Order By"
+        }
+      },
+      "required": [
+        "project_id",
+        "collection_path"
+      ],
+      "title": "FirestoreListDocumentsConfig",
+      "type": "object"
+    },
+    "FirestoreListFieldsConfig": {
+      "description": "List field index / TTL configurations.",
+      "properties": {
+        "operation": {
+          "const": "list_fields",
+          "default": "list_fields",
+          "title": "List Fields",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Indexes",
+          "x-display-name": "List Fields",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        },
+        "collection_id": {
+          "default": "__default__",
+          "description": "Collection group id, or \"__default__\" for default field settings",
+          "title": "Collection Group",
+          "type": "string"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "indexConfig.usesAncestorConfig:false",
+          "description": "Optional filter, e.g. \"indexConfig.usesAncestorConfig:false\" or \"ttlConfig:*\"",
+          "title": "Filter"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "50",
+          "title": "Page Size"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Token"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "FirestoreListFieldsConfig",
+      "type": "object"
+    },
+    "FirestoreListIndexesConfig": {
+      "description": "List composite indexes for a collection group.",
+      "properties": {
+        "operation": {
+          "const": "list_indexes",
+          "default": "list_indexes",
+          "title": "List Indexes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Indexes",
+          "x-display-name": "List Indexes",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        },
+        "collection_id": {
+          "description": "Collection group id to list composite indexes for",
+          "title": "Collection Group",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste collection group id",
+            "depends_on": "database_id",
+            "field_name": "collection_id",
+            "placeholder": "Select a collection group...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_collection"
+        }
+      },
+      "required": [
+        "project_id",
+        "collection_id"
+      ],
+      "title": "FirestoreListIndexesConfig",
+      "type": "object"
+    },
+    "FirestoreListLocationsConfig": {
+      "description": "List Firestore-supported locations.",
+      "properties": {
+        "operation": {
+          "const": "list_locations",
+          "default": "list_locations",
+          "title": "List Locations",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Locations",
+          "x-display-name": "List Locations",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Filter"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "50",
+          "title": "Page Size"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Token"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "FirestoreListLocationsConfig",
+      "type": "object"
+    },
+    "FirestoreListOperationsConfig": {
+      "description": "List long-running operations.",
+      "properties": {
+        "operation": {
+          "const": "list_operations",
+          "default": "list_operations",
+          "title": "List Operations",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Operations",
+          "x-display-name": "List Operations",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional operation filter string, e.g. \"done=false\"",
+          "title": "Filter"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "50",
+          "title": "Page Size"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Page Token"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "FirestoreListOperationsConfig",
+      "type": "object"
+    },
+    "FirestoreListUserCredsConfig": {
+      "description": "List user creds for a database.",
+      "properties": {
+        "operation": {
+          "const": "list_user_creds",
+          "default": "list_user_creds",
+          "title": "List User Creds",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User Creds",
+          "x-display-name": "List User Creds",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "FirestoreListUserCredsConfig",
+      "type": "object"
+    },
+    "FirestoreListenConfig": {
+      "description": "Open a Firestore listen stream request.",
+      "properties": {
+        "operation": {
+          "const": "listen",
+          "default": "listen",
+          "title": "Listen Stream",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Advanced",
+          "x-display-name": "Listen Stream",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        },
+        "listen_request": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
+          "description": "Listen JSON body",
+          "placeholder": "{\"addTarget\": {\"documents\": {\"documents\": [\"projects/my-proj/databases/(default)/documents/users/a\"]}, \"targetId\": 1}}",
+          "title": "Listen Request",
+          "ui:accept": ".json,.txt,application/json,text/plain",
+          "ui:widget": "text_upload_textarea"
+        }
+      },
+      "required": [
+        "project_id",
+        "listen_request"
+      ],
+      "title": "FirestoreListenConfig",
+      "type": "object"
+    },
+    "FirestoreOAuthCredential": {
+      "description": "OAuth credential for Google Cloud Firestore.\n\nTokens are obtained via the Google OAuth flow, not entered manually. The\n`datastore` scope grants read/write access to documents, queries, and\ntransactions.",
+      "properties": {
+        "credential_type": {
+          "const": "firestore_oauth",
+          "default": "firestore_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "OAuth 2.0 access token from Google",
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "description": "OAuth 2.0 refresh token for automatic renewal",
+          "title": "Refresh Token",
+          "type": "string"
+        },
+        "expires_at": {
+          "description": "ISO 8601 timestamp when the access token expires",
+          "title": "Token Expiry",
+          "type": "string"
+        },
+        "email": {
+          "description": "Email address of the connected Google account",
+          "title": "Google Account",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "email"
+      ],
+      "title": "FirestoreOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://console.cloud.google.com/apis/credentials",
+      "x-oauth-provider": "google",
+      "x-oauth-scopes": [
+        "https://www.googleapis.com/auth/datastore"
+      ]
+    },
+    "FirestoreOnDocumentChangedConfig": {
+      "description": "Trigger: poll a collection for documents created/updated since the last check.\n\nFirestore exposes no outbound webhooks over REST, so this trigger polls on a\nschedule. Each tick runs a structured query (`runQuery`) ordered by the\ndocument's update time and emits only documents whose `updateTime` is newer\nthan the stored cursor (`last_polled_at`), then advances the cursor.",
+      "properties": {
+        "operation": {
+          "const": "on_document_changed",
+          "default": "on_document_changed",
+          "title": "On Document Created/Updated",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Document Created/Updated",
+          "x-is-trigger": true
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        },
+        "collection_path": {
+          "description": "Collection to watch for new/updated documents, e.g. users",
+          "title": "Collection Path",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste collection path",
+            "depends_on": "database_id",
+            "field_name": "collection_path",
+            "placeholder": "Select a collection...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_collection"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "50",
+          "description": "Max documents to fetch per check (most recent first)",
+          "title": "Max Documents"
+        },
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": {
+            "frequency": "minutes",
+            "interval": 5,
+            "hour": 9,
+            "minute": 0,
+            "dayOfWeek": 1,
+            "dayOfMonth": 1
+          },
+          "description": "How often to poll the collection for changes",
+          "title": "Check Frequency",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "last_polled_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Polled At",
+          "ui:hidden": true
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:copyable": true,
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Check",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "project_id",
+        "collection_path"
+      ],
+      "title": "FirestoreOnDocumentChangedConfig",
+      "type": "object"
+    },
+    "FirestorePartitionQueryConfig": {
+      "description": "Partition a structured query for parallel execution.",
+      "properties": {
+        "operation": {
+          "const": "partition_query",
+          "default": "partition_query",
+          "title": "Partition Query",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Queries",
+          "x-display-name": "Partition Query",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        },
+        "parent_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Document path the query runs under (blank = database root)",
+          "title": "Parent Path"
+        },
+        "structured_query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
+          "description": "StructuredQuery JSON to partition",
+          "placeholder": "{\"from\": [{\"collectionId\": \"users\"}]}",
+          "title": "Structured Query",
+          "ui:accept": ".json,.txt,application/json,text/plain",
+          "ui:widget": "text_upload_textarea"
+        },
+        "partition_count": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "10",
+          "description": "Maximum number of partition cursors to return",
+          "title": "Partition Count"
+        }
+      },
+      "required": [
+        "project_id",
+        "structured_query"
+      ],
+      "title": "FirestorePartitionQueryConfig",
+      "type": "object"
+    },
+    "FirestoreResetUserCredsPasswordConfig": {
+      "description": "Reset the password of a user creds resource.",
+      "properties": {
+        "operation": {
+          "const": "reset_user_creds_password",
+          "default": "reset_user_creds_password",
+          "title": "Reset User Creds Password",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User Creds",
+          "x-display-name": "Reset User Creds Password",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        },
+        "user_creds_id": {
+          "title": "User Creds ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "user_creds_id"
+      ],
+      "title": "FirestoreResetUserCredsPasswordConfig",
+      "type": "object"
+    },
+    "FirestoreRestoreDatabaseConfig": {
+      "description": "Restore a Firestore database from a backup.",
+      "properties": {
+        "operation": {
+          "const": "restore_database",
+          "default": "restore_database",
+          "title": "Restore Database",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Databases",
+          "x-display-name": "Restore Database",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "new_database_id": {
+          "title": "New Database ID",
+          "type": "string"
+        },
+        "restore_request": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
+          "description": "RestoreDatabase JSON body without the top-level databaseId if desired",
+          "placeholder": "{\"backup\": \"projects/my-proj/locations/us/backups/backup-1\"}",
+          "title": "Restore Request",
+          "ui:accept": ".json,.txt,application/json,text/plain",
+          "ui:widget": "text_upload_textarea"
+        }
+      },
+      "required": [
+        "project_id",
+        "new_database_id",
+        "restore_request"
+      ],
+      "title": "FirestoreRestoreDatabaseConfig",
+      "type": "object"
+    },
+    "FirestoreRollbackConfig": {
+      "description": "Abort an in-progress transaction.",
+      "properties": {
+        "operation": {
+          "const": "rollback",
+          "default": "rollback",
+          "title": "Rollback",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Transactions",
+          "x-display-name": "Rollback",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        },
+        "transaction": {
+          "description": "The transaction token to roll back",
+          "title": "Transaction",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "transaction"
+      ],
+      "title": "FirestoreRollbackConfig",
+      "type": "object"
+    },
+    "FirestoreRunAggregationQueryConfig": {
+      "description": "Run a COUNT / SUM / AVG aggregation over a query.",
+      "properties": {
+        "operation": {
+          "const": "run_aggregation_query",
+          "default": "run_aggregation_query",
+          "title": "Run Aggregation Query",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Queries",
+          "x-display-name": "Run Aggregation Query",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        },
+        "parent_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Document path the query runs under (blank = database root)",
+          "title": "Parent Path"
+        },
+        "structured_aggregation_query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
+          "description": "A Firestore structuredAggregationQuery object, e.g. {\"structuredQuery\": {\"from\": [{\"collectionId\": \"users\"}]}, \"aggregations\": [{\"count\": {}, \"alias\": \"total\"}]}",
+          "placeholder": "{\"structuredQuery\": {...}, \"aggregations\": [{\"count\": {}}]}",
+          "title": "Structured Aggregation Query",
+          "ui:accept": ".json,.txt,application/json,text/plain",
+          "ui:widget": "text_upload_textarea"
+        }
+      },
+      "required": [
+        "project_id",
+        "structured_aggregation_query"
+      ],
+      "title": "FirestoreRunAggregationQueryConfig",
+      "type": "object"
+    },
+    "FirestoreRunQueryConfig": {
+      "description": "Run a structured query over a collection.",
+      "properties": {
+        "operation": {
+          "const": "run_query",
+          "default": "run_query",
+          "title": "Run Query",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Queries",
+          "x-display-name": "Run Query",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        },
+        "parent_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Document path the query runs under (blank = database root)",
+          "title": "Parent Path"
+        },
+        "structured_query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
+          "description": "A Firestore structuredQuery object, e.g. {\"from\": [{\"collectionId\": \"users\"}], \"limit\": 10}",
+          "placeholder": "{\"from\": [{\"collectionId\": \"users\"}], \"limit\": 10}",
+          "title": "Structured Query",
+          "ui:accept": ".json,.txt,application/json,text/plain",
+          "ui:widget": "text_upload_textarea"
+        }
+      },
+      "required": [
+        "project_id",
+        "structured_query"
+      ],
+      "title": "FirestoreRunQueryConfig",
+      "type": "object"
+    },
+    "FirestoreServiceAccountCredential": {
+      "description": "Service-account credential for server-side Firestore access.\n\nThis path exchanges a locally signed JWT assertion for a Google OAuth 2.0\naccess token on each execution. Firestore then authorizes requests with IAM,\nnot Security Rules.",
+      "properties": {
+        "credential_type": {
+          "const": "firestore_service_account",
+          "default": "firestore_service_account",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client_email": {
+          "description": "The service account client_email from the JSON key",
+          "title": "Client Email",
+          "type": "string"
+        },
+        "private_key": {
+          "description": "The service account private_key PEM block",
+          "title": "Private Key",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "private_key_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional private_key_id from the JSON key",
+          "title": "Private Key ID"
+        },
+        "project_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional project_id from the JSON key",
+          "title": "Project ID"
+        },
+        "token_uri": {
+          "default": "https://oauth2.googleapis.com/token",
+          "description": "OAuth 2.0 token endpoint for the service account",
+          "title": "Token URI",
+          "type": "string"
+        }
+      },
+      "required": [
+        "client_email",
+        "private_key"
+      ],
+      "title": "FirestoreServiceAccountCredential",
+      "type": "object",
+      "x-credential-url": "https://console.cloud.google.com/iam-admin/serviceaccounts"
+    },
+    "FirestoreUpdateBackupScheduleConfig": {
+      "description": "Update a backup schedule.",
+      "properties": {
+        "operation": {
+          "const": "update_backup_schedule",
+          "default": "update_backup_schedule",
+          "title": "Update Backup Schedule",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Backups",
+          "x-display-name": "Update Backup Schedule",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        },
+        "backup_schedule_id": {
+          "title": "Backup Schedule ID",
+          "type": "string"
+        },
+        "backup_schedule": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
+          "description": "BackupSchedule JSON body to patch",
+          "placeholder": "{\"retention\": \"1209600s\"}",
+          "title": "Backup Schedule",
+          "ui:accept": ".json,.txt,application/json,text/plain",
+          "ui:widget": "text_upload_textarea"
+        },
+        "update_mask": {
+          "description": "Comma-separated backup schedule field paths, e.g. \"retention\"",
+          "title": "Update Mask",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "backup_schedule_id",
+        "backup_schedule",
+        "update_mask"
+      ],
+      "title": "FirestoreUpdateBackupScheduleConfig",
+      "type": "object"
+    },
+    "FirestoreUpdateDatabaseConfig": {
+      "description": "Patch database metadata/configuration.",
+      "properties": {
+        "operation": {
+          "const": "update_database",
+          "default": "update_database",
+          "title": "Update Database",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Databases",
+          "x-display-name": "Update Database",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        },
+        "database": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
+          "description": "Database JSON body to patch",
+          "placeholder": "{\"type\": \"FIRESTORE_NATIVE\"}",
+          "title": "Database",
+          "ui:accept": ".json,.txt,application/json,text/plain",
+          "ui:widget": "text_upload_textarea"
+        },
+        "update_mask": {
+          "description": "Comma-separated database field paths, e.g. \"deleteProtectionState\"",
+          "title": "Update Mask",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "database",
+        "update_mask"
+      ],
+      "title": "FirestoreUpdateDatabaseConfig",
+      "type": "object"
+    },
+    "FirestoreUpdateDocumentConfig": {
+      "description": "Update (patch / upsert) fields on a document.",
+      "properties": {
+        "operation": {
+          "const": "update_document",
+          "default": "update_document",
+          "title": "Update / Upsert Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Update / Upsert Document",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        },
+        "collection_path": {
+          "description": "Collection path, e.g. users",
+          "title": "Collection Path",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste collection path",
+            "depends_on": "database_id",
+            "field_name": "collection_path",
+            "placeholder": "Select a collection...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_collection"
+        },
+        "document_id": {
+          "description": "The id of the document to patch",
+          "title": "Document ID",
+          "type": "string"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
+          "description": "Typed Firestore fields object to set, e.g. {\"age\": {\"integerValue\": \"31\"}}",
+          "placeholder": "{\"age\": {\"integerValue\": \"31\"}}",
+          "title": "Fields",
+          "ui:accept": ".json,.txt,application/json,text/plain",
+          "ui:widget": "text_upload_textarea"
+        },
+        "update_mask": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated field paths to patch (e.g. age,name). Without a mask the whole document is replaced (omitted fields are deleted).",
+          "title": "Update Mask"
+        }
+      },
+      "required": [
+        "project_id",
+        "collection_path",
+        "document_id",
+        "fields"
+      ],
+      "title": "FirestoreUpdateDocumentConfig",
+      "type": "object"
+    },
+    "FirestoreUpdateFieldConfig": {
+      "description": "Patch a field configuration.",
+      "properties": {
+        "operation": {
+          "const": "update_field",
+          "default": "update_field",
+          "title": "Update Field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Indexes",
+          "x-display-name": "Update Field",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        },
+        "collection_id": {
+          "title": "Collection Group",
+          "type": "string"
+        },
+        "field_path": {
+          "title": "Field Path",
+          "type": "string"
+        },
+        "field": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
+          "description": "Field JSON body to patch",
+          "placeholder": "{\"indexConfig\": {\"indexes\": []}}",
+          "title": "Field Config",
+          "ui:accept": ".json,.txt,application/json,text/plain",
+          "ui:widget": "text_upload_textarea"
+        },
+        "update_mask": {
+          "description": "Comma-separated field mask, e.g. \"indexConfig\" or \"ttlConfig\"",
+          "title": "Update Mask",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "collection_id",
+        "field_path",
+        "field",
+        "update_mask"
+      ],
+      "title": "FirestoreUpdateFieldConfig",
+      "type": "object"
+    },
+    "FirestoreWriteConfig": {
+      "description": "Open a Firestore write stream request.",
+      "properties": {
+        "operation": {
+          "const": "write",
+          "default": "write",
+          "title": "Write Stream",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Advanced",
+          "x-display-name": "Write Stream",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Your Google Cloud / Firebase project ID",
+          "title": "Project ID",
+          "type": "string",
+          "ui:loadValue": true
+        },
+        "database_id": {
+          "default": "(default)",
+          "description": "Firestore database id. Most projects use the default: (default)",
+          "title": "Database ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "depends_on": "project_id",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true
+          },
+          "x-resource-type": "firestore_database"
+        },
+        "write_request": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
+          "description": "Write JSON body",
+          "placeholder": "{\"streamId\": \"stream-1\", \"writes\": []}",
+          "title": "Write Request",
+          "ui:accept": ".json,.txt,application/json,text/plain",
+          "ui:widget": "text_upload_textarea"
+        }
+      },
+      "required": [
+        "project_id",
+        "write_request"
+      ],
+      "title": "FirestoreWriteConfig",
+      "type": "object"
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the Firestore node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "batch_get_documents": "#/$defs/FirestoreBatchGetConfig",
+          "batch_write": "#/$defs/FirestoreBatchWriteConfig",
+          "begin_transaction": "#/$defs/FirestoreBeginTransactionConfig",
+          "bulk_delete_documents": "#/$defs/FirestoreBulkDeleteDocumentsConfig",
+          "cancel_operation": "#/$defs/FirestoreCancelOperationConfig",
+          "clone_database": "#/$defs/FirestoreCloneDatabaseConfig",
+          "commit": "#/$defs/FirestoreCommitConfig",
+          "create_backup_schedule": "#/$defs/FirestoreCreateBackupScheduleConfig",
+          "create_database": "#/$defs/FirestoreCreateDatabaseConfig",
+          "create_document": "#/$defs/FirestoreCreateDocumentConfig",
+          "create_user_creds": "#/$defs/FirestoreCreateUserCredsConfig",
+          "custom_api_call": "#/$defs/FirestoreCustomApiCallConfig",
+          "delete_backup": "#/$defs/FirestoreDeleteBackupConfig",
+          "delete_backup_schedule": "#/$defs/FirestoreDeleteBackupScheduleConfig",
+          "delete_database": "#/$defs/FirestoreDeleteDatabaseConfig",
+          "delete_document": "#/$defs/FirestoreDeleteDocumentConfig",
+          "delete_index": "#/$defs/FirestoreDeleteIndexConfig",
+          "delete_operation": "#/$defs/FirestoreDeleteOperationConfig",
+          "delete_user_creds": "#/$defs/FirestoreDeleteUserCredsConfig",
+          "disable_user_creds": "#/$defs/FirestoreDisableUserCredsConfig",
+          "enable_user_creds": "#/$defs/FirestoreEnableUserCredsConfig",
+          "execute_pipeline": "#/$defs/FirestoreExecutePipelineConfig",
+          "export_documents": "#/$defs/FirestoreExportDocumentsConfig",
+          "get_backup": "#/$defs/FirestoreGetBackupConfig",
+          "get_backup_schedule": "#/$defs/FirestoreGetBackupScheduleConfig",
+          "get_database": "#/$defs/FirestoreGetDatabaseConfig",
+          "get_document": "#/$defs/FirestoreGetDocumentConfig",
+          "get_field": "#/$defs/FirestoreGetFieldConfig",
+          "get_index": "#/$defs/FirestoreGetIndexConfig",
+          "get_location": "#/$defs/FirestoreGetLocationConfig",
+          "get_operation": "#/$defs/FirestoreGetOperationConfig",
+          "get_user_creds": "#/$defs/FirestoreGetUserCredsConfig",
+          "import_documents": "#/$defs/FirestoreImportDocumentsConfig",
+          "list_backup_schedules": "#/$defs/FirestoreListBackupSchedulesConfig",
+          "list_backups": "#/$defs/FirestoreListBackupsConfig",
+          "list_collection_ids": "#/$defs/FirestoreListCollectionIdsConfig",
+          "list_databases": "#/$defs/FirestoreListDatabasesConfig",
+          "list_documents": "#/$defs/FirestoreListDocumentsConfig",
+          "list_fields": "#/$defs/FirestoreListFieldsConfig",
+          "list_indexes": "#/$defs/FirestoreListIndexesConfig",
+          "list_locations": "#/$defs/FirestoreListLocationsConfig",
+          "list_operations": "#/$defs/FirestoreListOperationsConfig",
+          "list_user_creds": "#/$defs/FirestoreListUserCredsConfig",
+          "listen": "#/$defs/FirestoreListenConfig",
+          "on_document_changed": "#/$defs/FirestoreOnDocumentChangedConfig",
+          "partition_query": "#/$defs/FirestorePartitionQueryConfig",
+          "reset_user_creds_password": "#/$defs/FirestoreResetUserCredsPasswordConfig",
+          "restore_database": "#/$defs/FirestoreRestoreDatabaseConfig",
+          "rollback": "#/$defs/FirestoreRollbackConfig",
+          "run_aggregation_query": "#/$defs/FirestoreRunAggregationQueryConfig",
+          "run_query": "#/$defs/FirestoreRunQueryConfig",
+          "update_backup_schedule": "#/$defs/FirestoreUpdateBackupScheduleConfig",
+          "update_database": "#/$defs/FirestoreUpdateDatabaseConfig",
+          "update_document": "#/$defs/FirestoreUpdateDocumentConfig",
+          "update_field": "#/$defs/FirestoreUpdateFieldConfig",
+          "write": "#/$defs/FirestoreWriteConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/FirestoreGetDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreListDocumentsConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreCreateDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreUpdateDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreDeleteDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreBatchGetConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreBatchWriteConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreRunQueryConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreRunAggregationQueryConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreListCollectionIdsConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreBeginTransactionConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreCommitConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreRollbackConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreExecutePipelineConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreListenConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreWriteConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreGetDatabaseConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreListDatabasesConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreCreateDatabaseConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreCloneDatabaseConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreRestoreDatabaseConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreListIndexesConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreGetOperationConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestorePartitionQueryConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreUpdateDatabaseConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreDeleteDatabaseConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreCreateBackupScheduleConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreGetBackupScheduleConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreListBackupSchedulesConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreUpdateBackupScheduleConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreDeleteBackupScheduleConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreExportDocumentsConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreImportDocumentsConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreBulkDeleteDocumentsConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreGetIndexConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreDeleteIndexConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreCreateUserCredsConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreGetUserCredsConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreListUserCredsConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreEnableUserCredsConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreDisableUserCredsConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreDeleteUserCredsConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreResetUserCredsPasswordConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreListFieldsConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreGetFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreUpdateFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreListOperationsConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreCancelOperationConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreDeleteOperationConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreGetLocationConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreListLocationsConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreGetBackupConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreListBackupsConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreDeleteBackupConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreCustomApiCallConfig"
+        },
+        {
+          "$ref": "#/$defs/FirestoreOnDocumentChangedConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FirestoreOAuthCredential"
+        },
+        {
+          "$ref": "#/$defs/FirestoreServiceAccountCredential"
+        },
+        {
+          "$ref": "#/$defs/FirestoreFirebaseIdTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Firestore Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Get a user document from the users collection",
+    "List the documents in a collection",
+    "Create a new document with typed fields",
+    "Run a structured query over a collection",
+    "Count documents with an aggregation query"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

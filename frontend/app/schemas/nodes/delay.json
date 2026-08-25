@@ -1,0 +1,81 @@
+{
+  "$defs": {
+    "DelayInnerConfig": {
+      "description": "Configuration for the delay node.",
+      "properties": {
+        "delay_amount": {
+          "default": 1,
+          "description": "How long to wait, in the chosen unit",
+          "minimum": 1,
+          "placeholder": "1",
+          "title": "Delay",
+          "type": "integer"
+        },
+        "delay_unit": {
+          "default": "minutes",
+          "description": "Unit for the delay duration",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "days",
+            "weeks"
+          ],
+          "enumNames": [
+            "Seconds",
+            "Minutes",
+            "Hours",
+            "Days",
+            "Weeks"
+          ],
+          "title": "Unit",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional message to display while waiting",
+          "placeholder": "Waiting for video generation...",
+          "title": "Wait Message (optional)"
+        }
+      },
+      "title": "DelayInnerConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for delay node (no credentials needed).",
+  "properties": {
+    "config": {
+      "$ref": "#/$defs/DelayInnerConfig",
+      "description": "Node-specific configuration"
+    },
+    "credentials": {
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials",
+      "type": "null"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Delay Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Wait 5 minutes before polling the video generation API",
+    "Add a 30-second delay between sending emails",
+    "Wait 2 days before sending the onboarding follow-up email",
+    "Pause for 1 week before the re-engagement step",
+    "Rate limit by waiting between API requests",
+    "Change the wait duration from minutes to hours"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

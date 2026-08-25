@@ -1,0 +1,3142 @@
+{
+  "$defs": {
+    "GoogleDriveCopyConfig": {
+      "description": "Configuration for copying a file",
+      "properties": {
+        "operation": {
+          "const": "copy_file",
+          "default": "copy_file",
+          "description": "Copy a file",
+          "title": "Copy File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File",
+          "x-creates-resource": true,
+          "x-display-name": "Copy File",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "duplicate file",
+            "clone file",
+            "make a copy"
+          ],
+          "x-resource-id-path": "file.id",
+          "x-resource-type": "google_drive_file"
+        },
+        "file_id": {
+          "description": "Select a file to copy",
+          "title": "File",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "file_id",
+            "placeholder": "Select a file...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_drive_file"
+        },
+        "new_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Name for the copy (optional, defaults to 'Copy of [original]')",
+          "title": "New Name"
+        },
+        "destination_folder_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Folder to copy to (leave empty for same location)",
+          "title": "Destination Folder",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste folder ID",
+            "field_name": "folder_id",
+            "placeholder": "Select destination folder...",
+            "searchable": true
+          },
+          "x-resource-type": "google_drive_folder"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "GoogleDriveCopyConfig",
+      "type": "object"
+    },
+    "GoogleDriveCreateCommentConfig": {
+      "description": "Configuration for creating a comment on a file",
+      "properties": {
+        "operation": {
+          "const": "create_file_comment",
+          "default": "create_file_comment",
+          "description": "Add a comment to a file",
+          "title": "Create File Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File Comment",
+          "x-display-name": "Create File Comment",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "add comment",
+            "comment on file",
+            "leave a note",
+            "annotate file"
+          ]
+        },
+        "file_id": {
+          "description": "Select a file to comment on",
+          "title": "File",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "file_id",
+            "placeholder": "Select a file...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_drive_file"
+        },
+        "content": {
+          "description": "Comment text",
+          "placeholder": "Enter your comment...",
+          "title": "Comment",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "file_id",
+        "content"
+      ],
+      "title": "GoogleDriveCreateCommentConfig",
+      "type": "object"
+    },
+    "GoogleDriveCreateFolderConfig": {
+      "description": "Configuration for creating a folder",
+      "properties": {
+        "operation": {
+          "const": "create_folder",
+          "default": "create_folder",
+          "description": "Create a new folder",
+          "title": "Create Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Folder",
+          "x-creates-resource": true,
+          "x-display-name": "Create Folder",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new folder",
+            "make folder",
+            "add folder",
+            "make directory"
+          ],
+          "x-resource-id-path": "folder.id",
+          "x-resource-type": "google_drive_folder"
+        },
+        "folder_name": {
+          "description": "Name for the new folder",
+          "title": "Folder Name",
+          "type": "string"
+        },
+        "parent_folder_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Parent folder (leave empty for root)",
+          "title": "Parent Folder",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste folder ID",
+            "field_name": "folder_id",
+            "placeholder": "Select parent folder (root if empty)...",
+            "searchable": true
+          },
+          "x-resource-type": "google_drive_folder"
+        }
+      },
+      "required": [
+        "folder_name"
+      ],
+      "title": "GoogleDriveCreateFolderConfig",
+      "type": "object"
+    },
+    "GoogleDriveCreateReplyConfig": {
+      "description": "Configuration for creating a reply to a comment",
+      "properties": {
+        "operation": {
+          "const": "create_comment_reply",
+          "default": "create_comment_reply",
+          "description": "Add a reply to an existing comment",
+          "title": "Create Comment Reply",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment Reply",
+          "x-display-name": "Create Comment Reply",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "reply to comment",
+            "respond to comment",
+            "answer comment",
+            "add reply"
+          ]
+        },
+        "file_id": {
+          "description": "Select a file",
+          "title": "File",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "file_id",
+            "placeholder": "Select a file...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_drive_file"
+        },
+        "comment_id": {
+          "description": "ID of the comment to reply to",
+          "placeholder": "Comment ID",
+          "title": "Comment ID",
+          "type": "string"
+        },
+        "content": {
+          "description": "Reply text",
+          "placeholder": "Enter your reply...",
+          "title": "Reply",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "file_id",
+        "comment_id",
+        "content"
+      ],
+      "title": "GoogleDriveCreateReplyConfig",
+      "type": "object"
+    },
+    "GoogleDriveCreateSharedDriveConfig": {
+      "description": "Configuration for creating a shared drive",
+      "properties": {
+        "operation": {
+          "const": "create_shared_drive",
+          "default": "create_shared_drive",
+          "description": "Create a new shared drive",
+          "title": "Create Shared Drive",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Shared Drive",
+          "x-display-name": "Create Shared Drive",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new team drive",
+            "make shared drive",
+            "add team drive"
+          ]
+        },
+        "name": {
+          "description": "Name for the new shared drive",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "GoogleDriveCreateSharedDriveConfig",
+      "type": "object"
+    },
+    "GoogleDriveDeleteCommentConfig": {
+      "description": "Configuration for deleting a comment",
+      "properties": {
+        "operation": {
+          "const": "delete_file_comment",
+          "default": "delete_file_comment",
+          "description": "Delete a comment from a file",
+          "title": "Delete File Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File Comment",
+          "x-display-name": "Delete File Comment",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove comment",
+            "erase comment",
+            "drop comment"
+          ]
+        },
+        "file_id": {
+          "description": "Select a file",
+          "title": "File",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "file_id",
+            "placeholder": "Select a file...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_drive_file"
+        },
+        "comment_id": {
+          "description": "ID of the comment to delete",
+          "placeholder": "Comment ID",
+          "title": "Comment ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id",
+        "comment_id"
+      ],
+      "title": "GoogleDriveDeleteCommentConfig",
+      "type": "object"
+    },
+    "GoogleDriveDeleteConfig": {
+      "description": "Configuration for deleting a file",
+      "properties": {
+        "operation": {
+          "const": "delete_file",
+          "default": "delete_file",
+          "description": "Delete a file permanently",
+          "title": "Delete File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File",
+          "x-display-name": "Delete File",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "permanently delete file",
+            "erase file forever",
+            "destroy file"
+          ]
+        },
+        "file_id": {
+          "description": "Select a file to delete",
+          "title": "File",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "file_id",
+            "placeholder": "Select a file...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_drive_file"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "GoogleDriveDeleteConfig",
+      "type": "object"
+    },
+    "GoogleDriveDeleteReplyConfig": {
+      "description": "Configuration for deleting a reply",
+      "properties": {
+        "operation": {
+          "const": "delete_comment_reply",
+          "default": "delete_comment_reply",
+          "description": "Delete a reply from a comment",
+          "title": "Delete Comment Reply",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment Reply",
+          "x-display-name": "Delete Comment Reply",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove reply",
+            "erase reply",
+            "drop reply"
+          ]
+        },
+        "file_id": {
+          "description": "Select a file",
+          "title": "File",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "file_id",
+            "placeholder": "Select a file...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_drive_file"
+        },
+        "comment_id": {
+          "description": "ID of the comment",
+          "placeholder": "Comment ID",
+          "title": "Comment ID",
+          "type": "string"
+        },
+        "reply_id": {
+          "description": "ID of the reply to delete",
+          "placeholder": "Reply ID",
+          "title": "Reply ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id",
+        "comment_id",
+        "reply_id"
+      ],
+      "title": "GoogleDriveDeleteReplyConfig",
+      "type": "object"
+    },
+    "GoogleDriveDeleteRevisionConfig": {
+      "description": "Configuration for deleting a revision",
+      "properties": {
+        "operation": {
+          "const": "delete_file_revision",
+          "default": "delete_file_revision",
+          "description": "Delete a specific file revision",
+          "title": "Delete File Revision",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File Revision",
+          "x-display-name": "Delete File Revision",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove revision",
+            "delete old version",
+            "erase version"
+          ]
+        },
+        "file_id": {
+          "description": "Select a file",
+          "title": "File",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "file_id",
+            "placeholder": "Select a file...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_drive_file"
+        },
+        "revision_id": {
+          "description": "ID of the revision to delete",
+          "placeholder": "Revision ID",
+          "title": "Revision ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id",
+        "revision_id"
+      ],
+      "title": "GoogleDriveDeleteRevisionConfig",
+      "type": "object"
+    },
+    "GoogleDriveDeleteSharedDriveConfig": {
+      "description": "Configuration for deleting a shared drive",
+      "properties": {
+        "operation": {
+          "const": "delete_shared_drive",
+          "default": "delete_shared_drive",
+          "description": "Delete a shared drive (must be empty)",
+          "title": "Delete Shared Drive",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Shared Drive",
+          "x-display-name": "Delete Shared Drive",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove team drive",
+            "erase shared drive",
+            "destroy team drive"
+          ]
+        },
+        "drive_id": {
+          "description": "ID of the shared drive to delete",
+          "placeholder": "Shared Drive ID",
+          "title": "Shared Drive ID",
+          "type": "string"
+        },
+        "use_domain_admin_access": {
+          "default": false,
+          "description": "Use domain administrator privileges",
+          "title": "Use Domain Admin Access",
+          "type": "boolean"
+        },
+        "allow_item_deletion": {
+          "default": false,
+          "description": "Allow deleting drive even if it contains items",
+          "title": "Allow Item Deletion",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "drive_id"
+      ],
+      "title": "GoogleDriveDeleteSharedDriveConfig",
+      "type": "object"
+    },
+    "GoogleDriveDownloadConfig": {
+      "description": "Configuration for downloading file content",
+      "properties": {
+        "operation": {
+          "const": "download_file",
+          "default": "download_file",
+          "description": "Download file content",
+          "title": "Download File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File",
+          "x-display-name": "Download File",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "save file locally",
+            "get file content",
+            "fetch file bytes",
+            "grab file"
+          ]
+        },
+        "file_id": {
+          "description": "Select a file to download",
+          "title": "File",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "file_id",
+            "placeholder": "Select a file...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_drive_file"
+        },
+        "export_format": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For Google Docs: pdf, docx, txt, html. For Sheets: xlsx, csv, pdf. Leave empty for binary files.",
+          "placeholder": "pdf, docx, xlsx, csv, etc.",
+          "title": "Export Format"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "GoogleDriveDownloadConfig",
+      "type": "object"
+    },
+    "GoogleDriveEmptyTrashConfig": {
+      "description": "Configuration for emptying trash",
+      "properties": {
+        "operation": {
+          "const": "empty_drive_trash",
+          "default": "empty_drive_trash",
+          "description": "Permanently delete all files in trash",
+          "title": "Empty Drive Trash",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Drive",
+          "x-display-name": "Empty Drive Trash",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "empty trash",
+            "clear bin",
+            "purge trash",
+            "empty recycle bin"
+          ]
+        },
+        "confirm": {
+          "default": false,
+          "description": "Check to confirm permanently deleting all trashed files (cannot be undone)",
+          "title": "Confirm Empty Trash",
+          "type": "boolean"
+        }
+      },
+      "title": "GoogleDriveEmptyTrashConfig",
+      "type": "object"
+    },
+    "GoogleDriveExportConfig": {
+      "description": "Configuration for exporting Google Workspace documents",
+      "properties": {
+        "operation": {
+          "const": "export_google_workspace_file",
+          "default": "export_google_workspace_file",
+          "description": "Export Google Docs/Sheets/Slides to other formats",
+          "title": "Export Google Workspace File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File",
+          "x-display-name": "Export Google Workspace File",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "export doc",
+            "convert google doc",
+            "export as pdf",
+            "save docs as",
+            "convert workspace file"
+          ]
+        },
+        "file_id": {
+          "description": "Select a Google Workspace file to export (Docs, Sheets, Slides only)",
+          "title": "File",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "exportable_file_id",
+            "placeholder": "Select a Google Docs/Sheets/Slides file...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_drive_file"
+        },
+        "export_format": {
+          "description": "Format to export the file as",
+          "title": "Export Format",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": false,
+            "field_name": "export_format",
+            "placeholder": "Select export format...",
+            "searchable": false,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "file_id",
+        "export_format"
+      ],
+      "title": "GoogleDriveExportConfig",
+      "type": "object"
+    },
+    "GoogleDriveGetAboutConfig": {
+      "description": "Configuration for getting Drive storage info",
+      "properties": {
+        "operation": {
+          "const": "get_drive_storage_info",
+          "default": "get_drive_storage_info",
+          "description": "Get storage quota and user info",
+          "title": "Get Drive Storage Info",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Drive",
+          "x-display-name": "Get Drive Storage Info",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "storage usage",
+            "space left",
+            "quota usage",
+            "how much space",
+            "disk quota"
+          ]
+        }
+      },
+      "title": "GoogleDriveGetAboutConfig",
+      "type": "object"
+    },
+    "GoogleDriveGetCommentConfig": {
+      "description": "Configuration for getting a single comment",
+      "properties": {
+        "operation": {
+          "const": "get_file_comment",
+          "default": "get_file_comment",
+          "description": "Get a specific comment by ID",
+          "title": "Get File Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File Comment",
+          "x-display-name": "Get File Comment",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "read one comment",
+            "view single comment",
+            "fetch specific comment"
+          ]
+        },
+        "file_id": {
+          "description": "Select a file",
+          "title": "File",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "file_id",
+            "placeholder": "Select a file...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_drive_file"
+        },
+        "comment_id": {
+          "description": "ID of the comment to retrieve",
+          "placeholder": "Comment ID",
+          "title": "Comment ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id",
+        "comment_id"
+      ],
+      "title": "GoogleDriveGetCommentConfig",
+      "type": "object"
+    },
+    "GoogleDriveGetConfig": {
+      "description": "Configuration for getting file metadata",
+      "properties": {
+        "operation": {
+          "const": "get_file_metadata",
+          "default": "get_file_metadata",
+          "description": "Get file metadata",
+          "title": "Get File Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File",
+          "x-display-name": "Get File Metadata",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "file details",
+            "file info",
+            "file properties",
+            "inspect file",
+            "about this file"
+          ]
+        },
+        "file_id": {
+          "description": "Select a file to get metadata for",
+          "title": "File",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "file_id",
+            "placeholder": "Select a file...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_drive_file"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "GoogleDriveGetConfig",
+      "type": "object"
+    },
+    "GoogleDriveGetPermissionConfig": {
+      "description": "Configuration for getting a specific permission",
+      "properties": {
+        "operation": {
+          "const": "get_file_permission",
+          "default": "get_file_permission",
+          "description": "Get details of a specific permission",
+          "title": "Get File Permission",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File Permission",
+          "x-display-name": "Get File Permission",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "check one permission",
+            "view single access",
+            "specific collaborator access"
+          ]
+        },
+        "file_id": {
+          "description": "Select a file",
+          "title": "File",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "file_id",
+            "placeholder": "Select a file...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_drive_file"
+        },
+        "permission_id": {
+          "description": "ID of the permission",
+          "placeholder": "Permission ID",
+          "title": "Permission ID",
+          "type": "string"
+        },
+        "supports_all_drives": {
+          "default": false,
+          "description": "Include shared drives in the request",
+          "title": "Supports All Drives",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "file_id",
+        "permission_id"
+      ],
+      "title": "GoogleDriveGetPermissionConfig",
+      "type": "object"
+    },
+    "GoogleDriveGetReplyConfig": {
+      "description": "Configuration for getting a specific reply",
+      "properties": {
+        "operation": {
+          "const": "get_comment_reply",
+          "default": "get_comment_reply",
+          "description": "Get a specific reply by ID",
+          "title": "Get Comment Reply",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment Reply",
+          "x-display-name": "Get Comment Reply",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "read one reply",
+            "view single reply",
+            "fetch specific reply"
+          ]
+        },
+        "file_id": {
+          "description": "Select a file",
+          "title": "File",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "file_id",
+            "placeholder": "Select a file...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_drive_file"
+        },
+        "comment_id": {
+          "description": "ID of the comment",
+          "placeholder": "Comment ID",
+          "title": "Comment ID",
+          "type": "string"
+        },
+        "reply_id": {
+          "description": "ID of the reply",
+          "placeholder": "Reply ID",
+          "title": "Reply ID",
+          "type": "string"
+        },
+        "include_deleted": {
+          "default": false,
+          "description": "Include deleted replies in the response",
+          "title": "Include Deleted",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "file_id",
+        "comment_id",
+        "reply_id"
+      ],
+      "title": "GoogleDriveGetReplyConfig",
+      "type": "object"
+    },
+    "GoogleDriveGetRevisionConfig": {
+      "description": "Configuration for getting a specific revision",
+      "properties": {
+        "operation": {
+          "const": "get_file_revision",
+          "default": "get_file_revision",
+          "description": "Get a specific file revision",
+          "title": "Get File Revision",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File Revision",
+          "x-display-name": "Get File Revision",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "view one version",
+            "single revision",
+            "specific version",
+            "fetch revision"
+          ]
+        },
+        "file_id": {
+          "description": "Select a file",
+          "title": "File",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "file_id",
+            "placeholder": "Select a file...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_drive_file"
+        },
+        "revision_id": {
+          "description": "ID of the revision",
+          "placeholder": "Revision ID",
+          "title": "Revision ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id",
+        "revision_id"
+      ],
+      "title": "GoogleDriveGetRevisionConfig",
+      "type": "object"
+    },
+    "GoogleDriveGetSharedDriveConfig": {
+      "description": "Configuration for getting shared drive details",
+      "properties": {
+        "operation": {
+          "const": "get_shared_drive",
+          "default": "get_shared_drive",
+          "description": "Get details of a specific shared drive",
+          "title": "Get Shared Drive",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Shared Drive",
+          "x-display-name": "Get Shared Drive",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "team drive details",
+            "shared drive info",
+            "inspect team drive"
+          ]
+        },
+        "drive_id": {
+          "description": "ID of the shared drive",
+          "placeholder": "Shared Drive ID",
+          "title": "Shared Drive ID",
+          "type": "string"
+        },
+        "use_domain_admin_access": {
+          "default": false,
+          "description": "Use domain administrator privileges",
+          "title": "Use Domain Admin Access",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "drive_id"
+      ],
+      "title": "GoogleDriveGetSharedDriveConfig",
+      "type": "object"
+    },
+    "GoogleDriveHideSharedDriveConfig": {
+      "description": "Configuration for hiding a shared drive",
+      "properties": {
+        "operation": {
+          "const": "hide_shared_drive",
+          "default": "hide_shared_drive",
+          "description": "Hide a shared drive from the default view",
+          "title": "Hide Shared Drive",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Shared Drive",
+          "x-display-name": "Hide Shared Drive",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "conceal team drive",
+            "remove from sidebar",
+            "stop showing drive"
+          ]
+        },
+        "drive_id": {
+          "description": "ID of the shared drive to hide",
+          "placeholder": "Shared Drive ID",
+          "title": "Shared Drive ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "drive_id"
+      ],
+      "title": "GoogleDriveHideSharedDriveConfig",
+      "type": "object"
+    },
+    "GoogleDriveListCommentsConfig": {
+      "description": "Configuration for listing comments on a file",
+      "properties": {
+        "operation": {
+          "const": "list_file_comments",
+          "default": "list_file_comments",
+          "description": "List all comments on a file",
+          "title": "List File Comments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File Comment",
+          "x-display-name": "List File Comments",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "view comments",
+            "all comments",
+            "read file comments",
+            "show annotations"
+          ]
+        },
+        "file_id": {
+          "description": "Select a file to list comments",
+          "title": "File",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "file_id",
+            "placeholder": "Select a file...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_drive_file"
+        },
+        "include_deleted": {
+          "default": false,
+          "description": "Include deleted comments",
+          "title": "Include Deleted",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "GoogleDriveListCommentsConfig",
+      "type": "object"
+    },
+    "GoogleDriveListConfig": {
+      "description": "Configuration for listing files in Google Drive",
+      "properties": {
+        "operation": {
+          "const": "list_files",
+          "default": "list_files",
+          "description": "List files from Google Drive",
+          "title": "List Files",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File",
+          "x-display-name": "List Files",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "browse files",
+            "list my files",
+            "all files",
+            "files in folder",
+            "enumerate files"
+          ]
+        },
+        "folder_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Select a folder to list files from (leave empty for root)",
+          "title": "Folder",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste folder ID",
+            "field_name": "folder_id",
+            "placeholder": "Select a folder (root if empty)...",
+            "searchable": true
+          },
+          "x-resource-type": "google_drive_folder"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search query (e.g., name contains 'report')",
+          "placeholder": "name contains 'report'",
+          "title": "Search Query"
+        },
+        "page_size": {
+          "default": 100,
+          "description": "Maximum number of files to return (1-1000)",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "include_trashed": {
+          "default": false,
+          "description": "Include files in trash",
+          "title": "Include Trashed",
+          "type": "boolean"
+        }
+      },
+      "title": "GoogleDriveListConfig",
+      "type": "object"
+    },
+    "GoogleDriveListPermissionsConfig": {
+      "description": "Configuration for listing file permissions",
+      "properties": {
+        "operation": {
+          "const": "list_file_permissions",
+          "default": "list_file_permissions",
+          "description": "List who has access to a file",
+          "title": "List File Permissions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File Permission",
+          "x-display-name": "List File Permissions",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "who has access",
+            "list collaborators",
+            "view sharing",
+            "all permissions"
+          ]
+        },
+        "file_id": {
+          "description": "Select a file to list permissions",
+          "title": "File",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "file_id",
+            "placeholder": "Select a file...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_drive_file"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "GoogleDriveListPermissionsConfig",
+      "type": "object"
+    },
+    "GoogleDriveListRepliesConfig": {
+      "description": "Configuration for listing replies to a comment",
+      "properties": {
+        "operation": {
+          "const": "list_comment_replies",
+          "default": "list_comment_replies",
+          "description": "List all replies to a comment",
+          "title": "List Comment Replies",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment Reply",
+          "x-display-name": "List Comment Replies",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "view replies",
+            "all replies",
+            "read comment replies",
+            "show responses"
+          ]
+        },
+        "file_id": {
+          "description": "Select a file",
+          "title": "File",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "file_id",
+            "placeholder": "Select a file...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_drive_file"
+        },
+        "comment_id": {
+          "description": "ID of the comment",
+          "placeholder": "Comment ID",
+          "title": "Comment ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id",
+        "comment_id"
+      ],
+      "title": "GoogleDriveListRepliesConfig",
+      "type": "object"
+    },
+    "GoogleDriveListRevisionsConfig": {
+      "description": "Configuration for listing file revisions",
+      "properties": {
+        "operation": {
+          "const": "list_file_revisions",
+          "default": "list_file_revisions",
+          "description": "List all versions of a file",
+          "title": "List File Revisions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File Revision",
+          "x-display-name": "List File Revisions",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "version history",
+            "file versions",
+            "revision history",
+            "all revisions"
+          ]
+        },
+        "file_id": {
+          "description": "Select a file to list revisions",
+          "title": "File",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "file_id",
+            "placeholder": "Select a file...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_drive_file"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "GoogleDriveListRevisionsConfig",
+      "type": "object"
+    },
+    "GoogleDriveListSharedDrivesConfig": {
+      "description": "Configuration for listing shared drives",
+      "properties": {
+        "operation": {
+          "const": "list_shared_drives",
+          "default": "list_shared_drives",
+          "description": "List all shared drives accessible to the user",
+          "title": "List Shared Drives",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Shared Drive",
+          "x-display-name": "List Shared Drives",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "browse team drives",
+            "list team drives",
+            "all shared drives",
+            "my shared drives"
+          ]
+        },
+        "page_size": {
+          "default": 100,
+          "description": "Maximum number of shared drives to return",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "use_domain_admin_access": {
+          "default": false,
+          "description": "Use domain administrator privileges",
+          "title": "Use Domain Admin Access",
+          "type": "boolean"
+        }
+      },
+      "title": "GoogleDriveListSharedDrivesConfig",
+      "type": "object"
+    },
+    "GoogleDriveMoveConfig": {
+      "description": "Configuration for moving a file",
+      "properties": {
+        "operation": {
+          "const": "move_file",
+          "default": "move_file",
+          "description": "Move a file to another folder",
+          "title": "Move File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File",
+          "x-display-name": "Move File",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "relocate file",
+            "change file folder",
+            "move to folder",
+            "transfer file"
+          ]
+        },
+        "file_id": {
+          "description": "Select a file to move",
+          "title": "File",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "file_id",
+            "placeholder": "Select a file...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_drive_file"
+        },
+        "destination_folder_id": {
+          "description": "Folder to move file to",
+          "title": "Destination Folder",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste folder ID",
+            "field_name": "folder_id",
+            "placeholder": "Select destination folder...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_drive_folder"
+        }
+      },
+      "required": [
+        "file_id",
+        "destination_folder_id"
+      ],
+      "title": "GoogleDriveMoveConfig",
+      "type": "object"
+    },
+    "GoogleDriveOAuthCredential": {
+      "description": "OAuth credential for Google Drive access.\nTokens are obtained via OAuth flow, not entered manually.",
+      "properties": {
+        "credential_type": {
+          "const": "google_drive_oauth",
+          "default": "google_drive_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "OAuth 2.0 access token from Google",
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "description": "OAuth 2.0 refresh token for automatic renewal",
+          "title": "Refresh Token",
+          "type": "string"
+        },
+        "expires_at": {
+          "description": "ISO 8601 timestamp when access token expires",
+          "title": "Token Expiry",
+          "type": "string"
+        },
+        "email": {
+          "description": "Email address of the connected Google account",
+          "title": "Google Account",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "email"
+      ],
+      "title": "GoogleDriveOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-oauth-provider": "google",
+      "x-oauth-scopes": [
+        "https://www.googleapis.com/auth/drive"
+      ]
+    },
+    "GoogleDriveOnChangeConfig": {
+      "description": "Trigger: fires when files change in the connected Google Drive.",
+      "properties": {
+        "operation": {
+          "const": "on_drive_change",
+          "default": "on_drive_change",
+          "title": "On Drive Change",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Drive Change",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "when drive changes",
+            "watch my drive",
+            "on any change",
+            "drive activity"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "drive_page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Drive Page Token",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        }
+      },
+      "title": "GoogleDriveOnChangeConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "GoogleDriveOnFileChangedConfig": {
+      "description": "Trigger: fires when a file is created or modified in Google Drive.",
+      "properties": {
+        "operation": {
+          "const": "on_file_changed",
+          "default": "on_file_changed",
+          "title": "On File Changed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On File Changed",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "when new file",
+            "on file created",
+            "when file modified",
+            "watch for file",
+            "new file added"
+          ]
+        },
+        "watch_target_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Select a file to monitor exactly, or a folder to monitor files within it and all descendant subfolders. Leave empty to watch the entire Drive.",
+          "title": "Watch File or Folder",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file/folder ID",
+            "field_name": "watch_target_id",
+            "placeholder": "Any file or folder in Drive",
+            "searchable": true
+          }
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "drive_page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Drive Page Token",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        }
+      },
+      "title": "GoogleDriveOnFileChangedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "GoogleDriveOnFileRemovedConfig": {
+      "description": "Trigger: fires when a file is trashed or permanently deleted from Google Drive.",
+      "properties": {
+        "operation": {
+          "const": "on_file_removed",
+          "default": "on_file_removed",
+          "title": "On File Removed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On File Removed",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "when file trashed",
+            "on file deleted",
+            "when file gone",
+            "watch deleted files"
+          ]
+        },
+        "watch_target_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Select a file to monitor exactly, or a folder to monitor files within it and all descendant subfolders. Leave empty to watch the entire Drive.",
+          "title": "Watch File or Folder",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file/folder ID",
+            "field_name": "watch_target_id",
+            "placeholder": "Any file or folder in Drive",
+            "searchable": true
+          }
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "drive_page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Drive Page Token",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        }
+      },
+      "title": "GoogleDriveOnFileRemovedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "GoogleDriveOnFolderChangedConfig": {
+      "description": "Trigger: fires when a folder is created or modified in Google Drive.",
+      "properties": {
+        "operation": {
+          "const": "on_folder_changed",
+          "default": "on_folder_changed",
+          "title": "On Folder Changed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Folder Changed",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "when new folder",
+            "on folder created",
+            "when folder modified",
+            "watch for folder"
+          ]
+        },
+        "watch_parent_folder_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only trigger for this folder and its descendant subfolders. Leave empty to watch all folders.",
+          "title": "Watch Folder",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste folder ID",
+            "field_name": "watch_parent_folder_id",
+            "placeholder": "All folders (entire Drive)",
+            "searchable": true
+          },
+          "x-resource-type": "google_drive_folder"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "drive_page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Drive Page Token",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        }
+      },
+      "title": "GoogleDriveOnFolderChangedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "GoogleDriveOnFolderRemovedConfig": {
+      "description": "Trigger: fires when a folder is trashed or permanently deleted from Google Drive.",
+      "properties": {
+        "operation": {
+          "const": "on_folder_removed",
+          "default": "on_folder_removed",
+          "title": "On Folder Removed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Folder Removed",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "when folder trashed",
+            "on folder deleted",
+            "when folder gone",
+            "watch deleted folders"
+          ]
+        },
+        "watch_parent_folder_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only trigger for this folder and its descendant subfolders. Leave empty to watch all folders.",
+          "title": "Watch Folder",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste folder ID",
+            "field_name": "watch_parent_folder_id",
+            "placeholder": "All folders (entire Drive)",
+            "searchable": true
+          },
+          "x-resource-type": "google_drive_folder"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "drive_page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Drive Page Token",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        }
+      },
+      "title": "GoogleDriveOnFolderRemovedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "GoogleDriveRestoreConfig": {
+      "description": "Configuration for restoring a file from trash",
+      "properties": {
+        "operation": {
+          "const": "restore_file_from_trash",
+          "default": "restore_file_from_trash",
+          "description": "Restore a file from trash",
+          "title": "Restore File from Trash",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File",
+          "x-display-name": "Restore File from Trash",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "untrash file",
+            "recover file",
+            "restore deleted file",
+            "bring back file"
+          ]
+        },
+        "file_id": {
+          "description": "ID of the trashed file to restore",
+          "placeholder": "File ID from trash",
+          "title": "File ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "GoogleDriveRestoreConfig",
+      "type": "object"
+    },
+    "GoogleDriveSearchConfig": {
+      "description": "Configuration for advanced file search",
+      "properties": {
+        "operation": {
+          "const": "search_files",
+          "default": "search_files",
+          "description": "Search files with advanced query",
+          "title": "Search Files",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File",
+          "x-display-name": "Search Files",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "find files",
+            "query files",
+            "advanced file search",
+            "look for files"
+          ]
+        },
+        "query": {
+          "description": "Search query (e.g., name contains 'report' and mimeType='application/pdf')",
+          "placeholder": "name contains 'report' and modifiedTime > '2024-01-01'",
+          "title": "Search Query",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "page_size": {
+          "default": 100,
+          "description": "Maximum number of results (1-1000)",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        },
+        "order_by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "modifiedTime desc",
+          "description": "Sort order for results",
+          "enum": [
+            "modifiedTime desc",
+            "modifiedTime asc",
+            "name",
+            "name desc",
+            "createdTime desc",
+            "folder"
+          ],
+          "enumLabels": [
+            "Modified (newest)",
+            "Modified (oldest)",
+            "Name (A-Z)",
+            "Name (Z-A)",
+            "Created (newest)",
+            "Folders first"
+          ],
+          "title": "Order By"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "GoogleDriveSearchConfig",
+      "type": "object"
+    },
+    "GoogleDriveShareConfig": {
+      "description": "Configuration for sharing a file",
+      "properties": {
+        "operation": {
+          "const": "share_file",
+          "default": "share_file",
+          "description": "Share a file with others",
+          "title": "Share File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File",
+          "x-display-name": "Share File",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "grant access",
+            "give permission",
+            "add collaborator",
+            "invite to file",
+            "make shareable"
+          ]
+        },
+        "file_id": {
+          "description": "Select a file to share",
+          "title": "File",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "file_id",
+            "placeholder": "Select a file...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_drive_file"
+        },
+        "share_type": {
+          "description": "Who to share with",
+          "enum": [
+            "user",
+            "group",
+            "domain",
+            "anyone"
+          ],
+          "enumLabels": [
+            "Specific User",
+            "Group",
+            "Domain",
+            "Anyone with link"
+          ],
+          "title": "Share Type",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Email address for user/group sharing",
+          "placeholder": "user@example.com",
+          "title": "Email Address"
+        },
+        "role": {
+          "default": "reader",
+          "description": "Permission level to grant",
+          "enum": [
+            "reader",
+            "commenter",
+            "writer"
+          ],
+          "enumLabels": [
+            "Viewer",
+            "Commenter",
+            "Editor"
+          ],
+          "title": "Permission",
+          "type": "string"
+        },
+        "send_notification": {
+          "default": true,
+          "description": "Send email notification to the user",
+          "title": "Send Notification",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "file_id",
+        "share_type"
+      ],
+      "title": "GoogleDriveShareConfig",
+      "type": "object"
+    },
+    "GoogleDriveTrashConfig": {
+      "description": "Configuration for moving a file to trash",
+      "properties": {
+        "operation": {
+          "const": "move_file_to_trash",
+          "default": "move_file_to_trash",
+          "description": "Move a file to trash",
+          "title": "Move File to Trash",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File",
+          "x-display-name": "Move File to Trash",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "trash file",
+            "send file to bin",
+            "soft delete file",
+            "recycle file"
+          ]
+        },
+        "file_id": {
+          "description": "Select a file to move to trash",
+          "title": "File",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "file_id",
+            "placeholder": "Select a file...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_drive_file"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "GoogleDriveTrashConfig",
+      "type": "object"
+    },
+    "GoogleDriveUnhideSharedDriveConfig": {
+      "description": "Configuration for unhiding a shared drive",
+      "properties": {
+        "operation": {
+          "const": "unhide_shared_drive",
+          "default": "unhide_shared_drive",
+          "description": "Unhide a shared drive (restore to default view)",
+          "title": "Unhide Shared Drive",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Shared Drive",
+          "x-display-name": "Unhide Shared Drive",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "show team drive again",
+            "reveal hidden drive",
+            "bring back drive"
+          ]
+        },
+        "drive_id": {
+          "description": "ID of the shared drive to unhide",
+          "placeholder": "Shared Drive ID",
+          "title": "Shared Drive ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "drive_id"
+      ],
+      "title": "GoogleDriveUnhideSharedDriveConfig",
+      "type": "object"
+    },
+    "GoogleDriveUnshareConfig": {
+      "description": "Configuration for removing file permissions",
+      "properties": {
+        "operation": {
+          "const": "remove_file_permission",
+          "default": "remove_file_permission",
+          "description": "Remove sharing permissions from a file",
+          "title": "Remove File Permission",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File",
+          "x-display-name": "Remove File Permission",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "revoke access",
+            "unshare file",
+            "remove collaborator",
+            "take away access"
+          ]
+        },
+        "file_id": {
+          "description": "Select a file to unshare",
+          "title": "File",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "file_id",
+            "placeholder": "Select a file...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_drive_file"
+        },
+        "permission_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specific permission ID to remove (leave empty to remove all except owner)",
+          "placeholder": "Permission ID (optional)",
+          "title": "Permission ID"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Email of user to remove access (alternative to permission ID)",
+          "placeholder": "user@example.com",
+          "title": "Email Address"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "GoogleDriveUnshareConfig",
+      "type": "object"
+    },
+    "GoogleDriveUpdateCommentConfig": {
+      "description": "Configuration for updating a comment",
+      "properties": {
+        "operation": {
+          "const": "update_file_comment",
+          "default": "update_file_comment",
+          "description": "Update an existing comment",
+          "title": "Update File Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File Comment",
+          "x-display-name": "Update File Comment",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "edit comment",
+            "change comment text",
+            "modify comment"
+          ]
+        },
+        "file_id": {
+          "description": "Select a file",
+          "title": "File",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "file_id",
+            "placeholder": "Select a file...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_drive_file"
+        },
+        "comment_id": {
+          "description": "ID of the comment to update",
+          "placeholder": "Comment ID",
+          "title": "Comment ID",
+          "type": "string"
+        },
+        "content": {
+          "description": "Updated comment text",
+          "placeholder": "Updated comment...",
+          "title": "New Content",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "file_id",
+        "comment_id",
+        "content"
+      ],
+      "title": "GoogleDriveUpdateCommentConfig",
+      "type": "object"
+    },
+    "GoogleDriveUpdateConfig": {
+      "description": "Configuration for updating file metadata",
+      "properties": {
+        "operation": {
+          "const": "update_file_metadata",
+          "default": "update_file_metadata",
+          "description": "Update file name or description",
+          "title": "Update File Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File",
+          "x-display-name": "Update File Metadata",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "rename file",
+            "edit file properties",
+            "change file name",
+            "modify file info"
+          ]
+        },
+        "file_id": {
+          "description": "Select a file to update",
+          "title": "File",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "file_id",
+            "placeholder": "Select a file...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_drive_file"
+        },
+        "new_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New name for the file (leave empty to keep current)",
+          "placeholder": "New file name",
+          "title": "New Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New description for the file",
+          "placeholder": "File description",
+          "title": "Description",
+          "ui:widget": "textarea"
+        },
+        "starred": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Mark file as starred",
+          "title": "Starred"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "GoogleDriveUpdateConfig",
+      "type": "object"
+    },
+    "GoogleDriveUpdatePermissionConfig": {
+      "description": "Configuration for updating a permission",
+      "properties": {
+        "operation": {
+          "const": "update_file_permission",
+          "default": "update_file_permission",
+          "description": "Update a permission (change role)",
+          "title": "Update File Permission",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File Permission",
+          "x-display-name": "Update File Permission",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "change access level",
+            "edit permission role",
+            "change collaborator role",
+            "modify sharing"
+          ]
+        },
+        "file_id": {
+          "description": "Select a file",
+          "title": "File",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "file_id",
+            "placeholder": "Select a file...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_drive_file"
+        },
+        "permission_id": {
+          "description": "ID of the permission to update",
+          "placeholder": "Permission ID",
+          "title": "Permission ID",
+          "type": "string"
+        },
+        "role": {
+          "description": "New role for the permission",
+          "enum": [
+            "reader",
+            "commenter",
+            "writer",
+            "fileOrganizer",
+            "organizer",
+            "owner"
+          ],
+          "enumLabels": [
+            "Viewer",
+            "Commenter",
+            "Editor",
+            "File Organizer",
+            "Organizer",
+            "Owner"
+          ],
+          "title": "New Role",
+          "type": "string"
+        },
+        "supports_all_drives": {
+          "default": false,
+          "description": "Include shared drives in the request",
+          "title": "Supports All Drives",
+          "type": "boolean"
+        },
+        "transfer_ownership": {
+          "default": false,
+          "description": "Transfer ownership to the specified user (use with owner role)",
+          "title": "Transfer Ownership",
+          "type": "boolean"
+        },
+        "expiration_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expiration time for the permission (ISO 8601 format)",
+          "title": "Expiration Time"
+        }
+      },
+      "required": [
+        "file_id",
+        "permission_id",
+        "role"
+      ],
+      "title": "GoogleDriveUpdatePermissionConfig",
+      "type": "object"
+    },
+    "GoogleDriveUpdateReplyConfig": {
+      "description": "Configuration for updating a reply",
+      "properties": {
+        "operation": {
+          "const": "update_comment_reply",
+          "default": "update_comment_reply",
+          "description": "Update an existing reply",
+          "title": "Update Comment Reply",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment Reply",
+          "x-display-name": "Update Comment Reply",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "edit reply",
+            "change reply text",
+            "modify reply"
+          ]
+        },
+        "file_id": {
+          "description": "Select a file",
+          "title": "File",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "file_id",
+            "placeholder": "Select a file...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_drive_file"
+        },
+        "comment_id": {
+          "description": "ID of the comment",
+          "placeholder": "Comment ID",
+          "title": "Comment ID",
+          "type": "string"
+        },
+        "reply_id": {
+          "description": "ID of the reply to update",
+          "placeholder": "Reply ID",
+          "title": "Reply ID",
+          "type": "string"
+        },
+        "content": {
+          "description": "Updated reply text",
+          "placeholder": "Updated reply...",
+          "title": "New Content",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "file_id",
+        "comment_id",
+        "reply_id",
+        "content"
+      ],
+      "title": "GoogleDriveUpdateReplyConfig",
+      "type": "object"
+    },
+    "GoogleDriveUpdateRevisionConfig": {
+      "description": "Configuration for updating revision metadata",
+      "properties": {
+        "operation": {
+          "const": "update_file_revision",
+          "default": "update_file_revision",
+          "description": "Update revision metadata (keep forever, etc.)",
+          "title": "Update File Revision",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File Revision",
+          "x-display-name": "Update File Revision",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "edit revision",
+            "keep version forever",
+            "pin revision",
+            "modify version metadata"
+          ]
+        },
+        "file_id": {
+          "description": "Select a file",
+          "title": "File",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "file_id",
+            "placeholder": "Select a file...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_drive_file"
+        },
+        "revision_id": {
+          "description": "ID of the revision",
+          "placeholder": "Revision ID",
+          "title": "Revision ID",
+          "type": "string"
+        },
+        "keep_forever": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether to keep this revision forever (prevents auto-deletion)",
+          "title": "Keep Forever"
+        },
+        "publish_auto": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Automatically publish new revisions",
+          "title": "Auto Publish"
+        },
+        "published": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether this revision is published",
+          "title": "Published"
+        }
+      },
+      "required": [
+        "file_id",
+        "revision_id"
+      ],
+      "title": "GoogleDriveUpdateRevisionConfig",
+      "type": "object"
+    },
+    "GoogleDriveUploadConfig": {
+      "description": "Configuration for uploading a file",
+      "properties": {
+        "operation": {
+          "const": "upload_file",
+          "default": "upload_file",
+          "description": "Upload a file",
+          "title": "Upload File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File",
+          "x-creates-resource": true,
+          "x-display-name": "Upload File",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "add new file",
+            "put file",
+            "save to drive",
+            "send file to drive"
+          ],
+          "x-resource-id-path": "file.id",
+          "x-resource-type": "google_drive_file"
+        },
+        "file_name": {
+          "description": "Name for the uploaded file (including extension)",
+          "title": "File Name",
+          "type": "string"
+        },
+        "content": {
+          "description": "File content: plain text, or \u2014 for binary \u2014 a URL, an upstream file reference (e.g. {{http-1.response.url}}), a data: URI, or base64.",
+          "title": "Content",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "mime_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "File MIME type (auto-detected if not specified)",
+          "placeholder": "text/plain, application/json, etc.",
+          "title": "MIME Type"
+        },
+        "parent_folder_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Folder to upload to (leave empty for root)",
+          "title": "Parent Folder",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste folder ID",
+            "field_name": "folder_id",
+            "placeholder": "Select folder (root if empty)...",
+            "searchable": true
+          },
+          "x-resource-type": "google_drive_folder"
+        },
+        "is_base64": {
+          "default": false,
+          "description": "Check if content is base64-encoded binary data",
+          "title": "Base64 Encoded",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "file_name",
+        "content"
+      ],
+      "title": "GoogleDriveUploadConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for Google Drive node including credentials",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "copy_file": "#/$defs/GoogleDriveCopyConfig",
+          "create_comment_reply": "#/$defs/GoogleDriveCreateReplyConfig",
+          "create_file_comment": "#/$defs/GoogleDriveCreateCommentConfig",
+          "create_folder": "#/$defs/GoogleDriveCreateFolderConfig",
+          "create_shared_drive": "#/$defs/GoogleDriveCreateSharedDriveConfig",
+          "delete_comment_reply": "#/$defs/GoogleDriveDeleteReplyConfig",
+          "delete_file": "#/$defs/GoogleDriveDeleteConfig",
+          "delete_file_comment": "#/$defs/GoogleDriveDeleteCommentConfig",
+          "delete_file_revision": "#/$defs/GoogleDriveDeleteRevisionConfig",
+          "delete_shared_drive": "#/$defs/GoogleDriveDeleteSharedDriveConfig",
+          "download_file": "#/$defs/GoogleDriveDownloadConfig",
+          "empty_drive_trash": "#/$defs/GoogleDriveEmptyTrashConfig",
+          "export_google_workspace_file": "#/$defs/GoogleDriveExportConfig",
+          "get_comment_reply": "#/$defs/GoogleDriveGetReplyConfig",
+          "get_drive_storage_info": "#/$defs/GoogleDriveGetAboutConfig",
+          "get_file_comment": "#/$defs/GoogleDriveGetCommentConfig",
+          "get_file_metadata": "#/$defs/GoogleDriveGetConfig",
+          "get_file_permission": "#/$defs/GoogleDriveGetPermissionConfig",
+          "get_file_revision": "#/$defs/GoogleDriveGetRevisionConfig",
+          "get_shared_drive": "#/$defs/GoogleDriveGetSharedDriveConfig",
+          "hide_shared_drive": "#/$defs/GoogleDriveHideSharedDriveConfig",
+          "list_comment_replies": "#/$defs/GoogleDriveListRepliesConfig",
+          "list_file_comments": "#/$defs/GoogleDriveListCommentsConfig",
+          "list_file_permissions": "#/$defs/GoogleDriveListPermissionsConfig",
+          "list_file_revisions": "#/$defs/GoogleDriveListRevisionsConfig",
+          "list_files": "#/$defs/GoogleDriveListConfig",
+          "list_shared_drives": "#/$defs/GoogleDriveListSharedDrivesConfig",
+          "move_file": "#/$defs/GoogleDriveMoveConfig",
+          "move_file_to_trash": "#/$defs/GoogleDriveTrashConfig",
+          "on_drive_change": "#/$defs/GoogleDriveOnChangeConfig",
+          "on_file_changed": "#/$defs/GoogleDriveOnFileChangedConfig",
+          "on_file_removed": "#/$defs/GoogleDriveOnFileRemovedConfig",
+          "on_folder_changed": "#/$defs/GoogleDriveOnFolderChangedConfig",
+          "on_folder_removed": "#/$defs/GoogleDriveOnFolderRemovedConfig",
+          "remove_file_permission": "#/$defs/GoogleDriveUnshareConfig",
+          "restore_file_from_trash": "#/$defs/GoogleDriveRestoreConfig",
+          "search_files": "#/$defs/GoogleDriveSearchConfig",
+          "share_file": "#/$defs/GoogleDriveShareConfig",
+          "unhide_shared_drive": "#/$defs/GoogleDriveUnhideSharedDriveConfig",
+          "update_comment_reply": "#/$defs/GoogleDriveUpdateReplyConfig",
+          "update_file_comment": "#/$defs/GoogleDriveUpdateCommentConfig",
+          "update_file_metadata": "#/$defs/GoogleDriveUpdateConfig",
+          "update_file_permission": "#/$defs/GoogleDriveUpdatePermissionConfig",
+          "update_file_revision": "#/$defs/GoogleDriveUpdateRevisionConfig",
+          "upload_file": "#/$defs/GoogleDriveUploadConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GoogleDriveOnChangeConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveOnFileChangedConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveOnFileRemovedConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveOnFolderChangedConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveOnFolderRemovedConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveListConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveGetConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveDownloadConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveCreateFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveUploadConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveCopyConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveMoveConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveDeleteConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveUpdateConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveExportConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveTrashConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveRestoreConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveEmptyTrashConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveShareConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveUnshareConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveListPermissionsConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveGetPermissionConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveUpdatePermissionConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveCreateCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveListCommentsConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveGetCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveUpdateCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveDeleteCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveCreateReplyConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveListRepliesConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveGetReplyConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveUpdateReplyConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveDeleteReplyConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveListRevisionsConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveGetRevisionConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveUpdateRevisionConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveDeleteRevisionConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveListSharedDrivesConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveGetSharedDriveConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveCreateSharedDriveConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveDeleteSharedDriveConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveHideSharedDriveConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveUnhideSharedDriveConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDriveGetAboutConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GoogleDriveOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Google-drive Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Upload the latest sales report PDF to the Q4 Reports folder",
+    "Download all invoice files from archive and save locally with timestamps",
+    "Create a new shared folder called \"Project Gamma\" with team access",
+    "Delete old backup files from 2024 and restore important files from trash",
+    "Copy the template document to create 5 new project folders with permissions",
+    "Share the monthly budget sheet with finance@company.com with editor access",
+    "Move all media files from temp to the Assets folder and update comments"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -1,0 +1,2432 @@
+{
+  "$defs": {
+    "MicrosoftTeamsOAuthCredential": {
+      "description": "Microsoft OAuth credential for Teams (via Microsoft Graph).\n\nUses the centralized Microsoft OAuth flow \u2014 credentials are created\nautomatically when the user connects their Microsoft (work/school) account.\nPersonal Microsoft accounts are not supported for Teams messaging.",
+      "properties": {
+        "credential_type": {
+          "const": "microsoft_teams_oauth",
+          "default": "microsoft_teams_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "OAuth access token",
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "description": "OAuth refresh token for token renewal",
+          "title": "Refresh Token",
+          "type": "string"
+        },
+        "expires_at": {
+          "description": "Token expiry timestamp (ISO 8601)",
+          "title": "Expires At",
+          "type": "string"
+        },
+        "email": {
+          "description": "Microsoft account email address",
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "email"
+      ],
+      "title": "MicrosoftTeamsOAuthCredential",
+      "type": "object",
+      "x-credential-instructions": "Connect your Microsoft work/school account to access Teams via Microsoft Graph. Personal Microsoft accounts are not supported for Teams messaging.",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://portal.azure.com/#blade/Microsoft_AAD_RegisteredApps/ApplicationsListBlade",
+      "x-oauth-provider": "microsoft",
+      "x-oauth-scopes": [
+        "https://graph.microsoft.com/User.Read",
+        "https://graph.microsoft.com/Team.ReadBasic.All",
+        "https://graph.microsoft.com/Team.Create",
+        "https://graph.microsoft.com/Channel.ReadBasic.All",
+        "https://graph.microsoft.com/Channel.Create",
+        "https://graph.microsoft.com/Channel.Delete.All",
+        "https://graph.microsoft.com/ChannelMessage.Read.All",
+        "https://graph.microsoft.com/ChannelMessage.Send",
+        "https://graph.microsoft.com/Chat.ReadWrite",
+        "https://graph.microsoft.com/ChatMessage.Send",
+        "https://graph.microsoft.com/TeamMember.ReadWrite.All",
+        "https://graph.microsoft.com/TeamsAppInstallation.ReadWriteForTeam",
+        "https://graph.microsoft.com/TeamsTab.ReadWriteForTeam",
+        "https://graph.microsoft.com/OnlineMeetings.ReadWrite",
+        "https://graph.microsoft.com/Presence.Read.All"
+      ]
+    },
+    "TeamsAddMemberConfig": {
+      "description": "Add a member to a team.",
+      "properties": {
+        "operation": {
+          "const": "add_team_member",
+          "default": "add_team_member",
+          "title": "Add Team Member",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Members",
+          "x-display-name": "Add Team Member",
+          "x-is-trigger": false
+        },
+        "team_id": {
+          "description": "The team to add the member to",
+          "title": "Team",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste team ID",
+            "field_name": "team_id",
+            "placeholder": "Select a team...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_team"
+        },
+        "user_email": {
+          "description": "User principal name / email of the member to add",
+          "title": "User Email",
+          "type": "string"
+        },
+        "is_owner": {
+          "default": "false",
+          "description": "Add as a team owner instead of a regular member",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Owner",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "team_id",
+        "user_email"
+      ],
+      "title": "TeamsAddMemberConfig",
+      "type": "object"
+    },
+    "TeamsAddTabConfig": {
+      "description": "Pin a configured tab to a channel.",
+      "properties": {
+        "operation": {
+          "const": "add_channel_tab",
+          "default": "add_channel_tab",
+          "title": "Add Channel Tab",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Apps & Tabs",
+          "x-display-name": "Add Channel Tab",
+          "x-is-trigger": false
+        },
+        "team_id": {
+          "description": "The team that owns the channel",
+          "title": "Team",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste team ID",
+            "field_name": "team_id",
+            "placeholder": "Select a team...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_team"
+        },
+        "channel_id": {
+          "description": "The channel to pin the tab to",
+          "title": "Channel",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste channel ID",
+            "field_name": "channel_id",
+            "placeholder": "Select a channel...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_channel"
+        },
+        "display_name": {
+          "description": "Display name for the tab",
+          "title": "Tab Name",
+          "type": "string"
+        },
+        "app_id": {
+          "description": "The teamsApp catalog ID (teamsAppId) backing the tab",
+          "title": "App",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste teamsApp ID",
+            "field_name": "app_id",
+            "placeholder": "Select an app...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "content_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The URL the tab displays (teamsTabConfiguration)",
+          "title": "Content URL"
+        }
+      },
+      "required": [
+        "team_id",
+        "channel_id",
+        "display_name",
+        "app_id"
+      ],
+      "title": "TeamsAddTabConfig",
+      "type": "object"
+    },
+    "TeamsArchiveTeamConfig": {
+      "description": "Archive a team (read-only for members; POST /archive).",
+      "properties": {
+        "operation": {
+          "const": "archive_team",
+          "default": "archive_team",
+          "title": "Archive Team",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Teams",
+          "x-display-name": "Archive Team",
+          "x-is-trigger": false
+        },
+        "team_id": {
+          "description": "The team to archive",
+          "title": "Team",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste team ID",
+            "field_name": "team_id",
+            "placeholder": "Select a team...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_team"
+        }
+      },
+      "required": [
+        "team_id"
+      ],
+      "title": "TeamsArchiveTeamConfig",
+      "type": "object"
+    },
+    "TeamsCreateChannelConfig": {
+      "description": "Create a standard / private / shared channel in a team.",
+      "properties": {
+        "operation": {
+          "const": "create_channel",
+          "default": "create_channel",
+          "title": "Create Channel",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Channels",
+          "x-creates-resource": true,
+          "x-display-name": "Create Channel",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "teams_channel"
+        },
+        "team_id": {
+          "description": "The team to create the channel in",
+          "title": "Team",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste team ID",
+            "field_name": "team_id",
+            "placeholder": "Select a team...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_team"
+        },
+        "display_name": {
+          "description": "Display name for the channel",
+          "title": "Channel Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Description for the channel",
+          "title": "Description"
+        },
+        "membership_type": {
+          "default": "standard",
+          "description": "Channel membership type",
+          "enum": [
+            "standard",
+            "private",
+            "shared"
+          ],
+          "enumNames": [
+            "Standard",
+            "Private",
+            "Shared"
+          ],
+          "title": "Membership Type",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "team_id",
+        "display_name"
+      ],
+      "title": "TeamsCreateChannelConfig",
+      "type": "object"
+    },
+    "TeamsCreateChatConfig": {
+      "description": "Create a new 1:1 or group chat with members.",
+      "properties": {
+        "operation": {
+          "const": "create_chat",
+          "default": "create_chat",
+          "title": "Create Chat",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Chats",
+          "x-creates-resource": true,
+          "x-display-name": "Create Chat",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "teams_chat"
+        },
+        "chat_type": {
+          "default": "group",
+          "description": "Type of chat to create",
+          "enum": [
+            "group",
+            "oneOnOne"
+          ],
+          "enumNames": [
+            "Group",
+            "One-on-One"
+          ],
+          "title": "Chat Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "member_emails": {
+          "description": "Comma-separated user principal names / emails to add to the chat",
+          "title": "Member Emails",
+          "type": "string"
+        },
+        "topic": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Chat topic (group chats only)",
+          "title": "Topic"
+        }
+      },
+      "required": [
+        "member_emails"
+      ],
+      "title": "TeamsCreateChatConfig",
+      "type": "object"
+    },
+    "TeamsCreateMeetingConfig": {
+      "description": "Create a Teams online meeting and get the join URL.",
+      "properties": {
+        "operation": {
+          "const": "create_online_meeting",
+          "default": "create_online_meeting",
+          "title": "Create Online Meeting",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Meetings",
+          "x-display-name": "Create Online Meeting",
+          "x-is-trigger": false
+        },
+        "subject": {
+          "description": "Meeting subject / title",
+          "title": "Subject",
+          "type": "string"
+        },
+        "start_datetime": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Meeting start in ISO 8601 (e.g. 2026-07-01T10:00:00Z)",
+          "title": "Start Time"
+        },
+        "end_datetime": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Meeting end in ISO 8601 (e.g. 2026-07-01T11:00:00Z)",
+          "title": "End Time"
+        }
+      },
+      "required": [
+        "subject"
+      ],
+      "title": "TeamsCreateMeetingConfig",
+      "type": "object"
+    },
+    "TeamsCreateTeamConfig": {
+      "description": "Create a new team (async; returns an operation location).",
+      "properties": {
+        "operation": {
+          "const": "create_team",
+          "default": "create_team",
+          "title": "Create Team",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Teams",
+          "x-creates-resource": true,
+          "x-display-name": "Create Team",
+          "x-is-trigger": false,
+          "x-resource-type": "teams_team"
+        },
+        "display_name": {
+          "description": "Display name for the new team",
+          "title": "Team Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Description for the new team",
+          "title": "Description"
+        },
+        "visibility": {
+          "default": "private",
+          "description": "Team visibility",
+          "enum": [
+            "private",
+            "public"
+          ],
+          "enumNames": [
+            "Private",
+            "Public"
+          ],
+          "title": "Visibility",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "display_name"
+      ],
+      "title": "TeamsCreateTeamConfig",
+      "type": "object"
+    },
+    "TeamsDeleteChannelConfig": {
+      "description": "Soft-delete a channel.",
+      "properties": {
+        "operation": {
+          "const": "delete_channel",
+          "default": "delete_channel",
+          "title": "Delete Channel",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Channels",
+          "x-display-name": "Delete Channel",
+          "x-is-trigger": false
+        },
+        "team_id": {
+          "description": "The team that owns the channel",
+          "title": "Team",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste team ID",
+            "field_name": "team_id",
+            "placeholder": "Select a team...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_team"
+        },
+        "channel_id": {
+          "description": "The channel to delete",
+          "title": "Channel",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste channel ID",
+            "field_name": "channel_id",
+            "placeholder": "Select a channel...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_channel"
+        }
+      },
+      "required": [
+        "team_id",
+        "channel_id"
+      ],
+      "title": "TeamsDeleteChannelConfig",
+      "type": "object"
+    },
+    "TeamsDeleteChannelTabConfig": {
+      "description": "Remove a tab from a channel.",
+      "properties": {
+        "operation": {
+          "const": "delete_channel_tab",
+          "default": "delete_channel_tab",
+          "title": "Delete Channel Tab",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tabs",
+          "x-display-name": "Delete Channel Tab",
+          "x-is-trigger": false
+        },
+        "team_id": {
+          "description": "The team that owns the channel",
+          "title": "Team",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste team ID",
+            "field_name": "team_id",
+            "placeholder": "Select a team...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_team"
+        },
+        "channel_id": {
+          "description": "The channel that owns the tab",
+          "title": "Channel",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste channel ID",
+            "field_name": "channel_id",
+            "placeholder": "Select a channel...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_channel"
+        },
+        "tab_id": {
+          "description": "ID of the tab to remove",
+          "title": "Tab ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "team_id",
+        "channel_id",
+        "tab_id"
+      ],
+      "title": "TeamsDeleteChannelTabConfig",
+      "type": "object"
+    },
+    "TeamsGetChannelConfig": {
+      "description": "Retrieve a single channel.",
+      "properties": {
+        "operation": {
+          "const": "get_channel",
+          "default": "get_channel",
+          "title": "Get Channel",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Channels",
+          "x-display-name": "Get Channel",
+          "x-is-trigger": false
+        },
+        "team_id": {
+          "description": "The team that owns the channel",
+          "title": "Team",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste team ID",
+            "field_name": "team_id",
+            "placeholder": "Select a team...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_team"
+        },
+        "channel_id": {
+          "description": "The channel to retrieve",
+          "title": "Channel",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste channel ID",
+            "field_name": "channel_id",
+            "placeholder": "Select a channel...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_channel"
+        }
+      },
+      "required": [
+        "team_id",
+        "channel_id"
+      ],
+      "title": "TeamsGetChannelConfig",
+      "type": "object"
+    },
+    "TeamsGetChannelMessageConfig": {
+      "description": "Retrieve a single channel message.",
+      "properties": {
+        "operation": {
+          "const": "get_channel_message",
+          "default": "get_channel_message",
+          "title": "Get Channel Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Channel Messages",
+          "x-display-name": "Get Channel Message",
+          "x-is-trigger": false
+        },
+        "team_id": {
+          "description": "The team that owns the channel",
+          "title": "Team",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste team ID",
+            "field_name": "team_id",
+            "placeholder": "Select a team...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_team"
+        },
+        "channel_id": {
+          "description": "The channel that owns the message",
+          "title": "Channel",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste channel ID",
+            "field_name": "channel_id",
+            "placeholder": "Select a channel...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_channel"
+        },
+        "message_id": {
+          "description": "The message to retrieve",
+          "title": "Message",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste message ID",
+            "depends_on": "channel_id",
+            "field_name": "message_id",
+            "placeholder": "Select a message...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "team_id",
+        "channel_id",
+        "message_id"
+      ],
+      "title": "TeamsGetChannelMessageConfig",
+      "type": "object"
+    },
+    "TeamsGetChatConfig": {
+      "description": "Retrieve a single chat.",
+      "properties": {
+        "operation": {
+          "const": "get_chat",
+          "default": "get_chat",
+          "title": "Get Chat",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Chats",
+          "x-display-name": "Get Chat",
+          "x-is-trigger": false
+        },
+        "chat_id": {
+          "description": "The chat to retrieve",
+          "title": "Chat",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste chat ID",
+            "field_name": "chat_id",
+            "placeholder": "Select a chat...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_chat"
+        }
+      },
+      "required": [
+        "chat_id"
+      ],
+      "title": "TeamsGetChatConfig",
+      "type": "object"
+    },
+    "TeamsGetChatMessageConfig": {
+      "description": "Fetch a single chat message.",
+      "properties": {
+        "operation": {
+          "const": "get_chat_message",
+          "default": "get_chat_message",
+          "title": "Get Chat Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Chats",
+          "x-display-name": "Get Chat Message",
+          "x-is-trigger": false
+        },
+        "chat_id": {
+          "description": "The chat that owns the message",
+          "title": "Chat",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste chat ID",
+            "field_name": "chat_id",
+            "placeholder": "Select a chat...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_chat"
+        },
+        "message_id": {
+          "description": "ID of the chat message to fetch",
+          "title": "Message ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chat_id",
+        "message_id"
+      ],
+      "title": "TeamsGetChatMessageConfig",
+      "type": "object"
+    },
+    "TeamsGetMeetingConfig": {
+      "description": "Retrieve an online meeting's details.",
+      "properties": {
+        "operation": {
+          "const": "get_online_meeting",
+          "default": "get_online_meeting",
+          "title": "Get Online Meeting",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Meetings",
+          "x-display-name": "Get Online Meeting",
+          "x-is-trigger": false
+        },
+        "meeting_id": {
+          "description": "The online meeting ID to retrieve",
+          "title": "Meeting ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "meeting_id"
+      ],
+      "title": "TeamsGetMeetingConfig",
+      "type": "object"
+    },
+    "TeamsGetMyPresenceConfig": {
+      "description": "Get the signed-in user's presence.",
+      "properties": {
+        "operation": {
+          "const": "get_my_presence",
+          "default": "get_my_presence",
+          "title": "Get My Presence",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Presence",
+          "x-display-name": "Get My Presence",
+          "x-is-trigger": false
+        }
+      },
+      "title": "TeamsGetMyPresenceConfig",
+      "type": "object"
+    },
+    "TeamsGetPresenceConfig": {
+      "description": "Get a user's availability / activity (e.g. Available, Busy).",
+      "properties": {
+        "operation": {
+          "const": "get_user_presence",
+          "default": "get_user_presence",
+          "title": "Get User Presence",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Presence",
+          "x-display-name": "Get User Presence",
+          "x-is-trigger": false
+        },
+        "user_id": {
+          "description": "The user whose presence to fetch",
+          "title": "User",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste user ID",
+            "field_name": "user_id",
+            "placeholder": "Select a user...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "TeamsGetPresenceConfig",
+      "type": "object"
+    },
+    "TeamsGetTeamConfig": {
+      "description": "Retrieve a team's properties and settings.",
+      "properties": {
+        "operation": {
+          "const": "get_team",
+          "default": "get_team",
+          "title": "Get Team",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Teams",
+          "x-display-name": "Get Team",
+          "x-is-trigger": false
+        },
+        "team_id": {
+          "description": "The team to retrieve",
+          "title": "Team",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste team ID",
+            "field_name": "team_id",
+            "placeholder": "Select a team...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_team"
+        }
+      },
+      "required": [
+        "team_id"
+      ],
+      "title": "TeamsGetTeamConfig",
+      "type": "object"
+    },
+    "TeamsInstallAppConfig": {
+      "description": "Install an app from the catalog into a team.",
+      "properties": {
+        "operation": {
+          "const": "install_app",
+          "default": "install_app",
+          "title": "Install App",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Apps & Tabs",
+          "x-display-name": "Install App",
+          "x-is-trigger": false
+        },
+        "team_id": {
+          "description": "The team to install the app into",
+          "title": "Team",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste team ID",
+            "field_name": "team_id",
+            "placeholder": "Select a team...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_team"
+        },
+        "app_id": {
+          "description": "The teamsApp catalog ID (teamsAppId) of the app to install",
+          "title": "App",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste teamsApp ID",
+            "field_name": "app_id",
+            "placeholder": "Select an app...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "team_id",
+        "app_id"
+      ],
+      "title": "TeamsInstallAppConfig",
+      "type": "object"
+    },
+    "TeamsListChannelMembersConfig": {
+      "description": "List the members of a channel (private/shared channels).",
+      "properties": {
+        "operation": {
+          "const": "list_channel_members",
+          "default": "list_channel_members",
+          "title": "List Channel Members",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Channels",
+          "x-display-name": "List Channel Members",
+          "x-is-trigger": false
+        },
+        "team_id": {
+          "description": "The team that owns the channel",
+          "title": "Team",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste team ID",
+            "field_name": "team_id",
+            "placeholder": "Select a team...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_team"
+        },
+        "channel_id": {
+          "description": "The channel whose members to list",
+          "title": "Channel",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste channel ID",
+            "field_name": "channel_id",
+            "placeholder": "Select a channel...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_channel"
+        }
+      },
+      "required": [
+        "team_id",
+        "channel_id"
+      ],
+      "title": "TeamsListChannelMembersConfig",
+      "type": "object"
+    },
+    "TeamsListChannelMessageRepliesConfig": {
+      "description": "List replies in a channel message thread.",
+      "properties": {
+        "operation": {
+          "const": "list_channel_message_replies",
+          "default": "list_channel_message_replies",
+          "title": "List Channel Message Replies",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Channel Messages",
+          "x-display-name": "List Channel Message Replies",
+          "x-is-trigger": false
+        },
+        "team_id": {
+          "description": "The team that owns the channel",
+          "title": "Team",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste team ID",
+            "field_name": "team_id",
+            "placeholder": "Select a team...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_team"
+        },
+        "channel_id": {
+          "description": "The channel that owns the message",
+          "title": "Channel",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste channel ID",
+            "field_name": "channel_id",
+            "placeholder": "Select a channel...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_channel"
+        },
+        "message_id": {
+          "description": "The parent message",
+          "title": "Message",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste message ID",
+            "depends_on": "channel_id",
+            "field_name": "message_id",
+            "placeholder": "Select a message...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "team_id",
+        "channel_id",
+        "message_id"
+      ],
+      "title": "TeamsListChannelMessageRepliesConfig",
+      "type": "object"
+    },
+    "TeamsListChannelMessagesConfig": {
+      "description": "List top-level messages in a channel.",
+      "properties": {
+        "operation": {
+          "const": "list_channel_messages",
+          "default": "list_channel_messages",
+          "title": "List Channel Messages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Channel Messages",
+          "x-display-name": "List Channel Messages",
+          "x-is-trigger": false
+        },
+        "team_id": {
+          "description": "The team that owns the channel",
+          "title": "Team",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste team ID",
+            "field_name": "team_id",
+            "placeholder": "Select a team...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_team"
+        },
+        "channel_id": {
+          "description": "The channel whose messages to list",
+          "title": "Channel",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste channel ID",
+            "field_name": "channel_id",
+            "placeholder": "Select a channel...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_channel"
+        },
+        "top": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Max number of messages to return (1-50)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "team_id",
+        "channel_id"
+      ],
+      "title": "TeamsListChannelMessagesConfig",
+      "type": "object"
+    },
+    "TeamsListChannelsConfig": {
+      "description": "List channels in a team.",
+      "properties": {
+        "operation": {
+          "const": "list_channels",
+          "default": "list_channels",
+          "title": "List Channels",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Channels",
+          "x-display-name": "List Channels",
+          "x-is-trigger": false
+        },
+        "team_id": {
+          "description": "The team whose channels to list",
+          "title": "Team",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste team ID",
+            "field_name": "team_id",
+            "placeholder": "Select a team...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_team"
+        }
+      },
+      "required": [
+        "team_id"
+      ],
+      "title": "TeamsListChannelsConfig",
+      "type": "object"
+    },
+    "TeamsListChatMembersConfig": {
+      "description": "List the members of a chat.",
+      "properties": {
+        "operation": {
+          "const": "list_chat_members",
+          "default": "list_chat_members",
+          "title": "List Chat Members",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Chats",
+          "x-display-name": "List Chat Members",
+          "x-is-trigger": false
+        },
+        "chat_id": {
+          "description": "The chat whose members to list",
+          "title": "Chat",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste chat ID",
+            "field_name": "chat_id",
+            "placeholder": "Select a chat...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_chat"
+        }
+      },
+      "required": [
+        "chat_id"
+      ],
+      "title": "TeamsListChatMembersConfig",
+      "type": "object"
+    },
+    "TeamsListChatMessagesConfig": {
+      "description": "List messages in a chat.",
+      "properties": {
+        "operation": {
+          "const": "list_chat_messages",
+          "default": "list_chat_messages",
+          "title": "List Chat Messages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Chats",
+          "x-display-name": "List Chat Messages",
+          "x-is-trigger": false
+        },
+        "chat_id": {
+          "description": "The chat whose messages to list",
+          "title": "Chat",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste chat ID",
+            "field_name": "chat_id",
+            "placeholder": "Select a chat...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_chat"
+        },
+        "top": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Max number of messages to return (1-50)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "chat_id"
+      ],
+      "title": "TeamsListChatMessagesConfig",
+      "type": "object"
+    },
+    "TeamsListChatsConfig": {
+      "description": "List the signed-in user's 1:1 / group / meeting chats.",
+      "properties": {
+        "operation": {
+          "const": "list_chats",
+          "default": "list_chats",
+          "title": "List Chats",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Chats",
+          "x-display-name": "List Chats",
+          "x-is-trigger": false
+        },
+        "top": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Max number of chats to return (1-50)",
+          "title": "Limit"
+        }
+      },
+      "title": "TeamsListChatsConfig",
+      "type": "object"
+    },
+    "TeamsListInstalledAppsConfig": {
+      "description": "List apps installed in a team.",
+      "properties": {
+        "operation": {
+          "const": "list_installed_apps",
+          "default": "list_installed_apps",
+          "title": "List Installed Apps",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Apps & Tabs",
+          "x-display-name": "List Installed Apps",
+          "x-is-trigger": false
+        },
+        "team_id": {
+          "description": "The team whose installed apps to list",
+          "title": "Team",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste team ID",
+            "field_name": "team_id",
+            "placeholder": "Select a team...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_team"
+        }
+      },
+      "required": [
+        "team_id"
+      ],
+      "title": "TeamsListInstalledAppsConfig",
+      "type": "object"
+    },
+    "TeamsListJoinedTeamsConfig": {
+      "description": "List teams the signed-in user is a member of.",
+      "properties": {
+        "operation": {
+          "const": "list_joined_teams",
+          "default": "list_joined_teams",
+          "title": "List Joined Teams",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Teams",
+          "x-display-name": "List Joined Teams",
+          "x-is-trigger": false
+        }
+      },
+      "title": "TeamsListJoinedTeamsConfig",
+      "type": "object"
+    },
+    "TeamsListMembersConfig": {
+      "description": "List members and their roles in a team.",
+      "properties": {
+        "operation": {
+          "const": "list_team_members",
+          "default": "list_team_members",
+          "title": "List Team Members",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Members",
+          "x-display-name": "List Team Members",
+          "x-is-trigger": false
+        },
+        "team_id": {
+          "description": "The team whose members to list",
+          "title": "Team",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste team ID",
+            "field_name": "team_id",
+            "placeholder": "Select a team...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_team"
+        }
+      },
+      "required": [
+        "team_id"
+      ],
+      "title": "TeamsListMembersConfig",
+      "type": "object"
+    },
+    "TeamsListTabsConfig": {
+      "description": "List tabs pinned to a channel.",
+      "properties": {
+        "operation": {
+          "const": "list_channel_tabs",
+          "default": "list_channel_tabs",
+          "title": "List Channel Tabs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Apps & Tabs",
+          "x-display-name": "List Channel Tabs",
+          "x-is-trigger": false
+        },
+        "team_id": {
+          "description": "The team that owns the channel",
+          "title": "Team",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste team ID",
+            "field_name": "team_id",
+            "placeholder": "Select a team...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_team"
+        },
+        "channel_id": {
+          "description": "The channel whose tabs to list",
+          "title": "Channel",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste channel ID",
+            "field_name": "channel_id",
+            "placeholder": "Select a channel...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_channel"
+        }
+      },
+      "required": [
+        "team_id",
+        "channel_id"
+      ],
+      "title": "TeamsListTabsConfig",
+      "type": "object"
+    },
+    "TeamsOnChannelMessageConfig": {
+      "description": "Fire when a message is posted in a specific channel (like Slack's\n\"on channel message\"). Subscribes to that channel's messages resource.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_channel_message",
+          "default": "on_channel_message",
+          "title": "On Channel Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Channel Message",
+          "x-is-trigger": true
+        },
+        "team_id": {
+          "description": "The team that owns the channel to watch",
+          "title": "Team",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste team ID",
+            "field_name": "team_id",
+            "placeholder": "Select a team...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_team"
+        },
+        "channel_id": {
+          "description": "The channel to watch for new/updated messages",
+          "title": "Channel",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste channel ID",
+            "field_name": "channel_id",
+            "placeholder": "Select a channel...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_channel"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Microsoft Graph posts change notifications here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "required": [
+        "team_id",
+        "channel_id"
+      ],
+      "title": "TeamsOnChannelMessageConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "TeamsOnChatMessageConfig": {
+      "description": "Fire when a message is posted in a specific chat (1:1 or group DM).\nSubscribes to that chat's messages resource.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_chat_message",
+          "default": "on_chat_message",
+          "title": "On Chat Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Chat Message",
+          "x-is-trigger": true
+        },
+        "chat_id": {
+          "description": "The chat to watch for new/updated messages",
+          "title": "Chat",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste chat ID",
+            "field_name": "chat_id",
+            "placeholder": "Select a chat...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_chat"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Microsoft Graph posts change notifications here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "required": [
+        "chat_id"
+      ],
+      "title": "TeamsOnChatMessageConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "TeamsRemoveMemberConfig": {
+      "description": "Remove a member from a team.",
+      "properties": {
+        "operation": {
+          "const": "remove_team_member",
+          "default": "remove_team_member",
+          "title": "Remove Team Member",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Members",
+          "x-display-name": "Remove Team Member",
+          "x-is-trigger": false
+        },
+        "team_id": {
+          "description": "The team to remove the member from",
+          "title": "Team",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste team ID",
+            "field_name": "team_id",
+            "placeholder": "Select a team...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_team"
+        },
+        "membership_id": {
+          "description": "The membership ID of the member to remove",
+          "title": "Member",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste membership ID",
+            "depends_on": "team_id",
+            "field_name": "membership_id",
+            "placeholder": "Select a member...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "team_id",
+        "membership_id"
+      ],
+      "title": "TeamsRemoveMemberConfig",
+      "type": "object"
+    },
+    "TeamsReplyChannelMessageConfig": {
+      "description": "Reply within a channel message thread.",
+      "properties": {
+        "operation": {
+          "const": "reply_channel_message",
+          "default": "reply_channel_message",
+          "title": "Reply to Channel Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Channel Messages",
+          "x-display-name": "Reply to Channel Message",
+          "x-is-trigger": false
+        },
+        "team_id": {
+          "description": "The team that owns the channel",
+          "title": "Team",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste team ID",
+            "field_name": "team_id",
+            "placeholder": "Select a team...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_team"
+        },
+        "channel_id": {
+          "description": "The channel that owns the message",
+          "title": "Channel",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste channel ID",
+            "field_name": "channel_id",
+            "placeholder": "Select a channel...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_channel"
+        },
+        "message_id": {
+          "description": "The message to reply to",
+          "title": "Message",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste message ID",
+            "depends_on": "channel_id",
+            "field_name": "message_id",
+            "placeholder": "Select a message...",
+            "searchable": true
+          }
+        },
+        "content": {
+          "description": "Reply body",
+          "title": "Reply",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "content_type": {
+          "default": "html",
+          "description": "How the reply body is interpreted",
+          "enum": [
+            "html",
+            "text"
+          ],
+          "enumNames": [
+            "HTML",
+            "Plain Text"
+          ],
+          "title": "Content Type",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "team_id",
+        "channel_id",
+        "message_id",
+        "content"
+      ],
+      "title": "TeamsReplyChannelMessageConfig",
+      "type": "object"
+    },
+    "TeamsSendChannelMessageConfig": {
+      "description": "Post a message to a channel (delegated ChannelMessage.Send).",
+      "properties": {
+        "operation": {
+          "const": "send_channel_message",
+          "default": "send_channel_message",
+          "title": "Send Channel Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Channel Messages",
+          "x-display-name": "Send Channel Message",
+          "x-is-trigger": false
+        },
+        "team_id": {
+          "description": "The team that owns the channel",
+          "title": "Team",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste team ID",
+            "field_name": "team_id",
+            "placeholder": "Select a team...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_team"
+        },
+        "channel_id": {
+          "description": "The channel to post to",
+          "title": "Channel",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste channel ID",
+            "field_name": "channel_id",
+            "placeholder": "Select a channel...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_channel"
+        },
+        "content": {
+          "description": "Message body",
+          "title": "Message",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "content_type": {
+          "default": "html",
+          "description": "How the message body is interpreted",
+          "enum": [
+            "html",
+            "text"
+          ],
+          "enumNames": [
+            "HTML",
+            "Plain Text"
+          ],
+          "title": "Content Type",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "team_id",
+        "channel_id",
+        "content"
+      ],
+      "title": "TeamsSendChannelMessageConfig",
+      "type": "object"
+    },
+    "TeamsSendChatMessageConfig": {
+      "description": "Post a message to an existing chat (delegated ChatMessage.Send).",
+      "properties": {
+        "operation": {
+          "const": "send_chat_message",
+          "default": "send_chat_message",
+          "title": "Send Chat Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Chats",
+          "x-display-name": "Send Chat Message",
+          "x-is-trigger": false
+        },
+        "chat_id": {
+          "description": "The chat to post to",
+          "title": "Chat",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste chat ID",
+            "field_name": "chat_id",
+            "placeholder": "Select a chat...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_chat"
+        },
+        "content": {
+          "description": "Message body",
+          "title": "Message",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "content_type": {
+          "default": "html",
+          "description": "How the message body is interpreted",
+          "enum": [
+            "html",
+            "text"
+          ],
+          "enumNames": [
+            "HTML",
+            "Plain Text"
+          ],
+          "title": "Content Type",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "chat_id",
+        "content"
+      ],
+      "title": "TeamsSendChatMessageConfig",
+      "type": "object"
+    },
+    "TeamsSubscriptionTriggerConfig": {
+      "description": "Advanced: subscribe to any Microsoft Graph change-notification resource\n(e.g. team/channel/membership lifecycle, presence) by pasting the resource.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_change_notification",
+          "default": "on_change_notification",
+          "title": "On Change Notification",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Change Notification (Advanced)",
+          "x-is-trigger": true
+        },
+        "resource": {
+          "default": "/me/chats/getAllMessages",
+          "description": "Any Graph change-notification resource, e.g. teams/{id}/channels/{id}/messages or chats/{id}/messages",
+          "title": "Resource",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Microsoft Graph posts change notifications here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        }
+      },
+      "title": "TeamsSubscriptionTriggerConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "TeamsUnarchiveTeamConfig": {
+      "description": "Restore an archived team (POST /unarchive).",
+      "properties": {
+        "operation": {
+          "const": "unarchive_team",
+          "default": "unarchive_team",
+          "title": "Unarchive Team",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Teams",
+          "x-display-name": "Unarchive Team",
+          "x-is-trigger": false
+        },
+        "team_id": {
+          "description": "The team to unarchive",
+          "title": "Team",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste team ID",
+            "field_name": "team_id",
+            "placeholder": "Select a team...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_team"
+        }
+      },
+      "required": [
+        "team_id"
+      ],
+      "title": "TeamsUnarchiveTeamConfig",
+      "type": "object"
+    },
+    "TeamsUninstallAppConfig": {
+      "description": "Uninstall an app from a team.",
+      "properties": {
+        "operation": {
+          "const": "uninstall_app",
+          "default": "uninstall_app",
+          "title": "Uninstall App",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Apps",
+          "x-display-name": "Uninstall App",
+          "x-is-trigger": false
+        },
+        "team_id": {
+          "description": "The team to uninstall the app from",
+          "title": "Team",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste team ID",
+            "field_name": "team_id",
+            "placeholder": "Select a team...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_team"
+        },
+        "installation_id": {
+          "description": "The teamsAppInstallation ID to remove (from List Installed Apps)",
+          "title": "Installation ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "team_id",
+        "installation_id"
+      ],
+      "title": "TeamsUninstallAppConfig",
+      "type": "object"
+    },
+    "TeamsUpdateChannelConfig": {
+      "description": "Update a channel's properties (PATCH).",
+      "properties": {
+        "operation": {
+          "const": "update_channel",
+          "default": "update_channel",
+          "title": "Update Channel",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Channels",
+          "x-display-name": "Update Channel",
+          "x-is-trigger": false
+        },
+        "team_id": {
+          "description": "The team that owns the channel",
+          "title": "Team",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste team ID",
+            "field_name": "team_id",
+            "placeholder": "Select a team...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_team"
+        },
+        "channel_id": {
+          "description": "The channel to update",
+          "title": "Channel",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste channel ID",
+            "field_name": "channel_id",
+            "placeholder": "Select a channel...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_channel"
+        },
+        "body": {
+          "description": "Channel fields to update, e.g. {\"displayName\": \"Renamed\", \"description\": \"...\"}",
+          "title": "Update JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "team_id",
+        "channel_id",
+        "body"
+      ],
+      "title": "TeamsUpdateChannelConfig",
+      "type": "object"
+    },
+    "TeamsUpdateTeamConfig": {
+      "description": "Update a team's properties (PATCH).",
+      "properties": {
+        "operation": {
+          "const": "update_team",
+          "default": "update_team",
+          "title": "Update Team",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Teams",
+          "x-display-name": "Update Team",
+          "x-is-trigger": false
+        },
+        "team_id": {
+          "description": "The team to update",
+          "title": "Team",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste team ID",
+            "field_name": "team_id",
+            "placeholder": "Select a team...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "teams_team"
+        },
+        "body": {
+          "description": "Team fields to update, e.g. {\"description\": \"New desc\", \"memberSettings\": {\"allowCreateUpdateChannels\": true}}",
+          "title": "Update JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "team_id",
+        "body"
+      ],
+      "title": "TeamsUpdateTeamConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the Microsoft Teams node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_channel_tab": "#/$defs/TeamsAddTabConfig",
+          "add_team_member": "#/$defs/TeamsAddMemberConfig",
+          "archive_team": "#/$defs/TeamsArchiveTeamConfig",
+          "create_channel": "#/$defs/TeamsCreateChannelConfig",
+          "create_chat": "#/$defs/TeamsCreateChatConfig",
+          "create_online_meeting": "#/$defs/TeamsCreateMeetingConfig",
+          "create_team": "#/$defs/TeamsCreateTeamConfig",
+          "delete_channel": "#/$defs/TeamsDeleteChannelConfig",
+          "delete_channel_tab": "#/$defs/TeamsDeleteChannelTabConfig",
+          "get_channel": "#/$defs/TeamsGetChannelConfig",
+          "get_channel_message": "#/$defs/TeamsGetChannelMessageConfig",
+          "get_chat": "#/$defs/TeamsGetChatConfig",
+          "get_chat_message": "#/$defs/TeamsGetChatMessageConfig",
+          "get_my_presence": "#/$defs/TeamsGetMyPresenceConfig",
+          "get_online_meeting": "#/$defs/TeamsGetMeetingConfig",
+          "get_team": "#/$defs/TeamsGetTeamConfig",
+          "get_user_presence": "#/$defs/TeamsGetPresenceConfig",
+          "install_app": "#/$defs/TeamsInstallAppConfig",
+          "list_channel_members": "#/$defs/TeamsListChannelMembersConfig",
+          "list_channel_message_replies": "#/$defs/TeamsListChannelMessageRepliesConfig",
+          "list_channel_messages": "#/$defs/TeamsListChannelMessagesConfig",
+          "list_channel_tabs": "#/$defs/TeamsListTabsConfig",
+          "list_channels": "#/$defs/TeamsListChannelsConfig",
+          "list_chat_members": "#/$defs/TeamsListChatMembersConfig",
+          "list_chat_messages": "#/$defs/TeamsListChatMessagesConfig",
+          "list_chats": "#/$defs/TeamsListChatsConfig",
+          "list_installed_apps": "#/$defs/TeamsListInstalledAppsConfig",
+          "list_joined_teams": "#/$defs/TeamsListJoinedTeamsConfig",
+          "list_team_members": "#/$defs/TeamsListMembersConfig",
+          "on_change_notification": "#/$defs/TeamsSubscriptionTriggerConfig",
+          "on_channel_message": "#/$defs/TeamsOnChannelMessageConfig",
+          "on_chat_message": "#/$defs/TeamsOnChatMessageConfig",
+          "remove_team_member": "#/$defs/TeamsRemoveMemberConfig",
+          "reply_channel_message": "#/$defs/TeamsReplyChannelMessageConfig",
+          "send_channel_message": "#/$defs/TeamsSendChannelMessageConfig",
+          "send_chat_message": "#/$defs/TeamsSendChatMessageConfig",
+          "unarchive_team": "#/$defs/TeamsUnarchiveTeamConfig",
+          "uninstall_app": "#/$defs/TeamsUninstallAppConfig",
+          "update_channel": "#/$defs/TeamsUpdateChannelConfig",
+          "update_team": "#/$defs/TeamsUpdateTeamConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/TeamsListJoinedTeamsConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsGetTeamConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsCreateTeamConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsListChannelsConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsGetChannelConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsCreateChannelConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsDeleteChannelConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsListChannelMessagesConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsGetChannelMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsSendChannelMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsReplyChannelMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsListChannelMessageRepliesConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsListChatsConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsGetChatConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsCreateChatConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsListChatMessagesConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsSendChatMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsListMembersConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsAddMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsRemoveMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsListInstalledAppsConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsInstallAppConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsListTabsConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsAddTabConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsCreateMeetingConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsGetMeetingConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsGetPresenceConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsUpdateTeamConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsArchiveTeamConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsUnarchiveTeamConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsUpdateChannelConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsListChannelMembersConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsGetChatMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsListChatMembersConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsDeleteChannelTabConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsUninstallAppConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsGetMyPresenceConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsOnChannelMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsOnChatMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/TeamsSubscriptionTriggerConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MicrosoftTeamsOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Microsoft-teams Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Send a message to a Teams channel when a deal closes",
+    "List all teams I'm a member of",
+    "Create a Teams online meeting and share the join link",
+    "Reply in a channel thread with an update",
+    "Trigger a workflow when a new message arrives in a chat"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -1,0 +1,2899 @@
+{
+  "$defs": {
+    "NotionAppendBlockChildrenConfig": {
+      "description": "Append new children blocks to a parent block",
+      "properties": {
+        "operation": {
+          "const": "append_children_to_block",
+          "default": "append_children_to_block",
+          "title": "Append Children to Block",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Block",
+          "x-display-name": "Append Children to Block",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "add content to page",
+            "append blocks",
+            "insert paragraph",
+            "add block to page",
+            "write to page",
+            "add text"
+          ]
+        },
+        "block_id": {
+          "description": "The parent block or page to append children to",
+          "title": "Block/Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste block/page ID",
+            "field_name": "page_id",
+            "placeholder": "Select a page...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "children": {
+          "description": "JSON array of block objects to append",
+          "placeholder": "[{\"type\": \"paragraph\", \"paragraph\": {\"rich_text\": [{\"text\": {\"content\": \"Hello World\"}}]}}]",
+          "title": "Children Blocks",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Append after this specific block ID",
+          "title": "After Block ID"
+        }
+      },
+      "required": [
+        "block_id",
+        "children"
+      ],
+      "title": "NotionAppendBlockChildrenConfig",
+      "type": "object"
+    },
+    "NotionCreateCommentConfig": {
+      "description": "Create a comment on a page or in an existing discussion thread",
+      "properties": {
+        "operation": {
+          "const": "create_page_comment",
+          "default": "create_page_comment",
+          "title": "Create Page Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment",
+          "x-display-name": "Create Page Comment",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "add comment",
+            "comment on page",
+            "reply in discussion",
+            "post comment",
+            "leave a note"
+          ]
+        },
+        "parent_type": {
+          "default": "page_id",
+          "description": "Type of parent to comment on",
+          "enum": [
+            "page_id",
+            "discussion_id"
+          ],
+          "title": "Parent Type",
+          "type": "string"
+        },
+        "parent_id": {
+          "description": "The page or discussion thread to comment on",
+          "title": "Parent Page/Discussion",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste page/discussion ID",
+            "field_name": "page_id",
+            "placeholder": "Select a page...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "rich_text": {
+          "description": "JSON array of rich text objects for the comment content",
+          "placeholder": "[{\"type\": \"text\", \"text\": {\"content\": \"This is a comment\"}}]",
+          "title": "Comment Content",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "parent_id",
+        "rich_text"
+      ],
+      "title": "NotionCreateCommentConfig",
+      "type": "object"
+    },
+    "NotionCreateDatabaseConfig": {
+      "description": "Create a new database as a child of a page",
+      "properties": {
+        "operation": {
+          "const": "create_page_database",
+          "default": "create_page_database",
+          "title": "Create Page Database",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Database",
+          "x-creates-resource": true,
+          "x-display-name": "Create Page Database",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "create database",
+            "new database",
+            "add database under page",
+            "make inline database",
+            "create child database"
+          ],
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "notion_database"
+        },
+        "parent_page_id": {
+          "description": "The parent page for the new database",
+          "title": "Parent Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste page ID",
+            "field_name": "page_id",
+            "placeholder": "Select a page...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "notion_page"
+        },
+        "title": {
+          "description": "Title for the new database",
+          "title": "Database Title",
+          "type": "string"
+        },
+        "properties": {
+          "type": "string",
+          "title": "Properties Schema",
+          "description": "JSON object defining database properties/columns",
+          "ui:widget": "textarea",
+          "placeholder": "{\"Name\": {\"title\": {}}, \"Status\": {\"select\": {\"options\": [{\"name\": \"To Do\"}, {\"name\": \"Done\"}]}}}"
+        }
+      },
+      "required": [
+        "parent_page_id",
+        "title",
+        "properties"
+      ],
+      "title": "NotionCreateDatabaseConfig",
+      "type": "object"
+    },
+    "NotionCreateFileUploadConfig": {
+      "description": "Initiate a file upload and get an upload URL",
+      "properties": {
+        "operation": {
+          "const": "create_file_upload",
+          "default": "create_file_upload",
+          "title": "Create File Upload",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File",
+          "x-display-name": "Create File Upload",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "upload file to notion",
+            "attach file",
+            "file upload initiate",
+            "create file object",
+            "upload attachment"
+          ]
+        },
+        "filename": {
+          "description": "Name of the file including extension (e.g. report.pdf)",
+          "title": "Filename",
+          "type": "string"
+        },
+        "content_type": {
+          "description": "MIME type of the file (e.g. application/pdf, image/png)",
+          "placeholder": "application/pdf",
+          "title": "Content Type",
+          "type": "string"
+        },
+        "file_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If provided, the file will be downloaded from this URL and uploaded to Notion",
+          "title": "File URL"
+        },
+        "parent_page_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional page to associate the file with",
+          "title": "Parent Page",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste page ID",
+            "field_name": "page_id",
+            "placeholder": "Select a page...",
+            "searchable": true
+          },
+          "x-resource-type": "notion_page"
+        }
+      },
+      "required": [
+        "filename",
+        "content_type"
+      ],
+      "title": "NotionCreateFileUploadConfig",
+      "type": "object"
+    },
+    "NotionCreatePageConfig": {
+      "description": "Create a new page in a database or as a child of another page",
+      "properties": {
+        "operation": {
+          "const": "create_notion_page",
+          "default": "create_notion_page",
+          "title": "Create Notion Page",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Page",
+          "x-display-name": "Create Notion Page",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "create page",
+            "new page",
+            "add page to database",
+            "make subpage",
+            "new note",
+            "add doc"
+          ]
+        },
+        "parent_type": {
+          "default": "database_id",
+          "description": "Type of parent",
+          "enum": [
+            "database_id",
+            "page_id"
+          ],
+          "title": "Parent Type",
+          "type": "string"
+        },
+        "parent_id": {
+          "description": "The parent page or database for the new page",
+          "title": "Parent Page/Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste page/database ID",
+            "field_name": "page_id",
+            "placeholder": "Select a page...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "properties": {
+          "type": "string",
+          "title": "Properties",
+          "description": "JSON object with page properties (required for database pages)",
+          "ui:widget": "textarea",
+          "placeholder": "{\"Name\": {\"title\": [{\"text\": {\"content\": \"New Page\"}}]}}"
+        },
+        "children": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array of block objects for page content",
+          "title": "Content Blocks",
+          "ui:widget": "textarea"
+        },
+        "icon": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Emoji icon for the page (e.g., '\ud83d\udcdd')",
+          "title": "Icon"
+        },
+        "cover": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The cover image to send \u2014 upload a file, paste a URL, or reference an upstream file (e.g. {{http-1.response.url}}).",
+          "title": "Cover",
+          "ui:accept": "image/*",
+          "ui:widget": "media_upload"
+        }
+      },
+      "required": [
+        "parent_id",
+        "properties"
+      ],
+      "title": "NotionCreatePageConfig",
+      "type": "object"
+    },
+    "NotionDeleteBlockConfig": {
+      "description": "Delete (archive) a block",
+      "properties": {
+        "operation": {
+          "const": "delete_notion_block",
+          "default": "delete_notion_block",
+          "title": "Delete Notion Block",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Block",
+          "x-display-name": "Delete Notion Block",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "delete block",
+            "archive block",
+            "remove block",
+            "trash block"
+          ]
+        },
+        "block_id": {
+          "description": "The ID of the block to delete",
+          "title": "Block ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "block_id"
+      ],
+      "title": "NotionDeleteBlockConfig",
+      "type": "object"
+    },
+    "NotionDeleteCommentConfig": {
+      "description": "Delete a comment",
+      "properties": {
+        "operation": {
+          "const": "delete_page_comment",
+          "default": "delete_page_comment",
+          "title": "Delete Page Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment",
+          "x-display-name": "Delete Page Comment",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "delete comment",
+            "remove comment",
+            "erase comment",
+            "trash comment"
+          ]
+        },
+        "comment_id": {
+          "description": "The ID of the comment to delete",
+          "title": "Comment ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "comment_id"
+      ],
+      "title": "NotionDeleteCommentConfig",
+      "type": "object"
+    },
+    "NotionGetAsyncTaskConfig": {
+      "description": "Get the status of an asynchronous Notion task",
+      "properties": {
+        "operation": {
+          "const": "get_async_task_status",
+          "default": "get_async_task_status",
+          "title": "Get Async Task Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File",
+          "x-display-name": "Get Async Task Status",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "check task status",
+            "get async task",
+            "poll task",
+            "async operation status",
+            "file upload status"
+          ]
+        },
+        "task_id": {
+          "description": "The ID of the async task to check",
+          "title": "Task ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "NotionGetAsyncTaskConfig",
+      "type": "object"
+    },
+    "NotionIntegrationTokenCredential": {
+      "description": "Internal Integration Token credential for Notion.\n\nCreate an internal integration at: https://www.notion.so/my-integrations\nThen share the desired pages/databases with your integration.",
+      "properties": {
+        "credential_type": {
+          "const": "notion_integration_token",
+          "default": "notion_integration_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "integration_token": {
+          "description": "Your Notion Internal Integration Token (starts with 'secret_')",
+          "title": "Internal Integration Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "integration_token"
+      ],
+      "title": "NotionIntegrationTokenCredential",
+      "type": "object",
+      "x-credential-url": "https://www.notion.so/my-integrations"
+    },
+    "NotionListCommentsConfig": {
+      "description": "List comments on a block or page",
+      "properties": {
+        "operation": {
+          "const": "list_block_comments",
+          "default": "list_block_comments",
+          "title": "List Block Comments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment",
+          "x-display-name": "List Block Comments",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "list comments",
+            "get page comments",
+            "read comment thread",
+            "comments on block"
+          ]
+        },
+        "block_id": {
+          "description": "The block or page to list comments from",
+          "title": "Block/Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste block/page ID",
+            "field_name": "page_id",
+            "placeholder": "Select a page...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "description": "Number of comments per page (max 100)",
+          "title": "Page Size"
+        },
+        "start_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from previous response",
+          "title": "Start Cursor"
+        }
+      },
+      "required": [
+        "block_id"
+      ],
+      "title": "NotionListCommentsConfig",
+      "type": "object"
+    },
+    "NotionListUsersConfig": {
+      "description": "List all users in the workspace",
+      "properties": {
+        "operation": {
+          "const": "list_workspace_users",
+          "default": "list_workspace_users",
+          "title": "List Workspace Users",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "List Workspace Users",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "list members",
+            "get all users",
+            "workspace people",
+            "list teammates"
+          ]
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "description": "Number of users per page (max 100)",
+          "title": "Page Size"
+        },
+        "start_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from previous response",
+          "title": "Start Cursor"
+        }
+      },
+      "title": "NotionListUsersConfig",
+      "type": "object"
+    },
+    "NotionListViewsConfig": {
+      "description": "List all views for a database",
+      "properties": {
+        "operation": {
+          "const": "list_database_views",
+          "default": "list_database_views",
+          "title": "List Database Views",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "View",
+          "x-display-name": "List Database Views",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "list views",
+            "get database views",
+            "show views",
+            "list table views",
+            "board gallery calendar view"
+          ]
+        },
+        "database_id": {
+          "description": "The database to list views for",
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "notion_database"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "description": "Number of views per page (max 100)",
+          "title": "Page Size"
+        },
+        "start_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor",
+          "title": "Start Cursor"
+        }
+      },
+      "required": [
+        "database_id"
+      ],
+      "title": "NotionListViewsConfig",
+      "type": "object"
+    },
+    "NotionOAuthCredential": {
+      "description": "OAuth 2.0 credential for Notion.\nTokens are obtained via OAuth flow, not entered manually.\n\nRegister OAuth app at: https://www.notion.so/my-integrations",
+      "properties": {
+        "credential_type": {
+          "const": "notion_oauth",
+          "default": "notion_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "OAuth 2.0 access token from Notion",
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "OAuth 2.0 refresh token for automatic renewal",
+          "title": "Refresh Token"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 timestamp when access token expires",
+          "title": "Token Expiry"
+        },
+        "workspace_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The Notion workspace ID",
+          "title": "Workspace ID"
+        },
+        "workspace_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The Notion workspace name",
+          "title": "Workspace Name"
+        },
+        "bot_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The bot user ID for this integration",
+          "title": "Bot ID"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "NotionOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-oauth-provider": "notion",
+      "x-oauth-scopes": []
+    },
+    "NotionOnCommentCreatedConfig": {
+      "description": "Trigger: fires when new comments appear on a specific block or page.",
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_comment_created",
+          "default": "on_comment_created",
+          "title": "On Comment Created",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Comment Created",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "when new comment",
+            "on comment added",
+            "watch page comments",
+            "trigger on comment",
+            "new discussion reply"
+          ]
+        },
+        "block_id": {
+          "description": "The block or page to watch for new comments",
+          "title": "Block/Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste block/page ID",
+            "field_name": "page_id",
+            "placeholder": "Select a page...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "block_id"
+      ],
+      "title": "NotionOnCommentCreatedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "NotionOnDatabaseCreatedConfig": {
+      "description": "Trigger: fires when new databases are created in the workspace.",
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_database_created",
+          "default": "on_database_created",
+          "title": "On Database Created",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Database Created",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "when new database created",
+            "on database added",
+            "watch for new databases",
+            "trigger on database creation",
+            "new notion database"
+          ]
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional title filter \u2014 only fire for databases matching this query",
+          "title": "Search Query"
+        }
+      },
+      "title": "NotionOnDatabaseCreatedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "NotionOnDatabaseItemConfig": {
+      "description": "Trigger: polls a Notion database and fires for new or updated items.",
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_database_item",
+          "default": "on_database_item",
+          "title": "On Database Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Database Item",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "when new database item",
+            "on page added",
+            "watch notion database",
+            "new row in database",
+            "database item updated",
+            "trigger on notion"
+          ]
+        },
+        "database_id": {
+          "description": "The Notion database to watch",
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a database ID",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "notion_database"
+        }
+      },
+      "required": [
+        "database_id"
+      ],
+      "title": "NotionOnDatabaseItemConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "NotionOnPageCreatedConfig": {
+      "description": "Trigger: fires when new pages are created in the workspace.",
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_page_created",
+          "default": "on_page_created",
+          "title": "On Page Created",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Page Created",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "when new page created",
+            "on new notion page",
+            "watch for new pages",
+            "trigger on page creation",
+            "new page added"
+          ]
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional title filter \u2014 only fire for pages matching this query",
+          "title": "Search Query"
+        }
+      },
+      "title": "NotionOnPageCreatedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "NotionOnPageUpdatedConfig": {
+      "description": "Trigger: fires when existing pages are updated.",
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_page_updated",
+          "default": "on_page_updated",
+          "title": "On Page Updated",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Page Updated",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "when page edited",
+            "on page change",
+            "watch page updates",
+            "trigger on page edit",
+            "page modified"
+          ]
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional title filter \u2014 only fire for pages matching this query",
+          "title": "Search Query"
+        }
+      },
+      "title": "NotionOnPageUpdatedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "NotionQueryDatabaseConfig": {
+      "description": "Query a database to retrieve pages",
+      "properties": {
+        "operation": {
+          "const": "query_notion_database",
+          "default": "query_notion_database",
+          "title": "Query Notion Database",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Database",
+          "x-display-name": "Query Notion Database",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "query database rows",
+            "get database pages",
+            "filter database",
+            "list database entries",
+            "retrieve database items",
+            "database query"
+          ]
+        },
+        "database_id": {
+          "description": "The ID of the database to query",
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "notion_database"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON filter object for querying (see Notion docs for filter syntax)",
+          "placeholder": "{\"property\": \"Status\", \"select\": {\"equals\": \"Done\"}}",
+          "title": "Filter",
+          "ui:widget": "textarea"
+        },
+        "sorts": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array of sort objects",
+          "placeholder": "[{\"property\": \"Created\", \"direction\": \"descending\"}]",
+          "title": "Sorts",
+          "ui:widget": "textarea"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "description": "Number of results per page (max 100)",
+          "title": "Page Size"
+        },
+        "start_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from previous response",
+          "title": "Start Cursor"
+        }
+      },
+      "required": [
+        "database_id"
+      ],
+      "title": "NotionQueryDatabaseConfig",
+      "type": "object"
+    },
+    "NotionRetrieveBlockChildrenConfig": {
+      "description": "Retrieve a block's children",
+      "properties": {
+        "operation": {
+          "const": "fetch_block_children",
+          "default": "fetch_block_children",
+          "title": "Fetch Block Children",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Block",
+          "x-display-name": "Fetch Block Children",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "get block children",
+            "read page content",
+            "list child blocks",
+            "retrieve nested blocks",
+            "read page body"
+          ]
+        },
+        "block_id": {
+          "description": "The block or page to get children from",
+          "title": "Block/Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste block/page ID",
+            "field_name": "page_id",
+            "placeholder": "Select a page...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "description": "Number of blocks per page (max 100)",
+          "title": "Page Size"
+        },
+        "start_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from previous response",
+          "title": "Start Cursor"
+        }
+      },
+      "required": [
+        "block_id"
+      ],
+      "title": "NotionRetrieveBlockChildrenConfig",
+      "type": "object"
+    },
+    "NotionRetrieveBlockConfig": {
+      "description": "Retrieve a block",
+      "properties": {
+        "operation": {
+          "const": "fetch_notion_block",
+          "default": "fetch_notion_block",
+          "title": "Fetch Notion Block",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Block",
+          "x-display-name": "Fetch Notion Block",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "get block",
+            "read single block",
+            "retrieve block by id"
+          ]
+        },
+        "block_id": {
+          "description": "The ID of the block to retrieve",
+          "title": "Block ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "block_id"
+      ],
+      "title": "NotionRetrieveBlockConfig",
+      "type": "object"
+    },
+    "NotionRetrieveBotUserConfig": {
+      "description": "Retrieve the bot user for the current integration",
+      "properties": {
+        "operation": {
+          "const": "fetch_bot_integration_user",
+          "default": "fetch_bot_integration_user",
+          "title": "Fetch Bot Integration User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Fetch Bot Integration User",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "get bot user",
+            "integration identity",
+            "whoami",
+            "current bot",
+            "my integration"
+          ]
+        }
+      },
+      "title": "NotionRetrieveBotUserConfig",
+      "type": "object"
+    },
+    "NotionRetrieveCommentConfig": {
+      "description": "Retrieve a comment by its ID",
+      "properties": {
+        "operation": {
+          "const": "fetch_page_comment",
+          "default": "fetch_page_comment",
+          "title": "Fetch Page Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment",
+          "x-display-name": "Fetch Page Comment",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "get comment",
+            "retrieve comment by id",
+            "read single comment"
+          ]
+        },
+        "comment_id": {
+          "description": "The ID of the comment to retrieve",
+          "title": "Comment ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "comment_id"
+      ],
+      "title": "NotionRetrieveCommentConfig",
+      "type": "object"
+    },
+    "NotionRetrieveDatabaseConfig": {
+      "description": "Retrieve a database's metadata and schema",
+      "properties": {
+        "operation": {
+          "const": "fetch_database_metadata",
+          "default": "fetch_database_metadata",
+          "title": "Fetch Database Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Database",
+          "x-display-name": "Fetch Database Metadata",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "get database schema",
+            "database properties",
+            "read database structure",
+            "database columns",
+            "retrieve schema"
+          ]
+        },
+        "database_id": {
+          "description": "The ID of the database to retrieve",
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "notion_database"
+        }
+      },
+      "required": [
+        "database_id"
+      ],
+      "title": "NotionRetrieveDatabaseConfig",
+      "type": "object"
+    },
+    "NotionRetrievePageConfig": {
+      "description": "Retrieve a page's properties",
+      "properties": {
+        "operation": {
+          "const": "fetch_page_properties",
+          "default": "fetch_page_properties",
+          "title": "Fetch Page Properties",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Page",
+          "x-display-name": "Fetch Page Properties",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "get page properties",
+            "read page fields",
+            "retrieve page metadata",
+            "page property values"
+          ]
+        },
+        "page_id": {
+          "description": "The page to retrieve",
+          "title": "Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste page ID",
+            "field_name": "page_id",
+            "placeholder": "Select a page...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "notion_page"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "NotionRetrievePageConfig",
+      "type": "object"
+    },
+    "NotionRetrievePagePropertyConfig": {
+      "description": "Retrieve a single property value from a page",
+      "properties": {
+        "operation": {
+          "const": "fetch_page_property",
+          "default": "fetch_page_property",
+          "title": "Fetch Page Property",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Page",
+          "x-display-name": "Fetch Page Property",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "get page property value",
+            "read single property",
+            "retrieve property item",
+            "page field value"
+          ]
+        },
+        "page_id": {
+          "description": "The page to retrieve a property from",
+          "title": "Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste page ID",
+            "field_name": "page_id",
+            "placeholder": "Select a page...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "notion_page"
+        },
+        "property_id": {
+          "description": "The ID or name of the property to retrieve",
+          "title": "Property ID or Name",
+          "type": "string"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "For paginated properties (rollup, relation, people, rich_text, title). Max 100.",
+          "title": "Page Size"
+        },
+        "start_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor for paginated properties",
+          "title": "Start Cursor"
+        }
+      },
+      "required": [
+        "page_id",
+        "property_id"
+      ],
+      "title": "NotionRetrievePagePropertyConfig",
+      "type": "object"
+    },
+    "NotionRetrieveUserConfig": {
+      "description": "Retrieve a user by ID",
+      "properties": {
+        "operation": {
+          "const": "fetch_workspace_user",
+          "default": "fetch_workspace_user",
+          "title": "Fetch Workspace User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Fetch Workspace User",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "get user by id",
+            "retrieve member",
+            "look up person",
+            "fetch teammate"
+          ]
+        },
+        "user_id": {
+          "description": "The workspace user to retrieve",
+          "title": "User",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste user ID",
+            "field_name": "user_id",
+            "placeholder": "Select a user...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "NotionRetrieveUserConfig",
+      "type": "object"
+    },
+    "NotionRetrieveViewConfig": {
+      "description": "Retrieve a specific database view",
+      "properties": {
+        "operation": {
+          "const": "fetch_database_view",
+          "default": "fetch_database_view",
+          "title": "Fetch Database View",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "View",
+          "x-display-name": "Fetch Database View",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "get view by id",
+            "retrieve view config",
+            "read view filters",
+            "fetch specific view"
+          ]
+        },
+        "view_id": {
+          "description": "The ID of the view to retrieve",
+          "title": "View ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "view_id"
+      ],
+      "title": "NotionRetrieveViewConfig",
+      "type": "object"
+    },
+    "NotionSearchConfig": {
+      "description": "Search pages and databases by title",
+      "properties": {
+        "operation": {
+          "const": "search_pages_and_databases",
+          "default": "search_pages_and_databases",
+          "title": "Search Pages and Databases",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspace",
+          "x-display-name": "Search Pages and Databases",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "search workspace",
+            "find page by title",
+            "search notion",
+            "look up database",
+            "global search",
+            "find content"
+          ]
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Text to search for in page and database titles. Leave empty to list all accessible content.",
+          "title": "Search Query"
+        },
+        "filter_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter results by object type",
+          "enum": [
+            "page",
+            "database"
+          ],
+          "title": "Filter Type"
+        },
+        "sort_direction": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "descending",
+          "description": "Sort by last edited time",
+          "enum": [
+            "ascending",
+            "descending"
+          ],
+          "title": "Sort Direction"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "description": "Number of results per page (max 100)",
+          "title": "Page Size"
+        },
+        "start_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from previous response",
+          "title": "Start Cursor"
+        }
+      },
+      "title": "NotionSearchConfig",
+      "type": "object"
+    },
+    "NotionUpdateBlockConfig": {
+      "description": "Update a block's content",
+      "properties": {
+        "operation": {
+          "const": "update_block_content",
+          "default": "update_block_content",
+          "title": "Update Block Content",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Block",
+          "x-display-name": "Update Block Content",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "edit block",
+            "change block text",
+            "modify block content",
+            "rewrite block"
+          ]
+        },
+        "block_id": {
+          "description": "The ID of the block to update",
+          "title": "Block ID",
+          "type": "string"
+        },
+        "block_type": {
+          "description": "The type of block (paragraph, heading_1, to_do, etc.)",
+          "title": "Block Type",
+          "type": "string"
+        },
+        "content": {
+          "description": "JSON object with the block type's content",
+          "title": "Block Content",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "archived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set to true to archive/delete the block",
+          "title": "Archive Block"
+        }
+      },
+      "required": [
+        "block_id",
+        "block_type",
+        "content"
+      ],
+      "title": "NotionUpdateBlockConfig",
+      "type": "object"
+    },
+    "NotionUpdateCommentConfig": {
+      "description": "Update a comment's rich text content",
+      "properties": {
+        "operation": {
+          "const": "update_page_comment",
+          "default": "update_page_comment",
+          "title": "Update Page Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comment",
+          "x-display-name": "Update Page Comment",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "edit comment",
+            "change comment text",
+            "modify comment",
+            "update discussion reply"
+          ]
+        },
+        "comment_id": {
+          "description": "The ID of the comment to update",
+          "title": "Comment ID",
+          "type": "string"
+        },
+        "rich_text": {
+          "description": "JSON array of rich text objects for the updated comment",
+          "placeholder": "[{\"type\": \"text\", \"text\": {\"content\": \"Updated comment text\"}}]",
+          "title": "New Content",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "comment_id",
+        "rich_text"
+      ],
+      "title": "NotionUpdateCommentConfig",
+      "type": "object"
+    },
+    "NotionUpdateDatabaseConfig": {
+      "description": "Update a database's title, description, or properties",
+      "properties": {
+        "operation": {
+          "const": "update_database_metadata",
+          "default": "update_database_metadata",
+          "title": "Update Database Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Database",
+          "x-display-name": "Update Database Metadata",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "rename database",
+            "edit database schema",
+            "change database title",
+            "modify database properties",
+            "update database columns"
+          ]
+        },
+        "database_id": {
+          "description": "The ID of the database to update",
+          "title": "Database",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste database ID",
+            "field_name": "database_id",
+            "placeholder": "Select a database...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "notion_database"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New title for the database",
+          "title": "New Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New description for the database",
+          "title": "Description"
+        },
+        "properties": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Properties Updates",
+          "description": "JSON object with property updates",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "database_id"
+      ],
+      "title": "NotionUpdateDatabaseConfig",
+      "type": "object"
+    },
+    "NotionUpdatePageConfig": {
+      "description": "Update a page's properties, icon, or cover",
+      "properties": {
+        "operation": {
+          "const": "update_page_properties",
+          "default": "update_page_properties",
+          "title": "Update Page Properties",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Page",
+          "x-display-name": "Update Page Properties",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "edit page properties",
+            "set page icon",
+            "change page cover",
+            "update page fields",
+            "modify page metadata"
+          ]
+        },
+        "page_id": {
+          "description": "The page to update",
+          "title": "Page",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste page ID",
+            "field_name": "page_id",
+            "placeholder": "Select a page...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "notion_page"
+        },
+        "properties": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Properties",
+          "description": "JSON object with property updates",
+          "ui:widget": "textarea"
+        },
+        "archived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set to true to move page to trash",
+          "title": "Archive Page"
+        },
+        "icon": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Emoji icon for the page",
+          "title": "Icon"
+        },
+        "cover": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The cover image to send \u2014 upload a file, paste a URL, or reference an upstream file (e.g. {{http-1.response.url}}).",
+          "title": "Cover",
+          "ui:accept": "image/*",
+          "ui:widget": "media_upload"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "NotionUpdatePageConfig",
+      "type": "object"
+    },
+    "NotionUpdateViewConfig": {
+      "description": "Update a database view's name or layout",
+      "properties": {
+        "operation": {
+          "const": "update_database_view",
+          "default": "update_database_view",
+          "title": "Update Database View",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "View",
+          "x-display-name": "Update Database View",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "rename view",
+            "edit view layout",
+            "change view name",
+            "modify view filters",
+            "update board view"
+          ]
+        },
+        "view_id": {
+          "description": "The ID of the view to update",
+          "title": "View ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New name for the view",
+          "title": "Name"
+        },
+        "layout": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "View layout type",
+          "enum": [
+            "table",
+            "board",
+            "gallery",
+            "list",
+            "calendar",
+            "timeline"
+          ],
+          "title": "Layout Type"
+        },
+        "filters": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object with filter configuration",
+          "title": "Filters",
+          "ui:widget": "textarea"
+        },
+        "sorts": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array of sort configurations",
+          "title": "Sorts",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "view_id"
+      ],
+      "title": "NotionUpdateViewConfig",
+      "type": "object"
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for Notion node including credentials",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "append_children_to_block": "#/$defs/NotionAppendBlockChildrenConfig",
+          "create_file_upload": "#/$defs/NotionCreateFileUploadConfig",
+          "create_notion_page": "#/$defs/NotionCreatePageConfig",
+          "create_page_comment": "#/$defs/NotionCreateCommentConfig",
+          "create_page_database": "#/$defs/NotionCreateDatabaseConfig",
+          "delete_notion_block": "#/$defs/NotionDeleteBlockConfig",
+          "delete_page_comment": "#/$defs/NotionDeleteCommentConfig",
+          "fetch_block_children": "#/$defs/NotionRetrieveBlockChildrenConfig",
+          "fetch_bot_integration_user": "#/$defs/NotionRetrieveBotUserConfig",
+          "fetch_database_metadata": "#/$defs/NotionRetrieveDatabaseConfig",
+          "fetch_database_view": "#/$defs/NotionRetrieveViewConfig",
+          "fetch_notion_block": "#/$defs/NotionRetrieveBlockConfig",
+          "fetch_page_comment": "#/$defs/NotionRetrieveCommentConfig",
+          "fetch_page_properties": "#/$defs/NotionRetrievePageConfig",
+          "fetch_page_property": "#/$defs/NotionRetrievePagePropertyConfig",
+          "fetch_workspace_user": "#/$defs/NotionRetrieveUserConfig",
+          "get_async_task_status": "#/$defs/NotionGetAsyncTaskConfig",
+          "list_block_comments": "#/$defs/NotionListCommentsConfig",
+          "list_database_views": "#/$defs/NotionListViewsConfig",
+          "list_workspace_users": "#/$defs/NotionListUsersConfig",
+          "on_comment_created": "#/$defs/NotionOnCommentCreatedConfig",
+          "on_database_created": "#/$defs/NotionOnDatabaseCreatedConfig",
+          "on_database_item": "#/$defs/NotionOnDatabaseItemConfig",
+          "on_page_created": "#/$defs/NotionOnPageCreatedConfig",
+          "on_page_updated": "#/$defs/NotionOnPageUpdatedConfig",
+          "query_notion_database": "#/$defs/NotionQueryDatabaseConfig",
+          "search_pages_and_databases": "#/$defs/NotionSearchConfig",
+          "update_block_content": "#/$defs/NotionUpdateBlockConfig",
+          "update_database_metadata": "#/$defs/NotionUpdateDatabaseConfig",
+          "update_database_view": "#/$defs/NotionUpdateViewConfig",
+          "update_page_comment": "#/$defs/NotionUpdateCommentConfig",
+          "update_page_properties": "#/$defs/NotionUpdatePageConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/NotionOnDatabaseItemConfig"
+        },
+        {
+          "$ref": "#/$defs/NotionOnPageCreatedConfig"
+        },
+        {
+          "$ref": "#/$defs/NotionOnPageUpdatedConfig"
+        },
+        {
+          "$ref": "#/$defs/NotionOnCommentCreatedConfig"
+        },
+        {
+          "$ref": "#/$defs/NotionOnDatabaseCreatedConfig"
+        },
+        {
+          "$ref": "#/$defs/NotionSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/NotionQueryDatabaseConfig"
+        },
+        {
+          "$ref": "#/$defs/NotionRetrieveDatabaseConfig"
+        },
+        {
+          "$ref": "#/$defs/NotionCreateDatabaseConfig"
+        },
+        {
+          "$ref": "#/$defs/NotionUpdateDatabaseConfig"
+        },
+        {
+          "$ref": "#/$defs/NotionRetrievePageConfig"
+        },
+        {
+          "$ref": "#/$defs/NotionRetrievePagePropertyConfig"
+        },
+        {
+          "$ref": "#/$defs/NotionCreatePageConfig"
+        },
+        {
+          "$ref": "#/$defs/NotionUpdatePageConfig"
+        },
+        {
+          "$ref": "#/$defs/NotionRetrieveBlockConfig"
+        },
+        {
+          "$ref": "#/$defs/NotionRetrieveBlockChildrenConfig"
+        },
+        {
+          "$ref": "#/$defs/NotionAppendBlockChildrenConfig"
+        },
+        {
+          "$ref": "#/$defs/NotionUpdateBlockConfig"
+        },
+        {
+          "$ref": "#/$defs/NotionDeleteBlockConfig"
+        },
+        {
+          "$ref": "#/$defs/NotionListUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/NotionRetrieveUserConfig"
+        },
+        {
+          "$ref": "#/$defs/NotionRetrieveBotUserConfig"
+        },
+        {
+          "$ref": "#/$defs/NotionCreateCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/NotionRetrieveCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/NotionListCommentsConfig"
+        },
+        {
+          "$ref": "#/$defs/NotionUpdateCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/NotionDeleteCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/NotionListViewsConfig"
+        },
+        {
+          "$ref": "#/$defs/NotionRetrieveViewConfig"
+        },
+        {
+          "$ref": "#/$defs/NotionUpdateViewConfig"
+        },
+        {
+          "$ref": "#/$defs/NotionCreateFileUploadConfig"
+        },
+        {
+          "$ref": "#/$defs/NotionGetAsyncTaskConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/NotionOAuthCredential"
+        },
+        {
+          "$ref": "#/$defs/NotionIntegrationTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Notion Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Create page in projects database with title and due date",
+    "Query database for status=Done and archive all matched pages",
+    "Search for meeting notes by title and append attendees list",
+    "Append paragraph block with formatted text to page content",
+    "Create comment on page and mention team members @user",
+    "Update database properties and retrieve all custom field values",
+    "List all comments on ticket page and create follow-up task"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

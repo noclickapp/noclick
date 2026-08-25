@@ -1,0 +1,874 @@
+{
+  "$defs": {
+    "PerplexityAcademicSearchConfig": {
+      "description": "Chat completion grounded in scholarly sources (search_mode: academic).",
+      "properties": {
+        "operation": {
+          "const": "academic_search",
+          "default": "academic_search",
+          "title": "Academic Search (Chat)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Chat",
+          "x-display-name": "Academic Search (Chat)",
+          "x-is-trigger": false
+        },
+        "model": {
+          "default": "sonar",
+          "description": "Sonar model to use",
+          "enum": [
+            "sonar",
+            "sonar-pro",
+            "sonar-reasoning-pro",
+            "sonar-deep-research"
+          ],
+          "title": "Model",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "prompt": {
+          "description": "The research question to answer from scholarly sources",
+          "title": "Prompt",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "PerplexityAcademicSearchConfig",
+      "type": "object",
+      "x-credentials-optional": true
+    },
+    "PerplexityAgentResponseConfig": {
+      "description": "Run a frontier model with Perplexity web-search tools and filters.",
+      "properties": {
+        "operation": {
+          "const": "agent_response",
+          "default": "agent_response",
+          "title": "Create Agent Response",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Agent",
+          "x-display-name": "Create Agent Response",
+          "x-is-trigger": false
+        },
+        "model": {
+          "default": "openai/gpt-5.5",
+          "description": "Provider/model identifier, e.g. openai/gpt-5.5, perplexity/sonar (built-in web search)",
+          "title": "Model",
+          "type": "string"
+        },
+        "prompt": {
+          "description": "The instruction / question for the agent",
+          "title": "Prompt",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "instructions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional system-level instructions to steer the agent",
+          "title": "Instructions",
+          "ui:widget": "textarea"
+        },
+        "reasoning_effort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reasoning depth",
+          "enum": [
+            "",
+            "low",
+            "medium",
+            "high",
+            "xhigh",
+            "max"
+          ],
+          "enumNames": [
+            "Default",
+            "Low",
+            "Medium",
+            "High",
+            "Extra high",
+            "Max"
+          ],
+          "title": "Reasoning Effort",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "PerplexityAgentResponseConfig",
+      "type": "object"
+    },
+    "PerplexityApiKeyCredential": {
+      "description": "API Key credential for Perplexity.",
+      "properties": {
+        "credential_type": {
+          "const": "perplexity_api_key",
+          "default": "perplexity_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Your Perplexity API key (starts with pplx-) from console.perplexity.ai \u2192 Settings \u2192 API",
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "PerplexityApiKeyCredential",
+      "type": "object",
+      "x-credential-url": "https://console.perplexity.ai"
+    },
+    "PerplexityChatCompletionConfig": {
+      "description": "Generate a search-grounded model answer for a chat conversation.",
+      "properties": {
+        "operation": {
+          "const": "chat_completion",
+          "default": "chat_completion",
+          "title": "Create Chat Completion",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Chat",
+          "x-display-name": "Create Chat Completion",
+          "x-is-trigger": false
+        },
+        "model": {
+          "default": "sonar",
+          "description": "Sonar model to use",
+          "enum": [
+            "sonar",
+            "sonar-pro",
+            "sonar-reasoning-pro",
+            "sonar-deep-research"
+          ],
+          "title": "Model",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a model name",
+            "field_name": "model",
+            "placeholder": "Select a model...",
+            "searchable": true
+          },
+          "x-enum-searchable": true,
+          "x-resource-type": "perplexity_model"
+        },
+        "prompt": {
+          "description": "The user message / question to answer",
+          "title": "Prompt",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "system_prompt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional system instructions to steer the model",
+          "title": "System Prompt",
+          "ui:widget": "textarea"
+        },
+        "max_tokens": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of completion tokens",
+          "title": "Max Tokens"
+        },
+        "temperature": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sampling temperature (0-2)",
+          "title": "Temperature"
+        },
+        "search_recency_filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Restrict grounding to recent results",
+          "enum": [
+            "",
+            "hour",
+            "day",
+            "week",
+            "month",
+            "year"
+          ],
+          "enumNames": [
+            "Any",
+            "Past hour",
+            "Past day",
+            "Past week",
+            "Past month",
+            "Past year"
+          ],
+          "title": "Recency Filter",
+          "x-enum-searchable": true
+        },
+        "search_domain_filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Limit grounding to these domains, comma-separated (max 20)",
+          "title": "Domain Filter"
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "PerplexityChatCompletionConfig",
+      "type": "object",
+      "x-credentials-optional": true
+    },
+    "PerplexityCreateAsyncCompletionConfig": {
+      "description": "Submit a long-running (e.g. deep-research) completion as a background job.",
+      "properties": {
+        "operation": {
+          "const": "create_async_completion",
+          "default": "create_async_completion",
+          "title": "Create Async Chat Completion",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Chat",
+          "x-display-name": "Create Async Chat Completion",
+          "x-is-trigger": false
+        },
+        "model": {
+          "default": "sonar-deep-research",
+          "description": "Model to use (deep-research models are best run async)",
+          "enum": [
+            "sonar",
+            "sonar-pro",
+            "sonar-reasoning-pro",
+            "sonar-deep-research"
+          ],
+          "title": "Model",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a model name",
+            "field_name": "model",
+            "placeholder": "Select a model...",
+            "searchable": true
+          },
+          "x-enum-searchable": true,
+          "x-resource-type": "perplexity_model"
+        },
+        "prompt": {
+          "description": "The user message / question to answer",
+          "title": "Prompt",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "system_prompt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional system instructions",
+          "title": "System Prompt",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "PerplexityCreateAsyncCompletionConfig",
+      "type": "object"
+    },
+    "PerplexityCreateContextualizedEmbeddingsConfig": {
+      "description": "Generate context-aware embeddings (document + surrounding context).",
+      "properties": {
+        "operation": {
+          "const": "create_contextualized_embeddings",
+          "default": "create_contextualized_embeddings",
+          "title": "Create Contextualized Embeddings",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Embeddings",
+          "x-display-name": "Create Contextualized Embeddings",
+          "x-is-trigger": false
+        },
+        "model": {
+          "default": "pplx-embed-context-v1-4b",
+          "description": "Contextualized embeddings model (pplx-embed-context-v1-0.6b or pplx-embed-context-v1-4b)",
+          "title": "Model",
+          "type": "string"
+        },
+        "input_text": {
+          "description": "Documents to embed, one per line (each line is embedded as a document)",
+          "title": "Input",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "input_text"
+      ],
+      "title": "PerplexityCreateContextualizedEmbeddingsConfig",
+      "type": "object"
+    },
+    "PerplexityCreateEmbeddingsConfig": {
+      "description": "Generate vector embeddings for text.",
+      "properties": {
+        "operation": {
+          "const": "create_embeddings",
+          "default": "create_embeddings",
+          "title": "Create Embeddings",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Embeddings",
+          "x-display-name": "Create Embeddings",
+          "x-is-trigger": false
+        },
+        "model": {
+          "default": "pplx-embed-v1-4b",
+          "description": "Embeddings model (pplx-embed-v1-0.6b or pplx-embed-v1-4b)",
+          "title": "Model",
+          "type": "string"
+        },
+        "input_text": {
+          "description": "Text to embed. For multiple inputs, separate with newlines",
+          "title": "Input",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "input_text"
+      ],
+      "title": "PerplexityCreateEmbeddingsConfig",
+      "type": "object"
+    },
+    "PerplexityGenerateAuthTokenConfig": {
+      "description": "Programmatically create a new API key/token for the account.",
+      "properties": {
+        "operation": {
+          "const": "generate_auth_token",
+          "default": "generate_auth_token",
+          "title": "Generate Auth Token",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Auth Tokens",
+          "x-display-name": "Generate Auth Token",
+          "x-is-trigger": false
+        },
+        "token_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional label for the new token",
+          "title": "Token Name"
+        }
+      },
+      "title": "PerplexityGenerateAuthTokenConfig",
+      "type": "object"
+    },
+    "PerplexityGetAsyncCompletionConfig": {
+      "description": "Poll the status and retrieve a specific async completion job.",
+      "properties": {
+        "operation": {
+          "const": "get_async_completion",
+          "default": "get_async_completion",
+          "title": "Get Async Chat Completion",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Chat",
+          "x-display-name": "Get Async Chat Completion",
+          "x-is-trigger": false
+        },
+        "request_id": {
+          "description": "The async job request_id to poll",
+          "title": "Request ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "request_id"
+      ],
+      "title": "PerplexityGetAsyncCompletionConfig",
+      "type": "object"
+    },
+    "PerplexityListAsyncCompletionsConfig": {
+      "description": "List all async chat-completion jobs for the account.",
+      "properties": {
+        "operation": {
+          "const": "list_async_completions",
+          "default": "list_async_completions",
+          "title": "List Async Chat Completions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Chat",
+          "x-display-name": "List Async Chat Completions",
+          "x-is-trigger": false
+        }
+      },
+      "title": "PerplexityListAsyncCompletionsConfig",
+      "type": "object"
+    },
+    "PerplexityListModelsConfig": {
+      "description": "List the models available to the account.",
+      "properties": {
+        "operation": {
+          "const": "list_models",
+          "default": "list_models",
+          "title": "List Models",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Models",
+          "x-display-name": "List Models",
+          "x-is-trigger": false
+        }
+      },
+      "title": "PerplexityListModelsConfig",
+      "type": "object"
+    },
+    "PerplexityRevokeAuthTokenConfig": {
+      "description": "Revoke an existing API key/token (rotation).",
+      "properties": {
+        "operation": {
+          "const": "revoke_auth_token",
+          "default": "revoke_auth_token",
+          "title": "Revoke Auth Token",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Auth Tokens",
+          "x-display-name": "Revoke Auth Token",
+          "x-is-trigger": false
+        },
+        "token": {
+          "description": "The API key/token to revoke",
+          "title": "Token",
+          "type": "string"
+        }
+      },
+      "required": [
+        "token"
+      ],
+      "title": "PerplexityRevokeAuthTokenConfig",
+      "type": "object"
+    },
+    "PerplexitySearchConfig": {
+      "description": "Get raw, ranked web search results (title, URL, snippet).",
+      "properties": {
+        "operation": {
+          "const": "search",
+          "default": "search",
+          "title": "Search the Web",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Search",
+          "x-display-name": "Search the Web",
+          "x-is-trigger": false
+        },
+        "query": {
+          "description": "The search query",
+          "title": "Query",
+          "type": "string"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "10",
+          "description": "Number of results to return (1-20)",
+          "title": "Max Results"
+        },
+        "search_recency_filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Restrict results by recency",
+          "enum": [
+            "",
+            "hour",
+            "day",
+            "week",
+            "month",
+            "year"
+          ],
+          "enumNames": [
+            "Any",
+            "Past hour",
+            "Past day",
+            "Past week",
+            "Past month",
+            "Past year"
+          ],
+          "title": "Recency Filter",
+          "x-enum-searchable": true
+        },
+        "search_domain_filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Limit to these domains, comma-separated (max 20)",
+          "title": "Domain Filter"
+        },
+        "search_language_filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Limit to these languages, comma-separated (max 20)",
+          "title": "Language Filter"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "PerplexitySearchConfig",
+      "type": "object",
+      "x-credentials-optional": true
+    },
+    "PerplexitySecSearchConfig": {
+      "description": "Chat completion grounded in SEC filings (search_mode: sec).",
+      "properties": {
+        "operation": {
+          "const": "sec_search",
+          "default": "sec_search",
+          "title": "SEC Filings Search (Chat)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Chat",
+          "x-display-name": "SEC Filings Search (Chat)",
+          "x-is-trigger": false
+        },
+        "model": {
+          "default": "sonar",
+          "description": "Sonar model to use",
+          "enum": [
+            "sonar",
+            "sonar-pro",
+            "sonar-reasoning-pro",
+            "sonar-deep-research"
+          ],
+          "title": "Model",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "prompt": {
+          "description": "The question to answer from SEC filings",
+          "title": "Prompt",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "PerplexitySecSearchConfig",
+      "type": "object",
+      "x-credentials-optional": true
+    },
+    "PerplexityStructuredOutputConfig": {
+      "description": "Chat completion with a JSON schema response_format for validated output.",
+      "properties": {
+        "operation": {
+          "const": "structured_output",
+          "default": "structured_output",
+          "title": "Structured JSON Output (Chat)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Chat",
+          "x-display-name": "Structured JSON Output (Chat)",
+          "x-is-trigger": false
+        },
+        "model": {
+          "default": "sonar",
+          "description": "Sonar model to use",
+          "enum": [
+            "sonar",
+            "sonar-pro",
+            "sonar-reasoning-pro",
+            "sonar-deep-research"
+          ],
+          "title": "Model",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "prompt": {
+          "description": "The question to answer",
+          "title": "Prompt",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "output_schema": {
+          "description": "A JSON Schema object the response must conform to",
+          "title": "JSON Schema",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "prompt",
+        "output_schema"
+      ],
+      "title": "PerplexityStructuredOutputConfig",
+      "type": "object",
+      "x-credentials-optional": true
+    },
+    "PerplexityUsageAnalyticsConfig": {
+      "description": "Retrieve account usage/analytics data.",
+      "properties": {
+        "operation": {
+          "const": "usage_analytics",
+          "default": "usage_analytics",
+          "title": "Computer Usage Analytics",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Analytics",
+          "x-display-name": "Computer Usage Analytics",
+          "x-is-trigger": false
+        },
+        "dataset": {
+          "default": "credit_usage",
+          "description": "Which usage dataset to retrieve",
+          "enum": [
+            "credit_usage",
+            "connectors",
+            "artifacts",
+            "skills",
+            "spaces",
+            "workflows",
+            "task_durations"
+          ],
+          "title": "Dataset",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "start_time": {
+          "description": "Window start as a Unix timestamp in seconds UTC (e.g. 1750000000)",
+          "title": "Start Time (unix seconds)",
+          "type": "string"
+        },
+        "end_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional window end (Unix seconds UTC)",
+          "title": "End Time (unix seconds)"
+        },
+        "bucket_width": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Aggregation bucket size",
+          "enum": [
+            "",
+            "1d",
+            "1h"
+          ],
+          "enumNames": [
+            "Default",
+            "Daily",
+            "Hourly"
+          ],
+          "title": "Bucket Width",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "start_time"
+      ],
+      "title": "PerplexityUsageAnalyticsConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the Perplexity node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "academic_search": "#/$defs/PerplexityAcademicSearchConfig",
+          "agent_response": "#/$defs/PerplexityAgentResponseConfig",
+          "chat_completion": "#/$defs/PerplexityChatCompletionConfig",
+          "create_async_completion": "#/$defs/PerplexityCreateAsyncCompletionConfig",
+          "create_contextualized_embeddings": "#/$defs/PerplexityCreateContextualizedEmbeddingsConfig",
+          "create_embeddings": "#/$defs/PerplexityCreateEmbeddingsConfig",
+          "generate_auth_token": "#/$defs/PerplexityGenerateAuthTokenConfig",
+          "get_async_completion": "#/$defs/PerplexityGetAsyncCompletionConfig",
+          "list_async_completions": "#/$defs/PerplexityListAsyncCompletionsConfig",
+          "list_models": "#/$defs/PerplexityListModelsConfig",
+          "revoke_auth_token": "#/$defs/PerplexityRevokeAuthTokenConfig",
+          "search": "#/$defs/PerplexitySearchConfig",
+          "sec_search": "#/$defs/PerplexitySecSearchConfig",
+          "structured_output": "#/$defs/PerplexityStructuredOutputConfig",
+          "usage_analytics": "#/$defs/PerplexityUsageAnalyticsConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/PerplexityChatCompletionConfig"
+        },
+        {
+          "$ref": "#/$defs/PerplexityCreateAsyncCompletionConfig"
+        },
+        {
+          "$ref": "#/$defs/PerplexityListAsyncCompletionsConfig"
+        },
+        {
+          "$ref": "#/$defs/PerplexityGetAsyncCompletionConfig"
+        },
+        {
+          "$ref": "#/$defs/PerplexitySearchConfig"
+        },
+        {
+          "$ref": "#/$defs/PerplexityAgentResponseConfig"
+        },
+        {
+          "$ref": "#/$defs/PerplexityCreateEmbeddingsConfig"
+        },
+        {
+          "$ref": "#/$defs/PerplexityCreateContextualizedEmbeddingsConfig"
+        },
+        {
+          "$ref": "#/$defs/PerplexityListModelsConfig"
+        },
+        {
+          "$ref": "#/$defs/PerplexityGenerateAuthTokenConfig"
+        },
+        {
+          "$ref": "#/$defs/PerplexityRevokeAuthTokenConfig"
+        },
+        {
+          "$ref": "#/$defs/PerplexityUsageAnalyticsConfig"
+        },
+        {
+          "$ref": "#/$defs/PerplexityAcademicSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/PerplexitySecSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/PerplexityStructuredOutputConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PerplexityApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Perplexity Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Answer a question with up-to-date web citations using Sonar",
+    "Search the web for the latest news on a topic and return ranked results",
+    "Run a deep-research report as an async job and poll for the result",
+    "Ground an answer in academic papers or SEC filings",
+    "Return structured JSON matching a schema from a search-grounded query"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

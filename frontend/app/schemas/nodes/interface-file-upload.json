@@ -1,0 +1,56 @@
+{
+  "$defs": {
+    "FileUploadConfig": {
+      "description": "Configuration for the file upload interface component.",
+      "properties": {
+        "accepted_types": {
+          "default": "",
+          "title": "Accepted Types",
+          "type": "string",
+          "ui:help": "Comma-separated file extensions",
+          "ui:placeholder": ".pdf,.csv,.xlsx"
+        },
+        "max_size_mb": {
+          "default": "10",
+          "title": "Max Size (MB)",
+          "type": "string",
+          "ui:placeholder": "10"
+        },
+        "resource_ids": {
+          "default": "",
+          "title": "Resource IDs",
+          "type": "string",
+          "ui:hidden": true
+        }
+      },
+      "title": "FileUploadConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for file upload interface node (no credentials).",
+  "properties": {
+    "config": {
+      "$ref": "#/$defs/FileUploadConfig",
+      "description": "Node-specific configuration"
+    },
+    "credentials": {
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials",
+      "type": "null"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Interface-file-upload Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Change accepted file types to only CSV/PDF",
+    "Increase max file size limit to 50MB",
+    "Pre-populate with uploaded files",
+    "Allow multiple files or single file only",
+    "Show a custom drag-and-drop message"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

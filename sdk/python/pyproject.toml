@@ -1,0 +1,35 @@
+[build-system]
+requires = ["setuptools>=77", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "noclick"
+version = "0.1.0"
+description = "Python SDK for NoClick workflow automation"
+readme = "README.md"
+license = "LicenseRef-Sustainable-Use-License-1.0"
+license-files = ["LICENSE.md"]
+requires-python = ">=3.10"
+keywords = ["noclick", "workflow", "automation", "sdk"]
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+]
+dependencies = [
+    "python-socketio[asyncio_client]>=5.0",
+    "aiohttp>=3.0",
+]
+
+[project.urls]
+Homepage = "https://docs.noclick.com/sdk/overview"
+Documentation = "https://docs.noclick.com/sdk/external-apps"
+
+[project.optional-dependencies]
+dev = ["pytest", "pytest-asyncio"]
+
+[tool.setuptools.packages.find]
+include = ["noclick*"]

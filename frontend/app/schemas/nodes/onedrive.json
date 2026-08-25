@@ -1,0 +1,1915 @@
+{
+  "$defs": {
+    "OneDriveAddPermissionConfig": {
+      "description": "Grant permission to a user or group",
+      "properties": {
+        "operation": {
+          "const": "grant_item_permission",
+          "default": "grant_item_permission",
+          "title": "Grant Item Permission",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Item",
+          "x-display-name": "Grant Item Permission",
+          "x-is-trigger": false
+        },
+        "item_id": {
+          "description": "File or folder to share",
+          "title": "Item ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste item ID",
+            "field_name": "item_id",
+            "placeholder": "Select an item...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "onedrive_item"
+        },
+        "recipient_email": {
+          "description": "Email address of the person to share with",
+          "title": "Recipient Email",
+          "type": "string"
+        },
+        "role": {
+          "default": "read",
+          "description": "Permission level",
+          "enum": [
+            "read",
+            "write",
+            "owner"
+          ],
+          "enumNames": [
+            "Can View",
+            "Can Edit",
+            "Owner"
+          ],
+          "title": "Role",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "send_invitation": {
+          "default": true,
+          "description": "Send an email notification to the recipient",
+          "title": "Send Email Invitation",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "item_id",
+        "recipient_email"
+      ],
+      "title": "OneDriveAddPermissionConfig",
+      "type": "object"
+    },
+    "OneDriveCheckInConfig": {
+      "description": "Check in a file (unlock and save)",
+      "properties": {
+        "operation": {
+          "const": "check_in_file",
+          "default": "check_in_file",
+          "title": "Check in File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Item",
+          "x-display-name": "Check in File",
+          "x-is-trigger": false
+        },
+        "item_id": {
+          "description": "File to check in",
+          "title": "Item ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "item_id",
+            "placeholder": "Select a file...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "onedrive_item"
+        },
+        "comment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional comment about the changes",
+          "title": "Check-in Comment"
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "OneDriveCheckInConfig",
+      "type": "object"
+    },
+    "OneDriveCheckOutConfig": {
+      "description": "Check out a file (lock for editing)",
+      "properties": {
+        "operation": {
+          "const": "check_out_file",
+          "default": "check_out_file",
+          "title": "Check Out File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Item",
+          "x-display-name": "Check Out File",
+          "x-is-trigger": false
+        },
+        "item_id": {
+          "description": "File to check out",
+          "title": "Item ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "item_id",
+            "placeholder": "Select a file...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "onedrive_item"
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "OneDriveCheckOutConfig",
+      "type": "object"
+    },
+    "OneDriveCopyConfig": {
+      "description": "Copy a file or folder",
+      "properties": {
+        "operation": {
+          "const": "copy_item",
+          "default": "copy_item",
+          "title": "Copy Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Item",
+          "x-display-name": "Copy Item",
+          "x-is-trigger": false
+        },
+        "item_id": {
+          "description": "File or folder to copy",
+          "title": "Item ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste item ID",
+            "field_name": "item_id",
+            "placeholder": "Select an item...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "onedrive_item"
+        },
+        "destination_folder_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Destination folder",
+          "title": "Destination Folder ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste folder ID",
+            "field_name": "destination_folder_id",
+            "placeholder": "Select destination...",
+            "searchable": true
+          },
+          "x-resource-type": "onedrive_folder"
+        },
+        "new_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Name for the copy (leave empty to keep original name)",
+          "title": "New Name"
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "OneDriveCopyConfig",
+      "type": "object"
+    },
+    "OneDriveCreateFolderConfig": {
+      "description": "Create a new folder",
+      "properties": {
+        "operation": {
+          "const": "create_folder",
+          "default": "create_folder",
+          "title": "Create Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Folder",
+          "x-creates-resource": true,
+          "x-display-name": "Create Folder",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "onedrive_folder"
+        },
+        "parent_folder_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Parent folder (leave empty for root)",
+          "title": "Parent Folder ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste folder ID",
+            "field_name": "parent_folder_id",
+            "placeholder": "Select a folder...",
+            "searchable": true
+          },
+          "x-resource-type": "onedrive_folder"
+        },
+        "parent_folder_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to parent folder",
+          "title": "Parent Folder Path",
+          "ui:placeholder": "/Documents"
+        },
+        "folder_name": {
+          "description": "Name for the new folder",
+          "title": "Folder Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folder_name"
+      ],
+      "title": "OneDriveCreateFolderConfig",
+      "type": "object"
+    },
+    "OneDriveCreateLinkConfig": {
+      "description": "Create a sharing link for an item",
+      "properties": {
+        "operation": {
+          "const": "create_sharing_link",
+          "default": "create_sharing_link",
+          "title": "Create Sharing Link",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File",
+          "x-display-name": "Create Sharing Link",
+          "x-is-trigger": false
+        },
+        "item_id": {
+          "description": "File or folder to share",
+          "title": "Item ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste item ID",
+            "field_name": "item_id",
+            "placeholder": "Select an item...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "onedrive_item"
+        },
+        "link_type": {
+          "default": "view",
+          "description": "Type of sharing link",
+          "enum": [
+            "view",
+            "edit",
+            "embed"
+          ],
+          "enumNames": [
+            "View Only",
+            "Can Edit",
+            "Embed"
+          ],
+          "title": "Link Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "scope": {
+          "default": "anonymous",
+          "description": "Who can access the link",
+          "enum": [
+            "anonymous",
+            "organization"
+          ],
+          "enumNames": [
+            "Anyone with Link",
+            "People in Organization"
+          ],
+          "title": "Scope",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "OneDriveCreateLinkConfig",
+      "type": "object"
+    },
+    "OneDriveDeleteConfig": {
+      "description": "Delete a file or folder (moves to recycle bin)",
+      "properties": {
+        "operation": {
+          "const": "delete_item",
+          "default": "delete_item",
+          "title": "Delete Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Item",
+          "x-display-name": "Delete Item",
+          "x-is-trigger": false
+        },
+        "item_id": {
+          "description": "File or folder to delete",
+          "title": "Item ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste item ID",
+            "field_name": "item_id",
+            "placeholder": "Select an item...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "onedrive_item"
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "OneDriveDeleteConfig",
+      "type": "object"
+    },
+    "OneDriveDeletePermissionConfig": {
+      "description": "Remove a permission",
+      "properties": {
+        "operation": {
+          "const": "delete_item_permission",
+          "default": "delete_item_permission",
+          "title": "Delete Item Permission",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Item",
+          "x-display-name": "Delete Item Permission",
+          "x-is-trigger": false
+        },
+        "item_id": {
+          "description": "File or folder",
+          "title": "Item ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste item ID",
+            "field_name": "item_id",
+            "placeholder": "Select an item...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "onedrive_item"
+        },
+        "permission_id": {
+          "description": "ID of the permission to remove",
+          "title": "Permission ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "item_id",
+        "permission_id"
+      ],
+      "title": "OneDriveDeletePermissionConfig",
+      "type": "object"
+    },
+    "OneDriveDeltaConfig": {
+      "description": "Track changes in OneDrive (delta query)",
+      "properties": {
+        "operation": {
+          "const": "track_drive_changes",
+          "default": "track_drive_changes",
+          "title": "Track Drive Changes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Drive",
+          "x-display-name": "Track Drive Changes",
+          "x-is-trigger": false
+        },
+        "folder_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Folder to track changes in (leave empty for root)",
+          "title": "Folder ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste folder ID",
+            "field_name": "folder_id",
+            "placeholder": "Select a folder...",
+            "searchable": true
+          },
+          "x-resource-type": "onedrive_folder"
+        },
+        "delta_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token from previous delta query (leave empty for initial sync)",
+          "title": "Delta Token"
+        }
+      },
+      "title": "OneDriveDeltaConfig",
+      "type": "object"
+    },
+    "OneDriveDiscardCheckoutConfig": {
+      "description": "Discard checkout (unlock without saving)",
+      "properties": {
+        "operation": {
+          "const": "discard_file_checkout",
+          "default": "discard_file_checkout",
+          "title": "Discard File Checkout",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Item",
+          "x-display-name": "Discard File Checkout",
+          "x-is-trigger": false
+        },
+        "item_id": {
+          "description": "File to discard checkout for",
+          "title": "Item ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "item_id",
+            "placeholder": "Select a file...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "onedrive_item"
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "OneDriveDiscardCheckoutConfig",
+      "type": "object"
+    },
+    "OneDriveDownloadConfig": {
+      "description": "Download file content",
+      "properties": {
+        "operation": {
+          "const": "download_item",
+          "default": "download_item",
+          "title": "Download Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Item",
+          "x-display-name": "Download Item",
+          "x-is-trigger": false
+        },
+        "item_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "File ID to download",
+          "title": "Item ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "item_id",
+            "placeholder": "Select a file...",
+            "searchable": true
+          },
+          "x-resource-type": "onedrive_item"
+        },
+        "item_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to file",
+          "title": "Item Path",
+          "ui:placeholder": "/Documents/report.pdf"
+        },
+        "format": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional format for conversion (e.g., pdf for Office files)",
+          "enum": [
+            "pdf",
+            "html",
+            "jpg",
+            "png"
+          ],
+          "title": "Download Format",
+          "x-enum-searchable": true
+        }
+      },
+      "title": "OneDriveDownloadConfig",
+      "type": "object"
+    },
+    "OneDriveFollowConfig": {
+      "description": "Follow an item for updates",
+      "properties": {
+        "operation": {
+          "const": "follow_item",
+          "default": "follow_item",
+          "title": "Follow Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Item",
+          "x-display-name": "Follow Item",
+          "x-is-trigger": false
+        },
+        "item_id": {
+          "description": "File or folder to follow",
+          "title": "Item ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste item ID",
+            "field_name": "item_id",
+            "placeholder": "Select an item...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "onedrive_item"
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "OneDriveFollowConfig",
+      "type": "object"
+    },
+    "OneDriveGetAnalyticsConfig": {
+      "description": "Get analytics for a file",
+      "properties": {
+        "operation": {
+          "const": "get_item_analytics",
+          "default": "get_item_analytics",
+          "title": "Get Item Analytics",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Item",
+          "x-display-name": "Get Item Analytics",
+          "x-is-trigger": false
+        },
+        "item_id": {
+          "description": "File to get analytics for",
+          "title": "Item ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "item_id",
+            "placeholder": "Select a file...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "onedrive_item"
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "OneDriveGetAnalyticsConfig",
+      "type": "object"
+    },
+    "OneDriveGetContentStreamConfig": {
+      "description": "Get download stream URL for a file",
+      "properties": {
+        "operation": {
+          "const": "get_item_download_stream",
+          "default": "get_item_download_stream",
+          "title": "Get Item Download Stream",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Item",
+          "x-display-name": "Get Item Download Stream",
+          "x-is-trigger": false
+        },
+        "item_id": {
+          "description": "File to get download URL for",
+          "title": "Item ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "item_id",
+            "placeholder": "Select a file...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "onedrive_item"
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "OneDriveGetContentStreamConfig",
+      "type": "object"
+    },
+    "OneDriveGetDriveConfig": {
+      "description": "Get drive information and quota",
+      "properties": {
+        "operation": {
+          "const": "get_drive_info",
+          "default": "get_drive_info",
+          "title": "Get Drive Info",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Drive",
+          "x-display-name": "Get Drive Info",
+          "x-is-trigger": false
+        }
+      },
+      "title": "OneDriveGetDriveConfig",
+      "type": "object"
+    },
+    "OneDriveGetItemConfig": {
+      "description": "Get metadata for a file or folder",
+      "properties": {
+        "operation": {
+          "const": "get_item_metadata",
+          "default": "get_item_metadata",
+          "title": "Get Item Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Item",
+          "x-display-name": "Get Item Metadata",
+          "x-is-trigger": false
+        },
+        "item_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "File or folder ID (leave empty to use path)",
+          "title": "Item ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste item ID",
+            "field_name": "item_id",
+            "placeholder": "Select an item...",
+            "searchable": true
+          },
+          "x-resource-type": "onedrive_item"
+        },
+        "item_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to file/folder (e.g., /Documents/report.pdf). Used if item_id is empty.",
+          "title": "Item Path",
+          "ui:placeholder": "/Documents/report.pdf"
+        }
+      },
+      "title": "OneDriveGetItemConfig",
+      "type": "object"
+    },
+    "OneDriveGetSpecialFolderConfig": {
+      "description": "Access special folders (Documents, Photos, etc.)",
+      "properties": {
+        "operation": {
+          "const": "get_special_folder",
+          "default": "get_special_folder",
+          "title": "Get Special Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Folder",
+          "x-display-name": "Get Special Folder",
+          "x-is-trigger": false
+        },
+        "folder_name": {
+          "description": "Name of the special folder to access",
+          "enum": [
+            "documents",
+            "photos",
+            "cameraroll",
+            "approot",
+            "music"
+          ],
+          "enumNames": [
+            "Documents",
+            "Photos",
+            "Camera Roll",
+            "App Root",
+            "Music"
+          ],
+          "title": "Special Folder",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "folder_name"
+      ],
+      "title": "OneDriveGetSpecialFolderConfig",
+      "type": "object"
+    },
+    "OneDriveGetThumbnailConfig": {
+      "description": "Get a specific thumbnail size",
+      "properties": {
+        "operation": {
+          "const": "get_item_thumbnail",
+          "default": "get_item_thumbnail",
+          "title": "Get Item Thumbnail",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Item",
+          "x-display-name": "Get Item Thumbnail",
+          "x-is-trigger": false
+        },
+        "item_id": {
+          "description": "File to get thumbnail for",
+          "title": "Item ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "item_id",
+            "placeholder": "Select a file...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "onedrive_item"
+        },
+        "size": {
+          "default": "medium",
+          "description": "Size of thumbnail to retrieve",
+          "enum": [
+            "small",
+            "medium",
+            "large"
+          ],
+          "enumNames": [
+            "Small (96x96)",
+            "Medium (176x176)",
+            "Large (800x800)"
+          ],
+          "title": "Thumbnail Size",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "OneDriveGetThumbnailConfig",
+      "type": "object"
+    },
+    "OneDriveGetVersionConfig": {
+      "description": "Get a specific version of a file",
+      "properties": {
+        "operation": {
+          "const": "get_file_version",
+          "default": "get_file_version",
+          "title": "Get File Version",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File",
+          "x-display-name": "Get File Version",
+          "x-is-trigger": false
+        },
+        "item_id": {
+          "description": "File ID",
+          "title": "Item ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "item_id",
+            "placeholder": "Select a file...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "onedrive_item"
+        },
+        "version_id": {
+          "description": "ID of the version to retrieve",
+          "title": "Version ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "item_id",
+        "version_id"
+      ],
+      "title": "OneDriveGetVersionConfig",
+      "type": "object"
+    },
+    "OneDriveListChildrenConfig": {
+      "description": "List contents of a folder",
+      "properties": {
+        "operation": {
+          "const": "list_folder_contents",
+          "default": "list_folder_contents",
+          "title": "List Folder Contents",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Folder",
+          "x-display-name": "List Folder Contents",
+          "x-is-trigger": false
+        },
+        "folder_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Folder ID (leave empty for root or to use path)",
+          "title": "Folder ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste folder ID",
+            "field_name": "folder_id",
+            "placeholder": "Select a folder...",
+            "searchable": true
+          },
+          "x-resource-type": "onedrive_folder"
+        },
+        "folder_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to folder (e.g., /Documents). Used if folder_id is empty.",
+          "title": "Folder Path",
+          "ui:placeholder": "/Documents"
+        },
+        "top": {
+          "default": 100,
+          "description": "Maximum number of items to return (1-999)",
+          "maximum": 999,
+          "minimum": 1,
+          "title": "Max Results",
+          "type": "integer"
+        }
+      },
+      "title": "OneDriveListChildrenConfig",
+      "type": "object"
+    },
+    "OneDriveListPermissionsConfig": {
+      "description": "List permissions for an item",
+      "properties": {
+        "operation": {
+          "const": "list_item_permissions",
+          "default": "list_item_permissions",
+          "title": "List Item Permissions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Item",
+          "x-display-name": "List Item Permissions",
+          "x-is-trigger": false
+        },
+        "item_id": {
+          "description": "File or folder to list permissions for",
+          "title": "Item ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste item ID",
+            "field_name": "item_id",
+            "placeholder": "Select an item...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "onedrive_item"
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "OneDriveListPermissionsConfig",
+      "type": "object"
+    },
+    "OneDriveListRecentConfig": {
+      "description": "List recently accessed items",
+      "properties": {
+        "operation": {
+          "const": "list_recent_items",
+          "default": "list_recent_items",
+          "title": "List Recent Items",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Drive",
+          "x-display-name": "List Recent Items",
+          "x-is-trigger": false
+        },
+        "top": {
+          "default": 20,
+          "description": "Maximum number of items to return",
+          "maximum": 999,
+          "minimum": 1,
+          "title": "Max Results",
+          "type": "integer"
+        }
+      },
+      "title": "OneDriveListRecentConfig",
+      "type": "object"
+    },
+    "OneDriveListSharedWithMeConfig": {
+      "description": "List items shared with the user",
+      "properties": {
+        "operation": {
+          "const": "list_shared_items",
+          "default": "list_shared_items",
+          "title": "List Shared Items",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Drive",
+          "x-display-name": "List Shared Items",
+          "x-is-trigger": false
+        },
+        "top": {
+          "default": 50,
+          "description": "Maximum number of items to return",
+          "maximum": 999,
+          "minimum": 1,
+          "title": "Max Results",
+          "type": "integer"
+        }
+      },
+      "title": "OneDriveListSharedWithMeConfig",
+      "type": "object"
+    },
+    "OneDriveListThumbnailsConfig": {
+      "description": "Get thumbnail images for a file",
+      "properties": {
+        "operation": {
+          "const": "list_item_thumbnails",
+          "default": "list_item_thumbnails",
+          "title": "List Item Thumbnails",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File",
+          "x-display-name": "List Item Thumbnails",
+          "x-is-trigger": false
+        },
+        "item_id": {
+          "description": "File to get thumbnails for",
+          "title": "Item ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "item_id",
+            "placeholder": "Select a file...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "onedrive_item"
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "OneDriveListThumbnailsConfig",
+      "type": "object"
+    },
+    "OneDriveListVersionsConfig": {
+      "description": "List all versions of a file",
+      "properties": {
+        "operation": {
+          "const": "list_file_versions",
+          "default": "list_file_versions",
+          "title": "List File Versions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File",
+          "x-display-name": "List File Versions",
+          "x-is-trigger": false
+        },
+        "item_id": {
+          "description": "File to get versions for",
+          "title": "Item ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "item_id",
+            "placeholder": "Select a file...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "onedrive_item"
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "OneDriveListVersionsConfig",
+      "type": "object"
+    },
+    "OneDriveMoveConfig": {
+      "description": "Move a file or folder",
+      "properties": {
+        "operation": {
+          "const": "move_item",
+          "default": "move_item",
+          "title": "Move Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Item",
+          "x-display-name": "Move Item",
+          "x-is-trigger": false
+        },
+        "item_id": {
+          "description": "File or folder to move",
+          "title": "Item ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste item ID",
+            "field_name": "item_id",
+            "placeholder": "Select an item...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "onedrive_item"
+        },
+        "destination_folder_id": {
+          "description": "Destination folder",
+          "title": "Destination Folder ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste folder ID",
+            "field_name": "destination_folder_id",
+            "placeholder": "Select destination...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "onedrive_folder"
+        }
+      },
+      "required": [
+        "item_id",
+        "destination_folder_id"
+      ],
+      "title": "OneDriveMoveConfig",
+      "type": "object"
+    },
+    "OneDriveOAuthCredential": {
+      "description": "Microsoft OAuth credential for OneDrive (via Graph API).\n\nUses centralized Microsoft OAuth - credentials are automatically created\nwhen users connect their Microsoft account through the OAuth flow.\n\nScopes required:\n- Files.ReadWrite.All: Full OneDrive file access\n- User.Read: Get user profile info",
+      "properties": {
+        "credential_type": {
+          "const": "microsoft_onedrive_oauth",
+          "default": "microsoft_onedrive_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "OAuth access token",
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "description": "OAuth refresh token for token renewal",
+          "title": "Refresh Token",
+          "type": "string"
+        },
+        "expires_at": {
+          "description": "Token expiry timestamp (ISO 8601)",
+          "title": "Expires At",
+          "type": "string"
+        },
+        "email": {
+          "description": "Microsoft account email address",
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "email"
+      ],
+      "title": "OneDriveOAuthCredential",
+      "type": "object",
+      "x-credential-instructions": "Connect your Microsoft account to access OneDrive files. Uses Microsoft Graph API with OAuth 2.0.",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://portal.azure.com/#blade/Microsoft_AAD_RegisteredApps/ApplicationsListBlade",
+      "x-oauth-provider": "microsoft",
+      "x-oauth-scopes": [
+        "https://graph.microsoft.com/Files.ReadWrite.All",
+        "https://graph.microsoft.com/User.Read"
+      ]
+    },
+    "OneDrivePermanentlyDeleteConfig": {
+      "description": "Permanently delete an item (cannot be recovered)",
+      "properties": {
+        "operation": {
+          "const": "permanently_delete_item",
+          "default": "permanently_delete_item",
+          "title": "Permanently Delete Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Item",
+          "x-display-name": "Permanently Delete Item",
+          "x-is-trigger": false
+        },
+        "item_id": {
+          "description": "Item to permanently delete",
+          "title": "Item ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "OneDrivePermanentlyDeleteConfig",
+      "type": "object"
+    },
+    "OneDrivePreviewConfig": {
+      "description": "Get a preview URL for a file",
+      "properties": {
+        "operation": {
+          "const": "get_item_preview_url",
+          "default": "get_item_preview_url",
+          "title": "Get Item Preview Url",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Item",
+          "x-display-name": "Get Item Preview Url",
+          "x-is-trigger": false
+        },
+        "item_id": {
+          "description": "File to preview",
+          "title": "Item ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "item_id",
+            "placeholder": "Select a file...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "onedrive_item"
+        },
+        "viewer": {
+          "default": "office",
+          "description": "Type of preview viewer",
+          "enum": [
+            "office",
+            "onedrive"
+          ],
+          "title": "Viewer Type",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "OneDrivePreviewConfig",
+      "type": "object"
+    },
+    "OneDriveRestoreConfig": {
+      "description": "Restore a deleted item from recycle bin",
+      "properties": {
+        "operation": {
+          "const": "restore_item_from_recycle_bin",
+          "default": "restore_item_from_recycle_bin",
+          "title": "Restore Item from Recycle Bin",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Item",
+          "x-display-name": "Restore Item from Recycle Bin",
+          "x-is-trigger": false
+        },
+        "item_id": {
+          "description": "ID of deleted item to restore",
+          "title": "Item ID",
+          "type": "string"
+        },
+        "parent_folder_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Where to restore the item (leave empty for original location)",
+          "title": "Parent Folder ID"
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "OneDriveRestoreConfig",
+      "type": "object"
+    },
+    "OneDriveRestoreVersionConfig": {
+      "description": "Restore a file to a previous version",
+      "properties": {
+        "operation": {
+          "const": "restore_file_version",
+          "default": "restore_file_version",
+          "title": "Restore File Version",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File",
+          "x-display-name": "Restore File Version",
+          "x-is-trigger": false
+        },
+        "item_id": {
+          "description": "File to restore",
+          "title": "Item ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "item_id",
+            "placeholder": "Select a file...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "onedrive_item"
+        },
+        "version_id": {
+          "description": "Version to restore to",
+          "title": "Version ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "item_id",
+        "version_id"
+      ],
+      "title": "OneDriveRestoreVersionConfig",
+      "type": "object"
+    },
+    "OneDriveSearchConfig": {
+      "description": "Search for items in OneDrive",
+      "properties": {
+        "operation": {
+          "const": "search_drive_items",
+          "default": "search_drive_items",
+          "title": "Search Drive Items",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Drive",
+          "x-display-name": "Search Drive Items",
+          "x-is-trigger": false
+        },
+        "query": {
+          "description": "Text to search for",
+          "title": "Search Query",
+          "type": "string",
+          "ui:placeholder": "quarterly report"
+        },
+        "top": {
+          "default": 50,
+          "description": "Maximum number of results (1-999)",
+          "maximum": 999,
+          "minimum": 1,
+          "title": "Max Results",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "OneDriveSearchConfig",
+      "type": "object"
+    },
+    "OneDriveSendInviteConfig": {
+      "description": "Send a sharing invitation",
+      "properties": {
+        "operation": {
+          "const": "send_sharing_invitation",
+          "default": "send_sharing_invitation",
+          "title": "Send Sharing Invitation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File",
+          "x-display-name": "Send Sharing Invitation",
+          "x-is-trigger": false
+        },
+        "item_id": {
+          "description": "File or folder to share",
+          "title": "Item ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste item ID",
+            "field_name": "item_id",
+            "placeholder": "Select an item...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "onedrive_item"
+        },
+        "recipient_email": {
+          "description": "Email address to send invitation to",
+          "title": "Recipient Email",
+          "type": "string"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional message to include in the invitation",
+          "title": "Message"
+        },
+        "require_sign_in": {
+          "default": true,
+          "description": "Recipient must sign in to access",
+          "title": "Require Sign In",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "item_id",
+        "recipient_email"
+      ],
+      "title": "OneDriveSendInviteConfig",
+      "type": "object"
+    },
+    "OneDriveUnfollowConfig": {
+      "description": "Unfollow an item",
+      "properties": {
+        "operation": {
+          "const": "unfollow_item",
+          "default": "unfollow_item",
+          "title": "Unfollow Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Item",
+          "x-display-name": "Unfollow Item",
+          "x-is-trigger": false
+        },
+        "item_id": {
+          "description": "File or folder to unfollow",
+          "title": "Item ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste item ID",
+            "field_name": "item_id",
+            "placeholder": "Select an item...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "onedrive_item"
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "OneDriveUnfollowConfig",
+      "type": "object"
+    },
+    "OneDriveUpdateItemConfig": {
+      "description": "Update file or folder metadata",
+      "properties": {
+        "operation": {
+          "const": "update_item_metadata",
+          "default": "update_item_metadata",
+          "title": "Update Item Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Item",
+          "x-display-name": "Update Item Metadata",
+          "x-is-trigger": false
+        },
+        "item_id": {
+          "description": "File or folder ID to update",
+          "title": "Item ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste item ID",
+            "field_name": "item_id",
+            "placeholder": "Select an item...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "onedrive_item"
+        },
+        "new_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New name for the item (leave empty to keep current)",
+          "title": "New Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Item description",
+          "title": "Description"
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "OneDriveUpdateItemConfig",
+      "type": "object"
+    },
+    "OneDriveUpdatePermissionConfig": {
+      "description": "Update an existing permission",
+      "properties": {
+        "operation": {
+          "const": "update_item_permission",
+          "default": "update_item_permission",
+          "title": "Update Item Permission",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Item",
+          "x-display-name": "Update Item Permission",
+          "x-is-trigger": false
+        },
+        "item_id": {
+          "description": "File or folder",
+          "title": "Item ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste item ID",
+            "field_name": "item_id",
+            "placeholder": "Select an item...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "onedrive_item"
+        },
+        "permission_id": {
+          "description": "ID of the permission to update",
+          "title": "Permission ID",
+          "type": "string"
+        },
+        "new_role": {
+          "description": "New permission level",
+          "enum": [
+            "read",
+            "write",
+            "owner"
+          ],
+          "enumNames": [
+            "Can View",
+            "Can Edit",
+            "Owner"
+          ],
+          "title": "New Role",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "item_id",
+        "permission_id",
+        "new_role"
+      ],
+      "title": "OneDriveUpdatePermissionConfig",
+      "type": "object"
+    },
+    "OneDriveUploadConfig": {
+      "description": "Upload a file (for files up to 4MB)",
+      "properties": {
+        "operation": {
+          "const": "upload_file",
+          "default": "upload_file",
+          "title": "Upload File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File",
+          "x-display-name": "Upload File",
+          "x-is-trigger": false
+        },
+        "parent_folder_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Folder to upload to (leave empty for root or to use path)",
+          "title": "Parent Folder ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste folder ID",
+            "field_name": "parent_folder_id",
+            "placeholder": "Select a folder...",
+            "searchable": true
+          },
+          "x-resource-type": "onedrive_folder"
+        },
+        "parent_folder_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to parent folder (e.g., /Documents). Used if parent_folder_id is empty.",
+          "title": "Parent Folder Path",
+          "ui:placeholder": "/Documents"
+        },
+        "file_name": {
+          "description": "Name for the uploaded file",
+          "title": "File Name",
+          "type": "string",
+          "ui:placeholder": "document.pdf"
+        },
+        "file_content": {
+          "description": "The file content to upload \u2014 plain text, or for binary files paste a URL, reference an upstream file (e.g. {{http-1.response.url}}), a data: URI, or base64.",
+          "title": "File Content",
+          "type": "string",
+          "ui:widget": "code_editor"
+        },
+        "content_type": {
+          "default": "application/octet-stream",
+          "description": "MIME type of the file",
+          "enum": [
+            "application/pdf",
+            "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+            "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+            "application/json",
+            "text/plain",
+            "text/csv",
+            "image/png",
+            "image/jpeg",
+            "application/octet-stream"
+          ],
+          "title": "Content Type",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "file_name",
+        "file_content"
+      ],
+      "title": "OneDriveUploadConfig",
+      "type": "object"
+    },
+    "OneDriveUploadSessionConfig": {
+      "description": "Create upload session for large files (>4MB)",
+      "properties": {
+        "operation": {
+          "const": "create_large_file_upload_session",
+          "default": "create_large_file_upload_session",
+          "title": "Create Large File Upload Session",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "File",
+          "x-display-name": "Create Large File Upload Session",
+          "x-is-trigger": false
+        },
+        "parent_folder_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Folder to upload to",
+          "title": "Parent Folder ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste folder ID",
+            "field_name": "parent_folder_id",
+            "placeholder": "Select a folder...",
+            "searchable": true
+          },
+          "x-resource-type": "onedrive_folder"
+        },
+        "parent_folder_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to parent folder",
+          "title": "Parent Folder Path",
+          "ui:placeholder": "/Documents"
+        },
+        "file_name": {
+          "description": "Name for the uploaded file",
+          "title": "File Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_name"
+      ],
+      "title": "OneDriveUploadSessionConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for OneDrive node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "check_in_file": "#/$defs/OneDriveCheckInConfig",
+          "check_out_file": "#/$defs/OneDriveCheckOutConfig",
+          "copy_item": "#/$defs/OneDriveCopyConfig",
+          "create_folder": "#/$defs/OneDriveCreateFolderConfig",
+          "create_large_file_upload_session": "#/$defs/OneDriveUploadSessionConfig",
+          "create_sharing_link": "#/$defs/OneDriveCreateLinkConfig",
+          "delete_item": "#/$defs/OneDriveDeleteConfig",
+          "delete_item_permission": "#/$defs/OneDriveDeletePermissionConfig",
+          "discard_file_checkout": "#/$defs/OneDriveDiscardCheckoutConfig",
+          "download_item": "#/$defs/OneDriveDownloadConfig",
+          "follow_item": "#/$defs/OneDriveFollowConfig",
+          "get_drive_info": "#/$defs/OneDriveGetDriveConfig",
+          "get_file_version": "#/$defs/OneDriveGetVersionConfig",
+          "get_item_analytics": "#/$defs/OneDriveGetAnalyticsConfig",
+          "get_item_download_stream": "#/$defs/OneDriveGetContentStreamConfig",
+          "get_item_metadata": "#/$defs/OneDriveGetItemConfig",
+          "get_item_preview_url": "#/$defs/OneDrivePreviewConfig",
+          "get_item_thumbnail": "#/$defs/OneDriveGetThumbnailConfig",
+          "get_special_folder": "#/$defs/OneDriveGetSpecialFolderConfig",
+          "grant_item_permission": "#/$defs/OneDriveAddPermissionConfig",
+          "list_file_versions": "#/$defs/OneDriveListVersionsConfig",
+          "list_folder_contents": "#/$defs/OneDriveListChildrenConfig",
+          "list_item_permissions": "#/$defs/OneDriveListPermissionsConfig",
+          "list_item_thumbnails": "#/$defs/OneDriveListThumbnailsConfig",
+          "list_recent_items": "#/$defs/OneDriveListRecentConfig",
+          "list_shared_items": "#/$defs/OneDriveListSharedWithMeConfig",
+          "move_item": "#/$defs/OneDriveMoveConfig",
+          "permanently_delete_item": "#/$defs/OneDrivePermanentlyDeleteConfig",
+          "restore_file_version": "#/$defs/OneDriveRestoreVersionConfig",
+          "restore_item_from_recycle_bin": "#/$defs/OneDriveRestoreConfig",
+          "search_drive_items": "#/$defs/OneDriveSearchConfig",
+          "send_sharing_invitation": "#/$defs/OneDriveSendInviteConfig",
+          "track_drive_changes": "#/$defs/OneDriveDeltaConfig",
+          "unfollow_item": "#/$defs/OneDriveUnfollowConfig",
+          "update_item_metadata": "#/$defs/OneDriveUpdateItemConfig",
+          "update_item_permission": "#/$defs/OneDriveUpdatePermissionConfig",
+          "upload_file": "#/$defs/OneDriveUploadConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/OneDriveGetItemConfig"
+        },
+        {
+          "$ref": "#/$defs/OneDriveListChildrenConfig"
+        },
+        {
+          "$ref": "#/$defs/OneDriveUploadConfig"
+        },
+        {
+          "$ref": "#/$defs/OneDriveUploadSessionConfig"
+        },
+        {
+          "$ref": "#/$defs/OneDriveDownloadConfig"
+        },
+        {
+          "$ref": "#/$defs/OneDriveUpdateItemConfig"
+        },
+        {
+          "$ref": "#/$defs/OneDriveCreateFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/OneDriveCopyConfig"
+        },
+        {
+          "$ref": "#/$defs/OneDriveMoveConfig"
+        },
+        {
+          "$ref": "#/$defs/OneDriveDeleteConfig"
+        },
+        {
+          "$ref": "#/$defs/OneDriveRestoreConfig"
+        },
+        {
+          "$ref": "#/$defs/OneDrivePermanentlyDeleteConfig"
+        },
+        {
+          "$ref": "#/$defs/OneDriveGetDriveConfig"
+        },
+        {
+          "$ref": "#/$defs/OneDriveSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/OneDriveDeltaConfig"
+        },
+        {
+          "$ref": "#/$defs/OneDriveCreateLinkConfig"
+        },
+        {
+          "$ref": "#/$defs/OneDriveListPermissionsConfig"
+        },
+        {
+          "$ref": "#/$defs/OneDriveAddPermissionConfig"
+        },
+        {
+          "$ref": "#/$defs/OneDriveUpdatePermissionConfig"
+        },
+        {
+          "$ref": "#/$defs/OneDriveDeletePermissionConfig"
+        },
+        {
+          "$ref": "#/$defs/OneDriveSendInviteConfig"
+        },
+        {
+          "$ref": "#/$defs/OneDriveListVersionsConfig"
+        },
+        {
+          "$ref": "#/$defs/OneDriveGetVersionConfig"
+        },
+        {
+          "$ref": "#/$defs/OneDriveRestoreVersionConfig"
+        },
+        {
+          "$ref": "#/$defs/OneDriveListThumbnailsConfig"
+        },
+        {
+          "$ref": "#/$defs/OneDriveGetThumbnailConfig"
+        },
+        {
+          "$ref": "#/$defs/OneDrivePreviewConfig"
+        },
+        {
+          "$ref": "#/$defs/OneDriveGetContentStreamConfig"
+        },
+        {
+          "$ref": "#/$defs/OneDriveCheckOutConfig"
+        },
+        {
+          "$ref": "#/$defs/OneDriveCheckInConfig"
+        },
+        {
+          "$ref": "#/$defs/OneDriveDiscardCheckoutConfig"
+        },
+        {
+          "$ref": "#/$defs/OneDriveGetAnalyticsConfig"
+        },
+        {
+          "$ref": "#/$defs/OneDriveGetSpecialFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/OneDriveListSharedWithMeConfig"
+        },
+        {
+          "$ref": "#/$defs/OneDriveListRecentConfig"
+        },
+        {
+          "$ref": "#/$defs/OneDriveFollowConfig"
+        },
+        {
+          "$ref": "#/$defs/OneDriveUnfollowConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/OneDriveOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Onedrive Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Upload the monthly report PDF to the Finance folder",
+    "Search OneDrive for all files modified in the last 7 days",
+    "Copy the template.xlsx file to Shared Documents with new name",
+    "Move archived invoices to the Archive folder and clean up",
+    "Create a sharing link to the Q4 budget spreadsheet for the team",
+    "Restore the accidentally deleted presentation from version history",
+    "List all items in the root folder and sort by modification date"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

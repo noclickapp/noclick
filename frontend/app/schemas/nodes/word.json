@@ -1,0 +1,1385 @@
+{
+  "$defs": {
+    "WordAddPermissionConfig": {
+      "description": "Share a Word document with a user or group",
+      "properties": {
+        "operation": {
+          "const": "share_document_with_user",
+          "default": "share_document_with_user",
+          "title": "Share Document with User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document Permission",
+          "x-display-name": "Share Document with User",
+          "x-is-trigger": false
+        },
+        "document_id": {
+          "description": "Document to share",
+          "title": "Document ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste document ID",
+            "field_name": "document_id",
+            "placeholder": "Select a document...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "word_document"
+        },
+        "recipient_email": {
+          "description": "Email address of the person to share with",
+          "title": "Recipient Email",
+          "type": "string",
+          "ui:placeholder": "user@example.com"
+        },
+        "role": {
+          "default": "read",
+          "description": "Access level to grant",
+          "enum": [
+            "read",
+            "write"
+          ],
+          "enumNames": [
+            "Read (View Only)",
+            "Write (Can Edit)"
+          ],
+          "title": "Permission Role",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "send_notification": {
+          "default": true,
+          "description": "Send email notification to recipient",
+          "title": "Send Email Notification",
+          "type": "boolean"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional message to include in notification email",
+          "title": "Message",
+          "ui:rows": 3,
+          "ui:widget": "code_editor"
+        }
+      },
+      "required": [
+        "document_id",
+        "recipient_email"
+      ],
+      "title": "WordAddPermissionConfig",
+      "type": "object"
+    },
+    "WordConvertToHTMLConfig": {
+      "description": "Convert Word document to HTML",
+      "properties": {
+        "operation": {
+          "const": "convert_document_to_html",
+          "default": "convert_document_to_html",
+          "title": "Convert Document to Html",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document",
+          "x-display-name": "Convert Document to Html",
+          "x-is-trigger": false
+        },
+        "document_id": {
+          "description": "Word document to convert",
+          "title": "Document ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste document ID",
+            "field_name": "document_id",
+            "placeholder": "Select a document...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "word_document"
+        },
+        "return_format": {
+          "default": "content",
+          "description": "How to return the HTML",
+          "enum": [
+            "content",
+            "download_url"
+          ],
+          "enumNames": [
+            "HTML Content",
+            "Download URL"
+          ],
+          "title": "Return Format",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "title": "WordConvertToHTMLConfig",
+      "type": "object"
+    },
+    "WordConvertToPDFConfig": {
+      "description": "Convert Word document to PDF",
+      "properties": {
+        "operation": {
+          "const": "convert_document_to_pdf",
+          "default": "convert_document_to_pdf",
+          "title": "Convert Document to Pdf",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document",
+          "x-display-name": "Convert Document to Pdf",
+          "x-is-trigger": false
+        },
+        "document_id": {
+          "description": "Word document to convert",
+          "title": "Document ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste document ID",
+            "field_name": "document_id",
+            "placeholder": "Select a document...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "word_document"
+        },
+        "return_format": {
+          "default": "base64",
+          "description": "How to return the PDF",
+          "enum": [
+            "base64",
+            "download_url"
+          ],
+          "enumNames": [
+            "Base64 Encoded PDF",
+            "Download URL"
+          ],
+          "title": "Return Format",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "title": "WordConvertToPDFConfig",
+      "type": "object"
+    },
+    "WordCopyDocumentConfig": {
+      "description": "Copy a Word document",
+      "properties": {
+        "operation": {
+          "const": "copy_word_document",
+          "default": "copy_word_document",
+          "title": "Copy Word Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document",
+          "x-display-name": "Copy Word Document",
+          "x-is-trigger": false
+        },
+        "document_id": {
+          "description": "Document to copy",
+          "title": "Document ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste document ID",
+            "field_name": "document_id",
+            "placeholder": "Select a document...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "word_document"
+        },
+        "destination_folder_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Folder to copy to (leave empty for same folder)",
+          "title": "Destination Folder ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste folder ID",
+            "field_name": "destination_folder_id",
+            "placeholder": "Select a folder...",
+            "searchable": true
+          },
+          "x-resource-type": "word_folder"
+        },
+        "new_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Name for the copy (leave empty to use 'Copy of <original>')",
+          "title": "New Name",
+          "ui:placeholder": "Copy of Report.docx"
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "title": "WordCopyDocumentConfig",
+      "type": "object"
+    },
+    "WordCreateDocumentConfig": {
+      "description": "Create a new blank Word document",
+      "properties": {
+        "operation": {
+          "const": "create_blank_document",
+          "default": "create_blank_document",
+          "title": "Create Blank Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document",
+          "x-creates-resource": true,
+          "x-display-name": "Create Blank Document",
+          "x-is-trigger": false,
+          "x-resource-id-path": "id",
+          "x-resource-type": "word_document"
+        },
+        "folder_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Folder to create document in (leave empty for root)",
+          "title": "Folder ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste folder ID",
+            "field_name": "folder_id",
+            "placeholder": "Select a folder...",
+            "searchable": true
+          },
+          "x-resource-type": "word_folder"
+        },
+        "folder_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to folder (e.g., /Documents). Used if folder_id is empty.",
+          "title": "Folder Path",
+          "ui:placeholder": "/Documents"
+        },
+        "document_name": {
+          "description": "Name for the new document (e.g., 'Report.docx')",
+          "title": "Document Name",
+          "type": "string",
+          "ui:placeholder": "Report.docx"
+        },
+        "initial_content": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional initial text content for the document",
+          "title": "Initial Content",
+          "ui:widget": "code_editor"
+        }
+      },
+      "required": [
+        "document_name"
+      ],
+      "title": "WordCreateDocumentConfig",
+      "type": "object"
+    },
+    "WordCreateSharingLinkConfig": {
+      "description": "Create a sharing link for a Word document",
+      "properties": {
+        "operation": {
+          "const": "create_document_sharing_link",
+          "default": "create_document_sharing_link",
+          "title": "Create Document Sharing Link",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document Permission",
+          "x-display-name": "Create Document Sharing Link",
+          "x-is-trigger": false
+        },
+        "document_id": {
+          "description": "Document to share",
+          "title": "Document ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste document ID",
+            "field_name": "document_id",
+            "placeholder": "Select a document...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "word_document"
+        },
+        "link_type": {
+          "default": "view",
+          "description": "Type of sharing link to create",
+          "enum": [
+            "view",
+            "edit",
+            "embed"
+          ],
+          "enumNames": [
+            "View Only",
+            "Edit",
+            "Embed"
+          ],
+          "title": "Link Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "scope": {
+          "default": "anonymous",
+          "description": "Who can access the link",
+          "enum": [
+            "anonymous",
+            "organization"
+          ],
+          "enumNames": [
+            "Anyone with the link",
+            "People in my organization"
+          ],
+          "title": "Scope",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "expiration_datetime": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "When the link expires (ISO 8601 format, e.g., 2024-12-31T23:59:59Z)",
+          "title": "Expiration Date",
+          "ui:placeholder": "2024-12-31T23:59:59Z"
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "title": "WordCreateSharingLinkConfig",
+      "type": "object"
+    },
+    "WordDeleteDocumentConfig": {
+      "description": "Delete a Word document",
+      "properties": {
+        "operation": {
+          "const": "delete_word_document",
+          "default": "delete_word_document",
+          "title": "Delete Word Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document",
+          "x-display-name": "Delete Word Document",
+          "x-is-trigger": false
+        },
+        "document_id": {
+          "description": "Document to delete",
+          "title": "Document ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste document ID",
+            "field_name": "document_id",
+            "placeholder": "Select a document...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "word_document"
+        },
+        "permanent": {
+          "default": false,
+          "description": "If true, permanently delete (cannot be recovered). If false, move to recycle bin.",
+          "title": "Permanent Delete",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "title": "WordDeleteDocumentConfig",
+      "type": "object"
+    },
+    "WordDownloadDocumentConfig": {
+      "description": "Download Word document content",
+      "properties": {
+        "operation": {
+          "const": "download_document_content",
+          "default": "download_document_content",
+          "title": "Download Document Content",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document",
+          "x-display-name": "Download Document Content",
+          "x-is-trigger": false
+        },
+        "document_id": {
+          "description": "Document to download",
+          "title": "Document ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste document ID",
+            "field_name": "document_id",
+            "placeholder": "Select a document...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "word_document"
+        },
+        "return_format": {
+          "default": "base64",
+          "description": "How to return the content",
+          "enum": [
+            "base64",
+            "download_url"
+          ],
+          "enumNames": [
+            "Base64 Encoded Content",
+            "Download URL"
+          ],
+          "title": "Return Format",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "title": "WordDownloadDocumentConfig",
+      "type": "object"
+    },
+    "WordGetDocumentConfig": {
+      "description": "Get Word document metadata",
+      "properties": {
+        "operation": {
+          "const": "fetch_document_metadata",
+          "default": "fetch_document_metadata",
+          "title": "Fetch Document Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document",
+          "x-display-name": "Fetch Document Metadata",
+          "x-is-trigger": false
+        },
+        "document_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Word document ID (leave empty to use path)",
+          "title": "Document ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste document ID",
+            "field_name": "document_id",
+            "placeholder": "Select a document...",
+            "searchable": true
+          },
+          "x-resource-type": "word_document"
+        },
+        "document_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to document (e.g., /Documents/report.docx). Used if document_id is empty.",
+          "title": "Document Path",
+          "ui:placeholder": "/Documents/report.docx"
+        }
+      },
+      "title": "WordGetDocumentConfig",
+      "type": "object"
+    },
+    "WordGetPreviewLinkConfig": {
+      "description": "Get an embeddable preview link for a Word document",
+      "properties": {
+        "operation": {
+          "const": "fetch_document_preview_link",
+          "default": "fetch_document_preview_link",
+          "title": "Fetch Document Preview Link",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document",
+          "x-display-name": "Fetch Document Preview Link",
+          "x-is-trigger": false
+        },
+        "document_id": {
+          "description": "Document to preview",
+          "title": "Document ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste document ID",
+            "field_name": "document_id",
+            "placeholder": "Select a document...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "word_document"
+        },
+        "allow_edit": {
+          "default": false,
+          "description": "If true, preview link allows editing (requires write permission)",
+          "title": "Allow Editing",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "title": "WordGetPreviewLinkConfig",
+      "type": "object"
+    },
+    "WordGetThumbnailConfig": {
+      "description": "Get a thumbnail image of a Word document",
+      "properties": {
+        "operation": {
+          "const": "fetch_document_thumbnail",
+          "default": "fetch_document_thumbnail",
+          "title": "Fetch Document Thumbnail",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document",
+          "x-display-name": "Fetch Document Thumbnail",
+          "x-is-trigger": false
+        },
+        "document_id": {
+          "description": "Document to get thumbnail for",
+          "title": "Document ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste document ID",
+            "field_name": "document_id",
+            "placeholder": "Select a document...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "word_document"
+        },
+        "size": {
+          "default": "medium",
+          "description": "Size of the thumbnail",
+          "enum": [
+            "small",
+            "medium",
+            "large"
+          ],
+          "enumNames": [
+            "Small (96x96)",
+            "Medium (176x176)",
+            "Large (800x800)"
+          ],
+          "title": "Thumbnail Size",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "return_format": {
+          "default": "base64",
+          "description": "How to return the thumbnail",
+          "enum": [
+            "base64",
+            "url"
+          ],
+          "enumNames": [
+            "Base64 Encoded Image",
+            "Image URL"
+          ],
+          "title": "Return Format",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "title": "WordGetThumbnailConfig",
+      "type": "object"
+    },
+    "WordGetVersionConfig": {
+      "description": "Get details of a specific document version",
+      "properties": {
+        "operation": {
+          "const": "fetch_document_version",
+          "default": "fetch_document_version",
+          "title": "Fetch Document Version",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document Version",
+          "x-display-name": "Fetch Document Version",
+          "x-is-trigger": false
+        },
+        "document_id": {
+          "description": "Document ID",
+          "title": "Document ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste document ID",
+            "field_name": "document_id",
+            "placeholder": "Select a document...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "word_document"
+        },
+        "version_id": {
+          "description": "Version ID (from list_versions)",
+          "title": "Version ID",
+          "type": "string",
+          "ui:placeholder": "1.0"
+        },
+        "return_format": {
+          "default": "metadata",
+          "description": "What to return",
+          "enum": [
+            "metadata",
+            "content_base64",
+            "download_url"
+          ],
+          "enumNames": [
+            "Metadata Only",
+            "Base64 Content",
+            "Download URL"
+          ],
+          "title": "Return Format",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "document_id",
+        "version_id"
+      ],
+      "title": "WordGetVersionConfig",
+      "type": "object"
+    },
+    "WordListDocumentsConfig": {
+      "description": "List Word documents from OneDrive",
+      "properties": {
+        "operation": {
+          "const": "list_onedrive_documents",
+          "default": "list_onedrive_documents",
+          "title": "List Onedrive Documents",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document",
+          "x-display-name": "List Onedrive Documents",
+          "x-is-trigger": false
+        },
+        "folder_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Folder to search in (leave empty for entire OneDrive)",
+          "title": "Folder ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste folder ID",
+            "field_name": "folder_id",
+            "placeholder": "Select a folder...",
+            "searchable": true
+          },
+          "x-resource-type": "word_folder"
+        },
+        "folder_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to folder (e.g., /Documents). Used if folder_id is empty.",
+          "title": "Folder Path",
+          "ui:placeholder": "/Documents"
+        },
+        "search_query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter documents by name (e.g., 'report')",
+          "title": "Search Query",
+          "ui:placeholder": "report"
+        },
+        "max_results": {
+          "default": 100,
+          "description": "Maximum number of documents to return (1-999)",
+          "maximum": 999,
+          "minimum": 1,
+          "title": "Max Results",
+          "type": "integer"
+        }
+      },
+      "title": "WordListDocumentsConfig",
+      "type": "object"
+    },
+    "WordListPermissionsConfig": {
+      "description": "List permissions for a Word document",
+      "properties": {
+        "operation": {
+          "const": "list_document_permissions",
+          "default": "list_document_permissions",
+          "title": "List Document Permissions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document Permission",
+          "x-display-name": "List Document Permissions",
+          "x-is-trigger": false
+        },
+        "document_id": {
+          "description": "Document to list permissions for",
+          "title": "Document ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste document ID",
+            "field_name": "document_id",
+            "placeholder": "Select a document...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "word_document"
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "title": "WordListPermissionsConfig",
+      "type": "object"
+    },
+    "WordListVersionsConfig": {
+      "description": "List version history for a Word document",
+      "properties": {
+        "operation": {
+          "const": "list_document_version_history",
+          "default": "list_document_version_history",
+          "title": "List Document Version History",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document Version",
+          "x-display-name": "List Document Version History",
+          "x-is-trigger": false
+        },
+        "document_id": {
+          "description": "Document to list versions for",
+          "title": "Document ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste document ID",
+            "field_name": "document_id",
+            "placeholder": "Select a document...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "word_document"
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "title": "WordListVersionsConfig",
+      "type": "object"
+    },
+    "WordMoveDocumentConfig": {
+      "description": "Move a Word document to a different folder",
+      "properties": {
+        "operation": {
+          "const": "move_document_to_folder",
+          "default": "move_document_to_folder",
+          "title": "Move Document to Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document",
+          "x-display-name": "Move Document to Folder",
+          "x-is-trigger": false
+        },
+        "document_id": {
+          "description": "Document to move",
+          "title": "Document ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste document ID",
+            "field_name": "document_id",
+            "placeholder": "Select a document...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "word_document"
+        },
+        "destination_folder_id": {
+          "description": "Folder to move to",
+          "title": "Destination Folder ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste folder ID",
+            "field_name": "destination_folder_id",
+            "placeholder": "Select a folder...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "word_folder"
+        }
+      },
+      "required": [
+        "document_id",
+        "destination_folder_id"
+      ],
+      "title": "WordMoveDocumentConfig",
+      "type": "object"
+    },
+    "WordOAuthCredential": {
+      "description": "Microsoft OAuth credential for Word (via Graph API).\n\nUses centralized Microsoft OAuth - credentials are automatically created\nwhen users connect their Microsoft account through the OAuth flow.\n\nScopes required:\n- Files.ReadWrite.All: Full OneDrive file access (includes Word documents)\n- User.Read: Get user profile info",
+      "properties": {
+        "credential_type": {
+          "const": "microsoft_word_oauth",
+          "default": "microsoft_word_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "OAuth access token",
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "description": "OAuth refresh token for token renewal",
+          "title": "Refresh Token",
+          "type": "string"
+        },
+        "expires_at": {
+          "description": "Token expiry timestamp (ISO 8601)",
+          "title": "Expires At",
+          "type": "string"
+        },
+        "email": {
+          "description": "Microsoft account email address",
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "email"
+      ],
+      "title": "WordOAuthCredential",
+      "type": "object",
+      "x-credential-instructions": "Connect your Microsoft account to access Word documents. Uses Microsoft Graph API with OAuth 2.0.",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://portal.azure.com/#blade/Microsoft_AAD_RegisteredApps/ApplicationsListBlade",
+      "x-oauth-provider": "microsoft",
+      "x-oauth-scopes": [
+        "https://graph.microsoft.com/Files.ReadWrite.All",
+        "https://graph.microsoft.com/User.Read"
+      ]
+    },
+    "WordRemovePermissionConfig": {
+      "description": "Remove a sharing permission",
+      "properties": {
+        "operation": {
+          "const": "remove_document_sharing_permission",
+          "default": "remove_document_sharing_permission",
+          "title": "Remove Document Sharing Permission",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document Permission",
+          "x-display-name": "Remove Document Sharing Permission",
+          "x-is-trigger": false
+        },
+        "document_id": {
+          "description": "Document to remove permissions from",
+          "title": "Document ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste document ID",
+            "field_name": "document_id",
+            "placeholder": "Select a document...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "word_document"
+        },
+        "permission_id": {
+          "description": "ID of the permission to remove (from list_permissions)",
+          "title": "Permission ID",
+          "type": "string",
+          "ui:placeholder": "aTowIy5mfG1lbWJlcnNoaXB8..."
+        }
+      },
+      "required": [
+        "document_id",
+        "permission_id"
+      ],
+      "title": "WordRemovePermissionConfig",
+      "type": "object"
+    },
+    "WordRenameDocumentConfig": {
+      "description": "Rename a Word document",
+      "properties": {
+        "operation": {
+          "const": "rename_word_document",
+          "default": "rename_word_document",
+          "title": "Rename Word Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document",
+          "x-display-name": "Rename Word Document",
+          "x-is-trigger": false
+        },
+        "document_id": {
+          "description": "Document to rename",
+          "title": "Document ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste document ID",
+            "field_name": "document_id",
+            "placeholder": "Select a document...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "word_document"
+        },
+        "new_name": {
+          "description": "New name for the document",
+          "title": "New Name",
+          "type": "string",
+          "ui:placeholder": "New Report.docx"
+        }
+      },
+      "required": [
+        "document_id",
+        "new_name"
+      ],
+      "title": "WordRenameDocumentConfig",
+      "type": "object"
+    },
+    "WordRestoreVersionConfig": {
+      "description": "Restore a previous version of a Word document",
+      "properties": {
+        "operation": {
+          "const": "restore_document_to_previous_version",
+          "default": "restore_document_to_previous_version",
+          "title": "Restore Document to Previous Version",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document Version",
+          "x-display-name": "Restore Document to Previous Version",
+          "x-is-trigger": false
+        },
+        "document_id": {
+          "description": "Document to restore",
+          "title": "Document ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste document ID",
+            "field_name": "document_id",
+            "placeholder": "Select a document...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "word_document"
+        },
+        "version_id": {
+          "description": "Version to restore (from list_versions)",
+          "title": "Version ID",
+          "type": "string",
+          "ui:placeholder": "1.0"
+        }
+      },
+      "required": [
+        "document_id",
+        "version_id"
+      ],
+      "title": "WordRestoreVersionConfig",
+      "type": "object"
+    },
+    "WordSearchDocumentsConfig": {
+      "description": "Search for Word documents across OneDrive",
+      "properties": {
+        "operation": {
+          "const": "search_onedrive_documents",
+          "default": "search_onedrive_documents",
+          "title": "Search Onedrive Documents",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document",
+          "x-display-name": "Search Onedrive Documents",
+          "x-is-trigger": false
+        },
+        "query": {
+          "description": "Text to search for (searches file names and content)",
+          "title": "Search Query",
+          "type": "string",
+          "ui:placeholder": "quarterly report"
+        },
+        "folder_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Limit search to specific folder (leave empty for entire OneDrive)",
+          "title": "Folder ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste folder ID",
+            "field_name": "folder_id",
+            "placeholder": "Select a folder...",
+            "searchable": true
+          },
+          "x-resource-type": "word_folder"
+        },
+        "max_results": {
+          "default": 100,
+          "description": "Maximum number of results to return (1-999)",
+          "maximum": 999,
+          "minimum": 1,
+          "title": "Max Results",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "WordSearchDocumentsConfig",
+      "type": "object"
+    },
+    "WordUpdatePermissionConfig": {
+      "description": "Update permission level for a user",
+      "properties": {
+        "operation": {
+          "const": "update_document_permission_level",
+          "default": "update_document_permission_level",
+          "title": "Update Document Permission Level",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document Permission",
+          "x-display-name": "Update Document Permission Level",
+          "x-is-trigger": false
+        },
+        "document_id": {
+          "description": "Document to update permissions for",
+          "title": "Document ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste document ID",
+            "field_name": "document_id",
+            "placeholder": "Select a document...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "word_document"
+        },
+        "permission_id": {
+          "description": "ID of the permission to update (from list_permissions)",
+          "title": "Permission ID",
+          "type": "string",
+          "ui:placeholder": "aTowIy5mfG1lbWJlcnNoaXB8..."
+        },
+        "new_role": {
+          "description": "New access level",
+          "enum": [
+            "read",
+            "write"
+          ],
+          "enumNames": [
+            "Read (View Only)",
+            "Write (Can Edit)"
+          ],
+          "title": "New Permission Role",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "document_id",
+        "permission_id",
+        "new_role"
+      ],
+      "title": "WordUpdatePermissionConfig",
+      "type": "object"
+    },
+    "WordUploadDocumentConfig": {
+      "description": "Upload a Word document",
+      "properties": {
+        "operation": {
+          "const": "upload_word_document",
+          "default": "upload_word_document",
+          "title": "Upload Word Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document",
+          "x-creates-resource": true,
+          "x-display-name": "Upload Word Document",
+          "x-is-trigger": false,
+          "x-resource-id-path": "id",
+          "x-resource-type": "word_document"
+        },
+        "folder_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Folder to upload to (leave empty for root)",
+          "title": "Folder ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste folder ID",
+            "field_name": "folder_id",
+            "placeholder": "Select a folder...",
+            "searchable": true
+          },
+          "x-resource-type": "word_folder"
+        },
+        "folder_path": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Path to folder (e.g., /Documents). Used if folder_id is empty.",
+          "title": "Folder Path",
+          "ui:placeholder": "/Documents"
+        },
+        "file_name": {
+          "description": "Name for the uploaded document (must end with .docx)",
+          "title": "File Name",
+          "type": "string",
+          "ui:placeholder": "document.docx"
+        },
+        "file_content": {
+          "description": "Word document content (base64 encoded .docx file)",
+          "title": "File Content",
+          "type": "string",
+          "ui:widget": "code_editor"
+        }
+      },
+      "required": [
+        "file_name",
+        "file_content"
+      ],
+      "title": "WordUploadDocumentConfig",
+      "type": "object"
+    }
+  },
+  "description": "Configuration for Word node with centralized Microsoft OAuth",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "convert_document_to_html": "#/$defs/WordConvertToHTMLConfig",
+          "convert_document_to_pdf": "#/$defs/WordConvertToPDFConfig",
+          "copy_word_document": "#/$defs/WordCopyDocumentConfig",
+          "create_blank_document": "#/$defs/WordCreateDocumentConfig",
+          "create_document_sharing_link": "#/$defs/WordCreateSharingLinkConfig",
+          "delete_word_document": "#/$defs/WordDeleteDocumentConfig",
+          "download_document_content": "#/$defs/WordDownloadDocumentConfig",
+          "fetch_document_metadata": "#/$defs/WordGetDocumentConfig",
+          "fetch_document_preview_link": "#/$defs/WordGetPreviewLinkConfig",
+          "fetch_document_thumbnail": "#/$defs/WordGetThumbnailConfig",
+          "fetch_document_version": "#/$defs/WordGetVersionConfig",
+          "list_document_permissions": "#/$defs/WordListPermissionsConfig",
+          "list_document_version_history": "#/$defs/WordListVersionsConfig",
+          "list_onedrive_documents": "#/$defs/WordListDocumentsConfig",
+          "move_document_to_folder": "#/$defs/WordMoveDocumentConfig",
+          "remove_document_sharing_permission": "#/$defs/WordRemovePermissionConfig",
+          "rename_word_document": "#/$defs/WordRenameDocumentConfig",
+          "restore_document_to_previous_version": "#/$defs/WordRestoreVersionConfig",
+          "search_onedrive_documents": "#/$defs/WordSearchDocumentsConfig",
+          "share_document_with_user": "#/$defs/WordAddPermissionConfig",
+          "update_document_permission_level": "#/$defs/WordUpdatePermissionConfig",
+          "upload_word_document": "#/$defs/WordUploadDocumentConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/WordListDocumentsConfig"
+        },
+        {
+          "$ref": "#/$defs/WordGetDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/WordCreateDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/WordUploadDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/WordCopyDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/WordMoveDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/WordRenameDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/WordDeleteDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/WordDownloadDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/WordConvertToPDFConfig"
+        },
+        {
+          "$ref": "#/$defs/WordConvertToHTMLConfig"
+        },
+        {
+          "$ref": "#/$defs/WordCreateSharingLinkConfig"
+        },
+        {
+          "$ref": "#/$defs/WordListPermissionsConfig"
+        },
+        {
+          "$ref": "#/$defs/WordAddPermissionConfig"
+        },
+        {
+          "$ref": "#/$defs/WordUpdatePermissionConfig"
+        },
+        {
+          "$ref": "#/$defs/WordRemovePermissionConfig"
+        },
+        {
+          "$ref": "#/$defs/WordListVersionsConfig"
+        },
+        {
+          "$ref": "#/$defs/WordGetVersionConfig"
+        },
+        {
+          "$ref": "#/$defs/WordRestoreVersionConfig"
+        },
+        {
+          "$ref": "#/$defs/WordGetPreviewLinkConfig"
+        },
+        {
+          "$ref": "#/$defs/WordGetThumbnailConfig"
+        },
+        {
+          "$ref": "#/$defs/WordSearchDocumentsConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/WordOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Word Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Convert the annual report Word document to PDF for distribution",
+    "Create a shareable link to the contract document for legal review",
+    "Search for all policy documents modified after January 2024",
+    "List version history and restore the previous draft before edits",
+    "Download the presentation template and upload to shared folder",
+    "Move completed proposals to the Archived Proposals folder",
+    "Generate a thumbnail for the team handbook cover page"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

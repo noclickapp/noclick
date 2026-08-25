@@ -1,0 +1,45 @@
+{
+  "$defs": {
+    "StateManagerInnerConfig": {
+      "description": "Configuration for the State Manager node.",
+      "properties": {
+        "state": {
+          "additionalProperties": true,
+          "description": "Default state values. These serve as initial defaults and are overwritten by any persisted state from previous executions.",
+          "placeholder": "{\"counter\": 0, \"items\": []}",
+          "title": "State",
+          "type": "object",
+          "ui:widget": "state_editor"
+        }
+      },
+      "title": "StateManagerInnerConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for State Manager node (no credentials needed).",
+  "properties": {
+    "config": {
+      "$ref": "#/$defs/StateManagerInnerConfig",
+      "description": "Node-specific configuration"
+    },
+    "credentials": {
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials",
+      "type": "null"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "State-manager Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Set default state with counter initialized to 0 and items array",
+    "Update default state to include processed_ids map for deduplication",
+    "Reset default state values but keep persistence across executions",
+    "Add timestamp field to state for tracking when state was last updated",
+    "Include API rate limit tracker in default state configuration"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

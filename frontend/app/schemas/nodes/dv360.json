@@ -1,0 +1,2203 @@
+{
+  "$defs": {
+    "DV360CreateAdvertiserConfig": {
+      "description": "Create a new advertiser under a partner.",
+      "properties": {
+        "operation": {
+          "const": "create_advertiser",
+          "default": "create_advertiser",
+          "title": "Create Advertiser",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Advertisers",
+          "x-display-name": "Create Advertiser",
+          "x-is-trigger": false
+        },
+        "advertiser_body": {
+          "description": "JSON body for the advertiser resource (partnerId, displayName, generalConfig, etc.)",
+          "title": "Advertiser JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "advertiser_body"
+      ],
+      "title": "DV360CreateAdvertiserConfig",
+      "type": "object"
+    },
+    "DV360CreateAssignedTargetingConfig": {
+      "description": "Assign a targeting option to a line item.",
+      "properties": {
+        "operation": {
+          "const": "create_assigned_targeting",
+          "default": "create_assigned_targeting",
+          "title": "Create Assigned Targeting",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Targeting",
+          "x-display-name": "Create Assigned Targeting",
+          "x-is-trigger": false
+        },
+        "advertiser_id": {
+          "description": "DV360 advertiser ID that scopes this operation",
+          "title": "Advertiser",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an advertiser ID",
+            "field_name": "advertiser_id",
+            "placeholder": "Select an advertiser...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "line_item_id": {
+          "description": "ID of the line item",
+          "title": "Line Item ID",
+          "type": "string"
+        },
+        "targeting_type": {
+          "description": "Targeting type to assign",
+          "title": "Targeting Type",
+          "type": "string"
+        },
+        "targeting_body": {
+          "description": "JSON body for the assigned targeting option (the *Details field for the type)",
+          "title": "Assigned Targeting JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "advertiser_id",
+        "line_item_id",
+        "targeting_type",
+        "targeting_body"
+      ],
+      "title": "DV360CreateAssignedTargetingConfig",
+      "type": "object"
+    },
+    "DV360CreateCampaignConfig": {
+      "description": "Create a campaign under an advertiser.",
+      "properties": {
+        "operation": {
+          "const": "create_campaign",
+          "default": "create_campaign",
+          "title": "Create Campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaigns",
+          "x-display-name": "Create Campaign",
+          "x-is-trigger": false
+        },
+        "advertiser_id": {
+          "description": "DV360 advertiser ID that scopes this operation",
+          "title": "Advertiser",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an advertiser ID",
+            "field_name": "advertiser_id",
+            "placeholder": "Select an advertiser...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "campaign_body": {
+          "description": "JSON body for the campaign (displayName, entityStatus, campaignGoal, campaignFlight, etc.)",
+          "title": "Campaign JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "advertiser_id",
+        "campaign_body"
+      ],
+      "title": "DV360CreateCampaignConfig",
+      "type": "object"
+    },
+    "DV360CreateChannelConfig": {
+      "description": "Create a channel.",
+      "properties": {
+        "operation": {
+          "const": "create_channel",
+          "default": "create_channel",
+          "title": "Create Channel",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Channels",
+          "x-display-name": "Create Channel",
+          "x-is-trigger": false
+        },
+        "advertiser_id": {
+          "description": "DV360 advertiser ID that scopes this operation",
+          "title": "Advertiser",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an advertiser ID",
+            "field_name": "advertiser_id",
+            "placeholder": "Select an advertiser...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "display_name": {
+          "description": "Name for the new channel",
+          "title": "Display Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "advertiser_id",
+        "display_name"
+      ],
+      "title": "DV360CreateChannelConfig",
+      "type": "object"
+    },
+    "DV360CreateCreativeConfig": {
+      "description": "Create a creative.",
+      "properties": {
+        "operation": {
+          "const": "create_creative",
+          "default": "create_creative",
+          "title": "Create Creative",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Creatives",
+          "x-display-name": "Create Creative",
+          "x-is-trigger": false
+        },
+        "advertiser_id": {
+          "description": "DV360 advertiser ID that scopes this operation",
+          "title": "Advertiser",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an advertiser ID",
+            "field_name": "advertiser_id",
+            "placeholder": "Select an advertiser...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "creative_body": {
+          "description": "JSON body for the creative (displayName, creativeType, dimensions, assets, etc.)",
+          "title": "Creative JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "advertiser_id",
+        "creative_body"
+      ],
+      "title": "DV360CreateCreativeConfig",
+      "type": "object"
+    },
+    "DV360CreateInsertionOrderConfig": {
+      "description": "Create an insertion order under a campaign.",
+      "properties": {
+        "operation": {
+          "const": "create_insertion_order",
+          "default": "create_insertion_order",
+          "title": "Create Insertion Order",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Insertion Orders",
+          "x-display-name": "Create Insertion Order",
+          "x-is-trigger": false
+        },
+        "advertiser_id": {
+          "description": "DV360 advertiser ID that scopes this operation",
+          "title": "Advertiser",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an advertiser ID",
+            "field_name": "advertiser_id",
+            "placeholder": "Select an advertiser...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "insertion_order_body": {
+          "description": "JSON body for the insertion order (campaignId, displayName, pacing, budget, etc.)",
+          "title": "Insertion Order JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "advertiser_id",
+        "insertion_order_body"
+      ],
+      "title": "DV360CreateInsertionOrderConfig",
+      "type": "object"
+    },
+    "DV360CreateLineItemConfig": {
+      "description": "Create a line item.",
+      "properties": {
+        "operation": {
+          "const": "create_line_item",
+          "default": "create_line_item",
+          "title": "Create Line Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Line Items",
+          "x-display-name": "Create Line Item",
+          "x-is-trigger": false
+        },
+        "advertiser_id": {
+          "description": "DV360 advertiser ID that scopes this operation",
+          "title": "Advertiser",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an advertiser ID",
+            "field_name": "advertiser_id",
+            "placeholder": "Select an advertiser...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "line_item_body": {
+          "description": "JSON body for the line item (insertionOrderId, displayName, lineItemType, flight, budget, etc.)",
+          "title": "Line Item JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "advertiser_id",
+        "line_item_body"
+      ],
+      "title": "DV360CreateLineItemConfig",
+      "type": "object"
+    },
+    "DV360CreateReportQueryConfig": {
+      "description": "Create a Bid Manager reporting query (dimensions/metrics/filters).",
+      "properties": {
+        "operation": {
+          "const": "create_report_query",
+          "default": "create_report_query",
+          "title": "Create Report Query",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reporting",
+          "x-display-name": "Create Report Query",
+          "x-is-trigger": false
+        },
+        "query_body": {
+          "description": "Bid Manager query JSON (metadata, params with dimensions/metrics/filters, schedule)",
+          "title": "Query JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "query_body"
+      ],
+      "title": "DV360CreateReportQueryConfig",
+      "type": "object"
+    },
+    "DV360DeleteCreativeConfig": {
+      "description": "Delete an unused creative.",
+      "properties": {
+        "operation": {
+          "const": "delete_creative",
+          "default": "delete_creative",
+          "title": "Delete Creative",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Creatives",
+          "x-display-name": "Delete Creative",
+          "x-is-trigger": false
+        },
+        "advertiser_id": {
+          "description": "DV360 advertiser ID that scopes this operation",
+          "title": "Advertiser",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an advertiser ID",
+            "field_name": "advertiser_id",
+            "placeholder": "Select an advertiser...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "creative_id": {
+          "description": "ID of the creative to delete",
+          "title": "Creative",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an ID",
+            "depends_on": "advertiser_id",
+            "field_name": "creative_id",
+            "placeholder": "Select a creative...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "advertiser_id",
+        "creative_id"
+      ],
+      "title": "DV360DeleteCreativeConfig",
+      "type": "object"
+    },
+    "DV360DeleteLineItemConfig": {
+      "description": "Delete a (draft) line item.",
+      "properties": {
+        "operation": {
+          "const": "delete_line_item",
+          "default": "delete_line_item",
+          "title": "Delete Line Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Line Items",
+          "x-display-name": "Delete Line Item",
+          "x-is-trigger": false
+        },
+        "advertiser_id": {
+          "description": "DV360 advertiser ID that scopes this operation",
+          "title": "Advertiser",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an advertiser ID",
+            "field_name": "advertiser_id",
+            "placeholder": "Select an advertiser...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "line_item_id": {
+          "description": "ID of the line item to delete",
+          "title": "Line Item",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an ID",
+            "depends_on": "advertiser_id",
+            "field_name": "line_item_id",
+            "placeholder": "Select a line item...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "advertiser_id",
+        "line_item_id"
+      ],
+      "title": "DV360DeleteLineItemConfig",
+      "type": "object"
+    },
+    "DV360DuplicateLineItemConfig": {
+      "description": "Clone a line item.",
+      "properties": {
+        "operation": {
+          "const": "duplicate_line_item",
+          "default": "duplicate_line_item",
+          "title": "Duplicate Line Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Line Items",
+          "x-display-name": "Duplicate Line Item",
+          "x-is-trigger": false
+        },
+        "advertiser_id": {
+          "description": "DV360 advertiser ID that scopes this operation",
+          "title": "Advertiser",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an advertiser ID",
+            "field_name": "advertiser_id",
+            "placeholder": "Select an advertiser...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "line_item_id": {
+          "description": "ID of the line item to duplicate",
+          "title": "Line Item",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an ID",
+            "depends_on": "advertiser_id",
+            "field_name": "line_item_id",
+            "placeholder": "Select a line item...",
+            "searchable": true
+          }
+        },
+        "target_display_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Display name for the duplicated line item",
+          "title": "New Display Name"
+        }
+      },
+      "required": [
+        "advertiser_id",
+        "line_item_id"
+      ],
+      "title": "DV360DuplicateLineItemConfig",
+      "type": "object"
+    },
+    "DV360EditCustomerMatchConfig": {
+      "description": "Add or remove Customer Match members in a first-party audience.",
+      "properties": {
+        "operation": {
+          "const": "edit_customer_match_members",
+          "default": "edit_customer_match_members",
+          "title": "Edit Customer Match Members",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audiences",
+          "x-display-name": "Edit Customer Match Members",
+          "x-is-trigger": false
+        },
+        "advertiser_id": {
+          "description": "DV360 advertiser ID that scopes this operation",
+          "title": "Advertiser",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an advertiser ID",
+            "field_name": "advertiser_id",
+            "placeholder": "Select an advertiser...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "audience_id": {
+          "description": "firstPartyAndPartnerAudienceId to edit",
+          "title": "Audience",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an ID",
+            "depends_on": "advertiser_id",
+            "field_name": "audience_id",
+            "placeholder": "Select a audience...",
+            "searchable": true
+          }
+        },
+        "edit_body": {
+          "description": "JSON body with addedContactInfoList / removedContactInfoList (or mobile device IDs)",
+          "title": "Edit JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "advertiser_id",
+        "audience_id",
+        "edit_body"
+      ],
+      "title": "DV360EditCustomerMatchConfig",
+      "type": "object"
+    },
+    "DV360GetAdvertiserConfig": {
+      "description": "Fetch a single advertiser's details.",
+      "properties": {
+        "operation": {
+          "const": "get_advertiser",
+          "default": "get_advertiser",
+          "title": "Get Advertiser",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Advertisers",
+          "x-display-name": "Get Advertiser",
+          "x-is-trigger": false
+        },
+        "advertiser_id": {
+          "description": "DV360 advertiser ID that scopes this operation",
+          "title": "Advertiser",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an advertiser ID",
+            "field_name": "advertiser_id",
+            "placeholder": "Select an advertiser...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "advertiser_id"
+      ],
+      "title": "DV360GetAdvertiserConfig",
+      "type": "object"
+    },
+    "DV360GetCampaignConfig": {
+      "description": "Fetch a single campaign.",
+      "properties": {
+        "operation": {
+          "const": "get_campaign",
+          "default": "get_campaign",
+          "title": "Get Campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaigns",
+          "x-display-name": "Get Campaign",
+          "x-is-trigger": false
+        },
+        "advertiser_id": {
+          "description": "DV360 advertiser ID that scopes this operation",
+          "title": "Advertiser",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an advertiser ID",
+            "field_name": "advertiser_id",
+            "placeholder": "Select an advertiser...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "campaign_id": {
+          "description": "ID of the campaign to fetch",
+          "title": "Campaign",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an ID",
+            "depends_on": "advertiser_id",
+            "field_name": "campaign_id",
+            "placeholder": "Select a campaign...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "advertiser_id",
+        "campaign_id"
+      ],
+      "title": "DV360GetCampaignConfig",
+      "type": "object"
+    },
+    "DV360GetChannelConfig": {
+      "description": "Fetch a single channel.",
+      "properties": {
+        "operation": {
+          "const": "get_channel",
+          "default": "get_channel",
+          "title": "Get Channel",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Channels",
+          "x-display-name": "Get Channel",
+          "x-is-trigger": false
+        },
+        "advertiser_id": {
+          "description": "DV360 advertiser ID that scopes this operation",
+          "title": "Advertiser",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an advertiser ID",
+            "field_name": "advertiser_id",
+            "placeholder": "Select an advertiser...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "channel_id": {
+          "description": "ID of the channel to fetch",
+          "title": "Channel",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an ID",
+            "depends_on": "advertiser_id",
+            "field_name": "channel_id",
+            "placeholder": "Select a channel...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "advertiser_id",
+        "channel_id"
+      ],
+      "title": "DV360GetChannelConfig",
+      "type": "object"
+    },
+    "DV360GetCreativeConfig": {
+      "description": "Fetch a single creative.",
+      "properties": {
+        "operation": {
+          "const": "get_creative",
+          "default": "get_creative",
+          "title": "Get Creative",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Creatives",
+          "x-display-name": "Get Creative",
+          "x-is-trigger": false
+        },
+        "advertiser_id": {
+          "description": "DV360 advertiser ID that scopes this operation",
+          "title": "Advertiser",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an advertiser ID",
+            "field_name": "advertiser_id",
+            "placeholder": "Select an advertiser...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "creative_id": {
+          "description": "ID of the creative to fetch",
+          "title": "Creative",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an ID",
+            "depends_on": "advertiser_id",
+            "field_name": "creative_id",
+            "placeholder": "Select a creative...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "advertiser_id",
+        "creative_id"
+      ],
+      "title": "DV360GetCreativeConfig",
+      "type": "object"
+    },
+    "DV360GetInsertionOrderConfig": {
+      "description": "Fetch a single insertion order.",
+      "properties": {
+        "operation": {
+          "const": "get_insertion_order",
+          "default": "get_insertion_order",
+          "title": "Get Insertion Order",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Insertion Orders",
+          "x-display-name": "Get Insertion Order",
+          "x-is-trigger": false
+        },
+        "advertiser_id": {
+          "description": "DV360 advertiser ID that scopes this operation",
+          "title": "Advertiser",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an advertiser ID",
+            "field_name": "advertiser_id",
+            "placeholder": "Select an advertiser...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "insertion_order_id": {
+          "description": "ID of the insertion order to fetch",
+          "title": "Insertion Order",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an ID",
+            "depends_on": "advertiser_id",
+            "field_name": "insertion_order_id",
+            "placeholder": "Select a insertion order...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "advertiser_id",
+        "insertion_order_id"
+      ],
+      "title": "DV360GetInsertionOrderConfig",
+      "type": "object"
+    },
+    "DV360GetLineItemConfig": {
+      "description": "Fetch a single line item.",
+      "properties": {
+        "operation": {
+          "const": "get_line_item",
+          "default": "get_line_item",
+          "title": "Get Line Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Line Items",
+          "x-display-name": "Get Line Item",
+          "x-is-trigger": false
+        },
+        "advertiser_id": {
+          "description": "DV360 advertiser ID that scopes this operation",
+          "title": "Advertiser",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an advertiser ID",
+            "field_name": "advertiser_id",
+            "placeholder": "Select an advertiser...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "line_item_id": {
+          "description": "ID of the line item to fetch",
+          "title": "Line Item",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an ID",
+            "depends_on": "advertiser_id",
+            "field_name": "line_item_id",
+            "placeholder": "Select a line item...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "advertiser_id",
+        "line_item_id"
+      ],
+      "title": "DV360GetLineItemConfig",
+      "type": "object"
+    },
+    "DV360GetReportConfig": {
+      "description": "Fetch a single report run (status + download path) of a query.",
+      "properties": {
+        "operation": {
+          "const": "get_report",
+          "default": "get_report",
+          "title": "Get Report",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reporting",
+          "x-display-name": "Get Report",
+          "x-is-trigger": false
+        },
+        "query_id": {
+          "description": "ID of the Bid Manager query",
+          "title": "Query ID",
+          "type": "string"
+        },
+        "report_id": {
+          "description": "ID of the report run to fetch",
+          "title": "Report ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "query_id",
+        "report_id"
+      ],
+      "title": "DV360GetReportConfig",
+      "type": "object"
+    },
+    "DV360GetReportQueryConfig": {
+      "description": "Fetch a single Bid Manager report query.",
+      "properties": {
+        "operation": {
+          "const": "get_report_query",
+          "default": "get_report_query",
+          "title": "Get Report Query",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reporting",
+          "x-display-name": "Get Report Query",
+          "x-is-trigger": false
+        },
+        "query_id": {
+          "description": "ID of the Bid Manager query to fetch",
+          "title": "Query ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "query_id"
+      ],
+      "title": "DV360GetReportQueryConfig",
+      "type": "object"
+    },
+    "DV360ListAdvertisersConfig": {
+      "description": "List advertisers the authenticated user can access under a partner.",
+      "properties": {
+        "operation": {
+          "const": "list_advertisers",
+          "default": "list_advertisers",
+          "title": "List Advertisers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Advertisers",
+          "x-display-name": "List Advertisers",
+          "x-is-trigger": false
+        },
+        "partner_id": {
+          "description": "DV360 partner ID to list advertisers for",
+          "title": "Partner",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a partner ID",
+            "field_name": "partner_id",
+            "placeholder": "Select a partner...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "DV360 filter expression (e.g. entityStatus=\"ENTITY_STATUS_ACTIVE\")",
+          "title": "Filter"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "100",
+          "description": "Max advertisers to return (1-200)",
+          "title": "Page Size"
+        }
+      },
+      "required": [
+        "partner_id"
+      ],
+      "title": "DV360ListAdvertisersConfig",
+      "type": "object"
+    },
+    "DV360ListAssignedTargetingConfig": {
+      "description": "List targeting options assigned to a line item for one targeting type.",
+      "properties": {
+        "operation": {
+          "const": "list_assigned_targeting",
+          "default": "list_assigned_targeting",
+          "title": "List Assigned Targeting",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Targeting",
+          "x-display-name": "List Assigned Targeting",
+          "x-is-trigger": false
+        },
+        "advertiser_id": {
+          "description": "DV360 advertiser ID that scopes this operation",
+          "title": "Advertiser",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an advertiser ID",
+            "field_name": "advertiser_id",
+            "placeholder": "Select an advertiser...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "line_item_id": {
+          "description": "ID of the line item",
+          "title": "Line Item ID",
+          "type": "string"
+        },
+        "targeting_type": {
+          "description": "Targeting type (e.g. TARGETING_TYPE_GEO_REGION, TARGETING_TYPE_KEYWORD)",
+          "title": "Targeting Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "advertiser_id",
+        "line_item_id",
+        "targeting_type"
+      ],
+      "title": "DV360ListAssignedTargetingConfig",
+      "type": "object"
+    },
+    "DV360ListAudiencesConfig": {
+      "description": "List first-party and partner audiences.",
+      "properties": {
+        "operation": {
+          "const": "list_audiences",
+          "default": "list_audiences",
+          "title": "List Audiences",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audiences",
+          "x-display-name": "List Audiences",
+          "x-is-trigger": false
+        },
+        "advertiser_id": {
+          "description": "DV360 advertiser ID that scopes this operation",
+          "title": "Advertiser",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an advertiser ID",
+            "field_name": "advertiser_id",
+            "placeholder": "Select an advertiser...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "100",
+          "description": "Max audiences to return",
+          "title": "Page Size"
+        }
+      },
+      "required": [
+        "advertiser_id"
+      ],
+      "title": "DV360ListAudiencesConfig",
+      "type": "object"
+    },
+    "DV360ListCampaignsConfig": {
+      "description": "List campaigns for an advertiser.",
+      "properties": {
+        "operation": {
+          "const": "list_campaigns",
+          "default": "list_campaigns",
+          "title": "List Campaigns",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaigns",
+          "x-display-name": "List Campaigns",
+          "x-is-trigger": false
+        },
+        "advertiser_id": {
+          "description": "DV360 advertiser ID that scopes this operation",
+          "title": "Advertiser",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an advertiser ID",
+            "field_name": "advertiser_id",
+            "placeholder": "Select an advertiser...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "DV360 filter expression",
+          "title": "Filter"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "100",
+          "description": "Max campaigns to return (1-200)",
+          "title": "Page Size"
+        }
+      },
+      "required": [
+        "advertiser_id"
+      ],
+      "title": "DV360ListCampaignsConfig",
+      "type": "object"
+    },
+    "DV360ListChannelsConfig": {
+      "description": "List channels (site/app groupings) for an advertiser.",
+      "properties": {
+        "operation": {
+          "const": "list_channels",
+          "default": "list_channels",
+          "title": "List Channels",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Channels",
+          "x-display-name": "List Channels",
+          "x-is-trigger": false
+        },
+        "advertiser_id": {
+          "description": "DV360 advertiser ID that scopes this operation",
+          "title": "Advertiser",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an advertiser ID",
+            "field_name": "advertiser_id",
+            "placeholder": "Select an advertiser...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "100",
+          "description": "Max channels to return",
+          "title": "Page Size"
+        }
+      },
+      "required": [
+        "advertiser_id"
+      ],
+      "title": "DV360ListChannelsConfig",
+      "type": "object"
+    },
+    "DV360ListCreativesConfig": {
+      "description": "List creatives for an advertiser.",
+      "properties": {
+        "operation": {
+          "const": "list_creatives",
+          "default": "list_creatives",
+          "title": "List Creatives",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Creatives",
+          "x-display-name": "List Creatives",
+          "x-is-trigger": false
+        },
+        "advertiser_id": {
+          "description": "DV360 advertiser ID that scopes this operation",
+          "title": "Advertiser",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an advertiser ID",
+            "field_name": "advertiser_id",
+            "placeholder": "Select an advertiser...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "DV360 filter expression",
+          "title": "Filter"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "100",
+          "description": "Max creatives to return",
+          "title": "Page Size"
+        }
+      },
+      "required": [
+        "advertiser_id"
+      ],
+      "title": "DV360ListCreativesConfig",
+      "type": "object"
+    },
+    "DV360ListInsertionOrdersConfig": {
+      "description": "List insertion orders for an advertiser.",
+      "properties": {
+        "operation": {
+          "const": "list_insertion_orders",
+          "default": "list_insertion_orders",
+          "title": "List Insertion Orders",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Insertion Orders",
+          "x-display-name": "List Insertion Orders",
+          "x-is-trigger": false
+        },
+        "advertiser_id": {
+          "description": "DV360 advertiser ID that scopes this operation",
+          "title": "Advertiser",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an advertiser ID",
+            "field_name": "advertiser_id",
+            "placeholder": "Select an advertiser...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "DV360 filter expression",
+          "title": "Filter"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "100",
+          "description": "Max insertion orders to return",
+          "title": "Page Size"
+        }
+      },
+      "required": [
+        "advertiser_id"
+      ],
+      "title": "DV360ListInsertionOrdersConfig",
+      "type": "object"
+    },
+    "DV360ListLineItemsConfig": {
+      "description": "List line items for an advertiser.",
+      "properties": {
+        "operation": {
+          "const": "list_line_items",
+          "default": "list_line_items",
+          "title": "List Line Items",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Line Items",
+          "x-display-name": "List Line Items",
+          "x-is-trigger": false
+        },
+        "advertiser_id": {
+          "description": "DV360 advertiser ID that scopes this operation",
+          "title": "Advertiser",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an advertiser ID",
+            "field_name": "advertiser_id",
+            "placeholder": "Select an advertiser...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "DV360 filter expression",
+          "title": "Filter"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "100",
+          "description": "Max line items to return",
+          "title": "Page Size"
+        }
+      },
+      "required": [
+        "advertiser_id"
+      ],
+      "title": "DV360ListLineItemsConfig",
+      "type": "object"
+    },
+    "DV360ListReportQueriesConfig": {
+      "description": "List saved Bid Manager report queries.",
+      "properties": {
+        "operation": {
+          "const": "list_report_queries",
+          "default": "list_report_queries",
+          "title": "List Report Queries",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reporting",
+          "x-display-name": "List Report Queries",
+          "x-is-trigger": false
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of queries to return",
+          "title": "Page Size"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token for the next page of queries",
+          "title": "Page Token"
+        }
+      },
+      "title": "DV360ListReportQueriesConfig",
+      "type": "object"
+    },
+    "DV360OAuthCredential": {
+      "description": "OAuth credential for Google Display & Video 360 access.",
+      "properties": {
+        "credential_type": {
+          "const": "dv360_oauth",
+          "default": "dv360_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "OAuth 2.0 access token from Google",
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "description": "OAuth 2.0 refresh token for automatic renewal",
+          "title": "Refresh Token",
+          "type": "string"
+        },
+        "expires_at": {
+          "description": "ISO 8601 timestamp when the access token expires",
+          "title": "Token Expiry",
+          "type": "string"
+        },
+        "email": {
+          "description": "Email address of the connected Google account",
+          "title": "Google Account",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "email"
+      ],
+      "title": "DV360OAuthCredential",
+      "type": "object",
+      "x-credential-instructions": "Sign in with a Google account that has Display & Video 360 access. Grant the Display & Video permission for campaign, line-item, creative and targeting operations; the Bid Manager permission is only needed for the report operations, so you can skip it and still connect.",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://console.cloud.google.com/apis/credentials",
+      "x-oauth-provider": "google",
+      "x-oauth-scopes": [
+        "https://www.googleapis.com/auth/display-video",
+        "https://www.googleapis.com/auth/doubleclickbidmanager"
+      ]
+    },
+    "DV360OnJobCompletedConfig": {
+      "description": "Poll-based trigger: fire when a Bid Manager report run for a query newly\ncompletes. DV360 has no native webhooks; async report runs are polled until\ndone. The node watches a query's report list and emits each newly-finished\nreport exactly once (deduped via the last-seen report id cursor).",
+      "properties": {
+        "operation": {
+          "const": "on_job_completed",
+          "default": "on_job_completed",
+          "description": "Trigger when a report run for a query completes",
+          "title": "On Async Job Completed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Async Job Completed",
+          "x-is-trigger": true
+        },
+        "query_id": {
+          "description": "Bid Manager query whose report runs to watch for completion",
+          "title": "Query",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a query ID",
+            "field_name": "query_id",
+            "placeholder": "Select a report query...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": {
+            "frequency": "minutes",
+            "interval": 5,
+            "hour": 9,
+            "minute": 0,
+            "dayOfWeek": 1,
+            "dayOfMonth": 1
+          },
+          "description": "How often to poll for newly completed report runs",
+          "title": "Check Frequency",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "50",
+          "description": "Maximum number of report runs to inspect per poll",
+          "title": "Max Reports",
+          "ui:hidden": true
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:copyable": true,
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Check",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "last_seen_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Last Seen Id",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "query_id"
+      ],
+      "title": "DV360OnJobCompletedConfig",
+      "type": "object"
+    },
+    "DV360RunReportQueryConfig": {
+      "description": "Run a Bid Manager query to generate a fresh report.",
+      "properties": {
+        "operation": {
+          "const": "run_report_query",
+          "default": "run_report_query",
+          "title": "Run Report Query",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Reporting",
+          "x-display-name": "Run Report Query",
+          "x-is-trigger": false
+        },
+        "query_id": {
+          "description": "ID of the Bid Manager query to run",
+          "title": "Query ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "query_id"
+      ],
+      "title": "DV360RunReportQueryConfig",
+      "type": "object"
+    },
+    "DV360SearchTargetingOptionsConfig": {
+      "description": "Search global targeting options (e.g. geo, keywords) by query.",
+      "properties": {
+        "operation": {
+          "const": "search_targeting_options",
+          "default": "search_targeting_options",
+          "title": "Search Targeting Options",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Targeting",
+          "x-display-name": "Search Targeting Options",
+          "x-is-trigger": false
+        },
+        "targeting_type": {
+          "description": "Targeting type to search within",
+          "title": "Targeting Type",
+          "type": "string"
+        },
+        "advertiser_id": {
+          "description": "DV360 advertiser ID that scopes this operation",
+          "title": "Advertiser",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an advertiser ID",
+            "field_name": "advertiser_id",
+            "placeholder": "Select an advertiser...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "query": {
+          "description": "Search string (e.g. a city name or keyword)",
+          "title": "Search Query",
+          "type": "string"
+        }
+      },
+      "required": [
+        "targeting_type",
+        "advertiser_id",
+        "query"
+      ],
+      "title": "DV360SearchTargetingOptionsConfig",
+      "type": "object"
+    },
+    "DV360ServiceAccountCredential": {
+      "description": "Service-account JSON key for server-to-server DV360 access.\n\nA signed JWT is exchanged for an OAuth access token per run. The service\naccount must be linked to a DV360 user profile with the required role.",
+      "properties": {
+        "credential_type": {
+          "const": "dv360_service_account",
+          "default": "dv360_service_account",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "service_account_json": {
+          "description": "Raw JSON key for a Google Cloud service account with DV360 access",
+          "title": "Service Account JSON",
+          "type": "string",
+          "ui:rows": 12,
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "service_account_json"
+      ],
+      "title": "DV360ServiceAccountCredential",
+      "type": "object",
+      "x-credential-instructions": "Create a JSON key for a service account, then link that service account's email to a DV360 user profile (Admin \u2192 Users) with the required role. Prefer user OAuth for user-delegated access; use a service account for server-to-server automation.",
+      "x-credential-url": "https://console.cloud.google.com/iam-admin/serviceaccounts"
+    },
+    "DV360UpdateAdvertiserConfig": {
+      "description": "Patch fields on an existing advertiser.",
+      "properties": {
+        "operation": {
+          "const": "update_advertiser",
+          "default": "update_advertiser",
+          "title": "Update Advertiser",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Advertisers",
+          "x-display-name": "Update Advertiser",
+          "x-is-trigger": false
+        },
+        "advertiser_id": {
+          "description": "DV360 advertiser ID that scopes this operation",
+          "title": "Advertiser",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an advertiser ID",
+            "field_name": "advertiser_id",
+            "placeholder": "Select an advertiser...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "update_mask": {
+          "description": "Comma-separated fields to update (e.g. displayName,entityStatus)",
+          "title": "Update Mask",
+          "type": "string"
+        },
+        "advertiser_body": {
+          "description": "JSON body containing the fields named in the update mask",
+          "title": "Advertiser JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "advertiser_id",
+        "update_mask",
+        "advertiser_body"
+      ],
+      "title": "DV360UpdateAdvertiserConfig",
+      "type": "object"
+    },
+    "DV360UpdateCampaignConfig": {
+      "description": "Patch fields on a campaign (e.g. status, budget).",
+      "properties": {
+        "operation": {
+          "const": "update_campaign",
+          "default": "update_campaign",
+          "title": "Update Campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Campaigns",
+          "x-display-name": "Update Campaign",
+          "x-is-trigger": false
+        },
+        "advertiser_id": {
+          "description": "DV360 advertiser ID that scopes this operation",
+          "title": "Advertiser",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an advertiser ID",
+            "field_name": "advertiser_id",
+            "placeholder": "Select an advertiser...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "campaign_id": {
+          "description": "ID of the campaign to update",
+          "title": "Campaign",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an ID",
+            "depends_on": "advertiser_id",
+            "field_name": "campaign_id",
+            "placeholder": "Select a campaign...",
+            "searchable": true
+          }
+        },
+        "update_mask": {
+          "description": "Comma-separated fields to update",
+          "title": "Update Mask",
+          "type": "string"
+        },
+        "campaign_body": {
+          "description": "JSON body containing the fields named in the update mask",
+          "title": "Campaign JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "advertiser_id",
+        "campaign_id",
+        "update_mask",
+        "campaign_body"
+      ],
+      "title": "DV360UpdateCampaignConfig",
+      "type": "object"
+    },
+    "DV360UpdateCreativeConfig": {
+      "description": "Patch a creative.",
+      "properties": {
+        "operation": {
+          "const": "update_creative",
+          "default": "update_creative",
+          "title": "Update Creative",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Creatives",
+          "x-display-name": "Update Creative",
+          "x-is-trigger": false
+        },
+        "advertiser_id": {
+          "description": "DV360 advertiser ID that scopes this operation",
+          "title": "Advertiser",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an advertiser ID",
+            "field_name": "advertiser_id",
+            "placeholder": "Select an advertiser...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "creative_id": {
+          "description": "ID of the creative to update",
+          "title": "Creative",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an ID",
+            "depends_on": "advertiser_id",
+            "field_name": "creative_id",
+            "placeholder": "Select a creative...",
+            "searchable": true
+          }
+        },
+        "update_mask": {
+          "description": "Comma-separated fields to update",
+          "title": "Update Mask",
+          "type": "string"
+        },
+        "creative_body": {
+          "description": "JSON body containing the fields named in the update mask",
+          "title": "Creative JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "advertiser_id",
+        "creative_id",
+        "update_mask",
+        "creative_body"
+      ],
+      "title": "DV360UpdateCreativeConfig",
+      "type": "object"
+    },
+    "DV360UpdateInsertionOrderConfig": {
+      "description": "Patch an insertion order (status, pacing, budget).",
+      "properties": {
+        "operation": {
+          "const": "update_insertion_order",
+          "default": "update_insertion_order",
+          "title": "Update Insertion Order",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Insertion Orders",
+          "x-display-name": "Update Insertion Order",
+          "x-is-trigger": false
+        },
+        "advertiser_id": {
+          "description": "DV360 advertiser ID that scopes this operation",
+          "title": "Advertiser",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an advertiser ID",
+            "field_name": "advertiser_id",
+            "placeholder": "Select an advertiser...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "insertion_order_id": {
+          "description": "ID of the insertion order",
+          "title": "Insertion Order",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an ID",
+            "depends_on": "advertiser_id",
+            "field_name": "insertion_order_id",
+            "placeholder": "Select a insertion order...",
+            "searchable": true
+          }
+        },
+        "update_mask": {
+          "description": "Comma-separated fields to update",
+          "title": "Update Mask",
+          "type": "string"
+        },
+        "insertion_order_body": {
+          "description": "JSON body containing the fields named in the update mask",
+          "title": "Insertion Order JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "advertiser_id",
+        "insertion_order_id",
+        "update_mask",
+        "insertion_order_body"
+      ],
+      "title": "DV360UpdateInsertionOrderConfig",
+      "type": "object"
+    },
+    "DV360UpdateLineItemConfig": {
+      "description": "Patch a line item (status/bid/budget); common pause/activate path.",
+      "properties": {
+        "operation": {
+          "const": "update_line_item",
+          "default": "update_line_item",
+          "title": "Update Line Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Line Items",
+          "x-display-name": "Update Line Item",
+          "x-is-trigger": false
+        },
+        "advertiser_id": {
+          "description": "DV360 advertiser ID that scopes this operation",
+          "title": "Advertiser",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an advertiser ID",
+            "field_name": "advertiser_id",
+            "placeholder": "Select an advertiser...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "line_item_id": {
+          "description": "ID of the line item to update",
+          "title": "Line Item",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste an ID",
+            "depends_on": "advertiser_id",
+            "field_name": "line_item_id",
+            "placeholder": "Select a line item...",
+            "searchable": true
+          }
+        },
+        "update_mask": {
+          "description": "Comma-separated fields to update (e.g. entityStatus)",
+          "title": "Update Mask",
+          "type": "string"
+        },
+        "line_item_body": {
+          "description": "JSON body containing the fields named in the update mask",
+          "title": "Line Item JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "advertiser_id",
+        "line_item_id",
+        "update_mask",
+        "line_item_body"
+      ],
+      "title": "DV360UpdateLineItemConfig",
+      "type": "object"
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the DV360 node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "create_advertiser": "#/$defs/DV360CreateAdvertiserConfig",
+          "create_assigned_targeting": "#/$defs/DV360CreateAssignedTargetingConfig",
+          "create_campaign": "#/$defs/DV360CreateCampaignConfig",
+          "create_channel": "#/$defs/DV360CreateChannelConfig",
+          "create_creative": "#/$defs/DV360CreateCreativeConfig",
+          "create_insertion_order": "#/$defs/DV360CreateInsertionOrderConfig",
+          "create_line_item": "#/$defs/DV360CreateLineItemConfig",
+          "create_report_query": "#/$defs/DV360CreateReportQueryConfig",
+          "delete_creative": "#/$defs/DV360DeleteCreativeConfig",
+          "delete_line_item": "#/$defs/DV360DeleteLineItemConfig",
+          "duplicate_line_item": "#/$defs/DV360DuplicateLineItemConfig",
+          "edit_customer_match_members": "#/$defs/DV360EditCustomerMatchConfig",
+          "get_advertiser": "#/$defs/DV360GetAdvertiserConfig",
+          "get_campaign": "#/$defs/DV360GetCampaignConfig",
+          "get_channel": "#/$defs/DV360GetChannelConfig",
+          "get_creative": "#/$defs/DV360GetCreativeConfig",
+          "get_insertion_order": "#/$defs/DV360GetInsertionOrderConfig",
+          "get_line_item": "#/$defs/DV360GetLineItemConfig",
+          "get_report": "#/$defs/DV360GetReportConfig",
+          "get_report_query": "#/$defs/DV360GetReportQueryConfig",
+          "list_advertisers": "#/$defs/DV360ListAdvertisersConfig",
+          "list_assigned_targeting": "#/$defs/DV360ListAssignedTargetingConfig",
+          "list_audiences": "#/$defs/DV360ListAudiencesConfig",
+          "list_campaigns": "#/$defs/DV360ListCampaignsConfig",
+          "list_channels": "#/$defs/DV360ListChannelsConfig",
+          "list_creatives": "#/$defs/DV360ListCreativesConfig",
+          "list_insertion_orders": "#/$defs/DV360ListInsertionOrdersConfig",
+          "list_line_items": "#/$defs/DV360ListLineItemsConfig",
+          "list_report_queries": "#/$defs/DV360ListReportQueriesConfig",
+          "on_job_completed": "#/$defs/DV360OnJobCompletedConfig",
+          "run_report_query": "#/$defs/DV360RunReportQueryConfig",
+          "search_targeting_options": "#/$defs/DV360SearchTargetingOptionsConfig",
+          "update_advertiser": "#/$defs/DV360UpdateAdvertiserConfig",
+          "update_campaign": "#/$defs/DV360UpdateCampaignConfig",
+          "update_creative": "#/$defs/DV360UpdateCreativeConfig",
+          "update_insertion_order": "#/$defs/DV360UpdateInsertionOrderConfig",
+          "update_line_item": "#/$defs/DV360UpdateLineItemConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/DV360ListAdvertisersConfig"
+        },
+        {
+          "$ref": "#/$defs/DV360GetAdvertiserConfig"
+        },
+        {
+          "$ref": "#/$defs/DV360CreateAdvertiserConfig"
+        },
+        {
+          "$ref": "#/$defs/DV360UpdateAdvertiserConfig"
+        },
+        {
+          "$ref": "#/$defs/DV360ListCampaignsConfig"
+        },
+        {
+          "$ref": "#/$defs/DV360GetCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/DV360CreateCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/DV360UpdateCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/DV360ListInsertionOrdersConfig"
+        },
+        {
+          "$ref": "#/$defs/DV360CreateInsertionOrderConfig"
+        },
+        {
+          "$ref": "#/$defs/DV360UpdateInsertionOrderConfig"
+        },
+        {
+          "$ref": "#/$defs/DV360ListLineItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/DV360GetLineItemConfig"
+        },
+        {
+          "$ref": "#/$defs/DV360CreateLineItemConfig"
+        },
+        {
+          "$ref": "#/$defs/DV360UpdateLineItemConfig"
+        },
+        {
+          "$ref": "#/$defs/DV360DuplicateLineItemConfig"
+        },
+        {
+          "$ref": "#/$defs/DV360ListCreativesConfig"
+        },
+        {
+          "$ref": "#/$defs/DV360CreateCreativeConfig"
+        },
+        {
+          "$ref": "#/$defs/DV360UpdateCreativeConfig"
+        },
+        {
+          "$ref": "#/$defs/DV360ListAssignedTargetingConfig"
+        },
+        {
+          "$ref": "#/$defs/DV360CreateAssignedTargetingConfig"
+        },
+        {
+          "$ref": "#/$defs/DV360SearchTargetingOptionsConfig"
+        },
+        {
+          "$ref": "#/$defs/DV360ListChannelsConfig"
+        },
+        {
+          "$ref": "#/$defs/DV360CreateChannelConfig"
+        },
+        {
+          "$ref": "#/$defs/DV360ListAudiencesConfig"
+        },
+        {
+          "$ref": "#/$defs/DV360EditCustomerMatchConfig"
+        },
+        {
+          "$ref": "#/$defs/DV360CreateReportQueryConfig"
+        },
+        {
+          "$ref": "#/$defs/DV360RunReportQueryConfig"
+        },
+        {
+          "$ref": "#/$defs/DV360GetInsertionOrderConfig"
+        },
+        {
+          "$ref": "#/$defs/DV360GetCreativeConfig"
+        },
+        {
+          "$ref": "#/$defs/DV360GetChannelConfig"
+        },
+        {
+          "$ref": "#/$defs/DV360DeleteLineItemConfig"
+        },
+        {
+          "$ref": "#/$defs/DV360DeleteCreativeConfig"
+        },
+        {
+          "$ref": "#/$defs/DV360ListReportQueriesConfig"
+        },
+        {
+          "$ref": "#/$defs/DV360GetReportQueryConfig"
+        },
+        {
+          "$ref": "#/$defs/DV360GetReportConfig"
+        },
+        {
+          "$ref": "#/$defs/DV360OnJobCompletedConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/DV360OAuthCredential"
+        },
+        {
+          "$ref": "#/$defs/DV360ServiceAccountCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Dv360 Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "List all advertisers under our partner",
+    "Pause a line item by setting its entity status to inactive",
+    "Create a campaign under an advertiser",
+    "List the creatives for an advertiser",
+    "Run a Bid Manager report query and fetch results"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

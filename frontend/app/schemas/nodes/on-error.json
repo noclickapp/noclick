@@ -1,0 +1,36 @@
+{
+  "$defs": {
+    "OnErrorConfig": {
+      "description": "Configuration for the on-error node.",
+      "properties": {},
+      "title": "OnErrorConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for on-error node (no credentials).",
+  "properties": {
+    "config": {
+      "$ref": "#/$defs/OnErrorConfig",
+      "description": "Node-specific configuration"
+    },
+    "credentials": {
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials",
+      "type": "null"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "On-error Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Add Slack notification node to alert team when error occurs",
+    "Log error details to external monitoring service for analysis",
+    "Send email with error summary and execution context to admin",
+    "Create error recovery flow for retry logic with backoff strategy",
+    "Store error details in database for historical troubleshooting"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

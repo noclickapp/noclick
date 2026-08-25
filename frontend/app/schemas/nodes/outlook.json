@@ -1,0 +1,5725 @@
+{
+  "$defs": {
+    "OutlookAcceptEventConfig": {
+      "description": "Configuration for accepting an event invitation",
+      "properties": {
+        "operation": {
+          "const": "accept_calendar_event_invitation",
+          "default": "accept_calendar_event_invitation",
+          "title": "Accept Calendar Event Invitation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar Event",
+          "x-display-name": "Accept Calendar Event Invitation",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "accept invite",
+            "accept meeting",
+            "say yes",
+            "rsvp yes",
+            "confirm attendance"
+          ]
+        },
+        "event_id": {
+          "description": "ID of the event to accept",
+          "placeholder": "Event ID from list_events",
+          "title": "Event ID",
+          "type": "string"
+        },
+        "comment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional comment to organizer",
+          "placeholder": "Looking forward to it! (optional)",
+          "title": "Comment",
+          "ui:widget": "textarea"
+        },
+        "send_response": {
+          "default": true,
+          "description": "Send acceptance response to organizer",
+          "title": "Send Response",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "OutlookAcceptEventConfig",
+      "type": "object"
+    },
+    "OutlookAddAttachmentConfig": {
+      "description": "Configuration for adding an attachment to a message",
+      "properties": {
+        "operation": {
+          "const": "add_attachment_to_message",
+          "default": "add_attachment_to_message",
+          "title": "Add Attachment to Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Message",
+          "x-display-name": "Add Attachment to Message",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "attach file",
+            "add attachment",
+            "include file",
+            "attach document to email"
+          ]
+        },
+        "message_id": {
+          "description": "ID of the message to add attachment to",
+          "placeholder": "Message ID (usually a draft)",
+          "title": "Message ID",
+          "type": "string"
+        },
+        "file_name": {
+          "description": "Name of the attachment file",
+          "placeholder": "document.pdf",
+          "title": "File Name",
+          "type": "string"
+        },
+        "content_base64": {
+          "description": "Base64-encoded file content",
+          "placeholder": "Base64-encoded file data...",
+          "title": "File Content (Base64)",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "content_type": {
+          "default": "application/octet-stream",
+          "description": "MIME type of the attachment",
+          "placeholder": "application/pdf",
+          "title": "Content Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message_id",
+        "file_name",
+        "content_base64"
+      ],
+      "title": "OutlookAddAttachmentConfig",
+      "type": "object"
+    },
+    "OutlookAddEventAttachmentConfig": {
+      "properties": {
+        "operation": {
+          "const": "add_event_attachment",
+          "default": "add_event_attachment",
+          "title": "Add Event Attachment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "Add Event Attachment",
+          "x-is-trigger": false
+        },
+        "event_id": {
+          "description": "The event to attach to",
+          "title": "Event ID",
+          "type": "string"
+        },
+        "name": {
+          "description": "Attachment file name",
+          "title": "File Name",
+          "type": "string"
+        },
+        "content_bytes": {
+          "description": "Base64-encoded file bytes (<3 MB)",
+          "title": "Content (base64)",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "content_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "MIME type, e.g. application/pdf",
+          "title": "Content Type"
+        }
+      },
+      "required": [
+        "event_id",
+        "name",
+        "content_bytes"
+      ],
+      "title": "OutlookAddEventAttachmentConfig",
+      "type": "object"
+    },
+    "OutlookAllowedSharingRolesConfig": {
+      "properties": {
+        "operation": {
+          "const": "allowed_calendar_sharing_roles",
+          "default": "allowed_calendar_sharing_roles",
+          "title": "Allowed Calendar Sharing Roles",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "Allowed Calendar Sharing Roles",
+          "x-is-trigger": false
+        },
+        "calendar_id": {
+          "description": "The calendar to check",
+          "title": "Calendar",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste calendar ID",
+            "field_name": "calendar_id",
+            "placeholder": "Select a calendar...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "outlook_calendar"
+        },
+        "user_email": {
+          "description": "SMTP address of the recipient",
+          "title": "User Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "calendar_id",
+        "user_email"
+      ],
+      "title": "OutlookAllowedSharingRolesConfig",
+      "type": "object"
+    },
+    "OutlookCalendarViewConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_calendar_view",
+          "default": "get_calendar_view",
+          "title": "Get Calendar View",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "Get Calendar View",
+          "x-is-trigger": false
+        },
+        "start_date_time": {
+          "description": "Window start, ISO 8601",
+          "title": "Start",
+          "type": "string"
+        },
+        "end_date_time": {
+          "description": "Window end, ISO 8601",
+          "title": "End",
+          "type": "string"
+        },
+        "calendar_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Calendar to view (default: primary)",
+          "title": "Calendar"
+        },
+        "top": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max events to return",
+          "title": "Max Results"
+        }
+      },
+      "required": [
+        "start_date_time",
+        "end_date_time"
+      ],
+      "title": "OutlookCalendarViewConfig",
+      "type": "object"
+    },
+    "OutlookCalendarViewDeltaConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_calendar_view_delta",
+          "default": "get_calendar_view_delta",
+          "title": "Get Calendar View Delta",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "Get Calendar View Delta",
+          "x-is-trigger": false
+        },
+        "start_date_time": {
+          "description": "Window start, ISO 8601",
+          "title": "Start",
+          "type": "string"
+        },
+        "end_date_time": {
+          "description": "Window end, ISO 8601",
+          "title": "End",
+          "type": "string"
+        },
+        "delta_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "A prior @odata.deltaLink or $deltatoken to resume from",
+          "title": "Delta Link/Token"
+        }
+      },
+      "required": [
+        "start_date_time",
+        "end_date_time"
+      ],
+      "title": "OutlookCalendarViewDeltaConfig",
+      "type": "object"
+    },
+    "OutlookCancelEventConfig": {
+      "description": "Configuration for canceling a calendar event",
+      "properties": {
+        "operation": {
+          "const": "cancel_calendar_event",
+          "default": "cancel_calendar_event",
+          "title": "Cancel Calendar Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar Event",
+          "x-display-name": "Cancel Calendar Event",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "cancel meeting",
+            "cancel event",
+            "call off meeting",
+            "notify cancellation"
+          ]
+        },
+        "event_id": {
+          "description": "ID of the event to cancel",
+          "placeholder": "Event ID from list_events",
+          "title": "Event ID",
+          "type": "string"
+        },
+        "comment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cancellation message to attendees",
+          "placeholder": "Event cancelled due to... (optional)",
+          "title": "Comment",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "OutlookCancelEventConfig",
+      "type": "object"
+    },
+    "OutlookCopyFolderConfig": {
+      "description": "Configuration for copying a folder",
+      "properties": {
+        "operation": {
+          "const": "copy_mail_folder",
+          "default": "copy_mail_folder",
+          "title": "Copy Mail Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Mail Folder",
+          "x-display-name": "Copy Mail Folder",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "copy folder",
+            "duplicate folder",
+            "clone mail folder"
+          ]
+        },
+        "folder_id": {
+          "description": "ID of the folder to copy",
+          "placeholder": "Folder ID from list_folders",
+          "title": "Folder ID",
+          "type": "string"
+        },
+        "destination_folder_id": {
+          "description": "ID of the destination parent folder",
+          "placeholder": "Parent folder ID",
+          "title": "Destination Folder ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folder_id",
+        "destination_folder_id"
+      ],
+      "title": "OutlookCopyFolderConfig",
+      "type": "object"
+    },
+    "OutlookCopyMessageConfig": {
+      "description": "Configuration for copying a message to another folder",
+      "properties": {
+        "operation": {
+          "const": "copy_message_to_folder",
+          "default": "copy_message_to_folder",
+          "title": "Copy Message to Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Message",
+          "x-display-name": "Copy Message to Folder",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "copy email",
+            "duplicate message",
+            "copy to folder",
+            "copy message"
+          ]
+        },
+        "message_id": {
+          "description": "ID of the message to copy",
+          "placeholder": "Message ID from previous operation",
+          "title": "Message ID",
+          "type": "string"
+        },
+        "destination_folder": {
+          "description": "Folder to copy the message to",
+          "enum": [
+            "inbox",
+            "drafts",
+            "sentitems",
+            "deleteditems",
+            "junkemail",
+            "archive"
+          ],
+          "title": "Destination Folder",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message_id",
+        "destination_folder"
+      ],
+      "title": "OutlookCopyMessageConfig",
+      "type": "object"
+    },
+    "OutlookCreateCalendarConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_calendar",
+          "default": "create_calendar",
+          "title": "Create Calendar",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-creates-resource": true,
+          "x-display-name": "Create Calendar",
+          "x-is-trigger": false,
+          "x-resource-id-path": "calendar.id",
+          "x-resource-type": "outlook_calendar"
+        },
+        "name": {
+          "description": "Name of the new calendar",
+          "title": "Name",
+          "type": "string"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Calendar color (e.g. auto, lightBlue)",
+          "title": "Color"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "OutlookCreateCalendarConfig",
+      "type": "object"
+    },
+    "OutlookCreateCalendarGroupConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_calendar_group",
+          "default": "create_calendar_group",
+          "title": "Create Calendar Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "Create Calendar Group",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Name of the new calendar group",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "OutlookCreateCalendarGroupConfig",
+      "type": "object"
+    },
+    "OutlookCreateCalendarInGroupConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_calendar_in_group",
+          "default": "create_calendar_in_group",
+          "title": "Create Calendar In Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "Create Calendar In Group",
+          "x-is-trigger": false
+        },
+        "group_id": {
+          "description": "The calendar group ID",
+          "title": "Group ID",
+          "type": "string"
+        },
+        "name": {
+          "description": "Name of the new calendar",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "group_id",
+        "name"
+      ],
+      "title": "OutlookCreateCalendarInGroupConfig",
+      "type": "object"
+    },
+    "OutlookCreateCalendarPermissionConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_calendar_permission",
+          "default": "create_calendar_permission",
+          "title": "Create Calendar Permission",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "Create Calendar Permission",
+          "x-is-trigger": false
+        },
+        "calendar_id": {
+          "description": "The calendar to share",
+          "title": "Calendar",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste calendar ID",
+            "field_name": "calendar_id",
+            "placeholder": "Select a calendar...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "outlook_calendar"
+        },
+        "resource": {
+          "description": "calendarPermission body, e.g. {\"emailAddress\":{\"address\":\"x@y.com\"},\"role\":\"read\",\"allowedRoles\":[\"read\"]}",
+          "title": "Permission JSON",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "calendar_id",
+        "resource"
+      ],
+      "title": "OutlookCreateCalendarPermissionConfig",
+      "type": "object"
+    },
+    "OutlookCreateCategoryConfig": {
+      "description": "Configuration for creating a category",
+      "properties": {
+        "operation": {
+          "const": "create_message_category",
+          "default": "create_message_category",
+          "title": "Create Message Category",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message Category",
+          "x-display-name": "Create Message Category",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new category",
+            "add color category",
+            "make tag",
+            "create label color"
+          ]
+        },
+        "display_name": {
+          "description": "Display name for the category",
+          "placeholder": "My Category",
+          "title": "Category Name",
+          "type": "string"
+        },
+        "color": {
+          "default": "preset0",
+          "description": "Color preset for the category",
+          "enum": [
+            "preset0",
+            "preset1",
+            "preset2",
+            "preset3",
+            "preset4",
+            "preset5",
+            "preset6",
+            "preset7",
+            "preset8",
+            "preset9",
+            "preset10",
+            "preset11",
+            "preset12",
+            "preset13",
+            "preset14",
+            "preset15",
+            "preset16",
+            "preset17",
+            "preset18",
+            "preset19",
+            "preset20",
+            "preset21",
+            "preset22",
+            "preset23",
+            "preset24"
+          ],
+          "title": "Color",
+          "type": "string"
+        }
+      },
+      "required": [
+        "display_name"
+      ],
+      "title": "OutlookCreateCategoryConfig",
+      "type": "object"
+    },
+    "OutlookCreateContactConfig": {
+      "description": "Configuration for creating a contact",
+      "properties": {
+        "operation": {
+          "const": "create_contact_person",
+          "default": "create_contact_person",
+          "title": "Create Contact Person",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact",
+          "x-display-name": "Create Contact Person",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "add contact",
+            "new contact",
+            "save contact",
+            "add person",
+            "add to address book",
+            "create contact"
+          ]
+        },
+        "given_name": {
+          "description": "Contact's first name",
+          "placeholder": "John",
+          "title": "First Name",
+          "type": "string"
+        },
+        "surname": {
+          "description": "Contact's last name",
+          "placeholder": "Doe",
+          "title": "Last Name",
+          "type": "string"
+        },
+        "email_address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact's email address",
+          "placeholder": "john.doe@example.com (optional)",
+          "title": "Email Address"
+        },
+        "business_phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact's business phone number",
+          "placeholder": "+1-555-0123 (optional)",
+          "title": "Business Phone"
+        },
+        "mobile_phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact's mobile phone number",
+          "placeholder": "+1-555-0124 (optional)",
+          "title": "Mobile Phone"
+        },
+        "home_phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact's home phone number",
+          "placeholder": "+1-555-0125 (optional)",
+          "title": "Home Phone"
+        },
+        "job_title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact's job title",
+          "placeholder": "Software Engineer (optional)",
+          "title": "Job Title"
+        },
+        "company_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact's company name",
+          "placeholder": "Acme Corp (optional)",
+          "title": "Company"
+        }
+      },
+      "required": [
+        "given_name",
+        "surname"
+      ],
+      "title": "OutlookCreateContactConfig",
+      "type": "object"
+    },
+    "OutlookCreateContactFolderConfig": {
+      "description": "Configuration for creating a contact folder",
+      "properties": {
+        "operation": {
+          "const": "create_contact_folder",
+          "default": "create_contact_folder",
+          "title": "Create Contact Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact Folder",
+          "x-display-name": "Create Contact Folder",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new contact folder",
+            "add contact group",
+            "make address book",
+            "create contact folder"
+          ]
+        },
+        "display_name": {
+          "description": "Name for the contact folder",
+          "placeholder": "My Contacts",
+          "title": "Folder Name",
+          "type": "string"
+        },
+        "parent_folder_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of parent folder (optional, defaults to root)",
+          "placeholder": "Parent folder ID (optional)",
+          "title": "Parent Folder ID"
+        }
+      },
+      "required": [
+        "display_name"
+      ],
+      "title": "OutlookCreateContactFolderConfig",
+      "type": "object"
+    },
+    "OutlookCreateDraftConfig": {
+      "description": "Configuration for creating an email draft",
+      "properties": {
+        "operation": {
+          "const": "create_email_draft",
+          "default": "create_email_draft",
+          "description": "Create an email draft",
+          "title": "Create Email Draft",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Message",
+          "x-display-name": "Create Email Draft",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "save draft",
+            "draft email",
+            "compose draft",
+            "new draft message",
+            "write draft"
+          ]
+        },
+        "to": {
+          "description": "Recipient email address(es), comma-separated for multiple",
+          "placeholder": "recipient@example.com",
+          "title": "To",
+          "type": "string"
+        },
+        "subject": {
+          "description": "Email subject line",
+          "placeholder": "Enter subject...",
+          "title": "Subject",
+          "type": "string"
+        },
+        "body": {
+          "description": "Email body content (HTML supported)",
+          "placeholder": "Enter email body...",
+          "title": "Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "cc": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "CC recipients (comma-separated)",
+          "placeholder": "cc@example.com (optional)",
+          "title": "CC"
+        },
+        "bcc": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "BCC recipients (comma-separated)",
+          "placeholder": "bcc@example.com (optional)",
+          "title": "BCC"
+        },
+        "attachments": {
+          "description": "Files to attach: workflow resource IDs or URLs (10MB per file, 20MB total)",
+          "items": {
+            "type": "string"
+          },
+          "placeholder": "{{node.resource_id}}",
+          "title": "Attachments",
+          "type": "array",
+          "ui:widget": "list"
+        }
+      },
+      "required": [
+        "to",
+        "subject",
+        "body"
+      ],
+      "title": "OutlookCreateDraftConfig",
+      "type": "object"
+    },
+    "OutlookCreateEventConfig": {
+      "description": "Configuration for creating a calendar event",
+      "properties": {
+        "operation": {
+          "const": "create_calendar_event",
+          "default": "create_calendar_event",
+          "title": "Create Calendar Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar Event",
+          "x-display-name": "Create Calendar Event",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new event",
+            "schedule meeting",
+            "book appointment",
+            "add event",
+            "create meeting"
+          ]
+        },
+        "subject": {
+          "description": "Event title",
+          "placeholder": "Team Meeting",
+          "title": "Subject",
+          "type": "string"
+        },
+        "start_datetime": {
+          "description": "Event start in ISO 8601 format",
+          "placeholder": "2024-01-01T10:00:00",
+          "title": "Start Date/Time",
+          "type": "string"
+        },
+        "end_datetime": {
+          "description": "Event end in ISO 8601 format",
+          "placeholder": "2024-01-01T11:00:00",
+          "title": "End Date/Time",
+          "type": "string"
+        },
+        "timezone": {
+          "default": "UTC",
+          "description": "Timezone for the event times",
+          "placeholder": "UTC",
+          "title": "Timezone",
+          "type": "string"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Event location",
+          "placeholder": "Conference Room A (optional)",
+          "title": "Location"
+        },
+        "body": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Event description",
+          "placeholder": "Event details (optional)",
+          "title": "Body",
+          "ui:widget": "textarea"
+        },
+        "attendees": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated email addresses",
+          "placeholder": "user1@example.com, user2@example.com (optional)",
+          "title": "Attendees"
+        },
+        "is_online_meeting": {
+          "default": false,
+          "description": "Create as Teams online meeting",
+          "title": "Online Meeting",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "subject",
+        "start_datetime",
+        "end_datetime"
+      ],
+      "title": "OutlookCreateEventConfig",
+      "type": "object"
+    },
+    "OutlookCreateFolderConfig": {
+      "description": "Configuration for creating a new mail folder",
+      "properties": {
+        "operation": {
+          "const": "create_mail_folder",
+          "default": "create_mail_folder",
+          "description": "Create a new mail folder",
+          "title": "Create Mail Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Mail Folder",
+          "x-display-name": "Create Mail Folder",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new folder",
+            "make mail folder",
+            "add folder",
+            "create mailbox folder"
+          ]
+        },
+        "folder_name": {
+          "description": "Name for the new folder",
+          "placeholder": "My New Folder",
+          "title": "Folder Name",
+          "type": "string"
+        },
+        "parent_folder": {
+          "default": "inbox",
+          "description": "Parent folder to create the new folder in",
+          "enum": [
+            "inbox",
+            "drafts",
+            "sentitems",
+            "deleteditems",
+            "junkemail",
+            "archive",
+            "msgfolderroot"
+          ],
+          "title": "Parent Folder",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folder_name"
+      ],
+      "title": "OutlookCreateFolderConfig",
+      "type": "object"
+    },
+    "OutlookCreateForwardDraftConfig": {
+      "description": "Configuration for creating a forward draft",
+      "properties": {
+        "operation": {
+          "const": "create_forward_draft",
+          "default": "create_forward_draft",
+          "title": "Create Forward Draft",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Message",
+          "x-display-name": "Create Forward Draft",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "draft a forward",
+            "save forward draft",
+            "prepare forward",
+            "forward draft"
+          ]
+        },
+        "message_id": {
+          "description": "ID of the message to forward",
+          "placeholder": "Message ID from previous operation",
+          "title": "Message ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message_id"
+      ],
+      "title": "OutlookCreateForwardDraftConfig",
+      "type": "object"
+    },
+    "OutlookCreateMessageRuleConfig": {
+      "description": "Configuration for creating an inbox rule",
+      "properties": {
+        "operation": {
+          "const": "create_inbox_rule",
+          "default": "create_inbox_rule",
+          "title": "Create Inbox Rule",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inbox Rule",
+          "x-display-name": "Create Inbox Rule",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new rule",
+            "make filter",
+            "add inbox rule",
+            "create mail filter",
+            "auto sort rule"
+          ]
+        },
+        "display_name": {
+          "description": "Display name for the rule",
+          "placeholder": "Move emails from sender...",
+          "title": "Rule Name",
+          "type": "string"
+        },
+        "conditions": {
+          "description": "JSON object defining rule conditions",
+          "placeholder": "{\"fromAddresses\": [{\"emailAddress\": {\"address\": \"sender@example.com\"}}]}",
+          "title": "Conditions (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "actions": {
+          "description": "JSON object defining rule actions",
+          "placeholder": "{\"moveToFolder\": \"inbox\"}",
+          "title": "Actions (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "display_name",
+        "conditions",
+        "actions"
+      ],
+      "title": "OutlookCreateMessageRuleConfig",
+      "type": "object"
+    },
+    "OutlookCreateReplyAllDraftConfig": {
+      "description": "Configuration for creating a reply-all draft",
+      "properties": {
+        "operation": {
+          "const": "create_reply_all_draft",
+          "default": "create_reply_all_draft",
+          "title": "Create Reply All Draft",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Message",
+          "x-display-name": "Create Reply All Draft",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "reply all draft",
+            "draft reply to all",
+            "respond to everyone draft",
+            "reply everyone"
+          ]
+        },
+        "message_id": {
+          "description": "ID of the message to reply all to",
+          "placeholder": "Message ID from previous operation",
+          "title": "Message ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message_id"
+      ],
+      "title": "OutlookCreateReplyAllDraftConfig",
+      "type": "object"
+    },
+    "OutlookCreateReplyDraftConfig": {
+      "description": "Configuration for creating a reply draft",
+      "properties": {
+        "operation": {
+          "const": "create_reply_draft",
+          "default": "create_reply_draft",
+          "title": "Create Reply Draft",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Message",
+          "x-display-name": "Create Reply Draft",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "draft a reply",
+            "save reply draft",
+            "prepare reply",
+            "reply draft"
+          ]
+        },
+        "message_id": {
+          "description": "ID of the message to reply to",
+          "placeholder": "Message ID from previous operation",
+          "title": "Message ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message_id"
+      ],
+      "title": "OutlookCreateReplyDraftConfig",
+      "type": "object"
+    },
+    "OutlookDeclineEventConfig": {
+      "description": "Configuration for declining an event invitation",
+      "properties": {
+        "operation": {
+          "const": "decline_calendar_event_invitation",
+          "default": "decline_calendar_event_invitation",
+          "title": "Decline Calendar Event Invitation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar Event",
+          "x-display-name": "Decline Calendar Event Invitation",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "decline invite",
+            "decline meeting",
+            "say no",
+            "rsvp no",
+            "reject invitation"
+          ]
+        },
+        "event_id": {
+          "description": "ID of the event to decline",
+          "placeholder": "Event ID from list_events",
+          "title": "Event ID",
+          "type": "string"
+        },
+        "comment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional comment to organizer",
+          "placeholder": "Unable to attend... (optional)",
+          "title": "Comment",
+          "ui:widget": "textarea"
+        },
+        "send_response": {
+          "default": true,
+          "description": "Send decline response to organizer",
+          "title": "Send Response",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "OutlookDeclineEventConfig",
+      "type": "object"
+    },
+    "OutlookDeleteAttachmentConfig": {
+      "description": "Configuration for deleting an attachment",
+      "properties": {
+        "operation": {
+          "const": "delete_attachment_from_message",
+          "default": "delete_attachment_from_message",
+          "title": "Delete Attachment from Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Message",
+          "x-display-name": "Delete Attachment from Message",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove attachment",
+            "detach file",
+            "delete email attachment",
+            "strip attachment"
+          ]
+        },
+        "message_id": {
+          "description": "ID of the message containing the attachment",
+          "placeholder": "Message ID",
+          "title": "Message ID",
+          "type": "string"
+        },
+        "attachment_id": {
+          "description": "ID of the attachment to delete",
+          "placeholder": "Attachment ID from get_attachments",
+          "title": "Attachment ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message_id",
+        "attachment_id"
+      ],
+      "title": "OutlookDeleteAttachmentConfig",
+      "type": "object"
+    },
+    "OutlookDeleteCalendarConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_calendar",
+          "default": "delete_calendar",
+          "title": "Delete Calendar",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "Delete Calendar",
+          "x-is-trigger": false
+        },
+        "calendar_id": {
+          "description": "The calendar to delete",
+          "title": "Calendar",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste calendar ID",
+            "field_name": "calendar_id",
+            "placeholder": "Select a calendar...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "outlook_calendar"
+        }
+      },
+      "required": [
+        "calendar_id"
+      ],
+      "title": "OutlookDeleteCalendarConfig",
+      "type": "object"
+    },
+    "OutlookDeleteCalendarGroupConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_calendar_group",
+          "default": "delete_calendar_group",
+          "title": "Delete Calendar Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "Delete Calendar Group",
+          "x-is-trigger": false
+        },
+        "group_id": {
+          "description": "The calendar group ID",
+          "title": "Group ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "OutlookDeleteCalendarGroupConfig",
+      "type": "object"
+    },
+    "OutlookDeleteCalendarPermissionConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_calendar_permission",
+          "default": "delete_calendar_permission",
+          "title": "Delete Calendar Permission",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "Delete Calendar Permission",
+          "x-is-trigger": false
+        },
+        "calendar_id": {
+          "description": "The calendar that owns the permission",
+          "title": "Calendar",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste calendar ID",
+            "field_name": "calendar_id",
+            "placeholder": "Select a calendar...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "outlook_calendar"
+        },
+        "permission_id": {
+          "description": "The calendarPermission ID to remove",
+          "title": "Permission ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "calendar_id",
+        "permission_id"
+      ],
+      "title": "OutlookDeleteCalendarPermissionConfig",
+      "type": "object"
+    },
+    "OutlookDeleteCategoryConfig": {
+      "description": "Configuration for deleting a category",
+      "properties": {
+        "operation": {
+          "const": "delete_message_category",
+          "default": "delete_message_category",
+          "title": "Delete Message Category",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message Category",
+          "x-display-name": "Delete Message Category",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove category",
+            "delete color category",
+            "trash tag"
+          ]
+        },
+        "category_id": {
+          "description": "ID of the category to delete",
+          "placeholder": "Category ID from list_categories",
+          "title": "Category ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "category_id"
+      ],
+      "title": "OutlookDeleteCategoryConfig",
+      "type": "object"
+    },
+    "OutlookDeleteConfig": {
+      "description": "Configuration for deleting an email",
+      "properties": {
+        "operation": {
+          "const": "delete_email_message",
+          "default": "delete_email_message",
+          "description": "Delete an email",
+          "title": "Delete Email Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Message",
+          "x-display-name": "Delete Email Message",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "delete email",
+            "trash email",
+            "remove message",
+            "discard email"
+          ]
+        },
+        "message_id": {
+          "description": "ID of the message to delete",
+          "placeholder": "Message ID from previous read operation",
+          "title": "Message ID",
+          "type": "string"
+        },
+        "permanent": {
+          "default": false,
+          "description": "Permanently delete instead of moving to Deleted Items",
+          "title": "Permanent Delete",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "message_id"
+      ],
+      "title": "OutlookDeleteConfig",
+      "type": "object"
+    },
+    "OutlookDeleteContactConfig": {
+      "description": "Configuration for deleting a contact",
+      "properties": {
+        "operation": {
+          "const": "delete_contact_person",
+          "default": "delete_contact_person",
+          "title": "Delete Contact Person",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact",
+          "x-display-name": "Delete Contact Person",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove contact",
+            "delete contact",
+            "erase person",
+            "remove from address book"
+          ]
+        },
+        "contact_id": {
+          "description": "ID of the contact to delete",
+          "placeholder": "Contact ID from list_contacts",
+          "title": "Contact ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "OutlookDeleteContactConfig",
+      "type": "object"
+    },
+    "OutlookDeleteContactFolderConfig": {
+      "description": "Configuration for deleting a contact folder",
+      "properties": {
+        "operation": {
+          "const": "delete_contact_folder",
+          "default": "delete_contact_folder",
+          "title": "Delete Contact Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact Folder",
+          "x-display-name": "Delete Contact Folder",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove contact folder",
+            "delete contact group",
+            "erase address book",
+            "delete contact folder"
+          ]
+        },
+        "folder_id": {
+          "description": "ID of the contact folder to delete",
+          "placeholder": "Folder ID from list_contact_folders",
+          "title": "Folder ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folder_id"
+      ],
+      "title": "OutlookDeleteContactFolderConfig",
+      "type": "object"
+    },
+    "OutlookDeleteEventAttachmentConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_event_attachment",
+          "default": "delete_event_attachment",
+          "title": "Delete Event Attachment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "Delete Event Attachment",
+          "x-is-trigger": false
+        },
+        "event_id": {
+          "description": "The event that owns the attachment",
+          "title": "Event ID",
+          "type": "string"
+        },
+        "attachment_id": {
+          "description": "The attachment ID to delete",
+          "title": "Attachment ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_id",
+        "attachment_id"
+      ],
+      "title": "OutlookDeleteEventAttachmentConfig",
+      "type": "object"
+    },
+    "OutlookDeleteEventConfig": {
+      "description": "Configuration for deleting a calendar event",
+      "properties": {
+        "operation": {
+          "const": "delete_calendar_event",
+          "default": "delete_calendar_event",
+          "title": "Delete Calendar Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar Event",
+          "x-display-name": "Delete Calendar Event",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "delete event",
+            "remove meeting",
+            "trash appointment",
+            "delete meeting"
+          ]
+        },
+        "event_id": {
+          "description": "ID of the event to delete",
+          "placeholder": "Event ID from list_events",
+          "title": "Event ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "OutlookDeleteEventConfig",
+      "type": "object"
+    },
+    "OutlookDeleteFolderConfig": {
+      "description": "Configuration for deleting a folder",
+      "properties": {
+        "operation": {
+          "const": "delete_mail_folder",
+          "default": "delete_mail_folder",
+          "title": "Delete Mail Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Mail Folder",
+          "x-display-name": "Delete Mail Folder",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove folder",
+            "trash folder",
+            "delete mail folder"
+          ]
+        },
+        "folder_id": {
+          "description": "ID of the folder to delete",
+          "placeholder": "Folder ID from list_folders",
+          "title": "Folder ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folder_id"
+      ],
+      "title": "OutlookDeleteFolderConfig",
+      "type": "object"
+    },
+    "OutlookDeleteMessageRuleConfig": {
+      "description": "Configuration for deleting an inbox rule",
+      "properties": {
+        "operation": {
+          "const": "delete_inbox_rule",
+          "default": "delete_inbox_rule",
+          "title": "Delete Inbox Rule",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inbox Rule",
+          "x-display-name": "Delete Inbox Rule",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove rule",
+            "delete filter",
+            "trash inbox rule"
+          ]
+        },
+        "rule_id": {
+          "description": "ID of the rule to delete",
+          "placeholder": "Rule ID from list_message_rules",
+          "title": "Rule ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule_id"
+      ],
+      "title": "OutlookDeleteMessageRuleConfig",
+      "type": "object"
+    },
+    "OutlookDismissReminderConfig": {
+      "description": "Configuration for dismissing an event reminder",
+      "properties": {
+        "operation": {
+          "const": "dismiss_event_reminder",
+          "default": "dismiss_event_reminder",
+          "title": "Dismiss Event Reminder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar Event",
+          "x-display-name": "Dismiss Event Reminder",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "dismiss reminder",
+            "clear alert",
+            "dismiss notification",
+            "acknowledge reminder"
+          ]
+        },
+        "event_id": {
+          "description": "ID of the event to dismiss reminder for",
+          "placeholder": "Event ID from list_events",
+          "title": "Event ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "OutlookDismissReminderConfig",
+      "type": "object"
+    },
+    "OutlookFindMeetingTimesConfig": {
+      "description": "Configuration for finding available meeting times",
+      "properties": {
+        "operation": {
+          "const": "find_available_meeting_times",
+          "default": "find_available_meeting_times",
+          "title": "Find Available Meeting Times",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar Event",
+          "x-display-name": "Find Available Meeting Times",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "find meeting time",
+            "suggest times",
+            "find open slot",
+            "schedule suggestions",
+            "best time to meet"
+          ]
+        },
+        "attendees": {
+          "description": "Comma-separated email addresses of required attendees",
+          "placeholder": "user1@example.com, user2@example.com",
+          "title": "Attendees",
+          "type": "string"
+        },
+        "meeting_duration": {
+          "default": 60,
+          "description": "Duration of the meeting in minutes",
+          "maximum": 480,
+          "minimum": 15,
+          "title": "Meeting Duration (minutes)",
+          "type": "integer"
+        },
+        "start_time": {
+          "description": "Earliest possible meeting time (ISO 8601)",
+          "placeholder": "2024-01-01T09:00:00",
+          "title": "Start Time",
+          "type": "string"
+        },
+        "end_time": {
+          "description": "Latest possible meeting time (ISO 8601)",
+          "placeholder": "2024-01-01T17:00:00",
+          "title": "End Time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "attendees",
+        "start_time",
+        "end_time"
+      ],
+      "title": "OutlookFindMeetingTimesConfig",
+      "type": "object"
+    },
+    "OutlookForwardCalendarEventConfig": {
+      "properties": {
+        "operation": {
+          "const": "forward_calendar_event",
+          "default": "forward_calendar_event",
+          "title": "Forward Calendar Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "Forward Calendar Event",
+          "x-is-trigger": false
+        },
+        "event_id": {
+          "description": "The event to forward",
+          "title": "Event ID",
+          "type": "string"
+        },
+        "to_recipients": {
+          "description": "Comma-separated recipient email addresses",
+          "title": "To",
+          "type": "string"
+        },
+        "comment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional forwarding comment",
+          "title": "Comment"
+        }
+      },
+      "required": [
+        "event_id",
+        "to_recipients"
+      ],
+      "title": "OutlookForwardCalendarEventConfig",
+      "type": "object"
+    },
+    "OutlookForwardConfig": {
+      "description": "Configuration for forwarding an email",
+      "properties": {
+        "operation": {
+          "const": "forward_email_message",
+          "default": "forward_email_message",
+          "description": "Forward an email",
+          "title": "Forward Email Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Message",
+          "x-display-name": "Forward Email Message",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "forward email",
+            "forward message",
+            "pass along email",
+            "send forward"
+          ]
+        },
+        "message_id": {
+          "description": "ID of the message to forward",
+          "placeholder": "Message ID from previous read operation",
+          "title": "Message ID",
+          "type": "string"
+        },
+        "to": {
+          "description": "Recipient email address(es), comma-separated for multiple",
+          "placeholder": "recipient@example.com",
+          "title": "Forward To",
+          "type": "string"
+        },
+        "comment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional message to include with the forwarded email",
+          "placeholder": "Optional comment...",
+          "title": "Comment",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "message_id",
+        "to"
+      ],
+      "title": "OutlookForwardConfig",
+      "type": "object"
+    },
+    "OutlookGetAttachmentsConfig": {
+      "description": "Configuration for getting attachments from an email",
+      "properties": {
+        "operation": {
+          "const": "get_email_attachments",
+          "default": "get_email_attachments",
+          "description": "Get attachments from an email",
+          "title": "Get Email Attachments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Message",
+          "x-display-name": "Get Email Attachments",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "download attachments",
+            "fetch attachments",
+            "email files",
+            "get message attachments"
+          ]
+        },
+        "message_id": {
+          "description": "ID of the message to get attachments from",
+          "placeholder": "Message ID from previous read operation",
+          "title": "Message ID",
+          "type": "string"
+        },
+        "include_content": {
+          "default": false,
+          "description": "Include the actual attachment content (base64 encoded)",
+          "title": "Include Content",
+          "type": "boolean"
+        },
+        "extract_text": {
+          "default": "false",
+          "description": "Extract readable text from document attachments instead of returning raw base64",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Extract Text",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "allow_ai_ocr": {
+          "default": "true",
+          "description": "OCR scanned PDFs with a vision model when there is no text layer (billed per page)",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Allow AI OCR",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "message_id"
+      ],
+      "title": "OutlookGetAttachmentsConfig",
+      "type": "object"
+    },
+    "OutlookGetCalendarConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_calendar",
+          "default": "get_calendar",
+          "title": "Get Calendar",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "Get Calendar",
+          "x-is-trigger": false
+        },
+        "calendar_id": {
+          "description": "The calendar to retrieve",
+          "title": "Calendar",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste calendar ID",
+            "field_name": "calendar_id",
+            "placeholder": "Select a calendar...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "outlook_calendar"
+        }
+      },
+      "required": [
+        "calendar_id"
+      ],
+      "title": "OutlookGetCalendarConfig",
+      "type": "object"
+    },
+    "OutlookGetCalendarGroupConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_calendar_group",
+          "default": "get_calendar_group",
+          "title": "Get Calendar Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "Get Calendar Group",
+          "x-is-trigger": false
+        },
+        "group_id": {
+          "description": "The calendar group ID",
+          "title": "Group ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "OutlookGetCalendarGroupConfig",
+      "type": "object"
+    },
+    "OutlookGetCalendarPermissionConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_calendar_permission",
+          "default": "get_calendar_permission",
+          "title": "Get Calendar Permission",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "Get Calendar Permission",
+          "x-is-trigger": false
+        },
+        "calendar_id": {
+          "description": "The calendar that owns the permission",
+          "title": "Calendar",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste calendar ID",
+            "field_name": "calendar_id",
+            "placeholder": "Select a calendar...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "outlook_calendar"
+        },
+        "permission_id": {
+          "description": "The calendarPermission ID",
+          "title": "Permission ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "calendar_id",
+        "permission_id"
+      ],
+      "title": "OutlookGetCalendarPermissionConfig",
+      "type": "object"
+    },
+    "OutlookGetCategoryConfig": {
+      "description": "Configuration for getting a specific category",
+      "properties": {
+        "operation": {
+          "const": "get_message_category",
+          "default": "get_message_category",
+          "title": "Get Message Category",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message Category",
+          "x-display-name": "Get Message Category",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "open category",
+            "single category",
+            "category details",
+            "fetch one tag"
+          ]
+        },
+        "category_id": {
+          "description": "ID of the category to retrieve",
+          "placeholder": "Category ID from list_categories",
+          "title": "Category ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "category_id"
+      ],
+      "title": "OutlookGetCategoryConfig",
+      "type": "object"
+    },
+    "OutlookGetContactConfig": {
+      "description": "Configuration for getting a contact",
+      "properties": {
+        "operation": {
+          "const": "get_contact_person",
+          "default": "get_contact_person",
+          "title": "Get Contact Person",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact",
+          "x-display-name": "Get Contact Person",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "view contact",
+            "contact details",
+            "open contact",
+            "fetch contact",
+            "person info",
+            "lookup contact"
+          ]
+        },
+        "contact_id": {
+          "description": "ID of the contact to retrieve",
+          "placeholder": "Contact ID from list_contacts",
+          "title": "Contact ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "OutlookGetContactConfig",
+      "type": "object"
+    },
+    "OutlookGetContactFolderConfig": {
+      "description": "Configuration for getting a contact folder",
+      "properties": {
+        "operation": {
+          "const": "get_contact_folder",
+          "default": "get_contact_folder",
+          "title": "Get Contact Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact Folder",
+          "x-display-name": "Get Contact Folder",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "view contact folder",
+            "open contact group",
+            "contact folder details",
+            "fetch contact folder"
+          ]
+        },
+        "folder_id": {
+          "description": "ID of the contact folder to retrieve",
+          "placeholder": "Folder ID from list_contact_folders",
+          "title": "Folder ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folder_id"
+      ],
+      "title": "OutlookGetContactFolderConfig",
+      "type": "object"
+    },
+    "OutlookGetEventAttachmentConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_event_attachment",
+          "default": "get_event_attachment",
+          "title": "Get Event Attachment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "Get Event Attachment",
+          "x-is-trigger": false
+        },
+        "event_id": {
+          "description": "The event that owns the attachment",
+          "title": "Event ID",
+          "type": "string"
+        },
+        "attachment_id": {
+          "description": "The attachment ID",
+          "title": "Attachment ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_id",
+        "attachment_id"
+      ],
+      "title": "OutlookGetEventAttachmentConfig",
+      "type": "object"
+    },
+    "OutlookGetEventConfig": {
+      "description": "Configuration for getting a calendar event",
+      "properties": {
+        "operation": {
+          "const": "get_calendar_event",
+          "default": "get_calendar_event",
+          "title": "Get Calendar Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar Event",
+          "x-display-name": "Get Calendar Event",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "open event",
+            "single event",
+            "event details",
+            "meeting details",
+            "fetch one appointment"
+          ]
+        },
+        "event_id": {
+          "description": "ID of the event to retrieve",
+          "placeholder": "Event ID from list_events",
+          "title": "Event ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "OutlookGetEventConfig",
+      "type": "object"
+    },
+    "OutlookGetMailboxSettingsConfig": {
+      "description": "Configuration for getting mailbox settings",
+      "properties": {
+        "operation": {
+          "const": "get_mailbox_settings",
+          "default": "get_mailbox_settings",
+          "description": "Get mailbox settings (auto-reply, timezone, etc.)",
+          "title": "Get Mailbox Settings",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Mailbox",
+          "x-display-name": "Get Mailbox Settings",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "mailbox settings",
+            "account preferences",
+            "mail config",
+            "inbox settings",
+            "timezone language"
+          ]
+        }
+      },
+      "title": "OutlookGetMailboxSettingsConfig",
+      "type": "object"
+    },
+    "OutlookGetMessageConfig": {
+      "description": "Configuration for getting a specific email by ID",
+      "properties": {
+        "operation": {
+          "const": "get_email_message",
+          "default": "get_email_message",
+          "description": "Get a specific email by ID",
+          "title": "Get Email Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Message",
+          "x-display-name": "Get Email Message",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "open email",
+            "fetch email by id",
+            "single email",
+            "read one message",
+            "email details"
+          ]
+        },
+        "message_id": {
+          "description": "ID of the message to retrieve",
+          "placeholder": "Message ID from previous read operation",
+          "title": "Message ID",
+          "type": "string"
+        },
+        "include_attachments": {
+          "default": false,
+          "description": "Include attachment metadata in the response",
+          "title": "Include Attachments",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "message_id"
+      ],
+      "title": "OutlookGetMessageConfig",
+      "type": "object"
+    },
+    "OutlookGetMessageRuleConfig": {
+      "description": "Configuration for getting a specific rule",
+      "properties": {
+        "operation": {
+          "const": "get_inbox_rule",
+          "default": "get_inbox_rule",
+          "title": "Get Inbox Rule",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inbox Rule",
+          "x-display-name": "Get Inbox Rule",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "open rule",
+            "single inbox rule",
+            "rule details",
+            "fetch one filter"
+          ]
+        },
+        "rule_id": {
+          "description": "ID of the rule to retrieve",
+          "placeholder": "Rule ID from list_message_rules",
+          "title": "Rule ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule_id"
+      ],
+      "title": "OutlookGetMessageRuleConfig",
+      "type": "object"
+    },
+    "OutlookGetMimeContentConfig": {
+      "description": "Configuration for getting MIME content",
+      "properties": {
+        "operation": {
+          "const": "get_email_mime_content",
+          "default": "get_email_mime_content",
+          "title": "Get Email Mime Content",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Message",
+          "x-display-name": "Get Email Mime Content",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "raw email",
+            "download eml",
+            "mime content",
+            "export email source",
+            "get raw mime"
+          ]
+        },
+        "message_id": {
+          "description": "ID of the message to get MIME content from",
+          "placeholder": "Message ID",
+          "title": "Message ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message_id"
+      ],
+      "title": "OutlookGetMimeContentConfig",
+      "type": "object"
+    },
+    "OutlookGetRoomListsConfig": {
+      "description": "Configuration for getting room lists",
+      "properties": {
+        "operation": {
+          "const": "get_available_room_lists",
+          "default": "get_available_room_lists",
+          "title": "Get Available Room Lists",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Room",
+          "x-display-name": "Get Available Room Lists",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "meeting rooms",
+            "room lists",
+            "conference rooms",
+            "bookable rooms",
+            "available locations"
+          ]
+        }
+      },
+      "title": "OutlookGetRoomListsConfig",
+      "type": "object"
+    },
+    "OutlookGetScheduleConfig": {
+      "description": "Configuration for getting free/busy schedule",
+      "properties": {
+        "operation": {
+          "const": "get_free_busy_schedule",
+          "default": "get_free_busy_schedule",
+          "title": "Get Free Busy Schedule",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar Event",
+          "x-display-name": "Get Free Busy Schedule",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "free busy schedule",
+            "availability slots",
+            "when is someone busy",
+            "check person availability",
+            "busy times",
+            "schedule availability"
+          ]
+        },
+        "schedules": {
+          "description": "Comma-separated email addresses to get schedules for",
+          "placeholder": "user1@example.com, user2@example.com",
+          "title": "Email Addresses",
+          "type": "string"
+        },
+        "start_time": {
+          "description": "Schedule start time (ISO 8601)",
+          "placeholder": "2024-01-01T00:00:00",
+          "title": "Start Time",
+          "type": "string"
+        },
+        "end_time": {
+          "description": "Schedule end time (ISO 8601)",
+          "placeholder": "2024-01-02T00:00:00",
+          "title": "End Time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schedules",
+        "start_time",
+        "end_time"
+      ],
+      "title": "OutlookGetScheduleConfig",
+      "type": "object"
+    },
+    "OutlookListCalendarGroupsConfig": {
+      "description": "Configuration for listing calendar groups",
+      "properties": {
+        "operation": {
+          "const": "list_calendar_groups",
+          "default": "list_calendar_groups",
+          "title": "List Calendar Groups",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "List Calendar Groups",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "calendar groups",
+            "grouped calendars",
+            "calendar collections",
+            "calendar folders"
+          ]
+        }
+      },
+      "title": "OutlookListCalendarGroupsConfig",
+      "type": "object"
+    },
+    "OutlookListCalendarPermissionsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_calendar_permissions",
+          "default": "list_calendar_permissions",
+          "title": "List Calendar Permissions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "List Calendar Permissions",
+          "x-is-trigger": false
+        },
+        "calendar_id": {
+          "description": "The calendar whose sharing permissions to list",
+          "title": "Calendar",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste calendar ID",
+            "field_name": "calendar_id",
+            "placeholder": "Select a calendar...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "outlook_calendar"
+        }
+      },
+      "required": [
+        "calendar_id"
+      ],
+      "title": "OutlookListCalendarPermissionsConfig",
+      "type": "object"
+    },
+    "OutlookListCalendarsConfig": {
+      "description": "Configuration for listing calendars",
+      "properties": {
+        "operation": {
+          "const": "list_calendars",
+          "default": "list_calendars",
+          "title": "List Calendars",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "List Calendars",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "my calendars",
+            "all calendars",
+            "available calendars",
+            "which calendars"
+          ]
+        }
+      },
+      "title": "OutlookListCalendarsConfig",
+      "type": "object"
+    },
+    "OutlookListCalendarsInGroupConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_calendars_in_group",
+          "default": "list_calendars_in_group",
+          "title": "List Calendars In Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "List Calendars In Group",
+          "x-is-trigger": false
+        },
+        "group_id": {
+          "description": "The calendar group ID",
+          "title": "Group ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "OutlookListCalendarsInGroupConfig",
+      "type": "object"
+    },
+    "OutlookListCategoriesConfig": {
+      "description": "Configuration for listing master categories",
+      "properties": {
+        "operation": {
+          "const": "list_message_categories",
+          "default": "list_message_categories",
+          "title": "List Message Categories",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message Category",
+          "x-display-name": "List Message Categories",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "list categories",
+            "show color categories",
+            "master categories",
+            "browse categories",
+            "tags list"
+          ]
+        }
+      },
+      "title": "OutlookListCategoriesConfig",
+      "type": "object"
+    },
+    "OutlookListContactFoldersConfig": {
+      "description": "Configuration for listing contact folders",
+      "properties": {
+        "operation": {
+          "const": "list_contact_folders",
+          "default": "list_contact_folders",
+          "title": "List Contact Folders",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact Folder",
+          "x-display-name": "List Contact Folders",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "address book folders",
+            "contact groups",
+            "view contact folders",
+            "all contact folders",
+            "browse contact folders"
+          ]
+        }
+      },
+      "title": "OutlookListContactFoldersConfig",
+      "type": "object"
+    },
+    "OutlookListContactsConfig": {
+      "description": "Configuration for listing contacts",
+      "properties": {
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "List Contacts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact",
+          "x-display-name": "List Contacts",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "address book",
+            "my contacts",
+            "people directory",
+            "saved contacts"
+          ]
+        },
+        "filter_query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "OData filter query",
+          "placeholder": "givenName eq 'John' (optional)",
+          "title": "Filter"
+        },
+        "order_by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "displayName",
+          "description": "Sort order for results",
+          "enum": [
+            "displayName",
+            "displayName desc",
+            "givenName",
+            "surname",
+            ""
+          ],
+          "enumNames": [
+            "Display Name A-Z",
+            "Display Name Z-A",
+            "Given Name",
+            "Surname",
+            "Default (no sort)"
+          ],
+          "title": "Order By",
+          "x-enum-searchable": true
+        },
+        "max_results": {
+          "default": 10,
+          "description": "Maximum number of contacts to retrieve (1-50)",
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Max Results",
+          "type": "integer"
+        }
+      },
+      "title": "OutlookListContactsConfig",
+      "type": "object"
+    },
+    "OutlookListEventAttachmentsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_event_attachments",
+          "default": "list_event_attachments",
+          "title": "List Event Attachments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "List Event Attachments",
+          "x-is-trigger": false
+        },
+        "event_id": {
+          "description": "The event whose attachments to list",
+          "title": "Event ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "OutlookListEventAttachmentsConfig",
+      "type": "object"
+    },
+    "OutlookListEventInstancesConfig": {
+      "description": "Configuration for listing recurring event instances",
+      "properties": {
+        "operation": {
+          "const": "list_recurring_event_instances",
+          "default": "list_recurring_event_instances",
+          "title": "List Recurring Event Instances",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar Event",
+          "x-display-name": "List Recurring Event Instances",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "recurring event instances",
+            "repeating event occurrences",
+            "series instances",
+            "expand recurring series",
+            "single occurrences"
+          ]
+        },
+        "event_id": {
+          "description": "ID of the recurring event",
+          "placeholder": "Recurring event ID",
+          "title": "Event ID",
+          "type": "string"
+        },
+        "start_datetime": {
+          "description": "Start of time range (ISO 8601)",
+          "placeholder": "2024-01-01T00:00:00",
+          "title": "Start Date/Time",
+          "type": "string"
+        },
+        "end_datetime": {
+          "description": "End of time range (ISO 8601)",
+          "placeholder": "2024-12-31T23:59:59",
+          "title": "End Date/Time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_id",
+        "start_datetime",
+        "end_datetime"
+      ],
+      "title": "OutlookListEventInstancesConfig",
+      "type": "object"
+    },
+    "OutlookListEventsConfig": {
+      "description": "Configuration for listing calendar events",
+      "properties": {
+        "operation": {
+          "const": "list_calendar_events",
+          "default": "list_calendar_events",
+          "title": "List Calendar Events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar Event",
+          "x-display-name": "List Calendar Events",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "list events",
+            "view calendar",
+            "show appointments",
+            "upcoming meetings",
+            "agenda",
+            "my schedule"
+          ]
+        },
+        "filter_query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "OData filter query",
+          "placeholder": "start/dateTime ge '2024-01-01' (optional)",
+          "title": "Filter"
+        },
+        "order_by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "start/dateTime",
+          "description": "Sort order for results",
+          "enum": [
+            "start/dateTime",
+            "start/dateTime desc",
+            "subject",
+            "subject desc",
+            ""
+          ],
+          "enumNames": [
+            "Start Date (ascending)",
+            "Start Date (descending)",
+            "Subject A-Z",
+            "Subject Z-A",
+            "Default (no sort)"
+          ],
+          "title": "Order By",
+          "x-enum-searchable": true
+        },
+        "max_results": {
+          "default": 10,
+          "description": "Maximum number of events to retrieve (1-50)",
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Max Results",
+          "type": "integer"
+        }
+      },
+      "title": "OutlookListEventsConfig",
+      "type": "object"
+    },
+    "OutlookListFoldersConfig": {
+      "description": "Configuration for listing mail folders",
+      "properties": {
+        "operation": {
+          "const": "list_mail_folders",
+          "default": "list_mail_folders",
+          "description": "List all mail folders",
+          "title": "List Mail Folders",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Mail Folder",
+          "x-display-name": "List Mail Folders",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "list folders",
+            "mailbox folders",
+            "show mail folders",
+            "browse folders"
+          ]
+        },
+        "include_child_folders": {
+          "default": false,
+          "description": "Include nested/child folders in the response",
+          "title": "Include Child Folders",
+          "type": "boolean"
+        }
+      },
+      "title": "OutlookListFoldersConfig",
+      "type": "object"
+    },
+    "OutlookListMessageRulesConfig": {
+      "description": "Configuration for listing inbox rules",
+      "properties": {
+        "operation": {
+          "const": "list_inbox_rules",
+          "default": "list_inbox_rules",
+          "title": "List Inbox Rules",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inbox Rule",
+          "x-display-name": "List Inbox Rules",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "list rules",
+            "show filters",
+            "mail rules",
+            "inbox filters",
+            "automation rules"
+          ]
+        }
+      },
+      "title": "OutlookListMessageRulesConfig",
+      "type": "object"
+    },
+    "OutlookMarkReadConfig": {
+      "description": "Configuration for marking an email as read or unread",
+      "properties": {
+        "operation": {
+          "const": "mark_email_as_read_unread",
+          "default": "mark_email_as_read_unread",
+          "description": "Mark an email as read or unread",
+          "title": "Mark Email As Read Unread",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Message",
+          "x-display-name": "Mark Email As Read Unread",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "mark as read",
+            "mark unread",
+            "flag as seen",
+            "mark message read"
+          ]
+        },
+        "message_id": {
+          "description": "ID of the message to mark",
+          "placeholder": "Message ID from previous read operation",
+          "title": "Message ID",
+          "type": "string"
+        },
+        "is_read": {
+          "default": true,
+          "description": "True to mark as read, False to mark as unread",
+          "title": "Mark as Read",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "message_id"
+      ],
+      "title": "OutlookMarkReadConfig",
+      "type": "object"
+    },
+    "OutlookMoveConfig": {
+      "description": "Configuration for moving an email to a different folder",
+      "properties": {
+        "operation": {
+          "const": "move_email_to_folder",
+          "default": "move_email_to_folder",
+          "description": "Move an email to a different folder",
+          "title": "Move Email to Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Message",
+          "x-display-name": "Move Email to Folder",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "move email",
+            "file email",
+            "move to folder",
+            "relocate message",
+            "sort into folder"
+          ]
+        },
+        "message_id": {
+          "description": "ID of the message to move",
+          "placeholder": "Message ID from previous read operation",
+          "title": "Message ID",
+          "type": "string"
+        },
+        "destination_folder": {
+          "description": "Folder to move the message to",
+          "enum": [
+            "inbox",
+            "drafts",
+            "sentitems",
+            "deleteditems",
+            "junkemail",
+            "archive"
+          ],
+          "title": "Destination Folder",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message_id",
+        "destination_folder"
+      ],
+      "title": "OutlookMoveConfig",
+      "type": "object"
+    },
+    "OutlookMoveFolderConfig": {
+      "description": "Configuration for moving a folder",
+      "properties": {
+        "operation": {
+          "const": "move_mail_folder",
+          "default": "move_mail_folder",
+          "title": "Move Mail Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Mail Folder",
+          "x-display-name": "Move Mail Folder",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "move folder",
+            "nest folder",
+            "relocate folder",
+            "move mailbox folder"
+          ]
+        },
+        "folder_id": {
+          "description": "ID of the folder to move",
+          "placeholder": "Folder ID from list_folders",
+          "title": "Folder ID",
+          "type": "string"
+        },
+        "destination_folder_id": {
+          "description": "ID of the destination parent folder",
+          "placeholder": "Parent folder ID",
+          "title": "Destination Folder ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folder_id",
+        "destination_folder_id"
+      ],
+      "title": "OutlookMoveFolderConfig",
+      "type": "object"
+    },
+    "OutlookOAuthCredential": {
+      "description": "OAuth credential for Outlook/Microsoft Graph access.\nTokens are obtained via OAuth flow, not entered manually.",
+      "properties": {
+        "credential_type": {
+          "const": "microsoft_outlook_oauth",
+          "default": "microsoft_outlook_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "OAuth 2.0 access token from Microsoft",
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "description": "OAuth 2.0 refresh token for automatic renewal",
+          "title": "Refresh Token",
+          "type": "string"
+        },
+        "expires_at": {
+          "description": "ISO 8601 timestamp when access token expires",
+          "title": "Token Expiry",
+          "type": "string"
+        },
+        "email": {
+          "description": "Email address of the connected Microsoft account",
+          "title": "Microsoft Account",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "email"
+      ],
+      "title": "OutlookOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-oauth-provider": "microsoft",
+      "x-oauth-scopes": [
+        "https://graph.microsoft.com/Mail.Send",
+        "https://graph.microsoft.com/Mail.Read",
+        "https://graph.microsoft.com/Mail.ReadWrite",
+        "https://graph.microsoft.com/MailboxSettings.ReadWrite",
+        "https://graph.microsoft.com/Calendars.Read",
+        "https://graph.microsoft.com/Calendars.ReadWrite",
+        "https://graph.microsoft.com/Calendars.ReadWrite.Shared",
+        "https://graph.microsoft.com/Contacts.Read",
+        "https://graph.microsoft.com/Contacts.ReadWrite",
+        "https://graph.microsoft.com/User.Read",
+        "offline_access"
+      ]
+    },
+    "OutlookOnCalendarEventChangeConfig": {
+      "description": "Fire on any calendar event change (created / updated / deleted).",
+      "properties": {
+        "calendar_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Watch a specific calendar (default: primary)",
+          "title": "Calendar",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste calendar ID",
+            "field_name": "calendar_id",
+            "placeholder": "Select a calendar...",
+            "searchable": true
+          }
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Microsoft Graph posts change notifications here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_calendar_event_change",
+          "default": "on_calendar_event_change",
+          "title": "On Calendar Event Change (Any)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Calendar Event Change (Any)",
+          "x-is-trigger": true
+        }
+      },
+      "title": "OutlookOnCalendarEventChangeConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "OutlookOnCalendarEventCreatedConfig": {
+      "description": "Fire when a calendar event is created.",
+      "properties": {
+        "calendar_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Watch a specific calendar (default: primary)",
+          "title": "Calendar",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste calendar ID",
+            "field_name": "calendar_id",
+            "placeholder": "Select a calendar...",
+            "searchable": true
+          }
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Microsoft Graph posts change notifications here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_calendar_event_created",
+          "default": "on_calendar_event_created",
+          "title": "On Calendar Event Created",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Calendar Event Created",
+          "x-is-trigger": true
+        }
+      },
+      "title": "OutlookOnCalendarEventCreatedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "OutlookOnCalendarEventDeletedConfig": {
+      "description": "Fire when a calendar event is deleted.",
+      "properties": {
+        "calendar_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Watch a specific calendar (default: primary)",
+          "title": "Calendar",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste calendar ID",
+            "field_name": "calendar_id",
+            "placeholder": "Select a calendar...",
+            "searchable": true
+          }
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Microsoft Graph posts change notifications here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_calendar_event_deleted",
+          "default": "on_calendar_event_deleted",
+          "title": "On Calendar Event Deleted",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Calendar Event Deleted",
+          "x-is-trigger": true
+        }
+      },
+      "title": "OutlookOnCalendarEventDeletedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "OutlookOnCalendarEventUpdatedConfig": {
+      "description": "Fire when a calendar event is updated.",
+      "properties": {
+        "calendar_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Watch a specific calendar (default: primary)",
+          "title": "Calendar",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste calendar ID",
+            "field_name": "calendar_id",
+            "placeholder": "Select a calendar...",
+            "searchable": true
+          }
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Microsoft Graph posts change notifications here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_calendar_event_updated",
+          "default": "on_calendar_event_updated",
+          "title": "On Calendar Event Updated",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Calendar Event Updated",
+          "x-is-trigger": true
+        }
+      },
+      "title": "OutlookOnCalendarEventUpdatedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "OutlookOnEmailChangeConfig": {
+      "description": "Fire on any email change in the watched folder (received / updated / deleted).",
+      "properties": {
+        "folder_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Watch a specific folder (default: Inbox). Accepts a well-known name (inbox, sentitems, drafts\u2026) or a folder ID.",
+          "title": "Mail Folder",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste folder ID",
+            "field_name": "mail_folder_id",
+            "placeholder": "Select a folder...",
+            "searchable": true
+          }
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Microsoft Graph posts change notifications here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_email_change",
+          "default": "on_email_change",
+          "title": "On Email Change (Any)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Email Change (Any)",
+          "x-is-trigger": true
+        }
+      },
+      "title": "OutlookOnEmailChangeConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "OutlookOnEmailDeletedConfig": {
+      "description": "Fire when an email is deleted or moved to Deleted Items.",
+      "properties": {
+        "folder_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Watch a specific folder (default: Inbox). Accepts a well-known name (inbox, sentitems, drafts\u2026) or a folder ID.",
+          "title": "Mail Folder",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste folder ID",
+            "field_name": "mail_folder_id",
+            "placeholder": "Select a folder...",
+            "searchable": true
+          }
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Microsoft Graph posts change notifications here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_email_deleted",
+          "default": "on_email_deleted",
+          "title": "On Email Deleted",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Email Deleted",
+          "x-is-trigger": true
+        }
+      },
+      "title": "OutlookOnEmailDeletedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "OutlookOnEmailReceivedConfig": {
+      "description": "Fire when a new email arrives in the watched folder.",
+      "properties": {
+        "folder_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Watch a specific folder (default: Inbox). Accepts a well-known name (inbox, sentitems, drafts\u2026) or a folder ID.",
+          "title": "Mail Folder",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste folder ID",
+            "field_name": "mail_folder_id",
+            "placeholder": "Select a folder...",
+            "searchable": true
+          }
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Microsoft Graph posts change notifications here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_email_received",
+          "default": "on_email_received",
+          "title": "On Email Received",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Email Received",
+          "x-is-trigger": true
+        }
+      },
+      "title": "OutlookOnEmailReceivedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "OutlookOnEmailUpdatedConfig": {
+      "description": "Fire when an email is updated (read/unread, flag, category, etc.).",
+      "properties": {
+        "folder_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Watch a specific folder (default: Inbox). Accepts a well-known name (inbox, sentitems, drafts\u2026) or a folder ID.",
+          "title": "Mail Folder",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste folder ID",
+            "field_name": "mail_folder_id",
+            "placeholder": "Select a folder...",
+            "searchable": true
+          }
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Microsoft Graph posts change notifications here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_email_updated",
+          "default": "on_email_updated",
+          "title": "On Email Updated",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Email Updated",
+          "x-is-trigger": true
+        }
+      },
+      "title": "OutlookOnEmailUpdatedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "OutlookReadConfig": {
+      "description": "Configuration for reading emails from inbox",
+      "properties": {
+        "operation": {
+          "const": "read_inbox_emails",
+          "default": "read_inbox_emails",
+          "description": "Read emails from inbox",
+          "title": "Read Inbox Emails",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Message",
+          "x-display-name": "Read Inbox Emails",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "check inbox",
+            "read emails",
+            "list inbox messages",
+            "incoming mail",
+            "browse inbox"
+          ]
+        },
+        "folder": {
+          "default": "inbox",
+          "description": "Mail folder to read from",
+          "enum": [
+            "inbox",
+            "drafts",
+            "sentitems",
+            "deleteditems",
+            "junkemail",
+            "archive"
+          ],
+          "enumNames": [
+            "Inbox",
+            "Drafts",
+            "Sent Items",
+            "Deleted Items",
+            "Junk Email",
+            "Archive"
+          ],
+          "title": "Folder",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "filter_query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "OData filter query. Examples: isRead eq false, importance eq 'high', hasAttachments eq true",
+          "placeholder": "e.g. isRead eq false",
+          "title": "Filter"
+        },
+        "search_query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search query to find emails (searches subject, body, sender)",
+          "placeholder": "Search term (optional)",
+          "title": "Search"
+        },
+        "max_results": {
+          "default": 10,
+          "description": "Maximum number of emails to retrieve (1-50)",
+          "maximum": 50,
+          "minimum": 1,
+          "title": "Max Results",
+          "type": "integer"
+        },
+        "include_body": {
+          "default": "true",
+          "description": "Include email body content in results",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Body",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "order_by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "receivedDateTime desc",
+          "description": "Sort order for results",
+          "enum": [
+            "receivedDateTime desc",
+            "receivedDateTime asc",
+            "subject asc",
+            "subject desc",
+            ""
+          ],
+          "enumNames": [
+            "Newest First",
+            "Oldest First",
+            "Subject A-Z",
+            "Subject Z-A",
+            "Default (no sort)"
+          ],
+          "title": "Order By",
+          "x-enum-searchable": true
+        }
+      },
+      "title": "OutlookReadConfig",
+      "type": "object"
+    },
+    "OutlookReminderViewConfig": {
+      "properties": {
+        "operation": {
+          "const": "reminder_view",
+          "default": "reminder_view",
+          "title": "Reminder View",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "Reminder View",
+          "x-is-trigger": false
+        },
+        "start_date_time": {
+          "description": "Window start, ISO 8601",
+          "title": "Start",
+          "type": "string"
+        },
+        "end_date_time": {
+          "description": "Window end, ISO 8601",
+          "title": "End",
+          "type": "string"
+        }
+      },
+      "required": [
+        "start_date_time",
+        "end_date_time"
+      ],
+      "title": "OutlookReminderViewConfig",
+      "type": "object"
+    },
+    "OutlookReplyConfig": {
+      "description": "Configuration for replying to an email",
+      "properties": {
+        "operation": {
+          "const": "reply_to_email_message",
+          "default": "reply_to_email_message",
+          "description": "Reply to an email",
+          "title": "Reply to Email Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Message",
+          "x-display-name": "Reply to Email Message",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "reply to email",
+            "respond to sender",
+            "send reply",
+            "answer email"
+          ]
+        },
+        "message_id": {
+          "description": "ID of the message to reply to",
+          "placeholder": "Message ID from previous read operation",
+          "title": "Message ID",
+          "type": "string"
+        },
+        "body": {
+          "description": "Reply message content (HTML supported)",
+          "placeholder": "Enter reply...",
+          "title": "Reply Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "reply_all": {
+          "default": false,
+          "description": "Reply to all recipients instead of just the sender",
+          "title": "Reply All",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "message_id",
+        "body"
+      ],
+      "title": "OutlookReplyConfig",
+      "type": "object"
+    },
+    "OutlookSendConfig": {
+      "description": "Configuration for sending an email",
+      "properties": {
+        "operation": {
+          "const": "send_email_message",
+          "default": "send_email_message",
+          "description": "Send an email",
+          "title": "Send Email Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Message",
+          "x-display-name": "Send Email Message",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "compose email",
+            "email someone",
+            "write email",
+            "send mail",
+            "new message"
+          ]
+        },
+        "to": {
+          "description": "Recipient email address(es), comma-separated for multiple",
+          "placeholder": "recipient@example.com",
+          "title": "To",
+          "type": "string"
+        },
+        "subject": {
+          "description": "Email subject line",
+          "placeholder": "Enter subject...",
+          "title": "Subject",
+          "type": "string"
+        },
+        "body": {
+          "description": "Email body content (HTML supported)",
+          "placeholder": "Enter email body...",
+          "title": "Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "body_type": {
+          "default": "HTML",
+          "description": "Content type of the email body",
+          "title": "Body Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "cc": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "CC recipients (comma-separated)",
+          "placeholder": "cc@example.com (optional)",
+          "title": "CC"
+        },
+        "bcc": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "BCC recipients (comma-separated)",
+          "placeholder": "bcc@example.com (optional)",
+          "title": "BCC"
+        },
+        "save_to_sent": {
+          "default": true,
+          "description": "Save a copy of the sent email to Sent Items folder",
+          "title": "Save to Sent Items",
+          "type": "boolean"
+        },
+        "attachments": {
+          "description": "Files to attach: workflow resource IDs or URLs (10MB per file, 20MB total)",
+          "items": {
+            "type": "string"
+          },
+          "placeholder": "{{node.resource_id}}",
+          "title": "Attachments",
+          "type": "array",
+          "ui:widget": "list"
+        }
+      },
+      "required": [
+        "to",
+        "subject",
+        "body"
+      ],
+      "title": "OutlookSendConfig",
+      "type": "object"
+    },
+    "OutlookSendDraftConfig": {
+      "description": "Configuration for sending an existing draft",
+      "properties": {
+        "operation": {
+          "const": "send_email_draft",
+          "default": "send_email_draft",
+          "title": "Send Email Draft",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Message",
+          "x-display-name": "Send Email Draft",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "send saved draft",
+            "send existing draft",
+            "ship draft",
+            "dispatch draft"
+          ]
+        },
+        "message_id": {
+          "description": "ID of the draft message to send",
+          "placeholder": "Draft ID from create_draft operation",
+          "title": "Draft ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message_id"
+      ],
+      "title": "OutlookSendDraftConfig",
+      "type": "object"
+    },
+    "OutlookSendMimeConfig": {
+      "description": "Configuration for sending MIME message",
+      "properties": {
+        "operation": {
+          "const": "send_mime_message",
+          "default": "send_mime_message",
+          "title": "Send Mime Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Message",
+          "x-display-name": "Send Mime Message",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "send raw email",
+            "send eml",
+            "deliver mime",
+            "send mime content"
+          ]
+        },
+        "mime_content": {
+          "description": "RFC822 MIME formatted message",
+          "placeholder": "MIME formatted email message...",
+          "title": "MIME Content",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "mime_content"
+      ],
+      "title": "OutlookSendMimeConfig",
+      "type": "object"
+    },
+    "OutlookSnoozeReminderConfig": {
+      "description": "Configuration for snoozing an event reminder",
+      "properties": {
+        "operation": {
+          "const": "snooze_event_reminder",
+          "default": "snooze_event_reminder",
+          "title": "Snooze Event Reminder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar Event",
+          "x-display-name": "Snooze Event Reminder",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "snooze reminder",
+            "remind later",
+            "postpone alert",
+            "delay reminder"
+          ]
+        },
+        "event_id": {
+          "description": "ID of the event to snooze reminder for",
+          "placeholder": "Event ID from list_events",
+          "title": "Event ID",
+          "type": "string"
+        },
+        "new_reminder_time": {
+          "description": "New reminder time in ISO 8601 format",
+          "placeholder": "2024-01-01T09:00:00",
+          "title": "New Reminder Time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_id",
+        "new_reminder_time"
+      ],
+      "title": "OutlookSnoozeReminderConfig",
+      "type": "object"
+    },
+    "OutlookTentativelyAcceptEventConfig": {
+      "description": "Configuration for tentatively accepting an event invitation",
+      "properties": {
+        "operation": {
+          "const": "tentatively_accept_calendar_event_invitation",
+          "default": "tentatively_accept_calendar_event_invitation",
+          "title": "Tentatively Accept Calendar Event Invitation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar Event",
+          "x-display-name": "Tentatively Accept Calendar Event Invitation",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "tentative rsvp",
+            "maybe attending",
+            "tentatively accept",
+            "rsvp maybe",
+            "provisional accept"
+          ]
+        },
+        "event_id": {
+          "description": "ID of the event to tentatively accept",
+          "placeholder": "Event ID from list_events",
+          "title": "Event ID",
+          "type": "string"
+        },
+        "comment": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional comment to organizer",
+          "placeholder": "Will try to attend... (optional)",
+          "title": "Comment",
+          "ui:widget": "textarea"
+        },
+        "send_response": {
+          "default": true,
+          "description": "Send tentative response to organizer",
+          "title": "Send Response",
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "OutlookTentativelyAcceptEventConfig",
+      "type": "object"
+    },
+    "OutlookUpdateAutoReplyConfig": {
+      "description": "Configuration for updating auto-reply settings",
+      "properties": {
+        "operation": {
+          "const": "update_auto_reply_settings",
+          "default": "update_auto_reply_settings",
+          "description": "Update auto-reply (out of office) settings",
+          "title": "Update Auto Reply Settings",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Mailbox",
+          "x-display-name": "Update Auto Reply Settings",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "out of office",
+            "vacation responder",
+            "automatic reply",
+            "ooo message",
+            "set away message",
+            "auto responder"
+          ]
+        },
+        "enabled": {
+          "default": true,
+          "description": "Enable or disable auto-reply",
+          "title": "Enable Auto-Reply",
+          "type": "boolean"
+        },
+        "internal_message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Auto-reply message for people within your organization",
+          "placeholder": "I am currently out of office...",
+          "title": "Internal Message",
+          "ui:widget": "textarea"
+        },
+        "external_message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Auto-reply message for people outside your organization",
+          "placeholder": "I am currently out of office...",
+          "title": "External Message",
+          "ui:widget": "textarea"
+        },
+        "external_audience": {
+          "default": "all",
+          "description": "Who outside the organization receives auto-replies",
+          "enum": [
+            "none",
+            "contactsOnly",
+            "all"
+          ],
+          "title": "External Audience",
+          "type": "string"
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start date/time for auto-reply (ISO 8601 format)",
+          "placeholder": "2024-01-01T00:00:00Z (optional)",
+          "title": "Start Date"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End date/time for auto-reply (ISO 8601 format)",
+          "placeholder": "2024-01-15T00:00:00Z (optional)",
+          "title": "End Date"
+        }
+      },
+      "title": "OutlookUpdateAutoReplyConfig",
+      "type": "object"
+    },
+    "OutlookUpdateCalendarConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_calendar",
+          "default": "update_calendar",
+          "title": "Update Calendar",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "Update Calendar",
+          "x-is-trigger": false
+        },
+        "calendar_id": {
+          "description": "The calendar to update",
+          "title": "Calendar",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste calendar ID",
+            "field_name": "calendar_id",
+            "placeholder": "Select a calendar...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "outlook_calendar"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New calendar name",
+          "title": "Name"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New calendar color",
+          "title": "Color"
+        }
+      },
+      "required": [
+        "calendar_id"
+      ],
+      "title": "OutlookUpdateCalendarConfig",
+      "type": "object"
+    },
+    "OutlookUpdateCalendarGroupConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_calendar_group",
+          "default": "update_calendar_group",
+          "title": "Update Calendar Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "Update Calendar Group",
+          "x-is-trigger": false
+        },
+        "group_id": {
+          "description": "The calendar group ID",
+          "title": "Group ID",
+          "type": "string"
+        },
+        "name": {
+          "description": "New calendar group name",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "group_id",
+        "name"
+      ],
+      "title": "OutlookUpdateCalendarGroupConfig",
+      "type": "object"
+    },
+    "OutlookUpdateCalendarPermissionConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_calendar_permission",
+          "default": "update_calendar_permission",
+          "title": "Update Calendar Permission",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "Update Calendar Permission",
+          "x-is-trigger": false
+        },
+        "calendar_id": {
+          "description": "The calendar that owns the permission",
+          "title": "Calendar",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste calendar ID",
+            "field_name": "calendar_id",
+            "placeholder": "Select a calendar...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "outlook_calendar"
+        },
+        "permission_id": {
+          "description": "The calendarPermission ID",
+          "title": "Permission ID",
+          "type": "string"
+        },
+        "role": {
+          "description": "freeBusyRead, limitedRead, read, write, delegateWithoutPrivateEventAccess, delegateWithPrivateEventAccess",
+          "title": "Role",
+          "type": "string"
+        }
+      },
+      "required": [
+        "calendar_id",
+        "permission_id",
+        "role"
+      ],
+      "title": "OutlookUpdateCalendarPermissionConfig",
+      "type": "object"
+    },
+    "OutlookUpdateCategoryConfig": {
+      "description": "Configuration for updating a category",
+      "properties": {
+        "operation": {
+          "const": "update_message_category",
+          "default": "update_message_category",
+          "title": "Update Message Category",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message Category",
+          "x-display-name": "Update Message Category",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "edit category",
+            "rename category",
+            "change category color",
+            "modify tag"
+          ]
+        },
+        "category_id": {
+          "description": "ID of the category to update",
+          "placeholder": "Category ID from list_categories",
+          "title": "Category ID",
+          "type": "string"
+        },
+        "color": {
+          "description": "New color preset for the category",
+          "enum": [
+            "preset0",
+            "preset1",
+            "preset2",
+            "preset3",
+            "preset4",
+            "preset5",
+            "preset6",
+            "preset7",
+            "preset8",
+            "preset9",
+            "preset10",
+            "preset11",
+            "preset12",
+            "preset13",
+            "preset14",
+            "preset15",
+            "preset16",
+            "preset17",
+            "preset18",
+            "preset19",
+            "preset20",
+            "preset21",
+            "preset22",
+            "preset23",
+            "preset24"
+          ],
+          "title": "Color",
+          "type": "string"
+        }
+      },
+      "required": [
+        "category_id",
+        "color"
+      ],
+      "title": "OutlookUpdateCategoryConfig",
+      "type": "object"
+    },
+    "OutlookUpdateContactConfig": {
+      "description": "Configuration for updating a contact",
+      "properties": {
+        "operation": {
+          "const": "update_contact_person",
+          "default": "update_contact_person",
+          "title": "Update Contact Person",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact",
+          "x-display-name": "Update Contact Person",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "edit contact",
+            "change contact",
+            "update phone number",
+            "edit contact details",
+            "modify contact"
+          ]
+        },
+        "contact_id": {
+          "description": "ID of the contact to update",
+          "placeholder": "Contact ID from list_contacts",
+          "title": "Contact ID",
+          "type": "string"
+        },
+        "given_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New first name",
+          "placeholder": "John (optional)",
+          "title": "First Name"
+        },
+        "surname": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New last name",
+          "placeholder": "Doe (optional)",
+          "title": "Last Name"
+        },
+        "email_address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New email address",
+          "placeholder": "john.doe@example.com (optional)",
+          "title": "Email Address"
+        },
+        "mobile_phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New mobile phone number",
+          "placeholder": "+1-555-0124 (optional)",
+          "title": "Mobile Phone"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "OutlookUpdateContactConfig",
+      "type": "object"
+    },
+    "OutlookUpdateContactFolderConfig": {
+      "description": "Configuration for updating a contact folder",
+      "properties": {
+        "operation": {
+          "const": "update_contact_folder",
+          "default": "update_contact_folder",
+          "title": "Update Contact Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contact Folder",
+          "x-display-name": "Update Contact Folder",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "rename contact folder",
+            "edit contact group",
+            "change contact folder",
+            "modify contact folder"
+          ]
+        },
+        "folder_id": {
+          "description": "ID of the contact folder to update",
+          "placeholder": "Folder ID from list_contact_folders",
+          "title": "Folder ID",
+          "type": "string"
+        },
+        "display_name": {
+          "description": "New name for the contact folder",
+          "placeholder": "Updated Folder Name",
+          "title": "New Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folder_id",
+        "display_name"
+      ],
+      "title": "OutlookUpdateContactFolderConfig",
+      "type": "object"
+    },
+    "OutlookUpdateEventConfig": {
+      "description": "Configuration for updating a calendar event",
+      "properties": {
+        "operation": {
+          "const": "update_calendar_event",
+          "default": "update_calendar_event",
+          "title": "Update Calendar Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar Event",
+          "x-display-name": "Update Calendar Event",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "edit event",
+            "reschedule meeting",
+            "change appointment",
+            "modify event",
+            "update meeting"
+          ]
+        },
+        "event_id": {
+          "description": "ID of the event to update",
+          "placeholder": "Event ID from list_events",
+          "title": "Event ID",
+          "type": "string"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New event title",
+          "placeholder": "Updated Meeting Title (optional)",
+          "title": "Subject"
+        },
+        "start_datetime": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New start in ISO 8601 format",
+          "placeholder": "2024-01-01T10:00:00 (optional)",
+          "title": "Start Date/Time"
+        },
+        "end_datetime": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New end in ISO 8601 format",
+          "placeholder": "2024-01-01T11:00:00 (optional)",
+          "title": "End Date/Time"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New event location",
+          "placeholder": "New location (optional)",
+          "title": "Location"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "OutlookUpdateEventConfig",
+      "type": "object"
+    },
+    "OutlookUpdateFolderConfig": {
+      "description": "Configuration for updating a folder",
+      "properties": {
+        "operation": {
+          "const": "update_mail_folder",
+          "default": "update_mail_folder",
+          "title": "Update Mail Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Mail Folder",
+          "x-display-name": "Update Mail Folder",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "rename folder",
+            "edit folder",
+            "change folder name",
+            "modify mail folder"
+          ]
+        },
+        "folder_id": {
+          "description": "ID of the folder to update",
+          "placeholder": "Folder ID from list_folders",
+          "title": "Folder ID",
+          "type": "string"
+        },
+        "display_name": {
+          "description": "New display name for the folder",
+          "placeholder": "New Folder Name",
+          "title": "New Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "folder_id",
+        "display_name"
+      ],
+      "title": "OutlookUpdateFolderConfig",
+      "type": "object"
+    },
+    "OutlookUpdateMessageConfig": {
+      "description": "Configuration for updating message properties",
+      "properties": {
+        "operation": {
+          "const": "update_email_message_properties",
+          "default": "update_email_message_properties",
+          "title": "Update Email Message Properties",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email Message",
+          "x-display-name": "Update Email Message Properties",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "edit email properties",
+            "change message flags",
+            "update importance",
+            "set email category",
+            "edit message metadata"
+          ]
+        },
+        "message_id": {
+          "description": "ID of the message to update",
+          "placeholder": "Message ID from previous operation",
+          "title": "Message ID",
+          "type": "string"
+        },
+        "subject": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Update the email subject",
+          "placeholder": "New subject (optional)",
+          "title": "Subject"
+        },
+        "importance": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set message importance level",
+          "enum": [
+            "low",
+            "normal",
+            "high"
+          ],
+          "title": "Importance"
+        },
+        "categories": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated category names",
+          "placeholder": "Red category, Blue category (optional)",
+          "title": "Categories"
+        },
+        "is_read": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Mark as read or unread",
+          "title": "Is Read"
+        }
+      },
+      "required": [
+        "message_id"
+      ],
+      "title": "OutlookUpdateMessageConfig",
+      "type": "object"
+    },
+    "OutlookUpdateMessageRuleConfig": {
+      "description": "Configuration for updating an inbox rule",
+      "properties": {
+        "operation": {
+          "const": "update_inbox_rule",
+          "default": "update_inbox_rule",
+          "title": "Update Inbox Rule",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Inbox Rule",
+          "x-display-name": "Update Inbox Rule",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "edit rule",
+            "change filter",
+            "modify inbox rule",
+            "update mail filter"
+          ]
+        },
+        "rule_id": {
+          "description": "ID of the rule to update",
+          "placeholder": "Rule ID from list_message_rules",
+          "title": "Rule ID",
+          "type": "string"
+        },
+        "display_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New display name for the rule",
+          "placeholder": "New rule name (optional)",
+          "title": "Rule Name"
+        },
+        "conditions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object defining rule conditions",
+          "placeholder": "New conditions JSON (optional)",
+          "title": "Conditions (JSON)",
+          "ui:widget": "textarea"
+        },
+        "actions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object defining rule actions",
+          "placeholder": "New actions JSON (optional)",
+          "title": "Actions (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "rule_id"
+      ],
+      "title": "OutlookUpdateMessageRuleConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for Outlook node including credentials",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "accept_calendar_event_invitation": "#/$defs/OutlookAcceptEventConfig",
+          "add_attachment_to_message": "#/$defs/OutlookAddAttachmentConfig",
+          "add_event_attachment": "#/$defs/OutlookAddEventAttachmentConfig",
+          "allowed_calendar_sharing_roles": "#/$defs/OutlookAllowedSharingRolesConfig",
+          "cancel_calendar_event": "#/$defs/OutlookCancelEventConfig",
+          "copy_mail_folder": "#/$defs/OutlookCopyFolderConfig",
+          "copy_message_to_folder": "#/$defs/OutlookCopyMessageConfig",
+          "create_calendar": "#/$defs/OutlookCreateCalendarConfig",
+          "create_calendar_event": "#/$defs/OutlookCreateEventConfig",
+          "create_calendar_group": "#/$defs/OutlookCreateCalendarGroupConfig",
+          "create_calendar_in_group": "#/$defs/OutlookCreateCalendarInGroupConfig",
+          "create_calendar_permission": "#/$defs/OutlookCreateCalendarPermissionConfig",
+          "create_contact_folder": "#/$defs/OutlookCreateContactFolderConfig",
+          "create_contact_person": "#/$defs/OutlookCreateContactConfig",
+          "create_email_draft": "#/$defs/OutlookCreateDraftConfig",
+          "create_forward_draft": "#/$defs/OutlookCreateForwardDraftConfig",
+          "create_inbox_rule": "#/$defs/OutlookCreateMessageRuleConfig",
+          "create_mail_folder": "#/$defs/OutlookCreateFolderConfig",
+          "create_message_category": "#/$defs/OutlookCreateCategoryConfig",
+          "create_reply_all_draft": "#/$defs/OutlookCreateReplyAllDraftConfig",
+          "create_reply_draft": "#/$defs/OutlookCreateReplyDraftConfig",
+          "decline_calendar_event_invitation": "#/$defs/OutlookDeclineEventConfig",
+          "delete_attachment_from_message": "#/$defs/OutlookDeleteAttachmentConfig",
+          "delete_calendar": "#/$defs/OutlookDeleteCalendarConfig",
+          "delete_calendar_event": "#/$defs/OutlookDeleteEventConfig",
+          "delete_calendar_group": "#/$defs/OutlookDeleteCalendarGroupConfig",
+          "delete_calendar_permission": "#/$defs/OutlookDeleteCalendarPermissionConfig",
+          "delete_contact_folder": "#/$defs/OutlookDeleteContactFolderConfig",
+          "delete_contact_person": "#/$defs/OutlookDeleteContactConfig",
+          "delete_email_message": "#/$defs/OutlookDeleteConfig",
+          "delete_event_attachment": "#/$defs/OutlookDeleteEventAttachmentConfig",
+          "delete_inbox_rule": "#/$defs/OutlookDeleteMessageRuleConfig",
+          "delete_mail_folder": "#/$defs/OutlookDeleteFolderConfig",
+          "delete_message_category": "#/$defs/OutlookDeleteCategoryConfig",
+          "dismiss_event_reminder": "#/$defs/OutlookDismissReminderConfig",
+          "find_available_meeting_times": "#/$defs/OutlookFindMeetingTimesConfig",
+          "forward_calendar_event": "#/$defs/OutlookForwardCalendarEventConfig",
+          "forward_email_message": "#/$defs/OutlookForwardConfig",
+          "get_available_room_lists": "#/$defs/OutlookGetRoomListsConfig",
+          "get_calendar": "#/$defs/OutlookGetCalendarConfig",
+          "get_calendar_event": "#/$defs/OutlookGetEventConfig",
+          "get_calendar_group": "#/$defs/OutlookGetCalendarGroupConfig",
+          "get_calendar_permission": "#/$defs/OutlookGetCalendarPermissionConfig",
+          "get_calendar_view": "#/$defs/OutlookCalendarViewConfig",
+          "get_calendar_view_delta": "#/$defs/OutlookCalendarViewDeltaConfig",
+          "get_contact_folder": "#/$defs/OutlookGetContactFolderConfig",
+          "get_contact_person": "#/$defs/OutlookGetContactConfig",
+          "get_email_attachments": "#/$defs/OutlookGetAttachmentsConfig",
+          "get_email_message": "#/$defs/OutlookGetMessageConfig",
+          "get_email_mime_content": "#/$defs/OutlookGetMimeContentConfig",
+          "get_event_attachment": "#/$defs/OutlookGetEventAttachmentConfig",
+          "get_free_busy_schedule": "#/$defs/OutlookGetScheduleConfig",
+          "get_inbox_rule": "#/$defs/OutlookGetMessageRuleConfig",
+          "get_mailbox_settings": "#/$defs/OutlookGetMailboxSettingsConfig",
+          "get_message_category": "#/$defs/OutlookGetCategoryConfig",
+          "list_calendar_events": "#/$defs/OutlookListEventsConfig",
+          "list_calendar_groups": "#/$defs/OutlookListCalendarGroupsConfig",
+          "list_calendar_permissions": "#/$defs/OutlookListCalendarPermissionsConfig",
+          "list_calendars": "#/$defs/OutlookListCalendarsConfig",
+          "list_calendars_in_group": "#/$defs/OutlookListCalendarsInGroupConfig",
+          "list_contact_folders": "#/$defs/OutlookListContactFoldersConfig",
+          "list_contacts": "#/$defs/OutlookListContactsConfig",
+          "list_event_attachments": "#/$defs/OutlookListEventAttachmentsConfig",
+          "list_inbox_rules": "#/$defs/OutlookListMessageRulesConfig",
+          "list_mail_folders": "#/$defs/OutlookListFoldersConfig",
+          "list_message_categories": "#/$defs/OutlookListCategoriesConfig",
+          "list_recurring_event_instances": "#/$defs/OutlookListEventInstancesConfig",
+          "mark_email_as_read_unread": "#/$defs/OutlookMarkReadConfig",
+          "move_email_to_folder": "#/$defs/OutlookMoveConfig",
+          "move_mail_folder": "#/$defs/OutlookMoveFolderConfig",
+          "on_calendar_event_change": "#/$defs/OutlookOnCalendarEventChangeConfig",
+          "on_calendar_event_created": "#/$defs/OutlookOnCalendarEventCreatedConfig",
+          "on_calendar_event_deleted": "#/$defs/OutlookOnCalendarEventDeletedConfig",
+          "on_calendar_event_updated": "#/$defs/OutlookOnCalendarEventUpdatedConfig",
+          "on_email_change": "#/$defs/OutlookOnEmailChangeConfig",
+          "on_email_deleted": "#/$defs/OutlookOnEmailDeletedConfig",
+          "on_email_received": "#/$defs/OutlookOnEmailReceivedConfig",
+          "on_email_updated": "#/$defs/OutlookOnEmailUpdatedConfig",
+          "read_inbox_emails": "#/$defs/OutlookReadConfig",
+          "reminder_view": "#/$defs/OutlookReminderViewConfig",
+          "reply_to_email_message": "#/$defs/OutlookReplyConfig",
+          "send_email_draft": "#/$defs/OutlookSendDraftConfig",
+          "send_email_message": "#/$defs/OutlookSendConfig",
+          "send_mime_message": "#/$defs/OutlookSendMimeConfig",
+          "snooze_event_reminder": "#/$defs/OutlookSnoozeReminderConfig",
+          "tentatively_accept_calendar_event_invitation": "#/$defs/OutlookTentativelyAcceptEventConfig",
+          "update_auto_reply_settings": "#/$defs/OutlookUpdateAutoReplyConfig",
+          "update_calendar": "#/$defs/OutlookUpdateCalendarConfig",
+          "update_calendar_event": "#/$defs/OutlookUpdateEventConfig",
+          "update_calendar_group": "#/$defs/OutlookUpdateCalendarGroupConfig",
+          "update_calendar_permission": "#/$defs/OutlookUpdateCalendarPermissionConfig",
+          "update_contact_folder": "#/$defs/OutlookUpdateContactFolderConfig",
+          "update_contact_person": "#/$defs/OutlookUpdateContactConfig",
+          "update_email_message_properties": "#/$defs/OutlookUpdateMessageConfig",
+          "update_inbox_rule": "#/$defs/OutlookUpdateMessageRuleConfig",
+          "update_mail_folder": "#/$defs/OutlookUpdateFolderConfig",
+          "update_message_category": "#/$defs/OutlookUpdateCategoryConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/OutlookSendConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookReadConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookReplyConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookForwardConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookGetMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookMarkReadConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookDeleteConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookMoveConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookCreateDraftConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookListFoldersConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookCreateFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookGetAttachmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookGetMailboxSettingsConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookUpdateAutoReplyConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookCopyMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookUpdateMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookSendDraftConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookCreateReplyDraftConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookCreateReplyAllDraftConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookCreateForwardDraftConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookAddAttachmentConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookDeleteAttachmentConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookUpdateFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookDeleteFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookMoveFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookCopyFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookListMessageRulesConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookGetMessageRuleConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookCreateMessageRuleConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookUpdateMessageRuleConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookDeleteMessageRuleConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookListCategoriesConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookGetCategoryConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookCreateCategoryConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookUpdateCategoryConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookDeleteCategoryConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookGetMimeContentConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookSendMimeConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookListEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookCreateEventConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookGetEventConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookUpdateEventConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookDeleteEventConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookCancelEventConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookAcceptEventConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookDeclineEventConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookTentativelyAcceptEventConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookDismissReminderConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookSnoozeReminderConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookFindMeetingTimesConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookGetScheduleConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookListEventInstancesConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookListCalendarsConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookListCalendarGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookGetRoomListsConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookCreateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookGetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookUpdateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookDeleteContactConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookListContactFoldersConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookCreateContactFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookGetContactFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookUpdateContactFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookDeleteContactFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookGetCalendarConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookCreateCalendarConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookUpdateCalendarConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookDeleteCalendarConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookCalendarViewConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookForwardCalendarEventConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookListEventAttachmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookAddEventAttachmentConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookGetEventAttachmentConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookDeleteEventAttachmentConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookCalendarViewDeltaConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookCreateCalendarGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookGetCalendarGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookUpdateCalendarGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookDeleteCalendarGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookListCalendarsInGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookCreateCalendarInGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookListCalendarPermissionsConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookGetCalendarPermissionConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookCreateCalendarPermissionConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookUpdateCalendarPermissionConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookDeleteCalendarPermissionConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookAllowedSharingRolesConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookReminderViewConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookOnCalendarEventCreatedConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookOnCalendarEventUpdatedConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookOnCalendarEventDeletedConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookOnCalendarEventChangeConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookOnEmailReceivedConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookOnEmailUpdatedConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookOnEmailDeletedConfig"
+        },
+        {
+          "$ref": "#/$defs/OutlookOnEmailChangeConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/OutlookOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Outlook Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Send an email to customer@acme.com with project proposal attachment",
+    "Read unread emails from the inbox and extract subject and sender",
+    "Reply all to a meeting scheduling email with updated availability",
+    "Forward urgent messages marked high priority to team@company.com",
+    "Create a calendar event for the Q4 planning meeting at 2 PM",
+    "Search for emails containing \"invoice\" in the Finance folder",
+    "Move marketing campaign emails to the Campaigns folder"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

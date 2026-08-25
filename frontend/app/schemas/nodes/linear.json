@@ -1,0 +1,4508 @@
+{
+  "$defs": {
+    "LinearArchiveCycleConfig": {
+      "description": "Archive a cycle",
+      "properties": {
+        "operation": {
+          "const": "archive_cycle",
+          "default": "archive_cycle",
+          "title": "Archive Cycle",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Cycle",
+          "x-display-name": "Archive Cycle",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "close sprint",
+            "archive iteration",
+            "finish cycle"
+          ]
+        },
+        "id": {
+          "description": "The cycle ID to archive",
+          "title": "ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Archive Cycle",
+      "type": "object"
+    },
+    "LinearArchiveIssueConfig": {
+      "description": "Archive an issue",
+      "properties": {
+        "operation": {
+          "const": "archive_issue",
+          "default": "archive_issue",
+          "title": "Archive Issue",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Issue",
+          "x-display-name": "Archive Issue",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "close issue",
+            "archive ticket",
+            "shelve issue"
+          ]
+        },
+        "id": {
+          "description": "The issue ID to archive",
+          "title": "ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Archive Issue",
+      "type": "object"
+    },
+    "LinearArchiveProjectConfig": {
+      "description": "Archive a project (soft delete)",
+      "properties": {
+        "operation": {
+          "const": "archive_project",
+          "default": "archive_project",
+          "title": "Archive Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Project",
+          "x-display-name": "Archive Project",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "close project",
+            "shelve project",
+            "soft delete project"
+          ]
+        },
+        "id": {
+          "description": "The project ID to archive",
+          "title": "ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Archive Project",
+      "type": "object"
+    },
+    "LinearCreateAttachmentConfig": {
+      "description": "Create an attachment (link URL to issue)",
+      "properties": {
+        "operation": {
+          "const": "create_issue_attachment",
+          "default": "create_issue_attachment",
+          "title": "Create Issue Attachment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Attachment",
+          "x-display-name": "Create Issue Attachment",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "attach link",
+            "link url to issue",
+            "add attachment",
+            "attach file to issue"
+          ]
+        },
+        "issueId": {
+          "description": "The issue ID to attach to",
+          "title": "Issue ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Linear ID / reference",
+            "field_name": "issue_id",
+            "placeholder": "Select an issue...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "linear_issue"
+        },
+        "url": {
+          "description": "The URL to attach",
+          "title": "URL",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Attachment title",
+          "title": "Title"
+        }
+      },
+      "required": [
+        "issueId",
+        "url"
+      ],
+      "title": "Create Attachment",
+      "type": "object"
+    },
+    "LinearCreateCommentConfig": {
+      "description": "Create a comment on a specific Linear issue",
+      "properties": {
+        "operation": {
+          "const": "create_issue_comment",
+          "default": "create_issue_comment",
+          "title": "Create Issue Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Issue",
+          "x-display-name": "Create Issue Comment",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "comment on issue",
+            "reply to issue",
+            "post comment",
+            "add note"
+          ]
+        },
+        "issueId": {
+          "description": "The issue ID",
+          "title": "Issue ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Linear ID / reference",
+            "field_name": "issue_id",
+            "placeholder": "Select an issue...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "linear_issue"
+        },
+        "body": {
+          "description": "The content of the comment as Markdown",
+          "title": "Body",
+          "type": "string"
+        }
+      },
+      "required": [
+        "issueId",
+        "body"
+      ],
+      "title": "Create Comment",
+      "type": "object"
+    },
+    "LinearCreateCycleConfig": {
+      "description": "Create a new cycle (sprint) for a team",
+      "properties": {
+        "operation": {
+          "const": "create_cycle",
+          "default": "create_cycle",
+          "title": "Create Cycle",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Cycle",
+          "x-creates-resource": true,
+          "x-display-name": "Create Cycle",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new sprint",
+            "start cycle",
+            "new iteration",
+            "add sprint"
+          ],
+          "x-resource-id-path": "data.cycleCreate.cycle.id",
+          "x-resource-type": "linear_cycle"
+        },
+        "teamId": {
+          "description": "The team ID",
+          "title": "Team ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Linear ID / reference",
+            "field_name": "team_id",
+            "placeholder": "Select a team...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "linear_team"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cycle name",
+          "title": "Name"
+        },
+        "startsAt": {
+          "description": "Start date in ISO format",
+          "title": "Starts At",
+          "type": "string"
+        },
+        "endsAt": {
+          "description": "End date in ISO format",
+          "title": "Ends At",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cycle description",
+          "title": "Description"
+        }
+      },
+      "required": [
+        "teamId",
+        "startsAt",
+        "endsAt"
+      ],
+      "title": "Create Cycle",
+      "type": "object"
+    },
+    "LinearCreateDocumentConfig": {
+      "description": "Create a new document. Requires exactly one of: projectId, teamId, or issueId.",
+      "properties": {
+        "operation": {
+          "const": "create_document",
+          "default": "create_document",
+          "title": "Create Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document",
+          "x-display-name": "Create Document",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new doc",
+            "write document",
+            "add doc",
+            "make document"
+          ]
+        },
+        "title": {
+          "description": "Document title",
+          "title": "Title",
+          "type": "string"
+        },
+        "content": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Document content in Markdown",
+          "title": "Content"
+        },
+        "projectId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Associated project ID (mutually exclusive with teamId/issueId)",
+          "title": "Project ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Linear ID / reference",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true
+          },
+          "x-resource-type": "linear_project"
+        },
+        "teamId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Associated team ID (mutually exclusive with projectId/issueId)",
+          "title": "Team ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Linear ID / reference",
+            "field_name": "team_id",
+            "placeholder": "Select a team...",
+            "searchable": true
+          },
+          "x-resource-type": "linear_team"
+        },
+        "issueId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Associated issue ID (mutually exclusive with projectId/teamId)",
+          "title": "Issue ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Linear ID / reference",
+            "field_name": "issue_id",
+            "placeholder": "Select an issue...",
+            "searchable": true
+          },
+          "x-resource-type": "linear_issue"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "Create Document",
+      "type": "object"
+    },
+    "LinearCreateIssueConfig": {
+      "description": "Create a new Linear issue",
+      "properties": {
+        "operation": {
+          "const": "create_issue",
+          "default": "create_issue",
+          "title": "Create Issue",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Issue",
+          "x-creates-resource": true,
+          "x-display-name": "Create Issue",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new issue",
+            "file ticket",
+            "open ticket",
+            "log bug",
+            "raise issue"
+          ],
+          "x-resource-id-path": "data.issueCreate.issue.id",
+          "x-resource-type": "linear_issue"
+        },
+        "title": {
+          "description": "The issue title",
+          "title": "Title",
+          "type": "string"
+        },
+        "teamId": {
+          "description": "The team ID",
+          "title": "Team ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Linear ID / reference",
+            "field_name": "team_id",
+            "placeholder": "Select a team...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "linear_team"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The issue description as Markdown",
+          "title": "Description"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "0=No priority, 1=Urgent, 2=High, 3=Normal, 4=Low",
+          "title": "Priority"
+        },
+        "stateId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The workflow state ID",
+          "title": "State ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Linear ID / reference",
+            "depends_on": "teamId",
+            "field_name": "state_id",
+            "placeholder": "Select a workflow state...",
+            "searchable": true
+          },
+          "x-resource-type": "linear_state"
+        },
+        "assigneeId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The assignee user ID",
+          "title": "Assignee ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Linear ID / reference",
+            "field_name": "user_id",
+            "placeholder": "Select a user...",
+            "searchable": true
+          }
+        },
+        "projectId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The project ID",
+          "title": "Project ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Linear ID / reference",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true
+          },
+          "x-resource-type": "linear_project"
+        },
+        "cycleId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The cycle ID",
+          "title": "Cycle ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Linear ID / reference",
+            "depends_on": "teamId",
+            "field_name": "cycle_id",
+            "placeholder": "Select a cycle...",
+            "searchable": true
+          },
+          "x-resource-type": "linear_cycle"
+        },
+        "labelIds": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Array of label IDs",
+          "title": "Label IDs"
+        },
+        "dueDate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Due date in ISO format (YYYY-MM-DD)",
+          "title": "Due Date"
+        },
+        "parentId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Parent issue ID for sub-issues",
+          "title": "Parent ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Linear ID / reference",
+            "field_name": "issue_id",
+            "placeholder": "Select an issue...",
+            "searchable": true
+          },
+          "x-resource-type": "linear_issue"
+        }
+      },
+      "required": [
+        "title",
+        "teamId"
+      ],
+      "title": "Create Issue",
+      "type": "object"
+    },
+    "LinearCreateIssueLabelConfig": {
+      "description": "Create a new Linear issue label",
+      "properties": {
+        "operation": {
+          "const": "create_issue_label",
+          "default": "create_issue_label",
+          "title": "Create Issue Label",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Issue",
+          "x-display-name": "Create Issue Label",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new label",
+            "add tag",
+            "make label"
+          ]
+        },
+        "name": {
+          "description": "The name of the label",
+          "title": "Name",
+          "type": "string"
+        },
+        "teamId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Team ID for team-specific label",
+          "title": "Team ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Linear ID / reference",
+            "field_name": "team_id",
+            "placeholder": "Select a team...",
+            "searchable": true
+          },
+          "x-resource-type": "linear_team"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Hex color code (e.g., #ff0000)",
+          "title": "Color"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Label description",
+          "title": "Description"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "Create Issue Label",
+      "type": "object"
+    },
+    "LinearCreateIssueRelationConfig": {
+      "description": "Create a relation between issues",
+      "properties": {
+        "operation": {
+          "const": "create_issue_relation",
+          "default": "create_issue_relation",
+          "title": "Create Issue Relation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Issue",
+          "x-display-name": "Create Issue Relation",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "link issues",
+            "mark as blocking",
+            "relate issues",
+            "mark duplicate",
+            "add dependency"
+          ]
+        },
+        "issueId": {
+          "description": "The source issue ID",
+          "title": "Issue ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Linear ID / reference",
+            "field_name": "issue_id",
+            "placeholder": "Select an issue...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "linear_issue"
+        },
+        "relatedIssueId": {
+          "description": "The target issue ID",
+          "title": "Related Issue ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Linear ID / reference",
+            "field_name": "issue_id",
+            "placeholder": "Select an issue...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "linear_issue"
+        },
+        "type": {
+          "description": "Type of relation: blocks, duplicate, related",
+          "title": "Relation Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "issueId",
+        "relatedIssueId",
+        "type"
+      ],
+      "title": "Create Issue Relation",
+      "type": "object"
+    },
+    "LinearCreateProjectConfig": {
+      "description": "Create a new project in Linear",
+      "properties": {
+        "operation": {
+          "const": "create_project",
+          "default": "create_project",
+          "title": "Create Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Project",
+          "x-creates-resource": true,
+          "x-display-name": "Create Project",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new project",
+            "start project",
+            "add project"
+          ],
+          "x-resource-id-path": "data.projectCreate.project.id",
+          "x-resource-type": "linear_project"
+        },
+        "name": {
+          "description": "The project name",
+          "title": "Name",
+          "type": "string"
+        },
+        "teamIds": {
+          "description": "Array of team IDs for this project",
+          "items": {
+            "type": "string"
+          },
+          "title": "Team IDs",
+          "type": "array"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Project description in Markdown",
+          "title": "Description"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Project state (planned, started, paused, completed, canceled)",
+          "title": "State"
+        },
+        "startDate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start date in ISO format (YYYY-MM-DD)",
+          "title": "Start Date"
+        },
+        "targetDate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Target date in ISO format (YYYY-MM-DD)",
+          "title": "Target Date"
+        },
+        "leadId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Project lead user ID",
+          "title": "Lead ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Linear ID / reference",
+            "field_name": "user_id",
+            "placeholder": "Select a user...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "name",
+        "teamIds"
+      ],
+      "title": "Create Project",
+      "type": "object"
+    },
+    "LinearCreateProjectMilestoneConfig": {
+      "description": "Create a project milestone",
+      "properties": {
+        "operation": {
+          "const": "create_project_milestone",
+          "default": "create_project_milestone",
+          "title": "Create Project Milestone",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Project",
+          "x-display-name": "Create Project Milestone",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new milestone",
+            "add milestone",
+            "set milestone"
+          ]
+        },
+        "projectId": {
+          "description": "The project ID",
+          "title": "Project ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Linear ID / reference",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "linear_project"
+        },
+        "name": {
+          "description": "Milestone name",
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Milestone description",
+          "title": "Description"
+        },
+        "targetDate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Target date in ISO format",
+          "title": "Target Date"
+        }
+      },
+      "required": [
+        "projectId",
+        "name"
+      ],
+      "title": "Create Project Milestone",
+      "type": "object"
+    },
+    "LinearCreateWebhookConfig": {
+      "description": "Create a webhook",
+      "properties": {
+        "operation": {
+          "const": "create_webhook",
+          "default": "create_webhook",
+          "title": "Create Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhook",
+          "x-display-name": "Create Webhook",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new webhook",
+            "register callback",
+            "setup webhook"
+          ]
+        },
+        "url": {
+          "description": "Webhook URL to receive events",
+          "title": "URL",
+          "type": "string"
+        },
+        "label": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Webhook label",
+          "title": "Label"
+        },
+        "teamId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Team to filter events for",
+          "title": "Team ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Linear ID / reference",
+            "field_name": "team_id",
+            "placeholder": "Select a team...",
+            "searchable": true
+          },
+          "x-resource-type": "linear_team"
+        },
+        "resourceTypes": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Types of resources to receive: Issue, Comment, Project, etc.",
+          "title": "Resource Types"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "Create Webhook",
+      "type": "object"
+    },
+    "LinearDeleteAttachmentConfig": {
+      "description": "Delete an attachment",
+      "properties": {
+        "operation": {
+          "const": "delete_attachment",
+          "default": "delete_attachment",
+          "title": "Delete Attachment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Attachment",
+          "x-display-name": "Delete Attachment",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove attachment",
+            "detach file",
+            "remove attached link"
+          ]
+        },
+        "id": {
+          "description": "The attachment ID to delete",
+          "title": "ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Delete Attachment",
+      "type": "object"
+    },
+    "LinearDeleteCommentConfig": {
+      "description": "Delete a comment",
+      "properties": {
+        "operation": {
+          "const": "delete_issue_comment",
+          "default": "delete_issue_comment",
+          "title": "Delete Issue Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Issue",
+          "x-display-name": "Delete Issue Comment",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove comment",
+            "erase comment",
+            "delete reply"
+          ]
+        },
+        "id": {
+          "description": "The comment ID to delete",
+          "title": "ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Delete Comment",
+      "type": "object"
+    },
+    "LinearDeleteDocumentConfig": {
+      "description": "Delete a document",
+      "properties": {
+        "operation": {
+          "const": "delete_document",
+          "default": "delete_document",
+          "title": "Delete Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document",
+          "x-display-name": "Delete Document",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove document",
+            "erase doc",
+            "trash document"
+          ]
+        },
+        "id": {
+          "description": "The document ID to delete",
+          "title": "ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Delete Document",
+      "type": "object"
+    },
+    "LinearDeleteIssueConfig": {
+      "description": "Delete a Linear issue",
+      "properties": {
+        "operation": {
+          "const": "delete_issue",
+          "default": "delete_issue",
+          "title": "Delete Issue",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Issue",
+          "x-display-name": "Delete Issue",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove issue",
+            "erase ticket",
+            "trash issue"
+          ]
+        },
+        "id": {
+          "description": "The issue ID",
+          "title": "ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Delete Issue",
+      "type": "object"
+    },
+    "LinearDeleteIssueLabelConfig": {
+      "description": "Delete an issue label",
+      "properties": {
+        "operation": {
+          "const": "delete_issue_label",
+          "default": "delete_issue_label",
+          "title": "Delete Issue Label",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Issue",
+          "x-display-name": "Delete Issue Label",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove label",
+            "erase tag",
+            "delete label"
+          ]
+        },
+        "id": {
+          "description": "The label ID to delete",
+          "title": "ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Delete Issue Label",
+      "type": "object"
+    },
+    "LinearDeleteIssueRelationConfig": {
+      "description": "Delete an issue relation",
+      "properties": {
+        "operation": {
+          "const": "delete_issue_relation",
+          "default": "delete_issue_relation",
+          "title": "Delete Issue Relation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Issue",
+          "x-display-name": "Delete Issue Relation",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "unlink issues",
+            "remove relation",
+            "remove dependency",
+            "remove blocking"
+          ]
+        },
+        "id": {
+          "description": "The issue relation ID to delete",
+          "title": "ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Delete Issue Relation",
+      "type": "object"
+    },
+    "LinearDeleteProjectConfig": {
+      "description": "Permanently delete a project",
+      "properties": {
+        "operation": {
+          "const": "delete_project",
+          "default": "delete_project",
+          "title": "Delete Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Project",
+          "x-display-name": "Delete Project",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove project",
+            "permanently delete project",
+            "trash project"
+          ]
+        },
+        "id": {
+          "description": "The project ID to delete",
+          "title": "ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Delete Project",
+      "type": "object"
+    },
+    "LinearDeleteProjectMilestoneConfig": {
+      "description": "Delete a project milestone",
+      "properties": {
+        "operation": {
+          "const": "delete_project_milestone",
+          "default": "delete_project_milestone",
+          "title": "Delete Project Milestone",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Project",
+          "x-display-name": "Delete Project Milestone",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove milestone",
+            "erase milestone",
+            "trash milestone"
+          ]
+        },
+        "id": {
+          "description": "The milestone ID to delete",
+          "title": "ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Delete Project Milestone",
+      "type": "object"
+    },
+    "LinearDeleteWebhookConfig": {
+      "description": "Delete a webhook",
+      "properties": {
+        "operation": {
+          "const": "delete_webhook",
+          "default": "delete_webhook",
+          "title": "Delete Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhook",
+          "x-display-name": "Delete Webhook",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove webhook",
+            "delete callback",
+            "unregister webhook"
+          ]
+        },
+        "id": {
+          "description": "The webhook ID to delete",
+          "title": "ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Delete Webhook",
+      "type": "object"
+    },
+    "LinearGetDocumentConfig": {
+      "description": "Retrieve a Linear document by ID",
+      "properties": {
+        "operation": {
+          "const": "get_document",
+          "default": "get_document",
+          "title": "Get Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document",
+          "x-display-name": "Get Document",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "read doc",
+            "fetch document",
+            "open doc",
+            "view document"
+          ]
+        },
+        "id": {
+          "description": "The document ID",
+          "title": "ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Get Document",
+      "type": "object"
+    },
+    "LinearGetIssueConfig": {
+      "description": "Retrieve detailed information about an issue by ID",
+      "properties": {
+        "operation": {
+          "const": "get_issue",
+          "default": "get_issue",
+          "title": "Get Issue",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Issue",
+          "x-display-name": "Get Issue",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "read issue",
+            "fetch ticket",
+            "open issue",
+            "issue details"
+          ]
+        },
+        "id": {
+          "description": "The issue ID",
+          "title": "ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Linear ID / reference",
+            "field_name": "issue_id",
+            "placeholder": "Select an issue...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "linear_issue"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Get Issue",
+      "type": "object"
+    },
+    "LinearGetProjectConfig": {
+      "description": "Retrieve details of a specific project",
+      "properties": {
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "title": "Get Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Project",
+          "x-display-name": "Get Project",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "read project",
+            "open project",
+            "project details",
+            "fetch project"
+          ]
+        },
+        "id": {
+          "description": "The project ID",
+          "title": "ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Linear ID / reference",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "linear_project"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Get Project",
+      "type": "object"
+    },
+    "LinearGetTeamConfig": {
+      "description": "Retrieve details of a specific Linear team",
+      "properties": {
+        "operation": {
+          "const": "get_team",
+          "default": "get_team",
+          "title": "Get Team",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Team",
+          "x-display-name": "Get Team",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "read team",
+            "team details",
+            "open team",
+            "fetch team"
+          ]
+        },
+        "id": {
+          "description": "The team ID",
+          "title": "ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Linear ID / reference",
+            "field_name": "team_id",
+            "placeholder": "Select a team...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "linear_team"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Get Team",
+      "type": "object"
+    },
+    "LinearGetUserConfig": {
+      "description": "Retrieve details of a specific Linear user",
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Get User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Get User",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "read user",
+            "member details",
+            "user profile",
+            "fetch person"
+          ]
+        },
+        "id": {
+          "description": "The user ID",
+          "title": "ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Linear ID / reference",
+            "field_name": "user_id",
+            "placeholder": "Select a user...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Get User",
+      "type": "object"
+    },
+    "LinearGetViewerConfig": {
+      "description": "Get the currently authenticated user",
+      "properties": {
+        "operation": {
+          "const": "get_authenticated_user",
+          "default": "get_authenticated_user",
+          "title": "Get Authenticated User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Get Authenticated User",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "current user",
+            "who am i",
+            "my account",
+            "logged in user",
+            "myself"
+          ]
+        }
+      },
+      "title": "Get Viewer",
+      "type": "object"
+    },
+    "LinearListAttachmentsConfig": {
+      "description": "List attachments for an issue",
+      "properties": {
+        "operation": {
+          "const": "list_issue_attachments",
+          "default": "list_issue_attachments",
+          "title": "List Issue Attachments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Attachment",
+          "x-display-name": "List Issue Attachments",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "issue attachments",
+            "attached links",
+            "see attachments",
+            "files on issue"
+          ]
+        },
+        "issueId": {
+          "description": "The issue ID to get attachments for",
+          "title": "Issue ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Linear ID / reference",
+            "field_name": "issue_id",
+            "placeholder": "Select an issue...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "linear_issue"
+        },
+        "first": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "description": "Number of results to return",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "issueId"
+      ],
+      "title": "List Attachments",
+      "type": "object"
+    },
+    "LinearListCommentsConfig": {
+      "description": "List comments for a specific Linear issue",
+      "properties": {
+        "operation": {
+          "const": "list_issue_comments",
+          "default": "list_issue_comments",
+          "title": "List Issue Comments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Issue",
+          "x-display-name": "List Issue Comments",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "issue comments",
+            "comments on issue",
+            "ticket replies",
+            "read discussion"
+          ]
+        },
+        "issueId": {
+          "description": "The issue ID",
+          "title": "Issue ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Linear ID / reference",
+            "field_name": "issue_id",
+            "placeholder": "Select an issue...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "linear_issue"
+        }
+      },
+      "required": [
+        "issueId"
+      ],
+      "title": "List Comments",
+      "type": "object"
+    },
+    "LinearListCyclesConfig": {
+      "description": "Retrieve cycles for a specific Linear team",
+      "properties": {
+        "operation": {
+          "const": "list_team_cycles",
+          "default": "list_team_cycles",
+          "title": "List Team Cycles",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Cycle",
+          "x-display-name": "List Team Cycles",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "team cycles",
+            "sprints",
+            "iterations",
+            "cycle list"
+          ]
+        },
+        "teamId": {
+          "description": "The team ID",
+          "title": "Team ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Linear ID / reference",
+            "field_name": "team_id",
+            "placeholder": "Select a team...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "linear_team"
+        },
+        "first": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "description": "Number of results to return (max 250)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "teamId"
+      ],
+      "title": "List Cycles",
+      "type": "object"
+    },
+    "LinearListDocumentsConfig": {
+      "description": "List documents in the user's Linear workspace",
+      "properties": {
+        "operation": {
+          "const": "list_documents",
+          "default": "list_documents",
+          "title": "List Documents",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document",
+          "x-display-name": "List Documents",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "all documents",
+            "docs list",
+            "workspace docs",
+            "browse documents"
+          ]
+        },
+        "first": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "description": "Number of results to return (max 250)",
+          "title": "Limit"
+        }
+      },
+      "title": "List Documents",
+      "type": "object"
+    },
+    "LinearListIssueLabelsConfig": {
+      "description": "List available issue labels in a Linear workspace",
+      "properties": {
+        "operation": {
+          "const": "list_issue_labels",
+          "default": "list_issue_labels",
+          "title": "List Issue Labels",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Issue",
+          "x-display-name": "List Issue Labels",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "available labels",
+            "all tags",
+            "workspace labels",
+            "browse labels"
+          ]
+        },
+        "first": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "description": "Number of results to return (max 250)",
+          "title": "Limit"
+        }
+      },
+      "title": "List Issue Labels",
+      "type": "object"
+    },
+    "LinearListIssueRelationsConfig": {
+      "description": "List issue relations (blocks, related, duplicate)",
+      "properties": {
+        "operation": {
+          "const": "list_issue_relations",
+          "default": "list_issue_relations",
+          "title": "List Issue Relations",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Issue",
+          "x-display-name": "List Issue Relations",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "issue relations",
+            "blocking issues",
+            "related issues",
+            "linked issues",
+            "duplicate issues"
+          ]
+        },
+        "issueId": {
+          "description": "The issue ID to get relations for",
+          "title": "Issue ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Linear ID / reference",
+            "field_name": "issue_id",
+            "placeholder": "Select an issue...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "linear_issue"
+        }
+      },
+      "required": [
+        "issueId"
+      ],
+      "title": "List Issue Relations",
+      "type": "object"
+    },
+    "LinearListIssuesConfig": {
+      "description": "List issues in the user's Linear workspace",
+      "properties": {
+        "operation": {
+          "const": "list_issues",
+          "default": "list_issues",
+          "title": "List Issues",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Issue",
+          "x-display-name": "List Issues",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "all issues",
+            "my issues",
+            "ticket list",
+            "browse issues",
+            "open tickets"
+          ]
+        },
+        "first": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "description": "Number of results to return (max 250)",
+          "title": "Limit"
+        },
+        "teamId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by team ID",
+          "title": "Team ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Linear ID / reference",
+            "field_name": "team_id",
+            "placeholder": "Select a team...",
+            "searchable": true
+          },
+          "x-resource-type": "linear_team"
+        },
+        "assigneeId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by assignee ID",
+          "title": "Assignee ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Linear ID / reference",
+            "field_name": "user_id",
+            "placeholder": "Select a user...",
+            "searchable": true
+          }
+        },
+        "includeArchived": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Whether to include archived issues",
+          "title": "Include Archived"
+        }
+      },
+      "title": "List Issues",
+      "type": "object"
+    },
+    "LinearListProjectMilestonesConfig": {
+      "description": "List milestones for a project",
+      "properties": {
+        "operation": {
+          "const": "list_project_milestones",
+          "default": "list_project_milestones",
+          "title": "List Project Milestones",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Project",
+          "x-display-name": "List Project Milestones",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "project milestones",
+            "all milestones",
+            "milestone list",
+            "browse milestones"
+          ]
+        },
+        "projectId": {
+          "description": "The project ID",
+          "title": "Project ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Linear ID / reference",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "linear_project"
+        }
+      },
+      "required": [
+        "projectId"
+      ],
+      "title": "List Project Milestones",
+      "type": "object"
+    },
+    "LinearListProjectsConfig": {
+      "description": "List projects in the user's Linear workspace",
+      "properties": {
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "title": "List Projects",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Project",
+          "x-display-name": "List Projects",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "all projects",
+            "project list",
+            "browse projects",
+            "my projects"
+          ]
+        },
+        "first": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "description": "Number of results to return (max 250)",
+          "title": "Limit"
+        }
+      },
+      "title": "List Projects",
+      "type": "object"
+    },
+    "LinearListTeamsConfig": {
+      "description": "List teams in the user's Linear workspace",
+      "properties": {
+        "operation": {
+          "const": "list_teams",
+          "default": "list_teams",
+          "title": "List Teams",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Team",
+          "x-display-name": "List Teams",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "all teams",
+            "team list",
+            "browse teams",
+            "workspace teams"
+          ]
+        },
+        "first": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "description": "Number of results to return (max 250)",
+          "title": "Limit"
+        }
+      },
+      "title": "List Teams",
+      "type": "object"
+    },
+    "LinearListUsersConfig": {
+      "description": "Retrieve users in the Linear workspace",
+      "properties": {
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "List Users",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "List Users",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "all users",
+            "members",
+            "people list",
+            "workspace members",
+            "teammates"
+          ]
+        },
+        "first": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "description": "Number of results to return (max 250)",
+          "title": "Limit"
+        }
+      },
+      "title": "List Users",
+      "type": "object"
+    },
+    "LinearListWebhooksConfig": {
+      "description": "List webhooks for the organization",
+      "properties": {
+        "operation": {
+          "const": "list_webhooks",
+          "default": "list_webhooks",
+          "title": "List Webhooks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhook",
+          "x-display-name": "List Webhooks",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "webhooks",
+            "show webhooks",
+            "configured callbacks"
+          ]
+        }
+      },
+      "title": "List Webhooks",
+      "type": "object"
+    },
+    "LinearListWorkflowStatesConfig": {
+      "description": "List workflow states (statuses) for a team",
+      "properties": {
+        "operation": {
+          "const": "list_team_workflow_states",
+          "default": "list_team_workflow_states",
+          "title": "List Team Workflow States",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Team",
+          "x-display-name": "List Team Workflow States",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "workflow states",
+            "statuses",
+            "issue statuses",
+            "team statuses",
+            "status columns"
+          ]
+        },
+        "teamId": {
+          "description": "The team ID",
+          "title": "Team ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Linear ID / reference",
+            "field_name": "team_id",
+            "placeholder": "Select a team...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "linear_team"
+        }
+      },
+      "required": [
+        "teamId"
+      ],
+      "title": "List Workflow States",
+      "type": "object"
+    },
+    "LinearOAuthCredential": {
+      "description": "OAuth 2.0 credential for Linear.\nTokens are obtained via OAuth flow, not entered manually.\nLinear tokens are long-lived (10 years).\n\nRegister OAuth app at: https://linear.app/settings/api",
+      "properties": {
+        "credential_type": {
+          "const": "linear_oauth",
+          "default": "linear_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refresh Token"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Expiry"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Email"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "LinearOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-oauth-provider": "linear",
+      "x-oauth-scopes": [
+        "read",
+        "write",
+        "issues:create",
+        "comments:create",
+        "admin"
+      ]
+    },
+    "LinearOnCommentCreatedConfig": {
+      "description": "Trigger: fires when a Linear comment is created.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "team_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Limit events to a single team (leave blank for all public teams)",
+          "title": "Team ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "team_id",
+            "placeholder": "Select a team...",
+            "searchable": true
+          },
+          "x-resource-type": "linear_team"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_comment_created",
+          "default": "on_comment_created",
+          "title": "On Comment Created",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Comment Created",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "when new comment",
+            "on comment added",
+            "someone commented",
+            "issue reply posted"
+          ]
+        }
+      },
+      "title": "On Comment Created",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "LinearOnCommentDeletedConfig": {
+      "description": "Trigger: fires when a Linear comment is deleted.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "team_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Limit events to a single team (leave blank for all public teams)",
+          "title": "Team ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "team_id",
+            "placeholder": "Select a team...",
+            "searchable": true
+          },
+          "x-resource-type": "linear_team"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_comment_deleted",
+          "default": "on_comment_deleted",
+          "title": "On Comment Deleted",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Comment Deleted",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "when comment removed",
+            "on comment deleted",
+            "comment deleted event"
+          ]
+        }
+      },
+      "title": "On Comment Deleted",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "LinearOnCommentUpdatedConfig": {
+      "description": "Trigger: fires when a Linear comment is updated.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "team_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Limit events to a single team (leave blank for all public teams)",
+          "title": "Team ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "team_id",
+            "placeholder": "Select a team...",
+            "searchable": true
+          },
+          "x-resource-type": "linear_team"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_comment_updated",
+          "default": "on_comment_updated",
+          "title": "On Comment Updated",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Comment Updated",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "when comment edited",
+            "on comment changed",
+            "comment updated event"
+          ]
+        }
+      },
+      "title": "On Comment Updated",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "LinearOnIssueCreatedConfig": {
+      "description": "Trigger: fires when a Linear issue is created.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "team_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Limit events to a single team (leave blank for all public teams)",
+          "title": "Team ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "team_id",
+            "placeholder": "Select a team...",
+            "searchable": true
+          },
+          "x-resource-type": "linear_team"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_issue_created",
+          "default": "on_issue_created",
+          "title": "On Issue Created",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Issue Created",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "when new issue",
+            "on issue opened",
+            "new ticket filed",
+            "issue created event"
+          ]
+        }
+      },
+      "title": "On Issue Created",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "LinearOnIssueDeletedConfig": {
+      "description": "Trigger: fires when a Linear issue is deleted.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "team_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Limit events to a single team (leave blank for all public teams)",
+          "title": "Team ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "team_id",
+            "placeholder": "Select a team...",
+            "searchable": true
+          },
+          "x-resource-type": "linear_team"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_issue_deleted",
+          "default": "on_issue_deleted",
+          "title": "On Issue Deleted",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Issue Deleted",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "when issue removed",
+            "on issue deleted",
+            "ticket deleted event"
+          ]
+        }
+      },
+      "title": "On Issue Deleted",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "LinearOnIssueUpdatedConfig": {
+      "description": "Trigger: fires when a Linear issue is updated.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "team_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Limit events to a single team (leave blank for all public teams)",
+          "title": "Team ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "team_id",
+            "placeholder": "Select a team...",
+            "searchable": true
+          },
+          "x-resource-type": "linear_team"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_issue_updated",
+          "default": "on_issue_updated",
+          "title": "On Issue Updated",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Issue Updated",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "when issue changed",
+            "on issue edited",
+            "issue status changed",
+            "ticket updated event"
+          ]
+        }
+      },
+      "title": "On Issue Updated",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "LinearOnProjectCreatedConfig": {
+      "description": "Trigger: fires when a Linear project is created.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "team_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Limit events to a single team (leave blank for all public teams)",
+          "title": "Team ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "team_id",
+            "placeholder": "Select a team...",
+            "searchable": true
+          },
+          "x-resource-type": "linear_team"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_project_created",
+          "default": "on_project_created",
+          "title": "On Project Created",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Project Created",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "when new project",
+            "on project started",
+            "project created event"
+          ]
+        }
+      },
+      "title": "On Project Created",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "LinearOnProjectDeletedConfig": {
+      "description": "Trigger: fires when a Linear project is deleted.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "team_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Limit events to a single team (leave blank for all public teams)",
+          "title": "Team ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "team_id",
+            "placeholder": "Select a team...",
+            "searchable": true
+          },
+          "x-resource-type": "linear_team"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_project_deleted",
+          "default": "on_project_deleted",
+          "title": "On Project Deleted",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Project Deleted",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "when project removed",
+            "on project deleted",
+            "project deleted event"
+          ]
+        }
+      },
+      "title": "On Project Deleted",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "LinearOnProjectUpdatedConfig": {
+      "description": "Trigger: fires when a Linear project is updated.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "team_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Limit events to a single team (leave blank for all public teams)",
+          "title": "Team ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "team_id",
+            "placeholder": "Select a team...",
+            "searchable": true
+          },
+          "x-resource-type": "linear_team"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_project_updated",
+          "default": "on_project_updated",
+          "title": "On Project Updated",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Project Updated",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "when project changed",
+            "on project edited",
+            "project updated event"
+          ]
+        }
+      },
+      "title": "On Project Updated",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "LinearPATCredential": {
+      "description": "Personal API Key authentication for Linear.\n\nGet your API key at: https://linear.app/settings/api",
+      "properties": {
+        "credential_type": {
+          "const": "linear_pat",
+          "default": "linear_pat",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Linear Personal API Key (starts with lin_api_)",
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "LinearPATCredential",
+      "type": "object",
+      "x-credential-url": "https://linear.app/settings/api"
+    },
+    "LinearSearchIssuesConfig": {
+      "description": "Search issues by query string",
+      "properties": {
+        "operation": {
+          "const": "search_issues",
+          "default": "search_issues",
+          "title": "Search Issues",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Issue",
+          "x-display-name": "Search Issues",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "find issue",
+            "search tickets",
+            "query issues",
+            "look up issue"
+          ]
+        },
+        "query": {
+          "description": "Search query string",
+          "title": "Query",
+          "type": "string"
+        },
+        "first": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "description": "Number of results to return (max 250)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "Search Issues",
+      "type": "object"
+    },
+    "LinearUnarchiveIssueConfig": {
+      "description": "Unarchive an issue",
+      "properties": {
+        "operation": {
+          "const": "unarchive_issue",
+          "default": "unarchive_issue",
+          "title": "Unarchive Issue",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Issue",
+          "x-display-name": "Unarchive Issue",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "restore issue",
+            "reopen archived issue",
+            "unarchive ticket"
+          ]
+        },
+        "id": {
+          "description": "The issue ID to unarchive",
+          "title": "ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Unarchive Issue",
+      "type": "object"
+    },
+    "LinearUpdateCommentConfig": {
+      "description": "Update an existing comment",
+      "properties": {
+        "operation": {
+          "const": "update_issue_comment",
+          "default": "update_issue_comment",
+          "title": "Update Issue Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Issue",
+          "x-display-name": "Update Issue Comment",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "edit comment",
+            "change comment",
+            "fix comment text"
+          ]
+        },
+        "id": {
+          "description": "The comment ID",
+          "title": "ID",
+          "type": "string"
+        },
+        "body": {
+          "description": "Updated comment content as Markdown",
+          "title": "Body",
+          "type": "string"
+        }
+      },
+      "required": [
+        "id",
+        "body"
+      ],
+      "title": "Update Comment",
+      "type": "object"
+    },
+    "LinearUpdateCycleConfig": {
+      "description": "Update an existing cycle",
+      "properties": {
+        "operation": {
+          "const": "update_cycle",
+          "default": "update_cycle",
+          "title": "Update Cycle",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Cycle",
+          "x-display-name": "Update Cycle",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "edit sprint",
+            "change cycle",
+            "modify iteration"
+          ]
+        },
+        "id": {
+          "description": "The cycle ID",
+          "title": "ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New cycle name",
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New cycle description",
+          "title": "Description"
+        },
+        "startsAt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New start date in ISO format",
+          "title": "Starts At"
+        },
+        "endsAt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New end date in ISO format",
+          "title": "Ends At"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Update Cycle",
+      "type": "object"
+    },
+    "LinearUpdateDocumentConfig": {
+      "description": "Update an existing document",
+      "properties": {
+        "operation": {
+          "const": "update_document",
+          "default": "update_document",
+          "title": "Update Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document",
+          "x-display-name": "Update Document",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "edit document",
+            "change doc",
+            "modify document"
+          ]
+        },
+        "id": {
+          "description": "The document ID",
+          "title": "ID",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New document title",
+          "title": "Title"
+        },
+        "content": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New document content in Markdown",
+          "title": "Content"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Update Document",
+      "type": "object"
+    },
+    "LinearUpdateIssueConfig": {
+      "description": "Update an existing Linear issue",
+      "properties": {
+        "operation": {
+          "const": "update_issue",
+          "default": "update_issue",
+          "title": "Update Issue",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Issue",
+          "x-display-name": "Update Issue",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "edit issue",
+            "change ticket",
+            "reassign issue",
+            "move to status",
+            "set priority"
+          ]
+        },
+        "id": {
+          "description": "The issue ID",
+          "title": "ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Linear ID / reference",
+            "field_name": "issue_id",
+            "placeholder": "Select an issue...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "linear_issue"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The issue title",
+          "title": "Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The issue description as Markdown",
+          "title": "Description"
+        },
+        "priority": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "0=No priority, 1=Urgent, 2=High, 3=Normal, 4=Low",
+          "title": "Priority"
+        },
+        "stateId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The workflow state ID",
+          "title": "State ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Linear ID / reference",
+            "depends_on": "teamId",
+            "field_name": "state_id",
+            "placeholder": "Select a workflow state...",
+            "searchable": true
+          },
+          "x-resource-type": "linear_state"
+        },
+        "assigneeId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The assignee user ID",
+          "title": "Assignee ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Linear ID / reference",
+            "field_name": "user_id",
+            "placeholder": "Select a user...",
+            "searchable": true
+          }
+        },
+        "projectId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The project ID",
+          "title": "Project ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Linear ID / reference",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true
+          },
+          "x-resource-type": "linear_project"
+        },
+        "cycleId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The cycle ID",
+          "title": "Cycle ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Linear ID / reference",
+            "depends_on": "teamId",
+            "field_name": "cycle_id",
+            "placeholder": "Select a cycle...",
+            "searchable": true
+          },
+          "x-resource-type": "linear_cycle"
+        },
+        "labelIds": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Array of label IDs",
+          "title": "Label IDs"
+        },
+        "dueDate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Due date in ISO format (YYYY-MM-DD)",
+          "title": "Due Date"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Update Issue",
+      "type": "object"
+    },
+    "LinearUpdateIssueLabelConfig": {
+      "description": "Update an issue label",
+      "properties": {
+        "operation": {
+          "const": "update_issue_label",
+          "default": "update_issue_label",
+          "title": "Update Issue Label",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Issue",
+          "x-display-name": "Update Issue Label",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "edit label",
+            "rename label",
+            "change tag color"
+          ]
+        },
+        "id": {
+          "description": "The label ID",
+          "title": "ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New label name",
+          "title": "Name"
+        },
+        "color": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New label color (hex)",
+          "title": "Color"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New label description",
+          "title": "Description"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Update Issue Label",
+      "type": "object"
+    },
+    "LinearUpdateProjectConfig": {
+      "description": "Update an existing Linear project",
+      "properties": {
+        "operation": {
+          "const": "update_project",
+          "default": "update_project",
+          "title": "Update Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Project",
+          "x-display-name": "Update Project",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "edit project",
+            "change project",
+            "rename project",
+            "set project status"
+          ]
+        },
+        "id": {
+          "description": "The project ID",
+          "title": "ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Linear ID / reference",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "linear_project"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The project name",
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Project description in Markdown",
+          "title": "Description"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Project state (planned, started, paused, completed, canceled)",
+          "title": "State"
+        },
+        "startDate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start date in ISO format (YYYY-MM-DD)",
+          "title": "Start Date"
+        },
+        "targetDate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Target date in ISO format (YYYY-MM-DD)",
+          "title": "Target Date"
+        },
+        "leadId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Project lead user ID",
+          "title": "Lead ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a Linear ID / reference",
+            "field_name": "user_id",
+            "placeholder": "Select a user...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Update Project",
+      "type": "object"
+    },
+    "LinearUpdateProjectMilestoneConfig": {
+      "description": "Update a project milestone",
+      "properties": {
+        "operation": {
+          "const": "update_project_milestone",
+          "default": "update_project_milestone",
+          "title": "Update Project Milestone",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Project",
+          "x-display-name": "Update Project Milestone",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "edit milestone",
+            "change milestone",
+            "rename milestone"
+          ]
+        },
+        "id": {
+          "description": "The milestone ID",
+          "title": "ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New milestone name",
+          "title": "Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New milestone description",
+          "title": "Description"
+        },
+        "targetDate": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New target date in ISO format",
+          "title": "Target Date"
+        }
+      },
+      "required": [
+        "id"
+      ],
+      "title": "Update Project Milestone",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for Linear node including credentials",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "archive_cycle": "#/$defs/LinearArchiveCycleConfig",
+          "archive_issue": "#/$defs/LinearArchiveIssueConfig",
+          "archive_project": "#/$defs/LinearArchiveProjectConfig",
+          "create_cycle": "#/$defs/LinearCreateCycleConfig",
+          "create_document": "#/$defs/LinearCreateDocumentConfig",
+          "create_issue": "#/$defs/LinearCreateIssueConfig",
+          "create_issue_attachment": "#/$defs/LinearCreateAttachmentConfig",
+          "create_issue_comment": "#/$defs/LinearCreateCommentConfig",
+          "create_issue_label": "#/$defs/LinearCreateIssueLabelConfig",
+          "create_issue_relation": "#/$defs/LinearCreateIssueRelationConfig",
+          "create_project": "#/$defs/LinearCreateProjectConfig",
+          "create_project_milestone": "#/$defs/LinearCreateProjectMilestoneConfig",
+          "create_webhook": "#/$defs/LinearCreateWebhookConfig",
+          "delete_attachment": "#/$defs/LinearDeleteAttachmentConfig",
+          "delete_document": "#/$defs/LinearDeleteDocumentConfig",
+          "delete_issue": "#/$defs/LinearDeleteIssueConfig",
+          "delete_issue_comment": "#/$defs/LinearDeleteCommentConfig",
+          "delete_issue_label": "#/$defs/LinearDeleteIssueLabelConfig",
+          "delete_issue_relation": "#/$defs/LinearDeleteIssueRelationConfig",
+          "delete_project": "#/$defs/LinearDeleteProjectConfig",
+          "delete_project_milestone": "#/$defs/LinearDeleteProjectMilestoneConfig",
+          "delete_webhook": "#/$defs/LinearDeleteWebhookConfig",
+          "get_authenticated_user": "#/$defs/LinearGetViewerConfig",
+          "get_document": "#/$defs/LinearGetDocumentConfig",
+          "get_issue": "#/$defs/LinearGetIssueConfig",
+          "get_project": "#/$defs/LinearGetProjectConfig",
+          "get_team": "#/$defs/LinearGetTeamConfig",
+          "get_user": "#/$defs/LinearGetUserConfig",
+          "list_documents": "#/$defs/LinearListDocumentsConfig",
+          "list_issue_attachments": "#/$defs/LinearListAttachmentsConfig",
+          "list_issue_comments": "#/$defs/LinearListCommentsConfig",
+          "list_issue_labels": "#/$defs/LinearListIssueLabelsConfig",
+          "list_issue_relations": "#/$defs/LinearListIssueRelationsConfig",
+          "list_issues": "#/$defs/LinearListIssuesConfig",
+          "list_project_milestones": "#/$defs/LinearListProjectMilestonesConfig",
+          "list_projects": "#/$defs/LinearListProjectsConfig",
+          "list_team_cycles": "#/$defs/LinearListCyclesConfig",
+          "list_team_workflow_states": "#/$defs/LinearListWorkflowStatesConfig",
+          "list_teams": "#/$defs/LinearListTeamsConfig",
+          "list_users": "#/$defs/LinearListUsersConfig",
+          "list_webhooks": "#/$defs/LinearListWebhooksConfig",
+          "on_comment_created": "#/$defs/LinearOnCommentCreatedConfig",
+          "on_comment_deleted": "#/$defs/LinearOnCommentDeletedConfig",
+          "on_comment_updated": "#/$defs/LinearOnCommentUpdatedConfig",
+          "on_issue_created": "#/$defs/LinearOnIssueCreatedConfig",
+          "on_issue_deleted": "#/$defs/LinearOnIssueDeletedConfig",
+          "on_issue_updated": "#/$defs/LinearOnIssueUpdatedConfig",
+          "on_project_created": "#/$defs/LinearOnProjectCreatedConfig",
+          "on_project_deleted": "#/$defs/LinearOnProjectDeletedConfig",
+          "on_project_updated": "#/$defs/LinearOnProjectUpdatedConfig",
+          "search_issues": "#/$defs/LinearSearchIssuesConfig",
+          "unarchive_issue": "#/$defs/LinearUnarchiveIssueConfig",
+          "update_cycle": "#/$defs/LinearUpdateCycleConfig",
+          "update_document": "#/$defs/LinearUpdateDocumentConfig",
+          "update_issue": "#/$defs/LinearUpdateIssueConfig",
+          "update_issue_comment": "#/$defs/LinearUpdateCommentConfig",
+          "update_issue_label": "#/$defs/LinearUpdateIssueLabelConfig",
+          "update_project": "#/$defs/LinearUpdateProjectConfig",
+          "update_project_milestone": "#/$defs/LinearUpdateProjectMilestoneConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/LinearOnIssueCreatedConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearOnIssueUpdatedConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearOnIssueDeletedConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearOnCommentCreatedConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearOnCommentUpdatedConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearOnCommentDeletedConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearOnProjectCreatedConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearOnProjectUpdatedConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearOnProjectDeletedConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearListCommentsConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearCreateCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearUpdateCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearDeleteCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearListCyclesConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearCreateCycleConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearUpdateCycleConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearArchiveCycleConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearGetDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearListDocumentsConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearCreateDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearUpdateDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearDeleteDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearGetIssueConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearListIssuesConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearCreateIssueConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearUpdateIssueConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearDeleteIssueConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearSearchIssuesConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearArchiveIssueConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearUnarchiveIssueConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearListWorkflowStatesConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearListIssueLabelsConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearCreateIssueLabelConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearUpdateIssueLabelConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearDeleteIssueLabelConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearListProjectsConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearGetProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearCreateProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearUpdateProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearArchiveProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearDeleteProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearListProjectMilestonesConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearCreateProjectMilestoneConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearUpdateProjectMilestoneConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearDeleteProjectMilestoneConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearListTeamsConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearGetTeamConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearListUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearGetUserConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearGetViewerConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearListAttachmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearCreateAttachmentConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearDeleteAttachmentConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearListIssueRelationsConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearCreateIssueRelationConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearDeleteIssueRelationConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearListWebhooksConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearCreateWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/LinearDeleteWebhookConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/LinearOAuthCredential"
+        },
+        {
+          "$ref": "#/$defs/LinearPATCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Linear Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Create a new issue in PROJ-123 titled \"Fix login bug\" with high priority",
+    "Add a comment to issue ENG-456 summarizing the deployment results",
+    "Update issue FEAT-789 status to \"In Progress\" and assign to Alice",
+    "List all comments on issue BUG-101 and extract the latest feedback",
+    "Create a new cycle named \"Sprint 12\" with a 2-week duration",
+    "Search for all issues with label \"critical\" in the Infra team"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

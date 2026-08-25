@@ -1,0 +1,5652 @@
+{
+  "$defs": {
+    "WebflowApiTokenCredential": {
+      "description": "API token credential for Webflow (Site Token or Workspace Token).",
+      "properties": {
+        "credential_type": {
+          "const": "webflow_api_token",
+          "default": "webflow_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "description": "A Webflow Site Token or Workspace Token. Generate a Site Token in Site Settings -> Apps & Integrations -> API access -> Generate API token.",
+          "title": "API Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "WebflowApiTokenCredential",
+      "type": "object",
+      "x-credential-url": "https://developers.webflow.com/data/reference/authentication"
+    },
+    "WebflowApplyPageCustomCodeConfig": {
+      "description": "Apply scripts to a page (full-array upsert).",
+      "properties": {
+        "operation": {
+          "const": "apply_page_custom_code",
+          "default": "apply_page_custom_code",
+          "title": "Apply Page Custom Code",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Code",
+          "x-display-name": "Apply Page Custom Code",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The page ID",
+          "title": "Page ID",
+          "type": "string"
+        },
+        "scripts_json": {
+          "description": "e.g. {\"scripts\":[{\"id\":\"...\",\"location\":\"header\",\"version\":\"1.0.0\"}]}",
+          "title": "Scripts (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "page_id",
+        "scripts_json"
+      ],
+      "title": "WebflowApplyPageCustomCodeConfig",
+      "type": "object"
+    },
+    "WebflowApplySiteCustomCodeConfig": {
+      "description": "Apply scripts to a site (full-array upsert).",
+      "properties": {
+        "operation": {
+          "const": "apply_site_custom_code",
+          "default": "apply_site_custom_code",
+          "title": "Apply Site Custom Code",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Code",
+          "x-display-name": "Apply Site Custom Code",
+          "x-is-trigger": false
+        },
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "scripts_json": {
+          "description": "e.g. {\"scripts\":[{\"id\":\"...\",\"location\":\"header\",\"version\":\"1.0.0\"}]}",
+          "title": "Scripts (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "site_id",
+        "scripts_json"
+      ],
+      "title": "WebflowApplySiteCustomCodeConfig",
+      "type": "object"
+    },
+    "WebflowCollectionItemChangedTrigger": {
+      "description": "Fires when a CMS collection item is updated.",
+      "properties": {
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Webflow posts events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "collection_item_changed",
+          "default": "collection_item_changed",
+          "description": "Fires when a CMS collection item is updated.",
+          "title": "On Collection Item Changed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Collection Item Changed",
+          "x-is-trigger": true
+        }
+      },
+      "required": [
+        "site_id"
+      ],
+      "title": "WebflowCollectionItemChangedTrigger",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "WebflowCollectionItemCreatedTrigger": {
+      "description": "Fires when a CMS collection item is created.",
+      "properties": {
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Webflow posts events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "collection_item_created",
+          "default": "collection_item_created",
+          "description": "Fires when a CMS collection item is created.",
+          "title": "On Collection Item Created",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Collection Item Created",
+          "x-is-trigger": true
+        }
+      },
+      "required": [
+        "site_id"
+      ],
+      "title": "WebflowCollectionItemCreatedTrigger",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "WebflowCollectionItemDeletedTrigger": {
+      "description": "Fires when a CMS collection item is deleted.",
+      "properties": {
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Webflow posts events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "collection_item_deleted",
+          "default": "collection_item_deleted",
+          "description": "Fires when a CMS collection item is deleted.",
+          "title": "On Collection Item Deleted",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Collection Item Deleted",
+          "x-is-trigger": true
+        }
+      },
+      "required": [
+        "site_id"
+      ],
+      "title": "WebflowCollectionItemDeletedTrigger",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "WebflowCollectionItemPublishedTrigger": {
+      "description": "Fires when a CMS collection item is published live.",
+      "properties": {
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Webflow posts events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "collection_item_published",
+          "default": "collection_item_published",
+          "description": "Fires when a CMS collection item is published live.",
+          "title": "On Collection Item Published",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Collection Item Published",
+          "x-is-trigger": true
+        }
+      },
+      "required": [
+        "site_id"
+      ],
+      "title": "WebflowCollectionItemPublishedTrigger",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "WebflowCollectionItemUnpublishedTrigger": {
+      "description": "Fires when a CMS collection item is unpublished.",
+      "properties": {
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Webflow posts events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "collection_item_unpublished",
+          "default": "collection_item_unpublished",
+          "description": "Fires when a CMS collection item is unpublished.",
+          "title": "On Collection Item Unpublished",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Collection Item Unpublished",
+          "x-is-trigger": true
+        }
+      },
+      "required": [
+        "site_id"
+      ],
+      "title": "WebflowCollectionItemUnpublishedTrigger",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "WebflowCommentCreatedTrigger": {
+      "description": "Fires when a comment is created on the site.",
+      "properties": {
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Webflow posts events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "comment_created",
+          "default": "comment_created",
+          "description": "Fires when a comment is created on the site.",
+          "title": "On Comment Created",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Comment Created",
+          "x-is-trigger": true
+        }
+      },
+      "required": [
+        "site_id"
+      ],
+      "title": "WebflowCommentCreatedTrigger",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "WebflowCreateAssetConfig": {
+      "description": "Create an asset (step 1: returns a presigned S3 upload URL to POST bytes to).",
+      "properties": {
+        "operation": {
+          "const": "create_asset",
+          "default": "create_asset",
+          "title": "Create Asset (Get Upload URL)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Assets",
+          "x-display-name": "Create Asset (Get Upload URL)",
+          "x-is-trigger": false
+        },
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "file_name": {
+          "description": "The asset file name (e.g. logo.png)",
+          "title": "File Name",
+          "type": "string"
+        },
+        "file_hash": {
+          "description": "MD5 hash of the file contents",
+          "title": "File Hash (MD5)",
+          "type": "string"
+        },
+        "parent_folder": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Asset folder to upload into (optional)",
+          "title": "Parent Folder ID"
+        }
+      },
+      "required": [
+        "site_id",
+        "file_name",
+        "file_hash"
+      ],
+      "title": "WebflowCreateAssetConfig",
+      "type": "object"
+    },
+    "WebflowCreateAssetFolderConfig": {
+      "description": "Create an asset folder.",
+      "properties": {
+        "operation": {
+          "const": "create_asset_folder",
+          "default": "create_asset_folder",
+          "title": "Create Asset Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Assets",
+          "x-display-name": "Create Asset Folder",
+          "x-is-trigger": false
+        },
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "display_name": {
+          "description": "Folder name",
+          "title": "Display Name",
+          "type": "string"
+        },
+        "parent_folder": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Parent folder (optional)",
+          "title": "Parent Folder ID"
+        }
+      },
+      "required": [
+        "site_id",
+        "display_name"
+      ],
+      "title": "WebflowCreateAssetFolderConfig",
+      "type": "object"
+    },
+    "WebflowCreateBulkItemsConfig": {
+      "description": "Create multiple CMS items at once (up to 100, multi-locale).",
+      "properties": {
+        "operation": {
+          "const": "create_bulk_items",
+          "default": "create_bulk_items",
+          "title": "Create Items (Bulk)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "CMS Items",
+          "x-display-name": "Create Items (Bulk)",
+          "x-is-trigger": false
+        },
+        "collection_id": {
+          "description": "The CMS collection ID",
+          "title": "Collection ID",
+          "type": "string"
+        },
+        "items_json": {
+          "description": "JSON array of item objects with fieldData",
+          "title": "Items (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "collection_id",
+        "items_json"
+      ],
+      "title": "WebflowCreateBulkItemsConfig",
+      "type": "object"
+    },
+    "WebflowCreateCollectionConfig": {
+      "description": "Create a new CMS collection on a site.",
+      "properties": {
+        "operation": {
+          "const": "create_collection",
+          "default": "create_collection",
+          "title": "Create Collection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collections",
+          "x-display-name": "Create Collection",
+          "x-is-trigger": false
+        },
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "display_name": {
+          "description": "Human-readable name of the collection",
+          "title": "Display Name",
+          "type": "string"
+        },
+        "singular_name": {
+          "description": "Singular label for a single item",
+          "title": "Singular Name",
+          "type": "string"
+        },
+        "slug": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL slug for the collection (optional)",
+          "title": "Slug"
+        }
+      },
+      "required": [
+        "site_id",
+        "display_name",
+        "singular_name"
+      ],
+      "title": "WebflowCreateCollectionConfig",
+      "type": "object"
+    },
+    "WebflowCreateCollectionFieldConfig": {
+      "description": "Add a field to a CMS collection.",
+      "properties": {
+        "operation": {
+          "const": "create_collection_field",
+          "default": "create_collection_field",
+          "title": "Create Collection Field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collections",
+          "x-display-name": "Create Collection Field",
+          "x-is-trigger": false
+        },
+        "collection_id": {
+          "description": "The CMS collection ID",
+          "title": "Collection ID",
+          "type": "string"
+        },
+        "field_type": {
+          "description": "The type of field to create",
+          "enum": [
+            "PlainText",
+            "RichText",
+            "Image",
+            "MultiImage",
+            "Video",
+            "Link",
+            "Email",
+            "Phone",
+            "Number",
+            "DateTime",
+            "Switch",
+            "Color",
+            "Option",
+            "File",
+            "Reference",
+            "MultiReference"
+          ],
+          "title": "Field Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "display_name": {
+          "description": "Human-readable name of the field",
+          "title": "Display Name",
+          "type": "string"
+        },
+        "is_required": {
+          "default": "false",
+          "description": "Whether the field is required",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Required",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "collection_id",
+        "field_type",
+        "display_name"
+      ],
+      "title": "WebflowCreateCollectionFieldConfig",
+      "type": "object"
+    },
+    "WebflowCreateItemConfig": {
+      "description": "Create one or more staged CMS items.",
+      "properties": {
+        "operation": {
+          "const": "create_item",
+          "default": "create_item",
+          "title": "Create Collection Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "CMS Items",
+          "x-display-name": "Create Collection Item",
+          "x-is-trigger": false
+        },
+        "collection_id": {
+          "description": "The CMS collection ID",
+          "title": "Collection ID",
+          "type": "string"
+        },
+        "field_data_json": {
+          "description": "Item field values as JSON, e.g. {\"name\":\"My Item\",\"slug\":\"my-item\"}. Include at least name and slug.",
+          "title": "Field Data (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "is_archived": {
+          "default": "false",
+          "description": "Create the item in an archived state",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Archived",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "is_draft": {
+          "default": "false",
+          "description": "Create the item in a draft state",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Draft",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "collection_id",
+        "field_data_json"
+      ],
+      "title": "WebflowCreateItemConfig",
+      "type": "object"
+    },
+    "WebflowCreateLiveItemConfig": {
+      "description": "Create CMS item(s) directly on the live site.",
+      "properties": {
+        "operation": {
+          "const": "create_live_item",
+          "default": "create_live_item",
+          "title": "Create Live Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "CMS Items",
+          "x-display-name": "Create Live Item",
+          "x-is-trigger": false
+        },
+        "collection_id": {
+          "description": "The CMS collection ID",
+          "title": "Collection ID",
+          "type": "string"
+        },
+        "field_data_json": {
+          "description": "Item field values as JSON, e.g. {\"name\":\"My Item\",\"slug\":\"my-item\"}",
+          "title": "Field Data (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "collection_id",
+        "field_data_json"
+      ],
+      "title": "WebflowCreateLiveItemConfig",
+      "type": "object"
+    },
+    "WebflowCreateProductConfig": {
+      "description": "Create an ecommerce product and its default SKU.",
+      "properties": {
+        "operation": {
+          "const": "create_product",
+          "default": "create_product",
+          "title": "Create Product & SKU",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Ecommerce",
+          "x-display-name": "Create Product & SKU",
+          "x-is-trigger": false
+        },
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "product_field_data_json": {
+          "description": "Product field values as JSON, e.g. {\"name\":\"T-Shirt\",\"slug\":\"t-shirt\"}",
+          "title": "Product Field Data (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "sku_field_data_json": {
+          "description": "Default SKU field values as JSON, e.g. {\"name\":\"Default\",\"price\":{\"value\":1000,\"unit\":\"USD\"}}",
+          "title": "SKU Field Data (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "site_id",
+        "product_field_data_json",
+        "sku_field_data_json"
+      ],
+      "title": "WebflowCreateProductConfig",
+      "type": "object"
+    },
+    "WebflowCreateSkusConfig": {
+      "description": "Create additional SKUs for a product.",
+      "properties": {
+        "operation": {
+          "const": "create_skus",
+          "default": "create_skus",
+          "title": "Create SKUs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Ecommerce",
+          "x-display-name": "Create SKUs",
+          "x-is-trigger": false
+        },
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "product_id": {
+          "description": "The product to add SKUs to",
+          "title": "Product ID",
+          "type": "string"
+        },
+        "skus_json": {
+          "description": "JSON array of SKU objects with fieldData",
+          "title": "SKUs (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "site_id",
+        "product_id",
+        "skus_json"
+      ],
+      "title": "WebflowCreateSkusConfig",
+      "type": "object"
+    },
+    "WebflowCreateWebhookConfig": {
+      "description": "Register a webhook (triggerType + url) for a site.",
+      "properties": {
+        "operation": {
+          "const": "create_webhook",
+          "default": "create_webhook",
+          "title": "Create Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Create Webhook",
+          "x-is-trigger": false
+        },
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "trigger_type": {
+          "description": "The Webflow event that fires this webhook",
+          "enum": [
+            "form_submission",
+            "site_publish",
+            "page_created",
+            "page_metadata_updated",
+            "page_deleted",
+            "collection_item_created",
+            "collection_item_changed",
+            "collection_item_deleted",
+            "collection_item_published",
+            "collection_item_unpublished",
+            "ecomm_new_order",
+            "ecomm_order_changed",
+            "ecomm_inventory_changed",
+            "comment_created"
+          ],
+          "title": "Trigger Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "url": {
+          "description": "URL Webflow will POST events to",
+          "title": "Subscriber URL",
+          "type": "string"
+        }
+      },
+      "required": [
+        "site_id",
+        "trigger_type",
+        "url"
+      ],
+      "title": "WebflowCreateWebhookConfig",
+      "type": "object"
+    },
+    "WebflowDeleteAssetConfig": {
+      "description": "Delete an asset.",
+      "properties": {
+        "operation": {
+          "const": "delete_asset",
+          "default": "delete_asset",
+          "title": "Delete Asset",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Assets",
+          "x-display-name": "Delete Asset",
+          "x-is-trigger": false
+        },
+        "asset_id": {
+          "description": "The asset ID to delete",
+          "title": "Asset ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "asset_id"
+      ],
+      "title": "WebflowDeleteAssetConfig",
+      "type": "object"
+    },
+    "WebflowDeleteCollectionConfig": {
+      "description": "Delete a CMS collection.",
+      "properties": {
+        "operation": {
+          "const": "delete_collection",
+          "default": "delete_collection",
+          "title": "Delete Collection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collections",
+          "x-display-name": "Delete Collection",
+          "x-is-trigger": false
+        },
+        "collection_id": {
+          "description": "The CMS collection ID",
+          "title": "Collection ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "collection_id"
+      ],
+      "title": "WebflowDeleteCollectionConfig",
+      "type": "object"
+    },
+    "WebflowDeleteCollectionFieldConfig": {
+      "description": "Delete a field from a collection.",
+      "properties": {
+        "operation": {
+          "const": "delete_collection_field",
+          "default": "delete_collection_field",
+          "title": "Delete Collection Field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collections",
+          "x-display-name": "Delete Collection Field",
+          "x-is-trigger": false
+        },
+        "collection_id": {
+          "description": "The CMS collection ID",
+          "title": "Collection ID",
+          "type": "string"
+        },
+        "field_id": {
+          "description": "The field to delete",
+          "title": "Field ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "collection_id",
+        "field_id"
+      ],
+      "title": "WebflowDeleteCollectionFieldConfig",
+      "type": "object"
+    },
+    "WebflowDeleteItemConfig": {
+      "description": "Delete a staged CMS item.",
+      "properties": {
+        "operation": {
+          "const": "delete_item",
+          "default": "delete_item",
+          "title": "Delete Collection Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "CMS Items",
+          "x-display-name": "Delete Collection Item",
+          "x-is-trigger": false
+        },
+        "collection_id": {
+          "description": "The CMS collection ID",
+          "title": "Collection ID",
+          "type": "string"
+        },
+        "item_id": {
+          "description": "The CMS item ID to delete",
+          "title": "Item ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "collection_id",
+        "item_id"
+      ],
+      "title": "WebflowDeleteItemConfig",
+      "type": "object"
+    },
+    "WebflowDeleteLiveItemConfig": {
+      "description": "Unpublish (delete-live) a CMS item from the live site.",
+      "properties": {
+        "operation": {
+          "const": "delete_live_item",
+          "default": "delete_live_item",
+          "title": "Unpublish Live Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "CMS Items",
+          "x-display-name": "Unpublish Live Item",
+          "x-is-trigger": false
+        },
+        "collection_id": {
+          "description": "The CMS collection ID",
+          "title": "Collection ID",
+          "type": "string"
+        },
+        "item_id": {
+          "description": "The live item ID to unpublish",
+          "title": "Item ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "collection_id",
+        "item_id"
+      ],
+      "title": "WebflowDeleteLiveItemConfig",
+      "type": "object"
+    },
+    "WebflowDeleteSubmissionConfig": {
+      "description": "Delete a form submission.",
+      "properties": {
+        "operation": {
+          "const": "delete_submission",
+          "default": "delete_submission",
+          "title": "Delete Submission",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Forms",
+          "x-display-name": "Delete Submission",
+          "x-is-trigger": false
+        },
+        "form_submission_id": {
+          "description": "The submission to delete",
+          "title": "Submission ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "form_submission_id"
+      ],
+      "title": "WebflowDeleteSubmissionConfig",
+      "type": "object"
+    },
+    "WebflowEcommInventoryChangedTrigger": {
+      "description": "Fires when ecommerce inventory changes.",
+      "properties": {
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Webflow posts events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "ecomm_inventory_changed",
+          "default": "ecomm_inventory_changed",
+          "description": "Fires when ecommerce inventory changes.",
+          "title": "On Inventory Changed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Inventory Changed",
+          "x-is-trigger": true
+        }
+      },
+      "required": [
+        "site_id"
+      ],
+      "title": "WebflowEcommInventoryChangedTrigger",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "WebflowEcommNewOrderTrigger": {
+      "description": "Fires when a new ecommerce order is placed.",
+      "properties": {
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Webflow posts events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "ecomm_new_order",
+          "default": "ecomm_new_order",
+          "description": "Fires when a new ecommerce order is placed.",
+          "title": "On New Order",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On New Order",
+          "x-is-trigger": true
+        }
+      },
+      "required": [
+        "site_id"
+      ],
+      "title": "WebflowEcommNewOrderTrigger",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "WebflowEcommOrderChangedTrigger": {
+      "description": "Fires when an ecommerce order changes.",
+      "properties": {
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Webflow posts events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "ecomm_order_changed",
+          "default": "ecomm_order_changed",
+          "description": "Fires when an ecommerce order changes.",
+          "title": "On Order Changed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Order Changed",
+          "x-is-trigger": true
+        }
+      },
+      "required": [
+        "site_id"
+      ],
+      "title": "WebflowEcommOrderChangedTrigger",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "WebflowFormSubmissionTrigger": {
+      "description": "Fires when a form is submitted on the site.",
+      "properties": {
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Webflow posts events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "form_submission",
+          "default": "form_submission",
+          "description": "Fires when a form is submitted on the site.",
+          "title": "On Form Submission",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Form Submission",
+          "x-is-trigger": true
+        }
+      },
+      "required": [
+        "site_id"
+      ],
+      "title": "WebflowFormSubmissionTrigger",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "WebflowFulfillOrderConfig": {
+      "description": "Mark an ecommerce order as fulfilled.",
+      "properties": {
+        "operation": {
+          "const": "fulfill_order",
+          "default": "fulfill_order",
+          "title": "Fulfill Order",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Ecommerce",
+          "x-display-name": "Fulfill Order",
+          "x-is-trigger": false
+        },
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "order_id": {
+          "description": "The ecommerce order ID to fulfill",
+          "title": "Order ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste order ID",
+            "depends_on": "site_id",
+            "field_name": "order_id",
+            "placeholder": "Select an order...",
+            "searchable": true
+          }
+        },
+        "send_order_fulfilled_email": {
+          "default": "false",
+          "description": "Send the order-fulfilled email to the customer",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Send Fulfillment Email",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "site_id",
+        "order_id"
+      ],
+      "title": "WebflowFulfillOrderConfig",
+      "type": "object"
+    },
+    "WebflowGetAssetConfig": {
+      "description": "Get a single asset's metadata.",
+      "properties": {
+        "operation": {
+          "const": "get_asset",
+          "default": "get_asset",
+          "title": "Get Asset",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Assets",
+          "x-display-name": "Get Asset",
+          "x-is-trigger": false
+        },
+        "asset_id": {
+          "description": "The asset ID",
+          "title": "Asset ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "asset_id"
+      ],
+      "title": "WebflowGetAssetConfig",
+      "type": "object"
+    },
+    "WebflowGetAssetFolderConfig": {
+      "description": "Get a single asset folder.",
+      "properties": {
+        "operation": {
+          "const": "get_asset_folder",
+          "default": "get_asset_folder",
+          "title": "Get Asset Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Assets",
+          "x-display-name": "Get Asset Folder",
+          "x-is-trigger": false
+        },
+        "asset_folder_id": {
+          "description": "The asset folder ID",
+          "title": "Asset Folder ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "asset_folder_id"
+      ],
+      "title": "WebflowGetAssetFolderConfig",
+      "type": "object"
+    },
+    "WebflowGetAuthorizedUserConfig": {
+      "description": "Get info about the user who authorized the token.",
+      "properties": {
+        "operation": {
+          "const": "get_authorized_user",
+          "default": "get_authorized_user",
+          "title": "Get Authorized User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Token",
+          "x-display-name": "Get Authorized User",
+          "x-is-trigger": false
+        }
+      },
+      "title": "WebflowGetAuthorizedUserConfig",
+      "type": "object"
+    },
+    "WebflowGetCollectionConfig": {
+      "description": "Get a CMS collection's schema and fields.",
+      "properties": {
+        "operation": {
+          "const": "get_collection",
+          "default": "get_collection",
+          "title": "Get Collection Details",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collections",
+          "x-display-name": "Get Collection Details",
+          "x-is-trigger": false
+        },
+        "collection_id": {
+          "description": "The CMS collection ID",
+          "title": "Collection ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "collection_id"
+      ],
+      "title": "WebflowGetCollectionConfig",
+      "type": "object"
+    },
+    "WebflowGetCommentThreadConfig": {
+      "description": "Get a single comment thread.",
+      "properties": {
+        "operation": {
+          "const": "get_comment_thread",
+          "default": "get_comment_thread",
+          "title": "Get Comment Thread",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comments",
+          "x-display-name": "Get Comment Thread",
+          "x-is-trigger": false
+        },
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "comment_thread_id": {
+          "description": "The comment thread ID",
+          "title": "Thread ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "site_id",
+        "comment_thread_id"
+      ],
+      "title": "WebflowGetCommentThreadConfig",
+      "type": "object"
+    },
+    "WebflowGetComponentContentConfig": {
+      "description": "Get a component's content (DOM node tree).",
+      "properties": {
+        "operation": {
+          "const": "get_component_content",
+          "default": "get_component_content",
+          "title": "Get Component Content",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Components",
+          "x-display-name": "Get Component Content",
+          "x-is-trigger": false
+        },
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "component_id": {
+          "description": "The component ID",
+          "title": "Component ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "site_id",
+        "component_id"
+      ],
+      "title": "WebflowGetComponentContentConfig",
+      "type": "object"
+    },
+    "WebflowGetComponentPropertiesConfig": {
+      "description": "Get a component's properties.",
+      "properties": {
+        "operation": {
+          "const": "get_component_properties",
+          "default": "get_component_properties",
+          "title": "Get Component Properties",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Components",
+          "x-display-name": "Get Component Properties",
+          "x-is-trigger": false
+        },
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "component_id": {
+          "description": "The component ID",
+          "title": "Component ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "site_id",
+        "component_id"
+      ],
+      "title": "WebflowGetComponentPropertiesConfig",
+      "type": "object"
+    },
+    "WebflowGetCustomDomainsConfig": {
+      "description": "List a site's custom domains (IDs used when publishing).",
+      "properties": {
+        "operation": {
+          "const": "get_custom_domains",
+          "default": "get_custom_domains",
+          "title": "Get Custom Domains",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sites",
+          "x-display-name": "Get Custom Domains",
+          "x-is-trigger": false
+        },
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "site_id"
+      ],
+      "title": "WebflowGetCustomDomainsConfig",
+      "type": "object"
+    },
+    "WebflowGetEcommerceSettingsConfig": {
+      "description": "Get a site's ecommerce settings (default currency, etc.).",
+      "properties": {
+        "operation": {
+          "const": "get_ecommerce_settings",
+          "default": "get_ecommerce_settings",
+          "title": "Get Ecommerce Settings",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Ecommerce",
+          "x-display-name": "Get Ecommerce Settings",
+          "x-is-trigger": false
+        },
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "site_id"
+      ],
+      "title": "WebflowGetEcommerceSettingsConfig",
+      "type": "object"
+    },
+    "WebflowGetFormConfig": {
+      "description": "Get a form's field schema.",
+      "properties": {
+        "operation": {
+          "const": "get_form",
+          "default": "get_form",
+          "title": "Get Form Schema",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Forms",
+          "x-display-name": "Get Form Schema",
+          "x-is-trigger": false
+        },
+        "form_id": {
+          "description": "The form ID to retrieve",
+          "title": "Form ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "form_id"
+      ],
+      "title": "WebflowGetFormConfig",
+      "type": "object"
+    },
+    "WebflowGetFormSubmissionConfig": {
+      "description": "Get a single form submission.",
+      "properties": {
+        "operation": {
+          "const": "get_form_submission",
+          "default": "get_form_submission",
+          "title": "Get Form Submission",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Forms",
+          "x-display-name": "Get Form Submission",
+          "x-is-trigger": false
+        },
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "form_submission_id": {
+          "description": "The form submission ID to retrieve",
+          "title": "Submission ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "site_id",
+        "form_submission_id"
+      ],
+      "title": "WebflowGetFormSubmissionConfig",
+      "type": "object"
+    },
+    "WebflowGetItemConfig": {
+      "description": "Get a single CMS item.",
+      "properties": {
+        "operation": {
+          "const": "get_item",
+          "default": "get_item",
+          "title": "Get Collection Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "CMS Items",
+          "x-display-name": "Get Collection Item",
+          "x-is-trigger": false
+        },
+        "collection_id": {
+          "description": "The CMS collection ID",
+          "title": "Collection ID",
+          "type": "string"
+        },
+        "item_id": {
+          "description": "The CMS item ID to retrieve",
+          "title": "Item ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "collection_id",
+        "item_id"
+      ],
+      "title": "WebflowGetItemConfig",
+      "type": "object"
+    },
+    "WebflowGetLiveItemConfig": {
+      "description": "Get a single published (live) CMS item.",
+      "properties": {
+        "operation": {
+          "const": "get_live_item",
+          "default": "get_live_item",
+          "title": "Get Live Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "CMS Items",
+          "x-display-name": "Get Live Item",
+          "x-is-trigger": false
+        },
+        "collection_id": {
+          "description": "The CMS collection ID",
+          "title": "Collection ID",
+          "type": "string"
+        },
+        "item_id": {
+          "description": "The live item ID",
+          "title": "Item ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "collection_id",
+        "item_id"
+      ],
+      "title": "WebflowGetLiveItemConfig",
+      "type": "object"
+    },
+    "WebflowGetOrderConfig": {
+      "description": "Get a single ecommerce order.",
+      "properties": {
+        "operation": {
+          "const": "get_order",
+          "default": "get_order",
+          "title": "Get Order",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Ecommerce",
+          "x-display-name": "Get Order",
+          "x-is-trigger": false
+        },
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "order_id": {
+          "description": "The ecommerce order ID",
+          "title": "Order ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste order ID",
+            "depends_on": "site_id",
+            "field_name": "order_id",
+            "placeholder": "Select an order...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "site_id",
+        "order_id"
+      ],
+      "title": "WebflowGetOrderConfig",
+      "type": "object"
+    },
+    "WebflowGetPageContentConfig": {
+      "description": "Get a page's static (DOM) text content.",
+      "properties": {
+        "operation": {
+          "const": "get_page_content",
+          "default": "get_page_content",
+          "title": "Get Page Content",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pages",
+          "x-display-name": "Get Page Content",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The page to read DOM content from",
+          "title": "Page ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "WebflowGetPageContentConfig",
+      "type": "object"
+    },
+    "WebflowGetPageCustomCodeConfig": {
+      "description": "Get the scripts applied to a page.",
+      "properties": {
+        "operation": {
+          "const": "get_page_custom_code",
+          "default": "get_page_custom_code",
+          "title": "Get Page Custom Code",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Code",
+          "x-display-name": "Get Page Custom Code",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The page ID",
+          "title": "Page ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "WebflowGetPageCustomCodeConfig",
+      "type": "object"
+    },
+    "WebflowGetPageMetadataConfig": {
+      "description": "Get a page's metadata (SEO, Open Graph, slug, draft state).",
+      "properties": {
+        "operation": {
+          "const": "get_page_metadata",
+          "default": "get_page_metadata",
+          "title": "Get Page Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pages",
+          "x-display-name": "Get Page Metadata",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The page to read metadata from",
+          "title": "Page ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "WebflowGetPageMetadataConfig",
+      "type": "object"
+    },
+    "WebflowGetProductConfig": {
+      "description": "Get a product and its SKUs.",
+      "properties": {
+        "operation": {
+          "const": "get_product",
+          "default": "get_product",
+          "title": "Get Product",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Ecommerce",
+          "x-display-name": "Get Product",
+          "x-is-trigger": false
+        },
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "product_id": {
+          "description": "The product ID",
+          "title": "Product ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "site_id",
+        "product_id"
+      ],
+      "title": "WebflowGetProductConfig",
+      "type": "object"
+    },
+    "WebflowGetSiteConfig": {
+      "description": "Get details and metadata for a single site.",
+      "properties": {
+        "operation": {
+          "const": "get_site",
+          "default": "get_site",
+          "title": "Get Site",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sites",
+          "x-display-name": "Get Site",
+          "x-is-trigger": false
+        },
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "site_id"
+      ],
+      "title": "WebflowGetSiteConfig",
+      "type": "object"
+    },
+    "WebflowGetSiteCustomCodeConfig": {
+      "description": "Get the scripts applied to a site.",
+      "properties": {
+        "operation": {
+          "const": "get_site_custom_code",
+          "default": "get_site_custom_code",
+          "title": "Get Site Custom Code",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Code",
+          "x-display-name": "Get Site Custom Code",
+          "x-is-trigger": false
+        },
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "site_id"
+      ],
+      "title": "WebflowGetSiteCustomCodeConfig",
+      "type": "object"
+    },
+    "WebflowGetWebhookConfig": {
+      "description": "Get a single registered webhook.",
+      "properties": {
+        "operation": {
+          "const": "get_webhook",
+          "default": "get_webhook",
+          "title": "Get Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Get Webhook",
+          "x-is-trigger": false
+        },
+        "webhook_id": {
+          "description": "The webhook ID",
+          "title": "Webhook ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "WebflowGetWebhookConfig",
+      "type": "object"
+    },
+    "WebflowIntrospectTokenConfig": {
+      "description": "Introspect the token \u2014 scopes, rate limit, authorized sites/workspaces.",
+      "properties": {
+        "operation": {
+          "const": "introspect_token",
+          "default": "introspect_token",
+          "title": "Introspect Token",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Token",
+          "x-display-name": "Introspect Token",
+          "x-is-trigger": false
+        }
+      },
+      "title": "WebflowIntrospectTokenConfig",
+      "type": "object"
+    },
+    "WebflowListAssetFoldersConfig": {
+      "description": "List a site's asset folders.",
+      "properties": {
+        "operation": {
+          "const": "list_asset_folders",
+          "default": "list_asset_folders",
+          "title": "List Asset Folders",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Assets",
+          "x-display-name": "List Asset Folders",
+          "x-is-trigger": false
+        },
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "site_id"
+      ],
+      "title": "WebflowListAssetFoldersConfig",
+      "type": "object"
+    },
+    "WebflowListAssetsConfig": {
+      "description": "List a site's assets.",
+      "properties": {
+        "operation": {
+          "const": "list_assets",
+          "default": "list_assets",
+          "title": "List Assets",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Assets",
+          "x-display-name": "List Assets",
+          "x-is-trigger": false
+        },
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "site_id"
+      ],
+      "title": "WebflowListAssetsConfig",
+      "type": "object"
+    },
+    "WebflowListCollectionsConfig": {
+      "description": "List CMS collections on a site.",
+      "properties": {
+        "operation": {
+          "const": "list_collections",
+          "default": "list_collections",
+          "title": "List Collections",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collections",
+          "x-display-name": "List Collections",
+          "x-is-trigger": false
+        },
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "site_id"
+      ],
+      "title": "WebflowListCollectionsConfig",
+      "type": "object"
+    },
+    "WebflowListCommentRepliesConfig": {
+      "description": "List replies in a comment thread.",
+      "properties": {
+        "operation": {
+          "const": "list_comment_replies",
+          "default": "list_comment_replies",
+          "title": "List Comment Replies",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comments",
+          "x-display-name": "List Comment Replies",
+          "x-is-trigger": false
+        },
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "comment_thread_id": {
+          "description": "The comment thread ID",
+          "title": "Thread ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "site_id",
+        "comment_thread_id"
+      ],
+      "title": "WebflowListCommentRepliesConfig",
+      "type": "object"
+    },
+    "WebflowListCommentThreadsConfig": {
+      "description": "List page-design comment threads.",
+      "properties": {
+        "operation": {
+          "const": "list_comment_threads",
+          "default": "list_comment_threads",
+          "title": "List Comment Threads",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comments",
+          "x-display-name": "List Comment Threads",
+          "x-is-trigger": false
+        },
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "site_id"
+      ],
+      "title": "WebflowListCommentThreadsConfig",
+      "type": "object"
+    },
+    "WebflowListComponentsConfig": {
+      "description": "List a site's components.",
+      "properties": {
+        "operation": {
+          "const": "list_components",
+          "default": "list_components",
+          "title": "List Components",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Components",
+          "x-display-name": "List Components",
+          "x-is-trigger": false
+        },
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "site_id"
+      ],
+      "title": "WebflowListComponentsConfig",
+      "type": "object"
+    },
+    "WebflowListFormSubmissionsConfig": {
+      "description": "List submissions for a form.",
+      "properties": {
+        "operation": {
+          "const": "list_form_submissions",
+          "default": "list_form_submissions",
+          "title": "List Form Submissions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Forms",
+          "x-display-name": "List Form Submissions",
+          "x-is-trigger": false
+        },
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "form_id": {
+          "description": "The form whose submissions to list",
+          "title": "Form ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste form ID",
+            "depends_on": "site_id",
+            "field_name": "form_id",
+            "placeholder": "Select a form...",
+            "searchable": true
+          }
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "100",
+          "description": "Max submissions to return (1-100)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "site_id",
+        "form_id"
+      ],
+      "title": "WebflowListFormSubmissionsConfig",
+      "type": "object"
+    },
+    "WebflowListFormsConfig": {
+      "description": "List forms on a site.",
+      "properties": {
+        "operation": {
+          "const": "list_forms",
+          "default": "list_forms",
+          "title": "List Forms",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Forms",
+          "x-display-name": "List Forms",
+          "x-is-trigger": false
+        },
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "site_id"
+      ],
+      "title": "WebflowListFormsConfig",
+      "type": "object"
+    },
+    "WebflowListInventoryConfig": {
+      "description": "Get inventory for a SKU.",
+      "properties": {
+        "operation": {
+          "const": "list_inventory",
+          "default": "list_inventory",
+          "title": "List Inventory",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Ecommerce",
+          "x-display-name": "List Inventory",
+          "x-is-trigger": false
+        },
+        "collection_id": {
+          "description": "The SKU collection ID",
+          "title": "SKU Collection ID",
+          "type": "string"
+        },
+        "sku_id": {
+          "description": "The SKU item ID",
+          "title": "SKU ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "collection_id",
+        "sku_id"
+      ],
+      "title": "WebflowListInventoryConfig",
+      "type": "object"
+    },
+    "WebflowListItemsConfig": {
+      "description": "List (staged) items in a CMS collection.",
+      "properties": {
+        "operation": {
+          "const": "list_items",
+          "default": "list_items",
+          "title": "List Collection Items",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "CMS Items",
+          "x-display-name": "List Collection Items",
+          "x-is-trigger": false
+        },
+        "collection_id": {
+          "description": "The CMS collection ID",
+          "title": "Collection ID",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "100",
+          "description": "Max items to return (1-100)",
+          "title": "Limit"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of items to skip for pagination",
+          "title": "Offset"
+        }
+      },
+      "required": [
+        "collection_id"
+      ],
+      "title": "WebflowListItemsConfig",
+      "type": "object"
+    },
+    "WebflowListLiveItemsConfig": {
+      "description": "List published (live) items in a collection.",
+      "properties": {
+        "operation": {
+          "const": "list_live_items",
+          "default": "list_live_items",
+          "title": "List Live Items",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "CMS Items",
+          "x-display-name": "List Live Items",
+          "x-is-trigger": false
+        },
+        "collection_id": {
+          "description": "The CMS collection ID",
+          "title": "Collection ID",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "100",
+          "description": "Max items (1-100)",
+          "title": "Limit"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Items to skip",
+          "title": "Offset"
+        }
+      },
+      "required": [
+        "collection_id"
+      ],
+      "title": "WebflowListLiveItemsConfig",
+      "type": "object"
+    },
+    "WebflowListOrdersConfig": {
+      "description": "List ecommerce orders.",
+      "properties": {
+        "operation": {
+          "const": "list_orders",
+          "default": "list_orders",
+          "title": "List Orders",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Ecommerce",
+          "x-display-name": "List Orders",
+          "x-is-trigger": false
+        },
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "site_id"
+      ],
+      "title": "WebflowListOrdersConfig",
+      "type": "object"
+    },
+    "WebflowListPagesConfig": {
+      "description": "List all static pages on a site.",
+      "properties": {
+        "operation": {
+          "const": "list_pages",
+          "default": "list_pages",
+          "title": "List Pages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pages",
+          "x-display-name": "List Pages",
+          "x-is-trigger": false
+        },
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "site_id"
+      ],
+      "title": "WebflowListPagesConfig",
+      "type": "object"
+    },
+    "WebflowListProductsConfig": {
+      "description": "List ecommerce products and SKUs.",
+      "properties": {
+        "operation": {
+          "const": "list_products",
+          "default": "list_products",
+          "title": "List Products & SKUs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Ecommerce",
+          "x-display-name": "List Products & SKUs",
+          "x-is-trigger": false
+        },
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "site_id"
+      ],
+      "title": "WebflowListProductsConfig",
+      "type": "object"
+    },
+    "WebflowListRegisteredScriptsConfig": {
+      "description": "List custom-code scripts registered to a site.",
+      "properties": {
+        "operation": {
+          "const": "list_registered_scripts",
+          "default": "list_registered_scripts",
+          "title": "List Registered Scripts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Code",
+          "x-display-name": "List Registered Scripts",
+          "x-is-trigger": false
+        },
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "site_id"
+      ],
+      "title": "WebflowListRegisteredScriptsConfig",
+      "type": "object"
+    },
+    "WebflowListSiteFormSubmissionsConfig": {
+      "description": "List all form submissions across a site.",
+      "properties": {
+        "operation": {
+          "const": "list_site_form_submissions",
+          "default": "list_site_form_submissions",
+          "title": "List Site Form Submissions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Forms",
+          "x-display-name": "List Site Form Submissions",
+          "x-is-trigger": false
+        },
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "100",
+          "description": "Max submissions (1-100)",
+          "title": "Limit"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Submissions to skip",
+          "title": "Offset"
+        }
+      },
+      "required": [
+        "site_id"
+      ],
+      "title": "WebflowListSiteFormSubmissionsConfig",
+      "type": "object"
+    },
+    "WebflowListSitesConfig": {
+      "description": "List all sites the token can access.",
+      "properties": {
+        "operation": {
+          "const": "list_sites",
+          "default": "list_sites",
+          "title": "List Sites",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sites",
+          "x-display-name": "List Sites",
+          "x-is-trigger": false
+        }
+      },
+      "title": "WebflowListSitesConfig",
+      "type": "object"
+    },
+    "WebflowListWebhooksConfig": {
+      "description": "List registered webhooks for a site.",
+      "properties": {
+        "operation": {
+          "const": "list_webhooks",
+          "default": "list_webhooks",
+          "title": "List Webhooks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "List Webhooks",
+          "x-is-trigger": false
+        },
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "site_id"
+      ],
+      "title": "WebflowListWebhooksConfig",
+      "type": "object"
+    },
+    "WebflowModifySubmissionConfig": {
+      "description": "Modify a form submission (hidden fields only).",
+      "properties": {
+        "operation": {
+          "const": "modify_submission",
+          "default": "modify_submission",
+          "title": "Modify Submission",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Forms",
+          "x-display-name": "Modify Submission",
+          "x-is-trigger": false
+        },
+        "form_submission_id": {
+          "description": "The submission to modify",
+          "title": "Submission ID",
+          "type": "string"
+        },
+        "data_json": {
+          "description": "Hidden field updates, e.g. {\"formSubmissionData\":{\"key\":\"value\"}}",
+          "title": "Data (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "form_submission_id",
+        "data_json"
+      ],
+      "title": "WebflowModifySubmissionConfig",
+      "type": "object"
+    },
+    "WebflowOAuthCredential": {
+      "description": "OAuth 2.0 credential for Webflow (authorization_code flow).\n\nTokens are obtained via the OAuth flow, not entered manually. Webflow OAuth\naccess tokens are long-lived and non-expiring \u2014 there is no refresh flow, so\nrefresh_token / expires_at are always empty (kept only for a uniform\ncredential shape). Reconnect the account if a token is revoked.\n\nRegister an OAuth app at: https://developers.webflow.com/data/docs/register-an-app",
+      "properties": {
+        "credential_type": {
+          "const": "webflow_oauth",
+          "default": "webflow_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "Webflow OAuth access token (Bearer).",
+          "title": "Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refresh Token"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Expiry"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Email"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "WebflowOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://developers.webflow.com/data/docs/register-an-app",
+      "x-oauth-custom-client-help": "Optionally bring your own Webflow OAuth app. Register one at https://developers.webflow.com/data/docs/register-an-app, set its redirect URI to NoClick's Webflow callback, and paste its client ID and secret here. Leave blank to use NoClick's shared Webflow app.",
+      "x-oauth-provider": "webflow",
+      "x-oauth-scopes": [
+        "sites:read",
+        "sites:write",
+        "pages:read",
+        "pages:write",
+        "cms:read",
+        "cms:write",
+        "custom_code:read",
+        "custom_code:write",
+        "forms:read",
+        "forms:write",
+        "ecommerce:read",
+        "ecommerce:write",
+        "assets:read",
+        "assets:write",
+        "components:read",
+        "components:write",
+        "comments:read",
+        "comments:write",
+        "site_config:read",
+        "site_config:write",
+        "site_activity:read",
+        "workspace:read",
+        "workspace:write",
+        "authorized_user:read"
+      ],
+      "x-oauth-supports-custom-client": true
+    },
+    "WebflowPageCreatedTrigger": {
+      "description": "Fires when a page is created.",
+      "properties": {
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Webflow posts events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "page_created",
+          "default": "page_created",
+          "description": "Fires when a page is created.",
+          "title": "On Page Created",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Page Created",
+          "x-is-trigger": true
+        }
+      },
+      "required": [
+        "site_id"
+      ],
+      "title": "WebflowPageCreatedTrigger",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "WebflowPageDeletedTrigger": {
+      "description": "Fires when a page is deleted.",
+      "properties": {
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Webflow posts events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "page_deleted",
+          "default": "page_deleted",
+          "description": "Fires when a page is deleted.",
+          "title": "On Page Deleted",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Page Deleted",
+          "x-is-trigger": true
+        }
+      },
+      "required": [
+        "site_id"
+      ],
+      "title": "WebflowPageDeletedTrigger",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "WebflowPageMetadataUpdatedTrigger": {
+      "description": "Fires when a page's metadata (SEO/slug/OG) changes.",
+      "properties": {
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Webflow posts events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "page_metadata_updated",
+          "default": "page_metadata_updated",
+          "description": "Fires when a page's metadata (SEO/slug/OG) changes.",
+          "title": "On Page Metadata Updated",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Page Metadata Updated",
+          "x-is-trigger": true
+        }
+      },
+      "required": [
+        "site_id"
+      ],
+      "title": "WebflowPageMetadataUpdatedTrigger",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "WebflowPublishItemsConfig": {
+      "description": "Publish staged CMS items to the live site.",
+      "properties": {
+        "operation": {
+          "const": "publish_items",
+          "default": "publish_items",
+          "title": "Publish Collection Items",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "CMS Items",
+          "x-display-name": "Publish Collection Items",
+          "x-is-trigger": false
+        },
+        "collection_id": {
+          "description": "The CMS collection ID",
+          "title": "Collection ID",
+          "type": "string"
+        },
+        "item_ids": {
+          "description": "Comma-separated CMS item IDs to publish",
+          "title": "Item IDs",
+          "type": "string"
+        }
+      },
+      "required": [
+        "collection_id",
+        "item_ids"
+      ],
+      "title": "WebflowPublishItemsConfig",
+      "type": "object"
+    },
+    "WebflowPublishSiteConfig": {
+      "description": "Publish a site to its domains (max 1 successful publish/min).",
+      "properties": {
+        "operation": {
+          "const": "publish_site",
+          "default": "publish_site",
+          "title": "Publish Site",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sites",
+          "x-display-name": "Publish Site",
+          "x-is-trigger": false
+        },
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "publish_to_webflow_subdomain": {
+          "default": "true",
+          "description": "Publish to the *.webflow.io staging domain",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Publish to Webflow Subdomain",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "custom_domains": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated custom domain IDs to publish to (optional)",
+          "title": "Custom Domain IDs"
+        }
+      },
+      "required": [
+        "site_id"
+      ],
+      "title": "WebflowPublishSiteConfig",
+      "type": "object"
+    },
+    "WebflowRefundOrderConfig": {
+      "description": "Refund an order.",
+      "properties": {
+        "operation": {
+          "const": "refund_order",
+          "default": "refund_order",
+          "title": "Refund Order",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Ecommerce",
+          "x-display-name": "Refund Order",
+          "x-is-trigger": false
+        },
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "order_id": {
+          "description": "The order ID to refund",
+          "title": "Order ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste order ID",
+            "depends_on": "site_id",
+            "field_name": "order_id",
+            "placeholder": "Select an order...",
+            "searchable": true
+          }
+        },
+        "reason": {
+          "default": "requested",
+          "description": "Refund reason",
+          "enum": [
+            "requested",
+            "duplicate",
+            "fraudulent"
+          ],
+          "title": "Reason",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "site_id",
+        "order_id"
+      ],
+      "title": "WebflowRefundOrderConfig",
+      "type": "object"
+    },
+    "WebflowRegisterHostedScriptConfig": {
+      "description": "Register a hosted custom-code script to the site's library.",
+      "properties": {
+        "operation": {
+          "const": "register_hosted_script",
+          "default": "register_hosted_script",
+          "title": "Register Hosted Script",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Code",
+          "x-display-name": "Register Hosted Script",
+          "x-is-trigger": false
+        },
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "script_json": {
+          "description": "e.g. {\"hostedLocation\":\"https://...\",\"integrityHash\":\"sha384-...\",\"version\":\"1.0.0\"}",
+          "title": "Script (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "site_id",
+        "script_json"
+      ],
+      "title": "WebflowRegisterHostedScriptConfig",
+      "type": "object"
+    },
+    "WebflowRegisterInlineScriptConfig": {
+      "description": "Register an inline custom-code script (<=2000 chars) to the site's library.",
+      "properties": {
+        "operation": {
+          "const": "register_inline_script",
+          "default": "register_inline_script",
+          "title": "Register Inline Script",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Code",
+          "x-display-name": "Register Inline Script",
+          "x-is-trigger": false
+        },
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "script_json": {
+          "description": "e.g. {\"sourceCode\":\"console.log(1)\",\"version\":\"1.0.0\",\"displayName\":\"My Script\"}",
+          "title": "Script (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "site_id",
+        "script_json"
+      ],
+      "title": "WebflowRegisterInlineScriptConfig",
+      "type": "object"
+    },
+    "WebflowRemovePageCustomCodeConfig": {
+      "description": "Remove all scripts applied to a page.",
+      "properties": {
+        "operation": {
+          "const": "remove_page_custom_code",
+          "default": "remove_page_custom_code",
+          "title": "Remove Page Custom Code",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Code",
+          "x-display-name": "Remove Page Custom Code",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The page ID",
+          "title": "Page ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "page_id"
+      ],
+      "title": "WebflowRemovePageCustomCodeConfig",
+      "type": "object"
+    },
+    "WebflowRemoveSiteCustomCodeConfig": {
+      "description": "Remove all scripts applied to a site.",
+      "properties": {
+        "operation": {
+          "const": "remove_site_custom_code",
+          "default": "remove_site_custom_code",
+          "title": "Remove Site Custom Code",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Code",
+          "x-display-name": "Remove Site Custom Code",
+          "x-is-trigger": false
+        },
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "site_id"
+      ],
+      "title": "WebflowRemoveSiteCustomCodeConfig",
+      "type": "object"
+    },
+    "WebflowRemoveWebhookConfig": {
+      "description": "Delete a registered webhook.",
+      "properties": {
+        "operation": {
+          "const": "remove_webhook",
+          "default": "remove_webhook",
+          "title": "Remove Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Remove Webhook",
+          "x-is-trigger": false
+        },
+        "webhook_id": {
+          "description": "The webhook ID to delete",
+          "title": "Webhook ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "WebflowRemoveWebhookConfig",
+      "type": "object"
+    },
+    "WebflowSitePublishTrigger": {
+      "description": "Fires when the site is published.",
+      "properties": {
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Webflow posts events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "site_publish",
+          "default": "site_publish",
+          "description": "Fires when the site is published.",
+          "title": "On Site Publish",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Site Publish",
+          "x-is-trigger": true
+        }
+      },
+      "required": [
+        "site_id"
+      ],
+      "title": "WebflowSitePublishTrigger",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "WebflowUnfulfillOrderConfig": {
+      "description": "Mark an order as unfulfilled.",
+      "properties": {
+        "operation": {
+          "const": "unfulfill_order",
+          "default": "unfulfill_order",
+          "title": "Unfulfill Order",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Ecommerce",
+          "x-display-name": "Unfulfill Order",
+          "x-is-trigger": false
+        },
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "order_id": {
+          "description": "The order ID to unfulfill",
+          "title": "Order ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste order ID",
+            "depends_on": "site_id",
+            "field_name": "order_id",
+            "placeholder": "Select an order...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "site_id",
+        "order_id"
+      ],
+      "title": "WebflowUnfulfillOrderConfig",
+      "type": "object"
+    },
+    "WebflowUpdateAssetConfig": {
+      "description": "Update an asset's display name / alt text.",
+      "properties": {
+        "operation": {
+          "const": "update_asset",
+          "default": "update_asset",
+          "title": "Update Asset",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Assets",
+          "x-display-name": "Update Asset",
+          "x-is-trigger": false
+        },
+        "asset_id": {
+          "description": "The asset ID",
+          "title": "Asset ID",
+          "type": "string"
+        },
+        "display_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New display name",
+          "title": "Display Name"
+        },
+        "alt_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New alt text",
+          "title": "Alt Text"
+        }
+      },
+      "required": [
+        "asset_id"
+      ],
+      "title": "WebflowUpdateAssetConfig",
+      "type": "object"
+    },
+    "WebflowUpdateCollectionFieldConfig": {
+      "description": "Update a collection field's display name / required / help text (type is immutable).",
+      "properties": {
+        "operation": {
+          "const": "update_collection_field",
+          "default": "update_collection_field",
+          "title": "Update Collection Field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collections",
+          "x-display-name": "Update Collection Field",
+          "x-is-trigger": false
+        },
+        "collection_id": {
+          "description": "The CMS collection ID",
+          "title": "Collection ID",
+          "type": "string"
+        },
+        "field_id": {
+          "description": "The field to update",
+          "title": "Field ID",
+          "type": "string"
+        },
+        "display_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New display name",
+          "title": "Display Name"
+        },
+        "is_required": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether the field is required",
+          "enum": [
+            "",
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Unchanged",
+            "Yes",
+            "No"
+          ],
+          "title": "Required",
+          "x-enum-searchable": true
+        },
+        "help_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Help text shown in the editor",
+          "title": "Help Text"
+        }
+      },
+      "required": [
+        "collection_id",
+        "field_id"
+      ],
+      "title": "WebflowUpdateCollectionFieldConfig",
+      "type": "object"
+    },
+    "WebflowUpdateComponentContentConfig": {
+      "description": "Update a component's static content (DOM nodes).",
+      "properties": {
+        "operation": {
+          "const": "update_component_content",
+          "default": "update_component_content",
+          "title": "Update Component Content",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Components",
+          "x-display-name": "Update Component Content",
+          "x-is-trigger": false
+        },
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "component_id": {
+          "description": "The component ID",
+          "title": "Component ID",
+          "type": "string"
+        },
+        "nodes_json": {
+          "description": "JSON array of node updates",
+          "title": "DOM Nodes (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "site_id",
+        "component_id",
+        "nodes_json"
+      ],
+      "title": "WebflowUpdateComponentContentConfig",
+      "type": "object"
+    },
+    "WebflowUpdateComponentPropertiesConfig": {
+      "description": "Update a component's properties.",
+      "properties": {
+        "operation": {
+          "const": "update_component_properties",
+          "default": "update_component_properties",
+          "title": "Update Component Properties",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Components",
+          "x-display-name": "Update Component Properties",
+          "x-is-trigger": false
+        },
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "component_id": {
+          "description": "The component ID",
+          "title": "Component ID",
+          "type": "string"
+        },
+        "properties_json": {
+          "description": "JSON array of property overrides",
+          "title": "Properties (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "site_id",
+        "component_id",
+        "properties_json"
+      ],
+      "title": "WebflowUpdateComponentPropertiesConfig",
+      "type": "object"
+    },
+    "WebflowUpdateInventoryConfig": {
+      "description": "Update inventory for a SKU.",
+      "properties": {
+        "operation": {
+          "const": "update_inventory",
+          "default": "update_inventory",
+          "title": "Update Inventory",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Ecommerce",
+          "x-display-name": "Update Inventory",
+          "x-is-trigger": false
+        },
+        "collection_id": {
+          "description": "The SKU collection ID",
+          "title": "SKU Collection ID",
+          "type": "string"
+        },
+        "sku_id": {
+          "description": "The SKU item ID",
+          "title": "SKU ID",
+          "type": "string"
+        },
+        "inventory_json": {
+          "description": "e.g. {\"inventoryType\":\"finite\",\"quantity\":10} or {\"updateQuantity\":-1}",
+          "title": "Inventory (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "collection_id",
+        "sku_id",
+        "inventory_json"
+      ],
+      "title": "WebflowUpdateInventoryConfig",
+      "type": "object"
+    },
+    "WebflowUpdateItemConfig": {
+      "description": "Update a staged CMS item.",
+      "properties": {
+        "operation": {
+          "const": "update_item",
+          "default": "update_item",
+          "title": "Update Collection Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "CMS Items",
+          "x-display-name": "Update Collection Item",
+          "x-is-trigger": false
+        },
+        "collection_id": {
+          "description": "The CMS collection ID",
+          "title": "Collection ID",
+          "type": "string"
+        },
+        "item_id": {
+          "description": "The CMS item ID to update",
+          "title": "Item ID",
+          "type": "string"
+        },
+        "field_data_json": {
+          "description": "Updated field values as JSON, e.g. {\"name\":\"New name\"}",
+          "title": "Field Data (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "collection_id",
+        "item_id",
+        "field_data_json"
+      ],
+      "title": "WebflowUpdateItemConfig",
+      "type": "object"
+    },
+    "WebflowUpdateLiveItemConfig": {
+      "description": "Update a published (live) CMS item.",
+      "properties": {
+        "operation": {
+          "const": "update_live_item",
+          "default": "update_live_item",
+          "title": "Update Live Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "CMS Items",
+          "x-display-name": "Update Live Item",
+          "x-is-trigger": false
+        },
+        "collection_id": {
+          "description": "The CMS collection ID",
+          "title": "Collection ID",
+          "type": "string"
+        },
+        "item_id": {
+          "description": "The live item ID",
+          "title": "Item ID",
+          "type": "string"
+        },
+        "field_data_json": {
+          "description": "Updated field values, e.g. {\"name\":\"New\"}",
+          "title": "Field Data (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "collection_id",
+        "item_id",
+        "field_data_json"
+      ],
+      "title": "WebflowUpdateLiveItemConfig",
+      "type": "object"
+    },
+    "WebflowUpdateOrderConfig": {
+      "description": "Update an order (comment, shipping provider/tracking).",
+      "properties": {
+        "operation": {
+          "const": "update_order",
+          "default": "update_order",
+          "title": "Update Order",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Ecommerce",
+          "x-display-name": "Update Order",
+          "x-is-trigger": false
+        },
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "order_id": {
+          "description": "The order ID to update",
+          "title": "Order ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste order ID",
+            "depends_on": "site_id",
+            "field_name": "order_id",
+            "placeholder": "Select an order...",
+            "searchable": true
+          }
+        },
+        "order_json": {
+          "description": "e.g. {\"comment\":\"...\",\"shippingTracking\":\"...\"}",
+          "title": "Order Fields (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "site_id",
+        "order_id",
+        "order_json"
+      ],
+      "title": "WebflowUpdateOrderConfig",
+      "type": "object"
+    },
+    "WebflowUpdatePageContentConfig": {
+      "description": "Update a page's static text content (DOM nodes).",
+      "properties": {
+        "operation": {
+          "const": "update_page_content",
+          "default": "update_page_content",
+          "title": "Update Page Content",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pages",
+          "x-display-name": "Update Page Content",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The page to update DOM content on",
+          "title": "Page ID",
+          "type": "string"
+        },
+        "nodes_json": {
+          "description": "JSON array of DOM node updates, e.g. [{\"nodeId\":\"...\",\"text\":\"New text\"}]",
+          "title": "DOM Nodes (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "page_id",
+        "nodes_json"
+      ],
+      "title": "WebflowUpdatePageContentConfig",
+      "type": "object"
+    },
+    "WebflowUpdatePageMetadataConfig": {
+      "description": "Update a page's metadata (title, slug, SEO, Open Graph).",
+      "properties": {
+        "operation": {
+          "const": "update_page_metadata",
+          "default": "update_page_metadata",
+          "title": "Update Page Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pages",
+          "x-display-name": "Update Page Metadata",
+          "x-is-trigger": false
+        },
+        "page_id": {
+          "description": "The page to update",
+          "title": "Page ID",
+          "type": "string"
+        },
+        "metadata_json": {
+          "description": "e.g. {\"title\":\"Home\",\"seo\":{\"title\":\"...\",\"description\":\"...\"}}",
+          "title": "Metadata (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "page_id",
+        "metadata_json"
+      ],
+      "title": "WebflowUpdatePageMetadataConfig",
+      "type": "object"
+    },
+    "WebflowUpdateProductConfig": {
+      "description": "Update a product's field data.",
+      "properties": {
+        "operation": {
+          "const": "update_product",
+          "default": "update_product",
+          "title": "Update Product",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Ecommerce",
+          "x-display-name": "Update Product",
+          "x-is-trigger": false
+        },
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "product_id": {
+          "description": "The product ID",
+          "title": "Product ID",
+          "type": "string"
+        },
+        "product_field_data_json": {
+          "description": "e.g. {\"name\":\"New name\"}",
+          "title": "Product Field Data (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "site_id",
+        "product_id",
+        "product_field_data_json"
+      ],
+      "title": "WebflowUpdateProductConfig",
+      "type": "object"
+    },
+    "WebflowUpdateSkuConfig": {
+      "description": "Update a single SKU.",
+      "properties": {
+        "operation": {
+          "const": "update_sku",
+          "default": "update_sku",
+          "title": "Update SKU",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Ecommerce",
+          "x-display-name": "Update SKU",
+          "x-is-trigger": false
+        },
+        "site_id": {
+          "description": "The Webflow site to operate on",
+          "title": "Site",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste site ID",
+            "field_name": "site_id",
+            "placeholder": "Select a site...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "product_id": {
+          "description": "The product ID",
+          "title": "Product ID",
+          "type": "string"
+        },
+        "sku_id": {
+          "description": "The SKU ID",
+          "title": "SKU ID",
+          "type": "string"
+        },
+        "sku_field_data_json": {
+          "description": "e.g. {\"price\":{\"value\":1500,\"unit\":\"USD\"}}",
+          "title": "SKU Field Data (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "site_id",
+        "product_id",
+        "sku_id",
+        "sku_field_data_json"
+      ],
+      "title": "WebflowUpdateSkuConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the Webflow node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "apply_page_custom_code": "#/$defs/WebflowApplyPageCustomCodeConfig",
+          "apply_site_custom_code": "#/$defs/WebflowApplySiteCustomCodeConfig",
+          "collection_item_changed": "#/$defs/WebflowCollectionItemChangedTrigger",
+          "collection_item_created": "#/$defs/WebflowCollectionItemCreatedTrigger",
+          "collection_item_deleted": "#/$defs/WebflowCollectionItemDeletedTrigger",
+          "collection_item_published": "#/$defs/WebflowCollectionItemPublishedTrigger",
+          "collection_item_unpublished": "#/$defs/WebflowCollectionItemUnpublishedTrigger",
+          "comment_created": "#/$defs/WebflowCommentCreatedTrigger",
+          "create_asset": "#/$defs/WebflowCreateAssetConfig",
+          "create_asset_folder": "#/$defs/WebflowCreateAssetFolderConfig",
+          "create_bulk_items": "#/$defs/WebflowCreateBulkItemsConfig",
+          "create_collection": "#/$defs/WebflowCreateCollectionConfig",
+          "create_collection_field": "#/$defs/WebflowCreateCollectionFieldConfig",
+          "create_item": "#/$defs/WebflowCreateItemConfig",
+          "create_live_item": "#/$defs/WebflowCreateLiveItemConfig",
+          "create_product": "#/$defs/WebflowCreateProductConfig",
+          "create_skus": "#/$defs/WebflowCreateSkusConfig",
+          "create_webhook": "#/$defs/WebflowCreateWebhookConfig",
+          "delete_asset": "#/$defs/WebflowDeleteAssetConfig",
+          "delete_collection": "#/$defs/WebflowDeleteCollectionConfig",
+          "delete_collection_field": "#/$defs/WebflowDeleteCollectionFieldConfig",
+          "delete_item": "#/$defs/WebflowDeleteItemConfig",
+          "delete_live_item": "#/$defs/WebflowDeleteLiveItemConfig",
+          "delete_submission": "#/$defs/WebflowDeleteSubmissionConfig",
+          "ecomm_inventory_changed": "#/$defs/WebflowEcommInventoryChangedTrigger",
+          "ecomm_new_order": "#/$defs/WebflowEcommNewOrderTrigger",
+          "ecomm_order_changed": "#/$defs/WebflowEcommOrderChangedTrigger",
+          "form_submission": "#/$defs/WebflowFormSubmissionTrigger",
+          "fulfill_order": "#/$defs/WebflowFulfillOrderConfig",
+          "get_asset": "#/$defs/WebflowGetAssetConfig",
+          "get_asset_folder": "#/$defs/WebflowGetAssetFolderConfig",
+          "get_authorized_user": "#/$defs/WebflowGetAuthorizedUserConfig",
+          "get_collection": "#/$defs/WebflowGetCollectionConfig",
+          "get_comment_thread": "#/$defs/WebflowGetCommentThreadConfig",
+          "get_component_content": "#/$defs/WebflowGetComponentContentConfig",
+          "get_component_properties": "#/$defs/WebflowGetComponentPropertiesConfig",
+          "get_custom_domains": "#/$defs/WebflowGetCustomDomainsConfig",
+          "get_ecommerce_settings": "#/$defs/WebflowGetEcommerceSettingsConfig",
+          "get_form": "#/$defs/WebflowGetFormConfig",
+          "get_form_submission": "#/$defs/WebflowGetFormSubmissionConfig",
+          "get_item": "#/$defs/WebflowGetItemConfig",
+          "get_live_item": "#/$defs/WebflowGetLiveItemConfig",
+          "get_order": "#/$defs/WebflowGetOrderConfig",
+          "get_page_content": "#/$defs/WebflowGetPageContentConfig",
+          "get_page_custom_code": "#/$defs/WebflowGetPageCustomCodeConfig",
+          "get_page_metadata": "#/$defs/WebflowGetPageMetadataConfig",
+          "get_product": "#/$defs/WebflowGetProductConfig",
+          "get_site": "#/$defs/WebflowGetSiteConfig",
+          "get_site_custom_code": "#/$defs/WebflowGetSiteCustomCodeConfig",
+          "get_webhook": "#/$defs/WebflowGetWebhookConfig",
+          "introspect_token": "#/$defs/WebflowIntrospectTokenConfig",
+          "list_asset_folders": "#/$defs/WebflowListAssetFoldersConfig",
+          "list_assets": "#/$defs/WebflowListAssetsConfig",
+          "list_collections": "#/$defs/WebflowListCollectionsConfig",
+          "list_comment_replies": "#/$defs/WebflowListCommentRepliesConfig",
+          "list_comment_threads": "#/$defs/WebflowListCommentThreadsConfig",
+          "list_components": "#/$defs/WebflowListComponentsConfig",
+          "list_form_submissions": "#/$defs/WebflowListFormSubmissionsConfig",
+          "list_forms": "#/$defs/WebflowListFormsConfig",
+          "list_inventory": "#/$defs/WebflowListInventoryConfig",
+          "list_items": "#/$defs/WebflowListItemsConfig",
+          "list_live_items": "#/$defs/WebflowListLiveItemsConfig",
+          "list_orders": "#/$defs/WebflowListOrdersConfig",
+          "list_pages": "#/$defs/WebflowListPagesConfig",
+          "list_products": "#/$defs/WebflowListProductsConfig",
+          "list_registered_scripts": "#/$defs/WebflowListRegisteredScriptsConfig",
+          "list_site_form_submissions": "#/$defs/WebflowListSiteFormSubmissionsConfig",
+          "list_sites": "#/$defs/WebflowListSitesConfig",
+          "list_webhooks": "#/$defs/WebflowListWebhooksConfig",
+          "modify_submission": "#/$defs/WebflowModifySubmissionConfig",
+          "page_created": "#/$defs/WebflowPageCreatedTrigger",
+          "page_deleted": "#/$defs/WebflowPageDeletedTrigger",
+          "page_metadata_updated": "#/$defs/WebflowPageMetadataUpdatedTrigger",
+          "publish_items": "#/$defs/WebflowPublishItemsConfig",
+          "publish_site": "#/$defs/WebflowPublishSiteConfig",
+          "refund_order": "#/$defs/WebflowRefundOrderConfig",
+          "register_hosted_script": "#/$defs/WebflowRegisterHostedScriptConfig",
+          "register_inline_script": "#/$defs/WebflowRegisterInlineScriptConfig",
+          "remove_page_custom_code": "#/$defs/WebflowRemovePageCustomCodeConfig",
+          "remove_site_custom_code": "#/$defs/WebflowRemoveSiteCustomCodeConfig",
+          "remove_webhook": "#/$defs/WebflowRemoveWebhookConfig",
+          "site_publish": "#/$defs/WebflowSitePublishTrigger",
+          "unfulfill_order": "#/$defs/WebflowUnfulfillOrderConfig",
+          "update_asset": "#/$defs/WebflowUpdateAssetConfig",
+          "update_collection_field": "#/$defs/WebflowUpdateCollectionFieldConfig",
+          "update_component_content": "#/$defs/WebflowUpdateComponentContentConfig",
+          "update_component_properties": "#/$defs/WebflowUpdateComponentPropertiesConfig",
+          "update_inventory": "#/$defs/WebflowUpdateInventoryConfig",
+          "update_item": "#/$defs/WebflowUpdateItemConfig",
+          "update_live_item": "#/$defs/WebflowUpdateLiveItemConfig",
+          "update_order": "#/$defs/WebflowUpdateOrderConfig",
+          "update_page_content": "#/$defs/WebflowUpdatePageContentConfig",
+          "update_page_metadata": "#/$defs/WebflowUpdatePageMetadataConfig",
+          "update_product": "#/$defs/WebflowUpdateProductConfig",
+          "update_sku": "#/$defs/WebflowUpdateSkuConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/WebflowListSitesConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowGetSiteConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowPublishSiteConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowListPagesConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowGetPageContentConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowUpdatePageContentConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowListCollectionsConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowGetCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowCreateCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowCreateCollectionFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowListItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowGetItemConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowCreateItemConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowCreateLiveItemConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowUpdateItemConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowDeleteItemConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowPublishItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowListFormsConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowGetFormConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowListFormSubmissionsConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowGetFormSubmissionConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowListAssetsConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowListProductsConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowCreateProductConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowListOrdersConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowGetOrderConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowFulfillOrderConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowListInventoryConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowListCommentThreadsConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowListWebhooksConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowCreateWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowRemoveWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowGetAuthorizedUserConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowGetCustomDomainsConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowGetPageMetadataConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowUpdatePageMetadataConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowListComponentsConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowGetComponentContentConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowUpdateComponentContentConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowGetComponentPropertiesConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowUpdateComponentPropertiesConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowDeleteCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowUpdateCollectionFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowDeleteCollectionFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowListLiveItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowGetLiveItemConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowUpdateLiveItemConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowDeleteLiveItemConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowCreateBulkItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowGetProductConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowUpdateProductConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowCreateSkusConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowUpdateSkuConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowUpdateInventoryConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowGetEcommerceSettingsConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowUpdateOrderConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowUnfulfillOrderConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowRefundOrderConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowListSiteFormSubmissionsConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowModifySubmissionConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowDeleteSubmissionConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowGetAssetConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowCreateAssetConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowUpdateAssetConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowDeleteAssetConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowListAssetFoldersConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowGetAssetFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowCreateAssetFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowGetCommentThreadConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowListCommentRepliesConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowGetWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowIntrospectTokenConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowRegisterHostedScriptConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowRegisterInlineScriptConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowListRegisteredScriptsConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowGetSiteCustomCodeConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowApplySiteCustomCodeConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowRemoveSiteCustomCodeConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowGetPageCustomCodeConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowApplyPageCustomCodeConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowRemovePageCustomCodeConfig"
+        },
+        {
+          "$ref": "#/$defs/WebflowFormSubmissionTrigger"
+        },
+        {
+          "$ref": "#/$defs/WebflowSitePublishTrigger"
+        },
+        {
+          "$ref": "#/$defs/WebflowPageCreatedTrigger"
+        },
+        {
+          "$ref": "#/$defs/WebflowPageMetadataUpdatedTrigger"
+        },
+        {
+          "$ref": "#/$defs/WebflowPageDeletedTrigger"
+        },
+        {
+          "$ref": "#/$defs/WebflowCollectionItemCreatedTrigger"
+        },
+        {
+          "$ref": "#/$defs/WebflowCollectionItemChangedTrigger"
+        },
+        {
+          "$ref": "#/$defs/WebflowCollectionItemDeletedTrigger"
+        },
+        {
+          "$ref": "#/$defs/WebflowCollectionItemPublishedTrigger"
+        },
+        {
+          "$ref": "#/$defs/WebflowCollectionItemUnpublishedTrigger"
+        },
+        {
+          "$ref": "#/$defs/WebflowEcommNewOrderTrigger"
+        },
+        {
+          "$ref": "#/$defs/WebflowEcommOrderChangedTrigger"
+        },
+        {
+          "$ref": "#/$defs/WebflowEcommInventoryChangedTrigger"
+        },
+        {
+          "$ref": "#/$defs/WebflowCommentCreatedTrigger"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/WebflowOAuthCredential"
+        },
+        {
+          "$ref": "#/$defs/WebflowApiTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Webflow Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "List all sites in my Webflow workspace",
+    "Create a new CMS item in a blog collection",
+    "Publish staged CMS items to the live site",
+    "List submissions for a contact form",
+    "Trigger a workflow whenever a Webflow form is submitted"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

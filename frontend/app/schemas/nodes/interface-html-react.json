@@ -1,0 +1,125 @@
+{
+  "$defs": {
+    "HtmlOperationConfig": {
+      "description": "Configuration for HTML mode.",
+      "properties": {
+        "operation": {
+          "const": "render_html_interface",
+          "default": "render_html_interface",
+          "title": "Render HTML",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "General",
+          "x-display-name": "Render HTML",
+          "x-is-trigger": false
+        },
+        "content": {
+          "default": "",
+          "title": "Content",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "html"
+        },
+        "fullscreen": {
+          "default": "true",
+          "description": "Show as a fullscreen tab instead of in the grid layout",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Fullscreen",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "title": "HTML",
+      "type": "object"
+    },
+    "JsxOperationConfig": {
+      "description": "Configuration for JSX/React mode.",
+      "properties": {
+        "operation": {
+          "const": "render_jsx_react_interface",
+          "default": "render_jsx_react_interface",
+          "title": "Render React/JSX",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "General",
+          "x-display-name": "Render React/JSX",
+          "x-is-trigger": false
+        },
+        "jsx_source": {
+          "default": "import React, { useState } from 'react';\nimport ReactDOM from 'react-dom/client';\n\nfunction App() {\n  const [count, setCount] = useState(0);\n\n  return (\n    <div className=\"flex flex-col items-center justify-center min-h-screen gap-4 p-4\">\n      <h1 className=\"text-2xl font-bold text-white\">Custom Component</h1>\n      <p className=\"text-zinc-400\">Count: {count}</p>\n      <button\n        className=\"px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-500\"\n        onClick={() => setCount(c => c + 1)}\n      >\n        Increment\n      </button>\n    </div>\n  );\n}\n\nReactDOM.createRoot(document.getElementById('root')).render(<App />);\n",
+          "title": "JSX Source",
+          "type": "string",
+          "ui:widget": "code_editor",
+          "x-code-language": "jsx"
+        },
+        "fullscreen": {
+          "default": "true",
+          "description": "Show as a fullscreen tab instead of in the grid layout",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Fullscreen",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "title": "JSX / React",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the consolidated component interface node.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "render_html_interface": "#/$defs/HtmlOperationConfig",
+          "render_jsx_react_interface": "#/$defs/JsxOperationConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/HtmlOperationConfig"
+        },
+        {
+          "$ref": "#/$defs/JsxOperationConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials",
+      "type": "null"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Interface-html-react Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Switch from HTML mode to JSX/React mode",
+    "Add interactive buttons and event handlers",
+    "Embed a custom React component with state",
+    "Import an npm package for the component",
+    "Make the component fullscreen instead",
+    "Style with TailwindCSS utility classes"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-connectionless": true
+}

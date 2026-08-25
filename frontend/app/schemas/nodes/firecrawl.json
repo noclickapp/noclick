@@ -1,0 +1,3260 @@
+{
+  "$defs": {
+    "FirecrawlAPIKeyCredential": {
+      "description": "API Key credential for Firecrawl.",
+      "properties": {
+        "credential_type": {
+          "const": "firecrawl_api_key",
+          "default": "firecrawl_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Your Firecrawl API key (starts with fc-) from the dashboard API Keys page",
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "FirecrawlAPIKeyCredential",
+      "type": "object",
+      "x-credential-url": "https://www.firecrawl.dev/app/api-keys"
+    },
+    "FirecrawlAgentConfig": {
+      "description": "Autonomous AI web data gathering from a prompt + schema (async).",
+      "properties": {
+        "operation": {
+          "const": "agent",
+          "default": "agent",
+          "title": "Agent (Autonomous Extract)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Extraction",
+          "x-display-name": "Agent (Autonomous Extract)",
+          "x-is-trigger": false
+        },
+        "prompt": {
+          "description": "Natural-language description of the data to gather",
+          "title": "Prompt",
+          "type": "string"
+        },
+        "output_schema": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON schema describing the structured output (as JSON text)",
+          "title": "JSON Schema",
+          "ui:widget": "textarea"
+        },
+        "urls": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional seed URLs to ground the search, comma-separated",
+          "title": "Seed URLs"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional URL to receive agent job events",
+          "title": "Webhook URL"
+        },
+        "webhook_events": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional comma-separated webhook events to send: started, action, completed, failed, cancelled",
+          "title": "Webhook Events"
+        },
+        "webhook_headers_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object of headers to send with webhook deliveries, e.g. `{\"X-Source\":\"noclick\"}`",
+          "title": "Webhook Headers (JSON)",
+          "ui:widget": "textarea"
+        },
+        "webhook_metadata_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object echoed back in webhook payload metadata, e.g. `{\"workflow\":\"demo\"}`",
+          "title": "Webhook Metadata (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "FirecrawlAgentConfig",
+      "type": "object"
+    },
+    "FirecrawlBatchScrapeConfig": {
+      "description": "Submit many URLs to scrape asynchronously; returns a job id.",
+      "properties": {
+        "operation": {
+          "const": "batch_scrape",
+          "default": "batch_scrape",
+          "title": "Batch Scrape",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Scraping",
+          "x-display-name": "Batch Scrape",
+          "x-is-trigger": false
+        },
+        "urls": {
+          "description": "URLs to scrape, comma-separated",
+          "title": "URLs",
+          "type": "string"
+        },
+        "formats": {
+          "default": "markdown",
+          "description": "Output formats to return, comma-separated",
+          "enum": [
+            "markdown",
+            "html",
+            "rawHtml",
+            "links",
+            "screenshot",
+            "summary"
+          ],
+          "title": "Formats",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional URL to receive batch_scrape job events",
+          "title": "Webhook URL"
+        },
+        "webhook_events": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional comma-separated webhook events to send: started, page, completed, failed",
+          "title": "Webhook Events"
+        },
+        "webhook_headers_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object of headers to send with webhook deliveries, e.g. `{\"X-Source\":\"noclick\"}`",
+          "title": "Webhook Headers (JSON)",
+          "ui:widget": "textarea"
+        },
+        "webhook_metadata_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object echoed back in webhook payload metadata, e.g. `{\"workflow\":\"demo\"}`",
+          "title": "Webhook Metadata (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "urls"
+      ],
+      "title": "FirecrawlBatchScrapeConfig",
+      "type": "object"
+    },
+    "FirecrawlCancelAgentConfig": {
+      "description": "Cancel an in-progress agent job.",
+      "properties": {
+        "operation": {
+          "const": "cancel_agent",
+          "default": "cancel_agent",
+          "title": "Cancel Agent",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Extraction",
+          "x-display-name": "Cancel Agent",
+          "x-is-trigger": false
+        },
+        "job_id": {
+          "description": "The agent job id",
+          "title": "Job ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "FirecrawlCancelAgentConfig",
+      "type": "object"
+    },
+    "FirecrawlCancelBatchScrapeConfig": {
+      "description": "Cancel an in-progress batch scrape job.",
+      "properties": {
+        "operation": {
+          "const": "cancel_batch_scrape",
+          "default": "cancel_batch_scrape",
+          "title": "Cancel Batch Scrape",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Scraping",
+          "x-display-name": "Cancel Batch Scrape",
+          "x-is-trigger": false
+        },
+        "job_id": {
+          "description": "The batch scrape job id",
+          "title": "Job ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "FirecrawlCancelBatchScrapeConfig",
+      "type": "object"
+    },
+    "FirecrawlCancelCrawlConfig": {
+      "description": "Cancel an in-progress crawl job.",
+      "properties": {
+        "operation": {
+          "const": "cancel_crawl",
+          "default": "cancel_crawl",
+          "title": "Cancel Crawl",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Crawling",
+          "x-display-name": "Cancel Crawl",
+          "x-is-trigger": false
+        },
+        "job_id": {
+          "description": "The crawl job id",
+          "title": "Job ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "FirecrawlCancelCrawlConfig",
+      "type": "object"
+    },
+    "FirecrawlCrawlConfig": {
+      "description": "Start an async crawl of a site from a starting URL; returns a job id.",
+      "properties": {
+        "operation": {
+          "const": "crawl",
+          "default": "crawl",
+          "title": "Crawl Website",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Crawling",
+          "x-display-name": "Crawl Website",
+          "x-is-trigger": false
+        },
+        "url": {
+          "description": "The URL to start crawling from",
+          "title": "Start URL",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of pages to crawl",
+          "title": "Limit"
+        },
+        "max_discovery_depth": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum link depth to follow from the start URL",
+          "title": "Max Depth"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional URL to receive crawl job events",
+          "title": "Webhook URL"
+        },
+        "webhook_events": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional comma-separated webhook events to send: started, page, completed, failed",
+          "title": "Webhook Events"
+        },
+        "webhook_headers_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object of headers to send with webhook deliveries, e.g. `{\"X-Source\":\"noclick\"}`",
+          "title": "Webhook Headers (JSON)",
+          "ui:widget": "textarea"
+        },
+        "webhook_metadata_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object echoed back in webhook payload metadata, e.g. `{\"workflow\":\"demo\"}`",
+          "title": "Webhook Metadata (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "FirecrawlCrawlConfig",
+      "type": "object"
+    },
+    "FirecrawlCrawlParamsPreviewConfig": {
+      "description": "Generate suggested crawl parameters from a natural-language prompt + URL.",
+      "properties": {
+        "operation": {
+          "const": "crawl_params_preview",
+          "default": "crawl_params_preview",
+          "title": "Crawl Params Preview",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Crawling",
+          "x-display-name": "Crawl Params Preview",
+          "x-is-trigger": false
+        },
+        "url": {
+          "description": "The URL to generate crawl params for",
+          "title": "URL",
+          "type": "string"
+        },
+        "prompt": {
+          "description": "Natural-language description of what to crawl",
+          "title": "Prompt",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url",
+        "prompt"
+      ],
+      "title": "FirecrawlCrawlParamsPreviewConfig",
+      "type": "object"
+    },
+    "FirecrawlCreateInteractConfig": {
+      "description": "Create a Firecrawl interact session.",
+      "properties": {
+        "operation": {
+          "const": "create_interact_session",
+          "default": "create_interact_session",
+          "title": "Create Interact Session",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Interact",
+          "x-display-name": "Create Interact Session",
+          "x-is-trigger": false
+        },
+        "ttl": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Total time-to-live for the interact session",
+          "title": "TTL (seconds)"
+        },
+        "activity_ttl": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Idle timeout before the interact session is destroyed",
+          "title": "Activity TTL (seconds)"
+        },
+        "stream_web_view": {
+          "default": "true",
+          "description": "Whether to stream a live browser view",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Stream Web View",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "profile_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Persistent profile name to reuse browser storage across sessions",
+          "title": "Profile Name"
+        },
+        "profile_save_changes": {
+          "default": "true",
+          "description": "Whether profile changes should be saved when the session closes",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Save Profile Changes",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "title": "FirecrawlCreateInteractConfig",
+      "type": "object"
+    },
+    "FirecrawlCreateMonitorConfig": {
+      "description": "Create a monitor.",
+      "properties": {
+        "operation": {
+          "const": "create_monitor",
+          "default": "create_monitor",
+          "title": "Create Monitor",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Monitoring",
+          "x-display-name": "Create Monitor",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Monitor name",
+          "title": "Name",
+          "type": "string"
+        },
+        "schedule_json": {
+          "description": "JSON object like `{\"text\":\"every 30 minutes\",\"timezone\":\"UTC\"}`",
+          "title": "Schedule (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "targets_json": {
+          "description": "JSON array of monitor targets",
+          "title": "Targets (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "webhook_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional monitor webhook object",
+          "title": "Webhook (JSON)",
+          "ui:widget": "textarea"
+        },
+        "notification_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional monitor notification object",
+          "title": "Notification (JSON)",
+          "ui:widget": "textarea"
+        },
+        "retention_days": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Days of monitor data to retain",
+          "title": "Retention Days"
+        },
+        "goal": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Plain-language goal for judging meaningful changes",
+          "title": "Goal"
+        },
+        "judge_enabled": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether to enable change judging",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Judge Enabled",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "name",
+        "schedule_json",
+        "targets_json"
+      ],
+      "title": "FirecrawlCreateMonitorConfig",
+      "type": "object"
+    },
+    "FirecrawlCreditUsageConfig": {
+      "description": "Return remaining credits for the account.",
+      "properties": {
+        "operation": {
+          "const": "credit_usage",
+          "default": "credit_usage",
+          "title": "Get Credit Usage",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Usage",
+          "x-display-name": "Get Credit Usage",
+          "x-is-trigger": false
+        }
+      },
+      "title": "FirecrawlCreditUsageConfig",
+      "type": "object"
+    },
+    "FirecrawlCreditUsageHistoricalConfig": {
+      "description": "Return historical credit usage for the account's team.",
+      "properties": {
+        "operation": {
+          "const": "credit_usage_historical",
+          "default": "credit_usage_historical",
+          "title": "Get Historical Credit Usage",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Usage",
+          "x-display-name": "Get Historical Credit Usage",
+          "x-is-trigger": false
+        },
+        "by_api_key": {
+          "default": "false",
+          "description": "Return historical usage grouped by API key",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Group By API Key",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "title": "FirecrawlCreditUsageHistoricalConfig",
+      "type": "object"
+    },
+    "FirecrawlDeleteInteractConfig": {
+      "description": "Delete a Firecrawl interact session.",
+      "properties": {
+        "operation": {
+          "const": "delete_interact_session",
+          "default": "delete_interact_session",
+          "title": "Delete Interact Session",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Interact",
+          "x-display-name": "Delete Interact Session",
+          "x-is-trigger": false
+        },
+        "session_id": {
+          "description": "The interact session id",
+          "title": "Session ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "session_id"
+      ],
+      "title": "FirecrawlDeleteInteractConfig",
+      "type": "object"
+    },
+    "FirecrawlDeleteMonitorConfig": {
+      "description": "Delete a monitor.",
+      "properties": {
+        "operation": {
+          "const": "delete_monitor",
+          "default": "delete_monitor",
+          "title": "Delete Monitor",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Monitoring",
+          "x-display-name": "Delete Monitor",
+          "x-is-trigger": false
+        },
+        "monitor_id": {
+          "description": "Monitor identifier",
+          "title": "Monitor ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "monitor_id"
+      ],
+      "title": "FirecrawlDeleteMonitorConfig",
+      "type": "object"
+    },
+    "FirecrawlEndpointFeedbackConfig": {
+      "description": "Submit feedback for a v2 job.",
+      "properties": {
+        "operation": {
+          "const": "submit_feedback",
+          "default": "submit_feedback",
+          "title": "Submit Endpoint Feedback",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Support",
+          "x-display-name": "Submit Endpoint Feedback",
+          "x-is-trigger": false
+        },
+        "endpoint": {
+          "description": "Endpoint family being rated",
+          "enum": [
+            "search",
+            "scrape",
+            "parse",
+            "map"
+          ],
+          "title": "Endpoint",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "job_id": {
+          "description": "The v2 job id",
+          "title": "Job ID",
+          "type": "string"
+        },
+        "rating": {
+          "description": "Overall feedback rating",
+          "enum": [
+            "good",
+            "partial",
+            "bad"
+          ],
+          "title": "Rating",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "valuable_sources_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array like `[{\"url\":\"https://...\",\"reason\":\"...\"}]`",
+          "title": "Valuable Sources (JSON)",
+          "ui:widget": "textarea"
+        },
+        "missing_content_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array like `[{\"topic\":\"...\",\"description\":\"...\"}]`",
+          "title": "Missing Content (JSON)",
+          "ui:widget": "textarea"
+        },
+        "query_suggestions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Suggestions for better query phrasing",
+          "title": "Query Suggestions"
+        },
+        "origin": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "api",
+          "description": "Feedback origin label",
+          "title": "Origin"
+        },
+        "integration": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional integration label",
+          "title": "Integration"
+        },
+        "issues_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array of issue codes like `[\"bad-markdown\",\"missing-content\"]`",
+          "title": "Issues (JSON)",
+          "ui:widget": "textarea"
+        },
+        "tags_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array of tags like `[\"production\",\"customer-report\"]`",
+          "title": "Tags (JSON)",
+          "ui:widget": "textarea"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Freeform note about the issue",
+          "title": "Note"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL related to the feedback",
+          "title": "URL"
+        },
+        "page_numbers_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array of page numbers",
+          "title": "Page Numbers (JSON)",
+          "ui:widget": "textarea"
+        },
+        "metadata_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Small endpoint-specific metadata object",
+          "title": "Metadata (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "endpoint",
+        "job_id",
+        "rating"
+      ],
+      "title": "FirecrawlEndpointFeedbackConfig",
+      "type": "object"
+    },
+    "FirecrawlExecuteInteractConfig": {
+      "description": "Execute code in a Firecrawl interact session.",
+      "properties": {
+        "operation": {
+          "const": "execute_interact_session",
+          "default": "execute_interact_session",
+          "title": "Execute in Interact Session",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Interact",
+          "x-display-name": "Execute in Interact Session",
+          "x-is-trigger": false
+        },
+        "session_id": {
+          "description": "The interact session id",
+          "title": "Session ID",
+          "type": "string"
+        },
+        "code": {
+          "description": "Code to execute in the interact session",
+          "title": "Code",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "language": {
+          "default": "node",
+          "description": "Execution language",
+          "enum": [
+            "python",
+            "node",
+            "bash"
+          ],
+          "title": "Language",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "timeout": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Execution timeout in seconds",
+          "title": "Timeout (seconds)"
+        }
+      },
+      "required": [
+        "session_id",
+        "code"
+      ],
+      "title": "FirecrawlExecuteInteractConfig",
+      "type": "object"
+    },
+    "FirecrawlExtractConfig": {
+      "description": "LLM-powered structured extraction from URLs (async; returns a job id).\n\nDeprecated by Firecrawl in favor of the agent operation.",
+      "properties": {
+        "operation": {
+          "const": "extract",
+          "default": "extract",
+          "title": "Extract Structured Data",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Extraction",
+          "x-display-name": "Extract Structured Data",
+          "x-is-trigger": false
+        },
+        "urls": {
+          "description": "URLs to extract from, comma-separated",
+          "title": "URLs",
+          "type": "string"
+        },
+        "prompt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Natural-language description of the data to extract",
+          "title": "Prompt"
+        },
+        "output_schema": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON schema describing the structured output (as JSON text)",
+          "title": "JSON Schema",
+          "ui:widget": "textarea"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional URL to receive extract job events",
+          "title": "Webhook URL"
+        },
+        "webhook_events": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional comma-separated webhook events to send, if enabled for your Firecrawl account",
+          "title": "Webhook Events"
+        },
+        "webhook_headers_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object of headers to send with webhook deliveries, e.g. `{\"X-Source\":\"noclick\"}`",
+          "title": "Webhook Headers (JSON)",
+          "ui:widget": "textarea"
+        },
+        "webhook_metadata_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object echoed back in webhook payload metadata, e.g. `{\"workflow\":\"demo\"}`",
+          "title": "Webhook Metadata (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "urls"
+      ],
+      "title": "FirecrawlExtractConfig",
+      "type": "object"
+    },
+    "FirecrawlGetAgentConfig": {
+      "description": "Poll an agent job by id.",
+      "properties": {
+        "operation": {
+          "const": "get_agent",
+          "default": "get_agent",
+          "title": "Get Agent Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Extraction",
+          "x-display-name": "Get Agent Status",
+          "x-is-trigger": false
+        },
+        "job_id": {
+          "description": "The agent job id",
+          "title": "Job ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "FirecrawlGetAgentConfig",
+      "type": "object"
+    },
+    "FirecrawlGetBatchScrapeConfig": {
+      "description": "Poll a batch scrape job by id.",
+      "properties": {
+        "operation": {
+          "const": "get_batch_scrape",
+          "default": "get_batch_scrape",
+          "title": "Get Batch Scrape Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Scraping",
+          "x-display-name": "Get Batch Scrape Status",
+          "x-is-trigger": false
+        },
+        "job_id": {
+          "description": "The batch scrape job id",
+          "title": "Job ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "FirecrawlGetBatchScrapeConfig",
+      "type": "object"
+    },
+    "FirecrawlGetBatchScrapeErrorsConfig": {
+      "description": "Retrieve per-URL errors for a batch scrape job.",
+      "properties": {
+        "operation": {
+          "const": "get_batch_scrape_errors",
+          "default": "get_batch_scrape_errors",
+          "title": "Get Batch Scrape Errors",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Scraping",
+          "x-display-name": "Get Batch Scrape Errors",
+          "x-is-trigger": false
+        },
+        "job_id": {
+          "description": "The batch scrape job id",
+          "title": "Job ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "FirecrawlGetBatchScrapeErrorsConfig",
+      "type": "object"
+    },
+    "FirecrawlGetCrawlConfig": {
+      "description": "Poll a crawl job's status by id.",
+      "properties": {
+        "operation": {
+          "const": "get_crawl",
+          "default": "get_crawl",
+          "title": "Get Crawl Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Crawling",
+          "x-display-name": "Get Crawl Status",
+          "x-is-trigger": false
+        },
+        "job_id": {
+          "description": "The crawl job id",
+          "title": "Job ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "FirecrawlGetCrawlConfig",
+      "type": "object"
+    },
+    "FirecrawlGetCrawlErrorsConfig": {
+      "description": "Retrieve per-URL errors and robots.txt-blocked URLs for a crawl job.",
+      "properties": {
+        "operation": {
+          "const": "get_crawl_errors",
+          "default": "get_crawl_errors",
+          "title": "Get Crawl Errors",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Crawling",
+          "x-display-name": "Get Crawl Errors",
+          "x-is-trigger": false
+        },
+        "job_id": {
+          "description": "The crawl job id",
+          "title": "Job ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "FirecrawlGetCrawlErrorsConfig",
+      "type": "object"
+    },
+    "FirecrawlGetExtractConfig": {
+      "description": "Poll an extract job by id. Deprecated.",
+      "properties": {
+        "operation": {
+          "const": "get_extract",
+          "default": "get_extract",
+          "title": "Get Extract Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Extraction",
+          "x-display-name": "Get Extract Status",
+          "x-is-trigger": false
+        },
+        "job_id": {
+          "description": "The extract job id",
+          "title": "Job ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "FirecrawlGetExtractConfig",
+      "type": "object"
+    },
+    "FirecrawlGetMonitorCheckConfig": {
+      "description": "Get a single monitor check and page details.",
+      "properties": {
+        "operation": {
+          "const": "get_monitor_check",
+          "default": "get_monitor_check",
+          "title": "Get Monitor Check",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Monitoring",
+          "x-display-name": "Get Monitor Check",
+          "x-is-trigger": false
+        },
+        "monitor_id": {
+          "description": "Monitor identifier",
+          "title": "Monitor ID",
+          "type": "string"
+        },
+        "check_id": {
+          "description": "Monitor check identifier",
+          "title": "Check ID",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum page results to return",
+          "title": "Limit"
+        },
+        "skip": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Page results offset",
+          "title": "Skip"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional page status filter",
+          "enum": [
+            "same",
+            "new",
+            "changed",
+            "removed",
+            "error"
+          ],
+          "title": "Page Status",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "monitor_id",
+        "check_id"
+      ],
+      "title": "FirecrawlGetMonitorCheckConfig",
+      "type": "object"
+    },
+    "FirecrawlGetMonitorConfig": {
+      "description": "Get a monitor.",
+      "properties": {
+        "operation": {
+          "const": "get_monitor",
+          "default": "get_monitor",
+          "title": "Get Monitor",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Monitoring",
+          "x-display-name": "Get Monitor",
+          "x-is-trigger": false
+        },
+        "monitor_id": {
+          "description": "Monitor identifier",
+          "title": "Monitor ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "monitor_id"
+      ],
+      "title": "FirecrawlGetMonitorConfig",
+      "type": "object"
+    },
+    "FirecrawlGetResearchPaperConfig": {
+      "description": "Inspect or read a paper.",
+      "properties": {
+        "operation": {
+          "const": "get_research_paper",
+          "default": "get_research_paper",
+          "title": "Get Paper",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Research",
+          "x-display-name": "Get Paper",
+          "x-is-trigger": false
+        },
+        "paper_id": {
+          "description": "Paper identifier",
+          "title": "Paper ID",
+          "type": "string"
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional refinement query for the paper lookup",
+          "title": "Query"
+        },
+        "k": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional result limit",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "paper_id"
+      ],
+      "title": "FirecrawlGetResearchPaperConfig",
+      "type": "object"
+    },
+    "FirecrawlGetScrapeConfig": {
+      "description": "Poll an async scrape job by id.",
+      "properties": {
+        "operation": {
+          "const": "get_scrape",
+          "default": "get_scrape",
+          "title": "Get Scrape Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Scraping",
+          "x-display-name": "Get Scrape Status",
+          "x-is-trigger": false
+        },
+        "job_id": {
+          "description": "The scrape job id",
+          "title": "Job ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "FirecrawlGetScrapeConfig",
+      "type": "object"
+    },
+    "FirecrawlGetSimilarResearchPapersConfig": {
+      "description": "Find related papers.",
+      "properties": {
+        "operation": {
+          "const": "get_similar_research_papers",
+          "default": "get_similar_research_papers",
+          "title": "Find Related Papers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Research",
+          "x-display-name": "Find Related Papers",
+          "x-is-trigger": false
+        },
+        "paper_id": {
+          "description": "Paper identifier",
+          "title": "Paper ID",
+          "type": "string"
+        },
+        "intent": {
+          "description": "Natural-language intent for ranking or filtering related papers",
+          "title": "Intent",
+          "type": "string"
+        },
+        "mode": {
+          "default": "similar",
+          "description": "Relationship mode for related papers",
+          "enum": [
+            "similar",
+            "citers",
+            "references"
+          ],
+          "title": "Mode",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "k": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum related papers to return",
+          "title": "Limit"
+        },
+        "rerank": {
+          "default": "false",
+          "description": "Whether to rerank the related papers",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Rerank",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "anchor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional anchor text for the similarity search",
+          "title": "Anchor"
+        }
+      },
+      "required": [
+        "paper_id",
+        "intent"
+      ],
+      "title": "FirecrawlGetSimilarResearchPapersConfig",
+      "type": "object"
+    },
+    "FirecrawlListActiveCrawlsConfig": {
+      "description": "List all currently running crawl jobs for the account.",
+      "properties": {
+        "operation": {
+          "const": "list_active_crawls",
+          "default": "list_active_crawls",
+          "title": "List Active Crawls",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Crawling",
+          "x-display-name": "List Active Crawls",
+          "x-is-trigger": false
+        }
+      },
+      "title": "FirecrawlListActiveCrawlsConfig",
+      "type": "object"
+    },
+    "FirecrawlListInteractConfig": {
+      "description": "List active Firecrawl interact sessions.",
+      "properties": {
+        "operation": {
+          "const": "list_interact_sessions",
+          "default": "list_interact_sessions",
+          "title": "List Interact Sessions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Interact",
+          "x-display-name": "List Interact Sessions",
+          "x-is-trigger": false
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional interact session status filter",
+          "title": "Status"
+        }
+      },
+      "title": "FirecrawlListInteractConfig",
+      "type": "object"
+    },
+    "FirecrawlListMonitorChecksConfig": {
+      "description": "List checks for a monitor.",
+      "properties": {
+        "operation": {
+          "const": "list_monitor_checks",
+          "default": "list_monitor_checks",
+          "title": "List Monitor Checks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Monitoring",
+          "x-display-name": "List Monitor Checks",
+          "x-is-trigger": false
+        },
+        "monitor_id": {
+          "description": "Monitor identifier",
+          "title": "Monitor ID",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum checks to return",
+          "title": "Limit"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination offset",
+          "title": "Offset"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional check status filter",
+          "enum": [
+            "queued",
+            "running",
+            "completed",
+            "failed",
+            "partial",
+            "skipped_overlap"
+          ],
+          "title": "Status",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "monitor_id"
+      ],
+      "title": "FirecrawlListMonitorChecksConfig",
+      "type": "object"
+    },
+    "FirecrawlListMonitorsConfig": {
+      "description": "List monitors.",
+      "properties": {
+        "operation": {
+          "const": "list_monitors",
+          "default": "list_monitors",
+          "title": "List Monitors",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Monitoring",
+          "x-display-name": "List Monitors",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum monitors to return",
+          "title": "Limit"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination offset",
+          "title": "Offset"
+        }
+      },
+      "title": "FirecrawlListMonitorsConfig",
+      "type": "object"
+    },
+    "FirecrawlMapConfig": {
+      "description": "Quickly return a complete list of URLs discovered on a website.",
+      "properties": {
+        "operation": {
+          "const": "map",
+          "default": "map",
+          "title": "Map Website",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Discovery",
+          "x-display-name": "Map Website",
+          "x-is-trigger": false
+        },
+        "url": {
+          "description": "The website to map",
+          "title": "URL",
+          "type": "string"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter discovered URLs by this search term",
+          "title": "Search"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of URLs to return",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "FirecrawlMapConfig",
+      "type": "object"
+    },
+    "FirecrawlOnAgentEventConfig": {
+      "description": "Receive Firecrawl agent webhook events.",
+      "properties": {
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reference this URL in a Crawl / Batch Scrape / Monitor webhook field, or any other Firecrawl webhook-capable operation",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Firecrawl webhook secret used to verify X-Firecrawl-Signature",
+          "title": "Webhook Signing Secret",
+          "ui:widget": "password"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_agent_event",
+          "default": "on_agent_event",
+          "title": "On Agent Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Agent Event",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "*",
+          "description": "Which agent event should fire this workflow. Firecrawl publishes these payloads in its webhook OpenAPI.",
+          "enum": [
+            "*",
+            "agent.started",
+            "agent.action",
+            "agent.completed",
+            "agent.failed",
+            "agent.cancelled"
+          ],
+          "enumNames": [
+            "Any agent event",
+            "Agent started",
+            "Agent action",
+            "Agent completed",
+            "Agent failed",
+            "Agent cancelled"
+          ],
+          "title": "Agent Event Type",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "title": "FirecrawlOnAgentEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "FirecrawlOnBatchScrapeEventConfig": {
+      "description": "Receive Firecrawl batch scrape webhook events.",
+      "properties": {
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reference this URL in a Crawl / Batch Scrape / Monitor webhook field, or any other Firecrawl webhook-capable operation",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Firecrawl webhook secret used to verify X-Firecrawl-Signature",
+          "title": "Webhook Signing Secret",
+          "ui:widget": "password"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_batch_scrape_event",
+          "default": "on_batch_scrape_event",
+          "title": "On Batch Scrape Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Batch Scrape Event",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "*",
+          "description": "Which batch scrape event should fire this workflow. 'Any batch scrape event' also matches future batch_scrape-prefixed events such as batch_scrape.failed.",
+          "enum": [
+            "*",
+            "batch_scrape.started",
+            "batch_scrape.page",
+            "batch_scrape.completed"
+          ],
+          "enumNames": [
+            "Any batch scrape event",
+            "Batch scrape started",
+            "Batch scrape page",
+            "Batch scrape completed"
+          ],
+          "title": "Batch Scrape Event Type",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "title": "FirecrawlOnBatchScrapeEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "FirecrawlOnCrawlEventConfig": {
+      "description": "Receive Firecrawl crawl webhook events.",
+      "properties": {
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reference this URL in a Crawl / Batch Scrape / Monitor webhook field, or any other Firecrawl webhook-capable operation",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Firecrawl webhook secret used to verify X-Firecrawl-Signature",
+          "title": "Webhook Signing Secret",
+          "ui:widget": "password"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_crawl_event",
+          "default": "on_crawl_event",
+          "title": "On Crawl Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Crawl Event",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "*",
+          "description": "Which crawl event should fire this workflow. 'Any crawl event' also matches future crawl-prefixed events such as crawl.failed.",
+          "enum": [
+            "*",
+            "crawl.started",
+            "crawl.page",
+            "crawl.completed"
+          ],
+          "enumNames": [
+            "Any crawl event",
+            "Crawl started",
+            "Crawl page",
+            "Crawl completed"
+          ],
+          "title": "Crawl Event Type",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "title": "FirecrawlOnCrawlEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "FirecrawlOnMonitorEventConfig": {
+      "description": "Receive Firecrawl monitor webhook events.",
+      "properties": {
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reference this URL in a Crawl / Batch Scrape / Monitor webhook field, or any other Firecrawl webhook-capable operation",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Firecrawl webhook secret used to verify X-Firecrawl-Signature",
+          "title": "Webhook Signing Secret",
+          "ui:widget": "password"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_monitor_event",
+          "default": "on_monitor_event",
+          "title": "On Monitor Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Monitor Event",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "*",
+          "description": "Which monitor event should fire this workflow.",
+          "enum": [
+            "*",
+            "monitor.page",
+            "monitor.check.completed"
+          ],
+          "enumNames": [
+            "Any monitor event",
+            "Monitor page",
+            "Monitor check completed"
+          ],
+          "title": "Monitor Event Type",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "title": "FirecrawlOnMonitorEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "FirecrawlParseConfig": {
+      "description": "Parse a remote file (PDF, DOCX, etc.) into markdown or other formats.",
+      "properties": {
+        "operation": {
+          "const": "parse",
+          "default": "parse",
+          "title": "Parse a File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Files",
+          "x-display-name": "Parse a File",
+          "x-is-trigger": false
+        },
+        "url": {
+          "description": "The URL of the file to parse",
+          "title": "File URL",
+          "type": "string"
+        },
+        "formats": {
+          "default": "markdown",
+          "description": "Output formats to return, comma-separated",
+          "enum": [
+            "markdown",
+            "html",
+            "rawHtml"
+          ],
+          "title": "Formats",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "FirecrawlParseConfig",
+      "type": "object"
+    },
+    "FirecrawlQueueStatusConfig": {
+      "description": "Inspect the account's current job queue depth/status.",
+      "properties": {
+        "operation": {
+          "const": "queue_status",
+          "default": "queue_status",
+          "title": "Get Queue Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Usage",
+          "x-display-name": "Get Queue Status",
+          "x-is-trigger": false
+        }
+      },
+      "title": "FirecrawlQueueStatusConfig",
+      "type": "object"
+    },
+    "FirecrawlReceiveWebhookConfig": {
+      "description": "Receive any published Firecrawl webhook event.\n\nFirecrawl webhooks are configured per-job by adding a `webhook` object to a\ncrawl / batch / extract request or to a monitor definition. Firecrawl also\naccepts webhook objects on `/agent` in live API testing, and publishes\nagent webhook payloads in its webhook OpenAPI. The trigger therefore accepts\nany Firecrawl webhook, but only crawl / batch scrape / agent / monitor have\na published event taxonomy suitable for decomposed trigger variants.",
+      "properties": {
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reference this URL in a Crawl / Batch Scrape / Monitor webhook field, or any other Firecrawl webhook-capable operation",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional Firecrawl webhook secret used to verify X-Firecrawl-Signature",
+          "title": "Webhook Signing Secret",
+          "ui:widget": "password"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "receive_webhook",
+          "default": "receive_webhook",
+          "title": "On Any Firecrawl Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Any Firecrawl Event",
+          "x-is-trigger": true
+        },
+        "event_type": {
+          "default": "*",
+          "description": "Optional exact Firecrawl event type filter. Leave on 'Any published Firecrawl webhook' to accept every event family.",
+          "enum": [
+            "*",
+            "crawl.started",
+            "crawl.page",
+            "crawl.completed",
+            "batch_scrape.started",
+            "batch_scrape.page",
+            "batch_scrape.completed",
+            "agent.started",
+            "agent.action",
+            "agent.completed",
+            "agent.failed",
+            "agent.cancelled",
+            "monitor.page",
+            "monitor.check.completed"
+          ],
+          "enumNames": [
+            "Any published Firecrawl webhook",
+            "Crawl started",
+            "Crawl page",
+            "Crawl completed",
+            "Batch scrape started",
+            "Batch scrape page",
+            "Batch scrape completed",
+            "Agent started",
+            "Agent action",
+            "Agent completed",
+            "Agent failed",
+            "Agent cancelled",
+            "Monitor page",
+            "Monitor check completed"
+          ],
+          "title": "Event Type",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "title": "FirecrawlReceiveWebhookConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "FirecrawlRunMonitorConfig": {
+      "description": "Run a monitor immediately.",
+      "properties": {
+        "operation": {
+          "const": "run_monitor",
+          "default": "run_monitor",
+          "title": "Run Monitor",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Monitoring",
+          "x-display-name": "Run Monitor",
+          "x-is-trigger": false
+        },
+        "monitor_id": {
+          "description": "Monitor identifier",
+          "title": "Monitor ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "monitor_id"
+      ],
+      "title": "FirecrawlRunMonitorConfig",
+      "type": "object"
+    },
+    "FirecrawlScrapeConfig": {
+      "description": "Scrape a single URL and return content as markdown / HTML / links.",
+      "properties": {
+        "operation": {
+          "const": "scrape",
+          "default": "scrape",
+          "title": "Scrape URL",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Scraping",
+          "x-display-name": "Scrape URL",
+          "x-is-trigger": false
+        },
+        "url": {
+          "description": "The URL to scrape",
+          "title": "URL",
+          "type": "string"
+        },
+        "formats": {
+          "default": "markdown",
+          "description": "Output formats to return, comma-separated",
+          "enum": [
+            "markdown",
+            "html",
+            "rawHtml",
+            "links",
+            "screenshot",
+            "summary"
+          ],
+          "title": "Formats",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "only_main_content": {
+          "default": "true",
+          "description": "Strip navigation, footers and other boilerplate",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Only Main Content",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "wait_for": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Milliseconds to wait for the page to render before scraping",
+          "title": "Wait For (ms)"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "FirecrawlScrapeConfig",
+      "type": "object"
+    },
+    "FirecrawlScrapeInteractConfig": {
+      "description": "Execute code in the scrape-bound interact session.",
+      "properties": {
+        "operation": {
+          "const": "scrape_interact",
+          "default": "scrape_interact",
+          "title": "Interact With Scrape Job",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Interact",
+          "x-display-name": "Interact With Scrape Job",
+          "x-is-trigger": false
+        },
+        "job_id": {
+          "description": "The scrape job id",
+          "title": "Job ID",
+          "type": "string"
+        },
+        "code": {
+          "description": "Code to execute in the scrape-bound interact session",
+          "title": "Code",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "language": {
+          "default": "node",
+          "description": "Execution language",
+          "enum": [
+            "python",
+            "node",
+            "bash"
+          ],
+          "title": "Language",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "timeout": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Execution timeout in seconds",
+          "title": "Timeout (seconds)"
+        },
+        "origin": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional origin label for execution telemetry",
+          "title": "Origin"
+        }
+      },
+      "required": [
+        "job_id",
+        "code"
+      ],
+      "title": "FirecrawlScrapeInteractConfig",
+      "type": "object"
+    },
+    "FirecrawlSearchConfig": {
+      "description": "Web search returning results, optionally with full-page content scraped.",
+      "properties": {
+        "operation": {
+          "const": "search",
+          "default": "search",
+          "title": "Search the Web",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Discovery",
+          "x-display-name": "Search the Web",
+          "x-is-trigger": false
+        },
+        "query": {
+          "description": "The search query",
+          "title": "Query",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of results to return",
+          "title": "Limit"
+        },
+        "scrape_content": {
+          "default": "false",
+          "description": "Also scrape full page content for each result",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Scrape Result Content",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "FirecrawlSearchConfig",
+      "type": "object"
+    },
+    "FirecrawlSearchFeedbackConfig": {
+      "description": "Submit feedback for a search job.",
+      "properties": {
+        "operation": {
+          "const": "submit_search_feedback",
+          "default": "submit_search_feedback",
+          "title": "Submit Search Feedback",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Support",
+          "x-display-name": "Submit Search Feedback",
+          "x-is-trigger": false
+        },
+        "job_id": {
+          "description": "The search job id",
+          "title": "Job ID",
+          "type": "string"
+        },
+        "rating": {
+          "description": "Overall feedback rating",
+          "enum": [
+            "good",
+            "partial",
+            "bad"
+          ],
+          "title": "Rating",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "valuable_sources_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array like `[{\"url\":\"https://...\",\"reason\":\"...\"}]`",
+          "title": "Valuable Sources (JSON)",
+          "ui:widget": "textarea"
+        },
+        "missing_content_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array like `[{\"topic\":\"...\",\"description\":\"...\"}]`",
+          "title": "Missing Content (JSON)",
+          "ui:widget": "textarea"
+        },
+        "query_suggestions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Suggestions for better query phrasing",
+          "title": "Query Suggestions"
+        },
+        "origin": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "api",
+          "description": "Feedback origin label",
+          "title": "Origin"
+        },
+        "integration": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional integration label",
+          "title": "Integration"
+        }
+      },
+      "required": [
+        "job_id",
+        "rating"
+      ],
+      "title": "FirecrawlSearchFeedbackConfig",
+      "type": "object"
+    },
+    "FirecrawlSearchResearchGithubConfig": {
+      "description": "Search GitHub history.",
+      "properties": {
+        "operation": {
+          "const": "search_research_github",
+          "default": "search_research_github",
+          "title": "Search GitHub History",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Research",
+          "x-display-name": "Search GitHub History",
+          "x-is-trigger": false
+        },
+        "query": {
+          "description": "Research query",
+          "title": "Query",
+          "type": "string"
+        },
+        "k": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of results to return",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "FirecrawlSearchResearchGithubConfig",
+      "type": "object"
+    },
+    "FirecrawlSearchResearchPapersConfig": {
+      "description": "Search academic papers.",
+      "properties": {
+        "operation": {
+          "const": "search_research_papers",
+          "default": "search_research_papers",
+          "title": "Search Papers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Research",
+          "x-display-name": "Search Papers",
+          "x-is-trigger": false
+        },
+        "query": {
+          "description": "Research query",
+          "title": "Query",
+          "type": "string"
+        },
+        "k": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum papers to return",
+          "title": "Limit"
+        },
+        "authors": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Author names to filter by",
+          "title": "Authors"
+        },
+        "categories": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated paper categories",
+          "title": "Categories"
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Lower ISO 8601 publication date bound",
+          "title": "From Date"
+        },
+        "to_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Upper ISO 8601 publication date bound",
+          "title": "To Date"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "FirecrawlSearchResearchPapersConfig",
+      "type": "object"
+    },
+    "FirecrawlStopScrapeInteractConfig": {
+      "description": "Stop the scrape-bound interact session.",
+      "properties": {
+        "operation": {
+          "const": "stop_scrape_interact",
+          "default": "stop_scrape_interact",
+          "title": "Stop Scrape Interaction",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Interact",
+          "x-display-name": "Stop Scrape Interaction",
+          "x-is-trigger": false
+        },
+        "job_id": {
+          "description": "The scrape job id",
+          "title": "Job ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "FirecrawlStopScrapeInteractConfig",
+      "type": "object"
+    },
+    "FirecrawlSupportAskConfig": {
+      "description": "Ask the Firecrawl support agent.",
+      "properties": {
+        "operation": {
+          "const": "support_ask",
+          "default": "support_ask",
+          "title": "Ask Firecrawl Support",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Support",
+          "x-display-name": "Ask Firecrawl Support",
+          "x-is-trigger": false
+        },
+        "question": {
+          "description": "Support question to ask",
+          "title": "Question",
+          "type": "string"
+        },
+        "rationale": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional context about what you are trying to accomplish",
+          "title": "Rationale"
+        }
+      },
+      "required": [
+        "question"
+      ],
+      "title": "FirecrawlSupportAskConfig",
+      "type": "object"
+    },
+    "FirecrawlSupportDocsSearchConfig": {
+      "description": "Search Firecrawl docs with citations.",
+      "properties": {
+        "operation": {
+          "const": "support_docs_search",
+          "default": "support_docs_search",
+          "title": "Search Firecrawl Docs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Support",
+          "x-display-name": "Search Firecrawl Docs",
+          "x-is-trigger": false
+        },
+        "question": {
+          "description": "Documentation question to answer",
+          "title": "Question",
+          "type": "string"
+        }
+      },
+      "required": [
+        "question"
+      ],
+      "title": "FirecrawlSupportDocsSearchConfig",
+      "type": "object"
+    },
+    "FirecrawlTeamActivityConfig": {
+      "description": "List recent API activity for the authenticated team.",
+      "properties": {
+        "operation": {
+          "const": "team_activity",
+          "default": "team_activity",
+          "title": "List Team Activity",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Usage",
+          "x-display-name": "List Team Activity",
+          "x-is-trigger": false
+        },
+        "endpoint": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional endpoint name to filter activity by",
+          "title": "Endpoint Filter"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of activity records to return",
+          "title": "Limit"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from a previous response",
+          "title": "Cursor"
+        }
+      },
+      "title": "FirecrawlTeamActivityConfig",
+      "type": "object"
+    },
+    "FirecrawlTokenUsageConfig": {
+      "description": "Return LLM token usage (for extract/agent operations).",
+      "properties": {
+        "operation": {
+          "const": "token_usage",
+          "default": "token_usage",
+          "title": "Get Token Usage",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Usage",
+          "x-display-name": "Get Token Usage",
+          "x-is-trigger": false
+        }
+      },
+      "title": "FirecrawlTokenUsageConfig",
+      "type": "object"
+    },
+    "FirecrawlTokenUsageHistoricalConfig": {
+      "description": "Return historical token usage for the account's team.",
+      "properties": {
+        "operation": {
+          "const": "token_usage_historical",
+          "default": "token_usage_historical",
+          "title": "Get Historical Token Usage",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Usage",
+          "x-display-name": "Get Historical Token Usage",
+          "x-is-trigger": false
+        },
+        "by_api_key": {
+          "default": "false",
+          "description": "Return historical usage grouped by API key",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Group By API Key",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "title": "FirecrawlTokenUsageHistoricalConfig",
+      "type": "object"
+    },
+    "FirecrawlUpdateMonitorConfig": {
+      "description": "Update a monitor.",
+      "properties": {
+        "operation": {
+          "const": "update_monitor",
+          "default": "update_monitor",
+          "title": "Update Monitor",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Monitoring",
+          "x-display-name": "Update Monitor",
+          "x-is-trigger": false
+        },
+        "monitor_id": {
+          "description": "Monitor identifier",
+          "title": "Monitor ID",
+          "type": "string"
+        },
+        "update_json": {
+          "description": "Partial monitor update payload",
+          "title": "Update Payload (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "monitor_id",
+        "update_json"
+      ],
+      "title": "FirecrawlUpdateMonitorConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the Firecrawl node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "agent": "#/$defs/FirecrawlAgentConfig",
+          "batch_scrape": "#/$defs/FirecrawlBatchScrapeConfig",
+          "cancel_agent": "#/$defs/FirecrawlCancelAgentConfig",
+          "cancel_batch_scrape": "#/$defs/FirecrawlCancelBatchScrapeConfig",
+          "cancel_crawl": "#/$defs/FirecrawlCancelCrawlConfig",
+          "crawl": "#/$defs/FirecrawlCrawlConfig",
+          "crawl_params_preview": "#/$defs/FirecrawlCrawlParamsPreviewConfig",
+          "create_interact_session": "#/$defs/FirecrawlCreateInteractConfig",
+          "create_monitor": "#/$defs/FirecrawlCreateMonitorConfig",
+          "credit_usage": "#/$defs/FirecrawlCreditUsageConfig",
+          "credit_usage_historical": "#/$defs/FirecrawlCreditUsageHistoricalConfig",
+          "delete_interact_session": "#/$defs/FirecrawlDeleteInteractConfig",
+          "delete_monitor": "#/$defs/FirecrawlDeleteMonitorConfig",
+          "execute_interact_session": "#/$defs/FirecrawlExecuteInteractConfig",
+          "extract": "#/$defs/FirecrawlExtractConfig",
+          "get_agent": "#/$defs/FirecrawlGetAgentConfig",
+          "get_batch_scrape": "#/$defs/FirecrawlGetBatchScrapeConfig",
+          "get_batch_scrape_errors": "#/$defs/FirecrawlGetBatchScrapeErrorsConfig",
+          "get_crawl": "#/$defs/FirecrawlGetCrawlConfig",
+          "get_crawl_errors": "#/$defs/FirecrawlGetCrawlErrorsConfig",
+          "get_extract": "#/$defs/FirecrawlGetExtractConfig",
+          "get_monitor": "#/$defs/FirecrawlGetMonitorConfig",
+          "get_monitor_check": "#/$defs/FirecrawlGetMonitorCheckConfig",
+          "get_research_paper": "#/$defs/FirecrawlGetResearchPaperConfig",
+          "get_scrape": "#/$defs/FirecrawlGetScrapeConfig",
+          "get_similar_research_papers": "#/$defs/FirecrawlGetSimilarResearchPapersConfig",
+          "list_active_crawls": "#/$defs/FirecrawlListActiveCrawlsConfig",
+          "list_interact_sessions": "#/$defs/FirecrawlListInteractConfig",
+          "list_monitor_checks": "#/$defs/FirecrawlListMonitorChecksConfig",
+          "list_monitors": "#/$defs/FirecrawlListMonitorsConfig",
+          "map": "#/$defs/FirecrawlMapConfig",
+          "on_agent_event": "#/$defs/FirecrawlOnAgentEventConfig",
+          "on_batch_scrape_event": "#/$defs/FirecrawlOnBatchScrapeEventConfig",
+          "on_crawl_event": "#/$defs/FirecrawlOnCrawlEventConfig",
+          "on_monitor_event": "#/$defs/FirecrawlOnMonitorEventConfig",
+          "parse": "#/$defs/FirecrawlParseConfig",
+          "queue_status": "#/$defs/FirecrawlQueueStatusConfig",
+          "receive_webhook": "#/$defs/FirecrawlReceiveWebhookConfig",
+          "run_monitor": "#/$defs/FirecrawlRunMonitorConfig",
+          "scrape": "#/$defs/FirecrawlScrapeConfig",
+          "scrape_interact": "#/$defs/FirecrawlScrapeInteractConfig",
+          "search": "#/$defs/FirecrawlSearchConfig",
+          "search_research_github": "#/$defs/FirecrawlSearchResearchGithubConfig",
+          "search_research_papers": "#/$defs/FirecrawlSearchResearchPapersConfig",
+          "stop_scrape_interact": "#/$defs/FirecrawlStopScrapeInteractConfig",
+          "submit_feedback": "#/$defs/FirecrawlEndpointFeedbackConfig",
+          "submit_search_feedback": "#/$defs/FirecrawlSearchFeedbackConfig",
+          "support_ask": "#/$defs/FirecrawlSupportAskConfig",
+          "support_docs_search": "#/$defs/FirecrawlSupportDocsSearchConfig",
+          "team_activity": "#/$defs/FirecrawlTeamActivityConfig",
+          "token_usage": "#/$defs/FirecrawlTokenUsageConfig",
+          "token_usage_historical": "#/$defs/FirecrawlTokenUsageHistoricalConfig",
+          "update_monitor": "#/$defs/FirecrawlUpdateMonitorConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/FirecrawlScrapeConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlGetScrapeConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlBatchScrapeConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlGetBatchScrapeConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlCancelBatchScrapeConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlGetBatchScrapeErrorsConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlCrawlConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlGetCrawlConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlCancelCrawlConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlGetCrawlErrorsConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlListActiveCrawlsConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlCrawlParamsPreviewConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlMapConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlSearchResearchGithubConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlSearchResearchPapersConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlGetResearchPaperConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlGetSimilarResearchPapersConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlExtractConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlGetExtractConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlAgentConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlGetAgentConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlCancelAgentConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlParseConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlCreateInteractConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlListInteractConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlExecuteInteractConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlDeleteInteractConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlScrapeInteractConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlStopScrapeInteractConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlCreditUsageConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlTokenUsageConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlCreditUsageHistoricalConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlTokenUsageHistoricalConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlQueueStatusConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlTeamActivityConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlEndpointFeedbackConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlSearchFeedbackConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlSupportAskConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlSupportDocsSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlCreateMonitorConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlListMonitorsConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlGetMonitorConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlUpdateMonitorConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlDeleteMonitorConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlListMonitorChecksConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlGetMonitorCheckConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlRunMonitorConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlReceiveWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlOnCrawlEventConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlOnBatchScrapeEventConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlOnAgentEventConfig"
+        },
+        {
+          "$ref": "#/$defs/FirecrawlOnMonitorEventConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FirecrawlAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Firecrawl Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Scrape a product page and return it as markdown",
+    "Crawl an entire documentation site and collect every page",
+    "Map all the URLs on a competitor's website",
+    "Search the web for recent news and scrape the top results",
+    "Extract structured pricing data from a list of URLs",
+    "Trigger a workflow when an async crawl job completes"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -1,0 +1,69 @@
+{
+  "$defs": {
+    "DataframeConfig": {
+      "description": "Configuration for the dataframe interface component.",
+      "properties": {
+        "resource_id": {
+          "default": "",
+          "description": "Select an existing dataset resource to display",
+          "title": "Dataset",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": false,
+            "field_name": "resource_id",
+            "placeholder": "Select a dataset...",
+            "searchable": true
+          }
+        },
+        "data": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "items": {},
+              "type": "array"
+            },
+            {
+              "additionalProperties": true,
+              "type": "object"
+            }
+          ],
+          "default": "",
+          "title": "Data",
+          "ui:placeholder": "[{\"name\": \"Alice\", \"age\": 30}]",
+          "ui:rows": 6,
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "DataframeConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for dataframe interface node (no credentials).",
+  "properties": {
+    "config": {
+      "$ref": "#/$defs/DataframeConfig",
+      "description": "Node-specific configuration"
+    },
+    "credentials": {
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials",
+      "type": "null"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Interface-dataframe Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Display a persisted dataset resource as a table",
+    "Show data from an upstream node as a table",
+    "Load JSON array inline and display as table",
+    "Increase the table height to show more rows",
+    "Switch to a different dataset resource"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

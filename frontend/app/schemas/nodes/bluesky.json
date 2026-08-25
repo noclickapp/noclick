@@ -1,0 +1,4854 @@
+{
+  "$defs": {
+    "BlueSkyAcceptConversationConfig": {
+      "description": "Accept a conversation request",
+      "properties": {
+        "operation": {
+          "const": "accept_conversation_request",
+          "default": "accept_conversation_request",
+          "title": "Accept Conversation Request",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Accept Conversation Request",
+          "x-is-trigger": false
+        },
+        "convo_id": {
+          "minLength": 1,
+          "title": "Conversation ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "convo_id"
+      ],
+      "title": "BlueSkyAcceptConversationConfig",
+      "type": "object"
+    },
+    "BlueSkyActivateAccountConfig": {
+      "description": "Reactivate deactivated account",
+      "properties": {
+        "operation": {
+          "const": "activate_account",
+          "default": "activate_account",
+          "title": "Activate Account",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Activate Account",
+          "x-is-trigger": false
+        }
+      },
+      "title": "BlueSkyActivateAccountConfig",
+      "type": "object"
+    },
+    "BlueSkyAddMessageReactionConfig": {
+      "description": "Add a reaction to a message",
+      "properties": {
+        "operation": {
+          "const": "add_reaction_to_message",
+          "default": "add_reaction_to_message",
+          "title": "Add Reaction to Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Add Reaction to Message",
+          "x-is-trigger": false
+        },
+        "convo_id": {
+          "minLength": 1,
+          "title": "Conversation ID",
+          "type": "string"
+        },
+        "message_id": {
+          "minLength": 1,
+          "title": "Message ID",
+          "type": "string"
+        },
+        "reaction": {
+          "description": "Emoji or reaction string",
+          "maxLength": 10,
+          "minLength": 1,
+          "title": "Reaction",
+          "type": "string"
+        }
+      },
+      "required": [
+        "convo_id",
+        "message_id",
+        "reaction"
+      ],
+      "title": "BlueSkyAddMessageReactionConfig",
+      "type": "object"
+    },
+    "BlueSkyAppPasswordCredential": {
+      "description": "BlueSky App Password credential (recommended for automation).\n\nCreate an App Password from BlueSky settings for secure API access\nwithout exposing your main account password.",
+      "properties": {
+        "credential_type": {
+          "const": "bluesky_handle_password",
+          "default": "bluesky_handle_password",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "identifier": {
+          "description": "Your BlueSky handle (e.g., user.bsky.social) or email address",
+          "minLength": 1,
+          "placeholder": "user.bsky.social",
+          "title": "Handle or Email",
+          "type": "string"
+        },
+        "app_password": {
+          "description": "App Password from BlueSky settings (not your main password)",
+          "minLength": 1,
+          "placeholder": "xxxx-xxxx-xxxx-xxxx",
+          "title": "App Password",
+          "type": "string",
+          "ui:widget": "password",
+          "x-credential-url": "https://bsky.app/settings/app-passwords"
+        }
+      },
+      "required": [
+        "identifier",
+        "app_password"
+      ],
+      "title": "BlueSkyAppPasswordCredential",
+      "type": "object"
+    },
+    "BlueSkyApplyWritesConfig": {
+      "description": "Apply multiple write operations atomically",
+      "properties": {
+        "operation": {
+          "const": "apply_writes_atomically",
+          "default": "apply_writes_atomically",
+          "title": "Apply Writes Atomically",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Record",
+          "x-display-name": "Apply Writes Atomically",
+          "x-is-trigger": false
+        },
+        "writes": {
+          "description": "List of write operations (create, update, delete)",
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "minItems": 1,
+          "title": "Writes",
+          "type": "array"
+        },
+        "swap_commit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "CID for optimistic concurrency",
+          "title": "Swap Commit"
+        }
+      },
+      "required": [
+        "writes"
+      ],
+      "title": "BlueSkyApplyWritesConfig",
+      "type": "object"
+    },
+    "BlueSkyBeginAgeAssuranceConfig": {
+      "description": "Start age assurance process",
+      "properties": {
+        "operation": {
+          "const": "begin_age_assurance",
+          "default": "begin_age_assurance",
+          "title": "Begin Age Assurance",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Begin Age Assurance",
+          "x-is-trigger": false
+        }
+      },
+      "title": "BlueSkyBeginAgeAssuranceConfig",
+      "type": "object"
+    },
+    "BlueSkyBlockUserConfig": {
+      "description": "Block a user",
+      "properties": {
+        "operation": {
+          "const": "block_user",
+          "default": "block_user",
+          "title": "Block User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Block User",
+          "x-is-trigger": false
+        },
+        "subject_did": {
+          "description": "DID of the user to block",
+          "minLength": 1,
+          "title": "User DID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "subject_did"
+      ],
+      "title": "BlueSkyBlockUserConfig",
+      "type": "object"
+    },
+    "BlueSkyCheckAccountStatusConfig": {
+      "description": "Verify account status",
+      "properties": {
+        "operation": {
+          "const": "check_account_status",
+          "default": "check_account_status",
+          "title": "Check Account Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Check Account Status",
+          "x-is-trigger": false
+        }
+      },
+      "title": "BlueSkyCheckAccountStatusConfig",
+      "type": "object"
+    },
+    "BlueSkyConfirmEmailConfig": {
+      "description": "Confirm email address",
+      "properties": {
+        "operation": {
+          "const": "confirm_email",
+          "default": "confirm_email",
+          "title": "Confirm Email",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Confirm Email",
+          "x-is-trigger": false
+        },
+        "token": {
+          "minLength": 1,
+          "title": "Confirmation Token",
+          "type": "string"
+        },
+        "email": {
+          "minLength": 1,
+          "title": "Email Address",
+          "type": "string"
+        }
+      },
+      "required": [
+        "token",
+        "email"
+      ],
+      "title": "BlueSkyConfirmEmailConfig",
+      "type": "object"
+    },
+    "BlueSkyCreateAppPasswordConfig": {
+      "description": "Generate application password",
+      "properties": {
+        "operation": {
+          "const": "create_app_password",
+          "default": "create_app_password",
+          "title": "Create App Password",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Create App Password",
+          "x-is-trigger": false
+        },
+        "name": {
+          "minLength": 1,
+          "title": "App Password Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "BlueSkyCreateAppPasswordConfig",
+      "type": "object"
+    },
+    "BlueSkyCreateBookmarkConfig": {
+      "description": "Save a post to bookmarks",
+      "properties": {
+        "operation": {
+          "const": "create_post_bookmark",
+          "default": "create_post_bookmark",
+          "title": "Create Post Bookmark",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Create Post Bookmark",
+          "x-is-trigger": false
+        },
+        "post_uri": {
+          "description": "AT URI of the post to bookmark",
+          "minLength": 1,
+          "title": "Post URI",
+          "type": "string"
+        },
+        "post_cid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "CID of the post (will be fetched automatically if not provided)",
+          "title": "Post CID"
+        }
+      },
+      "required": [
+        "post_uri"
+      ],
+      "title": "BlueSkyCreateBookmarkConfig",
+      "type": "object"
+    },
+    "BlueSkyCreateInviteCodeConfig": {
+      "description": "Generate invite code",
+      "properties": {
+        "operation": {
+          "const": "create_invite_code",
+          "default": "create_invite_code",
+          "title": "Create Invite Code",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Create Invite Code",
+          "x-is-trigger": false
+        },
+        "use_count": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Number of Uses",
+          "type": "integer"
+        }
+      },
+      "title": "BlueSkyCreateInviteCodeConfig",
+      "type": "object"
+    },
+    "BlueSkyCreateInviteCodesConfig": {
+      "description": "Generate multiple invite codes",
+      "properties": {
+        "operation": {
+          "const": "create_multiple_invite_codes",
+          "default": "create_multiple_invite_codes",
+          "title": "Create Multiple Invite Codes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Create Multiple Invite Codes",
+          "x-is-trigger": false
+        },
+        "code_count": {
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Number of Codes",
+          "type": "integer"
+        },
+        "use_count": {
+          "default": 1,
+          "minimum": 1,
+          "title": "Uses Per Code",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "code_count"
+      ],
+      "title": "BlueSkyCreateInviteCodesConfig",
+      "type": "object"
+    },
+    "BlueSkyCreateModerationReportConfig": {
+      "description": "Submit moderation report",
+      "properties": {
+        "operation": {
+          "const": "create_moderation_report",
+          "default": "create_moderation_report",
+          "title": "Create Moderation Report",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Create Moderation Report",
+          "x-is-trigger": false
+        },
+        "reason_type": {
+          "title": "Reason Type",
+          "type": "string"
+        },
+        "subject": {
+          "additionalProperties": true,
+          "description": "Subject being reported",
+          "title": "Subject",
+          "type": "object"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Additional context",
+          "title": "Reason"
+        }
+      },
+      "required": [
+        "reason_type",
+        "subject"
+      ],
+      "title": "BlueSkyCreateModerationReportConfig",
+      "type": "object"
+    },
+    "BlueSkyCreatePostConfig": {
+      "description": "Create a new post",
+      "properties": {
+        "operation": {
+          "const": "create_post",
+          "default": "create_post",
+          "title": "Create Post",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Create Post",
+          "x-is-trigger": false
+        },
+        "text": {
+          "description": "The text content of your post (max 300 characters)",
+          "maxLength": 300,
+          "minLength": 1,
+          "title": "Post Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "reply_to_uri": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional: AT URI of post to reply to",
+          "title": "Reply To URI"
+        },
+        "reply_to_cid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional: CID of the post being replied to",
+          "title": "Reply To CID"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "BlueSkyCreatePostConfig",
+      "type": "object"
+    },
+    "BlueSkyCreateRecordConfig": {
+      "description": "Create a record in the repository",
+      "properties": {
+        "operation": {
+          "const": "create_repository_record",
+          "default": "create_repository_record",
+          "title": "Create Repository Record",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Record",
+          "x-display-name": "Create Repository Record",
+          "x-is-trigger": false
+        },
+        "collection": {
+          "description": "Collection name (e.g., app.bsky.feed.post)",
+          "minLength": 1,
+          "title": "Collection",
+          "type": "string"
+        },
+        "record": {
+          "additionalProperties": true,
+          "description": "Record data as JSON object",
+          "title": "Record",
+          "type": "object"
+        },
+        "rkey": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional record key (auto-generated if not provided)",
+          "title": "Record Key"
+        }
+      },
+      "required": [
+        "collection",
+        "record"
+      ],
+      "title": "BlueSkyCreateRecordConfig",
+      "type": "object"
+    },
+    "BlueSkyDeactivateAccountConfig": {
+      "description": "Temporarily disable account",
+      "properties": {
+        "operation": {
+          "const": "deactivate_account",
+          "default": "deactivate_account",
+          "title": "Deactivate Account",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Deactivate Account",
+          "x-is-trigger": false
+        }
+      },
+      "title": "BlueSkyDeactivateAccountConfig",
+      "type": "object"
+    },
+    "BlueSkyDeleteAccountConfig": {
+      "description": "Permanently remove account",
+      "properties": {
+        "operation": {
+          "const": "delete_account",
+          "default": "delete_account",
+          "title": "Delete Account",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Delete Account",
+          "x-is-trigger": false
+        },
+        "password": {
+          "minLength": 1,
+          "title": "Account Password",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "token": {
+          "minLength": 1,
+          "title": "Deletion Token",
+          "type": "string"
+        }
+      },
+      "required": [
+        "password",
+        "token"
+      ],
+      "title": "BlueSkyDeleteAccountConfig",
+      "type": "object"
+    },
+    "BlueSkyDeleteBookmarkConfig": {
+      "description": "Remove a bookmark",
+      "properties": {
+        "operation": {
+          "const": "delete_post_bookmark",
+          "default": "delete_post_bookmark",
+          "title": "Delete Post Bookmark",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Delete Post Bookmark",
+          "x-is-trigger": false
+        },
+        "post_uri": {
+          "description": "BlueSky URL (https://bsky.app/profile/.../post/...) or AT URI (at://...) of the post to remove bookmark from",
+          "minLength": 1,
+          "title": "Post URL or URI",
+          "type": "string"
+        }
+      },
+      "required": [
+        "post_uri"
+      ],
+      "title": "BlueSkyDeleteBookmarkConfig",
+      "type": "object"
+    },
+    "BlueSkyDeleteChatAccountConfig": {
+      "description": "Delete chat account",
+      "properties": {
+        "operation": {
+          "const": "delete_chat_account",
+          "default": "delete_chat_account",
+          "title": "Delete Chat Account",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Delete Chat Account",
+          "x-is-trigger": false
+        }
+      },
+      "title": "BlueSkyDeleteChatAccountConfig",
+      "type": "object"
+    },
+    "BlueSkyDeleteMessageConfig": {
+      "description": "Delete a message (for self only)",
+      "properties": {
+        "operation": {
+          "const": "delete_message_for_self",
+          "default": "delete_message_for_self",
+          "title": "Delete Message for Self",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Delete Message for Self",
+          "x-is-trigger": false
+        },
+        "convo_id": {
+          "minLength": 1,
+          "title": "Conversation ID",
+          "type": "string"
+        },
+        "message_id": {
+          "minLength": 1,
+          "title": "Message ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "convo_id",
+        "message_id"
+      ],
+      "title": "BlueSkyDeleteMessageConfig",
+      "type": "object"
+    },
+    "BlueSkyDeletePostConfig": {
+      "description": "Delete a post",
+      "properties": {
+        "operation": {
+          "const": "delete_post",
+          "default": "delete_post",
+          "title": "Delete Post",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Delete Post",
+          "x-is-trigger": false
+        },
+        "post_uri": {
+          "description": "BlueSky URL (https://bsky.app/profile/.../post/...) or AT URI (at://...)",
+          "minLength": 1,
+          "title": "Post URL or URI",
+          "type": "string"
+        }
+      },
+      "required": [
+        "post_uri"
+      ],
+      "title": "BlueSkyDeletePostConfig",
+      "type": "object"
+    },
+    "BlueSkyDeleteRecordConfig": {
+      "description": "Delete a record from the repository",
+      "properties": {
+        "operation": {
+          "const": "delete_repository_record",
+          "default": "delete_repository_record",
+          "title": "Delete Repository Record",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Record",
+          "x-display-name": "Delete Repository Record",
+          "x-is-trigger": false
+        },
+        "collection": {
+          "minLength": 1,
+          "title": "Collection",
+          "type": "string"
+        },
+        "rkey": {
+          "minLength": 1,
+          "title": "Record Key",
+          "type": "string"
+        },
+        "swap_commit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "CID for optimistic concurrency",
+          "title": "Swap Commit"
+        }
+      },
+      "required": [
+        "collection",
+        "rkey"
+      ],
+      "title": "BlueSkyDeleteRecordConfig",
+      "type": "object"
+    },
+    "BlueSkyDeleteSessionConfig": {
+      "description": "Logout/end session",
+      "properties": {
+        "operation": {
+          "const": "delete_session_logout",
+          "default": "delete_session_logout",
+          "title": "Delete Session Logout",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Delete Session Logout",
+          "x-is-trigger": false
+        }
+      },
+      "title": "BlueSkyDeleteSessionConfig",
+      "type": "object"
+    },
+    "BlueSkyDescribeFeedGeneratorConfig": {
+      "description": "Get feed generator metadata",
+      "properties": {
+        "operation": {
+          "const": "describe_feed_generator",
+          "default": "describe_feed_generator",
+          "title": "Describe Feed Generator",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Feed",
+          "x-display-name": "Describe Feed Generator",
+          "x-is-trigger": false
+        },
+        "feed_uri": {
+          "description": "AT URI of the feed generator",
+          "minLength": 1,
+          "title": "Feed URI",
+          "type": "string"
+        }
+      },
+      "required": [
+        "feed_uri"
+      ],
+      "title": "BlueSkyDescribeFeedGeneratorConfig",
+      "type": "object"
+    },
+    "BlueSkyDescribeRepoConfig": {
+      "description": "Get repository description and metadata",
+      "properties": {
+        "operation": {
+          "const": "describe_repository",
+          "default": "describe_repository",
+          "title": "Describe Repository",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Repository",
+          "x-display-name": "Describe Repository",
+          "x-is-trigger": false
+        },
+        "repo": {
+          "description": "Repository DID or handle",
+          "minLength": 1,
+          "title": "Repository",
+          "type": "string"
+        }
+      },
+      "required": [
+        "repo"
+      ],
+      "title": "BlueSkyDescribeRepoConfig",
+      "type": "object"
+    },
+    "BlueSkyDescribeServerConfig": {
+      "description": "Get server information",
+      "properties": {
+        "operation": {
+          "const": "describe_server",
+          "default": "describe_server",
+          "title": "Describe Server",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Server",
+          "x-display-name": "Describe Server",
+          "x-is-trigger": false
+        }
+      },
+      "title": "BlueSkyDescribeServerConfig",
+      "type": "object"
+    },
+    "BlueSkyFollowUserConfig": {
+      "description": "Follow a user",
+      "properties": {
+        "operation": {
+          "const": "follow_user",
+          "default": "follow_user",
+          "title": "Follow User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Follow User",
+          "x-is-trigger": false
+        },
+        "subject_did": {
+          "description": "DID of the user to follow",
+          "minLength": 1,
+          "title": "User DID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "subject_did"
+      ],
+      "title": "BlueSkyFollowUserConfig",
+      "type": "object"
+    },
+    "BlueSkyGetAccountInviteCodesConfig": {
+      "description": "Retrieve generated codes",
+      "properties": {
+        "operation": {
+          "const": "list_account_invite_codes",
+          "default": "list_account_invite_codes",
+          "title": "List Account Invite Codes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "List Account Invite Codes",
+          "x-is-trigger": false
+        }
+      },
+      "title": "BlueSkyGetAccountInviteCodesConfig",
+      "type": "object"
+    },
+    "BlueSkyGetActorFeedsConfig": {
+      "description": "Get feed generators created by an actor",
+      "properties": {
+        "operation": {
+          "const": "list_actor_feed_generators",
+          "default": "list_actor_feed_generators",
+          "title": "List Actor Feed Generators",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Feed",
+          "x-display-name": "List Actor Feed Generators",
+          "x-is-trigger": false
+        },
+        "actor": {
+          "minLength": 1,
+          "title": "Actor Handle or DID",
+          "type": "string"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Number of feeds (1-100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "actor"
+      ],
+      "title": "BlueSkyGetActorFeedsConfig",
+      "type": "object"
+    },
+    "BlueSkyGetActorLikesConfig": {
+      "description": "Get posts liked by an actor",
+      "properties": {
+        "operation": {
+          "const": "list_actor_liked_posts",
+          "default": "list_actor_liked_posts",
+          "title": "List Actor Liked Posts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "List Actor Liked Posts",
+          "x-is-trigger": false
+        },
+        "actor": {
+          "minLength": 1,
+          "title": "Actor Handle or DID",
+          "type": "string"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Number of liked posts (1-100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "actor"
+      ],
+      "title": "BlueSkyGetActorLikesConfig",
+      "type": "object"
+    },
+    "BlueSkyGetActorStarterPacksConfig": {
+      "description": "Get starter packs created by user",
+      "properties": {
+        "operation": {
+          "const": "list_actor_starter_packs",
+          "default": "list_actor_starter_packs",
+          "title": "List Actor Starter Packs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Starter Pack",
+          "x-display-name": "List Actor Starter Packs",
+          "x-is-trigger": false
+        },
+        "actor": {
+          "minLength": 1,
+          "title": "Actor Handle or DID",
+          "type": "string"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "actor"
+      ],
+      "title": "BlueSkyGetActorStarterPacksConfig",
+      "type": "object"
+    },
+    "BlueSkyGetAgeAssuranceConfigConfig": {
+      "description": "Retrieve age assurance configuration",
+      "properties": {
+        "operation": {
+          "const": "get_age_assurance_config",
+          "default": "get_age_assurance_config",
+          "title": "Get Age Assurance Config",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Age Assurance Config",
+          "x-is-trigger": false
+        }
+      },
+      "title": "BlueSkyGetAgeAssuranceConfigConfig",
+      "type": "object"
+    },
+    "BlueSkyGetAgeAssuranceStateConfig": {
+      "description": "Check age assurance status",
+      "properties": {
+        "operation": {
+          "const": "get_age_assurance_state",
+          "default": "get_age_assurance_state",
+          "title": "Get Age Assurance State",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Age Assurance State",
+          "x-is-trigger": false
+        }
+      },
+      "title": "BlueSkyGetAgeAssuranceStateConfig",
+      "type": "object"
+    },
+    "BlueSkyGetAuthorFeedConfig": {
+      "description": "Get posts from a specific user's feed",
+      "properties": {
+        "operation": {
+          "const": "get_author_feed",
+          "default": "get_author_feed",
+          "title": "Get Author Feed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Get Author Feed",
+          "x-is-trigger": false
+        },
+        "actor": {
+          "description": "Handle (e.g., user.bsky.social) or DID of the user",
+          "minLength": 1,
+          "title": "Actor Handle or DID",
+          "type": "string"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Number of posts to retrieve (1-100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "posts_and_author_threads",
+          "description": "Type of posts to include",
+          "enum": [
+            "posts_with_replies",
+            "posts_no_replies",
+            "posts_with_media",
+            "posts_and_author_threads"
+          ],
+          "title": "Filter"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "actor"
+      ],
+      "title": "BlueSkyGetAuthorFeedConfig",
+      "type": "object"
+    },
+    "BlueSkyGetBlocksConfig": {
+      "description": "Get blocked accounts",
+      "properties": {
+        "operation": {
+          "const": "list_blocked_accounts",
+          "default": "list_blocked_accounts",
+          "title": "List Blocked Accounts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Block",
+          "x-display-name": "List Blocked Accounts",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "default": 50,
+          "description": "Number of blocks (1-100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor",
+          "title": "Cursor"
+        }
+      },
+      "title": "BlueSkyGetBlocksConfig",
+      "type": "object"
+    },
+    "BlueSkyGetBookmarksConfig": {
+      "description": "Get user's bookmarks",
+      "properties": {
+        "operation": {
+          "const": "list_bookmarks",
+          "default": "list_bookmarks",
+          "title": "List Bookmarks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "List Bookmarks",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "default": 50,
+          "description": "Number of bookmarks (1-100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor",
+          "title": "Cursor"
+        }
+      },
+      "title": "BlueSkyGetBookmarksConfig",
+      "type": "object"
+    },
+    "BlueSkyGetConversationConfig": {
+      "description": "Get a specific conversation",
+      "properties": {
+        "operation": {
+          "const": "get_conversation",
+          "default": "get_conversation",
+          "title": "Get Conversation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Get Conversation",
+          "x-is-trigger": false
+        },
+        "convo_id": {
+          "description": "ID of the conversation",
+          "minLength": 1,
+          "title": "Conversation ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "convo_id"
+      ],
+      "title": "BlueSkyGetConversationConfig",
+      "type": "object"
+    },
+    "BlueSkyGetConversationForMembersConfig": {
+      "description": "Get conversation with specific members",
+      "properties": {
+        "operation": {
+          "const": "get_conversation_with_members",
+          "default": "get_conversation_with_members",
+          "title": "Get Conversation with Members",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Get Conversation with Members",
+          "x-is-trigger": false
+        },
+        "members": {
+          "description": "List of member DIDs (max 10)",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 10,
+          "minItems": 1,
+          "title": "Member DIDs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "members"
+      ],
+      "title": "BlueSkyGetConversationForMembersConfig",
+      "type": "object"
+    },
+    "BlueSkyGetConversationLogConfig": {
+      "description": "Get conversation event log",
+      "properties": {
+        "operation": {
+          "const": "get_conversation_event_log",
+          "default": "get_conversation_event_log",
+          "title": "Get Conversation Event Log",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Get Conversation Event Log",
+          "x-is-trigger": false
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        }
+      },
+      "title": "BlueSkyGetConversationLogConfig",
+      "type": "object"
+    },
+    "BlueSkyGetConvoAvailabilityConfig": {
+      "description": "Check if conversation possible",
+      "properties": {
+        "operation": {
+          "const": "check_conversation_availability",
+          "default": "check_conversation_availability",
+          "title": "Check Conversation Availability",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Check Conversation Availability",
+          "x-is-trigger": false
+        },
+        "actor": {
+          "minLength": 1,
+          "title": "Actor Handle or DID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "actor"
+      ],
+      "title": "BlueSkyGetConvoAvailabilityConfig",
+      "type": "object"
+    },
+    "BlueSkyGetFeedConfig": {
+      "description": "Get posts from a custom feed",
+      "properties": {
+        "operation": {
+          "const": "get_custom_feed_posts",
+          "default": "get_custom_feed_posts",
+          "title": "Get Custom Feed Posts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Get Custom Feed Posts",
+          "x-is-trigger": false
+        },
+        "feed_uri": {
+          "description": "AT URI of the feed",
+          "minLength": 1,
+          "title": "Feed URI",
+          "type": "string"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Number of posts (1-100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "feed_uri"
+      ],
+      "title": "BlueSkyGetFeedConfig",
+      "type": "object"
+    },
+    "BlueSkyGetFeedGeneratorConfig": {
+      "description": "Get information about a feed generator",
+      "properties": {
+        "operation": {
+          "const": "get_feed_generator",
+          "default": "get_feed_generator",
+          "title": "Get Feed Generator",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Feed",
+          "x-display-name": "Get Feed Generator",
+          "x-is-trigger": false
+        },
+        "feed_uri": {
+          "description": "AT URI of the feed generator",
+          "minLength": 1,
+          "title": "Feed URI",
+          "type": "string"
+        }
+      },
+      "required": [
+        "feed_uri"
+      ],
+      "title": "BlueSkyGetFeedGeneratorConfig",
+      "type": "object"
+    },
+    "BlueSkyGetFeedGeneratorsConfig": {
+      "description": "Get multiple feed generators",
+      "properties": {
+        "operation": {
+          "const": "get_multiple_feed_generators",
+          "default": "get_multiple_feed_generators",
+          "title": "Get Multiple Feed Generators",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Feed",
+          "x-display-name": "Get Multiple Feed Generators",
+          "x-is-trigger": false
+        },
+        "feeds": {
+          "description": "List of feed URIs to retrieve (max 25)",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 25,
+          "minItems": 1,
+          "title": "Feed URIs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "feeds"
+      ],
+      "title": "BlueSkyGetFeedGeneratorsConfig",
+      "type": "object"
+    },
+    "BlueSkyGetFeedSkeletonConfig": {
+      "description": "Retrieve feed skeleton structure",
+      "properties": {
+        "operation": {
+          "const": "get_feed_skeleton",
+          "default": "get_feed_skeleton",
+          "title": "Get Feed Skeleton",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Get Feed Skeleton",
+          "x-is-trigger": false
+        },
+        "feed_uri": {
+          "minLength": 1,
+          "title": "Feed URI",
+          "type": "string"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Number of items (1-100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "feed_uri"
+      ],
+      "title": "BlueSkyGetFeedSkeletonConfig",
+      "type": "object"
+    },
+    "BlueSkyGetFollowersConfig": {
+      "description": "Get an actor's followers",
+      "properties": {
+        "operation": {
+          "const": "list_actor_followers",
+          "default": "list_actor_followers",
+          "title": "List Actor Followers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "List Actor Followers",
+          "x-is-trigger": false
+        },
+        "actor": {
+          "minLength": 1,
+          "title": "Actor Handle or DID",
+          "type": "string"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Number of followers (1-100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "actor"
+      ],
+      "title": "BlueSkyGetFollowersConfig",
+      "type": "object"
+    },
+    "BlueSkyGetFollowsConfig": {
+      "description": "Get accounts that an actor follows",
+      "properties": {
+        "operation": {
+          "const": "list_actor_follows",
+          "default": "list_actor_follows",
+          "title": "List Actor Follows",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "List Actor Follows",
+          "x-is-trigger": false
+        },
+        "actor": {
+          "minLength": 1,
+          "title": "Actor Handle or DID",
+          "type": "string"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Number of follows (1-100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "actor"
+      ],
+      "title": "BlueSkyGetFollowsConfig",
+      "type": "object"
+    },
+    "BlueSkyGetKnownFollowersConfig": {
+      "description": "Get mutual followers",
+      "properties": {
+        "operation": {
+          "const": "list_mutual_followers",
+          "default": "list_mutual_followers",
+          "title": "List Mutual Followers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "List Mutual Followers",
+          "x-is-trigger": false
+        },
+        "actor": {
+          "minLength": 1,
+          "title": "Actor Handle or DID",
+          "type": "string"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "actor"
+      ],
+      "title": "BlueSkyGetKnownFollowersConfig",
+      "type": "object"
+    },
+    "BlueSkyGetLabelerServicesConfig": {
+      "description": "Retrieve labeling services",
+      "properties": {
+        "operation": {
+          "const": "get_labeler_services",
+          "default": "get_labeler_services",
+          "title": "Get Labeler Services",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Labeler",
+          "x-display-name": "Get Labeler Services",
+          "x-is-trigger": false
+        },
+        "dids": {
+          "description": "List of labeler service DIDs (max 25)",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 25,
+          "minItems": 1,
+          "title": "Service DIDs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "dids"
+      ],
+      "title": "BlueSkyGetLabelerServicesConfig",
+      "type": "object"
+    },
+    "BlueSkyGetLikesConfig": {
+      "description": "Get users who liked a post",
+      "properties": {
+        "operation": {
+          "const": "list_post_likers",
+          "default": "list_post_likers",
+          "title": "List Post Likers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "List Post Likers",
+          "x-is-trigger": false
+        },
+        "post_uri": {
+          "description": "BlueSky URL (https://bsky.app/profile/.../post/...) or AT URI (at://...)",
+          "minLength": 1,
+          "title": "Post URL or URI",
+          "type": "string"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Number of likes to retrieve (1-100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "post_uri"
+      ],
+      "title": "BlueSkyGetLikesConfig",
+      "type": "object"
+    },
+    "BlueSkyGetListBlocksConfig": {
+      "description": "Get blocked lists",
+      "properties": {
+        "operation": {
+          "const": "list_blocked_lists",
+          "default": "list_blocked_lists",
+          "title": "List Blocked Lists",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "List",
+          "x-display-name": "List Blocked Lists",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        }
+      },
+      "title": "BlueSkyGetListBlocksConfig",
+      "type": "object"
+    },
+    "BlueSkyGetListConfig": {
+      "description": "Get a list and its members",
+      "properties": {
+        "operation": {
+          "const": "get_list_with_members",
+          "default": "get_list_with_members",
+          "title": "Get List with Members",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "List",
+          "x-display-name": "Get List with Members",
+          "x-is-trigger": false
+        },
+        "list_uri": {
+          "description": "AT URI of the list",
+          "minLength": 1,
+          "title": "List URI",
+          "type": "string"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Number of members (1-100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "list_uri"
+      ],
+      "title": "BlueSkyGetListConfig",
+      "type": "object"
+    },
+    "BlueSkyGetListFeedConfig": {
+      "description": "Get posts from members of a list",
+      "properties": {
+        "operation": {
+          "const": "get_list_member_feed",
+          "default": "get_list_member_feed",
+          "title": "Get List Member Feed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "List",
+          "x-display-name": "Get List Member Feed",
+          "x-is-trigger": false
+        },
+        "list_uri": {
+          "description": "AT URI of the list",
+          "minLength": 1,
+          "title": "List URI",
+          "type": "string"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Number of posts (1-100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "list_uri"
+      ],
+      "title": "BlueSkyGetListFeedConfig",
+      "type": "object"
+    },
+    "BlueSkyGetListMutesConfig": {
+      "description": "Get muted lists",
+      "properties": {
+        "operation": {
+          "const": "list_muted_lists",
+          "default": "list_muted_lists",
+          "title": "List Muted Lists",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "List",
+          "x-display-name": "List Muted Lists",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        }
+      },
+      "title": "BlueSkyGetListMutesConfig",
+      "type": "object"
+    },
+    "BlueSkyGetListsConfig": {
+      "description": "Get lists created by an actor",
+      "properties": {
+        "operation": {
+          "const": "list_actor_lists",
+          "default": "list_actor_lists",
+          "title": "List Actor Lists",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "List",
+          "x-display-name": "List Actor Lists",
+          "x-is-trigger": false
+        },
+        "actor": {
+          "minLength": 1,
+          "title": "Actor Handle or DID",
+          "type": "string"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Number of lists (1-100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "actor"
+      ],
+      "title": "BlueSkyGetListsConfig",
+      "type": "object"
+    },
+    "BlueSkyGetListsWithMembershipConfig": {
+      "description": "Get lists containing user",
+      "properties": {
+        "operation": {
+          "const": "list_actor_membership_lists",
+          "default": "list_actor_membership_lists",
+          "title": "List Actor Membership Lists",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "List",
+          "x-display-name": "List Actor Membership Lists",
+          "x-is-trigger": false
+        },
+        "actor": {
+          "minLength": 1,
+          "title": "Actor Handle or DID",
+          "type": "string"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "actor"
+      ],
+      "title": "BlueSkyGetListsWithMembershipConfig",
+      "type": "object"
+    },
+    "BlueSkyGetMessagesConfig": {
+      "description": "Get messages from a conversation",
+      "properties": {
+        "operation": {
+          "const": "list_conversation_messages",
+          "default": "list_conversation_messages",
+          "title": "List Conversation Messages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "List Conversation Messages",
+          "x-is-trigger": false
+        },
+        "convo_id": {
+          "minLength": 1,
+          "title": "Conversation ID",
+          "type": "string"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Number of messages (1-100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "convo_id"
+      ],
+      "title": "BlueSkyGetMessagesConfig",
+      "type": "object"
+    },
+    "BlueSkyGetMutesConfig": {
+      "description": "Get muted accounts",
+      "properties": {
+        "operation": {
+          "const": "list_muted_accounts",
+          "default": "list_muted_accounts",
+          "title": "List Muted Accounts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "List Muted Accounts",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "default": 50,
+          "description": "Number of mutes (1-100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor",
+          "title": "Cursor"
+        }
+      },
+      "title": "BlueSkyGetMutesConfig",
+      "type": "object"
+    },
+    "BlueSkyGetNotificationPreferencesConfig": {
+      "description": "Get notification preferences",
+      "properties": {
+        "operation": {
+          "const": "get_notification_preferences",
+          "default": "get_notification_preferences",
+          "title": "Get Notification Preferences",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Notification Preferences",
+          "x-is-trigger": false
+        }
+      },
+      "title": "BlueSkyGetNotificationPreferencesConfig",
+      "type": "object"
+    },
+    "BlueSkyGetPostThreadConfig": {
+      "description": "Get a post and its thread context",
+      "properties": {
+        "operation": {
+          "const": "get_post_thread",
+          "default": "get_post_thread",
+          "title": "Get Post Thread",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Get Post Thread",
+          "x-is-trigger": false
+        },
+        "post_uri": {
+          "description": "BlueSky URL (https://bsky.app/profile/.../post/...) or AT URI (at://...)",
+          "minLength": 1,
+          "title": "Post URL or URI",
+          "type": "string"
+        },
+        "depth": {
+          "default": 6,
+          "description": "How many levels of replies to include",
+          "maximum": 1000,
+          "minimum": 0,
+          "title": "Reply Depth",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "post_uri"
+      ],
+      "title": "BlueSkyGetPostThreadConfig",
+      "type": "object"
+    },
+    "BlueSkyGetPostsConfig": {
+      "description": "Get multiple posts by their URIs",
+      "properties": {
+        "operation": {
+          "const": "get_posts_by_uris",
+          "default": "get_posts_by_uris",
+          "title": "Get Posts by Uris",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Get Posts by Uris",
+          "x-is-trigger": false
+        },
+        "uris": {
+          "description": "List of AT URIs to retrieve (max 25)",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 25,
+          "minItems": 1,
+          "title": "Post URIs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "uris"
+      ],
+      "title": "BlueSkyGetPostsConfig",
+      "type": "object"
+    },
+    "BlueSkyGetPreferencesConfig": {
+      "description": "Get user preferences",
+      "properties": {
+        "operation": {
+          "const": "get_user_preferences",
+          "default": "get_user_preferences",
+          "title": "Get User Preferences",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get User Preferences",
+          "x-is-trigger": false
+        }
+      },
+      "title": "BlueSkyGetPreferencesConfig",
+      "type": "object"
+    },
+    "BlueSkyGetProfileConfig": {
+      "description": "Get a user's profile information",
+      "properties": {
+        "operation": {
+          "const": "get_user_profile",
+          "default": "get_user_profile",
+          "title": "Get User Profile",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Get User Profile",
+          "x-is-trigger": false
+        },
+        "actor": {
+          "description": "Handle (e.g., user.bsky.social) or DID of the user",
+          "minLength": 1,
+          "title": "Actor Handle or DID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "actor"
+      ],
+      "title": "BlueSkyGetProfileConfig",
+      "type": "object"
+    },
+    "BlueSkyGetProfilesConfig": {
+      "description": "Get multiple user profiles at once",
+      "properties": {
+        "operation": {
+          "const": "get_multiple_user_profiles",
+          "default": "get_multiple_user_profiles",
+          "title": "Get Multiple User Profiles",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Get Multiple User Profiles",
+          "x-is-trigger": false
+        },
+        "actors": {
+          "description": "List of handles or DIDs (max 25)",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 25,
+          "minItems": 1,
+          "title": "Actor Handles or DIDs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "actors"
+      ],
+      "title": "BlueSkyGetProfilesConfig",
+      "type": "object"
+    },
+    "BlueSkyGetQuotesConfig": {
+      "description": "Get posts that quote a specific post",
+      "properties": {
+        "operation": {
+          "const": "list_post_quotes",
+          "default": "list_post_quotes",
+          "title": "List Post Quotes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "List Post Quotes",
+          "x-is-trigger": false
+        },
+        "post_uri": {
+          "description": "BlueSky URL (https://bsky.app/profile/.../post/...) or AT URI (at://...)",
+          "minLength": 1,
+          "title": "Post URL or URI",
+          "type": "string"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Number of quotes to retrieve (1-100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "post_uri"
+      ],
+      "title": "BlueSkyGetQuotesConfig",
+      "type": "object"
+    },
+    "BlueSkyGetRecommendedDidCredentialsConfig": {
+      "description": "Get recommended DID credential providers",
+      "properties": {
+        "operation": {
+          "const": "get_recommended_did_credentials",
+          "default": "get_recommended_did_credentials",
+          "title": "Get Recommended Did Credentials",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Credentials",
+          "x-display-name": "Get Recommended Did Credentials",
+          "x-is-trigger": false
+        }
+      },
+      "title": "BlueSkyGetRecommendedDidCredentialsConfig",
+      "type": "object"
+    },
+    "BlueSkyGetRecordConfig": {
+      "description": "Get a specific record",
+      "properties": {
+        "operation": {
+          "const": "get_repository_record",
+          "default": "get_repository_record",
+          "title": "Get Repository Record",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Record",
+          "x-display-name": "Get Repository Record",
+          "x-is-trigger": false
+        },
+        "repo": {
+          "description": "Repository DID or handle",
+          "minLength": 1,
+          "title": "Repository",
+          "type": "string"
+        },
+        "collection": {
+          "minLength": 1,
+          "title": "Collection",
+          "type": "string"
+        },
+        "rkey": {
+          "minLength": 1,
+          "title": "Record Key",
+          "type": "string"
+        },
+        "cid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Specific version CID",
+          "title": "CID"
+        }
+      },
+      "required": [
+        "repo",
+        "collection",
+        "rkey"
+      ],
+      "title": "BlueSkyGetRecordConfig",
+      "type": "object"
+    },
+    "BlueSkyGetRelationshipsConfig": {
+      "description": "Get relationships between actors",
+      "properties": {
+        "operation": {
+          "const": "get_actor_relationships",
+          "default": "get_actor_relationships",
+          "title": "Get Actor Relationships",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Get Actor Relationships",
+          "x-is-trigger": false
+        },
+        "actor": {
+          "description": "Primary actor",
+          "minLength": 1,
+          "title": "Actor Handle or DID",
+          "type": "string"
+        },
+        "others": {
+          "description": "List of other actors to check relationships with (max 30)",
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 30,
+          "minItems": 1,
+          "title": "Other Actors",
+          "type": "array"
+        }
+      },
+      "required": [
+        "actor",
+        "others"
+      ],
+      "title": "BlueSkyGetRelationshipsConfig",
+      "type": "object"
+    },
+    "BlueSkyGetRepostedByConfig": {
+      "description": "Get users who reposted a post",
+      "properties": {
+        "operation": {
+          "const": "list_post_reposters",
+          "default": "list_post_reposters",
+          "title": "List Post Reposters",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "List Post Reposters",
+          "x-is-trigger": false
+        },
+        "post_uri": {
+          "description": "BlueSky URL (https://bsky.app/profile/.../post/...) or AT URI (at://...)",
+          "minLength": 1,
+          "title": "Post URL or URI",
+          "type": "string"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Number of reposts to retrieve (1-100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "post_uri"
+      ],
+      "title": "BlueSkyGetRepostedByConfig",
+      "type": "object"
+    },
+    "BlueSkyGetServiceAuthConfig": {
+      "description": "Get service authentication",
+      "properties": {
+        "operation": {
+          "const": "get_service_auth_token",
+          "default": "get_service_auth_token",
+          "title": "Get Service Auth Token",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Service Auth",
+          "x-display-name": "Get Service Auth Token",
+          "x-is-trigger": false
+        },
+        "aud": {
+          "minLength": 1,
+          "title": "Audience DID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "aud"
+      ],
+      "title": "BlueSkyGetServiceAuthConfig",
+      "type": "object"
+    },
+    "BlueSkyGetSessionConfig": {
+      "description": "Verify active session",
+      "properties": {
+        "operation": {
+          "const": "get_active_session",
+          "default": "get_active_session",
+          "title": "Get Active Session",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Active Session",
+          "x-is-trigger": false
+        }
+      },
+      "title": "BlueSkyGetSessionConfig",
+      "type": "object"
+    },
+    "BlueSkyGetStarterPackConfig": {
+      "description": "Get starter pack details",
+      "properties": {
+        "operation": {
+          "const": "get_starter_pack",
+          "default": "get_starter_pack",
+          "title": "Get Starter Pack",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Starter Pack",
+          "x-display-name": "Get Starter Pack",
+          "x-is-trigger": false
+        },
+        "starter_pack_uri": {
+          "minLength": 1,
+          "title": "Starter Pack URI",
+          "type": "string"
+        }
+      },
+      "required": [
+        "starter_pack_uri"
+      ],
+      "title": "BlueSkyGetStarterPackConfig",
+      "type": "object"
+    },
+    "BlueSkyGetStarterPacksConfig": {
+      "description": "Get starter packs",
+      "properties": {
+        "operation": {
+          "const": "get_multiple_starter_packs",
+          "default": "get_multiple_starter_packs",
+          "title": "Get Multiple Starter Packs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Starter Pack",
+          "x-display-name": "Get Multiple Starter Packs",
+          "x-is-trigger": false
+        },
+        "uris": {
+          "items": {
+            "type": "string"
+          },
+          "maxItems": 25,
+          "minItems": 1,
+          "title": "Starter Pack URIs",
+          "type": "array"
+        }
+      },
+      "required": [
+        "uris"
+      ],
+      "title": "BlueSkyGetStarterPacksConfig",
+      "type": "object"
+    },
+    "BlueSkyGetStarterPacksWithMembershipConfig": {
+      "description": "Get starter packs user belongs to",
+      "properties": {
+        "operation": {
+          "const": "list_starter_packs_with_membership",
+          "default": "list_starter_packs_with_membership",
+          "title": "List Starter Packs with Membership",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Starter Pack",
+          "x-display-name": "List Starter Packs with Membership",
+          "x-is-trigger": false
+        },
+        "actor": {
+          "minLength": 1,
+          "title": "Actor Handle or DID",
+          "type": "string"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "actor"
+      ],
+      "title": "BlueSkyGetStarterPacksWithMembershipConfig",
+      "type": "object"
+    },
+    "BlueSkyGetSuggestedFeedsConfig": {
+      "description": "Get suggested feed generators",
+      "properties": {
+        "operation": {
+          "const": "list_suggested_feeds",
+          "default": "list_suggested_feeds",
+          "title": "List Suggested Feeds",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Feed",
+          "x-display-name": "List Suggested Feeds",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "default": 50,
+          "description": "Number of suggestions (1-100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor",
+          "title": "Cursor"
+        }
+      },
+      "title": "BlueSkyGetSuggestedFeedsConfig",
+      "type": "object"
+    },
+    "BlueSkyGetSuggestedFollowsByActorConfig": {
+      "description": "Get follow suggestions",
+      "properties": {
+        "operation": {
+          "const": "list_suggested_follows_by_actor",
+          "default": "list_suggested_follows_by_actor",
+          "title": "List Suggested Follows by Actor",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "List Suggested Follows by Actor",
+          "x-is-trigger": false
+        },
+        "actor": {
+          "minLength": 1,
+          "title": "Actor Handle or DID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "actor"
+      ],
+      "title": "BlueSkyGetSuggestedFollowsByActorConfig",
+      "type": "object"
+    },
+    "BlueSkyGetSuggestionsConfig": {
+      "description": "Get suggested accounts to follow",
+      "properties": {
+        "operation": {
+          "const": "list_suggested_accounts",
+          "default": "list_suggested_accounts",
+          "title": "List Suggested Accounts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "List Suggested Accounts",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "default": 50,
+          "description": "Number of suggestions (1-100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor",
+          "title": "Cursor"
+        }
+      },
+      "title": "BlueSkyGetSuggestionsConfig",
+      "type": "object"
+    },
+    "BlueSkyGetTimelineConfig": {
+      "description": "Get the authenticated user's home timeline",
+      "properties": {
+        "operation": {
+          "const": "get_home_timeline",
+          "default": "get_home_timeline",
+          "title": "Get Home Timeline",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Get Home Timeline",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "default": 50,
+          "description": "Number of posts to retrieve (1-100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor",
+          "title": "Cursor"
+        }
+      },
+      "title": "BlueSkyGetTimelineConfig",
+      "type": "object"
+    },
+    "BlueSkyGetUnreadCountConfig": {
+      "description": "Get count of unread notifications",
+      "properties": {
+        "operation": {
+          "const": "get_unread_notification_count",
+          "default": "get_unread_notification_count",
+          "title": "Get Unread Notification Count",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Get Unread Notification Count",
+          "x-is-trigger": false
+        },
+        "seen_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO timestamp for filtering",
+          "title": "Seen At"
+        }
+      },
+      "title": "BlueSkyGetUnreadCountConfig",
+      "type": "object"
+    },
+    "BlueSkyGetUploadLimitsConfig": {
+      "description": "Get video upload limits for the account",
+      "properties": {
+        "operation": {
+          "const": "get_video_upload_limits",
+          "default": "get_video_upload_limits",
+          "title": "Get Video Upload Limits",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Video Upload Limits",
+          "x-is-trigger": false
+        }
+      },
+      "title": "BlueSkyGetUploadLimitsConfig",
+      "type": "object"
+    },
+    "BlueSkyGetVideoJobStatusConfig": {
+      "description": "Get video processing job status",
+      "properties": {
+        "operation": {
+          "const": "get_video_job_status",
+          "default": "get_video_job_status",
+          "title": "Get Video Job Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Video",
+          "x-display-name": "Get Video Job Status",
+          "x-is-trigger": false
+        },
+        "job_id": {
+          "description": "Video processing job ID",
+          "minLength": 1,
+          "title": "Job ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "BlueSkyGetVideoJobStatusConfig",
+      "type": "object"
+    },
+    "BlueSkyLeaveConversationConfig": {
+      "description": "Leave a conversation",
+      "properties": {
+        "operation": {
+          "const": "leave_conversation",
+          "default": "leave_conversation",
+          "title": "Leave Conversation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Leave Conversation",
+          "x-is-trigger": false
+        },
+        "convo_id": {
+          "minLength": 1,
+          "title": "Conversation ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "convo_id"
+      ],
+      "title": "BlueSkyLeaveConversationConfig",
+      "type": "object"
+    },
+    "BlueSkyLikePostConfig": {
+      "description": "Like a post",
+      "properties": {
+        "operation": {
+          "const": "like_post",
+          "default": "like_post",
+          "title": "Like Post",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Like Post",
+          "x-is-trigger": false
+        },
+        "post_uri": {
+          "description": "BlueSky URL (https://bsky.app/profile/.../post/...) or AT URI (at://...)",
+          "minLength": 1,
+          "title": "Post URL or URI",
+          "type": "string"
+        },
+        "post_cid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "CID of the post (will be fetched automatically if not provided)",
+          "title": "Post CID"
+        }
+      },
+      "required": [
+        "post_uri"
+      ],
+      "title": "BlueSkyLikePostConfig",
+      "type": "object"
+    },
+    "BlueSkyListActivitySubscriptionsConfig": {
+      "description": "List activity notification subscriptions",
+      "properties": {
+        "operation": {
+          "const": "list_activity_subscriptions",
+          "default": "list_activity_subscriptions",
+          "title": "List Activity Subscriptions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Activity Subscription",
+          "x-display-name": "List Activity Subscriptions",
+          "x-is-trigger": false
+        }
+      },
+      "title": "BlueSkyListActivitySubscriptionsConfig",
+      "type": "object"
+    },
+    "BlueSkyListAppPasswordsConfig": {
+      "description": "List application passwords",
+      "properties": {
+        "operation": {
+          "const": "list_app_passwords",
+          "default": "list_app_passwords",
+          "title": "List App Passwords",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "App Password",
+          "x-display-name": "List App Passwords",
+          "x-is-trigger": false
+        }
+      },
+      "title": "BlueSkyListAppPasswordsConfig",
+      "type": "object"
+    },
+    "BlueSkyListConversationsConfig": {
+      "description": "List user's chat conversations",
+      "properties": {
+        "operation": {
+          "const": "list_user_conversations",
+          "default": "list_user_conversations",
+          "title": "List User Conversations",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "List User Conversations",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "default": 50,
+          "description": "Number of conversations (1-100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor",
+          "title": "Cursor"
+        }
+      },
+      "title": "BlueSkyListConversationsConfig",
+      "type": "object"
+    },
+    "BlueSkyListNotificationsConfig": {
+      "description": "List notifications for the authenticated user",
+      "properties": {
+        "operation": {
+          "const": "list_notifications",
+          "default": "list_notifications",
+          "title": "List Notifications",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Notification",
+          "x-display-name": "List Notifications",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "default": 50,
+          "description": "Number of notifications (1-100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor",
+          "title": "Cursor"
+        },
+        "seen_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO timestamp for filtering",
+          "title": "Seen At"
+        }
+      },
+      "title": "BlueSkyListNotificationsConfig",
+      "type": "object"
+    },
+    "BlueSkyListRecordsConfig": {
+      "description": "List records in a collection",
+      "properties": {
+        "operation": {
+          "const": "list_repository_records",
+          "default": "list_repository_records",
+          "title": "List Repository Records",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Record",
+          "x-display-name": "List Repository Records",
+          "x-is-trigger": false
+        },
+        "repo": {
+          "description": "Repository DID or handle",
+          "minLength": 1,
+          "title": "Repository",
+          "type": "string"
+        },
+        "collection": {
+          "minLength": 1,
+          "title": "Collection",
+          "type": "string"
+        },
+        "limit": {
+          "default": 50,
+          "description": "Number of records (1-100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "repo",
+        "collection"
+      ],
+      "title": "BlueSkyListRecordsConfig",
+      "type": "object"
+    },
+    "BlueSkyMuteActorConfig": {
+      "description": "Mute an actor",
+      "properties": {
+        "operation": {
+          "const": "mute_actor",
+          "default": "mute_actor",
+          "title": "Mute Actor",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Mute Actor",
+          "x-is-trigger": false
+        },
+        "actor": {
+          "minLength": 1,
+          "title": "Actor Handle or DID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "actor"
+      ],
+      "title": "BlueSkyMuteActorConfig",
+      "type": "object"
+    },
+    "BlueSkyMuteActorListConfig": {
+      "description": "Mute entire list",
+      "properties": {
+        "operation": {
+          "const": "mute_list",
+          "default": "mute_list",
+          "title": "Mute List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "List",
+          "x-display-name": "Mute List",
+          "x-is-trigger": false
+        },
+        "list_uri": {
+          "minLength": 1,
+          "title": "List URI",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_uri"
+      ],
+      "title": "BlueSkyMuteActorListConfig",
+      "type": "object"
+    },
+    "BlueSkyMuteConversationConfig": {
+      "description": "Mute a conversation",
+      "properties": {
+        "operation": {
+          "const": "mute_conversation",
+          "default": "mute_conversation",
+          "title": "Mute Conversation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Mute Conversation",
+          "x-is-trigger": false
+        },
+        "convo_id": {
+          "minLength": 1,
+          "title": "Conversation ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "convo_id"
+      ],
+      "title": "BlueSkyMuteConversationConfig",
+      "type": "object"
+    },
+    "BlueSkyMuteThreadConfig": {
+      "description": "Mute a thread",
+      "properties": {
+        "operation": {
+          "const": "mute_thread",
+          "default": "mute_thread",
+          "title": "Mute Thread",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Thread",
+          "x-display-name": "Mute Thread",
+          "x-is-trigger": false
+        },
+        "root_uri": {
+          "description": "AT URI of the thread root",
+          "minLength": 1,
+          "title": "Root Post URI",
+          "type": "string"
+        }
+      },
+      "required": [
+        "root_uri"
+      ],
+      "title": "BlueSkyMuteThreadConfig",
+      "type": "object"
+    },
+    "BlueSkyPutNotificationPreferencesConfig": {
+      "description": "Update notification preferences",
+      "properties": {
+        "operation": {
+          "const": "update_notification_preferences",
+          "default": "update_notification_preferences",
+          "title": "Update Notification Preferences",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Update Notification Preferences",
+          "x-is-trigger": false
+        },
+        "preferences": {
+          "additionalProperties": true,
+          "description": "Notification preferences object",
+          "title": "Preferences",
+          "type": "object"
+        }
+      },
+      "required": [
+        "preferences"
+      ],
+      "title": "BlueSkyPutNotificationPreferencesConfig",
+      "type": "object"
+    },
+    "BlueSkyPutPreferencesConfig": {
+      "description": "Update user preferences",
+      "properties": {
+        "operation": {
+          "const": "update_user_preferences",
+          "default": "update_user_preferences",
+          "title": "Update User Preferences",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Update User Preferences",
+          "x-is-trigger": false
+        },
+        "preferences": {
+          "additionalProperties": true,
+          "description": "Preferences object to update",
+          "title": "Preferences",
+          "type": "object"
+        }
+      },
+      "required": [
+        "preferences"
+      ],
+      "title": "BlueSkyPutPreferencesConfig",
+      "type": "object"
+    },
+    "BlueSkyPutRecordConfig": {
+      "description": "Create or update a record",
+      "properties": {
+        "operation": {
+          "const": "create_or_update_record",
+          "default": "create_or_update_record",
+          "title": "Create or Update Record",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Record",
+          "x-display-name": "Create or Update Record",
+          "x-is-trigger": false
+        },
+        "collection": {
+          "minLength": 1,
+          "title": "Collection",
+          "type": "string"
+        },
+        "rkey": {
+          "minLength": 1,
+          "title": "Record Key",
+          "type": "string"
+        },
+        "record": {
+          "additionalProperties": true,
+          "description": "Record data",
+          "title": "Record",
+          "type": "object"
+        },
+        "swap_commit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "CID for optimistic concurrency",
+          "title": "Swap Commit"
+        }
+      },
+      "required": [
+        "collection",
+        "rkey",
+        "record"
+      ],
+      "title": "BlueSkyPutRecordConfig",
+      "type": "object"
+    },
+    "BlueSkyQueryLabelsConfig": {
+      "description": "Query content labels",
+      "properties": {
+        "operation": {
+          "const": "query_content_labels",
+          "default": "query_content_labels",
+          "title": "Query Content Labels",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Labeler",
+          "x-display-name": "Query Content Labels",
+          "x-is-trigger": false
+        },
+        "uri_patterns": {
+          "items": {
+            "type": "string"
+          },
+          "minItems": 1,
+          "title": "URI Patterns",
+          "type": "array"
+        },
+        "sources": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Label Sources"
+        },
+        "limit": {
+          "default": 50,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "uri_patterns"
+      ],
+      "title": "BlueSkyQueryLabelsConfig",
+      "type": "object"
+    },
+    "BlueSkyRefreshSessionConfig": {
+      "description": "Refresh session credentials",
+      "properties": {
+        "operation": {
+          "const": "refresh_session",
+          "default": "refresh_session",
+          "title": "Refresh Session",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Refresh Session",
+          "x-is-trigger": false
+        }
+      },
+      "title": "BlueSkyRefreshSessionConfig",
+      "type": "object"
+    },
+    "BlueSkyRegisterPushConfig": {
+      "description": "Register device for push notifications",
+      "properties": {
+        "operation": {
+          "const": "register_push_notifications",
+          "default": "register_push_notifications",
+          "title": "Register Push Notifications",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Register Push Notifications",
+          "x-is-trigger": false
+        },
+        "service_did": {
+          "description": "DID of the push service",
+          "title": "Service DID",
+          "type": "string"
+        },
+        "token": {
+          "description": "Device push token",
+          "title": "Push Token",
+          "type": "string"
+        },
+        "platform": {
+          "description": "Platform (ios, android, web)",
+          "enum": [
+            "ios",
+            "android",
+            "web"
+          ],
+          "title": "Platform",
+          "type": "string"
+        },
+        "app_id": {
+          "description": "Application identifier",
+          "title": "App ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "service_did",
+        "token",
+        "platform",
+        "app_id"
+      ],
+      "title": "BlueSkyRegisterPushConfig",
+      "type": "object"
+    },
+    "BlueSkyRemoveMessageReactionConfig": {
+      "description": "Remove message reaction",
+      "properties": {
+        "operation": {
+          "const": "remove_reaction_from_message",
+          "default": "remove_reaction_from_message",
+          "title": "Remove Reaction from Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Remove Reaction from Message",
+          "x-is-trigger": false
+        },
+        "convo_id": {
+          "minLength": 1,
+          "title": "Conversation ID",
+          "type": "string"
+        },
+        "message_id": {
+          "minLength": 1,
+          "title": "Message ID",
+          "type": "string"
+        },
+        "reaction": {
+          "minLength": 1,
+          "title": "Reaction",
+          "type": "string"
+        }
+      },
+      "required": [
+        "convo_id",
+        "message_id",
+        "reaction"
+      ],
+      "title": "BlueSkyRemoveMessageReactionConfig",
+      "type": "object"
+    },
+    "BlueSkyRepostConfig": {
+      "description": "Repost a post",
+      "properties": {
+        "operation": {
+          "const": "repost_post",
+          "default": "repost_post",
+          "title": "Repost Post",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Repost Post",
+          "x-is-trigger": false
+        },
+        "post_uri": {
+          "description": "AT URI of the post to repost",
+          "minLength": 1,
+          "title": "Post URI",
+          "type": "string"
+        },
+        "post_cid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "CID of the post (will be fetched automatically if not provided)",
+          "title": "Post CID"
+        }
+      },
+      "required": [
+        "post_uri"
+      ],
+      "title": "BlueSkyRepostConfig",
+      "type": "object"
+    },
+    "BlueSkyRequestAccountDeleteConfig": {
+      "description": "Initiate account deletion",
+      "properties": {
+        "operation": {
+          "const": "request_account_deletion",
+          "default": "request_account_deletion",
+          "title": "Request Account Deletion",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Request Account Deletion",
+          "x-is-trigger": false
+        }
+      },
+      "title": "BlueSkyRequestAccountDeleteConfig",
+      "type": "object"
+    },
+    "BlueSkyRequestEmailConfirmationConfig": {
+      "description": "Request verification email",
+      "properties": {
+        "operation": {
+          "const": "request_email_confirmation",
+          "default": "request_email_confirmation",
+          "title": "Request Email Confirmation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Request Email Confirmation",
+          "x-is-trigger": false
+        }
+      },
+      "title": "BlueSkyRequestEmailConfirmationConfig",
+      "type": "object"
+    },
+    "BlueSkyRequestEmailUpdateConfig": {
+      "description": "Request email change",
+      "properties": {
+        "operation": {
+          "const": "request_email_update",
+          "default": "request_email_update",
+          "title": "Request Email Update",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Request Email Update",
+          "x-is-trigger": false
+        },
+        "email": {
+          "minLength": 1,
+          "title": "New Email Address",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "BlueSkyRequestEmailUpdateConfig",
+      "type": "object"
+    },
+    "BlueSkyRequestPasswordResetConfig": {
+      "description": "Initiate password reset",
+      "properties": {
+        "operation": {
+          "const": "request_password_reset",
+          "default": "request_password_reset",
+          "title": "Request Password Reset",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Request Password Reset",
+          "x-is-trigger": false
+        },
+        "email": {
+          "minLength": 1,
+          "title": "Email Address",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "BlueSkyRequestPasswordResetConfig",
+      "type": "object"
+    },
+    "BlueSkyReserveSigningKeyConfig": {
+      "description": "Reserve signing key",
+      "properties": {
+        "operation": {
+          "const": "reserve_signing_key",
+          "default": "reserve_signing_key",
+          "title": "Reserve Signing Key",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Reserve Signing Key",
+          "x-is-trigger": false
+        },
+        "did": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "DID"
+        }
+      },
+      "title": "BlueSkyReserveSigningKeyConfig",
+      "type": "object"
+    },
+    "BlueSkyResetPasswordConfig": {
+      "description": "Complete password reset",
+      "properties": {
+        "operation": {
+          "const": "reset_password",
+          "default": "reset_password",
+          "title": "Reset Password",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Reset Password",
+          "x-is-trigger": false
+        },
+        "token": {
+          "minLength": 1,
+          "title": "Reset Token",
+          "type": "string"
+        },
+        "password": {
+          "minLength": 8,
+          "title": "New Password",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "token",
+        "password"
+      ],
+      "title": "BlueSkyResetPasswordConfig",
+      "type": "object"
+    },
+    "BlueSkyResolveDidConfig": {
+      "description": "Resolve a DID to get DID document",
+      "properties": {
+        "operation": {
+          "const": "resolve_did_to_document",
+          "default": "resolve_did_to_document",
+          "title": "Resolve Did to Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Repository",
+          "x-display-name": "Resolve Did to Document",
+          "x-is-trigger": false
+        },
+        "did": {
+          "description": "DID to resolve",
+          "minLength": 1,
+          "title": "DID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "did"
+      ],
+      "title": "BlueSkyResolveDidConfig",
+      "type": "object"
+    },
+    "BlueSkyResolveHandleConfig": {
+      "description": "Resolve a handle to a DID",
+      "properties": {
+        "operation": {
+          "const": "resolve_handle_to_did",
+          "default": "resolve_handle_to_did",
+          "title": "Resolve Handle to Did",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Repository",
+          "x-display-name": "Resolve Handle to Did",
+          "x-is-trigger": false
+        },
+        "handle": {
+          "description": "Handle to resolve (e.g., user.bsky.social)",
+          "minLength": 1,
+          "title": "Handle",
+          "type": "string"
+        }
+      },
+      "required": [
+        "handle"
+      ],
+      "title": "BlueSkyResolveHandleConfig",
+      "type": "object"
+    },
+    "BlueSkyResolveIdentityConfig": {
+      "description": "Resolve complete identity (handle + DID)",
+      "properties": {
+        "operation": {
+          "const": "resolve_complete_identity",
+          "default": "resolve_complete_identity",
+          "title": "Resolve Complete Identity",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Repository",
+          "x-display-name": "Resolve Complete Identity",
+          "x-is-trigger": false
+        },
+        "identifier": {
+          "description": "Handle or DID to resolve",
+          "minLength": 1,
+          "title": "Identifier",
+          "type": "string"
+        }
+      },
+      "required": [
+        "identifier"
+      ],
+      "title": "BlueSkyResolveIdentityConfig",
+      "type": "object"
+    },
+    "BlueSkyRevokeAppPasswordConfig": {
+      "description": "Remove application password",
+      "properties": {
+        "operation": {
+          "const": "revoke_app_password",
+          "default": "revoke_app_password",
+          "title": "Revoke App Password",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "App Password",
+          "x-display-name": "Revoke App Password",
+          "x-is-trigger": false
+        },
+        "name": {
+          "minLength": 1,
+          "title": "App Password Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "BlueSkyRevokeAppPasswordConfig",
+      "type": "object"
+    },
+    "BlueSkySearchActorsConfig": {
+      "description": "Search for actors/users",
+      "properties": {
+        "operation": {
+          "const": "search_actors",
+          "default": "search_actors",
+          "title": "Search Actors",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Search Actors",
+          "x-is-trigger": false
+        },
+        "query": {
+          "description": "Search term",
+          "minLength": 1,
+          "title": "Search Query",
+          "type": "string"
+        },
+        "limit": {
+          "default": 25,
+          "description": "Number of results (1-100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "BlueSkySearchActorsConfig",
+      "type": "object"
+    },
+    "BlueSkySearchActorsTypeaheadConfig": {
+      "description": "Typeahead search for actors (for autocomplete)",
+      "properties": {
+        "operation": {
+          "const": "search_actors_typeahead",
+          "default": "search_actors_typeahead",
+          "title": "Search Actors Typeahead",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Search Actors Typeahead",
+          "x-is-trigger": false
+        },
+        "query": {
+          "description": "Partial search term",
+          "minLength": 1,
+          "title": "Search Query",
+          "type": "string"
+        },
+        "limit": {
+          "default": 10,
+          "description": "Number of results (1-100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "BlueSkySearchActorsTypeaheadConfig",
+      "type": "object"
+    },
+    "BlueSkySearchPostsConfig": {
+      "description": "Search for posts",
+      "properties": {
+        "operation": {
+          "const": "search_posts",
+          "default": "search_posts",
+          "title": "Search Posts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Search Posts",
+          "x-is-trigger": false
+        },
+        "query": {
+          "description": "Search query string",
+          "minLength": 1,
+          "title": "Search Query",
+          "type": "string"
+        },
+        "limit": {
+          "default": 25,
+          "description": "Number of results (1-100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "latest",
+          "description": "Sort order for results",
+          "enum": [
+            "top",
+            "latest"
+          ],
+          "title": "Sort Order"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor",
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "BlueSkySearchPostsConfig",
+      "type": "object"
+    },
+    "BlueSkySearchStarterPacksConfig": {
+      "description": "Search starter packs",
+      "properties": {
+        "operation": {
+          "const": "search_starter_packs",
+          "default": "search_starter_packs",
+          "title": "Search Starter Packs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Starter Pack",
+          "x-display-name": "Search Starter Packs",
+          "x-is-trigger": false
+        },
+        "query": {
+          "minLength": 1,
+          "title": "Search Query",
+          "type": "string"
+        },
+        "limit": {
+          "default": 25,
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Cursor"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "BlueSkySearchStarterPacksConfig",
+      "type": "object"
+    },
+    "BlueSkySendInteractionsConfig": {
+      "description": "Report user interactions",
+      "properties": {
+        "operation": {
+          "const": "send_user_interactions",
+          "default": "send_user_interactions",
+          "title": "Send User Interactions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Interactions",
+          "x-display-name": "Send User Interactions",
+          "x-is-trigger": false
+        },
+        "interactions": {
+          "description": "List of interaction events",
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "minItems": 1,
+          "title": "Interactions",
+          "type": "array"
+        }
+      },
+      "required": [
+        "interactions"
+      ],
+      "title": "BlueSkySendInteractionsConfig",
+      "type": "object"
+    },
+    "BlueSkySendMessageBatchConfig": {
+      "description": "Send multiple messages",
+      "properties": {
+        "operation": {
+          "const": "send_message_batch",
+          "default": "send_message_batch",
+          "title": "Send Message Batch",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Send Message Batch",
+          "x-is-trigger": false
+        },
+        "messages": {
+          "description": "Batch of messages to send (max 100)",
+          "items": {
+            "additionalProperties": true,
+            "type": "object"
+          },
+          "maxItems": 100,
+          "minItems": 1,
+          "title": "Messages",
+          "type": "array"
+        }
+      },
+      "required": [
+        "messages"
+      ],
+      "title": "BlueSkySendMessageBatchConfig",
+      "type": "object"
+    },
+    "BlueSkySendMessageConfig": {
+      "description": "Send a message in a conversation",
+      "properties": {
+        "operation": {
+          "const": "send_message_in_conversation",
+          "default": "send_message_in_conversation",
+          "title": "Send Message in Conversation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Send Message in Conversation",
+          "x-is-trigger": false
+        },
+        "convo_id": {
+          "minLength": 1,
+          "title": "Conversation ID",
+          "type": "string"
+        },
+        "text": {
+          "description": "Message content (max 10,000 characters)",
+          "maxLength": 10000,
+          "minLength": 1,
+          "title": "Message Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "convo_id",
+        "text"
+      ],
+      "title": "BlueSkySendMessageConfig",
+      "type": "object"
+    },
+    "BlueSkyUnblockUserConfig": {
+      "description": "Unblock a user",
+      "properties": {
+        "operation": {
+          "const": "unblock_user",
+          "default": "unblock_user",
+          "title": "Unblock User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Unblock User",
+          "x-is-trigger": false
+        },
+        "block_uri": {
+          "description": "AT URI of the block record to delete",
+          "minLength": 1,
+          "title": "Block URI",
+          "type": "string"
+        }
+      },
+      "required": [
+        "block_uri"
+      ],
+      "title": "BlueSkyUnblockUserConfig",
+      "type": "object"
+    },
+    "BlueSkyUnfollowUserConfig": {
+      "description": "Unfollow a user",
+      "properties": {
+        "operation": {
+          "const": "unfollow_user",
+          "default": "unfollow_user",
+          "title": "Unfollow User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Unfollow User",
+          "x-is-trigger": false
+        },
+        "follow_uri": {
+          "description": "AT URI of the follow record to delete",
+          "minLength": 1,
+          "title": "Follow URI",
+          "type": "string"
+        }
+      },
+      "required": [
+        "follow_uri"
+      ],
+      "title": "BlueSkyUnfollowUserConfig",
+      "type": "object"
+    },
+    "BlueSkyUnlikePostConfig": {
+      "description": "Unlike a post (remove like)",
+      "properties": {
+        "operation": {
+          "const": "unlike_post",
+          "default": "unlike_post",
+          "title": "Unlike Post",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Unlike Post",
+          "x-is-trigger": false
+        },
+        "post_uri": {
+          "description": "BlueSky URL (https://bsky.app/profile/.../post/...) or AT URI (at://...) of the post to unlike",
+          "minLength": 1,
+          "title": "Post URL or URI",
+          "type": "string"
+        }
+      },
+      "required": [
+        "post_uri"
+      ],
+      "title": "BlueSkyUnlikePostConfig",
+      "type": "object"
+    },
+    "BlueSkyUnmuteActorConfig": {
+      "description": "Unmute an actor",
+      "properties": {
+        "operation": {
+          "const": "unmute_actor",
+          "default": "unmute_actor",
+          "title": "Unmute Actor",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Unmute Actor",
+          "x-is-trigger": false
+        },
+        "actor": {
+          "minLength": 1,
+          "title": "Actor Handle or DID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "actor"
+      ],
+      "title": "BlueSkyUnmuteActorConfig",
+      "type": "object"
+    },
+    "BlueSkyUnmuteActorListConfig": {
+      "description": "Unmute list",
+      "properties": {
+        "operation": {
+          "const": "unmute_list",
+          "default": "unmute_list",
+          "title": "Unmute List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "List",
+          "x-display-name": "Unmute List",
+          "x-is-trigger": false
+        },
+        "list_uri": {
+          "minLength": 1,
+          "title": "List URI",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_uri"
+      ],
+      "title": "BlueSkyUnmuteActorListConfig",
+      "type": "object"
+    },
+    "BlueSkyUnmuteConversationConfig": {
+      "description": "Unmute a conversation",
+      "properties": {
+        "operation": {
+          "const": "unmute_conversation",
+          "default": "unmute_conversation",
+          "title": "Unmute Conversation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Unmute Conversation",
+          "x-is-trigger": false
+        },
+        "convo_id": {
+          "minLength": 1,
+          "title": "Conversation ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "convo_id"
+      ],
+      "title": "BlueSkyUnmuteConversationConfig",
+      "type": "object"
+    },
+    "BlueSkyUnmuteThreadConfig": {
+      "description": "Unmute a thread",
+      "properties": {
+        "operation": {
+          "const": "unmute_thread",
+          "default": "unmute_thread",
+          "title": "Unmute Thread",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Thread",
+          "x-display-name": "Unmute Thread",
+          "x-is-trigger": false
+        },
+        "root_uri": {
+          "description": "AT URI of the thread root",
+          "minLength": 1,
+          "title": "Root Post URI",
+          "type": "string"
+        }
+      },
+      "required": [
+        "root_uri"
+      ],
+      "title": "BlueSkyUnmuteThreadConfig",
+      "type": "object"
+    },
+    "BlueSkyUnregisterPushConfig": {
+      "description": "Unregister device from push notifications",
+      "properties": {
+        "operation": {
+          "const": "unregister_push_notifications",
+          "default": "unregister_push_notifications",
+          "title": "Unregister Push Notifications",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Unregister Push Notifications",
+          "x-is-trigger": false
+        },
+        "service_did": {
+          "description": "DID of the push service",
+          "title": "Service DID",
+          "type": "string"
+        },
+        "token": {
+          "description": "Device push token",
+          "title": "Push Token",
+          "type": "string"
+        }
+      },
+      "required": [
+        "service_did",
+        "token"
+      ],
+      "title": "BlueSkyUnregisterPushConfig",
+      "type": "object"
+    },
+    "BlueSkyUnrepostConfig": {
+      "description": "Remove a repost",
+      "properties": {
+        "operation": {
+          "const": "remove_repost",
+          "default": "remove_repost",
+          "title": "Remove Repost",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Remove Repost",
+          "x-is-trigger": false
+        },
+        "post_uri": {
+          "description": "BlueSky URL (https://bsky.app/profile/.../post/...) or AT URI (at://...) of the post to unrepost",
+          "minLength": 1,
+          "title": "Post URL or URI",
+          "type": "string"
+        }
+      },
+      "required": [
+        "post_uri"
+      ],
+      "title": "BlueSkyUnrepostConfig",
+      "type": "object"
+    },
+    "BlueSkyUpdateAllReadConfig": {
+      "description": "Mark all messages read",
+      "properties": {
+        "operation": {
+          "const": "mark_all_messages_read",
+          "default": "mark_all_messages_read",
+          "title": "Mark All Messages Read",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Mark All Messages Read",
+          "x-is-trigger": false
+        }
+      },
+      "title": "BlueSkyUpdateAllReadConfig",
+      "type": "object"
+    },
+    "BlueSkyUpdateConversationReadConfig": {
+      "description": "Mark conversation as read",
+      "properties": {
+        "operation": {
+          "const": "mark_conversation_read",
+          "default": "mark_conversation_read",
+          "title": "Mark Conversation Read",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Mark Conversation Read",
+          "x-is-trigger": false
+        },
+        "convo_id": {
+          "minLength": 1,
+          "title": "Conversation ID",
+          "type": "string"
+        },
+        "message_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Mark read up to this message",
+          "title": "Message ID"
+        }
+      },
+      "required": [
+        "convo_id"
+      ],
+      "title": "BlueSkyUpdateConversationReadConfig",
+      "type": "object"
+    },
+    "BlueSkyUpdateEmailConfig": {
+      "description": "Update account email",
+      "properties": {
+        "operation": {
+          "const": "update_account_email",
+          "default": "update_account_email",
+          "title": "Update Account Email",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Update Account Email",
+          "x-is-trigger": false
+        },
+        "email": {
+          "minLength": 1,
+          "title": "New Email",
+          "type": "string"
+        },
+        "token": {
+          "minLength": 1,
+          "title": "Verification Token",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email",
+        "token"
+      ],
+      "title": "BlueSkyUpdateEmailConfig",
+      "type": "object"
+    },
+    "BlueSkyUpdateHandleConfig": {
+      "description": "Update account handle",
+      "properties": {
+        "operation": {
+          "const": "update_account_handle",
+          "default": "update_account_handle",
+          "title": "Update Account Handle",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Update Account Handle",
+          "x-is-trigger": false
+        },
+        "handle": {
+          "description": "New handle for the account",
+          "minLength": 1,
+          "title": "New Handle",
+          "type": "string"
+        }
+      },
+      "required": [
+        "handle"
+      ],
+      "title": "BlueSkyUpdateHandleConfig",
+      "type": "object"
+    },
+    "BlueSkyUpdateSeenConfig": {
+      "description": "Mark notifications as seen",
+      "properties": {
+        "operation": {
+          "const": "mark_notifications_as_seen",
+          "default": "mark_notifications_as_seen",
+          "title": "Mark Notifications As Seen",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Notification",
+          "x-display-name": "Mark Notifications As Seen",
+          "x-is-trigger": false
+        },
+        "seen_at": {
+          "description": "ISO timestamp to mark as seen up to",
+          "title": "Seen At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "seen_at"
+      ],
+      "title": "BlueSkyUpdateSeenConfig",
+      "type": "object"
+    },
+    "BlueSkyUploadBlobConfig": {
+      "description": "Upload a blob to the repository",
+      "properties": {
+        "operation": {
+          "const": "upload_blob_to_repository",
+          "default": "upload_blob_to_repository",
+          "title": "Upload Blob to Repository",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Blob",
+          "x-display-name": "Upload Blob to Repository",
+          "x-is-trigger": false
+        },
+        "blob_data": {
+          "description": "The blob to send \u2014 upload a file, paste a URL, or reference an upstream file (e.g. {{http-1.response.url}}).",
+          "title": "Blob",
+          "type": "string",
+          "ui:widget": "media_upload"
+        },
+        "mime_type": {
+          "description": "MIME type of the blob",
+          "title": "MIME Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "blob_data",
+        "mime_type"
+      ],
+      "title": "BlueSkyUploadBlobConfig",
+      "type": "object"
+    },
+    "BlueSkyUploadVideoConfig": {
+      "description": "Upload a video",
+      "properties": {
+        "operation": {
+          "const": "upload_video",
+          "default": "upload_video",
+          "title": "Upload Video",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Video",
+          "x-display-name": "Upload Video",
+          "x-is-trigger": false
+        },
+        "video_data": {
+          "description": "The video to send \u2014 upload a file, paste a URL, or reference an upstream file (e.g. {{http-1.response.url}}).",
+          "title": "Video",
+          "type": "string",
+          "ui:accept": "video/*",
+          "ui:widget": "media_upload"
+        },
+        "mime_type": {
+          "description": "Video MIME type (e.g., video/mp4)",
+          "title": "MIME Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "video_data",
+        "mime_type"
+      ],
+      "title": "BlueSkyUploadVideoConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for BlueSky node including credentials",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "accept_conversation_request": "#/$defs/BlueSkyAcceptConversationConfig",
+          "activate_account": "#/$defs/BlueSkyActivateAccountConfig",
+          "add_reaction_to_message": "#/$defs/BlueSkyAddMessageReactionConfig",
+          "apply_writes_atomically": "#/$defs/BlueSkyApplyWritesConfig",
+          "begin_age_assurance": "#/$defs/BlueSkyBeginAgeAssuranceConfig",
+          "block_user": "#/$defs/BlueSkyBlockUserConfig",
+          "check_account_status": "#/$defs/BlueSkyCheckAccountStatusConfig",
+          "check_conversation_availability": "#/$defs/BlueSkyGetConvoAvailabilityConfig",
+          "confirm_email": "#/$defs/BlueSkyConfirmEmailConfig",
+          "create_app_password": "#/$defs/BlueSkyCreateAppPasswordConfig",
+          "create_invite_code": "#/$defs/BlueSkyCreateInviteCodeConfig",
+          "create_moderation_report": "#/$defs/BlueSkyCreateModerationReportConfig",
+          "create_multiple_invite_codes": "#/$defs/BlueSkyCreateInviteCodesConfig",
+          "create_or_update_record": "#/$defs/BlueSkyPutRecordConfig",
+          "create_post": "#/$defs/BlueSkyCreatePostConfig",
+          "create_post_bookmark": "#/$defs/BlueSkyCreateBookmarkConfig",
+          "create_repository_record": "#/$defs/BlueSkyCreateRecordConfig",
+          "deactivate_account": "#/$defs/BlueSkyDeactivateAccountConfig",
+          "delete_account": "#/$defs/BlueSkyDeleteAccountConfig",
+          "delete_chat_account": "#/$defs/BlueSkyDeleteChatAccountConfig",
+          "delete_message_for_self": "#/$defs/BlueSkyDeleteMessageConfig",
+          "delete_post": "#/$defs/BlueSkyDeletePostConfig",
+          "delete_post_bookmark": "#/$defs/BlueSkyDeleteBookmarkConfig",
+          "delete_repository_record": "#/$defs/BlueSkyDeleteRecordConfig",
+          "delete_session_logout": "#/$defs/BlueSkyDeleteSessionConfig",
+          "describe_feed_generator": "#/$defs/BlueSkyDescribeFeedGeneratorConfig",
+          "describe_repository": "#/$defs/BlueSkyDescribeRepoConfig",
+          "describe_server": "#/$defs/BlueSkyDescribeServerConfig",
+          "follow_user": "#/$defs/BlueSkyFollowUserConfig",
+          "get_active_session": "#/$defs/BlueSkyGetSessionConfig",
+          "get_actor_relationships": "#/$defs/BlueSkyGetRelationshipsConfig",
+          "get_age_assurance_config": "#/$defs/BlueSkyGetAgeAssuranceConfigConfig",
+          "get_age_assurance_state": "#/$defs/BlueSkyGetAgeAssuranceStateConfig",
+          "get_author_feed": "#/$defs/BlueSkyGetAuthorFeedConfig",
+          "get_conversation": "#/$defs/BlueSkyGetConversationConfig",
+          "get_conversation_event_log": "#/$defs/BlueSkyGetConversationLogConfig",
+          "get_conversation_with_members": "#/$defs/BlueSkyGetConversationForMembersConfig",
+          "get_custom_feed_posts": "#/$defs/BlueSkyGetFeedConfig",
+          "get_feed_generator": "#/$defs/BlueSkyGetFeedGeneratorConfig",
+          "get_feed_skeleton": "#/$defs/BlueSkyGetFeedSkeletonConfig",
+          "get_home_timeline": "#/$defs/BlueSkyGetTimelineConfig",
+          "get_labeler_services": "#/$defs/BlueSkyGetLabelerServicesConfig",
+          "get_list_member_feed": "#/$defs/BlueSkyGetListFeedConfig",
+          "get_list_with_members": "#/$defs/BlueSkyGetListConfig",
+          "get_multiple_feed_generators": "#/$defs/BlueSkyGetFeedGeneratorsConfig",
+          "get_multiple_starter_packs": "#/$defs/BlueSkyGetStarterPacksConfig",
+          "get_multiple_user_profiles": "#/$defs/BlueSkyGetProfilesConfig",
+          "get_notification_preferences": "#/$defs/BlueSkyGetNotificationPreferencesConfig",
+          "get_post_thread": "#/$defs/BlueSkyGetPostThreadConfig",
+          "get_posts_by_uris": "#/$defs/BlueSkyGetPostsConfig",
+          "get_recommended_did_credentials": "#/$defs/BlueSkyGetRecommendedDidCredentialsConfig",
+          "get_repository_record": "#/$defs/BlueSkyGetRecordConfig",
+          "get_service_auth_token": "#/$defs/BlueSkyGetServiceAuthConfig",
+          "get_starter_pack": "#/$defs/BlueSkyGetStarterPackConfig",
+          "get_unread_notification_count": "#/$defs/BlueSkyGetUnreadCountConfig",
+          "get_user_preferences": "#/$defs/BlueSkyGetPreferencesConfig",
+          "get_user_profile": "#/$defs/BlueSkyGetProfileConfig",
+          "get_video_job_status": "#/$defs/BlueSkyGetVideoJobStatusConfig",
+          "get_video_upload_limits": "#/$defs/BlueSkyGetUploadLimitsConfig",
+          "leave_conversation": "#/$defs/BlueSkyLeaveConversationConfig",
+          "like_post": "#/$defs/BlueSkyLikePostConfig",
+          "list_account_invite_codes": "#/$defs/BlueSkyGetAccountInviteCodesConfig",
+          "list_activity_subscriptions": "#/$defs/BlueSkyListActivitySubscriptionsConfig",
+          "list_actor_feed_generators": "#/$defs/BlueSkyGetActorFeedsConfig",
+          "list_actor_followers": "#/$defs/BlueSkyGetFollowersConfig",
+          "list_actor_follows": "#/$defs/BlueSkyGetFollowsConfig",
+          "list_actor_liked_posts": "#/$defs/BlueSkyGetActorLikesConfig",
+          "list_actor_lists": "#/$defs/BlueSkyGetListsConfig",
+          "list_actor_membership_lists": "#/$defs/BlueSkyGetListsWithMembershipConfig",
+          "list_actor_starter_packs": "#/$defs/BlueSkyGetActorStarterPacksConfig",
+          "list_app_passwords": "#/$defs/BlueSkyListAppPasswordsConfig",
+          "list_blocked_accounts": "#/$defs/BlueSkyGetBlocksConfig",
+          "list_blocked_lists": "#/$defs/BlueSkyGetListBlocksConfig",
+          "list_bookmarks": "#/$defs/BlueSkyGetBookmarksConfig",
+          "list_conversation_messages": "#/$defs/BlueSkyGetMessagesConfig",
+          "list_muted_accounts": "#/$defs/BlueSkyGetMutesConfig",
+          "list_muted_lists": "#/$defs/BlueSkyGetListMutesConfig",
+          "list_mutual_followers": "#/$defs/BlueSkyGetKnownFollowersConfig",
+          "list_notifications": "#/$defs/BlueSkyListNotificationsConfig",
+          "list_post_likers": "#/$defs/BlueSkyGetLikesConfig",
+          "list_post_quotes": "#/$defs/BlueSkyGetQuotesConfig",
+          "list_post_reposters": "#/$defs/BlueSkyGetRepostedByConfig",
+          "list_repository_records": "#/$defs/BlueSkyListRecordsConfig",
+          "list_starter_packs_with_membership": "#/$defs/BlueSkyGetStarterPacksWithMembershipConfig",
+          "list_suggested_accounts": "#/$defs/BlueSkyGetSuggestionsConfig",
+          "list_suggested_feeds": "#/$defs/BlueSkyGetSuggestedFeedsConfig",
+          "list_suggested_follows_by_actor": "#/$defs/BlueSkyGetSuggestedFollowsByActorConfig",
+          "list_user_conversations": "#/$defs/BlueSkyListConversationsConfig",
+          "mark_all_messages_read": "#/$defs/BlueSkyUpdateAllReadConfig",
+          "mark_conversation_read": "#/$defs/BlueSkyUpdateConversationReadConfig",
+          "mark_notifications_as_seen": "#/$defs/BlueSkyUpdateSeenConfig",
+          "mute_actor": "#/$defs/BlueSkyMuteActorConfig",
+          "mute_conversation": "#/$defs/BlueSkyMuteConversationConfig",
+          "mute_list": "#/$defs/BlueSkyMuteActorListConfig",
+          "mute_thread": "#/$defs/BlueSkyMuteThreadConfig",
+          "query_content_labels": "#/$defs/BlueSkyQueryLabelsConfig",
+          "refresh_session": "#/$defs/BlueSkyRefreshSessionConfig",
+          "register_push_notifications": "#/$defs/BlueSkyRegisterPushConfig",
+          "remove_reaction_from_message": "#/$defs/BlueSkyRemoveMessageReactionConfig",
+          "remove_repost": "#/$defs/BlueSkyUnrepostConfig",
+          "repost_post": "#/$defs/BlueSkyRepostConfig",
+          "request_account_deletion": "#/$defs/BlueSkyRequestAccountDeleteConfig",
+          "request_email_confirmation": "#/$defs/BlueSkyRequestEmailConfirmationConfig",
+          "request_email_update": "#/$defs/BlueSkyRequestEmailUpdateConfig",
+          "request_password_reset": "#/$defs/BlueSkyRequestPasswordResetConfig",
+          "reserve_signing_key": "#/$defs/BlueSkyReserveSigningKeyConfig",
+          "reset_password": "#/$defs/BlueSkyResetPasswordConfig",
+          "resolve_complete_identity": "#/$defs/BlueSkyResolveIdentityConfig",
+          "resolve_did_to_document": "#/$defs/BlueSkyResolveDidConfig",
+          "resolve_handle_to_did": "#/$defs/BlueSkyResolveHandleConfig",
+          "revoke_app_password": "#/$defs/BlueSkyRevokeAppPasswordConfig",
+          "search_actors": "#/$defs/BlueSkySearchActorsConfig",
+          "search_actors_typeahead": "#/$defs/BlueSkySearchActorsTypeaheadConfig",
+          "search_posts": "#/$defs/BlueSkySearchPostsConfig",
+          "search_starter_packs": "#/$defs/BlueSkySearchStarterPacksConfig",
+          "send_message_batch": "#/$defs/BlueSkySendMessageBatchConfig",
+          "send_message_in_conversation": "#/$defs/BlueSkySendMessageConfig",
+          "send_user_interactions": "#/$defs/BlueSkySendInteractionsConfig",
+          "unblock_user": "#/$defs/BlueSkyUnblockUserConfig",
+          "unfollow_user": "#/$defs/BlueSkyUnfollowUserConfig",
+          "unlike_post": "#/$defs/BlueSkyUnlikePostConfig",
+          "unmute_actor": "#/$defs/BlueSkyUnmuteActorConfig",
+          "unmute_conversation": "#/$defs/BlueSkyUnmuteConversationConfig",
+          "unmute_list": "#/$defs/BlueSkyUnmuteActorListConfig",
+          "unmute_thread": "#/$defs/BlueSkyUnmuteThreadConfig",
+          "unregister_push_notifications": "#/$defs/BlueSkyUnregisterPushConfig",
+          "update_account_email": "#/$defs/BlueSkyUpdateEmailConfig",
+          "update_account_handle": "#/$defs/BlueSkyUpdateHandleConfig",
+          "update_notification_preferences": "#/$defs/BlueSkyPutNotificationPreferencesConfig",
+          "update_user_preferences": "#/$defs/BlueSkyPutPreferencesConfig",
+          "upload_blob_to_repository": "#/$defs/BlueSkyUploadBlobConfig",
+          "upload_video": "#/$defs/BlueSkyUploadVideoConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/BlueSkyCreatePostConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyDeletePostConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetPostThreadConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetPostsConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyLikePostConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyUnlikePostConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyRepostConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyUnrepostConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetLikesConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetRepostedByConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetQuotesConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkySearchPostsConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetTimelineConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetAuthorFeedConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetActorLikesConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetFeedGeneratorConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetActorFeedsConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetSuggestedFeedsConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetListFeedConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetFeedConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetProfilesConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkySearchActorsConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkySearchActorsTypeaheadConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetSuggestionsConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetPreferencesConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyPutPreferencesConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyFollowUserConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyUnfollowUserConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetFollowersConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetFollowsConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyBlockUserConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyUnblockUserConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetBlocksConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyMuteActorConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyUnmuteActorConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetMutesConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyMuteThreadConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyUnmuteThreadConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetListConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetListsConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetRelationshipsConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyCreateBookmarkConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyDeleteBookmarkConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetBookmarksConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyListNotificationsConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetUnreadCountConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyUpdateSeenConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyRegisterPushConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyUnregisterPushConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetNotificationPreferencesConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyPutNotificationPreferencesConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyListActivitySubscriptionsConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyListConversationsConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetConversationForMembersConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetMessagesConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkySendMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyDeleteMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyLeaveConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyMuteConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyUnmuteConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyUpdateConversationReadConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyAcceptConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyAddMessageReactionConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyUploadVideoConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetVideoJobStatusConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetUploadLimitsConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyCreateRecordConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyPutRecordConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyDeleteRecordConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetRecordConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyListRecordsConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyUploadBlobConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyDescribeRepoConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyApplyWritesConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyResolveHandleConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyResolveDidConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyUpdateHandleConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetRecommendedDidCredentialsConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyResolveIdentityConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyBeginAgeAssuranceConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetAgeAssuranceConfigConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetAgeAssuranceStateConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyDescribeFeedGeneratorConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetFeedGeneratorsConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetFeedSkeletonConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkySendInteractionsConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetActorStarterPacksConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetKnownFollowersConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetListBlocksConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetListMutesConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetListsWithMembershipConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetStarterPackConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetStarterPacksWithMembershipConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetStarterPacksConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetSuggestedFollowsByActorConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyMuteActorListConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyUnmuteActorListConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkySearchStarterPacksConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetLabelerServicesConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyRemoveMessageReactionConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkySendMessageBatchConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetConversationLogConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetConvoAvailabilityConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyUpdateAllReadConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyDeleteChatAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyActivateAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyCheckAccountStatusConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyConfirmEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyCreateAppPasswordConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyCreateInviteCodeConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyCreateInviteCodesConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyDeactivateAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyDeleteAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyDeleteSessionConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyDescribeServerConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetAccountInviteCodesConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetServiceAuthConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyGetSessionConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyListAppPasswordsConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyRefreshSessionConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyRequestAccountDeleteConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyRequestEmailConfirmationConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyRequestEmailUpdateConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyRequestPasswordResetConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyReserveSigningKeyConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyResetPasswordConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyRevokeAppPasswordConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyUpdateEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyQueryLabelsConfig"
+        },
+        {
+          "$ref": "#/$defs/BlueSkyCreateModerationReportConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BlueSkyAppPasswordCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Bluesky Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Create a post with an image and tag @user123 in the text",
+    "Search for posts about \"climate\" with engagement filter",
+    "Follow a user and add them to \"Interesting People\" list",
+    "Like and repost a post by @alice in one workflow",
+    "Get notifications and mark conversations as read",
+    "Mute a thread and send a direct message about the topic",
+    "Block a user and report for harassment with description"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -1,0 +1,2129 @@
+{
+  "$defs": {
+    "SendGridAPIKeyCredential": {
+      "description": "SendGrid API Key credential for SendGrid Email API (Twilio-owned email service).\n\nGet your API key at: https://app.sendgrid.com/settings/api_keys\nNavigate to: Settings \u2192 API Keys \u2192 Create API Key\n\nNote: SendGrid uses a separate authentication system from Twilio's main APIs.\nCreate a 'Restricted Access' key with only the permissions you need.",
+      "properties": {
+        "credential_type": {
+          "const": "sendgrid_api_key",
+          "default": "sendgrid_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Your SendGrid API key (starts with SG.)",
+          "placeholder": "SG.xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "title": "SendGrid API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "SendGridAPIKeyCredential",
+      "type": "object",
+      "x-credential-instructions": "Navigate to Settings \u2192 API Keys \u2192 Create API Key \u2192 Select 'Restricted Access' \u2192 Grant 'Mail Send' permission \u2192 Generate & View",
+      "x-credential-url": "https://app.sendgrid.com/settings/api_keys"
+    },
+    "SendGridGetEmailStatsConfig": {
+      "description": "Get email delivery statistics from SendGrid",
+      "properties": {
+        "operation": {
+          "const": "get_sendgrid_email_stats",
+          "default": "get_sendgrid_email_stats",
+          "title": "Get Sendgrid Email Stats",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email",
+          "x-display-name": "Get Sendgrid Email Stats",
+          "x-is-trigger": false
+        },
+        "start_date": {
+          "description": "Start date for stats (YYYY-MM-DD format)",
+          "placeholder": "2024-01-01",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End date for stats (defaults to today)",
+          "placeholder": "2024-12-31",
+          "title": "End Date (Optional)"
+        },
+        "aggregated_by": {
+          "default": "day",
+          "description": "Time interval for aggregation",
+          "enum": [
+            "day",
+            "week",
+            "month"
+          ],
+          "title": "Aggregated By",
+          "type": "string"
+        }
+      },
+      "required": [
+        "start_date"
+      ],
+      "title": "Get Email Stats",
+      "type": "object"
+    },
+    "SendGridSendEmailConfig": {
+      "description": "Send a transactional email via SendGrid Email API",
+      "properties": {
+        "operation": {
+          "const": "send_sendgrid_transactional_email",
+          "default": "send_sendgrid_transactional_email",
+          "title": "Send Sendgrid Transactional Email",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email",
+          "x-display-name": "Send Sendgrid Transactional Email",
+          "x-is-trigger": false
+        },
+        "from_email": {
+          "description": "Sender's email address (must be verified in SendGrid)",
+          "placeholder": "sender@example.com",
+          "title": "From Email",
+          "type": "string"
+        },
+        "from_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sender's display name",
+          "title": "From Name (Optional)"
+        },
+        "to_email": {
+          "description": "Recipient's email address",
+          "placeholder": "recipient@example.com",
+          "title": "To Email",
+          "type": "string"
+        },
+        "to_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Recipient's display name",
+          "title": "To Name (Optional)"
+        },
+        "subject": {
+          "description": "Email subject line",
+          "title": "Subject",
+          "type": "string"
+        },
+        "html_content": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Email body in HTML format",
+          "title": "HTML Content (Optional)",
+          "ui:widget": "textarea"
+        },
+        "text_content": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Email body in plain text format",
+          "title": "Plain Text Content (Optional)",
+          "ui:widget": "textarea"
+        },
+        "cc_emails": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated CC email addresses",
+          "placeholder": "cc1@example.com,cc2@example.com",
+          "title": "CC Emails (Optional)"
+        },
+        "bcc_emails": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated BCC email addresses",
+          "placeholder": "bcc1@example.com,bcc2@example.com",
+          "title": "BCC Emails (Optional)"
+        },
+        "reply_to_email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Email address for replies",
+          "title": "Reply-To Email (Optional)"
+        }
+      },
+      "required": [
+        "from_email",
+        "to_email",
+        "subject"
+      ],
+      "title": "Send Email",
+      "type": "object"
+    },
+    "SendGridSendTemplateEmailConfig": {
+      "description": "Send an email using a SendGrid template",
+      "properties": {
+        "operation": {
+          "const": "send_sendgrid_template_email",
+          "default": "send_sendgrid_template_email",
+          "title": "Send Sendgrid Template Email",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email",
+          "x-display-name": "Send Sendgrid Template Email",
+          "x-is-trigger": false
+        },
+        "from_email": {
+          "description": "Sender's email address (must be verified)",
+          "placeholder": "sender@example.com",
+          "title": "From Email",
+          "type": "string"
+        },
+        "to_email": {
+          "description": "Recipient's email address",
+          "placeholder": "recipient@example.com",
+          "title": "To Email",
+          "type": "string"
+        },
+        "template_id": {
+          "description": "SendGrid template ID (d-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx)",
+          "placeholder": "d-xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "title": "Template ID",
+          "type": "string"
+        },
+        "dynamic_template_data": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object with template variables (e.g., {\"name\": \"John\", \"order_id\": \"12345\"})",
+          "title": "Template Data (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "from_email",
+        "to_email",
+        "template_id"
+      ],
+      "title": "Send Template Email",
+      "type": "object"
+    },
+    "TwilioAPIKeyCredential": {
+      "description": "API Key + Secret credential for Twilio APIs (recommended for production/multi-user apps).\n\nCreate API keys at: https://console.twilio.com/us1/account/keys-credentials/api-keys\nNavigate to: Console \u2192 Account \u2192 API Keys & Tokens \u2192 Create API Key\n\nBenefits over Auth Token:\n- Can create multiple keys per account\n- Independent revocation (don't need to rotate main Auth Token)\n- Better security for server-to-server communication",
+      "properties": {
+        "credential_type": {
+          "const": "twilio_api_key",
+          "default": "twilio_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "account_sid": {
+          "description": "Your Twilio Account SID (starts with AC)",
+          "placeholder": "ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "title": "Account SID",
+          "type": "string"
+        },
+        "api_key_sid": {
+          "description": "Your API Key SID (starts with SK)",
+          "placeholder": "SKxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "title": "API Key SID",
+          "type": "string"
+        },
+        "api_key_secret": {
+          "description": "Your API Key Secret (shown only once when created)",
+          "title": "API Key Secret",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "account_sid",
+        "api_key_sid",
+        "api_key_secret"
+      ],
+      "title": "TwilioAPIKeyCredential",
+      "type": "object",
+      "x-credential-instructions": "Navigate to Console \u2192 API Keys & Tokens \u2192 Create API Key \u2192 Save the API Key SID and Secret (secret is shown only once)",
+      "x-credential-url": "https://console.twilio.com/us1/account/keys-credentials/api-keys"
+    },
+    "TwilioAccountCredential": {
+      "description": "Account SID + Auth Token credential for Twilio APIs (recommended for most use cases).\n\nGet your credentials at: https://console.twilio.com/\nNavigate to: Console Dashboard \u2192 Account Info \u2192 Account SID & Auth Token\n\nThis is the primary authentication method for all Twilio services except SendGrid.",
+      "properties": {
+        "credential_type": {
+          "const": "twilio_account",
+          "default": "twilio_account",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "account_sid": {
+          "description": "Your Twilio Account SID (starts with AC)",
+          "placeholder": "ACxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "title": "Account SID",
+          "type": "string"
+        },
+        "auth_token": {
+          "description": "Your Twilio Auth Token from the console",
+          "title": "Auth Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "account_sid",
+        "auth_token"
+      ],
+      "title": "TwilioAccountCredential",
+      "type": "object",
+      "x-credential-instructions": "Navigate to Console Dashboard \u2192 Account Info section \u2192 Copy Account SID and Auth Token",
+      "x-credential-url": "https://console.twilio.com/"
+    },
+    "TwilioAddParticipantConfig": {
+      "description": "Add a participant to a conversation (SMS, WhatsApp, or Chat)",
+      "properties": {
+        "operation": {
+          "const": "add_conversation_participant",
+          "default": "add_conversation_participant",
+          "title": "Add Conversation Participant",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Conversation",
+          "x-display-name": "Add Conversation Participant",
+          "x-is-trigger": false
+        },
+        "conversation_sid": {
+          "description": "The conversation to add the participant to",
+          "placeholder": "CHxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "title": "Conversation SID",
+          "type": "string"
+        },
+        "messaging_binding_address": {
+          "description": "Phone number (E.164) or WhatsApp number (whatsapp:+12025550100)",
+          "placeholder": "+12025550100 or whatsapp:+12025550100",
+          "title": "Participant Address",
+          "type": "string"
+        },
+        "messaging_binding_proxy_address": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Your Twilio phone number to use for this participant",
+          "title": "Proxy Address (Optional)"
+        }
+      },
+      "required": [
+        "conversation_sid",
+        "messaging_binding_address"
+      ],
+      "title": "Add Participant",
+      "type": "object"
+    },
+    "TwilioCheckVerificationConfig": {
+      "description": "Check if a verification code is correct (Twilio Verify API)",
+      "properties": {
+        "operation": {
+          "const": "check_verification_code",
+          "default": "check_verification_code",
+          "title": "Check Verification Code",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Verification",
+          "x-display-name": "Check Verification Code",
+          "x-is-trigger": false
+        },
+        "verify_service_sid": {
+          "description": "Your Twilio Verify service SID",
+          "placeholder": "VAxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "title": "Verify Service SID",
+          "type": "string"
+        },
+        "to": {
+          "description": "The phone number or email that received the code",
+          "placeholder": "+12025550100 or user@example.com",
+          "title": "To (Phone/Email)",
+          "type": "string"
+        },
+        "code": {
+          "description": "The code entered by the user",
+          "placeholder": "123456",
+          "title": "Verification Code",
+          "type": "string"
+        }
+      },
+      "required": [
+        "verify_service_sid",
+        "to",
+        "code"
+      ],
+      "title": "Check Verification",
+      "type": "object"
+    },
+    "TwilioCreateConversationConfig": {
+      "description": "Create a new conversation (Conversations API)",
+      "properties": {
+        "operation": {
+          "const": "create_conversation",
+          "default": "create_conversation",
+          "title": "Create Conversation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Conversation",
+          "x-display-name": "Create Conversation",
+          "x-is-trigger": false
+        },
+        "friendly_name": {
+          "description": "Human-readable name for the conversation",
+          "placeholder": "Customer Support - John Doe",
+          "title": "Friendly Name",
+          "type": "string"
+        },
+        "unique_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unique identifier for the conversation (e.g., user_123_support)",
+          "title": "Unique Name (Optional)"
+        }
+      },
+      "required": [
+        "friendly_name"
+      ],
+      "title": "Create Conversation",
+      "type": "object"
+    },
+    "TwilioDeleteConversationConfig": {
+      "description": "Delete a conversation",
+      "properties": {
+        "operation": {
+          "const": "delete_conversation",
+          "default": "delete_conversation",
+          "title": "Delete Conversation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Conversation",
+          "x-display-name": "Delete Conversation",
+          "x-is-trigger": false
+        },
+        "conversation_sid": {
+          "description": "The unique identifier for the conversation to delete",
+          "placeholder": "CHxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "title": "Conversation SID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "conversation_sid"
+      ],
+      "title": "Delete Conversation",
+      "type": "object"
+    },
+    "TwilioDeleteMessageConfig": {
+      "description": "Delete a message from your account (removes from logs)",
+      "properties": {
+        "operation": {
+          "const": "delete_message",
+          "default": "delete_message",
+          "title": "Delete Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Delete Message",
+          "x-is-trigger": false
+        },
+        "message_sid": {
+          "description": "The unique identifier for the message to delete",
+          "placeholder": "SMxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "title": "Message SID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message_sid"
+      ],
+      "title": "Delete Message",
+      "type": "object"
+    },
+    "TwilioDeleteRecordingConfig": {
+      "description": "Delete a call recording from your account",
+      "properties": {
+        "operation": {
+          "const": "delete_call_recording",
+          "default": "delete_call_recording",
+          "title": "Delete Call Recording",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Recording",
+          "x-display-name": "Delete Call Recording",
+          "x-is-trigger": false
+        },
+        "recording_sid": {
+          "description": "The unique identifier for the recording to delete",
+          "placeholder": "RExxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "title": "Recording SID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "recording_sid"
+      ],
+      "title": "Delete Recording",
+      "type": "object"
+    },
+    "TwilioGetCallConfig": {
+      "description": "Get details about a specific call by SID",
+      "properties": {
+        "operation": {
+          "const": "get_call",
+          "default": "get_call",
+          "title": "Get Call",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Call",
+          "x-display-name": "Get Call",
+          "x-is-trigger": false
+        },
+        "call_sid": {
+          "description": "The unique identifier for the call (starts with CA)",
+          "placeholder": "CAxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "title": "Call SID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "call_sid"
+      ],
+      "title": "Get Call",
+      "type": "object"
+    },
+    "TwilioGetConferenceConfig": {
+      "description": "Get details about a specific conference",
+      "properties": {
+        "operation": {
+          "const": "get_conference",
+          "default": "get_conference",
+          "title": "Get Conference",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Conference",
+          "x-display-name": "Get Conference",
+          "x-is-trigger": false
+        },
+        "conference_sid": {
+          "description": "The unique identifier for the conference (starts with CF)",
+          "placeholder": "CFxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "title": "Conference SID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "conference_sid"
+      ],
+      "title": "Get Conference",
+      "type": "object"
+    },
+    "TwilioGetConversationDetailsConfig": {
+      "description": "Get details about a specific conversation",
+      "properties": {
+        "operation": {
+          "const": "get_conversation",
+          "default": "get_conversation",
+          "title": "Get Conversation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Conversation",
+          "x-display-name": "Get Conversation",
+          "x-is-trigger": false
+        },
+        "conversation_sid": {
+          "description": "The unique identifier for the conversation (starts with CH)",
+          "placeholder": "CHxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "title": "Conversation SID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "conversation_sid"
+      ],
+      "title": "Get Conversation Details",
+      "type": "object"
+    },
+    "TwilioGetMessageConfig": {
+      "description": "Get details about a specific message by SID",
+      "properties": {
+        "operation": {
+          "const": "get_message",
+          "default": "get_message",
+          "title": "Get Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Get Message",
+          "x-is-trigger": false
+        },
+        "message_sid": {
+          "description": "The unique identifier for the message (starts with MM or SM)",
+          "placeholder": "SMxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "title": "Message SID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message_sid"
+      ],
+      "title": "Get Message",
+      "type": "object"
+    },
+    "TwilioGetRecordingConfig": {
+      "description": "Get details about a specific recording",
+      "properties": {
+        "operation": {
+          "const": "get_call_recording",
+          "default": "get_call_recording",
+          "title": "Get Call Recording",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Recording",
+          "x-display-name": "Get Call Recording",
+          "x-is-trigger": false
+        },
+        "recording_sid": {
+          "description": "The unique identifier for the recording (starts with RE)",
+          "placeholder": "RExxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "title": "Recording SID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "recording_sid"
+      ],
+      "title": "Get Recording",
+      "type": "object"
+    },
+    "TwilioGetWhatsAppMessageConfig": {
+      "description": "Get details about a specific WhatsApp message",
+      "properties": {
+        "operation": {
+          "const": "get_whatsapp_message",
+          "default": "get_whatsapp_message",
+          "title": "Get Whatsapp Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "WhatsApp Message",
+          "x-display-name": "Get Whatsapp Message",
+          "x-is-trigger": false
+        },
+        "message_sid": {
+          "description": "The unique identifier for the WhatsApp message",
+          "placeholder": "SMxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "title": "Message SID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message_sid"
+      ],
+      "title": "Get WhatsApp Message",
+      "type": "object"
+    },
+    "TwilioListCallsConfig": {
+      "description": "List calls made to/from your account with filters",
+      "properties": {
+        "operation": {
+          "const": "list_calls",
+          "default": "list_calls",
+          "title": "List Calls",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Call",
+          "x-display-name": "List Calls",
+          "x-is-trigger": false
+        },
+        "to_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by recipient phone number",
+          "title": "To Number (Filter)"
+        },
+        "from_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by caller phone number",
+          "title": "From Number (Filter)"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "queued",
+                "ringing",
+                "in-progress",
+                "completed",
+                "failed",
+                "busy",
+                "no-answer",
+                "canceled"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by call status",
+          "title": "Status (Filter)",
+          "enum": [
+            "queued",
+            "ringing",
+            "in-progress",
+            "completed",
+            "failed",
+            "busy",
+            "no-answer",
+            "canceled"
+          ],
+          "x-enum-searchable": true
+        },
+        "start_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by call start time (YYYY-MM-DD format)",
+          "title": "Start Time (Filter)"
+        },
+        "page_size": {
+          "default": 20,
+          "description": "Number of calls to return (max 1000)",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "title": "List Calls",
+      "type": "object"
+    },
+    "TwilioListConferencesConfig": {
+      "description": "List conferences in your account",
+      "properties": {
+        "operation": {
+          "const": "list_conferences",
+          "default": "list_conferences",
+          "title": "List Conferences",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Conference",
+          "x-display-name": "List Conferences",
+          "x-is-trigger": false
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "init",
+                "in-progress",
+                "completed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by conference status",
+          "title": "Status (Filter)",
+          "enum": [
+            "init",
+            "in-progress",
+            "completed"
+          ],
+          "x-enum-searchable": true
+        },
+        "friendly_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by conference friendly name",
+          "title": "Friendly Name (Filter)"
+        },
+        "page_size": {
+          "default": 20,
+          "description": "Number of conferences to return (max 1000)",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "title": "List Conferences",
+      "type": "object"
+    },
+    "TwilioListConversationsConfig": {
+      "description": "List all conversations in your account",
+      "properties": {
+        "operation": {
+          "const": "list_conversations",
+          "default": "list_conversations",
+          "title": "List Conversations",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Conversation",
+          "x-display-name": "List Conversations",
+          "x-is-trigger": false
+        },
+        "page_size": {
+          "default": 20,
+          "description": "Number of conversations to return (max 100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "title": "List Conversations",
+      "type": "object"
+    },
+    "TwilioListIncomingNumbersConfig": {
+      "description": "List phone numbers owned by your account",
+      "properties": {
+        "operation": {
+          "const": "list_owned_phone_numbers",
+          "default": "list_owned_phone_numbers",
+          "title": "List Owned Phone Numbers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Phone Number",
+          "x-display-name": "List Owned Phone Numbers",
+          "x-is-trigger": false
+        },
+        "phone_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by specific phone number",
+          "title": "Phone Number (Filter)"
+        },
+        "friendly_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by friendly name",
+          "title": "Friendly Name (Filter)"
+        },
+        "page_size": {
+          "default": 20,
+          "description": "Number of numbers to return (max 1000)",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "title": "List Incoming Numbers",
+      "type": "object"
+    },
+    "TwilioListMessagesConfig": {
+      "description": "List messages sent/received from your account with filters",
+      "properties": {
+        "operation": {
+          "const": "list_messages",
+          "default": "list_messages",
+          "title": "List Messages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "List Messages",
+          "x-is-trigger": false
+        },
+        "to_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by recipient phone number in E.164 format",
+          "title": "To Number (Filter)"
+        },
+        "from_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by sender phone number in E.164 format",
+          "title": "From Number (Filter)"
+        },
+        "date_sent": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by date sent (YYYY-MM-DD format)",
+          "title": "Date Sent (Filter)"
+        },
+        "page_size": {
+          "default": 20,
+          "description": "Number of messages to return (max 1000)",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "title": "List Messages",
+      "type": "object"
+    },
+    "TwilioListParticipantsConfig": {
+      "description": "List participants in a conference",
+      "properties": {
+        "operation": {
+          "const": "list_conference_participants",
+          "default": "list_conference_participants",
+          "title": "List Conference Participants",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Conference",
+          "x-display-name": "List Conference Participants",
+          "x-is-trigger": false
+        },
+        "conference_sid": {
+          "description": "The conference to list participants from",
+          "placeholder": "CFxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "title": "Conference SID",
+          "type": "string"
+        },
+        "muted": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by muted status (true/false)",
+          "title": "Muted (Filter)"
+        }
+      },
+      "required": [
+        "conference_sid"
+      ],
+      "title": "List Participants",
+      "type": "object"
+    },
+    "TwilioListRecordingsConfig": {
+      "description": "List call recordings from your account",
+      "properties": {
+        "operation": {
+          "const": "list_call_recordings",
+          "default": "list_call_recordings",
+          "title": "List Call Recordings",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Recording",
+          "x-display-name": "List Call Recordings",
+          "x-is-trigger": false
+        },
+        "call_sid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter recordings by specific call",
+          "title": "Call SID (Filter)"
+        },
+        "date_created": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by creation date (YYYY-MM-DD format)",
+          "title": "Date Created (Filter)"
+        },
+        "page_size": {
+          "default": 20,
+          "description": "Number of recordings to return (max 1000)",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Page Size",
+          "type": "integer"
+        }
+      },
+      "title": "List Recordings",
+      "type": "object"
+    },
+    "TwilioLookupPhoneNumberConfig": {
+      "description": "Look up phone number information (carrier, line type, validation)",
+      "properties": {
+        "operation": {
+          "const": "lookup_phone_number_info",
+          "default": "lookup_phone_number_info",
+          "title": "Lookup Phone Number Info",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Phone Number",
+          "x-display-name": "Lookup Phone Number Info",
+          "x-is-trigger": false
+        },
+        "phone_number": {
+          "description": "Phone number to look up in E.164 format (e.g., +12025550100)",
+          "placeholder": "+12025550100",
+          "title": "Phone Number",
+          "type": "string"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list: validation, caller_name, line_type_intelligence, etc. (may incur charges)",
+          "placeholder": "line_type_intelligence",
+          "title": "Data Type (Optional)"
+        }
+      },
+      "required": [
+        "phone_number"
+      ],
+      "title": "Lookup Phone Number",
+      "type": "object"
+    },
+    "TwilioMakeCallConfig": {
+      "description": "Make an outbound phone call with TwiML instructions",
+      "properties": {
+        "operation": {
+          "const": "make_outbound_call",
+          "default": "make_outbound_call",
+          "title": "Make Outbound Call",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Call",
+          "x-display-name": "Make Outbound Call",
+          "x-is-trigger": false
+        },
+        "from_number": {
+          "description": "Your Twilio phone number in E.164 format (e.g., +12025550100)",
+          "placeholder": "+12025550100",
+          "title": "From Number",
+          "type": "string"
+        },
+        "to_number": {
+          "description": "Recipient's phone number in E.164 format (e.g., +1987654321)",
+          "placeholder": "+1987654321",
+          "title": "To Number",
+          "type": "string"
+        },
+        "url": {
+          "description": "URL that returns TwiML instructions for the call (e.g., play audio, say text)",
+          "placeholder": "https://example.com/twiml",
+          "title": "TwiML URL",
+          "type": "string"
+        },
+        "status_callback": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Webhook URL to receive call status updates (ringing, answered, completed)",
+          "title": "Status Callback URL (Optional)"
+        },
+        "timeout": {
+          "anyOf": [
+            {
+              "maximum": 600,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 60,
+          "description": "Number of seconds to wait for an answer before giving up (max 600)",
+          "title": "Timeout (Seconds)"
+        },
+        "record": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Enable call recording",
+          "title": "Record Call"
+        }
+      },
+      "required": [
+        "from_number",
+        "to_number",
+        "url"
+      ],
+      "title": "Make Call",
+      "type": "object"
+    },
+    "TwilioOnIncomingSmsConfig": {
+      "description": "Trigger: fires when an SMS is received by a Twilio phone number.",
+      "properties": {
+        "operation": {
+          "const": "on_incoming_sms",
+          "default": "on_incoming_sms",
+          "title": "On Incoming SMS",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Incoming SMS",
+          "x-is-trigger": true
+        },
+        "phone_number_sid": {
+          "description": "SID of the Twilio number to receive SMS on (starts with PN)",
+          "title": "Phone Number SID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "field_name": "phone_number_sid",
+            "placeholder": "Select a phone number...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "twilio_phone_number"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "phone_number_sid"
+      ],
+      "title": "TwilioOnIncomingSmsConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "TwilioPurchasePhoneNumberConfig": {
+      "description": "Purchase an available phone number",
+      "properties": {
+        "operation": {
+          "const": "purchase_phone_number",
+          "default": "purchase_phone_number",
+          "title": "Purchase Phone Number",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Phone Number",
+          "x-display-name": "Purchase Phone Number",
+          "x-is-trigger": false
+        },
+        "phone_number": {
+          "description": "The phone number to purchase in E.164 format (e.g., +12025550100)",
+          "placeholder": "+12025550100",
+          "title": "Phone Number",
+          "type": "string"
+        },
+        "friendly_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Human-readable label for the number",
+          "title": "Friendly Name (Optional)"
+        },
+        "sms_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL to call when an SMS is received",
+          "title": "SMS Webhook URL (Optional)"
+        },
+        "voice_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL to call when a call is received",
+          "title": "Voice Webhook URL (Optional)"
+        }
+      },
+      "required": [
+        "phone_number"
+      ],
+      "title": "Purchase Phone Number",
+      "type": "object"
+    },
+    "TwilioReleasePhoneNumberConfig": {
+      "description": "Release (delete) a phone number from your account",
+      "properties": {
+        "operation": {
+          "const": "release_phone_number",
+          "default": "release_phone_number",
+          "title": "Release Phone Number",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Phone Number",
+          "x-display-name": "Release Phone Number",
+          "x-is-trigger": false
+        },
+        "phone_number_sid": {
+          "description": "The SID of the phone number to release",
+          "placeholder": "PNxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "title": "Phone Number SID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "phone_number_sid"
+      ],
+      "title": "Release Phone Number",
+      "type": "object"
+    },
+    "TwilioSearchAvailableNumbersConfig": {
+      "description": "Search for available phone numbers to purchase",
+      "properties": {
+        "operation": {
+          "const": "search_available_phone_numbers",
+          "default": "search_available_phone_numbers",
+          "title": "Search Available Phone Numbers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Phone Number",
+          "x-display-name": "Search Available Phone Numbers",
+          "x-is-trigger": false
+        },
+        "country_code": {
+          "default": "US",
+          "description": "Two-letter country code (US, GB, CA, etc.)",
+          "placeholder": "US",
+          "title": "Country Code",
+          "type": "string"
+        },
+        "area_code": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by area code (e.g., 415, 212)",
+          "title": "Area Code (Optional)"
+        },
+        "contains": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter numbers containing this pattern (e.g., '555')",
+          "title": "Contains (Optional)"
+        },
+        "sms_enabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "Filter by SMS capability",
+          "title": "SMS Enabled"
+        },
+        "voice_enabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "Filter by voice capability",
+          "title": "Voice Enabled"
+        },
+        "limit": {
+          "default": 10,
+          "description": "Number of results to return (max 100)",
+          "maximum": 100,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        }
+      },
+      "title": "Search Available Numbers",
+      "type": "object"
+    },
+    "TwilioSendConversationMessageConfig": {
+      "description": "Send a message to a conversation",
+      "properties": {
+        "operation": {
+          "const": "send_conversation_message",
+          "default": "send_conversation_message",
+          "title": "Send Conversation Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Conversation",
+          "x-display-name": "Send Conversation Message",
+          "x-is-trigger": false
+        },
+        "conversation_sid": {
+          "description": "The conversation to send the message to",
+          "placeholder": "CHxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "title": "Conversation SID",
+          "type": "string"
+        },
+        "body": {
+          "description": "Text content of the message",
+          "title": "Message Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "author": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Display name of the message sender",
+          "title": "Author (Optional)"
+        }
+      },
+      "required": [
+        "conversation_sid",
+        "body"
+      ],
+      "title": "Send Conversation Message",
+      "type": "object"
+    },
+    "TwilioSendSMSConfig": {
+      "description": "Send an SMS or MMS message via Twilio Messaging API",
+      "properties": {
+        "operation": {
+          "const": "send_sms_message",
+          "default": "send_sms_message",
+          "title": "Send Sms Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Send Sms Message",
+          "x-is-trigger": false
+        },
+        "from_number": {
+          "description": "Your Twilio phone number in E.164 format (e.g., +12025550100)",
+          "placeholder": "+12025550100",
+          "title": "From Number",
+          "type": "string"
+        },
+        "to_number": {
+          "description": "Recipient's phone number in E.164 format (e.g., +1987654321)",
+          "placeholder": "+1987654321",
+          "title": "To Number",
+          "type": "string"
+        },
+        "body": {
+          "description": "Text content of the message (up to 1600 characters)",
+          "title": "Message Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "media_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The media to send (for MMS) \u2014 upload a file, paste a URL, or reference an upstream file (e.g. {{http-1.response.url}}). Supports images, videos, PDFs, etc.",
+          "title": "Media URL (Optional)",
+          "ui:accept": "image/*,video/*",
+          "ui:widget": "media_upload"
+        },
+        "status_callback": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Webhook URL to receive message delivery status updates",
+          "title": "Status Callback URL (Optional)"
+        }
+      },
+      "required": [
+        "from_number",
+        "to_number",
+        "body"
+      ],
+      "title": "Send SMS",
+      "type": "object"
+    },
+    "TwilioSendWhatsAppConfig": {
+      "description": "Send a WhatsApp message via Twilio (template or session message)",
+      "properties": {
+        "operation": {
+          "const": "send_whatsapp_message",
+          "default": "send_whatsapp_message",
+          "title": "Send Whatsapp Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "WhatsApp Message",
+          "x-display-name": "Send Whatsapp Message",
+          "x-is-trigger": false
+        },
+        "from_number": {
+          "description": "Your Twilio WhatsApp number with 'whatsapp:' prefix (e.g., whatsapp:+14155238886)",
+          "placeholder": "whatsapp:+14155238886",
+          "title": "From Number",
+          "type": "string"
+        },
+        "to_number": {
+          "description": "Recipient's WhatsApp number with 'whatsapp:' prefix (e.g., whatsapp:+1987654321)",
+          "placeholder": "whatsapp:+1987654321",
+          "title": "To Number",
+          "type": "string"
+        },
+        "body": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Text content (required for session messages, optional for templates)",
+          "title": "Message Body (Optional)",
+          "ui:widget": "textarea"
+        },
+        "content_sid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pre-approved WhatsApp message template SID (starts with HX)",
+          "placeholder": "HXxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "title": "Content SID (Template)"
+        },
+        "media_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The media to send \u2014 upload a file, paste a URL, or reference an upstream file (e.g. {{http-1.response.url}}). Supports images, videos, documents.",
+          "title": "Media URL (Optional)",
+          "ui:accept": "image/*,video/*",
+          "ui:widget": "media_upload"
+        }
+      },
+      "required": [
+        "from_number",
+        "to_number"
+      ],
+      "title": "Send WhatsApp",
+      "type": "object"
+    },
+    "TwilioStartVerificationConfig": {
+      "description": "Send a verification code via SMS, Voice, or Email (Twilio Verify API)",
+      "properties": {
+        "operation": {
+          "const": "start_verification_code",
+          "default": "start_verification_code",
+          "title": "Start Verification Code",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Verification",
+          "x-display-name": "Start Verification Code",
+          "x-is-trigger": false
+        },
+        "verify_service_sid": {
+          "description": "Your Twilio Verify service SID (create at console.twilio.com/verify)",
+          "placeholder": "VAxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "title": "Verify Service SID",
+          "type": "string"
+        },
+        "to": {
+          "description": "Phone number (E.164) or email address to send verification code",
+          "placeholder": "+12025550100 or user@example.com",
+          "title": "To (Phone/Email)",
+          "type": "string"
+        },
+        "channel": {
+          "default": "sms",
+          "description": "Delivery method for verification code",
+          "enum": [
+            "sms",
+            "call",
+            "email"
+          ],
+          "title": "Channel",
+          "type": "string"
+        },
+        "locale": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "en",
+          "description": "Language for the verification message (e.g., en, es, fr)",
+          "placeholder": "en",
+          "title": "Locale"
+        }
+      },
+      "required": [
+        "verify_service_sid",
+        "to"
+      ],
+      "title": "Start Verification",
+      "type": "object"
+    },
+    "TwilioUpdateCallConfig": {
+      "description": "Update an in-progress call (redirect, hangup, or modify)",
+      "properties": {
+        "operation": {
+          "const": "update_in_progress_call",
+          "default": "update_in_progress_call",
+          "title": "Update in Progress Call",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Call",
+          "x-display-name": "Update in Progress Call",
+          "x-is-trigger": false
+        },
+        "call_sid": {
+          "description": "The unique identifier for the call to update",
+          "placeholder": "CAxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "title": "Call SID",
+          "type": "string"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Redirect call to new TwiML instructions",
+          "title": "New TwiML URL (Optional)"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "canceled",
+                "completed"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set status to 'canceled' (hangup queued/ringing) or 'completed' (hangup in-progress)",
+          "title": "Status (Optional)",
+          "enum": [
+            "canceled",
+            "completed"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "call_sid"
+      ],
+      "title": "Update Call",
+      "type": "object"
+    },
+    "TwilioUpdateParticipantConfig": {
+      "description": "Update a conference participant (mute, hold, kick)",
+      "properties": {
+        "operation": {
+          "const": "update_conference_participant",
+          "default": "update_conference_participant",
+          "title": "Update Conference Participant",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Conference",
+          "x-display-name": "Update Conference Participant",
+          "x-is-trigger": false
+        },
+        "conference_sid": {
+          "description": "The conference containing the participant",
+          "placeholder": "CFxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "title": "Conference SID",
+          "type": "string"
+        },
+        "call_sid": {
+          "description": "The call SID of the participant to update",
+          "placeholder": "CAxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "title": "Participant Call SID",
+          "type": "string"
+        },
+        "muted": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Mute or unmute the participant",
+          "title": "Muted"
+        },
+        "hold": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Put participant on hold or take off hold",
+          "title": "Hold"
+        }
+      },
+      "required": [
+        "conference_sid",
+        "call_sid"
+      ],
+      "title": "Update Participant",
+      "type": "object"
+    },
+    "TwilioUpdatePhoneNumberConfig": {
+      "description": "Update configuration for an owned phone number",
+      "properties": {
+        "operation": {
+          "const": "update_phone_number_configuration",
+          "default": "update_phone_number_configuration",
+          "title": "Update Phone Number Configuration",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Phone Number",
+          "x-display-name": "Update Phone Number Configuration",
+          "x-is-trigger": false
+        },
+        "phone_number_sid": {
+          "description": "The SID of the phone number to update (starts with PN)",
+          "placeholder": "PNxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx",
+          "title": "Phone Number SID",
+          "type": "string"
+        },
+        "friendly_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Update the friendly name",
+          "title": "Friendly Name (Optional)"
+        },
+        "sms_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Update the SMS webhook URL",
+          "title": "SMS Webhook URL (Optional)"
+        },
+        "voice_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Update the voice webhook URL",
+          "title": "Voice Webhook URL (Optional)"
+        }
+      },
+      "required": [
+        "phone_number_sid"
+      ],
+      "title": "Update Phone Number",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for Twilio automation node",
+  "properties": {
+    "config": {
+      "discriminator": {
+        "mapping": {
+          "add_conversation_participant": "#/$defs/TwilioAddParticipantConfig",
+          "check_verification_code": "#/$defs/TwilioCheckVerificationConfig",
+          "create_conversation": "#/$defs/TwilioCreateConversationConfig",
+          "delete_call_recording": "#/$defs/TwilioDeleteRecordingConfig",
+          "delete_conversation": "#/$defs/TwilioDeleteConversationConfig",
+          "delete_message": "#/$defs/TwilioDeleteMessageConfig",
+          "get_call": "#/$defs/TwilioGetCallConfig",
+          "get_call_recording": "#/$defs/TwilioGetRecordingConfig",
+          "get_conference": "#/$defs/TwilioGetConferenceConfig",
+          "get_conversation": "#/$defs/TwilioGetConversationDetailsConfig",
+          "get_message": "#/$defs/TwilioGetMessageConfig",
+          "get_sendgrid_email_stats": "#/$defs/SendGridGetEmailStatsConfig",
+          "get_whatsapp_message": "#/$defs/TwilioGetWhatsAppMessageConfig",
+          "list_call_recordings": "#/$defs/TwilioListRecordingsConfig",
+          "list_calls": "#/$defs/TwilioListCallsConfig",
+          "list_conference_participants": "#/$defs/TwilioListParticipantsConfig",
+          "list_conferences": "#/$defs/TwilioListConferencesConfig",
+          "list_conversations": "#/$defs/TwilioListConversationsConfig",
+          "list_messages": "#/$defs/TwilioListMessagesConfig",
+          "list_owned_phone_numbers": "#/$defs/TwilioListIncomingNumbersConfig",
+          "lookup_phone_number_info": "#/$defs/TwilioLookupPhoneNumberConfig",
+          "make_outbound_call": "#/$defs/TwilioMakeCallConfig",
+          "on_incoming_sms": "#/$defs/TwilioOnIncomingSmsConfig",
+          "purchase_phone_number": "#/$defs/TwilioPurchasePhoneNumberConfig",
+          "release_phone_number": "#/$defs/TwilioReleasePhoneNumberConfig",
+          "search_available_phone_numbers": "#/$defs/TwilioSearchAvailableNumbersConfig",
+          "send_conversation_message": "#/$defs/TwilioSendConversationMessageConfig",
+          "send_sendgrid_template_email": "#/$defs/SendGridSendTemplateEmailConfig",
+          "send_sendgrid_transactional_email": "#/$defs/SendGridSendEmailConfig",
+          "send_sms_message": "#/$defs/TwilioSendSMSConfig",
+          "send_whatsapp_message": "#/$defs/TwilioSendWhatsAppConfig",
+          "start_verification_code": "#/$defs/TwilioStartVerificationConfig",
+          "update_conference_participant": "#/$defs/TwilioUpdateParticipantConfig",
+          "update_in_progress_call": "#/$defs/TwilioUpdateCallConfig",
+          "update_phone_number_configuration": "#/$defs/TwilioUpdatePhoneNumberConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/TwilioOnIncomingSmsConfig"
+        },
+        {
+          "$ref": "#/$defs/TwilioSendSMSConfig"
+        },
+        {
+          "$ref": "#/$defs/TwilioGetMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/TwilioListMessagesConfig"
+        },
+        {
+          "$ref": "#/$defs/TwilioDeleteMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/TwilioSendWhatsAppConfig"
+        },
+        {
+          "$ref": "#/$defs/TwilioGetWhatsAppMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/TwilioMakeCallConfig"
+        },
+        {
+          "$ref": "#/$defs/TwilioGetCallConfig"
+        },
+        {
+          "$ref": "#/$defs/TwilioListCallsConfig"
+        },
+        {
+          "$ref": "#/$defs/TwilioUpdateCallConfig"
+        },
+        {
+          "$ref": "#/$defs/TwilioListRecordingsConfig"
+        },
+        {
+          "$ref": "#/$defs/TwilioGetRecordingConfig"
+        },
+        {
+          "$ref": "#/$defs/TwilioDeleteRecordingConfig"
+        },
+        {
+          "$ref": "#/$defs/TwilioListConferencesConfig"
+        },
+        {
+          "$ref": "#/$defs/TwilioGetConferenceConfig"
+        },
+        {
+          "$ref": "#/$defs/TwilioListParticipantsConfig"
+        },
+        {
+          "$ref": "#/$defs/TwilioUpdateParticipantConfig"
+        },
+        {
+          "$ref": "#/$defs/TwilioStartVerificationConfig"
+        },
+        {
+          "$ref": "#/$defs/TwilioCheckVerificationConfig"
+        },
+        {
+          "$ref": "#/$defs/TwilioLookupPhoneNumberConfig"
+        },
+        {
+          "$ref": "#/$defs/TwilioCreateConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/TwilioListConversationsConfig"
+        },
+        {
+          "$ref": "#/$defs/TwilioGetConversationDetailsConfig"
+        },
+        {
+          "$ref": "#/$defs/TwilioSendConversationMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/TwilioAddParticipantConfig"
+        },
+        {
+          "$ref": "#/$defs/TwilioDeleteConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/TwilioSearchAvailableNumbersConfig"
+        },
+        {
+          "$ref": "#/$defs/TwilioListIncomingNumbersConfig"
+        },
+        {
+          "$ref": "#/$defs/TwilioPurchasePhoneNumberConfig"
+        },
+        {
+          "$ref": "#/$defs/TwilioUpdatePhoneNumberConfig"
+        },
+        {
+          "$ref": "#/$defs/TwilioReleasePhoneNumberConfig"
+        },
+        {
+          "$ref": "#/$defs/SendGridSendEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/SendGridSendTemplateEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/SendGridGetEmailStatsConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TwilioAccountCredential"
+        },
+        {
+          "$ref": "#/$defs/TwilioAPIKeyCredential"
+        },
+        {
+          "$ref": "#/$defs/SendGridAPIKeyCredential"
+        }
+      ],
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config",
+    "credentials"
+  ],
+  "title": "Twilio Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Send an SMS message to verify a user email address",
+    "Make a voice call to alert support when an order ships",
+    "Send WhatsApp template message for customer confirmation",
+    "Search available phone numbers in area code 415",
+    "Verify a 2FA code submitted by the customer",
+    "Send a transactional email via SendGrid to order@example.com",
+    "Create a conversation and add multiple participants"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

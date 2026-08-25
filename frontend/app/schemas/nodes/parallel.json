@@ -1,0 +1,1583 @@
+{
+  "$defs": {
+    "ParallelAddRunsToGroupConfig": {
+      "description": "Add one or more task runs to an existing group.",
+      "properties": {
+        "operation": {
+          "const": "add_runs_to_group",
+          "default": "add_runs_to_group",
+          "title": "Add Runs to Task Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Task Groups",
+          "x-display-name": "Add Runs to Task Group",
+          "x-is-trigger": false
+        },
+        "taskgroup_id": {
+          "description": "The group to add runs to",
+          "title": "Task Group ID",
+          "type": "string"
+        },
+        "inputs": {
+          "description": "Run inputs, one per line \u2014 each becomes a run in the group",
+          "title": "Inputs",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "processor": {
+          "default": "core",
+          "description": "Depth / cost / latency tier applied to each run",
+          "enum": [
+            "lite",
+            "base",
+            "core",
+            "core2x",
+            "pro",
+            "ultra",
+            "ultra2x",
+            "ultra4x",
+            "ultra8x"
+          ],
+          "title": "Processor",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "taskgroup_id",
+        "inputs"
+      ],
+      "title": "ParallelAddRunsToGroupConfig",
+      "type": "object"
+    },
+    "ParallelApiKeyCredential": {
+      "description": "API Key credential for Parallel.",
+      "properties": {
+        "credential_type": {
+          "const": "parallel_api_key",
+          "default": "parallel_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Your Parallel API key from platform.parallel.ai. Sent in the x-api-key header.",
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "ParallelApiKeyCredential",
+      "type": "object",
+      "x-credential-url": "https://platform.parallel.ai"
+    },
+    "ParallelCancelFindAllConfig": {
+      "description": "Cancel an in-progress FindAll run.",
+      "properties": {
+        "operation": {
+          "const": "cancel_findall",
+          "default": "cancel_findall",
+          "title": "Cancel FindAll Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "FindAll",
+          "x-display-name": "Cancel FindAll Run",
+          "x-is-trigger": false
+        },
+        "findall_id": {
+          "description": "The FindAll run id to cancel",
+          "title": "FindAll Run ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "findall_id"
+      ],
+      "title": "ParallelCancelFindAllConfig",
+      "type": "object"
+    },
+    "ParallelCancelMonitorConfig": {
+      "description": "Stop / cancel a monitor.",
+      "properties": {
+        "operation": {
+          "const": "cancel_monitor",
+          "default": "cancel_monitor",
+          "title": "Cancel Monitor",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Monitors",
+          "x-display-name": "Cancel Monitor",
+          "x-is-trigger": false
+        },
+        "monitor_id": {
+          "description": "The monitor id to cancel",
+          "title": "Monitor ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "field_name": "monitor_id",
+            "placeholder": "Select a monitor...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "parallel_monitor"
+        }
+      },
+      "required": [
+        "monitor_id"
+      ],
+      "title": "ParallelCancelMonitorConfig",
+      "type": "object"
+    },
+    "ParallelChatCompletionsConfig": {
+      "description": "OpenAI-compatible chat completion backed by Parallel web research (Beta).",
+      "properties": {
+        "operation": {
+          "const": "chat_completions",
+          "default": "chat_completions",
+          "title": "Chat Completions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Chat",
+          "x-display-name": "Chat Completions",
+          "x-is-trigger": false
+        },
+        "prompt": {
+          "description": "The user message to send to the chat model",
+          "title": "Prompt",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "model": {
+          "default": "speed",
+          "description": "The Parallel chat model to use. 'speed' is fastest (~3s); 'lite'/'base'/'core' are research-grade with citations (10s\u20135min).",
+          "enum": [
+            "speed",
+            "lite",
+            "base",
+            "core"
+          ],
+          "enumNames": [
+            "Speed (~3s, no citations)",
+            "Lite (research)",
+            "Base (research)",
+            "Core (deep research)"
+          ],
+          "title": "Model",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "system_prompt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional system message to steer the response",
+          "title": "System Prompt",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "prompt"
+      ],
+      "title": "ParallelChatCompletionsConfig",
+      "type": "object"
+    },
+    "ParallelCreateFindAllConfig": {
+      "description": "Discover verified entities matching plain-language criteria.",
+      "properties": {
+        "operation": {
+          "const": "create_findall_run",
+          "default": "create_findall_run",
+          "title": "Create FindAll Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "FindAll",
+          "x-display-name": "Create FindAll Run",
+          "x-is-trigger": false
+        },
+        "objective": {
+          "description": "Plain-language description of the entities to discover",
+          "title": "Objective",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "entity_type": {
+          "description": "The kind of entity to find (e.g. company, person, funded_startups)",
+          "title": "Entity Type",
+          "type": "string"
+        },
+        "generator": {
+          "default": "base",
+          "description": "Research depth for entity discovery",
+          "enum": [
+            "base",
+            "core",
+            "pro",
+            "preview"
+          ],
+          "enumNames": [
+            "Base",
+            "Core",
+            "Pro",
+            "Preview"
+          ],
+          "title": "Generator",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "match_conditions": {
+          "description": "JSON array of condition objects, each with \"name\" and \"description\" keys. Example: [{\"name\": \"funded\", \"description\": \"Company has raised venture funding\"}]",
+          "title": "Match Conditions (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "match_limit": {
+          "description": "Maximum number of entities to find (integer as string, e.g. '10')",
+          "title": "Match Limit",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional URL to POST completion events to",
+          "title": "Webhook URL"
+        }
+      },
+      "required": [
+        "objective",
+        "entity_type",
+        "match_conditions",
+        "match_limit"
+      ],
+      "title": "ParallelCreateFindAllConfig",
+      "type": "object"
+    },
+    "ParallelCreateFindAllSpecConfig": {
+      "description": "Transform a natural-language objective into a structured FindAll spec (suggested starting point).",
+      "properties": {
+        "operation": {
+          "const": "create_findall_spec",
+          "default": "create_findall_spec",
+          "title": "Generate FindAll Spec",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "FindAll",
+          "x-display-name": "Generate FindAll Spec",
+          "x-is-trigger": false
+        },
+        "objective": {
+          "description": "Plain-language description of what entities to find \u2014 returns a structured spec you can use with Create FindAll Run",
+          "title": "Objective",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "objective"
+      ],
+      "title": "ParallelCreateFindAllSpecConfig",
+      "type": "object"
+    },
+    "ParallelCreateMonitorConfig": {
+      "description": "Set up continuous web tracking.",
+      "properties": {
+        "operation": {
+          "const": "create_monitor",
+          "default": "create_monitor",
+          "title": "Create Monitor",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Monitors",
+          "x-creates-resource": true,
+          "x-display-name": "Create Monitor",
+          "x-is-trigger": false,
+          "x-resource-id-path": "monitor_id",
+          "x-resource-type": "parallel_monitor"
+        },
+        "type": {
+          "default": "event_stream",
+          "description": "The kind of monitor to create",
+          "enum": [
+            "event_stream",
+            "snapshot"
+          ],
+          "enumNames": [
+            "Event Stream (track web changes)",
+            "Snapshot (compare task run outputs)"
+          ],
+          "title": "Monitor Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "frequency": {
+          "default": "1d",
+          "description": "How often the monitor runs. Use <number><unit> format: '1d' (daily), '12h' (every 12 hours), '1w' (weekly), '2h' (every 2 hours).",
+          "title": "Frequency",
+          "type": "string",
+          "ui:placeholder": "e.g. 1d, 12h, 1w"
+        },
+        "settings": {
+          "description": "Monitor-type-specific settings as JSON. event_stream: {\"query\": \"search terms\"} \u2014 optional advanced: {\"query\": \"...\", \"advanced_settings\": {\"location\": \"us\"}}. snapshot: {\"task_run_id\": \"<completed_task_run_id>\"} \u2014 requires a completed task run id as baseline.",
+          "title": "Settings (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional URL to POST detected-change events to",
+          "title": "Webhook URL"
+        }
+      },
+      "required": [
+        "settings"
+      ],
+      "title": "ParallelCreateMonitorConfig",
+      "type": "object"
+    },
+    "ParallelCreateTaskGroupConfig": {
+      "description": "Create a batch group to run many task runs together.",
+      "properties": {
+        "operation": {
+          "const": "create_task_group",
+          "default": "create_task_group",
+          "title": "Create Task Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Task Groups",
+          "x-display-name": "Create Task Group",
+          "x-is-trigger": false
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON object of metadata to attach to the group",
+          "title": "Metadata (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "ParallelCreateTaskGroupConfig",
+      "type": "object"
+    },
+    "ParallelCreateTaskRunConfig": {
+      "description": "Start a deep-research / enrichment task run.",
+      "properties": {
+        "operation": {
+          "const": "create_task_run",
+          "default": "create_task_run",
+          "title": "Create Task Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Create Task Run",
+          "x-is-trigger": false
+        },
+        "input": {
+          "description": "The research question or enrichment input for the task",
+          "title": "Input",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "processor": {
+          "default": "core",
+          "description": "Depth / cost / latency tier",
+          "enum": [
+            "lite",
+            "base",
+            "core",
+            "core2x",
+            "pro",
+            "ultra",
+            "ultra2x",
+            "ultra4x",
+            "ultra8x"
+          ],
+          "title": "Processor",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "output_schema": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON Schema describing the desired structured output",
+          "title": "Output Schema (JSON)",
+          "ui:widget": "textarea"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional URL to POST the task_run.status event to on completion",
+          "title": "Webhook URL"
+        }
+      },
+      "required": [
+        "input"
+      ],
+      "title": "ParallelCreateTaskRunConfig",
+      "type": "object"
+    },
+    "ParallelEnrichFindAllConfig": {
+      "description": "Add column enrichments to a FindAll run's discovered entities.",
+      "properties": {
+        "operation": {
+          "const": "enrich_findall",
+          "default": "enrich_findall",
+          "title": "Add FindAll Enrichment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "FindAll",
+          "x-display-name": "Add FindAll Enrichment",
+          "x-is-trigger": false
+        },
+        "findall_id": {
+          "description": "The FindAll run id",
+          "title": "FindAll Run ID",
+          "type": "string"
+        },
+        "enrichments": {
+          "description": "Enrichment column descriptions, one per line",
+          "title": "Enrichments",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "findall_id",
+        "enrichments"
+      ],
+      "title": "ParallelEnrichFindAllConfig",
+      "type": "object"
+    },
+    "ParallelEntitySearchConfig": {
+      "description": "Synchronous real-time people / company lookup.",
+      "properties": {
+        "operation": {
+          "const": "entity_search",
+          "default": "entity_search",
+          "title": "Fast Entity Search",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "FindAll",
+          "x-display-name": "Fast Entity Search",
+          "x-is-trigger": false
+        },
+        "query": {
+          "description": "Plain-language query describing the person or company to find",
+          "title": "Query",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "entity_type": {
+          "description": "Whether to search for people or companies",
+          "enum": [
+            "people",
+            "companies"
+          ],
+          "enumNames": [
+            "People",
+            "Companies"
+          ],
+          "title": "Entity Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "objective": {
+          "description": "What you want to find out about the entity (e.g. 'Find the CEO of Anthropic')",
+          "title": "Objective",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "query",
+        "entity_type",
+        "objective"
+      ],
+      "title": "ParallelEntitySearchConfig",
+      "type": "object"
+    },
+    "ParallelExtendFindAllConfig": {
+      "description": "Find more entities beyond the original match limit.",
+      "properties": {
+        "operation": {
+          "const": "extend_findall",
+          "default": "extend_findall",
+          "title": "Extend FindAll Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "FindAll",
+          "x-display-name": "Extend FindAll Run",
+          "x-is-trigger": false
+        },
+        "findall_id": {
+          "description": "The FindAll run id",
+          "title": "FindAll Run ID",
+          "type": "string"
+        },
+        "match_limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Additional number of entities to find",
+          "title": "Additional Match Limit"
+        }
+      },
+      "required": [
+        "findall_id"
+      ],
+      "title": "ParallelExtendFindAllConfig",
+      "type": "object"
+    },
+    "ParallelExtractConfig": {
+      "description": "Extract clean markdown excerpts from a list of URLs.",
+      "properties": {
+        "operation": {
+          "const": "extract",
+          "default": "extract",
+          "title": "Extract Page Content",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Search",
+          "x-display-name": "Extract Page Content",
+          "x-is-trigger": false
+        },
+        "urls": {
+          "description": "Page URLs to extract, one per line",
+          "title": "URLs",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "objective": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional focus describing what content to prioritize",
+          "title": "Objective",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "urls"
+      ],
+      "title": "ParallelExtractConfig",
+      "type": "object"
+    },
+    "ParallelGetFindAllConfig": {
+      "description": "Poll a FindAll run's status.",
+      "properties": {
+        "operation": {
+          "const": "get_findall_run",
+          "default": "get_findall_run",
+          "title": "Get FindAll Run Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "FindAll",
+          "x-display-name": "Get FindAll Run Status",
+          "x-is-trigger": false
+        },
+        "findall_id": {
+          "description": "The FindAll run id to poll",
+          "title": "FindAll Run ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "findall_id"
+      ],
+      "title": "ParallelGetFindAllConfig",
+      "type": "object"
+    },
+    "ParallelGetFindAllResultConfig": {
+      "description": "Get discovered entities / candidates for a FindAll run.",
+      "properties": {
+        "operation": {
+          "const": "get_findall_result",
+          "default": "get_findall_result",
+          "title": "Get FindAll Run Result",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "FindAll",
+          "x-display-name": "Get FindAll Run Result",
+          "x-is-trigger": false
+        },
+        "findall_id": {
+          "description": "The FindAll run id",
+          "title": "FindAll Run ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "findall_id"
+      ],
+      "title": "ParallelGetFindAllResultConfig",
+      "type": "object"
+    },
+    "ParallelGetGroupEventsConfig": {
+      "description": "Stream real-time events for a task group while runs are active (SSE).",
+      "properties": {
+        "operation": {
+          "const": "get_group_events",
+          "default": "get_group_events",
+          "title": "Stream Task Group Events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Task Groups",
+          "x-display-name": "Stream Task Group Events",
+          "x-is-trigger": false
+        },
+        "taskgroup_id": {
+          "description": "The group to stream events for",
+          "title": "Task Group ID",
+          "type": "string"
+        },
+        "last_event_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Resume from a specific event ID (cursor from a previous response).",
+          "title": "Last Event ID"
+        }
+      },
+      "required": [
+        "taskgroup_id"
+      ],
+      "title": "ParallelGetGroupEventsConfig",
+      "type": "object"
+    },
+    "ParallelGetGroupRunsConfig": {
+      "description": "List runs in a task group.",
+      "properties": {
+        "operation": {
+          "const": "get_group_runs",
+          "default": "get_group_runs",
+          "title": "Fetch Task Group Runs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Task Groups",
+          "x-display-name": "Fetch Task Group Runs",
+          "x-is-trigger": false
+        },
+        "taskgroup_id": {
+          "description": "The group to list runs for",
+          "title": "Task Group ID",
+          "type": "string"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter runs by status (optional)",
+          "title": "Status Filter"
+        },
+        "include_input": {
+          "default": "false",
+          "description": "Include each run's input in the response",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Input",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "include_output": {
+          "default": "false",
+          "description": "Include each run's output in the response",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Output",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "taskgroup_id"
+      ],
+      "title": "ParallelGetGroupRunsConfig",
+      "type": "object"
+    },
+    "ParallelGetMonitorConfig": {
+      "description": "Retrieve a single monitor.",
+      "properties": {
+        "operation": {
+          "const": "get_monitor",
+          "default": "get_monitor",
+          "title": "Get Monitor",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Monitors",
+          "x-display-name": "Get Monitor",
+          "x-is-trigger": false
+        },
+        "monitor_id": {
+          "description": "The monitor id to retrieve",
+          "title": "Monitor ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "field_name": "monitor_id",
+            "placeholder": "Select a monitor...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "parallel_monitor"
+        }
+      },
+      "required": [
+        "monitor_id"
+      ],
+      "title": "ParallelGetMonitorConfig",
+      "type": "object"
+    },
+    "ParallelGetTaskGroupConfig": {
+      "description": "Retrieve a task group's status and aggregate progress.",
+      "properties": {
+        "operation": {
+          "const": "get_task_group",
+          "default": "get_task_group",
+          "title": "Get Task Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Task Groups",
+          "x-display-name": "Get Task Group",
+          "x-is-trigger": false
+        },
+        "taskgroup_id": {
+          "description": "The group to retrieve",
+          "title": "Task Group ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "taskgroup_id"
+      ],
+      "title": "ParallelGetTaskGroupConfig",
+      "type": "object"
+    },
+    "ParallelGetTaskGroupRunConfig": {
+      "description": "Retrieve a single run within a task group.",
+      "properties": {
+        "operation": {
+          "const": "get_task_group_run",
+          "default": "get_task_group_run",
+          "title": "Get Task Group Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Task Groups",
+          "x-display-name": "Get Task Group Run",
+          "x-is-trigger": false
+        },
+        "taskgroup_id": {
+          "description": "The group the run belongs to",
+          "title": "Task Group ID",
+          "type": "string"
+        },
+        "run_id": {
+          "description": "The specific run to retrieve",
+          "title": "Run ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "taskgroup_id",
+        "run_id"
+      ],
+      "title": "ParallelGetTaskGroupRunConfig",
+      "type": "object"
+    },
+    "ParallelGetTaskRunConfig": {
+      "description": "Retrieve a task run object and its status.",
+      "properties": {
+        "operation": {
+          "const": "get_task_run",
+          "default": "get_task_run",
+          "title": "Get Task Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Get Task Run",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "description": "The task run id to retrieve",
+          "title": "Run ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "ParallelGetTaskRunConfig",
+      "type": "object"
+    },
+    "ParallelGetTaskRunEventsConfig": {
+      "description": "Stream real-time progress events for an individual task run via SSE.",
+      "properties": {
+        "operation": {
+          "const": "get_task_run_events",
+          "default": "get_task_run_events",
+          "title": "Stream Task Run Events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Stream Task Run Events",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "description": "The task run id to stream events for",
+          "title": "Run ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "ParallelGetTaskRunEventsConfig",
+      "type": "object"
+    },
+    "ParallelGetTaskRunInputConfig": {
+      "description": "Retrieve the original input submitted for a task run.",
+      "properties": {
+        "operation": {
+          "const": "get_task_run_input",
+          "default": "get_task_run_input",
+          "title": "Get Task Run Input",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Get Task Run Input",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "description": "The task run id to fetch the input for",
+          "title": "Run ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "ParallelGetTaskRunInputConfig",
+      "type": "object"
+    },
+    "ParallelGetTaskRunResultConfig": {
+      "description": "Retrieve a completed task run result (blocks until the run finishes or timeout expires).",
+      "properties": {
+        "operation": {
+          "const": "get_task_run_result",
+          "default": "get_task_run_result",
+          "title": "Get Task Run Result",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Get Task Run Result",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "description": "The task run id to fetch the result for",
+          "title": "Run ID",
+          "type": "string"
+        },
+        "timeout_seconds": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "How long to wait for completion before returning a 408 (default: 600). Deep-research tasks with 'ultra' processors may need the full 600 seconds.",
+          "title": "Timeout (seconds)"
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "ParallelGetTaskRunResultConfig",
+      "type": "object"
+    },
+    "ParallelListMonitorEventsConfig": {
+      "description": "List detected change events for a monitor.",
+      "properties": {
+        "operation": {
+          "const": "list_monitor_events",
+          "default": "list_monitor_events",
+          "title": "List Monitor Events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Monitors",
+          "x-display-name": "List Monitor Events",
+          "x-is-trigger": false
+        },
+        "monitor_id": {
+          "description": "The monitor id",
+          "title": "Monitor ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "field_name": "monitor_id",
+            "placeholder": "Select a monitor...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "parallel_monitor"
+        },
+        "event_group_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter to a specific execution's event group (from a webhook payload's data.event.event_group_id).",
+          "title": "Event Group ID"
+        },
+        "include_completions": {
+          "default": "false",
+          "description": "Include 'completion' events (runs that found no changes).",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Completions",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "next_cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from a previous response to fetch the next page.",
+          "title": "Next Cursor"
+        }
+      },
+      "required": [
+        "monitor_id"
+      ],
+      "title": "ParallelListMonitorEventsConfig",
+      "type": "object"
+    },
+    "ParallelListMonitorsConfig": {
+      "description": "List monitors (cursor pagination).",
+      "properties": {
+        "operation": {
+          "const": "list_monitors",
+          "default": "list_monitors",
+          "title": "List Monitors",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Monitors",
+          "x-display-name": "List Monitors",
+          "x-is-trigger": false
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by monitor type",
+          "title": "Type Filter"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by status",
+          "title": "Status Filter"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor",
+          "title": "Cursor"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max monitors to return",
+          "title": "Limit"
+        }
+      },
+      "title": "ParallelListMonitorsConfig",
+      "type": "object"
+    },
+    "ParallelOAuthCredential": {
+      "description": "OAuth credential for Parallel (Authorization Code + PKCE).\n\nThe access_token IS the user's permanent Parallel API key \u2014 no refresh\ntoken is issued and the token does not expire.",
+      "properties": {
+        "credential_type": {
+          "const": "parallel_oauth",
+          "default": "parallel_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "Parallel API key obtained via OAuth \u2014 used as the x-api-key header.",
+          "title": "Access Token",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "ParallelOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://platform.parallel.ai",
+      "x-oauth-provider": "parallel",
+      "x-oauth-scopes": [
+        "key:read"
+      ]
+    },
+    "ParallelReceiveWebhookConfig": {
+      "description": "Receive Task / Monitor completion events from Parallel.\n\nParallel webhooks are configured inline on create requests (no separate\nregisterable webhook API), so this provisions a NoClick webhook URL that the\nuser supplies in the `webhook` object when creating a Task or Monitor.\nHMAC signature verification is supported.",
+      "properties": {
+        "operation": {
+          "const": "receive_webhook",
+          "default": "receive_webhook",
+          "title": "Receive Webhook Events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "Receive Webhook Events",
+          "x-is-trigger": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Use this URL as the `webhook.url` when you create a Task run or Monitor in Parallel.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The webhook signing secret from Parallel \u2014 used to verify event signatures",
+          "title": "Signing Secret",
+          "ui:widget": "password"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        }
+      },
+      "title": "ParallelReceiveWebhookConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "ParallelSearchConfig": {
+      "description": "Run a one-shot web search returning ranked URLs with LLM excerpts.",
+      "properties": {
+        "operation": {
+          "const": "search",
+          "default": "search",
+          "title": "Search the Web",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Search",
+          "x-display-name": "Search the Web",
+          "x-is-trigger": false
+        },
+        "search_queries": {
+          "description": "Keyword queries, one per line \u2014 at least one is required",
+          "title": "Search Queries",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "objective": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional natural-language description of what you're looking for, used to rank results",
+          "title": "Objective",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "search_queries"
+      ],
+      "title": "ParallelSearchConfig",
+      "type": "object"
+    },
+    "ParallelSimulateMonitorEventConfig": {
+      "description": "Simulate a monitor event to test webhook delivery without waiting for a real run.",
+      "properties": {
+        "operation": {
+          "const": "simulate_monitor_event",
+          "default": "simulate_monitor_event",
+          "title": "Simulate Monitor Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Monitors",
+          "x-display-name": "Simulate Monitor Event",
+          "x-is-trigger": false
+        },
+        "monitor_id": {
+          "description": "The monitor to simulate an event for",
+          "title": "Monitor ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "field_name": "monitor_id",
+            "placeholder": "Select a monitor...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "parallel_monitor"
+        }
+      },
+      "required": [
+        "monitor_id"
+      ],
+      "title": "ParallelSimulateMonitorEventConfig",
+      "type": "object"
+    },
+    "ParallelTriggerMonitorConfig": {
+      "description": "Manually trigger a monitor check now.",
+      "properties": {
+        "operation": {
+          "const": "trigger_monitor",
+          "default": "trigger_monitor",
+          "title": "Trigger Monitor Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Monitors",
+          "x-display-name": "Trigger Monitor Run",
+          "x-is-trigger": false
+        },
+        "monitor_id": {
+          "description": "The monitor id to trigger",
+          "title": "Monitor ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "field_name": "monitor_id",
+            "placeholder": "Select a monitor...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "parallel_monitor"
+        }
+      },
+      "required": [
+        "monitor_id"
+      ],
+      "title": "ParallelTriggerMonitorConfig",
+      "type": "object"
+    },
+    "ParallelUpdateMonitorConfig": {
+      "description": "Update a monitor's config.",
+      "properties": {
+        "operation": {
+          "const": "update_monitor",
+          "default": "update_monitor",
+          "title": "Update Monitor",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Monitors",
+          "x-display-name": "Update Monitor",
+          "x-is-trigger": false
+        },
+        "monitor_id": {
+          "description": "The monitor id to update",
+          "title": "Monitor ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "field_name": "monitor_id",
+            "placeholder": "Select a monitor...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "parallel_monitor"
+        },
+        "frequency": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New check frequency (e.g. '1d', '12h', '2w'). Leave blank to keep current.",
+          "title": "Frequency"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required when updating settings. Must match the monitor's original type: 'event_stream' or 'snapshot'.",
+          "enum": [
+            "event_stream",
+            "snapshot"
+          ],
+          "title": "Monitor Type"
+        },
+        "settings": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object with updated monitor settings. Requires 'type' to also be set. For event_stream: {\"query\": \"your search query\"}. Advanced: {\"query\": \"...\", \"advanced_settings\": {\"location\": \"us\", \"source_policy\": {\"include_domains\": [...]}}}. Note: 'objective' is not a valid field \u2014 use 'query' only.",
+          "title": "Settings (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "monitor_id"
+      ],
+      "title": "ParallelUpdateMonitorConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the Parallel node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_runs_to_group": "#/$defs/ParallelAddRunsToGroupConfig",
+          "cancel_findall": "#/$defs/ParallelCancelFindAllConfig",
+          "cancel_monitor": "#/$defs/ParallelCancelMonitorConfig",
+          "chat_completions": "#/$defs/ParallelChatCompletionsConfig",
+          "create_findall_run": "#/$defs/ParallelCreateFindAllConfig",
+          "create_findall_spec": "#/$defs/ParallelCreateFindAllSpecConfig",
+          "create_monitor": "#/$defs/ParallelCreateMonitorConfig",
+          "create_task_group": "#/$defs/ParallelCreateTaskGroupConfig",
+          "create_task_run": "#/$defs/ParallelCreateTaskRunConfig",
+          "enrich_findall": "#/$defs/ParallelEnrichFindAllConfig",
+          "entity_search": "#/$defs/ParallelEntitySearchConfig",
+          "extend_findall": "#/$defs/ParallelExtendFindAllConfig",
+          "extract": "#/$defs/ParallelExtractConfig",
+          "get_findall_result": "#/$defs/ParallelGetFindAllResultConfig",
+          "get_findall_run": "#/$defs/ParallelGetFindAllConfig",
+          "get_group_events": "#/$defs/ParallelGetGroupEventsConfig",
+          "get_group_runs": "#/$defs/ParallelGetGroupRunsConfig",
+          "get_monitor": "#/$defs/ParallelGetMonitorConfig",
+          "get_task_group": "#/$defs/ParallelGetTaskGroupConfig",
+          "get_task_group_run": "#/$defs/ParallelGetTaskGroupRunConfig",
+          "get_task_run": "#/$defs/ParallelGetTaskRunConfig",
+          "get_task_run_events": "#/$defs/ParallelGetTaskRunEventsConfig",
+          "get_task_run_input": "#/$defs/ParallelGetTaskRunInputConfig",
+          "get_task_run_result": "#/$defs/ParallelGetTaskRunResultConfig",
+          "list_monitor_events": "#/$defs/ParallelListMonitorEventsConfig",
+          "list_monitors": "#/$defs/ParallelListMonitorsConfig",
+          "receive_webhook": "#/$defs/ParallelReceiveWebhookConfig",
+          "search": "#/$defs/ParallelSearchConfig",
+          "simulate_monitor_event": "#/$defs/ParallelSimulateMonitorEventConfig",
+          "trigger_monitor": "#/$defs/ParallelTriggerMonitorConfig",
+          "update_monitor": "#/$defs/ParallelUpdateMonitorConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ParallelSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/ParallelExtractConfig"
+        },
+        {
+          "$ref": "#/$defs/ParallelCreateTaskRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ParallelGetTaskRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ParallelGetTaskRunResultConfig"
+        },
+        {
+          "$ref": "#/$defs/ParallelGetTaskRunInputConfig"
+        },
+        {
+          "$ref": "#/$defs/ParallelGetTaskRunEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/ParallelCreateTaskGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/ParallelAddRunsToGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/ParallelGetGroupRunsConfig"
+        },
+        {
+          "$ref": "#/$defs/ParallelGetGroupEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/ParallelGetTaskGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/ParallelGetTaskGroupRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ParallelCreateFindAllConfig"
+        },
+        {
+          "$ref": "#/$defs/ParallelCreateFindAllSpecConfig"
+        },
+        {
+          "$ref": "#/$defs/ParallelGetFindAllConfig"
+        },
+        {
+          "$ref": "#/$defs/ParallelGetFindAllResultConfig"
+        },
+        {
+          "$ref": "#/$defs/ParallelEnrichFindAllConfig"
+        },
+        {
+          "$ref": "#/$defs/ParallelExtendFindAllConfig"
+        },
+        {
+          "$ref": "#/$defs/ParallelCancelFindAllConfig"
+        },
+        {
+          "$ref": "#/$defs/ParallelEntitySearchConfig"
+        },
+        {
+          "$ref": "#/$defs/ParallelCreateMonitorConfig"
+        },
+        {
+          "$ref": "#/$defs/ParallelListMonitorsConfig"
+        },
+        {
+          "$ref": "#/$defs/ParallelGetMonitorConfig"
+        },
+        {
+          "$ref": "#/$defs/ParallelUpdateMonitorConfig"
+        },
+        {
+          "$ref": "#/$defs/ParallelListMonitorEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/ParallelTriggerMonitorConfig"
+        },
+        {
+          "$ref": "#/$defs/ParallelCancelMonitorConfig"
+        },
+        {
+          "$ref": "#/$defs/ParallelSimulateMonitorEventConfig"
+        },
+        {
+          "$ref": "#/$defs/ParallelChatCompletionsConfig"
+        },
+        {
+          "$ref": "#/$defs/ParallelReceiveWebhookConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ParallelApiKeyCredential"
+        },
+        {
+          "$ref": "#/$defs/ParallelOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Parallel Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Search the web for recent funding rounds in the AI agents space",
+    "Run a deep research task on a company and return structured findings",
+    "Find all Series B SaaS companies hiring for ML roles",
+    "Monitor a competitor's pricing page and trigger a workflow when it changes",
+    "Extract the clean markdown content of a list of article URLs"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

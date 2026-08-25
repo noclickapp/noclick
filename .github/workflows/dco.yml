@@ -1,0 +1,64 @@
+# Every commit carries a Signed-off-by line.
+#
+# The check is here rather than in a bot so that it is visible in the repository
+# it applies to, and so a fork's CI tells a contributor the same thing ours does.
+name: DCO
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  signed-off-by:
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          # The whole PR range, plus its base, so every commit can be inspected.
+          fetch-depth: 0
+
+      - name: Every commit is signed off
+        env:
+          EVENT_NAME: ${{ github.event_name }}
+          PR_BASE_REF: ${{ github.event.pull_request.base.ref }}
+          CHECK_HEAD: ${{ github.event.pull_request.head.sha || github.sha }}
+          PUSH_BEFORE: ${{ github.event.before }}
+        run: |
+          set -euo pipefail
+          if [ "$EVENT_NAME" = "pull_request" ]; then
+            # Exclude everything already reachable from the live base branch.
+            # A contributor can then update from main without inheriting
+            # responsibility for the repository's older unsigned commits.
+            git fetch --no-tags origin \
+              "+refs/heads/${PR_BASE_REF}:refs/remotes/origin/${PR_BASE_REF}"
+            BASE="refs/remotes/origin/${PR_BASE_REF}"
+            REVISIONS=("$CHECK_HEAD" --not "$BASE")
+          elif [[ "$PUSH_BEFORE" =~ ^0{40}$ ]] || \
+               ! git cat-file -e "${PUSH_BEFORE}^{commit}" 2>/dev/null; then
+            # The first push creates main, so no prior ref can register this
+            # required context. Audit the complete candidate fail-closed.
+            REVISIONS=("$CHECK_HEAD")
+          else
+            REVISIONS=("$CHECK_HEAD" --not "$PUSH_BEFORE")
+          fi
+
+          missing=$(git log --no-merges --format='%H %s' "${REVISIONS[@]}" | while read -r sha subject; do
+              if ! git log -1 --format='%B' "$sha" | grep -qiE '^Signed-off-by: .+ <.+@.+>$'; then
+                  echo "  ${sha:0:9}  $subject"
+              fi
+          done)
+          if [ -n "$missing" ]; then
+              echo "These commits have no Signed-off-by line:" >&2
+              echo "$missing" >&2
+              echo "" >&2
+              echo "Sign off with 'git commit -s', or fix a branch with" >&2
+              echo "'git rebase --signoff ${GITHUB_BASE_REF:-main}'. It certifies that you" >&2
+              echo "wrote the change or may submit it — see CONTRIBUTING.md." >&2
+              exit 1
+          fi
+          echo "All commits signed off."

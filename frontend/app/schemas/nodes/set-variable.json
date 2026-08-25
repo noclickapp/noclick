@@ -1,0 +1,60 @@
+{
+  "$defs": {
+    "SetVariableConfigModel": {
+      "properties": {
+        "assignments": {
+          "items": {
+            "$ref": "#/$defs/VariableAssignment"
+          },
+          "title": "Variables",
+          "type": "array",
+          "ui:widget": "variable_assignments"
+        }
+      },
+      "title": "SetVariableConfigModel",
+      "type": "object"
+    },
+    "VariableAssignment": {
+      "properties": {
+        "variable_name": {
+          "default": "",
+          "title": "Variable Name",
+          "type": "string"
+        },
+        "value": {
+          "default": "",
+          "title": "Value",
+          "type": "string"
+        }
+      },
+      "title": "VariableAssignment",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for set variable node (no credentials).",
+  "properties": {
+    "config": {
+      "$ref": "#/$defs/SetVariableConfigModel",
+      "description": "Node-specific configuration"
+    },
+    "credentials": {
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials",
+      "type": "null"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Set-variable Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Add a new variable for user_id and set it to {{trigger.user_id}}",
+    "Change total_amount value to {{calc.result}} instead of static number",
+    "Add three more variables: api_key, retry_count, and last_run_time",
+    "Update campaign_name variable to reference {{form.campaign_field}}",
+    "Remove unused variables and keep only frequently referenced ones"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

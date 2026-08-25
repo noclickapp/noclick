@@ -1,0 +1,1560 @@
+{
+  "$defs": {
+    "HexApiTokenCredential": {
+      "description": "API token credential for Hex (Personal Access Token or Workspace Token).",
+      "properties": {
+        "credential_type": {
+          "const": "hex_api_token",
+          "default": "hex_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "description": "Your Hex token (Personal hxtp_ or Workspace hxtw_) from Settings -> API keys",
+          "title": "API Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "workspace_host": {
+          "default": "app.hex.tech",
+          "description": "Host for your Hex workspace. Use app.hex.tech for multi-tenant, or your single-tenant/EU/HIPAA host (e.g. eu.hex.tech)",
+          "title": "Workspace Host",
+          "type": "string"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "HexApiTokenCredential",
+      "type": "object",
+      "x-credential-url": "https://app.hex.tech/settings/api-keys"
+    },
+    "HexCancelRunConfig": {
+      "description": "Cancel an in-progress run.",
+      "properties": {
+        "operation": {
+          "const": "cancel_run",
+          "default": "cancel_run",
+          "title": "Cancel Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Runs",
+          "x-display-name": "Cancel Run",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "The project the run belongs to",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "run_id": {
+          "description": "The run to cancel",
+          "title": "Run ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "run_id"
+      ],
+      "title": "HexCancelRunConfig",
+      "type": "object"
+    },
+    "HexCreateCollectionConfig": {
+      "description": "Create a collection.",
+      "properties": {
+        "operation": {
+          "const": "create_collection",
+          "default": "create_collection",
+          "title": "Create Collection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collections",
+          "x-display-name": "Create Collection",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Name of the new collection",
+          "title": "Collection Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional collection description",
+          "title": "Description"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "HexCreateCollectionConfig",
+      "type": "object"
+    },
+    "HexCreateEmbedUrlConfig": {
+      "description": "Create a signed embed URL for a project.",
+      "properties": {
+        "operation": {
+          "const": "create_embed_url",
+          "default": "create_embed_url",
+          "title": "Create Embed URL",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Embedding",
+          "x-display-name": "Create Embed URL",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "The project to embed",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "hex_user_attributes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object of user attributes to scope the embed",
+          "title": "Hex User Attributes",
+          "ui:widget": "textarea"
+        },
+        "input_parameters": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object of published app parameters for the embed",
+          "title": "Input Parameters",
+          "ui:widget": "textarea"
+        },
+        "expires_in": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Lifetime of the signed URL in milliseconds",
+          "title": "Expires In (ms)"
+        },
+        "test_mode": {
+          "default": "false",
+          "description": "Validate the embed without consuming usage",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Test Mode",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "HexCreateEmbedUrlConfig",
+      "type": "object"
+    },
+    "HexCreateGroupConfig": {
+      "description": "Create a new group.",
+      "properties": {
+        "operation": {
+          "const": "create_group",
+          "default": "create_group",
+          "title": "Create Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "Create Group",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Name of the new group",
+          "title": "Group Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "HexCreateGroupConfig",
+      "type": "object"
+    },
+    "HexDeactivateUserConfig": {
+      "description": "Deactivate a workspace user.",
+      "properties": {
+        "operation": {
+          "const": "deactivate_user",
+          "default": "deactivate_user",
+          "title": "Deactivate User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Admin",
+          "x-display-name": "Deactivate User",
+          "x-is-trigger": false
+        },
+        "user_id": {
+          "description": "The user to deactivate",
+          "title": "User ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "HexDeactivateUserConfig",
+      "type": "object"
+    },
+    "HexDeleteGroupConfig": {
+      "description": "Delete a group.",
+      "properties": {
+        "operation": {
+          "const": "delete_group",
+          "default": "delete_group",
+          "title": "Delete Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "Delete Group",
+          "x-is-trigger": false
+        },
+        "group_id": {
+          "description": "The group to delete",
+          "title": "Group ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "HexDeleteGroupConfig",
+      "type": "object"
+    },
+    "HexEditCollectionConfig": {
+      "description": "Edit a collection; upsert user/group/workspace access.",
+      "properties": {
+        "operation": {
+          "const": "edit_collection",
+          "default": "edit_collection",
+          "title": "Edit Collection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collections",
+          "x-display-name": "Edit Collection",
+          "x-is-trigger": false
+        },
+        "collection_id": {
+          "description": "The collection to edit",
+          "title": "Collection ID",
+          "type": "string"
+        },
+        "body": {
+          "description": "JSON body, e.g. {\"name\": \"...\", \"sharing\": {\"upsert\": [...]}}",
+          "title": "Edit Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "collection_id",
+        "body"
+      ],
+      "title": "HexEditCollectionConfig",
+      "type": "object"
+    },
+    "HexEditDataConnectionConfig": {
+      "description": "Edit a data connection / rotate secrets.",
+      "properties": {
+        "operation": {
+          "const": "edit_data_connection",
+          "default": "edit_data_connection",
+          "title": "Edit Data Connection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Data Connections",
+          "x-display-name": "Edit Data Connection",
+          "x-is-trigger": false
+        },
+        "data_connection_id": {
+          "description": "The data connection to edit",
+          "title": "Data Connection ID",
+          "type": "string"
+        },
+        "body": {
+          "description": "JSON body describing the connection edits (e.g. rotate password / service account)",
+          "title": "Edit Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "data_connection_id",
+        "body"
+      ],
+      "title": "HexEditDataConnectionConfig",
+      "type": "object"
+    },
+    "HexEditGroupConfig": {
+      "description": "Rename a group or add/remove members.",
+      "properties": {
+        "operation": {
+          "const": "edit_group",
+          "default": "edit_group",
+          "title": "Edit Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "Edit Group",
+          "x-is-trigger": false
+        },
+        "group_id": {
+          "description": "The group to edit",
+          "title": "Group ID",
+          "type": "string"
+        },
+        "body": {
+          "description": "JSON body, e.g. {\"name\": \"New name\"} or member add/remove operations",
+          "title": "Edit Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "group_id",
+        "body"
+      ],
+      "title": "HexEditGroupConfig",
+      "type": "object"
+    },
+    "HexGetCollectionConfig": {
+      "description": "Fetch a collection's details.",
+      "properties": {
+        "operation": {
+          "const": "get_collection",
+          "default": "get_collection",
+          "title": "Get Collection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collections",
+          "x-display-name": "Get Collection",
+          "x-is-trigger": false
+        },
+        "collection_id": {
+          "description": "The collection to fetch",
+          "title": "Collection ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "collection_id"
+      ],
+      "title": "HexGetCollectionConfig",
+      "type": "object"
+    },
+    "HexGetGroupConfig": {
+      "description": "Fetch a group's details.",
+      "properties": {
+        "operation": {
+          "const": "get_group",
+          "default": "get_group",
+          "title": "Get Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "Get Group",
+          "x-is-trigger": false
+        },
+        "group_id": {
+          "description": "The group to fetch",
+          "title": "Group ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "group_id"
+      ],
+      "title": "HexGetGroupConfig",
+      "type": "object"
+    },
+    "HexGetMeConfig": {
+      "description": "Return the token owner's user info.",
+      "properties": {
+        "operation": {
+          "const": "get_me",
+          "default": "get_me",
+          "title": "Get Current User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Admin",
+          "x-display-name": "Get Current User",
+          "x-is-trigger": false
+        }
+      },
+      "title": "HexGetMeConfig",
+      "type": "object"
+    },
+    "HexGetProjectConfig": {
+      "description": "Fetch metadata for a single project.",
+      "properties": {
+        "operation": {
+          "const": "get_project",
+          "default": "get_project",
+          "title": "Get Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Get Project",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "The project to fetch",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "HexGetProjectConfig",
+      "type": "object"
+    },
+    "HexGetProjectRunsConfig": {
+      "description": "List recent runs for a project.",
+      "properties": {
+        "operation": {
+          "const": "get_project_runs",
+          "default": "get_project_runs",
+          "title": "Get Project Runs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Runs",
+          "x-display-name": "Get Project Runs",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "The project to list runs for",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max number of runs to return",
+          "title": "Limit"
+        },
+        "status_filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter runs by status",
+          "enum": [
+            "",
+            "PENDING",
+            "RUNNING",
+            "COMPLETED",
+            "ERRORED",
+            "KILLED",
+            "UNABLE_TO_ALLOCATE_KERNEL"
+          ],
+          "enumNames": [
+            "Any",
+            "Pending",
+            "Running",
+            "Completed",
+            "Errored",
+            "Killed",
+            "Unable to allocate kernel"
+          ],
+          "title": "Status Filter",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "HexGetProjectRunsConfig",
+      "type": "object"
+    },
+    "HexGetRunCellImageConfig": {
+      "description": "Download a rendered PNG of a chart/cell output from a run.",
+      "properties": {
+        "operation": {
+          "const": "get_run_cell_image",
+          "default": "get_run_cell_image",
+          "title": "Get Run Cell Image",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Runs",
+          "x-display-name": "Get Run Cell Image",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "The project the run belongs to",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "run_id": {
+          "description": "The run to fetch the cell image from",
+          "title": "Run ID",
+          "type": "string"
+        },
+        "static_id": {
+          "description": "The static ID of the chart/cell to render",
+          "title": "Cell Static ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "run_id",
+        "static_id"
+      ],
+      "title": "HexGetRunCellImageConfig",
+      "type": "object"
+    },
+    "HexGetRunStatusConfig": {
+      "description": "Get the status of a single project run.",
+      "properties": {
+        "operation": {
+          "const": "get_run_status",
+          "default": "get_run_status",
+          "title": "Get Run Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Runs",
+          "x-display-name": "Get Run Status",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "The project the run belongs to",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "run_id": {
+          "description": "The run to check the status of",
+          "title": "Run ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "run_id"
+      ],
+      "title": "HexGetRunStatusConfig",
+      "type": "object"
+    },
+    "HexIngestSemanticProjectConfig": {
+      "description": "Ingest a semantic project from a zip (max 3 req/min).",
+      "properties": {
+        "operation": {
+          "const": "ingest_semantic_project",
+          "default": "ingest_semantic_project",
+          "title": "Ingest Semantic Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Semantic Models",
+          "x-display-name": "Ingest Semantic Project",
+          "x-is-trigger": false
+        },
+        "semantic_project_id": {
+          "description": "The semantic project to ingest into",
+          "title": "Semantic Project ID",
+          "type": "string"
+        },
+        "body": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON body describing the ingest source (e.g. zip reference)",
+          "title": "Ingest Body",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "semantic_project_id"
+      ],
+      "title": "HexIngestSemanticProjectConfig",
+      "type": "object"
+    },
+    "HexListCollectionsConfig": {
+      "description": "List all collections.",
+      "properties": {
+        "operation": {
+          "const": "list_collections",
+          "default": "list_collections",
+          "title": "List Collections",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collections",
+          "x-display-name": "List Collections",
+          "x-is-trigger": false
+        }
+      },
+      "title": "HexListCollectionsConfig",
+      "type": "object"
+    },
+    "HexListDataConnectionsConfig": {
+      "description": "List configured data connections.",
+      "properties": {
+        "operation": {
+          "const": "list_data_connections",
+          "default": "list_data_connections",
+          "title": "List Data Connections",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Data Connections",
+          "x-display-name": "List Data Connections",
+          "x-is-trigger": false
+        }
+      },
+      "title": "HexListDataConnectionsConfig",
+      "type": "object"
+    },
+    "HexListGroupsConfig": {
+      "description": "List all groups.",
+      "properties": {
+        "operation": {
+          "const": "list_groups",
+          "default": "list_groups",
+          "title": "List Groups",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "List Groups",
+          "x-is-trigger": false
+        }
+      },
+      "title": "HexListGroupsConfig",
+      "type": "object"
+    },
+    "HexListProjectsConfig": {
+      "description": "List all projects the caller can view.",
+      "properties": {
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "title": "List Projects",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "List Projects",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "100",
+          "description": "Max number of projects to return per page",
+          "title": "Limit"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor (pagination.after from a prior page)",
+          "title": "Cursor"
+        }
+      },
+      "title": "HexListProjectsConfig",
+      "type": "object"
+    },
+    "HexListUsersConfig": {
+      "description": "List workspace users (Admin API; Team/Enterprise).",
+      "properties": {
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "List Users",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Admin",
+          "x-display-name": "List Users",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "100",
+          "description": "Max number of users to return per page",
+          "title": "Limit"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor for the next page",
+          "title": "Cursor"
+        }
+      },
+      "title": "HexListUsersConfig",
+      "type": "object"
+    },
+    "HexOnRunCompletedConfig": {
+      "description": "Trigger: poll a project's runs for newly-finished runs (COMPLETED/ERRORED/KILLED).\n\nHex has no inbound webhook subscription API, so this is poll-based: the\nwebhook is a wake-up signal and execute() actually polls the Get Project\nRuns endpoint. Dedup and state persistence are handled by ScheduledPollTriggerMixin.",
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_run_completed",
+          "default": "on_run_completed",
+          "title": "On Project Run Completed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Project Run Completed",
+          "x-is-trigger": true
+        },
+        "project_id": {
+          "description": "The project whose runs to watch",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "status_filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only fire for runs that reached this status (default: any terminal status)",
+          "enum": [
+            "",
+            "COMPLETED",
+            "ERRORED",
+            "KILLED"
+          ],
+          "enumNames": [
+            "Any terminal",
+            "Completed",
+            "Errored",
+            "Killed"
+          ],
+          "title": "Status Filter",
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max number of recent runs to inspect each poll",
+          "title": "Max Runs Per Poll",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "HexOnRunCompletedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "HexRunProjectConfig": {
+      "description": "Trigger a run of a project's latest published version.",
+      "properties": {
+        "operation": {
+          "const": "run_project",
+          "default": "run_project",
+          "title": "Run Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Runs",
+          "x-display-name": "Run Project",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "The project to run",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "input_params": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object of published app parameters, e.g. {\"region\": \"EU\"}",
+          "title": "Input Parameters",
+          "ui:widget": "textarea"
+        },
+        "dry_run": {
+          "default": "false",
+          "description": "Validate the run without executing or consuming usage",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Dry Run",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "update_published_results": {
+          "default": "false",
+          "description": "Persist results to the published app (requires Can Edit; incompatible with input parameters)",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Update Published Results",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "use_cached_sql_results": {
+          "default": "true",
+          "description": "Reuse cached SQL results where possible",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Use Cached SQL Results",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "view_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Run a saved view (incompatible with input parameters)",
+          "title": "View ID"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "HexRunProjectConfig",
+      "type": "object"
+    },
+    "HexUpdateProjectCollectionSharingConfig": {
+      "description": "Add or remove a project from collections.",
+      "properties": {
+        "operation": {
+          "const": "update_collection_sharing",
+          "default": "update_collection_sharing",
+          "title": "Update Collection Sharing",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sharing",
+          "x-display-name": "Update Collection Sharing",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "The project to update sharing for",
+          "title": "Project ID",
+          "type": "string"
+        },
+        "body": {
+          "description": "JSON body. Must include a \"sharing\" wrapper. To add a project to a collection: {\"sharing\": {\"upsert\": {\"collections\": [{\"collection\": {\"id\": \"COLLECTION_ID\"}, \"access\": \"CAN_VIEW\"}]}}}",
+          "title": "Sharing Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "project_id",
+        "body"
+      ],
+      "title": "HexUpdateProjectCollectionSharingConfig",
+      "type": "object"
+    },
+    "HexUpdateProjectConfig": {
+      "description": "Update a project's status or endorsements.",
+      "properties": {
+        "operation": {
+          "const": "update_project",
+          "default": "update_project",
+          "title": "Update Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Projects",
+          "x-display-name": "Update Project",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "The project to update",
+          "title": "Project",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste project ID",
+            "field_name": "project_id",
+            "placeholder": "Select a project...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "body": {
+          "description": "JSON body of fields to update, e.g. {\"status\": {\"name\": \"In review\"}}",
+          "title": "Update Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "project_id",
+        "body"
+      ],
+      "title": "HexUpdateProjectConfig",
+      "type": "object"
+    },
+    "HexUpdateProjectGroupSharingConfig": {
+      "description": "Add groups or change their access level on a project.",
+      "properties": {
+        "operation": {
+          "const": "update_group_sharing",
+          "default": "update_group_sharing",
+          "title": "Update Group Sharing",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sharing",
+          "x-display-name": "Update Group Sharing",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "The project to update sharing for",
+          "title": "Project ID",
+          "type": "string"
+        },
+        "body": {
+          "description": "JSON body. Must include a \"sharing\" wrapper. To add a group: {\"sharing\": {\"upsert\": {\"groups\": [{\"group\": {\"id\": \"GROUP_ID\"}, \"access\": \"CAN_VIEW\"}]}}}",
+          "title": "Sharing Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "project_id",
+        "body"
+      ],
+      "title": "HexUpdateProjectGroupSharingConfig",
+      "type": "object"
+    },
+    "HexUpdateProjectUserSharingConfig": {
+      "description": "Add users or change their access level on a project.",
+      "properties": {
+        "operation": {
+          "const": "update_user_sharing",
+          "default": "update_user_sharing",
+          "title": "Update User Sharing",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sharing",
+          "x-display-name": "Update User Sharing",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "The project to update sharing for",
+          "title": "Project ID",
+          "type": "string"
+        },
+        "body": {
+          "description": "JSON body. Must include a \"sharing\" wrapper. To add a user: {\"sharing\": {\"upsert\": {\"users\": [{\"user\": {\"id\": \"USER_ID\"}, \"access\": \"CAN_VIEW\"}]}}}",
+          "title": "Sharing Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "project_id",
+        "body"
+      ],
+      "title": "HexUpdateProjectUserSharingConfig",
+      "type": "object"
+    },
+    "HexUpdateProjectWorkspaceSharingConfig": {
+      "description": "Set workspace-wide or public access level for a project.",
+      "properties": {
+        "operation": {
+          "const": "update_workspace_sharing",
+          "default": "update_workspace_sharing",
+          "title": "Update Workspace/Public Sharing",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sharing",
+          "x-display-name": "Update Workspace/Public Sharing",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "The project to update sharing for",
+          "title": "Project ID",
+          "type": "string"
+        },
+        "body": {
+          "description": "JSON body. Must include a \"sharing\" wrapper. Set workspace access: {\"sharing\": {\"workspace\": \"CAN_VIEW\"}} \u2014 valid values: \"NONE\", \"CAN_VIEW\", \"CAN_EDIT\", \"CAN_PUBLISH\".",
+          "title": "Sharing Body",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "project_id",
+        "body"
+      ],
+      "title": "HexUpdateProjectWorkspaceSharingConfig",
+      "type": "object"
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the Hex node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_run": "#/$defs/HexCancelRunConfig",
+          "create_collection": "#/$defs/HexCreateCollectionConfig",
+          "create_embed_url": "#/$defs/HexCreateEmbedUrlConfig",
+          "create_group": "#/$defs/HexCreateGroupConfig",
+          "deactivate_user": "#/$defs/HexDeactivateUserConfig",
+          "delete_group": "#/$defs/HexDeleteGroupConfig",
+          "edit_collection": "#/$defs/HexEditCollectionConfig",
+          "edit_data_connection": "#/$defs/HexEditDataConnectionConfig",
+          "edit_group": "#/$defs/HexEditGroupConfig",
+          "get_collection": "#/$defs/HexGetCollectionConfig",
+          "get_group": "#/$defs/HexGetGroupConfig",
+          "get_me": "#/$defs/HexGetMeConfig",
+          "get_project": "#/$defs/HexGetProjectConfig",
+          "get_project_runs": "#/$defs/HexGetProjectRunsConfig",
+          "get_run_cell_image": "#/$defs/HexGetRunCellImageConfig",
+          "get_run_status": "#/$defs/HexGetRunStatusConfig",
+          "ingest_semantic_project": "#/$defs/HexIngestSemanticProjectConfig",
+          "list_collections": "#/$defs/HexListCollectionsConfig",
+          "list_data_connections": "#/$defs/HexListDataConnectionsConfig",
+          "list_groups": "#/$defs/HexListGroupsConfig",
+          "list_projects": "#/$defs/HexListProjectsConfig",
+          "list_users": "#/$defs/HexListUsersConfig",
+          "on_run_completed": "#/$defs/HexOnRunCompletedConfig",
+          "run_project": "#/$defs/HexRunProjectConfig",
+          "update_collection_sharing": "#/$defs/HexUpdateProjectCollectionSharingConfig",
+          "update_group_sharing": "#/$defs/HexUpdateProjectGroupSharingConfig",
+          "update_project": "#/$defs/HexUpdateProjectConfig",
+          "update_user_sharing": "#/$defs/HexUpdateProjectUserSharingConfig",
+          "update_workspace_sharing": "#/$defs/HexUpdateProjectWorkspaceSharingConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/HexRunProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/HexGetRunStatusConfig"
+        },
+        {
+          "$ref": "#/$defs/HexGetProjectRunsConfig"
+        },
+        {
+          "$ref": "#/$defs/HexCancelRunConfig"
+        },
+        {
+          "$ref": "#/$defs/HexGetRunCellImageConfig"
+        },
+        {
+          "$ref": "#/$defs/HexListProjectsConfig"
+        },
+        {
+          "$ref": "#/$defs/HexGetProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/HexUpdateProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/HexUpdateProjectCollectionSharingConfig"
+        },
+        {
+          "$ref": "#/$defs/HexUpdateProjectWorkspaceSharingConfig"
+        },
+        {
+          "$ref": "#/$defs/HexUpdateProjectGroupSharingConfig"
+        },
+        {
+          "$ref": "#/$defs/HexUpdateProjectUserSharingConfig"
+        },
+        {
+          "$ref": "#/$defs/HexCreateEmbedUrlConfig"
+        },
+        {
+          "$ref": "#/$defs/HexListUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/HexGetMeConfig"
+        },
+        {
+          "$ref": "#/$defs/HexDeactivateUserConfig"
+        },
+        {
+          "$ref": "#/$defs/HexListGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/HexCreateGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/HexGetGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/HexEditGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/HexDeleteGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/HexListCollectionsConfig"
+        },
+        {
+          "$ref": "#/$defs/HexCreateCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/HexGetCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/HexEditCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/HexListDataConnectionsConfig"
+        },
+        {
+          "$ref": "#/$defs/HexEditDataConnectionConfig"
+        },
+        {
+          "$ref": "#/$defs/HexIngestSemanticProjectConfig"
+        },
+        {
+          "$ref": "#/$defs/HexOnRunCompletedConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/HexApiTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Hex Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Run a Hex project with input parameters and poll for completion",
+    "Get the status of a Hex project run",
+    "List all Hex projects I can view",
+    "Create a signed embed URL for a Hex app",
+    "List workspace users via the Hex Admin API"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

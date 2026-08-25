@@ -1,0 +1,2067 @@
+{
+  "$defs": {
+    "ChromaAddAttachedFunctionInputConfig": {
+      "description": "Add input data to an attached function (e.g. provide documents to embed).",
+      "properties": {
+        "operation": {
+          "const": "add_attached_function_input",
+          "default": "add_attached_function_input",
+          "title": "Add Function Input",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Functions",
+          "x-display-name": "Add Function Input",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "function input",
+            "add embedding input",
+            "feed data to function"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "chroma_collection"
+        },
+        "function_name": {
+          "description": "Name of the attached function",
+          "title": "Function Name",
+          "type": "string"
+        },
+        "input": {
+          "description": "JSON object to send as input to the function",
+          "title": "Input",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "collection",
+        "function_name",
+        "input"
+      ],
+      "title": "ChromaAddAttachedFunctionInputConfig",
+      "type": "object"
+    },
+    "ChromaAddConfig": {
+      "description": "Add records to a collection (fails if IDs already exist; use Upsert for insert-or-update).",
+      "properties": {
+        "operation": {
+          "const": "add",
+          "default": "add",
+          "title": "Add Records",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Records",
+          "x-display-name": "Add Records",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "insert",
+            "index",
+            "store",
+            "embed"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "chroma_collection"
+        },
+        "ids": {
+          "description": "Record IDs, comma-separated",
+          "title": "IDs",
+          "type": "string"
+        },
+        "embeddings": {
+          "description": "JSON array of embedding vectors, one per ID: [[0.1, ...], [0.2, ...]]",
+          "title": "Embeddings",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "documents": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON array of document texts, one per ID",
+          "title": "Documents",
+          "ui:widget": "textarea"
+        },
+        "metadatas": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON array of metadata objects, one per ID",
+          "title": "Metadatas",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "collection",
+        "ids",
+        "embeddings"
+      ],
+      "title": "ChromaAddConfig",
+      "type": "object"
+    },
+    "ChromaAttachFunctionConfig": {
+      "description": "Attach an embedding or processing function to a collection.",
+      "properties": {
+        "operation": {
+          "const": "attach_function",
+          "default": "attach_function",
+          "title": "Attach Function",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Functions",
+          "x-display-name": "Attach Function",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "embedding function",
+            "attach model",
+            "server-side embedding",
+            "function"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "chroma_collection"
+        },
+        "function_name": {
+          "description": "Name of the function to attach (e.g. 'openai')",
+          "title": "Function Name",
+          "type": "string"
+        },
+        "function_config": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON configuration for the function",
+          "title": "Function Config",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "collection",
+        "function_name"
+      ],
+      "title": "ChromaAttachFunctionConfig",
+      "type": "object"
+    },
+    "ChromaCountCollectionsConfig": {
+      "description": "Count the total number of collections in the database.",
+      "properties": {
+        "operation": {
+          "const": "count_collections",
+          "default": "count_collections",
+          "title": "Count Collections",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collection",
+          "x-display-name": "Count Collections",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "collection count",
+            "how many collections",
+            "total collections"
+          ]
+        }
+      },
+      "title": "ChromaCountCollectionsConfig",
+      "type": "object"
+    },
+    "ChromaCountConfig": {
+      "description": "Count the number of records in a collection.",
+      "properties": {
+        "operation": {
+          "const": "count",
+          "default": "count",
+          "title": "Count Records",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Records",
+          "x-display-name": "Count Records",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "count",
+            "size",
+            "total",
+            "how many"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "chroma_collection"
+        }
+      },
+      "required": [
+        "collection"
+      ],
+      "title": "ChromaCountConfig",
+      "type": "object"
+    },
+    "ChromaCreateCollectionConfig": {
+      "description": "Create a collection.",
+      "properties": {
+        "operation": {
+          "const": "create_collection",
+          "default": "create_collection",
+          "title": "Create Collection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collection",
+          "x-creates-resource": true,
+          "x-display-name": "Create Collection",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new collection",
+            "provision",
+            "setup"
+          ],
+          "x-resource-id-path": "data.name",
+          "x-resource-type": "chroma_collection"
+        },
+        "name": {
+          "description": "Collection name",
+          "title": "Name",
+          "type": "string"
+        },
+        "get_or_create": {
+          "default": "true",
+          "description": "Return the existing collection if it already exists instead of raising an error",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Get or Create",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "distance_metric": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Embedding distance function used for similarity queries (self-hosted; Chroma Cloud uses the collection's attached function)",
+          "enum": [
+            "",
+            "l2",
+            "cosine",
+            "ip"
+          ],
+          "enumNames": [
+            "Default (l2)",
+            "L2 (Euclidean)",
+            "Cosine",
+            "Inner Product (ip)"
+          ],
+          "title": "Distance Metric",
+          "x-enum-searchable": true
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON metadata object to attach to the collection",
+          "title": "Metadata"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "ChromaCreateCollectionConfig",
+      "type": "object"
+    },
+    "ChromaCreateDatabaseConfig": {
+      "description": "Create a new database in the tenant.",
+      "properties": {
+        "operation": {
+          "const": "create_database",
+          "default": "create_database",
+          "title": "Create Database",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Database",
+          "x-display-name": "Create Database",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new database",
+            "provision database",
+            "add db"
+          ]
+        },
+        "database_name": {
+          "description": "Name for the new database",
+          "title": "Database Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "database_name"
+      ],
+      "title": "ChromaCreateDatabaseConfig",
+      "type": "object"
+    },
+    "ChromaCreateTenantConfig": {
+      "description": "Create a new tenant.",
+      "properties": {
+        "operation": {
+          "const": "create_tenant",
+          "default": "create_tenant",
+          "title": "Create Tenant",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tenant",
+          "x-display-name": "Create Tenant",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new tenant",
+            "provision tenant",
+            "create workspace"
+          ]
+        },
+        "tenant_name": {
+          "description": "Name for the new tenant",
+          "title": "Tenant Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tenant_name"
+      ],
+      "title": "ChromaCreateTenantConfig",
+      "type": "object"
+    },
+    "ChromaCredential": {
+      "description": "Token or Basic-auth credential for Chroma.",
+      "properties": {
+        "credential_type": {
+          "const": "chroma_token",
+          "default": "chroma_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "auth_type": {
+          "default": "token",
+          "description": "Token auth (Chroma Cloud / default) or Basic auth (self-hosted with password auth enabled).",
+          "enum": [
+            "token",
+            "basic"
+          ],
+          "enumNames": [
+            "Token (x-chroma-token)",
+            "Basic (username + password)"
+          ],
+          "title": "Auth Method",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "api_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Chroma token \u2014 sent as x-chroma-token. Required when Auth Method is Token.",
+          "title": "API Token",
+          "ui:widget": "password"
+        },
+        "username": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Basic auth username. Required when Auth Method is Basic.",
+          "title": "Username"
+        },
+        "password": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Basic auth password. Required when Auth Method is Basic.",
+          "title": "Password",
+          "ui:widget": "password"
+        },
+        "tenant": {
+          "description": "Chroma tenant (id or 'default_tenant')",
+          "title": "Tenant",
+          "type": "string"
+        },
+        "database": {
+          "description": "Chroma database name (or 'default_database')",
+          "title": "Database",
+          "type": "string"
+        },
+        "base_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Override for self-hosted Chroma. Defaults to Chroma Cloud (https://api.trychroma.com).",
+          "title": "Base URL"
+        }
+      },
+      "required": [
+        "tenant",
+        "database"
+      ],
+      "title": "ChromaCredential",
+      "type": "object",
+      "x-credential-url": "https://trychroma.com/"
+    },
+    "ChromaDeleteCollectionConfig": {
+      "description": "Permanently delete a collection and all its records.",
+      "properties": {
+        "operation": {
+          "const": "delete_collection",
+          "default": "delete_collection",
+          "title": "Delete Collection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collection",
+          "x-display-name": "Delete Collection",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "drop collection",
+            "remove collection",
+            "destroy"
+          ]
+        },
+        "collection": {
+          "title": "Collection Name",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "chroma_collection"
+        }
+      },
+      "required": [
+        "collection"
+      ],
+      "title": "ChromaDeleteCollectionConfig",
+      "type": "object"
+    },
+    "ChromaDeleteConfig": {
+      "description": "Delete records by ID, metadata filter, or document content filter.",
+      "properties": {
+        "operation": {
+          "const": "delete",
+          "default": "delete",
+          "title": "Delete Records",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Records",
+          "x-display-name": "Delete Records",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove",
+            "purge",
+            "clear"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "chroma_collection"
+        },
+        "ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Record IDs to delete, comma-separated",
+          "title": "IDs"
+        },
+        "where": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Delete records matching a JSON metadata filter",
+          "title": "Where"
+        },
+        "where_document": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Delete records whose document text matches, e.g. {\"$contains\": \"keyword\"}",
+          "title": "Where Document"
+        }
+      },
+      "required": [
+        "collection"
+      ],
+      "title": "ChromaDeleteConfig",
+      "type": "object"
+    },
+    "ChromaDeleteDatabaseConfig": {
+      "description": "Delete a database and ALL its collections. DESTRUCTIVE.",
+      "properties": {
+        "operation": {
+          "const": "delete_database",
+          "default": "delete_database",
+          "title": "Delete Database",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Database",
+          "x-display-name": "Delete Database",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "drop database",
+            "remove database",
+            "destroy db"
+          ]
+        },
+        "database_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Database to delete (defaults to the database on the credential). DESTRUCTIVE \u2014 permanently removes all collections and records.",
+          "title": "Database Name"
+        }
+      },
+      "title": "ChromaDeleteDatabaseConfig",
+      "type": "object"
+    },
+    "ChromaDetachFunctionConfig": {
+      "description": "Detach (remove) a function from a collection.",
+      "properties": {
+        "operation": {
+          "const": "detach_function",
+          "default": "detach_function",
+          "title": "Detach Function",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Functions",
+          "x-display-name": "Detach Function",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove function",
+            "unattach",
+            "detach model"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "chroma_collection"
+        },
+        "function_name": {
+          "description": "Name of the function to detach",
+          "title": "Function Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "collection",
+        "function_name"
+      ],
+      "title": "ChromaDetachFunctionConfig",
+      "type": "object"
+    },
+    "ChromaForkCollectionConfig": {
+      "description": "Fork (copy) an existing collection into a new one.",
+      "properties": {
+        "operation": {
+          "const": "fork_collection",
+          "default": "fork_collection",
+          "title": "Fork Collection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collection",
+          "x-display-name": "Fork Collection",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "copy collection",
+            "duplicate",
+            "snapshot",
+            "clone"
+          ]
+        },
+        "collection": {
+          "title": "Source Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "chroma_collection"
+        },
+        "new_name": {
+          "description": "Name for the forked collection",
+          "title": "New Name",
+          "type": "string"
+        },
+        "destination_database": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Database for the fork (defaults to the same database as the source)",
+          "title": "Destination Database"
+        }
+      },
+      "required": [
+        "collection",
+        "new_name"
+      ],
+      "title": "ChromaForkCollectionConfig",
+      "type": "object"
+    },
+    "ChromaForkCountConfig": {
+      "description": "Get the number of times a collection has been forked.",
+      "properties": {
+        "operation": {
+          "const": "fork_count",
+          "default": "fork_count",
+          "title": "Fork Count",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collection",
+          "x-display-name": "Fork Count",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "fork count",
+            "how many forks",
+            "copies"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "chroma_collection"
+        }
+      },
+      "required": [
+        "collection"
+      ],
+      "title": "ChromaForkCountConfig",
+      "type": "object"
+    },
+    "ChromaGetAttachedFunctionConfig": {
+      "description": "Get details about a function attached to a collection.",
+      "properties": {
+        "operation": {
+          "const": "get_attached_function",
+          "default": "get_attached_function",
+          "title": "Get Attached Function",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Functions",
+          "x-display-name": "Get Attached Function",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "embedding function details",
+            "attached model",
+            "function info"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "chroma_collection"
+        },
+        "function_name": {
+          "description": "Name of the attached function",
+          "title": "Function Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "collection",
+        "function_name"
+      ],
+      "title": "ChromaGetAttachedFunctionConfig",
+      "type": "object"
+    },
+    "ChromaGetCollectionByCrnConfig": {
+      "description": "Get a collection by its Cloud Resource Name (CRN).",
+      "properties": {
+        "operation": {
+          "const": "get_collection_by_crn",
+          "default": "get_collection_by_crn",
+          "title": "Get Collection by CRN",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collection",
+          "x-display-name": "Get Collection by CRN",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "crn",
+            "cloud resource name",
+            "collection identifier"
+          ]
+        },
+        "crn": {
+          "description": "Cloud Resource Name of the collection",
+          "title": "CRN",
+          "type": "string"
+        }
+      },
+      "required": [
+        "crn"
+      ],
+      "title": "ChromaGetCollectionByCrnConfig",
+      "type": "object"
+    },
+    "ChromaGetCollectionByIdConfig": {
+      "description": "Get a collection's metadata by its UUID.",
+      "properties": {
+        "operation": {
+          "const": "get_collection_by_id",
+          "default": "get_collection_by_id",
+          "title": "Get Collection by ID",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collection",
+          "x-display-name": "Get Collection by ID",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "collection by uuid",
+            "lookup by id",
+            "find collection uuid"
+          ]
+        },
+        "collection_id": {
+          "description": "The collection's UUID",
+          "title": "Collection UUID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "collection_id"
+      ],
+      "title": "ChromaGetCollectionByIdConfig",
+      "type": "object"
+    },
+    "ChromaGetCollectionConfig": {
+      "description": "Get a collection's metadata and configuration by name.",
+      "properties": {
+        "operation": {
+          "const": "get_collection",
+          "default": "get_collection",
+          "title": "Get Collection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collection",
+          "x-display-name": "Get Collection",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "describe collection",
+            "collection info",
+            "collection details",
+            "inspect"
+          ]
+        },
+        "collection": {
+          "title": "Collection Name",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "chroma_collection"
+        }
+      },
+      "required": [
+        "collection"
+      ],
+      "title": "ChromaGetCollectionConfig",
+      "type": "object"
+    },
+    "ChromaGetConfig": {
+      "description": "Get records by ID or filter.",
+      "properties": {
+        "operation": {
+          "const": "get",
+          "default": "get",
+          "title": "Get Records",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Records",
+          "x-display-name": "Get Records",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "fetch",
+            "lookup",
+            "read"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "chroma_collection"
+        },
+        "ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Record IDs to retrieve, comma-separated",
+          "title": "IDs"
+        },
+        "where": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON metadata filter",
+          "title": "Where"
+        },
+        "where_document": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by document text content, e.g. {\"$contains\": \"keyword\"}",
+          "title": "Where Document"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max records to return",
+          "title": "Limit"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of records to skip (pagination)",
+          "title": "Offset"
+        },
+        "include": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array of fields to return. Default: [\"documents\",\"metadatas\"]. Options: documents, embeddings, metadatas, uris.",
+          "title": "Include Fields"
+        }
+      },
+      "required": [
+        "collection"
+      ],
+      "title": "ChromaGetConfig",
+      "type": "object"
+    },
+    "ChromaGetDatabaseConfig": {
+      "description": "Get metadata about a database.",
+      "properties": {
+        "operation": {
+          "const": "get_database",
+          "default": "get_database",
+          "title": "Get Database",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Database",
+          "x-display-name": "Get Database",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "database info",
+            "describe database",
+            "db details"
+          ]
+        },
+        "database_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Database to fetch (defaults to the database on the credential)",
+          "title": "Database Name"
+        }
+      },
+      "title": "ChromaGetDatabaseConfig",
+      "type": "object"
+    },
+    "ChromaGetTenantConfig": {
+      "description": "Get metadata about a tenant.",
+      "properties": {
+        "operation": {
+          "const": "get_tenant",
+          "default": "get_tenant",
+          "title": "Get Tenant",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tenant",
+          "x-display-name": "Get Tenant",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "tenant info",
+            "tenant details",
+            "describe tenant"
+          ]
+        },
+        "tenant_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Tenant to fetch (defaults to the tenant on the credential)",
+          "title": "Tenant Name"
+        }
+      },
+      "title": "ChromaGetTenantConfig",
+      "type": "object"
+    },
+    "ChromaGetUserIdentityConfig": {
+      "description": "Get the identity of the currently authenticated user.",
+      "properties": {
+        "operation": {
+          "const": "get_user_identity",
+          "default": "get_user_identity",
+          "title": "Get User Identity",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Utility",
+          "x-display-name": "Get User Identity",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "identity",
+            "who am i",
+            "current user",
+            "auth info"
+          ]
+        }
+      },
+      "title": "ChromaGetUserIdentityConfig",
+      "type": "object"
+    },
+    "ChromaHealthcheckConfig": {
+      "description": "Check whether the Chroma server is healthy.",
+      "properties": {
+        "operation": {
+          "const": "healthcheck",
+          "default": "healthcheck",
+          "title": "Healthcheck",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Utility",
+          "x-display-name": "Healthcheck",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "health",
+            "ping",
+            "status",
+            "is alive"
+          ]
+        }
+      },
+      "title": "ChromaHealthcheckConfig",
+      "type": "object"
+    },
+    "ChromaHeartbeatConfig": {
+      "description": "Get the server heartbeat (nanosecond timestamp).",
+      "properties": {
+        "operation": {
+          "const": "heartbeat",
+          "default": "heartbeat",
+          "title": "Heartbeat",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Utility",
+          "x-display-name": "Heartbeat",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "heartbeat",
+            "ping",
+            "latency",
+            "timestamp"
+          ]
+        }
+      },
+      "title": "ChromaHeartbeatConfig",
+      "type": "object"
+    },
+    "ChromaIndexingStatusConfig": {
+      "description": "Get the indexing status of a collection (records indexed vs pending).",
+      "properties": {
+        "operation": {
+          "const": "indexing_status",
+          "default": "indexing_status",
+          "title": "Indexing Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collection",
+          "x-display-name": "Indexing Status",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "index progress",
+            "indexing",
+            "background",
+            "pending"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "chroma_collection"
+        }
+      },
+      "required": [
+        "collection"
+      ],
+      "title": "ChromaIndexingStatusConfig",
+      "type": "object"
+    },
+    "ChromaListCollectionsConfig": {
+      "description": "List collections in the tenant/database.",
+      "properties": {
+        "operation": {
+          "const": "list_collections",
+          "default": "list_collections",
+          "title": "List Collections",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collection",
+          "x-display-name": "List Collections",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "list",
+            "show collections"
+          ]
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max collections to return",
+          "title": "Limit"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Collections to skip for pagination",
+          "title": "Offset"
+        }
+      },
+      "title": "ChromaListCollectionsConfig",
+      "type": "object"
+    },
+    "ChromaListDatabasesConfig": {
+      "description": "List all databases in the tenant.",
+      "properties": {
+        "operation": {
+          "const": "list_databases",
+          "default": "list_databases",
+          "title": "List Databases",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Database",
+          "x-display-name": "List Databases",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "show databases",
+            "list dbs",
+            "all databases"
+          ]
+        }
+      },
+      "title": "ChromaListDatabasesConfig",
+      "type": "object"
+    },
+    "ChromaQueryConfig": {
+      "description": "Similarity search by a query embedding vector.",
+      "properties": {
+        "operation": {
+          "const": "query",
+          "default": "query",
+          "title": "Query (Vector)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Records",
+          "x-display-name": "Query (Vector)",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "similarity search",
+            "nearest neighbors",
+            "vector search",
+            "rag",
+            "knn"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "chroma_collection"
+        },
+        "vector": {
+          "description": "Embedding to search with \u2014 a JSON array of numbers",
+          "title": "Query Vector",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "n_results": {
+          "default": 10,
+          "description": "Number of matches to return",
+          "title": "N Results",
+          "type": "integer"
+        },
+        "where": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON metadata filter, e.g. {\"source\": \"doc1\"}",
+          "title": "Where"
+        },
+        "where_document": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by document text content, e.g. {\"$contains\": \"keyword\"} or {\"$not_contains\": \"word\"}",
+          "title": "Where Document"
+        },
+        "include": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array of fields to return. Default: [\"distances\",\"documents\",\"metadatas\"]. Options: distances, documents, embeddings, metadatas, uris.",
+          "title": "Include Fields"
+        }
+      },
+      "required": [
+        "collection",
+        "vector"
+      ],
+      "title": "ChromaQueryConfig",
+      "type": "object"
+    },
+    "ChromaResetConfig": {
+      "description": "Reset the Chroma server. DESTRUCTIVE \u2014 wipes ALL data across all tenants and databases.",
+      "properties": {
+        "operation": {
+          "const": "reset",
+          "default": "reset",
+          "title": "Reset Server",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Utility",
+          "x-display-name": "Reset Server",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "reset",
+            "wipe",
+            "clear all",
+            "factory reset"
+          ]
+        }
+      },
+      "title": "ChromaResetConfig",
+      "type": "object"
+    },
+    "ChromaSearchConfig": {
+      "description": "Full-text / semantic search using query text \u2014 Chroma embeds it server-side via an attached function.",
+      "properties": {
+        "operation": {
+          "const": "search",
+          "default": "search",
+          "title": "Search (Text)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Records",
+          "x-display-name": "Search (Text)",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "text search",
+            "semantic search",
+            "rag",
+            "similarity",
+            "find",
+            "natural language",
+            "no vector"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "chroma_collection"
+        },
+        "query_text": {
+          "description": "Natural language query \u2014 Chroma embeds it server-side using the collection's attached function",
+          "title": "Query Text",
+          "type": "string"
+        },
+        "n_results": {
+          "default": 10,
+          "description": "Number of results to return",
+          "title": "N Results",
+          "type": "integer"
+        },
+        "where": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON metadata filter",
+          "title": "Where"
+        },
+        "where_document": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by document text, e.g. {\"$contains\": \"keyword\"}",
+          "title": "Where Document"
+        },
+        "include": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array of fields. Default: [\"distances\",\"documents\",\"metadatas\"]",
+          "title": "Include Fields"
+        }
+      },
+      "required": [
+        "collection",
+        "query_text"
+      ],
+      "title": "ChromaSearchConfig",
+      "type": "object"
+    },
+    "ChromaUpdateCollectionConfig": {
+      "description": "Rename a collection or replace its metadata.",
+      "properties": {
+        "operation": {
+          "const": "update_collection",
+          "default": "update_collection",
+          "title": "Update Collection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collection",
+          "x-display-name": "Update Collection",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "rename collection",
+            "update metadata",
+            "edit collection"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "chroma_collection"
+        },
+        "new_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Rename the collection",
+          "title": "New Name"
+        },
+        "metadata": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Replacement JSON metadata for the collection (replaces existing metadata entirely)",
+          "title": "New Metadata"
+        }
+      },
+      "required": [
+        "collection"
+      ],
+      "title": "ChromaUpdateCollectionConfig",
+      "type": "object"
+    },
+    "ChromaUpdateConfig": {
+      "description": "Update existing records by ID (fails if an ID does not exist; use Upsert otherwise).",
+      "properties": {
+        "operation": {
+          "const": "update",
+          "default": "update",
+          "title": "Update Records",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Records",
+          "x-display-name": "Update Records",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "edit",
+            "patch",
+            "modify",
+            "change"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "chroma_collection"
+        },
+        "ids": {
+          "description": "IDs of records to update, comma-separated",
+          "title": "IDs",
+          "type": "string"
+        },
+        "embeddings": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New embedding vectors (JSON array), one per ID",
+          "title": "Embeddings",
+          "ui:widget": "textarea"
+        },
+        "documents": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New document texts (JSON array), one per ID",
+          "title": "Documents",
+          "ui:widget": "textarea"
+        },
+        "metadatas": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New metadata objects (JSON array), one per ID",
+          "title": "Metadatas",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "collection",
+        "ids"
+      ],
+      "title": "ChromaUpdateConfig",
+      "type": "object"
+    },
+    "ChromaUpdateTenantConfig": {
+      "description": "Update a tenant's configuration.",
+      "properties": {
+        "operation": {
+          "const": "update_tenant",
+          "default": "update_tenant",
+          "title": "Update Tenant",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tenant",
+          "x-display-name": "Update Tenant",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "edit tenant",
+            "modify tenant",
+            "tenant config"
+          ]
+        },
+        "tenant_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Tenant to update (defaults to the tenant on the credential)",
+          "title": "Tenant Name"
+        },
+        "config": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON config update for the tenant",
+          "title": "Config",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "ChromaUpdateTenantConfig",
+      "type": "object"
+    },
+    "ChromaUploadIndexConfig": {
+      "description": "Upload a document file, chunk + embed it, and add the records.",
+      "properties": {
+        "operation": {
+          "const": "upload_and_index",
+          "default": "upload_and_index",
+          "title": "Upload & Index Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Records",
+          "x-display-name": "Upload & Index Document",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "upload",
+            "ingest",
+            "index document",
+            "rag",
+            "embed file",
+            "add pdf"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "chroma_collection"
+        },
+        "document": {
+          "description": "Upload a PDF/DOCX/TXT/MD/CSV file (or paste a URL / reference an upstream file). It's chunked, embedded with text-embedding-3-small, and added as records.",
+          "title": "Document",
+          "type": "string",
+          "ui:accept": ".pdf,.docx,.txt,.md,.markdown,.csv,.json,.html,.htm",
+          "ui:widget": "media_upload"
+        },
+        "chunk_size": {
+          "default": 1000,
+          "description": "Characters per chunk",
+          "title": "Chunk Size",
+          "type": "integer"
+        },
+        "chunk_overlap": {
+          "default": 200,
+          "description": "Overlapping characters between chunks",
+          "title": "Chunk Overlap",
+          "type": "integer"
+        },
+        "id_prefix": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional prefix for chunk IDs (defaults to the filename)",
+          "title": "ID Prefix"
+        }
+      },
+      "required": [
+        "collection",
+        "document"
+      ],
+      "title": "ChromaUploadIndexConfig",
+      "type": "object"
+    },
+    "ChromaUpsertConfig": {
+      "description": "Upsert records \u2014 inserts new IDs and updates existing ones (idempotent sync).",
+      "properties": {
+        "operation": {
+          "const": "upsert",
+          "default": "upsert",
+          "title": "Upsert Records",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Records",
+          "x-display-name": "Upsert Records",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "insert or update",
+            "sync",
+            "idempotent",
+            "overwrite",
+            "reindex"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the collection name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "chroma_collection"
+        },
+        "ids": {
+          "description": "Record IDs, comma-separated",
+          "title": "IDs",
+          "type": "string"
+        },
+        "embeddings": {
+          "description": "JSON array of embedding vectors, one per ID: [[0.1, ...], [0.2, ...]]",
+          "title": "Embeddings",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "documents": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON array of document texts, one per ID",
+          "title": "Documents",
+          "ui:widget": "textarea"
+        },
+        "metadatas": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON array of metadata objects, one per ID",
+          "title": "Metadatas",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "collection",
+        "ids",
+        "embeddings"
+      ],
+      "title": "ChromaUpsertConfig",
+      "type": "object"
+    },
+    "ChromaVersionConfig": {
+      "description": "Get the Chroma server version string.",
+      "properties": {
+        "operation": {
+          "const": "version",
+          "default": "version",
+          "title": "Get Version",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Utility",
+          "x-display-name": "Get Version",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "version",
+            "server version",
+            "chroma version"
+          ]
+        }
+      },
+      "title": "ChromaVersionConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the Chroma node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add": "#/$defs/ChromaAddConfig",
+          "add_attached_function_input": "#/$defs/ChromaAddAttachedFunctionInputConfig",
+          "attach_function": "#/$defs/ChromaAttachFunctionConfig",
+          "count": "#/$defs/ChromaCountConfig",
+          "count_collections": "#/$defs/ChromaCountCollectionsConfig",
+          "create_collection": "#/$defs/ChromaCreateCollectionConfig",
+          "create_database": "#/$defs/ChromaCreateDatabaseConfig",
+          "create_tenant": "#/$defs/ChromaCreateTenantConfig",
+          "delete": "#/$defs/ChromaDeleteConfig",
+          "delete_collection": "#/$defs/ChromaDeleteCollectionConfig",
+          "delete_database": "#/$defs/ChromaDeleteDatabaseConfig",
+          "detach_function": "#/$defs/ChromaDetachFunctionConfig",
+          "fork_collection": "#/$defs/ChromaForkCollectionConfig",
+          "fork_count": "#/$defs/ChromaForkCountConfig",
+          "get": "#/$defs/ChromaGetConfig",
+          "get_attached_function": "#/$defs/ChromaGetAttachedFunctionConfig",
+          "get_collection": "#/$defs/ChromaGetCollectionConfig",
+          "get_collection_by_crn": "#/$defs/ChromaGetCollectionByCrnConfig",
+          "get_collection_by_id": "#/$defs/ChromaGetCollectionByIdConfig",
+          "get_database": "#/$defs/ChromaGetDatabaseConfig",
+          "get_tenant": "#/$defs/ChromaGetTenantConfig",
+          "get_user_identity": "#/$defs/ChromaGetUserIdentityConfig",
+          "healthcheck": "#/$defs/ChromaHealthcheckConfig",
+          "heartbeat": "#/$defs/ChromaHeartbeatConfig",
+          "indexing_status": "#/$defs/ChromaIndexingStatusConfig",
+          "list_collections": "#/$defs/ChromaListCollectionsConfig",
+          "list_databases": "#/$defs/ChromaListDatabasesConfig",
+          "query": "#/$defs/ChromaQueryConfig",
+          "reset": "#/$defs/ChromaResetConfig",
+          "search": "#/$defs/ChromaSearchConfig",
+          "update": "#/$defs/ChromaUpdateConfig",
+          "update_collection": "#/$defs/ChromaUpdateCollectionConfig",
+          "update_tenant": "#/$defs/ChromaUpdateTenantConfig",
+          "upload_and_index": "#/$defs/ChromaUploadIndexConfig",
+          "upsert": "#/$defs/ChromaUpsertConfig",
+          "version": "#/$defs/ChromaVersionConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ChromaQueryConfig"
+        },
+        {
+          "$ref": "#/$defs/ChromaSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/ChromaAddConfig"
+        },
+        {
+          "$ref": "#/$defs/ChromaUpsertConfig"
+        },
+        {
+          "$ref": "#/$defs/ChromaUpdateConfig"
+        },
+        {
+          "$ref": "#/$defs/ChromaGetConfig"
+        },
+        {
+          "$ref": "#/$defs/ChromaCountConfig"
+        },
+        {
+          "$ref": "#/$defs/ChromaDeleteConfig"
+        },
+        {
+          "$ref": "#/$defs/ChromaUploadIndexConfig"
+        },
+        {
+          "$ref": "#/$defs/ChromaListCollectionsConfig"
+        },
+        {
+          "$ref": "#/$defs/ChromaGetCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/ChromaCreateCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/ChromaUpdateCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/ChromaDeleteCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/ChromaCountCollectionsConfig"
+        },
+        {
+          "$ref": "#/$defs/ChromaIndexingStatusConfig"
+        },
+        {
+          "$ref": "#/$defs/ChromaForkCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/ChromaForkCountConfig"
+        },
+        {
+          "$ref": "#/$defs/ChromaGetCollectionByIdConfig"
+        },
+        {
+          "$ref": "#/$defs/ChromaGetCollectionByCrnConfig"
+        },
+        {
+          "$ref": "#/$defs/ChromaAttachFunctionConfig"
+        },
+        {
+          "$ref": "#/$defs/ChromaGetAttachedFunctionConfig"
+        },
+        {
+          "$ref": "#/$defs/ChromaAddAttachedFunctionInputConfig"
+        },
+        {
+          "$ref": "#/$defs/ChromaDetachFunctionConfig"
+        },
+        {
+          "$ref": "#/$defs/ChromaGetTenantConfig"
+        },
+        {
+          "$ref": "#/$defs/ChromaCreateTenantConfig"
+        },
+        {
+          "$ref": "#/$defs/ChromaUpdateTenantConfig"
+        },
+        {
+          "$ref": "#/$defs/ChromaListDatabasesConfig"
+        },
+        {
+          "$ref": "#/$defs/ChromaCreateDatabaseConfig"
+        },
+        {
+          "$ref": "#/$defs/ChromaGetDatabaseConfig"
+        },
+        {
+          "$ref": "#/$defs/ChromaDeleteDatabaseConfig"
+        },
+        {
+          "$ref": "#/$defs/ChromaHealthcheckConfig"
+        },
+        {
+          "$ref": "#/$defs/ChromaHeartbeatConfig"
+        },
+        {
+          "$ref": "#/$defs/ChromaVersionConfig"
+        },
+        {
+          "$ref": "#/$defs/ChromaResetConfig"
+        },
+        {
+          "$ref": "#/$defs/ChromaGetUserIdentityConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ChromaCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Chroma Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Search a Chroma collection for the records most similar to a query embedding",
+    "Add document embeddings with metadata to a Chroma collection",
+    "Upsert records into Chroma (insert new, update existing)",
+    "Count the number of records in a Chroma collection",
+    "Delete a Chroma collection",
+    "Fork a Chroma collection to create a snapshot",
+    "Check the indexing status of a collection"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

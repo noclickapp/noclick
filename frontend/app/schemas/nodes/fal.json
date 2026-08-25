@@ -1,0 +1,681 @@
+{
+  "$defs": {
+    "FalApiKeyCredential": {
+      "description": "API Key credential for fal.ai.",
+      "properties": {
+        "credential_type": {
+          "const": "fal_api_key",
+          "default": "fal_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Your fal API key from the dashboard. Sent as 'Authorization: Key <key>'.",
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "FalApiKeyCredential",
+      "type": "object",
+      "x-credential-url": "https://fal.ai/dashboard/keys"
+    },
+    "FalCancelRequestConfig": {
+      "description": "Cancel a queued or in-progress request.",
+      "properties": {
+        "operation": {
+          "const": "cancel_request",
+          "default": "cancel_request",
+          "title": "Cancel Request",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Model Run",
+          "x-display-name": "Cancel Request",
+          "x-is-trigger": false
+        },
+        "model_id": {
+          "description": "The model endpoint slug the request was submitted to",
+          "title": "Model ID",
+          "type": "string"
+        },
+        "request_id": {
+          "description": "The request_id to cancel",
+          "title": "Request ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model_id",
+        "request_id"
+      ],
+      "title": "FalCancelRequestConfig",
+      "type": "object"
+    },
+    "FalCreateKeyConfig": {
+      "description": "Create a new API key for the account.",
+      "properties": {
+        "operation": {
+          "const": "create_key",
+          "default": "create_key",
+          "title": "Create API Key",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Keys",
+          "x-display-name": "Create API Key",
+          "x-is-trigger": false
+        },
+        "alias": {
+          "description": "Human-readable label for the new key (required by fal)",
+          "title": "Alias",
+          "type": "string"
+        }
+      },
+      "required": [
+        "alias"
+      ],
+      "title": "FalCreateKeyConfig",
+      "type": "object"
+    },
+    "FalDeleteKeyConfig": {
+      "description": "Delete an API key by its ID.",
+      "properties": {
+        "operation": {
+          "const": "delete_key",
+          "default": "delete_key",
+          "title": "Delete API Key",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Keys",
+          "x-display-name": "Delete API Key",
+          "x-is-trigger": false
+        },
+        "key_id": {
+          "description": "The ID of the key to delete",
+          "title": "Key ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "key_id"
+      ],
+      "title": "FalDeleteKeyConfig",
+      "type": "object"
+    },
+    "FalGetResultConfig": {
+      "description": "Fetch the completed result payload of a queued request.",
+      "properties": {
+        "operation": {
+          "const": "get_result",
+          "default": "get_result",
+          "title": "Get Request Result",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Model Run",
+          "x-display-name": "Get Request Result",
+          "x-is-trigger": false
+        },
+        "model_id": {
+          "description": "The model endpoint slug the request was submitted to",
+          "title": "Model ID",
+          "type": "string"
+        },
+        "request_id": {
+          "description": "The request_id of the completed request",
+          "title": "Request ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "model_id",
+        "request_id"
+      ],
+      "title": "FalGetResultConfig",
+      "type": "object"
+    },
+    "FalGetStatusConfig": {
+      "description": "Poll the status of a queued request.",
+      "properties": {
+        "operation": {
+          "const": "get_status",
+          "default": "get_status",
+          "title": "Get Request Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Model Run",
+          "x-display-name": "Get Request Status",
+          "x-is-trigger": false
+        },
+        "model_id": {
+          "description": "The model endpoint slug the request was submitted to",
+          "title": "Model ID",
+          "type": "string"
+        },
+        "request_id": {
+          "description": "The request_id returned when submitting to the queue",
+          "title": "Request ID",
+          "type": "string"
+        },
+        "logs": {
+          "default": "false",
+          "description": "Include runner logs in the status response",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Logs",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "model_id",
+        "request_id"
+      ],
+      "title": "FalGetStatusConfig",
+      "type": "object"
+    },
+    "FalInitiateUploadConfig": {
+      "description": "Initiate a file upload to fal's CDN; returns a presigned upload URL.",
+      "properties": {
+        "operation": {
+          "const": "initiate_upload",
+          "default": "initiate_upload",
+          "title": "Initiate File Upload",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Storage",
+          "x-display-name": "Initiate File Upload",
+          "x-is-trigger": false
+        },
+        "content_type": {
+          "default": "application/octet-stream",
+          "description": "MIME type of the file you will upload (e.g. image/png)",
+          "title": "Content Type",
+          "type": "string",
+          "ui:placeholder": "e.g. image/png, video/mp4, application/pdf"
+        },
+        "file_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional original file name",
+          "title": "File Name"
+        }
+      },
+      "title": "FalInitiateUploadConfig",
+      "type": "object"
+    },
+    "FalJobCompletedTriggerConfig": {
+      "description": "Fire the workflow when a queued fal job completes (success or error).\n\nfal posts the completion event to whatever URL is passed as the queue\nsubmit's `webhook_url`. Wire this trigger and paste its URL into the\nSubmit to Queue operation's Webhook URL field.",
+      "properties": {
+        "operation": {
+          "const": "on_job_completed",
+          "default": "on_job_completed",
+          "title": "On Job Completed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Job Completed",
+          "x-is-trigger": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pass this URL as the webhook_url when submitting a job to fal's queue.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        }
+      },
+      "title": "FalJobCompletedTriggerConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "FalListKeysConfig": {
+      "description": "List all API keys for the account.",
+      "properties": {
+        "operation": {
+          "const": "list_keys",
+          "default": "list_keys",
+          "title": "List API Keys",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Keys",
+          "x-display-name": "List API Keys",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Max number of keys to return",
+          "title": "Limit",
+          "ui:help": "Lists keys created via the API (POST /v1/keys). Your root API key used for authentication does not appear here."
+        }
+      },
+      "title": "FalListKeysConfig",
+      "type": "object"
+    },
+    "FalListRequestsConfig": {
+      "description": "List recent requests for a specific model endpoint.",
+      "properties": {
+        "operation": {
+          "const": "list_requests",
+          "default": "list_requests",
+          "title": "List Requests by Endpoint",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Platform",
+          "x-display-name": "List Requests by Endpoint",
+          "x-is-trigger": false
+        },
+        "model_id": {
+          "description": "The model endpoint slug to list requests for",
+          "title": "Model ID",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Max number of requests to return",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "model_id"
+      ],
+      "title": "FalListRequestsConfig",
+      "type": "object"
+    },
+    "FalRunModelConfig": {
+      "description": "Run a model endpoint synchronously and get the result inline.",
+      "properties": {
+        "operation": {
+          "const": "run_model",
+          "default": "run_model",
+          "title": "Run Model (Sync)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Model Run",
+          "x-display-name": "Run Model (Sync)",
+          "x-is-trigger": false
+        },
+        "model_id": {
+          "description": "The model endpoint slug, e.g. fal-ai/flux/dev or fal-ai/fast-sdxl",
+          "title": "Model ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a model slug",
+            "field_name": "model_id",
+            "placeholder": "Select or search a model...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "fal_model"
+        },
+        "subpath": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional extra path segment for endpoints that expose one",
+          "title": "Subpath"
+        },
+        "input": {
+          "default": "{}",
+          "description": "The model's JSON input payload (schema is per-model)",
+          "title": "Input (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "model_id"
+      ],
+      "title": "FalRunModelConfig",
+      "type": "object"
+    },
+    "FalSearchModelsConfig": {
+      "description": "Search and list available model endpoints.",
+      "properties": {
+        "operation": {
+          "const": "search_models",
+          "default": "search_models",
+          "title": "Search Models",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Platform",
+          "x-display-name": "Search Models",
+          "x-is-trigger": false
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search term to filter models by name/capability",
+          "title": "Query"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Max number of models to return",
+          "title": "Limit"
+        }
+      },
+      "title": "FalSearchModelsConfig",
+      "type": "object"
+    },
+    "FalSubmitQueueConfig": {
+      "description": "Submit an async request to the fal queue (best for long-running jobs).",
+      "properties": {
+        "operation": {
+          "const": "submit_queue",
+          "default": "submit_queue",
+          "title": "Submit to Queue",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Model Run",
+          "x-display-name": "Submit to Queue",
+          "x-is-trigger": false
+        },
+        "model_id": {
+          "description": "The model endpoint slug, e.g. fal-ai/flux/dev",
+          "title": "Model ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a model slug",
+            "field_name": "model_id",
+            "placeholder": "Select or search a model...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "fal_model"
+        },
+        "subpath": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional extra path segment for endpoints that expose one",
+          "title": "Subpath"
+        },
+        "input": {
+          "default": "{}",
+          "description": "The model's JSON input payload (schema is per-model)",
+          "title": "Input (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional URL fal POSTs the result to on completion (fal_webhook query param)",
+          "title": "Webhook URL"
+        }
+      },
+      "required": [
+        "model_id"
+      ],
+      "title": "FalSubmitQueueConfig",
+      "type": "object"
+    },
+    "FalUsageConfig": {
+      "description": "Retrieve granular usage line items for the account.",
+      "properties": {
+        "operation": {
+          "const": "get_usage",
+          "default": "get_usage",
+          "title": "Get Usage",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Platform",
+          "x-display-name": "Get Usage",
+          "x-is-trigger": false
+        },
+        "start_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 lower bound for usage records",
+          "title": "Start Date",
+          "ui:placeholder": "2026-01-01T00:00:00Z",
+          "ui:widget": "datetime"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 upper bound for usage records",
+          "title": "End Date",
+          "ui:placeholder": "2026-12-31T23:59:59Z",
+          "ui:widget": "datetime"
+        }
+      },
+      "title": "FalUsageConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the fal node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_request": "#/$defs/FalCancelRequestConfig",
+          "create_key": "#/$defs/FalCreateKeyConfig",
+          "delete_key": "#/$defs/FalDeleteKeyConfig",
+          "get_result": "#/$defs/FalGetResultConfig",
+          "get_status": "#/$defs/FalGetStatusConfig",
+          "get_usage": "#/$defs/FalUsageConfig",
+          "initiate_upload": "#/$defs/FalInitiateUploadConfig",
+          "list_keys": "#/$defs/FalListKeysConfig",
+          "list_requests": "#/$defs/FalListRequestsConfig",
+          "on_job_completed": "#/$defs/FalJobCompletedTriggerConfig",
+          "run_model": "#/$defs/FalRunModelConfig",
+          "search_models": "#/$defs/FalSearchModelsConfig",
+          "submit_queue": "#/$defs/FalSubmitQueueConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/FalRunModelConfig"
+        },
+        {
+          "$ref": "#/$defs/FalSubmitQueueConfig"
+        },
+        {
+          "$ref": "#/$defs/FalGetStatusConfig"
+        },
+        {
+          "$ref": "#/$defs/FalGetResultConfig"
+        },
+        {
+          "$ref": "#/$defs/FalCancelRequestConfig"
+        },
+        {
+          "$ref": "#/$defs/FalInitiateUploadConfig"
+        },
+        {
+          "$ref": "#/$defs/FalSearchModelsConfig"
+        },
+        {
+          "$ref": "#/$defs/FalUsageConfig"
+        },
+        {
+          "$ref": "#/$defs/FalListRequestsConfig"
+        },
+        {
+          "$ref": "#/$defs/FalListKeysConfig"
+        },
+        {
+          "$ref": "#/$defs/FalCreateKeyConfig"
+        },
+        {
+          "$ref": "#/$defs/FalDeleteKeyConfig"
+        },
+        {
+          "$ref": "#/$defs/FalJobCompletedTriggerConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FalApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Fal Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Generate an image with fal-ai/flux/dev from a text prompt",
+    "Submit a long video generation job to the fal queue",
+    "Poll the status of a queued fal request",
+    "Fetch the result of a completed fal job",
+    "Trigger a workflow when a queued fal job finishes"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

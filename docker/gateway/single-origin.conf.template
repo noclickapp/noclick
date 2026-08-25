@@ -1,0 +1,172 @@
+# One origin for the whole application.
+#
+# The browser, the API, the websocket and every webhook share a hostname, which
+# is what makes a one-click deploy possible: platforms that hand out a single
+# URL per service can host this, and there is no second address to configure, no
+# CORS, and no cross-origin cookie question.
+#
+# The routing is a list of prefixes rather than a rule, because the backend's
+# paths were never designed to sit under one. `test_single_origin_routing.py`
+# reads this file and the application's own route table and fails when a new
+# backend route lands outside the list — where it would be served the app's HTML
+# instead, which looks like a bug in the caller.
+
+# Only set for a real upgrade request; an ordinary proxied request must not
+# carry `Connection: upgrade`.
+map $http_upgrade $connection_upgrade {
+    default upgrade;
+    ''      close;
+}
+
+# Whatever terminated TLS in front of this, or the scheme we were reached on.
+map $http_x_forwarded_proto $forwarded_proto {
+    default $http_x_forwarded_proto;
+    ''      $scheme;
+}
+
+server {
+    listen ${PORT};
+    server_name _;
+
+    # Uploads go straight to object storage against a presigned URL. What passes
+    # through here is API traffic and page loads.
+    client_max_body_size 16m;
+
+    # A signed-in request carries the auth cookie set, which the auth server
+    # splits across several chunks and which comfortably exceeds nginx's stock
+    # 8k header buffer. Every authenticated page load then answers "400 Request
+    # Header Or Cookie Too Large" — an error with nothing in it to suggest the
+    # proxy in front is the one refusing.
+    client_header_buffer_size 8k;
+    large_client_header_buffers 8 32k;
+
+    # ── The app ─────────────────────────────────────────────────────────────
+    location / {
+        proxy_pass http://127.0.0.1:3000;
+        include /etc/nginx/noclick-proxy.conf;
+    }
+
+    # The MCP consent page belongs to the app, and sits inside the backend's
+    # /mcp prefix. An exact match outranks the prefix below it.
+    location = /mcp/consent {
+        proxy_pass http://127.0.0.1:3000;
+        include /etc/nginx/noclick-proxy.conf;
+    }
+
+    # ── The backend ─────────────────────────────────────────────────────────
+    location = /health {
+        proxy_pass http://127.0.0.1:8000;
+        include /etc/nginx/noclick-proxy.conf;
+    }
+
+    location /health/ {
+        proxy_pass http://127.0.0.1:8000;
+        include /etc/nginx/noclick-proxy.conf;
+    }
+
+    # Long-lived connections: the socket carries every editor action, and the
+    # relay carries execution output.
+    location /socket.io/ {
+        proxy_pass http://127.0.0.1:8000;
+        include /etc/nginx/noclick-proxy.conf;
+        proxy_read_timeout 24h;
+        proxy_send_timeout 24h;
+        # The socket authenticates from its own handshake payload and reads no
+        # cookies. Sharing an origin with the app means it would otherwise
+        # receive the whole session cookie set on every connect — and the
+        # websocket handshake parser rejects a request line that long, with
+        # "did not receive a valid HTTP request; line too long" and a 400 that
+        # looks like an auth failure.
+        proxy_set_header Cookie "";
+    }
+
+    location /relay {
+        proxy_pass http://127.0.0.1:8000;
+        include /etc/nginx/noclick-proxy.conf;
+        proxy_read_timeout 24h;
+        proxy_send_timeout 24h;
+        # As with the socket: the relay authenticates from a token sent on the
+        # open connection, reads no cookies, and a large cookie set overruns the
+        # websocket handshake parser.
+        proxy_set_header Cookie "";
+    }
+
+    location /webhook/ {
+        proxy_pass http://127.0.0.1:8000;
+        include /etc/nginx/noclick-proxy.conf;
+    }
+
+    location /email/ {
+        proxy_pass http://127.0.0.1:8000;
+        include /etc/nginx/noclick-proxy.conf;
+    }
+
+    # The public half of a builder run: whoever holds a /b/{id} link answers
+    # its questions and connects credentials, with no account.
+    location /api/builder-bridge/ {
+        proxy_pass http://127.0.0.1:8000;
+        include /etc/nginx/noclick-proxy.conf;
+    }
+
+    # Provider callbacks that are not workflow deliveries — the auth server's
+    # signup hook. Secret-authenticated, like every other webhook here.
+    location /webhooks/ {
+        proxy_pass http://127.0.0.1:8000;
+        include /etc/nginx/noclick-proxy.conf;
+    }
+
+    location /local-cron/ {
+        proxy_pass http://127.0.0.1:8000;
+        include /etc/nginx/noclick-proxy.conf;
+    }
+
+    location = /mcp {
+        proxy_pass http://127.0.0.1:8000;
+        include /etc/nginx/noclick-proxy.conf;
+    }
+
+    location /mcp/ {
+        proxy_pass http://127.0.0.1:8000;
+        include /etc/nginx/noclick-proxy.conf;
+        # A hosted MCP link runs workflow tools; a tools/call is a request that
+        # may take minutes, and retrying an aborted one would double-fire writes.
+        proxy_read_timeout 30m;
+    }
+
+    location /s/ {
+        proxy_pass http://127.0.0.1:8000;
+        include /etc/nginx/noclick-proxy.conf;
+        proxy_read_timeout 30m;
+    }
+
+    location /agent/ {
+        proxy_pass http://127.0.0.1:8000;
+        include /etc/nginx/noclick-proxy.conf;
+    }
+
+    location /.well-known/ {
+        proxy_pass http://127.0.0.1:8000;
+        include /etc/nginx/noclick-proxy.conf;
+    }
+
+    # /api is shared: the app owns /api/auth, the backend owns these four.
+    location /api/credential-request/ {
+        proxy_pass http://127.0.0.1:8000;
+        include /etc/nginx/noclick-proxy.conf;
+    }
+
+    location /api/keys {
+        proxy_pass http://127.0.0.1:8000;
+        include /etc/nginx/noclick-proxy.conf;
+    }
+
+    location /api/models {
+        proxy_pass http://127.0.0.1:8000;
+        include /etc/nginx/noclick-proxy.conf;
+    }
+
+    location /api/public/ {
+        proxy_pass http://127.0.0.1:8000;
+        include /etc/nginx/noclick-proxy.conf;
+    }
+}

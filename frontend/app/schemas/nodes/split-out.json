@@ -1,0 +1,102 @@
+{
+  "$defs": {
+    "SplitOutConfigModel": {
+      "properties": {
+        "input_data": {
+          "description": "The data to split \u2014 an array, or an object that contains the array field(s). e.g. {{node-id.items}}",
+          "placeholder": "{{node-id.field}}",
+          "title": "Input Data",
+          "ui:widget": "textarea"
+        },
+        "fields_to_split": {
+          "default": "",
+          "description": "The field(s) holding the array to split out. Comma-separate to split multiple; dot notation supported. Leave empty if the input is itself an array.",
+          "placeholder": "items",
+          "title": "Fields To Split Out",
+          "type": "string"
+        },
+        "include": {
+          "default": "none",
+          "description": "Which of the input's other fields to keep on each output item.",
+          "enum": [
+            "none",
+            "all",
+            "selected"
+          ],
+          "enumNames": [
+            "No Other Fields",
+            "All Other Fields",
+            "Selected Other Fields"
+          ],
+          "title": "Include",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "fields_to_include": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated field names to keep on each item.",
+          "placeholder": "id,name",
+          "title": "Fields To Include",
+          "ui:show-if": {
+            "containsAny": [
+              "selected"
+            ],
+            "field": "include"
+          }
+        },
+        "destination_field": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Rename the split field on each output item (single field only).",
+          "placeholder": "item",
+          "title": "Destination Field Name"
+        }
+      },
+      "required": [
+        "input_data"
+      ],
+      "title": "SplitOutConfigModel",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the Split Out node (no credentials).",
+  "properties": {
+    "config": {
+      "$ref": "#/$defs/SplitOutConfigModel",
+      "description": "Node-specific configuration"
+    },
+    "credentials": {
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials",
+      "type": "null"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Split-out Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Split the items array into one item per element",
+    "Split out the orders field and keep the customer id on each item",
+    "Turn a list of tags into separate items",
+    "Split out results, carrying all the other fields"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

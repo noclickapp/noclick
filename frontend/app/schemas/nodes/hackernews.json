@@ -1,0 +1,490 @@
+{
+  "$defs": {
+    "HNGetAskStoriesConfig": {
+      "description": "Config for fetching Ask HN stories",
+      "properties": {
+        "operation": {
+          "const": "fetch_ask_hn_stories",
+          "default": "fetch_ask_hn_stories",
+          "title": "Fetch Ask Hn Stories",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Story",
+          "x-display-name": "Fetch Ask Hn Stories",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "default": 10,
+          "description": "Maximum number of stories to return (1-200)",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "fetch_details": {
+          "default": true,
+          "description": "If true, fetches full story details. If false, returns only IDs (faster).",
+          "title": "Fetch Full Details",
+          "type": "boolean"
+        }
+      },
+      "title": "HNGetAskStoriesConfig",
+      "type": "object"
+    },
+    "HNGetBestStoriesConfig": {
+      "description": "Config for fetching best stories",
+      "properties": {
+        "operation": {
+          "const": "fetch_best_stories",
+          "default": "fetch_best_stories",
+          "title": "Fetch Best Stories",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Story",
+          "x-display-name": "Fetch Best Stories",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "default": 10,
+          "description": "Maximum number of stories to return (1-500)",
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "fetch_details": {
+          "default": true,
+          "description": "If true, fetches full story details. If false, returns only IDs (faster).",
+          "title": "Fetch Full Details",
+          "type": "boolean"
+        }
+      },
+      "title": "HNGetBestStoriesConfig",
+      "type": "object"
+    },
+    "HNGetItemConfig": {
+      "description": "Config for fetching a single item (story, comment, job, poll) by ID",
+      "properties": {
+        "operation": {
+          "const": "fetch_item_by_id",
+          "default": "fetch_item_by_id",
+          "title": "Fetch Item by Id",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Item",
+          "x-display-name": "Fetch Item by Id",
+          "x-is-trigger": false
+        },
+        "item_id": {
+          "description": "The numeric ID of the item to fetch (story, comment, job, or poll)",
+          "minLength": 1,
+          "placeholder": "8863",
+          "title": "Item ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "HNGetItemConfig",
+      "type": "object"
+    },
+    "HNGetJobStoriesConfig": {
+      "description": "Config for fetching job postings",
+      "properties": {
+        "operation": {
+          "const": "fetch_job_postings",
+          "default": "fetch_job_postings",
+          "title": "Fetch Job Postings",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Story",
+          "x-display-name": "Fetch Job Postings",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "default": 10,
+          "description": "Maximum number of jobs to return (1-200)",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "fetch_details": {
+          "default": true,
+          "description": "If true, fetches full job details. If false, returns only IDs (faster).",
+          "title": "Fetch Full Details",
+          "type": "boolean"
+        }
+      },
+      "title": "HNGetJobStoriesConfig",
+      "type": "object"
+    },
+    "HNGetMaxItemConfig": {
+      "description": "Config for fetching the current largest item ID",
+      "properties": {
+        "operation": {
+          "const": "fetch_largest_item_id",
+          "default": "fetch_largest_item_id",
+          "title": "Fetch Largest Item Id",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Item",
+          "x-display-name": "Fetch Largest Item Id",
+          "x-is-trigger": false
+        }
+      },
+      "title": "HNGetMaxItemConfig",
+      "type": "object"
+    },
+    "HNGetNewStoriesConfig": {
+      "description": "Config for fetching newest stories",
+      "properties": {
+        "operation": {
+          "const": "fetch_newest_stories",
+          "default": "fetch_newest_stories",
+          "title": "Fetch Newest Stories",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Story",
+          "x-display-name": "Fetch Newest Stories",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "default": 10,
+          "description": "Maximum number of stories to return (1-500)",
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "fetch_details": {
+          "default": true,
+          "description": "If true, fetches full story details. If false, returns only IDs (faster).",
+          "title": "Fetch Full Details",
+          "type": "boolean"
+        }
+      },
+      "title": "HNGetNewStoriesConfig",
+      "type": "object"
+    },
+    "HNGetShowStoriesConfig": {
+      "description": "Config for fetching Show HN stories",
+      "properties": {
+        "operation": {
+          "const": "fetch_show_hn_stories",
+          "default": "fetch_show_hn_stories",
+          "title": "Fetch Show Hn Stories",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Story",
+          "x-display-name": "Fetch Show Hn Stories",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "default": 10,
+          "description": "Maximum number of stories to return (1-200)",
+          "maximum": 200,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "fetch_details": {
+          "default": true,
+          "description": "If true, fetches full story details. If false, returns only IDs (faster).",
+          "title": "Fetch Full Details",
+          "type": "boolean"
+        }
+      },
+      "title": "HNGetShowStoriesConfig",
+      "type": "object"
+    },
+    "HNGetTopStoriesConfig": {
+      "description": "Config for fetching top stories",
+      "properties": {
+        "operation": {
+          "const": "fetch_top_stories",
+          "default": "fetch_top_stories",
+          "title": "Fetch Top Stories",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Story",
+          "x-display-name": "Fetch Top Stories",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "default": 10,
+          "description": "Maximum number of stories to return (1-500)",
+          "maximum": 500,
+          "minimum": 1,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "fetch_details": {
+          "default": true,
+          "description": "If true, fetches full story details. If false, returns only IDs (faster).",
+          "title": "Fetch Full Details",
+          "type": "boolean"
+        }
+      },
+      "title": "HNGetTopStoriesConfig",
+      "type": "object"
+    },
+    "HNGetUpdatesConfig": {
+      "description": "Config for fetching changed items and profiles",
+      "properties": {
+        "operation": {
+          "const": "fetch_changed_items_and_profiles",
+          "default": "fetch_changed_items_and_profiles",
+          "title": "Fetch Changed Items and Profiles",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Item",
+          "x-display-name": "Fetch Changed Items and Profiles",
+          "x-is-trigger": false
+        }
+      },
+      "title": "HNGetUpdatesConfig",
+      "type": "object"
+    },
+    "HNGetUserConfig": {
+      "description": "Config for fetching a user profile by username",
+      "properties": {
+        "operation": {
+          "const": "fetch_user_profile",
+          "default": "fetch_user_profile",
+          "title": "Fetch User Profile",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Fetch User Profile",
+          "x-is-trigger": false
+        },
+        "username": {
+          "description": "The case-sensitive username to look up",
+          "minLength": 1,
+          "placeholder": "pg",
+          "title": "Username",
+          "type": "string"
+        }
+      },
+      "required": [
+        "username"
+      ],
+      "title": "HNGetUserConfig",
+      "type": "object"
+    },
+    "HNSearchByDateConfig": {
+      "description": "Config for Algolia search sorted by date (most recent first)",
+      "properties": {
+        "operation": {
+          "const": "search_by_recent_date",
+          "default": "search_by_recent_date",
+          "title": "Search by Recent Date",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Search",
+          "x-display-name": "Search by Recent Date",
+          "x-is-trigger": false
+        },
+        "query": {
+          "default": "",
+          "description": "Search query string (leave empty to get all items with specified tags)",
+          "title": "Search Query",
+          "type": "string"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by tags (e.g., 'story', 'ask_hn', 'show_hn', 'poll', 'comment', 'author_pg', 'story_8863'). ANDed by default, ORed if in parenthesis.",
+          "title": "Tags Filter"
+        },
+        "page": {
+          "default": 0,
+          "description": "Page number for pagination (0-indexed)",
+          "minimum": 0,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "hits_per_page": {
+          "default": 20,
+          "description": "Number of results per page (1-1000)",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Results Per Page",
+          "type": "integer"
+        },
+        "numeric_filters": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Numeric filters (e.g., 'created_at_i>1234567890' or 'points>100,num_comments<50')",
+          "title": "Numeric Filters"
+        }
+      },
+      "title": "HNSearchByDateConfig",
+      "type": "object"
+    },
+    "HNSearchConfig": {
+      "description": "Config for Algolia search (sorted by relevance, then points, then comments)",
+      "properties": {
+        "operation": {
+          "const": "search_by_relevance",
+          "default": "search_by_relevance",
+          "title": "Search by Relevance",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Search",
+          "x-display-name": "Search by Relevance",
+          "x-is-trigger": false
+        },
+        "query": {
+          "default": "",
+          "description": "Search query string (leave empty to get all items with specified tags)",
+          "title": "Search Query",
+          "type": "string"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by tags (e.g., 'story', 'ask_hn', 'show_hn', 'poll', 'comment', 'author_pg', 'story_8863'). ANDed by default, ORed if in parenthesis.",
+          "title": "Tags Filter"
+        },
+        "page": {
+          "default": 0,
+          "description": "Page number for pagination (0-indexed)",
+          "minimum": 0,
+          "title": "Page Number",
+          "type": "integer"
+        },
+        "hits_per_page": {
+          "default": 20,
+          "description": "Number of results per page (1-1000)",
+          "maximum": 1000,
+          "minimum": 1,
+          "title": "Results Per Page",
+          "type": "integer"
+        },
+        "numeric_filters": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Numeric filters (e.g., 'created_at_i>1234567890' or 'points>100,num_comments<50')",
+          "title": "Numeric Filters"
+        }
+      },
+      "title": "HNSearchConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for Hacker News node (no credentials needed - public API)",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "fetch_ask_hn_stories": "#/$defs/HNGetAskStoriesConfig",
+          "fetch_best_stories": "#/$defs/HNGetBestStoriesConfig",
+          "fetch_changed_items_and_profiles": "#/$defs/HNGetUpdatesConfig",
+          "fetch_item_by_id": "#/$defs/HNGetItemConfig",
+          "fetch_job_postings": "#/$defs/HNGetJobStoriesConfig",
+          "fetch_largest_item_id": "#/$defs/HNGetMaxItemConfig",
+          "fetch_newest_stories": "#/$defs/HNGetNewStoriesConfig",
+          "fetch_show_hn_stories": "#/$defs/HNGetShowStoriesConfig",
+          "fetch_top_stories": "#/$defs/HNGetTopStoriesConfig",
+          "fetch_user_profile": "#/$defs/HNGetUserConfig",
+          "search_by_recent_date": "#/$defs/HNSearchByDateConfig",
+          "search_by_relevance": "#/$defs/HNSearchConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/HNGetItemConfig"
+        },
+        {
+          "$ref": "#/$defs/HNGetUserConfig"
+        },
+        {
+          "$ref": "#/$defs/HNGetTopStoriesConfig"
+        },
+        {
+          "$ref": "#/$defs/HNGetNewStoriesConfig"
+        },
+        {
+          "$ref": "#/$defs/HNGetBestStoriesConfig"
+        },
+        {
+          "$ref": "#/$defs/HNGetAskStoriesConfig"
+        },
+        {
+          "$ref": "#/$defs/HNGetShowStoriesConfig"
+        },
+        {
+          "$ref": "#/$defs/HNGetJobStoriesConfig"
+        },
+        {
+          "$ref": "#/$defs/HNGetMaxItemConfig"
+        },
+        {
+          "$ref": "#/$defs/HNGetUpdatesConfig"
+        },
+        {
+          "$ref": "#/$defs/HNSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/HNSearchByDateConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials",
+      "type": "null"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Hackernews Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Get top 25 stories and fetch full details for each",
+    "Search for posts tagged with PostgreSQL sorted by date",
+    "Retrieve user profile and find all their recent submissions",
+    "Get current job postings list with job details and permalinks",
+    "Search for 'machine learning' comments and fetch 100 results",
+    "Query Show HN stories with score > 100 from last 30 days",
+    "Fetch Ask HN best posts and get replies to a specific comment"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

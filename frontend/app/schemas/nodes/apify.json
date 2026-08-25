@@ -1,0 +1,4032 @@
+{
+  "$defs": {
+    "ApifyAbortBuildConfig": {
+      "description": "Abort a running Actor build",
+      "properties": {
+        "operation": {
+          "const": "abort_actor_build",
+          "default": "abort_actor_build",
+          "title": "Abort Actor Build",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actor",
+          "x-display-name": "Abort Actor Build",
+          "x-is-trigger": false
+        },
+        "actor_id": {
+          "description": "Actor ID or username~actor-name",
+          "title": "Actor ID",
+          "type": "string"
+        },
+        "build_id": {
+          "description": "The build ID to abort",
+          "title": "Build ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "actor_id",
+        "build_id"
+      ],
+      "title": "ApifyAbortBuildConfig",
+      "type": "object"
+    },
+    "ApifyAbortRunConfig": {
+      "description": "Abort a running Actor",
+      "properties": {
+        "operation": {
+          "const": "abort_actor_run",
+          "default": "abort_actor_run",
+          "title": "Abort Actor Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actor",
+          "x-display-name": "Abort Actor Run",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "description": "The ID of the Actor run to abort",
+          "title": "Run ID",
+          "type": "string"
+        },
+        "gracefully": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "If true, Actor will have some time to finish current task",
+          "title": "Gracefully"
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "ApifyAbortRunConfig",
+      "type": "object"
+    },
+    "ApifyAddQueueRequestConfig": {
+      "description": "Add a request to a queue",
+      "properties": {
+        "operation": {
+          "const": "add_request_to_queue",
+          "default": "add_request_to_queue",
+          "title": "Add Request to Queue",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Request Queue",
+          "x-display-name": "Add Request to Queue",
+          "x-is-trigger": false
+        },
+        "queue_id": {
+          "description": "Queue ID or username~queue-name",
+          "title": "Queue ID",
+          "type": "string"
+        },
+        "url": {
+          "description": "Request URL",
+          "title": "URL",
+          "type": "string"
+        },
+        "unique_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Unique identifier for deduplication",
+          "title": "Unique Key"
+        },
+        "method": {
+          "anyOf": [
+            {
+              "enum": [
+                "GET",
+                "POST",
+                "PUT",
+                "DELETE",
+                "PATCH"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "GET",
+          "description": "HTTP method for the request",
+          "title": "HTTP Method",
+          "enum": [
+            "GET",
+            "POST",
+            "PUT",
+            "DELETE",
+            "PATCH"
+          ],
+          "x-enum-searchable": true
+        },
+        "user_data": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom JSON data associated with the request",
+          "title": "User Data (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "queue_id",
+        "url"
+      ],
+      "title": "ApifyAddQueueRequestConfig",
+      "type": "object"
+    },
+    "ApifyApiTokenCredential": {
+      "description": "API Token credential for Apify.\n\nGet your API token at: https://console.apify.com/settings/integrations",
+      "properties": {
+        "credential_type": {
+          "const": "apify_api_token",
+          "default": "apify_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "description": "Your Apify API token from console.apify.com/settings/integrations",
+          "title": "API Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "ApifyApiTokenCredential",
+      "type": "object",
+      "x-credential-url": "https://console.apify.com/settings/integrations"
+    },
+    "ApifyBuildActorConfig": {
+      "description": "Start a new Actor build",
+      "properties": {
+        "operation": {
+          "const": "start_actor_build",
+          "default": "start_actor_build",
+          "title": "Start Actor Build",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actor",
+          "x-display-name": "Start Actor Build",
+          "x-is-trigger": false
+        },
+        "actor_id": {
+          "description": "Actor ID or username~actor-name to build",
+          "title": "Actor ID",
+          "type": "string"
+        },
+        "version_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Version to build (e.g., '0.1', 'latest')",
+          "title": "Version Number"
+        },
+        "beta_packages": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Use beta NPM packages",
+          "title": "Beta Packages"
+        },
+        "tag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Tag for the build",
+          "title": "Build Tag"
+        },
+        "use_cache": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "Use build cache for faster builds",
+          "title": "Use Cache"
+        },
+        "wait_for_finish": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Wait up to this many seconds for build to finish (max 300)",
+          "title": "Wait for Finish (seconds)"
+        }
+      },
+      "required": [
+        "actor_id"
+      ],
+      "title": "ApifyBuildActorConfig",
+      "type": "object"
+    },
+    "ApifyCreateActorConfig": {
+      "description": "Create a new Actor",
+      "properties": {
+        "operation": {
+          "const": "create_actor",
+          "default": "create_actor",
+          "title": "Create Actor",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actor",
+          "x-display-name": "Create Actor",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Actor name (lowercase letters, numbers, dashes only)",
+          "title": "Name",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Display title for the Actor",
+          "title": "Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Actor description",
+          "title": "Description",
+          "ui:widget": "textarea"
+        },
+        "versions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array of version configurations",
+          "title": "Versions (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "ApifyCreateActorConfig",
+      "type": "object"
+    },
+    "ApifyCreateActorVersionConfig": {
+      "description": "Create a new Actor version",
+      "properties": {
+        "operation": {
+          "const": "create_actor_version",
+          "default": "create_actor_version",
+          "title": "Create Actor Version",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actor Version",
+          "x-display-name": "Create Actor Version",
+          "x-is-trigger": false
+        },
+        "actor_id": {
+          "description": "Actor ID or username~actor-name",
+          "title": "Actor ID",
+          "type": "string"
+        },
+        "version_number": {
+          "description": "Version number (e.g., '0.1', '1.0')",
+          "title": "Version Number",
+          "type": "string"
+        },
+        "build_tag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "latest",
+          "description": "Build tag to use",
+          "title": "Build Tag"
+        },
+        "env_vars": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array of environment variables",
+          "title": "Environment Variables (JSON)",
+          "ui:widget": "textarea"
+        },
+        "apply_env_vars_to_build": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Apply environment variables to the build process",
+          "title": "Apply Env Vars to Build"
+        },
+        "source_type": {
+          "anyOf": [
+            {
+              "enum": [
+                "SOURCE_FILES",
+                "GIT_REPO",
+                "TARBALL",
+                "GITHUB_GIST"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "SOURCE_FILES",
+          "description": "Type of source code",
+          "title": "Source Type",
+          "enum": [
+            "SOURCE_FILES",
+            "GIT_REPO",
+            "TARBALL",
+            "GITHUB_GIST"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "actor_id",
+        "version_number"
+      ],
+      "title": "ApifyCreateActorVersionConfig",
+      "type": "object"
+    },
+    "ApifyCreateDatasetConfig": {
+      "description": "Create a named dataset",
+      "properties": {
+        "operation": {
+          "const": "create_dataset",
+          "default": "create_dataset",
+          "title": "Create Dataset",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Dataset",
+          "x-display-name": "Create Dataset",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Name for the dataset (only lowercase letters, numbers, dashes)",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "ApifyCreateDatasetConfig",
+      "type": "object"
+    },
+    "ApifyCreateEnvVarConfig": {
+      "description": "Create a new environment variable",
+      "properties": {
+        "operation": {
+          "const": "create_environment_variable",
+          "default": "create_environment_variable",
+          "title": "Create Environment Variable",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Environment Variable",
+          "x-display-name": "Create Environment Variable",
+          "x-is-trigger": false
+        },
+        "actor_id": {
+          "description": "Actor ID or username~actor-name",
+          "title": "Actor ID",
+          "type": "string"
+        },
+        "version_number": {
+          "description": "Version number",
+          "title": "Version Number",
+          "type": "string"
+        },
+        "name": {
+          "description": "Environment variable name",
+          "title": "Variable Name",
+          "type": "string"
+        },
+        "value": {
+          "description": "Variable value",
+          "title": "Value",
+          "type": "string"
+        },
+        "is_secret": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Whether the variable is secret (will be encrypted)",
+          "title": "Is Secret"
+        }
+      },
+      "required": [
+        "actor_id",
+        "version_number",
+        "name",
+        "value"
+      ],
+      "title": "ApifyCreateEnvVarConfig",
+      "type": "object"
+    },
+    "ApifyCreateKeyValueStoreConfig": {
+      "description": "Create a named key-value store",
+      "properties": {
+        "operation": {
+          "const": "create_key_value_store",
+          "default": "create_key_value_store",
+          "title": "Create Key Value Store",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Key-Value Store",
+          "x-display-name": "Create Key Value Store",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Name for the store (only lowercase letters, numbers, dashes)",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "ApifyCreateKeyValueStoreConfig",
+      "type": "object"
+    },
+    "ApifyCreateRequestQueueConfig": {
+      "description": "Create a named request queue",
+      "properties": {
+        "operation": {
+          "const": "create_request_queue",
+          "default": "create_request_queue",
+          "title": "Create Request Queue",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Request Queue",
+          "x-display-name": "Create Request Queue",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Name for the queue (lowercase letters, numbers, dashes)",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "ApifyCreateRequestQueueConfig",
+      "type": "object"
+    },
+    "ApifyCreateScheduleConfig": {
+      "description": "Create a new schedule",
+      "properties": {
+        "operation": {
+          "const": "create_schedule",
+          "default": "create_schedule",
+          "title": "Create Schedule",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Schedule",
+          "x-display-name": "Create Schedule",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Schedule name",
+          "title": "Name",
+          "type": "string"
+        },
+        "cron_expression": {
+          "description": "Cron expression for schedule timing (e.g., '0 0 * * *' for daily at midnight)",
+          "title": "Cron Expression",
+          "type": "string"
+        },
+        "is_enabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "Whether the schedule is active",
+          "title": "Enabled"
+        },
+        "is_exclusive": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Don't start new run if previous is still running",
+          "title": "Exclusive"
+        },
+        "timezone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "UTC",
+          "description": "Timezone for the cron expression (e.g., 'America/New_York')",
+          "title": "Timezone"
+        },
+        "actions": {
+          "description": "JSON array of actions (type: RUN_ACTOR or RUN_ACTOR_TASK, actorId/actorTaskId required)",
+          "title": "Actions (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "name",
+        "cron_expression",
+        "actions"
+      ],
+      "title": "ApifyCreateScheduleConfig",
+      "type": "object"
+    },
+    "ApifyCreateTaskConfig": {
+      "description": "Create a new Actor Task",
+      "properties": {
+        "operation": {
+          "const": "create_actor_task",
+          "default": "create_actor_task",
+          "title": "Create Actor Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Task",
+          "x-display-name": "Create Actor Task",
+          "x-is-trigger": false
+        },
+        "actor_id": {
+          "description": "Actor ID or username~actor-name",
+          "title": "Actor ID",
+          "type": "string"
+        },
+        "name": {
+          "description": "Name for the task (lowercase letters, numbers, dashes)",
+          "title": "Task Name",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Display title for the task",
+          "title": "Task Title"
+        },
+        "input_body": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON input for the task",
+          "title": "Input (JSON)",
+          "ui:widget": "textarea"
+        },
+        "memory_mbytes": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Memory limit in megabytes",
+          "title": "Memory (MB)"
+        },
+        "timeout_secs": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Timeout in seconds",
+          "title": "Timeout (seconds)"
+        }
+      },
+      "required": [
+        "actor_id",
+        "name"
+      ],
+      "title": "ApifyCreateTaskConfig",
+      "type": "object"
+    },
+    "ApifyCreateWebhookConfig": {
+      "description": "Create a new webhook",
+      "properties": {
+        "operation": {
+          "const": "create_webhook",
+          "default": "create_webhook",
+          "title": "Create Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhook",
+          "x-display-name": "Create Webhook",
+          "x-is-trigger": false
+        },
+        "event_types": {
+          "description": "Events that trigger the webhook",
+          "items": {
+            "enum": [
+              "ACTOR.RUN.CREATED",
+              "ACTOR.RUN.SUCCEEDED",
+              "ACTOR.RUN.FAILED",
+              "ACTOR.RUN.TIMED_OUT",
+              "ACTOR.RUN.ABORTED",
+              "ACTOR.RUN.RESURRECTED"
+            ],
+            "type": "string"
+          },
+          "title": "Event Types",
+          "type": "array"
+        },
+        "request_url": {
+          "description": "URL to send webhook requests to",
+          "title": "Request URL",
+          "type": "string"
+        },
+        "condition": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON condition for filtering (e.g., {\"actorId\": \"xxx\"})",
+          "title": "Condition (JSON)",
+          "ui:widget": "textarea"
+        },
+        "is_ad_hoc": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Whether this is an ad-hoc webhook (auto-deleted after triggering)",
+          "title": "Ad Hoc"
+        }
+      },
+      "required": [
+        "event_types",
+        "request_url"
+      ],
+      "title": "ApifyCreateWebhookConfig",
+      "type": "object"
+    },
+    "ApifyDeleteActorConfig": {
+      "description": "Delete an Actor",
+      "properties": {
+        "operation": {
+          "const": "delete_actor",
+          "default": "delete_actor",
+          "title": "Delete Actor",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actor",
+          "x-display-name": "Delete Actor",
+          "x-is-trigger": false
+        },
+        "actor_id": {
+          "description": "Actor ID or username~actor-name to delete",
+          "title": "Actor ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "actor_id"
+      ],
+      "title": "ApifyDeleteActorConfig",
+      "type": "object"
+    },
+    "ApifyDeleteActorVersionConfig": {
+      "description": "Delete an Actor version",
+      "properties": {
+        "operation": {
+          "const": "delete_actor_version",
+          "default": "delete_actor_version",
+          "title": "Delete Actor Version",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actor Version",
+          "x-display-name": "Delete Actor Version",
+          "x-is-trigger": false
+        },
+        "actor_id": {
+          "description": "Actor ID or username~actor-name",
+          "title": "Actor ID",
+          "type": "string"
+        },
+        "version_number": {
+          "description": "Version number to delete",
+          "title": "Version Number",
+          "type": "string"
+        }
+      },
+      "required": [
+        "actor_id",
+        "version_number"
+      ],
+      "title": "ApifyDeleteActorVersionConfig",
+      "type": "object"
+    },
+    "ApifyDeleteDatasetConfig": {
+      "description": "Delete a dataset",
+      "properties": {
+        "operation": {
+          "const": "delete_dataset",
+          "default": "delete_dataset",
+          "title": "Delete Dataset",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Dataset",
+          "x-display-name": "Delete Dataset",
+          "x-is-trigger": false
+        },
+        "dataset_id": {
+          "description": "Dataset ID or username~dataset-name",
+          "title": "Dataset ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dataset_id"
+      ],
+      "title": "ApifyDeleteDatasetConfig",
+      "type": "object"
+    },
+    "ApifyDeleteEnvVarConfig": {
+      "description": "Delete an environment variable",
+      "properties": {
+        "operation": {
+          "const": "delete_environment_variable",
+          "default": "delete_environment_variable",
+          "title": "Delete Environment Variable",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Environment Variable",
+          "x-display-name": "Delete Environment Variable",
+          "x-is-trigger": false
+        },
+        "actor_id": {
+          "description": "Actor ID or username~actor-name",
+          "title": "Actor ID",
+          "type": "string"
+        },
+        "version_number": {
+          "description": "Version number",
+          "title": "Version Number",
+          "type": "string"
+        },
+        "env_var_name": {
+          "description": "Environment variable name to delete",
+          "title": "Variable Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "actor_id",
+        "version_number",
+        "env_var_name"
+      ],
+      "title": "ApifyDeleteEnvVarConfig",
+      "type": "object"
+    },
+    "ApifyDeleteKeyValueStoreConfig": {
+      "description": "Delete a key-value store",
+      "properties": {
+        "operation": {
+          "const": "delete_key_value_store",
+          "default": "delete_key_value_store",
+          "title": "Delete Key Value Store",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Key-Value Store",
+          "x-display-name": "Delete Key Value Store",
+          "x-is-trigger": false
+        },
+        "store_id": {
+          "description": "Store ID or username~store-name",
+          "title": "Store ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "store_id"
+      ],
+      "title": "ApifyDeleteKeyValueStoreConfig",
+      "type": "object"
+    },
+    "ApifyDeleteQueueRequestConfig": {
+      "description": "Delete a request from a queue",
+      "properties": {
+        "operation": {
+          "const": "delete_request_from_queue",
+          "default": "delete_request_from_queue",
+          "title": "Delete Request from Queue",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Request Queue",
+          "x-display-name": "Delete Request from Queue",
+          "x-is-trigger": false
+        },
+        "queue_id": {
+          "description": "Queue ID or username~queue-name",
+          "title": "Queue ID",
+          "type": "string"
+        },
+        "request_id": {
+          "description": "The request ID to delete",
+          "title": "Request ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "queue_id",
+        "request_id"
+      ],
+      "title": "ApifyDeleteQueueRequestConfig",
+      "type": "object"
+    },
+    "ApifyDeleteRecordConfig": {
+      "description": "Delete a record from a key-value store",
+      "properties": {
+        "operation": {
+          "const": "delete_key_value_record",
+          "default": "delete_key_value_record",
+          "title": "Delete Key Value Record",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Key-Value Store",
+          "x-display-name": "Delete Key Value Record",
+          "x-is-trigger": false
+        },
+        "store_id": {
+          "description": "Store ID or username~store-name",
+          "title": "Store ID",
+          "type": "string"
+        },
+        "key": {
+          "description": "The record key to delete",
+          "title": "Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "store_id",
+        "key"
+      ],
+      "title": "ApifyDeleteRecordConfig",
+      "type": "object"
+    },
+    "ApifyDeleteRequestQueueConfig": {
+      "description": "Delete a request queue",
+      "properties": {
+        "operation": {
+          "const": "delete_request_queue",
+          "default": "delete_request_queue",
+          "title": "Delete Request Queue",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Request Queue",
+          "x-display-name": "Delete Request Queue",
+          "x-is-trigger": false
+        },
+        "queue_id": {
+          "description": "Queue ID or username~queue-name",
+          "title": "Queue ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "queue_id"
+      ],
+      "title": "ApifyDeleteRequestQueueConfig",
+      "type": "object"
+    },
+    "ApifyDeleteScheduleConfig": {
+      "description": "Delete a schedule",
+      "properties": {
+        "operation": {
+          "const": "delete_schedule",
+          "default": "delete_schedule",
+          "title": "Delete Schedule",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Schedule",
+          "x-display-name": "Delete Schedule",
+          "x-is-trigger": false
+        },
+        "schedule_id": {
+          "description": "The schedule ID to delete",
+          "title": "Schedule ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schedule_id"
+      ],
+      "title": "ApifyDeleteScheduleConfig",
+      "type": "object"
+    },
+    "ApifyDeleteTaskConfig": {
+      "description": "Delete an Actor Task",
+      "properties": {
+        "operation": {
+          "const": "delete_actor_task",
+          "default": "delete_actor_task",
+          "title": "Delete Actor Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Task",
+          "x-display-name": "Delete Actor Task",
+          "x-is-trigger": false
+        },
+        "task_id": {
+          "description": "Task ID or username~task-name to delete",
+          "title": "Task ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "ApifyDeleteTaskConfig",
+      "type": "object"
+    },
+    "ApifyDeleteWebhookConfig": {
+      "description": "Delete a webhook",
+      "properties": {
+        "operation": {
+          "const": "delete_webhook",
+          "default": "delete_webhook",
+          "title": "Delete Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhook",
+          "x-display-name": "Delete Webhook",
+          "x-is-trigger": false
+        },
+        "webhook_id": {
+          "description": "The webhook ID to delete",
+          "title": "Webhook ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "ApifyDeleteWebhookConfig",
+      "type": "object"
+    },
+    "ApifyGetActorBuildConfig": {
+      "description": "Get details of a specific Actor build",
+      "properties": {
+        "operation": {
+          "const": "get_actor_build",
+          "default": "get_actor_build",
+          "title": "Get Actor Build",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actor",
+          "x-display-name": "Get Actor Build",
+          "x-is-trigger": false
+        },
+        "actor_id": {
+          "description": "Actor ID or username~actor-name",
+          "title": "Actor ID",
+          "type": "string"
+        },
+        "build_id": {
+          "description": "The build ID",
+          "title": "Build ID",
+          "type": "string"
+        },
+        "wait_for_finish": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Wait up to this many seconds for build to finish (max 60)",
+          "title": "Wait for Finish (seconds)"
+        }
+      },
+      "required": [
+        "actor_id",
+        "build_id"
+      ],
+      "title": "ApifyGetActorBuildConfig",
+      "type": "object"
+    },
+    "ApifyGetActorConfig": {
+      "description": "Get information about a specific Actor",
+      "properties": {
+        "operation": {
+          "const": "get_actor",
+          "default": "get_actor",
+          "title": "Get Actor",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actor",
+          "x-display-name": "Get Actor",
+          "x-is-trigger": false
+        },
+        "actor_id": {
+          "description": "Actor ID or username~actor-name (e.g., 'apify~web-scraper')",
+          "title": "Actor ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "actor_id"
+      ],
+      "title": "ApifyGetActorConfig",
+      "type": "object"
+    },
+    "ApifyGetActorVersionConfig": {
+      "description": "Get a specific Actor version",
+      "properties": {
+        "operation": {
+          "const": "get_actor_version",
+          "default": "get_actor_version",
+          "title": "Get Actor Version",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actor Version",
+          "x-display-name": "Get Actor Version",
+          "x-is-trigger": false
+        },
+        "actor_id": {
+          "description": "Actor ID or username~actor-name",
+          "title": "Actor ID",
+          "type": "string"
+        },
+        "version_number": {
+          "description": "Version number (e.g., '0.1', '1.0')",
+          "title": "Version Number",
+          "type": "string"
+        }
+      },
+      "required": [
+        "actor_id",
+        "version_number"
+      ],
+      "title": "ApifyGetActorVersionConfig",
+      "type": "object"
+    },
+    "ApifyGetBuildLogConfig": {
+      "description": "Get Actor build log",
+      "properties": {
+        "operation": {
+          "const": "get_actor_build_log",
+          "default": "get_actor_build_log",
+          "title": "Get Actor Build Log",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actor",
+          "x-display-name": "Get Actor Build Log",
+          "x-is-trigger": false
+        },
+        "actor_id": {
+          "description": "Actor ID or username~actor-name",
+          "title": "Actor ID",
+          "type": "string"
+        },
+        "build_id": {
+          "description": "The build ID",
+          "title": "Build ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "actor_id",
+        "build_id"
+      ],
+      "title": "ApifyGetBuildLogConfig",
+      "type": "object"
+    },
+    "ApifyGetDatasetConfig": {
+      "description": "Get dataset metadata",
+      "properties": {
+        "operation": {
+          "const": "get_dataset",
+          "default": "get_dataset",
+          "title": "Get Dataset",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Dataset",
+          "x-display-name": "Get Dataset",
+          "x-is-trigger": false
+        },
+        "dataset_id": {
+          "description": "Dataset ID or username~dataset-name",
+          "title": "Dataset ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dataset_id"
+      ],
+      "title": "ApifyGetDatasetConfig",
+      "type": "object"
+    },
+    "ApifyGetDatasetItemsConfig": {
+      "description": "Get items from a dataset",
+      "properties": {
+        "operation": {
+          "const": "get_dataset_items",
+          "default": "get_dataset_items",
+          "title": "Get Dataset Items",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Dataset",
+          "x-display-name": "Get Dataset Items",
+          "x-is-trigger": false
+        },
+        "dataset_id": {
+          "description": "Dataset ID or username~dataset-name",
+          "title": "Dataset ID",
+          "type": "string"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Number of items to skip",
+          "title": "Offset"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "description": "Maximum number of items to return (max 250000)",
+          "title": "Limit"
+        },
+        "clean": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Return only non-empty items without hidden fields",
+          "title": "Clean"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of fields to include",
+          "title": "Fields"
+        }
+      },
+      "required": [
+        "dataset_id"
+      ],
+      "title": "ApifyGetDatasetItemsConfig",
+      "type": "object"
+    },
+    "ApifyGetDatasetStatisticsConfig": {
+      "description": "Get dataset statistics",
+      "properties": {
+        "operation": {
+          "const": "get_dataset_statistics",
+          "default": "get_dataset_statistics",
+          "title": "Get Dataset Statistics",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Dataset",
+          "x-display-name": "Get Dataset Statistics",
+          "x-is-trigger": false
+        },
+        "dataset_id": {
+          "description": "Dataset ID or username~dataset-name",
+          "title": "Dataset ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dataset_id"
+      ],
+      "title": "ApifyGetDatasetStatisticsConfig",
+      "type": "object"
+    },
+    "ApifyGetEnvVarConfig": {
+      "description": "Get a specific environment variable",
+      "properties": {
+        "operation": {
+          "const": "get_environment_variable",
+          "default": "get_environment_variable",
+          "title": "Get Environment Variable",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Environment Variable",
+          "x-display-name": "Get Environment Variable",
+          "x-is-trigger": false
+        },
+        "actor_id": {
+          "description": "Actor ID or username~actor-name",
+          "title": "Actor ID",
+          "type": "string"
+        },
+        "version_number": {
+          "description": "Version number",
+          "title": "Version Number",
+          "type": "string"
+        },
+        "env_var_name": {
+          "description": "Environment variable name",
+          "title": "Variable Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "actor_id",
+        "version_number",
+        "env_var_name"
+      ],
+      "title": "ApifyGetEnvVarConfig",
+      "type": "object"
+    },
+    "ApifyGetKeyValueStoreConfig": {
+      "description": "Get key-value store metadata",
+      "properties": {
+        "operation": {
+          "const": "get_key_value_store",
+          "default": "get_key_value_store",
+          "title": "Get Key Value Store",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Key-Value Store",
+          "x-display-name": "Get Key Value Store",
+          "x-is-trigger": false
+        },
+        "store_id": {
+          "description": "Store ID or username~store-name",
+          "title": "Store ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "store_id"
+      ],
+      "title": "ApifyGetKeyValueStoreConfig",
+      "type": "object"
+    },
+    "ApifyGetMonthlyUsageConfig": {
+      "description": "Get monthly usage statistics",
+      "properties": {
+        "operation": {
+          "const": "get_monthly_usage_stats",
+          "default": "get_monthly_usage_stats",
+          "title": "Get Monthly Usage Stats",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Monthly Usage Stats",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ApifyGetMonthlyUsageConfig",
+      "type": "object"
+    },
+    "ApifyGetPublicUserConfig": {
+      "description": "Get public information about a user",
+      "properties": {
+        "operation": {
+          "const": "get_public_user_info",
+          "default": "get_public_user_info",
+          "title": "Get Public User Info",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Get Public User Info",
+          "x-is-trigger": false
+        },
+        "user_id": {
+          "description": "User ID or username",
+          "title": "User ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "ApifyGetPublicUserConfig",
+      "type": "object"
+    },
+    "ApifyGetQueueRequestConfig": {
+      "description": "Get a specific request from a queue",
+      "properties": {
+        "operation": {
+          "const": "get_request_from_queue",
+          "default": "get_request_from_queue",
+          "title": "Get Request from Queue",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Request Queue",
+          "x-display-name": "Get Request from Queue",
+          "x-is-trigger": false
+        },
+        "queue_id": {
+          "description": "Queue ID or username~queue-name",
+          "title": "Queue ID",
+          "type": "string"
+        },
+        "request_id": {
+          "description": "The request ID",
+          "title": "Request ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "queue_id",
+        "request_id"
+      ],
+      "title": "ApifyGetQueueRequestConfig",
+      "type": "object"
+    },
+    "ApifyGetRecordConfig": {
+      "description": "Get a record from a key-value store",
+      "properties": {
+        "operation": {
+          "const": "get_key_value_record",
+          "default": "get_key_value_record",
+          "title": "Get Key Value Record",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Key-Value Store",
+          "x-display-name": "Get Key Value Record",
+          "x-is-trigger": false
+        },
+        "store_id": {
+          "description": "Store ID or username~store-name",
+          "title": "Store ID",
+          "type": "string"
+        },
+        "key": {
+          "description": "The record key",
+          "title": "Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "store_id",
+        "key"
+      ],
+      "title": "ApifyGetRecordConfig",
+      "type": "object"
+    },
+    "ApifyGetRequestQueueConfig": {
+      "description": "Get request queue metadata",
+      "properties": {
+        "operation": {
+          "const": "get_request_queue",
+          "default": "get_request_queue",
+          "title": "Get Request Queue",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Request Queue",
+          "x-display-name": "Get Request Queue",
+          "x-is-trigger": false
+        },
+        "queue_id": {
+          "description": "Queue ID or username~queue-name",
+          "title": "Queue ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "queue_id"
+      ],
+      "title": "ApifyGetRequestQueueConfig",
+      "type": "object"
+    },
+    "ApifyGetRunConfig": {
+      "description": "Get details of a specific Actor run",
+      "properties": {
+        "operation": {
+          "const": "get_actor_run",
+          "default": "get_actor_run",
+          "title": "Get Actor Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actor",
+          "x-display-name": "Get Actor Run",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "description": "The ID of the Actor run",
+          "title": "Run ID",
+          "type": "string"
+        },
+        "wait_for_finish": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Wait up to this many seconds for run to finish (max 300)",
+          "title": "Wait for Finish (seconds)"
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "ApifyGetRunConfig",
+      "type": "object"
+    },
+    "ApifyGetRunLastConfig": {
+      "description": "Get the last run of an Actor",
+      "properties": {
+        "operation": {
+          "const": "get_actor_last_run",
+          "default": "get_actor_last_run",
+          "title": "Get Actor Last Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actor",
+          "x-display-name": "Get Actor Last Run",
+          "x-is-trigger": false
+        },
+        "actor_id": {
+          "description": "Actor ID or username~actor-name",
+          "title": "Actor ID",
+          "type": "string"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "SUCCEEDED",
+                "FAILED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by last run status",
+          "title": "Status Filter",
+          "enum": [
+            "SUCCEEDED",
+            "FAILED"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "actor_id"
+      ],
+      "title": "ApifyGetRunLastConfig",
+      "type": "object"
+    },
+    "ApifyGetRunLogConfig": {
+      "description": "Get the log of an Actor run",
+      "properties": {
+        "operation": {
+          "const": "get_actor_run_log",
+          "default": "get_actor_run_log",
+          "title": "Get Actor Run Log",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actor",
+          "x-display-name": "Get Actor Run Log",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "description": "The ID of the Actor run",
+          "title": "Run ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "ApifyGetRunLogConfig",
+      "type": "object"
+    },
+    "ApifyGetScheduleConfig": {
+      "description": "Get schedule details",
+      "properties": {
+        "operation": {
+          "const": "get_schedule",
+          "default": "get_schedule",
+          "title": "Get Schedule",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Schedule",
+          "x-display-name": "Get Schedule",
+          "x-is-trigger": false
+        },
+        "schedule_id": {
+          "description": "The schedule ID",
+          "title": "Schedule ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "schedule_id"
+      ],
+      "title": "ApifyGetScheduleConfig",
+      "type": "object"
+    },
+    "ApifyGetTaskConfig": {
+      "description": "Get details of a specific Actor Task",
+      "properties": {
+        "operation": {
+          "const": "get_actor_task",
+          "default": "get_actor_task",
+          "title": "Get Actor Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Task",
+          "x-display-name": "Get Actor Task",
+          "x-is-trigger": false
+        },
+        "task_id": {
+          "description": "Task ID or username~task-name",
+          "title": "Task ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "ApifyGetTaskConfig",
+      "type": "object"
+    },
+    "ApifyGetTaskLastRunConfig": {
+      "description": "Get the last run of a Task",
+      "properties": {
+        "operation": {
+          "const": "get_task_last_run",
+          "default": "get_task_last_run",
+          "title": "Get Task Last Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Task",
+          "x-display-name": "Get Task Last Run",
+          "x-is-trigger": false
+        },
+        "task_id": {
+          "description": "Task ID or username~task-name",
+          "title": "Task ID",
+          "type": "string"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "SUCCEEDED",
+                "FAILED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by last run status",
+          "title": "Status Filter",
+          "enum": [
+            "SUCCEEDED",
+            "FAILED"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "ApifyGetTaskLastRunConfig",
+      "type": "object"
+    },
+    "ApifyGetUserConfig": {
+      "description": "Get current user information",
+      "properties": {
+        "operation": {
+          "const": "get_current_user",
+          "default": "get_current_user",
+          "title": "Get Current User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Get Current User",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ApifyGetUserConfig",
+      "type": "object"
+    },
+    "ApifyGetUserLimitsConfig": {
+      "description": "Get account limits and current usage",
+      "properties": {
+        "operation": {
+          "const": "get_account_limits_and_usage",
+          "default": "get_account_limits_and_usage",
+          "title": "Get Account Limits and Usage",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Get Account Limits and Usage",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ApifyGetUserLimitsConfig",
+      "type": "object"
+    },
+    "ApifyGetWebhookConfig": {
+      "description": "Get webhook details",
+      "properties": {
+        "operation": {
+          "const": "get_webhook",
+          "default": "get_webhook",
+          "title": "Get Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhook",
+          "x-display-name": "Get Webhook",
+          "x-is-trigger": false
+        },
+        "webhook_id": {
+          "description": "The webhook ID",
+          "title": "Webhook ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "ApifyGetWebhookConfig",
+      "type": "object"
+    },
+    "ApifyGetWebhookDispatchConfig": {
+      "description": "Get details of a specific webhook dispatch",
+      "properties": {
+        "operation": {
+          "const": "get_webhook_dispatch",
+          "default": "get_webhook_dispatch",
+          "title": "Get Webhook Dispatch",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhook",
+          "x-display-name": "Get Webhook Dispatch",
+          "x-is-trigger": false
+        },
+        "dispatch_id": {
+          "description": "The webhook dispatch ID",
+          "title": "Dispatch ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "dispatch_id"
+      ],
+      "title": "ApifyGetWebhookDispatchConfig",
+      "type": "object"
+    },
+    "ApifyListActorBuildsConfig": {
+      "description": "List builds for an Actor",
+      "properties": {
+        "operation": {
+          "const": "list_actor_builds",
+          "default": "list_actor_builds",
+          "title": "List Actor Builds",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actor",
+          "x-display-name": "List Actor Builds",
+          "x-is-trigger": false
+        },
+        "actor_id": {
+          "description": "Actor ID or username~actor-name",
+          "title": "Actor ID",
+          "type": "string"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Number of records to skip",
+          "title": "Offset"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "description": "Maximum number of records to return",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "actor_id"
+      ],
+      "title": "ApifyListActorBuildsConfig",
+      "type": "object"
+    },
+    "ApifyListActorRunsConfig": {
+      "description": "List runs for a specific Actor",
+      "properties": {
+        "operation": {
+          "const": "list_actor_runs",
+          "default": "list_actor_runs",
+          "title": "List Actor Runs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actor",
+          "x-display-name": "List Actor Runs",
+          "x-is-trigger": false
+        },
+        "actor_id": {
+          "description": "Actor ID or username~actor-name",
+          "title": "Actor ID",
+          "type": "string"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Number of records to skip",
+          "title": "Offset"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "description": "Maximum number of records to return",
+          "title": "Limit"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "enum": [
+                "READY",
+                "RUNNING",
+                "SUCCEEDED",
+                "FAILED",
+                "TIMING-OUT",
+                "TIMED-OUT",
+                "ABORTING",
+                "ABORTED"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by run status",
+          "title": "Status",
+          "enum": [
+            "READY",
+            "RUNNING",
+            "SUCCEEDED",
+            "FAILED",
+            "TIMING-OUT",
+            "TIMED-OUT",
+            "ABORTING",
+            "ABORTED"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "actor_id"
+      ],
+      "title": "ApifyListActorRunsConfig",
+      "type": "object"
+    },
+    "ApifyListActorVersionsConfig": {
+      "description": "List versions of an Actor",
+      "properties": {
+        "operation": {
+          "const": "list_actor_versions",
+          "default": "list_actor_versions",
+          "title": "List Actor Versions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actor Version",
+          "x-display-name": "List Actor Versions",
+          "x-is-trigger": false
+        },
+        "actor_id": {
+          "description": "Actor ID or username~actor-name",
+          "title": "Actor ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "actor_id"
+      ],
+      "title": "ApifyListActorVersionsConfig",
+      "type": "object"
+    },
+    "ApifyListActorsConfig": {
+      "description": "List Actors available to the user",
+      "properties": {
+        "operation": {
+          "const": "list_actors",
+          "default": "list_actors",
+          "title": "List Actors",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actor",
+          "x-display-name": "List Actors",
+          "x-is-trigger": false
+        },
+        "my": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "Only list Actors created by you",
+          "title": "My Actors Only"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Number of records to skip",
+          "title": "Offset"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "description": "Maximum number of records to return (max 1000)",
+          "title": "Limit"
+        }
+      },
+      "title": "ApifyListActorsConfig",
+      "type": "object"
+    },
+    "ApifyListDatasetsConfig": {
+      "description": "List datasets",
+      "properties": {
+        "operation": {
+          "const": "list_datasets",
+          "default": "list_datasets",
+          "title": "List Datasets",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Dataset",
+          "x-display-name": "List Datasets",
+          "x-is-trigger": false
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Number of records to skip",
+          "title": "Offset"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "description": "Maximum number of records to return (max 1000)",
+          "title": "Limit"
+        },
+        "unnamed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Include unnamed datasets",
+          "title": "Include Unnamed"
+        }
+      },
+      "title": "ApifyListDatasetsConfig",
+      "type": "object"
+    },
+    "ApifyListEnvVarsConfig": {
+      "description": "List environment variables for an Actor version",
+      "properties": {
+        "operation": {
+          "const": "list_environment_variables",
+          "default": "list_environment_variables",
+          "title": "List Environment Variables",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Environment Variable",
+          "x-display-name": "List Environment Variables",
+          "x-is-trigger": false
+        },
+        "actor_id": {
+          "description": "Actor ID or username~actor-name",
+          "title": "Actor ID",
+          "type": "string"
+        },
+        "version_number": {
+          "description": "Version number (e.g., '0.1', '1.0')",
+          "title": "Version Number",
+          "type": "string"
+        }
+      },
+      "required": [
+        "actor_id",
+        "version_number"
+      ],
+      "title": "ApifyListEnvVarsConfig",
+      "type": "object"
+    },
+    "ApifyListKeyValueStoresConfig": {
+      "description": "List key-value stores",
+      "properties": {
+        "operation": {
+          "const": "list_key_value_stores",
+          "default": "list_key_value_stores",
+          "title": "List Key Value Stores",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Key-Value Store",
+          "x-display-name": "List Key Value Stores",
+          "x-is-trigger": false
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Number of records to skip",
+          "title": "Offset"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "description": "Maximum number of records to return (max 1000)",
+          "title": "Limit"
+        },
+        "unnamed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Include unnamed stores",
+          "title": "Include Unnamed"
+        }
+      },
+      "title": "ApifyListKeyValueStoresConfig",
+      "type": "object"
+    },
+    "ApifyListKeysConfig": {
+      "description": "List keys in a key-value store",
+      "properties": {
+        "operation": {
+          "const": "list_key_value_store_keys",
+          "default": "list_key_value_store_keys",
+          "title": "List Key Value Store Keys",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Key-Value Store",
+          "x-display-name": "List Key Value Store Keys",
+          "x-is-trigger": false
+        },
+        "store_id": {
+          "description": "Store ID or username~store-name",
+          "title": "Store ID",
+          "type": "string"
+        },
+        "exclusive_start_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start listing after this key (for pagination)",
+          "title": "Start After Key"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "description": "Maximum number of keys to return (max 1000)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "store_id"
+      ],
+      "title": "ApifyListKeysConfig",
+      "type": "object"
+    },
+    "ApifyListQueueRequestsConfig": {
+      "description": "List requests in a queue",
+      "properties": {
+        "operation": {
+          "const": "list_queue_requests",
+          "default": "list_queue_requests",
+          "title": "List Queue Requests",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Request Queue",
+          "x-display-name": "List Queue Requests",
+          "x-is-trigger": false
+        },
+        "queue_id": {
+          "description": "Queue ID or username~queue-name",
+          "title": "Queue ID",
+          "type": "string"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Number of records to skip",
+          "title": "Offset"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "description": "Maximum number of records to return",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "queue_id"
+      ],
+      "title": "ApifyListQueueRequestsConfig",
+      "type": "object"
+    },
+    "ApifyListRequestQueuesConfig": {
+      "description": "List request queues",
+      "properties": {
+        "operation": {
+          "const": "list_request_queues",
+          "default": "list_request_queues",
+          "title": "List Request Queues",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Request Queue",
+          "x-display-name": "List Request Queues",
+          "x-is-trigger": false
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Number of records to skip",
+          "title": "Offset"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "description": "Maximum number of records to return (max 1000)",
+          "title": "Limit"
+        },
+        "unnamed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Include unnamed queues",
+          "title": "Include Unnamed"
+        }
+      },
+      "title": "ApifyListRequestQueuesConfig",
+      "type": "object"
+    },
+    "ApifyListSchedulesConfig": {
+      "description": "List schedules",
+      "properties": {
+        "operation": {
+          "const": "list_schedules",
+          "default": "list_schedules",
+          "title": "List Schedules",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Schedule",
+          "x-display-name": "List Schedules",
+          "x-is-trigger": false
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Number of records to skip",
+          "title": "Offset"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "description": "Maximum number of records to return (max 1000)",
+          "title": "Limit"
+        }
+      },
+      "title": "ApifyListSchedulesConfig",
+      "type": "object"
+    },
+    "ApifyListTaskRunsConfig": {
+      "description": "List runs for a specific Task",
+      "properties": {
+        "operation": {
+          "const": "list_task_runs",
+          "default": "list_task_runs",
+          "title": "List Task Runs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Task",
+          "x-display-name": "List Task Runs",
+          "x-is-trigger": false
+        },
+        "task_id": {
+          "description": "Task ID or username~task-name",
+          "title": "Task ID",
+          "type": "string"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Number of records to skip",
+          "title": "Offset"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "description": "Maximum number of records to return",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "ApifyListTaskRunsConfig",
+      "type": "object"
+    },
+    "ApifyListTasksConfig": {
+      "description": "List Actor Tasks",
+      "properties": {
+        "operation": {
+          "const": "list_actor_tasks",
+          "default": "list_actor_tasks",
+          "title": "List Actor Tasks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Task",
+          "x-display-name": "List Actor Tasks",
+          "x-is-trigger": false
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Number of records to skip",
+          "title": "Offset"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "description": "Maximum number of records to return (max 1000)",
+          "title": "Limit"
+        }
+      },
+      "title": "ApifyListTasksConfig",
+      "type": "object"
+    },
+    "ApifyListWebhookDispatchesConfig": {
+      "description": "List webhook dispatch history",
+      "properties": {
+        "operation": {
+          "const": "list_webhook_dispatches",
+          "default": "list_webhook_dispatches",
+          "title": "List Webhook Dispatches",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhook",
+          "x-display-name": "List Webhook Dispatches",
+          "x-is-trigger": false
+        },
+        "webhook_id": {
+          "description": "The webhook ID",
+          "title": "Webhook ID",
+          "type": "string"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Number of records to skip",
+          "title": "Offset"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "description": "Maximum number of records to return",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "ApifyListWebhookDispatchesConfig",
+      "type": "object"
+    },
+    "ApifyListWebhooksConfig": {
+      "description": "List webhooks",
+      "properties": {
+        "operation": {
+          "const": "list_webhooks",
+          "default": "list_webhooks",
+          "title": "List Webhooks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhook",
+          "x-display-name": "List Webhooks",
+          "x-is-trigger": false
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Number of records to skip",
+          "title": "Offset"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "description": "Maximum number of records to return",
+          "title": "Limit"
+        }
+      },
+      "title": "ApifyListWebhooksConfig",
+      "type": "object"
+    },
+    "ApifyMetamorphoseRunConfig": {
+      "description": "Metamorphose (transform) an Actor run into another Actor",
+      "properties": {
+        "operation": {
+          "const": "metamorphose_actor_run",
+          "default": "metamorphose_actor_run",
+          "title": "Metamorphose Actor Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actor",
+          "x-display-name": "Metamorphose Actor Run",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "description": "The ID of the Actor run to metamorphose",
+          "title": "Run ID",
+          "type": "string"
+        },
+        "target_actor_id": {
+          "description": "Actor ID to transform into",
+          "title": "Target Actor ID",
+          "type": "string"
+        },
+        "target_actor_build": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Build tag or ID of target Actor",
+          "title": "Target Actor Build"
+        },
+        "input_body": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON input for the target Actor",
+          "title": "Input (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "run_id",
+        "target_actor_id"
+      ],
+      "title": "ApifyMetamorphoseRunConfig",
+      "type": "object"
+    },
+    "ApifyPushDatasetItemsConfig": {
+      "description": "Push items to a dataset",
+      "properties": {
+        "operation": {
+          "const": "push_items_to_dataset",
+          "default": "push_items_to_dataset",
+          "title": "Push Items to Dataset",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Dataset",
+          "x-display-name": "Push Items to Dataset",
+          "x-is-trigger": false
+        },
+        "dataset_id": {
+          "description": "Dataset ID or username~dataset-name",
+          "title": "Dataset ID",
+          "type": "string"
+        },
+        "items": {
+          "description": "JSON array of items to push",
+          "title": "Items (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "dataset_id",
+        "items"
+      ],
+      "title": "ApifyPushDatasetItemsConfig",
+      "type": "object"
+    },
+    "ApifyPutRecordConfig": {
+      "description": "Put a record in a key-value store",
+      "properties": {
+        "operation": {
+          "const": "put_key_value_record",
+          "default": "put_key_value_record",
+          "title": "Put Key Value Record",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Key-Value Store",
+          "x-display-name": "Put Key Value Record",
+          "x-is-trigger": false
+        },
+        "store_id": {
+          "description": "Store ID or username~store-name",
+          "title": "Store ID",
+          "type": "string"
+        },
+        "key": {
+          "description": "The record key",
+          "title": "Key",
+          "type": "string"
+        },
+        "value": {
+          "description": "JSON value to store",
+          "title": "Value (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "content_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "application/json",
+          "description": "MIME type of the record",
+          "title": "Content Type"
+        }
+      },
+      "required": [
+        "store_id",
+        "key",
+        "value"
+      ],
+      "title": "ApifyPutRecordConfig",
+      "type": "object"
+    },
+    "ApifyRebootRunConfig": {
+      "description": "Reboot an Actor run",
+      "properties": {
+        "operation": {
+          "const": "reboot_actor_run",
+          "default": "reboot_actor_run",
+          "title": "Reboot Actor Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actor",
+          "x-display-name": "Reboot Actor Run",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "description": "The ID of the Actor run to reboot",
+          "title": "Run ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "ApifyRebootRunConfig",
+      "type": "object"
+    },
+    "ApifyResurrectRunConfig": {
+      "description": "Resurrect a finished Actor run",
+      "properties": {
+        "operation": {
+          "const": "resurrect_actor_run",
+          "default": "resurrect_actor_run",
+          "title": "Resurrect Actor Run",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actor",
+          "x-display-name": "Resurrect Actor Run",
+          "x-is-trigger": false
+        },
+        "run_id": {
+          "description": "The ID of the Actor run to resurrect",
+          "title": "Run ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "run_id"
+      ],
+      "title": "ApifyResurrectRunConfig",
+      "type": "object"
+    },
+    "ApifyRunActorConfig": {
+      "description": "Run an Actor asynchronously",
+      "properties": {
+        "operation": {
+          "const": "run_actor_asynchronously",
+          "default": "run_actor_asynchronously",
+          "title": "Run Actor Asynchronously",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actor",
+          "x-display-name": "Run Actor Asynchronously",
+          "x-is-trigger": false
+        },
+        "actor_id": {
+          "description": "Actor ID or username~actor-name to run",
+          "title": "Actor ID",
+          "type": "string"
+        },
+        "input_body": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON input to pass to the Actor",
+          "title": "Input (JSON)",
+          "ui:widget": "textarea"
+        },
+        "memory_mbytes": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Memory limit in megabytes (128-32768)",
+          "title": "Memory (MB)"
+        },
+        "timeout_secs": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Timeout in seconds",
+          "title": "Timeout (seconds)"
+        },
+        "build": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Build tag or number to use (default: latest)",
+          "title": "Build"
+        }
+      },
+      "required": [
+        "actor_id"
+      ],
+      "title": "ApifyRunActorConfig",
+      "type": "object"
+    },
+    "ApifyRunActorSyncConfig": {
+      "description": "Run an Actor synchronously and wait for results (max 300 seconds)",
+      "properties": {
+        "operation": {
+          "const": "run_actor_synchronously",
+          "default": "run_actor_synchronously",
+          "title": "Run Actor Synchronously",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actor",
+          "x-display-name": "Run Actor Synchronously",
+          "x-is-trigger": false
+        },
+        "actor_id": {
+          "description": "Actor ID or username~actor-name to run",
+          "title": "Actor ID",
+          "type": "string"
+        },
+        "input_body": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON input to pass to the Actor",
+          "title": "Input (JSON)",
+          "ui:widget": "textarea"
+        },
+        "memory_mbytes": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Memory limit in megabytes",
+          "title": "Memory (MB)"
+        },
+        "timeout_secs": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 300,
+          "description": "Timeout in seconds (max 300 for sync runs)",
+          "title": "Timeout (seconds)"
+        }
+      },
+      "required": [
+        "actor_id"
+      ],
+      "title": "ApifyRunActorSyncConfig",
+      "type": "object"
+    },
+    "ApifyRunActorSyncGetDatasetItemsConfig": {
+      "description": "Run an Actor synchronously and get dataset items directly",
+      "properties": {
+        "operation": {
+          "const": "run_actor_sync_and_get_dataset_items",
+          "default": "run_actor_sync_and_get_dataset_items",
+          "title": "Run Actor Sync and Get Dataset Items",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actor",
+          "x-display-name": "Run Actor Sync and Get Dataset Items",
+          "x-is-trigger": false
+        },
+        "actor_id": {
+          "description": "Actor ID or username~actor-name to run",
+          "title": "Actor ID",
+          "type": "string"
+        },
+        "input_body": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON input to pass to the Actor",
+          "title": "Input (JSON)",
+          "ui:widget": "textarea"
+        },
+        "memory_mbytes": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Memory limit in megabytes",
+          "title": "Memory (MB)"
+        },
+        "timeout_secs": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 300,
+          "description": "Timeout in seconds (max 300 for sync runs)",
+          "title": "Timeout (seconds)"
+        }
+      },
+      "required": [
+        "actor_id"
+      ],
+      "title": "ApifyRunActorSyncGetDatasetItemsConfig",
+      "type": "object"
+    },
+    "ApifyRunTaskConfig": {
+      "description": "Run an Actor Task asynchronously",
+      "properties": {
+        "operation": {
+          "const": "run_actor_task_asynchronously",
+          "default": "run_actor_task_asynchronously",
+          "title": "Run Actor Task Asynchronously",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Task",
+          "x-display-name": "Run Actor Task Asynchronously",
+          "x-is-trigger": false
+        },
+        "task_id": {
+          "description": "Task ID or username~task-name to run",
+          "title": "Task ID",
+          "type": "string"
+        },
+        "input_body": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON input to override task defaults",
+          "title": "Input Override (JSON)",
+          "ui:widget": "textarea"
+        },
+        "memory_mbytes": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Memory limit override in megabytes",
+          "title": "Memory (MB)"
+        },
+        "timeout_secs": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Timeout override in seconds",
+          "title": "Timeout (seconds)"
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "ApifyRunTaskConfig",
+      "type": "object"
+    },
+    "ApifyRunTaskSyncConfig": {
+      "description": "Run an Actor Task synchronously and wait for results",
+      "properties": {
+        "operation": {
+          "const": "run_actor_task_synchronously",
+          "default": "run_actor_task_synchronously",
+          "title": "Run Actor Task Synchronously",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Task",
+          "x-display-name": "Run Actor Task Synchronously",
+          "x-is-trigger": false
+        },
+        "task_id": {
+          "description": "Task ID or username~task-name to run",
+          "title": "Task ID",
+          "type": "string"
+        },
+        "input_body": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON input to override task defaults",
+          "title": "Input Override (JSON)",
+          "ui:widget": "textarea"
+        },
+        "timeout_secs": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 300,
+          "description": "Timeout in seconds (max 300 for sync runs)",
+          "title": "Timeout (seconds)"
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "ApifyRunTaskSyncConfig",
+      "type": "object"
+    },
+    "ApifyTestWebhookConfig": {
+      "description": "Test a webhook by sending a sample request",
+      "properties": {
+        "operation": {
+          "const": "test_webhook",
+          "default": "test_webhook",
+          "title": "Test Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhook",
+          "x-display-name": "Test Webhook",
+          "x-is-trigger": false
+        },
+        "webhook_id": {
+          "description": "The webhook ID to test",
+          "title": "Webhook ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "ApifyTestWebhookConfig",
+      "type": "object"
+    },
+    "ApifyUpdateActorConfig": {
+      "description": "Update an existing Actor",
+      "properties": {
+        "operation": {
+          "const": "update_actor",
+          "default": "update_actor",
+          "title": "Update Actor",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actor",
+          "x-display-name": "Update Actor",
+          "x-is-trigger": false
+        },
+        "actor_id": {
+          "description": "Actor ID or username~actor-name",
+          "title": "Actor ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New Actor name",
+          "title": "Name"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New display title",
+          "title": "Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New description",
+          "title": "Description",
+          "ui:widget": "textarea"
+        },
+        "is_public": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Make Actor public",
+          "title": "Public"
+        }
+      },
+      "required": [
+        "actor_id"
+      ],
+      "title": "ApifyUpdateActorConfig",
+      "type": "object"
+    },
+    "ApifyUpdateActorVersionConfig": {
+      "description": "Update an existing Actor version",
+      "properties": {
+        "operation": {
+          "const": "update_actor_version",
+          "default": "update_actor_version",
+          "title": "Update Actor Version",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actor Version",
+          "x-display-name": "Update Actor Version",
+          "x-is-trigger": false
+        },
+        "actor_id": {
+          "description": "Actor ID or username~actor-name",
+          "title": "Actor ID",
+          "type": "string"
+        },
+        "version_number": {
+          "description": "Version number to update",
+          "title": "Version Number",
+          "type": "string"
+        },
+        "build_tag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New build tag",
+          "title": "Build Tag"
+        },
+        "env_vars": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array of environment variables",
+          "title": "Environment Variables (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "actor_id",
+        "version_number"
+      ],
+      "title": "ApifyUpdateActorVersionConfig",
+      "type": "object"
+    },
+    "ApifyUpdateEnvVarConfig": {
+      "description": "Update an environment variable",
+      "properties": {
+        "operation": {
+          "const": "update_environment_variable",
+          "default": "update_environment_variable",
+          "title": "Update Environment Variable",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Environment Variable",
+          "x-display-name": "Update Environment Variable",
+          "x-is-trigger": false
+        },
+        "actor_id": {
+          "description": "Actor ID or username~actor-name",
+          "title": "Actor ID",
+          "type": "string"
+        },
+        "version_number": {
+          "description": "Version number",
+          "title": "Version Number",
+          "type": "string"
+        },
+        "env_var_name": {
+          "description": "Environment variable name",
+          "title": "Variable Name",
+          "type": "string"
+        },
+        "value": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New variable value",
+          "title": "Value"
+        },
+        "is_secret": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether the variable is secret",
+          "title": "Is Secret"
+        }
+      },
+      "required": [
+        "actor_id",
+        "version_number",
+        "env_var_name"
+      ],
+      "title": "ApifyUpdateEnvVarConfig",
+      "type": "object"
+    },
+    "ApifyUpdateQueueRequestConfig": {
+      "description": "Update a request in a queue",
+      "properties": {
+        "operation": {
+          "const": "update_request_in_queue",
+          "default": "update_request_in_queue",
+          "title": "Update Request in Queue",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Request Queue",
+          "x-display-name": "Update Request in Queue",
+          "x-is-trigger": false
+        },
+        "queue_id": {
+          "description": "Queue ID or username~queue-name",
+          "title": "Queue ID",
+          "type": "string"
+        },
+        "request_id": {
+          "description": "The request ID",
+          "title": "Request ID",
+          "type": "string"
+        },
+        "user_data": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated custom JSON data",
+          "title": "User Data (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "queue_id",
+        "request_id"
+      ],
+      "title": "ApifyUpdateQueueRequestConfig",
+      "type": "object"
+    },
+    "ApifyUpdateScheduleConfig": {
+      "description": "Update an existing schedule",
+      "properties": {
+        "operation": {
+          "const": "update_schedule",
+          "default": "update_schedule",
+          "title": "Update Schedule",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Schedule",
+          "x-display-name": "Update Schedule",
+          "x-is-trigger": false
+        },
+        "schedule_id": {
+          "description": "The schedule ID",
+          "title": "Schedule ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New schedule name",
+          "title": "Name"
+        },
+        "cron_expression": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New cron expression",
+          "title": "Cron Expression"
+        },
+        "is_enabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Enable or disable the schedule",
+          "title": "Enabled"
+        },
+        "timezone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New timezone",
+          "title": "Timezone"
+        }
+      },
+      "required": [
+        "schedule_id"
+      ],
+      "title": "ApifyUpdateScheduleConfig",
+      "type": "object"
+    },
+    "ApifyUpdateTaskConfig": {
+      "description": "Update an existing Actor Task",
+      "properties": {
+        "operation": {
+          "const": "update_actor_task",
+          "default": "update_actor_task",
+          "title": "Update Actor Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Task",
+          "x-display-name": "Update Actor Task",
+          "x-is-trigger": false
+        },
+        "task_id": {
+          "description": "Task ID or username~task-name",
+          "title": "Task ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New task name",
+          "title": "Task Name"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New display title",
+          "title": "Task Title"
+        },
+        "input_body": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON input for the task",
+          "title": "Input (JSON)",
+          "ui:widget": "textarea"
+        },
+        "memory_mbytes": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Memory limit in megabytes",
+          "title": "Memory (MB)"
+        },
+        "timeout_secs": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Timeout in seconds",
+          "title": "Timeout (seconds)"
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "ApifyUpdateTaskConfig",
+      "type": "object"
+    },
+    "ApifyUpdateUserLimitsConfig": {
+      "description": "Update account limits",
+      "properties": {
+        "operation": {
+          "const": "update_account_limits",
+          "default": "update_account_limits",
+          "title": "Update Account Limits",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Update Account Limits",
+          "x-is-trigger": false
+        },
+        "user_id": {
+          "description": "The user ID to update limits for",
+          "title": "User ID",
+          "type": "string"
+        },
+        "max_monthly_usage_usd": {
+          "anyOf": [
+            {
+              "type": "number"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum monthly usage in USD",
+          "title": "Max Monthly Usage (USD)"
+        },
+        "max_actors_per_user": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Maximum number of actors per user",
+          "title": "Max Actors Per User"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "ApifyUpdateUserLimitsConfig",
+      "type": "object"
+    },
+    "ApifyUpdateWebhookConfig": {
+      "description": "Update an existing webhook",
+      "properties": {
+        "operation": {
+          "const": "update_webhook",
+          "default": "update_webhook",
+          "title": "Update Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhook",
+          "x-display-name": "Update Webhook",
+          "x-is-trigger": false
+        },
+        "webhook_id": {
+          "description": "The webhook ID",
+          "title": "Webhook ID",
+          "type": "string"
+        },
+        "event_types": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New event types",
+          "title": "Event Types"
+        },
+        "request_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New request URL",
+          "title": "Request URL"
+        },
+        "is_ad_hoc": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Update ad-hoc setting",
+          "title": "Ad Hoc"
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "ApifyUpdateWebhookConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for Apify node including credentials",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "abort_actor_build": "#/$defs/ApifyAbortBuildConfig",
+          "abort_actor_run": "#/$defs/ApifyAbortRunConfig",
+          "add_request_to_queue": "#/$defs/ApifyAddQueueRequestConfig",
+          "create_actor": "#/$defs/ApifyCreateActorConfig",
+          "create_actor_task": "#/$defs/ApifyCreateTaskConfig",
+          "create_actor_version": "#/$defs/ApifyCreateActorVersionConfig",
+          "create_dataset": "#/$defs/ApifyCreateDatasetConfig",
+          "create_environment_variable": "#/$defs/ApifyCreateEnvVarConfig",
+          "create_key_value_store": "#/$defs/ApifyCreateKeyValueStoreConfig",
+          "create_request_queue": "#/$defs/ApifyCreateRequestQueueConfig",
+          "create_schedule": "#/$defs/ApifyCreateScheduleConfig",
+          "create_webhook": "#/$defs/ApifyCreateWebhookConfig",
+          "delete_actor": "#/$defs/ApifyDeleteActorConfig",
+          "delete_actor_task": "#/$defs/ApifyDeleteTaskConfig",
+          "delete_actor_version": "#/$defs/ApifyDeleteActorVersionConfig",
+          "delete_dataset": "#/$defs/ApifyDeleteDatasetConfig",
+          "delete_environment_variable": "#/$defs/ApifyDeleteEnvVarConfig",
+          "delete_key_value_record": "#/$defs/ApifyDeleteRecordConfig",
+          "delete_key_value_store": "#/$defs/ApifyDeleteKeyValueStoreConfig",
+          "delete_request_from_queue": "#/$defs/ApifyDeleteQueueRequestConfig",
+          "delete_request_queue": "#/$defs/ApifyDeleteRequestQueueConfig",
+          "delete_schedule": "#/$defs/ApifyDeleteScheduleConfig",
+          "delete_webhook": "#/$defs/ApifyDeleteWebhookConfig",
+          "get_account_limits_and_usage": "#/$defs/ApifyGetUserLimitsConfig",
+          "get_actor": "#/$defs/ApifyGetActorConfig",
+          "get_actor_build": "#/$defs/ApifyGetActorBuildConfig",
+          "get_actor_build_log": "#/$defs/ApifyGetBuildLogConfig",
+          "get_actor_last_run": "#/$defs/ApifyGetRunLastConfig",
+          "get_actor_run": "#/$defs/ApifyGetRunConfig",
+          "get_actor_run_log": "#/$defs/ApifyGetRunLogConfig",
+          "get_actor_task": "#/$defs/ApifyGetTaskConfig",
+          "get_actor_version": "#/$defs/ApifyGetActorVersionConfig",
+          "get_current_user": "#/$defs/ApifyGetUserConfig",
+          "get_dataset": "#/$defs/ApifyGetDatasetConfig",
+          "get_dataset_items": "#/$defs/ApifyGetDatasetItemsConfig",
+          "get_dataset_statistics": "#/$defs/ApifyGetDatasetStatisticsConfig",
+          "get_environment_variable": "#/$defs/ApifyGetEnvVarConfig",
+          "get_key_value_record": "#/$defs/ApifyGetRecordConfig",
+          "get_key_value_store": "#/$defs/ApifyGetKeyValueStoreConfig",
+          "get_monthly_usage_stats": "#/$defs/ApifyGetMonthlyUsageConfig",
+          "get_public_user_info": "#/$defs/ApifyGetPublicUserConfig",
+          "get_request_from_queue": "#/$defs/ApifyGetQueueRequestConfig",
+          "get_request_queue": "#/$defs/ApifyGetRequestQueueConfig",
+          "get_schedule": "#/$defs/ApifyGetScheduleConfig",
+          "get_task_last_run": "#/$defs/ApifyGetTaskLastRunConfig",
+          "get_webhook": "#/$defs/ApifyGetWebhookConfig",
+          "get_webhook_dispatch": "#/$defs/ApifyGetWebhookDispatchConfig",
+          "list_actor_builds": "#/$defs/ApifyListActorBuildsConfig",
+          "list_actor_runs": "#/$defs/ApifyListActorRunsConfig",
+          "list_actor_tasks": "#/$defs/ApifyListTasksConfig",
+          "list_actor_versions": "#/$defs/ApifyListActorVersionsConfig",
+          "list_actors": "#/$defs/ApifyListActorsConfig",
+          "list_datasets": "#/$defs/ApifyListDatasetsConfig",
+          "list_environment_variables": "#/$defs/ApifyListEnvVarsConfig",
+          "list_key_value_store_keys": "#/$defs/ApifyListKeysConfig",
+          "list_key_value_stores": "#/$defs/ApifyListKeyValueStoresConfig",
+          "list_queue_requests": "#/$defs/ApifyListQueueRequestsConfig",
+          "list_request_queues": "#/$defs/ApifyListRequestQueuesConfig",
+          "list_schedules": "#/$defs/ApifyListSchedulesConfig",
+          "list_task_runs": "#/$defs/ApifyListTaskRunsConfig",
+          "list_webhook_dispatches": "#/$defs/ApifyListWebhookDispatchesConfig",
+          "list_webhooks": "#/$defs/ApifyListWebhooksConfig",
+          "metamorphose_actor_run": "#/$defs/ApifyMetamorphoseRunConfig",
+          "push_items_to_dataset": "#/$defs/ApifyPushDatasetItemsConfig",
+          "put_key_value_record": "#/$defs/ApifyPutRecordConfig",
+          "reboot_actor_run": "#/$defs/ApifyRebootRunConfig",
+          "resurrect_actor_run": "#/$defs/ApifyResurrectRunConfig",
+          "run_actor_asynchronously": "#/$defs/ApifyRunActorConfig",
+          "run_actor_sync_and_get_dataset_items": "#/$defs/ApifyRunActorSyncGetDatasetItemsConfig",
+          "run_actor_synchronously": "#/$defs/ApifyRunActorSyncConfig",
+          "run_actor_task_asynchronously": "#/$defs/ApifyRunTaskConfig",
+          "run_actor_task_synchronously": "#/$defs/ApifyRunTaskSyncConfig",
+          "start_actor_build": "#/$defs/ApifyBuildActorConfig",
+          "test_webhook": "#/$defs/ApifyTestWebhookConfig",
+          "update_account_limits": "#/$defs/ApifyUpdateUserLimitsConfig",
+          "update_actor": "#/$defs/ApifyUpdateActorConfig",
+          "update_actor_task": "#/$defs/ApifyUpdateTaskConfig",
+          "update_actor_version": "#/$defs/ApifyUpdateActorVersionConfig",
+          "update_environment_variable": "#/$defs/ApifyUpdateEnvVarConfig",
+          "update_request_in_queue": "#/$defs/ApifyUpdateQueueRequestConfig",
+          "update_schedule": "#/$defs/ApifyUpdateScheduleConfig",
+          "update_webhook": "#/$defs/ApifyUpdateWebhookConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ApifyListActorsConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyGetActorConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyRunActorConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyRunActorSyncConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyRunActorSyncGetDatasetItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyCreateActorConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyUpdateActorConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyDeleteActorConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyListActorBuildsConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyBuildActorConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyGetActorBuildConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyAbortBuildConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyListActorVersionsConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyGetActorVersionConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyCreateActorVersionConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyUpdateActorVersionConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyDeleteActorVersionConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyListEnvVarsConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyGetEnvVarConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyCreateEnvVarConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyUpdateEnvVarConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyDeleteEnvVarConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyListActorRunsConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyGetRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyGetRunLastConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyAbortRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyResurrectRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyGetRunLogConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyMetamorphoseRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyRebootRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyListTasksConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyGetTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyRunTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyRunTaskSyncConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyListTaskRunsConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyGetTaskLastRunConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyCreateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyUpdateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyDeleteTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyListDatasetsConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyGetDatasetConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyGetDatasetItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyCreateDatasetConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyPushDatasetItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyDeleteDatasetConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyListKeyValueStoresConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyGetKeyValueStoreConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyListKeysConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyGetRecordConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyPutRecordConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyDeleteRecordConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyCreateKeyValueStoreConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyDeleteKeyValueStoreConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyListSchedulesConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyGetScheduleConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyCreateScheduleConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyUpdateScheduleConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyDeleteScheduleConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyListWebhooksConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyGetWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyCreateWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyUpdateWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyDeleteWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyTestWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyListWebhookDispatchesConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyGetWebhookDispatchConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyGetUserConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyGetPublicUserConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyGetUserLimitsConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyUpdateUserLimitsConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyGetMonthlyUsageConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyGetDatasetStatisticsConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyGetBuildLogConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyListRequestQueuesConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyGetRequestQueueConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyCreateRequestQueueConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyDeleteRequestQueueConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyListQueueRequestsConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyAddQueueRequestConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyGetQueueRequestConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyUpdateQueueRequestConfig"
+        },
+        {
+          "$ref": "#/$defs/ApifyDeleteQueueRequestConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ApifyApiTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Apify Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Run a web scraper actor and wait for results with a timeout",
+    "List all available actors in my account with pagination",
+    "Create a new dataset and push items from a scraping run",
+    "Run a scheduled task at specific times and get job status",
+    "Get items from a dataset and filter by price range",
+    "Create a webhook to notify on actor run completion",
+    "Build an actor to crawl competitor prices daily"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

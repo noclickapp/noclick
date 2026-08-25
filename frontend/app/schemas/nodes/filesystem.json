@@ -1,0 +1,75 @@
+{
+  "$defs": {
+    "FilesystemConfig": {
+      "description": "Configuration for the filesystem node.",
+      "properties": {
+        "volume_mode": {
+          "default": "common",
+          "description": "How volumes are scoped across executions",
+          "enum": [
+            "common",
+            "per_conversation_key"
+          ],
+          "enumNames": [
+            "Shared (all executions)",
+            "Per Conversation Key (isolated per user)"
+          ],
+          "title": "Volume Mode",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "mount_path": {
+          "default": "/workspace",
+          "description": "Absolute folder path where the files appear inside the agent's sandbox",
+          "title": "Mount Path",
+          "type": "string",
+          "ui:help": "The agent reads/writes files at this path (e.g. /workspace or /assets). Files persist across executions. A missing leading slash is added automatically.",
+          "ui:placeholder": "/workspace"
+        },
+        "file_browser": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Files",
+          "ui:widget": "file_browser"
+        }
+      },
+      "title": "FilesystemConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for Filesystem node (no credentials needed).",
+  "properties": {
+    "config": {
+      "$ref": "#/$defs/FilesystemConfig",
+      "description": "Node-specific configuration"
+    },
+    "credentials": {
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials",
+      "type": "null"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Filesystem Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Switch to per-conversation storage mode",
+    "Change mount path to /data",
+    "Use shared volume for all executions",
+    "Isolate storage per user conversation",
+    "Change mount path to /tmp",
+    "View files in persistent storage",
+    "Browse uploaded resources"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

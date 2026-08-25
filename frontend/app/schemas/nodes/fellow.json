@@ -1,0 +1,1458 @@
+{
+  "$defs": {
+    "FellowAPIKeyCredential": {
+      "description": "API Key credential for Fellow (fellow.ai).",
+      "properties": {
+        "credential_type": {
+          "const": "fellow_api_key",
+          "default": "fellow_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "subdomain": {
+          "description": "Your Fellow workspace subdomain \u2014 the \"acme\" in https://acme.fellow.app. You can also paste the full URL; the subdomain is extracted automatically.",
+          "title": "Workspace Subdomain",
+          "type": "string"
+        },
+        "api_key": {
+          "description": "Your Fellow Developer API key from User Settings \u2192 API & MCP Connections \u2192 + New API Key. Sent in the X-API-KEY header.",
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "subdomain",
+        "api_key"
+      ],
+      "title": "FellowAPIKeyCredential",
+      "type": "object",
+      "x-credential-url": "https://help.fellow.ai/en/articles/11817206-developer-api"
+    },
+    "FellowArchiveActionItemConfig": {
+      "description": "Archive an action item by marking it 'won't do'.",
+      "properties": {
+        "operation": {
+          "const": "archive_action_item",
+          "default": "archive_action_item",
+          "title": "Archive Action Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Action Items",
+          "x-display-name": "Archive Action Item",
+          "x-is-trigger": false
+        },
+        "action_item_id": {
+          "description": "The ID of the action item to archive",
+          "title": "Action Item ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "action_item_id"
+      ],
+      "title": "FellowArchiveActionItemConfig",
+      "type": "object"
+    },
+    "FellowCompleteActionItemConfig": {
+      "description": "Toggle an action item's completion state.",
+      "properties": {
+        "operation": {
+          "const": "complete_action_item",
+          "default": "complete_action_item",
+          "title": "Mark Action Item Complete",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Action Items",
+          "x-display-name": "Mark Action Item Complete",
+          "x-is-trigger": false
+        },
+        "action_item_id": {
+          "description": "The ID of the action item to update",
+          "title": "Action Item ID",
+          "type": "string"
+        },
+        "completed": {
+          "default": "true",
+          "description": "Mark the action item complete (Yes) or incomplete (No)",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Completed",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "action_item_id"
+      ],
+      "title": "FellowCompleteActionItemConfig",
+      "type": "object"
+    },
+    "FellowCreateWebhookConfig": {
+      "description": "Create a webhook subscription that receives HTTP POST on subscribed events.",
+      "properties": {
+        "operation": {
+          "const": "create_webhook",
+          "default": "create_webhook",
+          "title": "Create Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Create Webhook",
+          "x-is-trigger": false
+        },
+        "url": {
+          "description": "HTTPS URL that receives event POSTs",
+          "title": "Subscriber URL",
+          "type": "string"
+        },
+        "events": {
+          "description": "Comma-separated events to subscribe to: ai_note.generated, ai_note.shared_to_channel, action_item.assigned, action_item.completed",
+          "title": "Events",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url",
+        "events"
+      ],
+      "title": "FellowCreateWebhookConfig",
+      "type": "object"
+    },
+    "FellowDeleteNoteConfig": {
+      "description": "Permanently delete a note. Requires a Super Admin (privileged) key.",
+      "properties": {
+        "operation": {
+          "const": "delete_note",
+          "default": "delete_note",
+          "title": "Delete Note",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Notes",
+          "x-display-name": "Delete Note",
+          "x-is-trigger": false
+        },
+        "note_id": {
+          "description": "The ID of the note to delete (Super Admin key required)",
+          "title": "Note ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "note_id"
+      ],
+      "title": "FellowDeleteNoteConfig",
+      "type": "object"
+    },
+    "FellowDeleteRecordingConfig": {
+      "description": "Permanently delete a recording. Requires a Super Admin (privileged) key.",
+      "properties": {
+        "operation": {
+          "const": "delete_recording",
+          "default": "delete_recording",
+          "title": "Delete Recording",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Recordings",
+          "x-display-name": "Delete Recording",
+          "x-is-trigger": false
+        },
+        "recording_id": {
+          "description": "The ID of the recording to delete (Super Admin key required)",
+          "title": "Recording ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "recording_id"
+      ],
+      "title": "FellowDeleteRecordingConfig",
+      "type": "object"
+    },
+    "FellowDeleteWebhookConfig": {
+      "description": "Delete a webhook subscription by ID.",
+      "properties": {
+        "operation": {
+          "const": "delete_webhook",
+          "default": "delete_webhook",
+          "title": "Delete Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Delete Webhook",
+          "x-is-trigger": false
+        },
+        "webhook_id": {
+          "description": "The ID of the webhook subscription to delete",
+          "title": "Webhook ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "FellowDeleteWebhookConfig",
+      "type": "object"
+    },
+    "FellowEventTriggerConfig": {
+      "description": "Fire on any Fellow AI-note or action-item event (catch-all, backward-compat).",
+      "properties": {
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fellow posts events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_fellow_event",
+          "default": "on_fellow_event",
+          "title": "On Fellow Event (Any)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Fellow Event (Any)",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "any fellow event",
+            "all events"
+          ]
+        }
+      },
+      "title": "FellowEventTriggerConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "FellowGetActionItemConfig": {
+      "description": "Retrieve a single action item by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_action_item",
+          "default": "get_action_item",
+          "title": "Retrieve Action Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Action Items",
+          "x-display-name": "Retrieve Action Item",
+          "x-is-trigger": false
+        },
+        "action_item_id": {
+          "description": "The ID of the action item to retrieve",
+          "title": "Action Item ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "action_item_id"
+      ],
+      "title": "FellowGetActionItemConfig",
+      "type": "object"
+    },
+    "FellowGetMeConfig": {
+      "description": "Retrieve the authenticated user and workspace info (validates the key).",
+      "properties": {
+        "operation": {
+          "const": "get_me",
+          "default": "get_me",
+          "title": "Get My Profile",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Profile",
+          "x-display-name": "Get My Profile",
+          "x-is-trigger": false
+        }
+      },
+      "title": "FellowGetMeConfig",
+      "type": "object"
+    },
+    "FellowGetNoteConfig": {
+      "description": "Retrieve a single note by ID (structured / AI note content).",
+      "properties": {
+        "operation": {
+          "const": "get_note",
+          "default": "get_note",
+          "title": "Retrieve Note",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Notes",
+          "x-display-name": "Retrieve Note",
+          "x-is-trigger": false
+        },
+        "note_id": {
+          "description": "The ID of the note to retrieve",
+          "title": "Note ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "note_id"
+      ],
+      "title": "FellowGetNoteConfig",
+      "type": "object"
+    },
+    "FellowGetRecordingConfig": {
+      "description": "Retrieve one recording, including transcript segments.",
+      "properties": {
+        "operation": {
+          "const": "get_recording",
+          "default": "get_recording",
+          "title": "Retrieve Recording",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Recordings",
+          "x-display-name": "Retrieve Recording",
+          "x-is-trigger": false
+        },
+        "recording_id": {
+          "description": "The ID of the recording to retrieve",
+          "title": "Recording ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "recording_id"
+      ],
+      "title": "FellowGetRecordingConfig",
+      "type": "object"
+    },
+    "FellowGetWebhookConfig": {
+      "description": "Retrieve a single webhook subscription by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_webhook",
+          "default": "get_webhook",
+          "title": "Retrieve Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Retrieve Webhook",
+          "x-is-trigger": false
+        },
+        "webhook_id": {
+          "description": "The ID of the webhook subscription to retrieve",
+          "title": "Webhook ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "FellowGetWebhookConfig",
+      "type": "object"
+    },
+    "FellowListActionItemsConfig": {
+      "description": "List action items with optional scope filter and cursor pagination.",
+      "properties": {
+        "operation": {
+          "const": "list_action_items",
+          "default": "list_action_items",
+          "title": "List Action Items",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Action Items",
+          "x-display-name": "List Action Items",
+          "x-is-trigger": false
+        },
+        "scope": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Which action items to return",
+          "enum": [
+            "",
+            "assigned_to_me",
+            "assigned_to_others"
+          ],
+          "enumNames": [
+            "All accessible",
+            "Assigned to me",
+            "Assigned to others"
+          ],
+          "title": "Scope",
+          "x-enum-searchable": true
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from a previous response (leave blank for first page)",
+          "title": "Cursor"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Results per page (1-50, default 20)",
+          "title": "Page Size"
+        }
+      },
+      "title": "FellowListActionItemsConfig",
+      "type": "object"
+    },
+    "FellowListNotesConfig": {
+      "description": "List meeting notes with optional filters and cursor pagination.",
+      "properties": {
+        "operation": {
+          "const": "list_notes",
+          "default": "list_notes",
+          "title": "List Notes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Notes",
+          "x-display-name": "List Notes",
+          "x-is-trigger": false
+        },
+        "event_guid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter to notes for this calendar event",
+          "title": "Event GUID"
+        },
+        "channel_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter to notes in this channel",
+          "title": "Channel ID"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by note title (substring match)",
+          "title": "Title"
+        },
+        "include_attendees": {
+          "default": "false",
+          "description": "Include event attendees in each note",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Attendees",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "include_content_markdown": {
+          "default": "false",
+          "description": "Include the note content as markdown",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Content (Markdown)",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from a previous response (leave blank for first page)",
+          "title": "Cursor"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Results per page (1-50, default 20)",
+          "title": "Page Size"
+        }
+      },
+      "title": "FellowListNotesConfig",
+      "type": "object"
+    },
+    "FellowListRecordingsConfig": {
+      "description": "List meeting recordings with optional filters and cursor pagination.",
+      "properties": {
+        "operation": {
+          "const": "list_recordings",
+          "default": "list_recordings",
+          "title": "List Recordings",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Recordings",
+          "x-display-name": "List Recordings",
+          "x-is-trigger": false
+        },
+        "event_guid": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter to recordings for this calendar event",
+          "title": "Event GUID"
+        },
+        "channel_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter to recordings in this channel",
+          "title": "Channel ID"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by recording title (substring match)",
+          "title": "Title"
+        },
+        "include_transcript": {
+          "default": "false",
+          "description": "Include transcript segments in each recording",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Transcript",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "include_ai_notes": {
+          "default": "false",
+          "description": "Include AI-generated notes in each recording",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include AI Notes",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from a previous response (leave blank for first page)",
+          "title": "Cursor"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Results per page (1-50, default 20)",
+          "title": "Page Size"
+        }
+      },
+      "title": "FellowListRecordingsConfig",
+      "type": "object"
+    },
+    "FellowListWebhooksConfig": {
+      "description": "List webhook subscriptions.",
+      "properties": {
+        "operation": {
+          "const": "list_webhooks",
+          "default": "list_webhooks",
+          "title": "List Webhooks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "List Webhooks",
+          "x-is-trigger": false
+        }
+      },
+      "title": "FellowListWebhooksConfig",
+      "type": "object"
+    },
+    "FellowOnAINoteGeneratedConfig": {
+      "description": "Fire when Fellow generates an AI note for a meeting.",
+      "properties": {
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fellow posts events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_ai_note_generated",
+          "default": "on_ai_note_generated",
+          "title": "On AI Note Generated",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On AI Note Generated",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "ai note",
+            "meeting notes",
+            "summary generated",
+            "note created"
+          ]
+        }
+      },
+      "title": "FellowOnAINoteGeneratedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "FellowOnAINoteSharedConfig": {
+      "description": "Fire when a Fellow AI note is shared to a channel (e.g. Slack, Teams).",
+      "properties": {
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fellow posts events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_ai_note_shared",
+          "default": "on_ai_note_shared",
+          "title": "On AI Note Shared",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On AI Note Shared",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "note shared",
+            "share to channel",
+            "slack share",
+            "teams share"
+          ]
+        }
+      },
+      "title": "FellowOnAINoteSharedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "FellowOnActionItemAssignedConfig": {
+      "description": "Fire when a Fellow action item is assigned to someone.",
+      "properties": {
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fellow posts events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_action_item_assigned",
+          "default": "on_action_item_assigned",
+          "title": "On Action Item Assigned",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Action Item Assigned",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "action item assigned",
+            "task assigned",
+            "todo assigned"
+          ]
+        }
+      },
+      "title": "FellowOnActionItemAssignedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "FellowOnActionItemCompletedConfig": {
+      "description": "Fire when a Fellow action item is marked complete.",
+      "properties": {
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fellow posts events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_action_item_completed",
+          "default": "on_action_item_completed",
+          "title": "On Action Item Completed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Action Item Completed",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "action item completed",
+            "task done",
+            "todo completed",
+            "action item resolved"
+          ]
+        }
+      },
+      "title": "FellowOnActionItemCompletedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "FellowUpdateWebhookConfig": {
+      "description": "Partial update of a webhook subscription (only provided fields change).",
+      "properties": {
+        "operation": {
+          "const": "update_webhook",
+          "default": "update_webhook",
+          "title": "Update Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Update Webhook",
+          "x-is-trigger": false
+        },
+        "webhook_id": {
+          "description": "The ID of the webhook subscription to update",
+          "title": "Webhook ID",
+          "type": "string"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New HTTPS URL that receives event POSTs",
+          "title": "Subscriber URL"
+        },
+        "events": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New comma-separated list of subscribed events",
+          "title": "Events"
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "FellowUpdateWebhookConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the Fellow node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "archive_action_item": "#/$defs/FellowArchiveActionItemConfig",
+          "complete_action_item": "#/$defs/FellowCompleteActionItemConfig",
+          "create_webhook": "#/$defs/FellowCreateWebhookConfig",
+          "delete_note": "#/$defs/FellowDeleteNoteConfig",
+          "delete_recording": "#/$defs/FellowDeleteRecordingConfig",
+          "delete_webhook": "#/$defs/FellowDeleteWebhookConfig",
+          "get_action_item": "#/$defs/FellowGetActionItemConfig",
+          "get_me": "#/$defs/FellowGetMeConfig",
+          "get_note": "#/$defs/FellowGetNoteConfig",
+          "get_recording": "#/$defs/FellowGetRecordingConfig",
+          "get_webhook": "#/$defs/FellowGetWebhookConfig",
+          "list_action_items": "#/$defs/FellowListActionItemsConfig",
+          "list_notes": "#/$defs/FellowListNotesConfig",
+          "list_recordings": "#/$defs/FellowListRecordingsConfig",
+          "list_webhooks": "#/$defs/FellowListWebhooksConfig",
+          "on_action_item_assigned": "#/$defs/FellowOnActionItemAssignedConfig",
+          "on_action_item_completed": "#/$defs/FellowOnActionItemCompletedConfig",
+          "on_ai_note_generated": "#/$defs/FellowOnAINoteGeneratedConfig",
+          "on_ai_note_shared": "#/$defs/FellowOnAINoteSharedConfig",
+          "on_fellow_event": "#/$defs/FellowEventTriggerConfig",
+          "update_webhook": "#/$defs/FellowUpdateWebhookConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/FellowGetMeConfig"
+        },
+        {
+          "$ref": "#/$defs/FellowListRecordingsConfig"
+        },
+        {
+          "$ref": "#/$defs/FellowGetRecordingConfig"
+        },
+        {
+          "$ref": "#/$defs/FellowDeleteRecordingConfig"
+        },
+        {
+          "$ref": "#/$defs/FellowListNotesConfig"
+        },
+        {
+          "$ref": "#/$defs/FellowGetNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/FellowDeleteNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/FellowListActionItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/FellowGetActionItemConfig"
+        },
+        {
+          "$ref": "#/$defs/FellowCompleteActionItemConfig"
+        },
+        {
+          "$ref": "#/$defs/FellowArchiveActionItemConfig"
+        },
+        {
+          "$ref": "#/$defs/FellowListWebhooksConfig"
+        },
+        {
+          "$ref": "#/$defs/FellowCreateWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/FellowGetWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/FellowUpdateWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/FellowDeleteWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/FellowOnAINoteGeneratedConfig"
+        },
+        {
+          "$ref": "#/$defs/FellowOnAINoteSharedConfig"
+        },
+        {
+          "$ref": "#/$defs/FellowOnActionItemAssignedConfig"
+        },
+        {
+          "$ref": "#/$defs/FellowOnActionItemCompletedConfig"
+        },
+        {
+          "$ref": "#/$defs/FellowEventTriggerConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FellowAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Fellow Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "List the latest meeting recordings with transcripts",
+    "Retrieve the AI notes for a meeting",
+    "List my open action items",
+    "Mark an action item complete",
+    "Trigger a workflow when a new AI note is generated",
+    "Trigger a workflow when an action item is assigned to me"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

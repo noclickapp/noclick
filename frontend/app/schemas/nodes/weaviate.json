@@ -1,0 +1,1280 @@
+{
+  "$defs": {
+    "WeaviateAggregateConfig": {
+      "description": "Aggregate statistics over a collection (GraphQL Aggregate \u2014 count, mean, topOccurrences, etc.).",
+      "properties": {
+        "operation": {
+          "const": "aggregate",
+          "default": "aggregate",
+          "title": "Aggregate",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Search",
+          "x-display-name": "Aggregate",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "count",
+            "stats",
+            "statistics",
+            "aggregate",
+            "average",
+            "mean",
+            "sum",
+            "group by",
+            "analytics"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the class name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "weaviate_collection"
+        },
+        "properties": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Properties (JSON)",
+          "description": "JSON array of property aggregation definitions. Each entry specifies a property name and the stats to compute. Numeric properties support stats: [\"mean\",\"maximum\",\"minimum\",\"sum\",\"count\"]. Text properties support topOccurrences (number). E.g. [{\"name\":\"score\",\"stats\":[\"mean\",\"maximum\"]},{\"name\":\"category\",\"topOccurrences\":5}]. meta.count is always included.",
+          "ui:widget": "textarea"
+        },
+        "where": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "WhereFilter JSON to restrict which objects are aggregated",
+          "title": "Filter (JSON)",
+          "ui:widget": "textarea"
+        },
+        "group_by": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Property name to group results by (e.g. \"category\"). Adds groupedBy { value path } to the selection.",
+          "title": "Group By"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max number of groups returned when using Group By",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "collection"
+      ],
+      "title": "WeaviateAggregateConfig",
+      "type": "object"
+    },
+    "WeaviateBatchDeleteConfig": {
+      "description": "Batch-delete objects matching a where filter (up to 10,000 per call).",
+      "properties": {
+        "operation": {
+          "const": "batch_delete",
+          "default": "batch_delete",
+          "title": "Batch Delete Objects",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Objects",
+          "x-display-name": "Batch Delete Objects",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "bulk delete",
+            "delete by filter",
+            "purge",
+            "clean up"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the class name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "weaviate_collection"
+        },
+        "where": {
+          "description": "WhereFilter JSON, e.g. {\"path\":[\"category\"],\"operator\":\"Equal\",\"valueText\":\"old\"}",
+          "title": "Filter (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "dry_run": {
+          "default": "false",
+          "description": "If true, reports how many objects would be deleted without actually deleting them",
+          "enum": [
+            "false",
+            "true"
+          ],
+          "enumNames": [
+            "Delete (live)",
+            "Dry run (preview only)"
+          ],
+          "title": "Dry Run",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "collection",
+        "where"
+      ],
+      "title": "WeaviateBatchDeleteConfig",
+      "type": "object"
+    },
+    "WeaviateCreateCollectionConfig": {
+      "description": "Create a collection (schema class).",
+      "properties": {
+        "operation": {
+          "const": "create_collection",
+          "default": "create_collection",
+          "title": "Create Collection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Schema",
+          "x-creates-resource": true,
+          "x-display-name": "Create Collection",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new class",
+            "provision",
+            "setup"
+          ],
+          "x-resource-id-path": "data.class",
+          "x-resource-type": "weaviate_collection"
+        },
+        "name": {
+          "description": "Class name (Weaviate capitalises it)",
+          "title": "Name",
+          "type": "string"
+        },
+        "vectorizer": {
+          "default": "none",
+          "description": "Embedding module, or 'none' for bring-your-own vectors",
+          "enum": [
+            "none",
+            "text2vec-weaviate",
+            "text2vec-openai",
+            "text2vec-cohere",
+            "text2vec-huggingface"
+          ],
+          "title": "Vectorizer",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "properties": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Properties",
+          "description": "Optional JSON array of property defs, e.g. [{\"name\": \"title\", \"dataType\": [\"text\"]}]",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "WeaviateCreateCollectionConfig",
+      "type": "object"
+    },
+    "WeaviateCredential": {
+      "description": "API key + cluster URL credential for Weaviate.",
+      "properties": {
+        "credential_type": {
+          "const": "weaviate_api_key",
+          "default": "weaviate_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "url": {
+          "description": "Your Weaviate REST endpoint, e.g. https://my-cluster.weaviate.network",
+          "title": "Cluster URL",
+          "type": "string"
+        },
+        "api_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Weaviate API key (required for Weaviate Cloud; optional for an unsecured instance)",
+          "title": "API Key",
+          "ui:widget": "password"
+        },
+        "openai_api_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sent as X-OpenAI-Api-Key \u2014 required when your collection uses text2vec-openai or generative-openai",
+          "title": "OpenAI API Key",
+          "ui:widget": "password"
+        },
+        "cohere_api_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sent as X-Cohere-Api-Key \u2014 required when your collection uses text2vec-cohere or generative-cohere",
+          "title": "Cohere API Key",
+          "ui:widget": "password"
+        },
+        "huggingface_api_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sent as X-HuggingFace-Api-Key \u2014 required when your collection uses text2vec-huggingface",
+          "title": "HuggingFace API Key",
+          "ui:widget": "password"
+        },
+        "anthropic_api_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sent as X-Anthropic-Api-Key \u2014 required when your collection uses generative-anthropic",
+          "title": "Anthropic API Key",
+          "ui:widget": "password"
+        },
+        "google_api_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sent as X-Google-Api-Key \u2014 required when your collection uses generative-google (Gemini/PaLM)",
+          "title": "Google API Key",
+          "ui:widget": "password"
+        },
+        "mistral_api_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sent as X-Mistral-Api-Key \u2014 required when your collection uses generative-mistral",
+          "title": "Mistral API Key",
+          "ui:widget": "password"
+        },
+        "weaviate_embedding_api_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sent as X-Weaviate-Api-Key \u2014 required when your collection uses text2vec-weaviate (Weaviate Embeddings / Engram). Get one at console.weaviate.cloud \u2192 Embeddings.",
+          "title": "Weaviate Embeddings API Key",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "WeaviateCredential",
+      "type": "object",
+      "x-credential-url": "https://console.weaviate.cloud/"
+    },
+    "WeaviateDeleteCollectionConfig": {
+      "description": "Drop a collection and ALL of its objects \u2014 permanent.",
+      "properties": {
+        "operation": {
+          "const": "delete_collection",
+          "default": "delete_collection",
+          "title": "Delete Collection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Schema",
+          "x-display-name": "Delete Collection",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "drop class",
+            "remove schema",
+            "purge collection",
+            "truncate"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the class name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "weaviate_collection"
+        }
+      },
+      "required": [
+        "collection"
+      ],
+      "title": "WeaviateDeleteCollectionConfig",
+      "type": "object"
+    },
+    "WeaviateDeleteConfig": {
+      "description": "Delete an object by ID (REST).",
+      "properties": {
+        "operation": {
+          "const": "delete",
+          "default": "delete",
+          "title": "Delete Object",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Objects",
+          "x-display-name": "Delete Object",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove",
+            "purge"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the class name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "weaviate_collection"
+        },
+        "id": {
+          "description": "Object UUID",
+          "title": "ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "collection",
+        "id"
+      ],
+      "title": "WeaviateDeleteConfig",
+      "type": "object"
+    },
+    "WeaviateGenerativeSearchConfig": {
+      "description": "Generative search (RAG): retrieve objects then generate text with an LLM (GraphQL generate).\n\nThe collection must have a generative module configured in its schema\n(e.g. generative-openai, generative-anthropic, generative-cohere). Pass the\ncorresponding API key in the credential. Provide single_prompt, group_task, or both.",
+      "properties": {
+        "operation": {
+          "const": "generative_search",
+          "default": "generative_search",
+          "title": "Generative Search (RAG)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Search",
+          "x-display-name": "Generative Search (RAG)",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "rag",
+            "generate",
+            "llm",
+            "summarize",
+            "answer",
+            "gpt",
+            "claude",
+            "cohere",
+            "gemini"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the class name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "weaviate_collection"
+        },
+        "search_type": {
+          "default": "nearVector",
+          "description": "How to retrieve objects before generating",
+          "enum": [
+            "nearVector",
+            "nearText",
+            "hybrid"
+          ],
+          "enumNames": [
+            "Vector (nearVector)",
+            "Text (nearText)",
+            "Hybrid (BM25+vector)"
+          ],
+          "title": "Search Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "vector": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array of numbers \u2014 required for nearVector; optional for hybrid",
+          "title": "Query Vector",
+          "ui:widget": "textarea"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Text query \u2014 required for nearText and hybrid",
+          "title": "Query Text",
+          "ui:widget": "textarea"
+        },
+        "alpha": {
+          "default": 0.75,
+          "description": "BM25 (0) to vector (1) balance \u2014 only used with hybrid search type",
+          "title": "Hybrid Alpha",
+          "type": "number"
+        },
+        "properties": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Return Properties",
+          "description": "Object properties to return alongside generated text, comma-separated"
+        },
+        "limit": {
+          "default": 5,
+          "description": "Number of objects to retrieve and feed to the LLM",
+          "title": "Limit",
+          "type": "integer"
+        },
+        "where": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional WhereFilter JSON to restrict which objects are fed to the LLM",
+          "title": "Filter (JSON)",
+          "ui:widget": "textarea"
+        },
+        "single_prompt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Prompt template applied to each object individually. Reference object properties with {propertyName}, e.g. \"Summarize this article: {content}\"",
+          "title": "Single Prompt",
+          "ui:widget": "textarea"
+        },
+        "group_task": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Task applied once to ALL retrieved objects combined, e.g. \"What do these articles have in common?\"",
+          "title": "Group Task",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "collection"
+      ],
+      "title": "WeaviateGenerativeSearchConfig",
+      "type": "object"
+    },
+    "WeaviateGetConfig": {
+      "description": "Get an object by ID (REST).",
+      "properties": {
+        "operation": {
+          "const": "get",
+          "default": "get",
+          "title": "Get Object",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Objects",
+          "x-display-name": "Get Object",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "fetch",
+            "lookup by id",
+            "read"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the class name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "weaviate_collection"
+        },
+        "id": {
+          "description": "Object UUID",
+          "title": "ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "collection",
+        "id"
+      ],
+      "title": "WeaviateGetConfig",
+      "type": "object"
+    },
+    "WeaviateHybridSearchConfig": {
+      "description": "Hybrid BM25 + vector search (GraphQL hybrid).",
+      "properties": {
+        "operation": {
+          "const": "hybrid_search",
+          "default": "hybrid_search",
+          "title": "Hybrid Search",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Search",
+          "x-display-name": "Hybrid Search",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "hybrid",
+            "bm25",
+            "keyword",
+            "semantic",
+            "rag",
+            "rank fusion"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the class name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "weaviate_collection"
+        },
+        "query": {
+          "description": "Text query \u2014 combined BM25 + vector by Weaviate",
+          "title": "Query Text",
+          "type": "string"
+        },
+        "alpha": {
+          "default": 0.75,
+          "description": "Balance between BM25 (0) and vector search (1). Default 0.75 weights toward semantic.",
+          "title": "Alpha",
+          "type": "number"
+        },
+        "vector": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON array to use instead of re-encoding the query text",
+          "title": "Query Vector",
+          "ui:widget": "textarea"
+        },
+        "properties": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Return Properties",
+          "description": "Object properties to return, comma-separated. id + score always included."
+        },
+        "limit": {
+          "default": 10,
+          "title": "Limit",
+          "type": "integer"
+        },
+        "where": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Weaviate WhereFilter JSON object to restrict the hybrid search results",
+          "title": "Filter (JSON)",
+          "ui:widget": "textarea"
+        },
+        "target_vector": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Named vector to search (for multi-vector collections). Leave blank for the default vector.",
+          "title": "Target Vector"
+        }
+      },
+      "required": [
+        "collection",
+        "query"
+      ],
+      "title": "WeaviateHybridSearchConfig",
+      "type": "object"
+    },
+    "WeaviateInsertConfig": {
+      "description": "Insert an object (REST).",
+      "properties": {
+        "operation": {
+          "const": "insert",
+          "default": "insert",
+          "title": "Insert Object",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Objects",
+          "x-display-name": "Insert Object",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "add",
+            "create object",
+            "index",
+            "store",
+            "upsert"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the class name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "weaviate_collection"
+        },
+        "properties": {
+          "type": "string",
+          "title": "Properties",
+          "description": "JSON object of the object's properties, e.g. {\"title\": \"Doc\", \"content\": \"...\"}",
+          "ui:widget": "textarea"
+        },
+        "vector": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON array embedding (omit if the class has a vectorizer)",
+          "title": "Vector",
+          "ui:widget": "textarea"
+        },
+        "id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional UUID for the object",
+          "title": "ID"
+        }
+      },
+      "required": [
+        "collection",
+        "properties"
+      ],
+      "title": "WeaviateInsertConfig",
+      "type": "object"
+    },
+    "WeaviateListCollectionsConfig": {
+      "description": "List collections (schema classes).",
+      "properties": {
+        "operation": {
+          "const": "list_collections",
+          "default": "list_collections",
+          "title": "List Collections",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Schema",
+          "x-display-name": "List Collections",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "list",
+            "show classes",
+            "schema"
+          ]
+        }
+      },
+      "title": "WeaviateListCollectionsConfig",
+      "type": "object"
+    },
+    "WeaviateQueryConfig": {
+      "description": "Vector similarity search (GraphQL nearVector).",
+      "properties": {
+        "operation": {
+          "const": "query",
+          "default": "query",
+          "title": "Query / Search",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Search",
+          "x-display-name": "Query / Search",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "search",
+            "similarity search",
+            "nearest neighbors",
+            "vector search"
+          ]
+        },
+        "collection": {
+          "description": "Class to search",
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the class name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "weaviate_collection"
+        },
+        "vector": {
+          "description": "Embedding to search with \u2014 a JSON array of numbers",
+          "title": "Query Vector",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "properties": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Return Properties",
+          "description": "Object properties to return, comma-separated (e.g. title,content). id + distance are always included."
+        },
+        "limit": {
+          "default": 10,
+          "description": "Number of matches to return",
+          "title": "Limit",
+          "type": "integer"
+        },
+        "where": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Weaviate WhereFilter JSON object, e.g. {\"path\":[\"category\"],\"operator\":\"Equal\",\"valueText\":\"news\"}",
+          "title": "Filter (JSON)",
+          "ui:widget": "textarea"
+        },
+        "target_vector": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Named vector to search (for multi-vector collections). Leave blank for the default vector.",
+          "title": "Target Vector"
+        }
+      },
+      "required": [
+        "collection",
+        "vector"
+      ],
+      "title": "WeaviateQueryConfig",
+      "type": "object"
+    },
+    "WeaviateQueryTextConfig": {
+      "description": "Semantic search by text (GraphQL nearText \u2014 requires the class to have a\ntext2vec vectorizer module).",
+      "properties": {
+        "operation": {
+          "const": "query_text",
+          "default": "query_text",
+          "title": "Query by Text",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Search",
+          "x-display-name": "Query by Text",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "search text",
+            "semantic search",
+            "rag",
+            "retrieve documents",
+            "ask"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the class name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "weaviate_collection"
+        },
+        "text": {
+          "description": "Text to search with \u2014 vectorised server-side by the class's module",
+          "title": "Query Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "properties": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Return Properties",
+          "description": "Object properties to return, comma-separated. id + distance always included."
+        },
+        "limit": {
+          "default": 10,
+          "description": "Number of matches to return",
+          "title": "Limit",
+          "type": "integer"
+        },
+        "where": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Weaviate WhereFilter JSON object, e.g. {\"path\":[\"status\"],\"operator\":\"Equal\",\"valueText\":\"published\"}",
+          "title": "Filter (JSON)",
+          "ui:widget": "textarea"
+        },
+        "target_vector": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Named vector to search (for multi-vector collections). Leave blank for the default vector.",
+          "title": "Target Vector"
+        }
+      },
+      "required": [
+        "collection",
+        "text"
+      ],
+      "title": "WeaviateQueryTextConfig",
+      "type": "object"
+    },
+    "WeaviateUpdateConfig": {
+      "description": "Partial update (PATCH /v1/objects/{class}/{id}) \u2014 merges provided fields.",
+      "properties": {
+        "operation": {
+          "const": "update",
+          "default": "update",
+          "title": "Update Object",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Objects",
+          "x-display-name": "Update Object",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "patch",
+            "modify",
+            "edit",
+            "merge properties"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the class name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "weaviate_collection"
+        },
+        "id": {
+          "description": "Object UUID",
+          "title": "ID",
+          "type": "string"
+        },
+        "properties": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Properties",
+          "description": "JSON object of properties to merge in (only listed fields change)",
+          "ui:widget": "textarea"
+        },
+        "vector": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON array replacement vector",
+          "title": "Vector",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "collection",
+        "id"
+      ],
+      "title": "WeaviateUpdateConfig",
+      "type": "object"
+    },
+    "WeaviateUploadIndexConfig": {
+      "description": "Upload a document file, chunk + embed it, and batch-insert objects.",
+      "properties": {
+        "operation": {
+          "const": "upload_and_index",
+          "default": "upload_and_index",
+          "title": "Upload & Index Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Objects",
+          "x-display-name": "Upload & Index Document",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "upload",
+            "ingest",
+            "index document",
+            "rag",
+            "embed file",
+            "add pdf"
+          ]
+        },
+        "collection": {
+          "title": "Collection",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type the class name",
+            "field_name": "collection",
+            "placeholder": "Select a collection...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "weaviate_collection"
+        },
+        "document": {
+          "description": "Upload a PDF/DOCX/TXT/MD/CSV file (or paste a URL / reference an upstream file). It's chunked, embedded with text-embedding-3-small, and batch-inserted as objects (text/source/chunk_index properties + explicit vector).",
+          "title": "Document",
+          "type": "string",
+          "ui:accept": ".pdf,.docx,.txt,.md,.markdown,.csv,.json,.html,.htm",
+          "ui:widget": "media_upload"
+        },
+        "chunk_size": {
+          "default": 1000,
+          "description": "Characters per chunk",
+          "title": "Chunk Size",
+          "type": "integer"
+        },
+        "chunk_overlap": {
+          "default": 200,
+          "description": "Overlapping characters between chunks",
+          "title": "Chunk Overlap",
+          "type": "integer"
+        },
+        "id_prefix": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional prefix for chunk IDs (defaults to the filename)",
+          "title": "ID Prefix"
+        }
+      },
+      "required": [
+        "collection",
+        "document"
+      ],
+      "title": "WeaviateUploadIndexConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the Weaviate node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "aggregate": "#/$defs/WeaviateAggregateConfig",
+          "batch_delete": "#/$defs/WeaviateBatchDeleteConfig",
+          "create_collection": "#/$defs/WeaviateCreateCollectionConfig",
+          "delete": "#/$defs/WeaviateDeleteConfig",
+          "delete_collection": "#/$defs/WeaviateDeleteCollectionConfig",
+          "generative_search": "#/$defs/WeaviateGenerativeSearchConfig",
+          "get": "#/$defs/WeaviateGetConfig",
+          "hybrid_search": "#/$defs/WeaviateHybridSearchConfig",
+          "insert": "#/$defs/WeaviateInsertConfig",
+          "list_collections": "#/$defs/WeaviateListCollectionsConfig",
+          "query": "#/$defs/WeaviateQueryConfig",
+          "query_text": "#/$defs/WeaviateQueryTextConfig",
+          "update": "#/$defs/WeaviateUpdateConfig",
+          "upload_and_index": "#/$defs/WeaviateUploadIndexConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/WeaviateQueryConfig"
+        },
+        {
+          "$ref": "#/$defs/WeaviateQueryTextConfig"
+        },
+        {
+          "$ref": "#/$defs/WeaviateHybridSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/WeaviateGenerativeSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/WeaviateAggregateConfig"
+        },
+        {
+          "$ref": "#/$defs/WeaviateInsertConfig"
+        },
+        {
+          "$ref": "#/$defs/WeaviateGetConfig"
+        },
+        {
+          "$ref": "#/$defs/WeaviateUpdateConfig"
+        },
+        {
+          "$ref": "#/$defs/WeaviateDeleteConfig"
+        },
+        {
+          "$ref": "#/$defs/WeaviateListCollectionsConfig"
+        },
+        {
+          "$ref": "#/$defs/WeaviateCreateCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/WeaviateDeleteCollectionConfig"
+        },
+        {
+          "$ref": "#/$defs/WeaviateBatchDeleteConfig"
+        },
+        {
+          "$ref": "#/$defs/WeaviateUploadIndexConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/WeaviateCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Weaviate Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Semantically search a Weaviate class by text for the most relevant objects",
+    "Vector-search a Weaviate class with a precomputed query embedding",
+    "Insert a document object into Weaviate with its embedding",
+    "Create a Weaviate class with an OpenAI vectorizer for automatic embedding",
+    "Delete an object by its UUID",
+    "Use generative search to summarize retrieved documents with GPT-4",
+    "Aggregate object counts grouped by category"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

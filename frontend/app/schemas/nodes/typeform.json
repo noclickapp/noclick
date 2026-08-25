@@ -1,0 +1,2337 @@
+{
+  "$defs": {
+    "TypeformAutoTranslateConfig": {
+      "description": "Auto-translate a form to a target language",
+      "properties": {
+        "operation": {
+          "const": "auto_translate_form_to_language",
+          "default": "auto_translate_form_to_language",
+          "title": "Auto Translate Form to Language",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Form",
+          "x-display-name": "Auto Translate Form to Language",
+          "x-is-trigger": false
+        },
+        "form_id": {
+          "description": "The unique ID of the form",
+          "title": "Form ID",
+          "type": "string"
+        },
+        "target_language": {
+          "description": "Target language code (e.g., 'es', 'fr', 'de')",
+          "title": "Target Language",
+          "type": "string"
+        }
+      },
+      "required": [
+        "form_id",
+        "target_language"
+      ],
+      "title": "TypeformAutoTranslateConfig",
+      "type": "object"
+    },
+    "TypeformCreateAccountWorkspaceConfig": {
+      "description": "Create a new account workspace",
+      "properties": {
+        "operation": {
+          "const": "create_account_workspace",
+          "default": "create_account_workspace",
+          "title": "Create Account Workspace",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspace",
+          "x-display-name": "Create Account Workspace",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Name of the account workspace",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "TypeformCreateAccountWorkspaceConfig",
+      "type": "object"
+    },
+    "TypeformCreateFormConfig": {
+      "description": "Create a new form",
+      "properties": {
+        "operation": {
+          "const": "create_form",
+          "default": "create_form",
+          "title": "Create Form",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Form",
+          "x-creates-resource": true,
+          "x-display-name": "Create Form",
+          "x-is-trigger": false,
+          "x-resource-id-path": "id",
+          "x-resource-type": "typeform_form"
+        },
+        "title": {
+          "description": "Title of the form",
+          "title": "Title",
+          "type": "string"
+        },
+        "workspace_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of workspace to create form in",
+          "title": "Workspace ID"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "items": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Array of field definitions for the form",
+          "title": "Fields",
+          "ui:widget": "textarea"
+        },
+        "settings": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Form settings (JSON object)",
+          "title": "Settings",
+          "ui:widget": "textarea"
+        },
+        "theme_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of theme to apply to the form",
+          "title": "Theme ID"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "TypeformCreateFormConfig",
+      "type": "object"
+    },
+    "TypeformCreateImageConfig": {
+      "description": "Upload a new image",
+      "properties": {
+        "operation": {
+          "const": "upload_image",
+          "default": "upload_image",
+          "title": "Upload Image",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Image",
+          "x-display-name": "Upload Image",
+          "x-is-trigger": false
+        },
+        "image_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The image to send \u2014 upload a file, paste a URL, or reference an upstream file (e.g. {{http-1.response.url}}).",
+          "title": "Image URL",
+          "ui:accept": "image/*",
+          "ui:widget": "media_upload"
+        },
+        "image_base64": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Base64-encoded image data",
+          "title": "Image Base64",
+          "ui:widget": "textarea"
+        },
+        "file_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional file name for the image",
+          "title": "File Name"
+        }
+      },
+      "title": "TypeformCreateImageConfig",
+      "type": "object"
+    },
+    "TypeformCreateThemeConfig": {
+      "description": "Create a new theme",
+      "properties": {
+        "operation": {
+          "const": "create_theme",
+          "default": "create_theme",
+          "title": "Create Theme",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Theme",
+          "x-display-name": "Create Theme",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Name of the theme",
+          "title": "Name",
+          "type": "string"
+        },
+        "colors": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Color definitions (JSON object with question, answer, button, background keys)",
+          "title": "Colors",
+          "ui:widget": "textarea"
+        },
+        "font": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Font family for the theme",
+          "title": "Font"
+        },
+        "has_transparent_button": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether to use transparent buttons",
+          "title": "Transparent Button"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "TypeformCreateThemeConfig",
+      "type": "object"
+    },
+    "TypeformCreateTranslationConfig": {
+      "description": "Create or update a translation for a form",
+      "properties": {
+        "operation": {
+          "const": "create_form_translation",
+          "default": "create_form_translation",
+          "title": "Create Form Translation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Form",
+          "x-display-name": "Create Form Translation",
+          "x-is-trigger": false
+        },
+        "form_id": {
+          "description": "The unique ID of the form",
+          "title": "Form ID",
+          "type": "string"
+        },
+        "language": {
+          "description": "Language code (e.g., 'es', 'fr', 'de')",
+          "title": "Language Code",
+          "type": "string"
+        },
+        "translation_data": {
+          "additionalProperties": true,
+          "description": "Translation content (JSON object)",
+          "title": "Translation Data",
+          "type": "object",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "form_id",
+        "language",
+        "translation_data"
+      ],
+      "title": "TypeformCreateTranslationConfig",
+      "type": "object"
+    },
+    "TypeformCreateWebhookConfig": {
+      "description": "Create or update a webhook for a form",
+      "properties": {
+        "operation": {
+          "const": "create_form_webhook",
+          "default": "create_form_webhook",
+          "title": "Create Form Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhook",
+          "x-display-name": "Create Form Webhook",
+          "x-is-trigger": false
+        },
+        "form_id": {
+          "description": "The unique ID of the form",
+          "title": "Form ID",
+          "type": "string"
+        },
+        "tag": {
+          "description": "Unique tag for this webhook",
+          "title": "Tag",
+          "type": "string"
+        },
+        "url": {
+          "description": "URL to send webhook payloads to",
+          "title": "Webhook URL",
+          "type": "string"
+        },
+        "enabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "Whether the webhook is enabled",
+          "title": "Enabled"
+        },
+        "secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Secret for webhook signature verification",
+          "title": "Secret",
+          "ui:widget": "password"
+        },
+        "verify_ssl": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "Whether to verify SSL certificates",
+          "title": "Verify SSL"
+        }
+      },
+      "required": [
+        "form_id",
+        "tag",
+        "url"
+      ],
+      "title": "TypeformCreateWebhookConfig",
+      "type": "object"
+    },
+    "TypeformCreateWorkspaceConfig": {
+      "description": "Create a new workspace",
+      "properties": {
+        "operation": {
+          "const": "create_workspace",
+          "default": "create_workspace",
+          "title": "Create Workspace",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspace",
+          "x-display-name": "Create Workspace",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Name of the workspace",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "TypeformCreateWorkspaceConfig",
+      "type": "object"
+    },
+    "TypeformDeleteFormConfig": {
+      "description": "Delete a form",
+      "properties": {
+        "operation": {
+          "const": "delete_form",
+          "default": "delete_form",
+          "title": "Delete Form",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Form",
+          "x-display-name": "Delete Form",
+          "x-is-trigger": false
+        },
+        "form_id": {
+          "description": "The unique ID of the form to delete",
+          "title": "Form ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "form_id"
+      ],
+      "title": "TypeformDeleteFormConfig",
+      "type": "object"
+    },
+    "TypeformDeleteImageConfig": {
+      "description": "Delete an image",
+      "properties": {
+        "operation": {
+          "const": "delete_image",
+          "default": "delete_image",
+          "title": "Delete Image",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Image",
+          "x-display-name": "Delete Image",
+          "x-is-trigger": false
+        },
+        "image_id": {
+          "description": "The unique ID of the image to delete",
+          "title": "Image ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "image_id"
+      ],
+      "title": "TypeformDeleteImageConfig",
+      "type": "object"
+    },
+    "TypeformDeleteResponsesConfig": {
+      "description": "Delete responses from a form",
+      "properties": {
+        "operation": {
+          "const": "delete_form_responses",
+          "default": "delete_form_responses",
+          "title": "Delete Form Responses",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Form Response",
+          "x-display-name": "Delete Form Responses",
+          "x-is-trigger": false
+        },
+        "form_id": {
+          "description": "The unique ID of the form",
+          "title": "Form ID",
+          "type": "string"
+        },
+        "included_tokens": {
+          "description": "Comma-separated list of response tokens to delete",
+          "title": "Response Tokens",
+          "type": "string"
+        }
+      },
+      "required": [
+        "form_id",
+        "included_tokens"
+      ],
+      "title": "TypeformDeleteResponsesConfig",
+      "type": "object"
+    },
+    "TypeformDeleteThemeConfig": {
+      "description": "Delete a theme",
+      "properties": {
+        "operation": {
+          "const": "delete_theme",
+          "default": "delete_theme",
+          "title": "Delete Theme",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Theme",
+          "x-display-name": "Delete Theme",
+          "x-is-trigger": false
+        },
+        "theme_id": {
+          "description": "The unique ID of the theme to delete",
+          "title": "Theme ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "theme_id"
+      ],
+      "title": "TypeformDeleteThemeConfig",
+      "type": "object"
+    },
+    "TypeformDeleteTranslationConfig": {
+      "description": "Delete a translation for a form",
+      "properties": {
+        "operation": {
+          "const": "delete_form_translation",
+          "default": "delete_form_translation",
+          "title": "Delete Form Translation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Form",
+          "x-display-name": "Delete Form Translation",
+          "x-is-trigger": false
+        },
+        "form_id": {
+          "description": "The unique ID of the form",
+          "title": "Form ID",
+          "type": "string"
+        },
+        "language": {
+          "description": "Language code of translation to delete (e.g., 'es', 'fr', 'de')",
+          "title": "Language Code",
+          "type": "string"
+        }
+      },
+      "required": [
+        "form_id",
+        "language"
+      ],
+      "title": "TypeformDeleteTranslationConfig",
+      "type": "object"
+    },
+    "TypeformDeleteWebhookConfig": {
+      "description": "Delete a webhook",
+      "properties": {
+        "operation": {
+          "const": "delete_form_webhook",
+          "default": "delete_form_webhook",
+          "title": "Delete Form Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhook",
+          "x-display-name": "Delete Form Webhook",
+          "x-is-trigger": false
+        },
+        "form_id": {
+          "description": "The unique ID of the form",
+          "title": "Form ID",
+          "type": "string"
+        },
+        "tag": {
+          "description": "Tag of the webhook to delete",
+          "title": "Tag",
+          "type": "string"
+        }
+      },
+      "required": [
+        "form_id",
+        "tag"
+      ],
+      "title": "TypeformDeleteWebhookConfig",
+      "type": "object"
+    },
+    "TypeformDeleteWorkspaceConfig": {
+      "description": "Delete a workspace",
+      "properties": {
+        "operation": {
+          "const": "delete_workspace",
+          "default": "delete_workspace",
+          "title": "Delete Workspace",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspace",
+          "x-display-name": "Delete Workspace",
+          "x-is-trigger": false
+        },
+        "workspace_id": {
+          "description": "The unique ID of the workspace to delete",
+          "title": "Workspace ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace_id"
+      ],
+      "title": "TypeformDeleteWorkspaceConfig",
+      "type": "object"
+    },
+    "TypeformDownloadFilesConfig": {
+      "description": "Download all files uploaded in form responses",
+      "properties": {
+        "operation": {
+          "const": "download_response_files",
+          "default": "download_response_files",
+          "title": "Download Response Files",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Form Response",
+          "x-display-name": "Download Response Files",
+          "x-is-trigger": false
+        },
+        "form_id": {
+          "description": "The unique ID of the form",
+          "title": "Form ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "form_id"
+      ],
+      "title": "TypeformDownloadFilesConfig",
+      "type": "object"
+    },
+    "TypeformGetAudioMasterConfig": {
+      "description": "Get generated audio master file",
+      "properties": {
+        "operation": {
+          "const": "get_generated_audio_master",
+          "default": "get_generated_audio_master",
+          "title": "Get Generated Audio Master",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audio and Video Master",
+          "x-display-name": "Get Generated Audio Master",
+          "x-is-trigger": false
+        },
+        "form_id": {
+          "description": "The unique ID of the form",
+          "title": "Form ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "form_id"
+      ],
+      "title": "TypeformGetAudioMasterConfig",
+      "type": "object"
+    },
+    "TypeformGetFileFromResponseConfig": {
+      "description": "Get a specific file from a response",
+      "properties": {
+        "operation": {
+          "const": "get_response_file",
+          "default": "get_response_file",
+          "title": "Get Response File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Form Response",
+          "x-display-name": "Get Response File",
+          "x-is-trigger": false
+        },
+        "form_id": {
+          "description": "The unique ID of the form",
+          "title": "Form ID",
+          "type": "string"
+        },
+        "response_id": {
+          "description": "The unique ID of the response",
+          "title": "Response ID",
+          "type": "string"
+        },
+        "field_id": {
+          "description": "The unique ID of the file upload field",
+          "title": "Field ID",
+          "type": "string"
+        },
+        "filename": {
+          "description": "Name of the file to download",
+          "title": "Filename",
+          "type": "string"
+        }
+      },
+      "required": [
+        "form_id",
+        "response_id",
+        "field_id",
+        "filename"
+      ],
+      "title": "TypeformGetFileFromResponseConfig",
+      "type": "object"
+    },
+    "TypeformGetFormConfig": {
+      "description": "Retrieve a specific form by ID",
+      "properties": {
+        "operation": {
+          "const": "get_form",
+          "default": "get_form",
+          "title": "Get Form",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Form",
+          "x-display-name": "Get Form",
+          "x-is-trigger": false
+        },
+        "form_id": {
+          "description": "The unique ID of the form",
+          "title": "Form ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "form_id"
+      ],
+      "title": "TypeformGetFormConfig",
+      "type": "object"
+    },
+    "TypeformGetFormMessagesConfig": {
+      "description": "Retrieve custom messages for a form",
+      "properties": {
+        "operation": {
+          "const": "get_form_custom_messages",
+          "default": "get_form_custom_messages",
+          "title": "Get Form Custom Messages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Form",
+          "x-display-name": "Get Form Custom Messages",
+          "x-is-trigger": false
+        },
+        "form_id": {
+          "description": "The unique ID of the form",
+          "title": "Form ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "form_id"
+      ],
+      "title": "TypeformGetFormMessagesConfig",
+      "type": "object"
+    },
+    "TypeformGetImageConfig": {
+      "description": "Retrieve a specific image by ID",
+      "properties": {
+        "operation": {
+          "const": "get_image",
+          "default": "get_image",
+          "title": "Get Image",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Image",
+          "x-display-name": "Get Image",
+          "x-is-trigger": false
+        },
+        "image_id": {
+          "description": "The unique ID of the image",
+          "title": "Image ID",
+          "type": "string"
+        },
+        "size": {
+          "anyOf": [
+            {
+              "enum": [
+                "default",
+                "thumbnail",
+                "mobile",
+                "tablet",
+                "choice",
+                "background"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "default",
+          "description": "Size variant to retrieve",
+          "title": "Size",
+          "enum": [
+            "default",
+            "thumbnail",
+            "mobile",
+            "tablet",
+            "choice",
+            "background"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "image_id"
+      ],
+      "title": "TypeformGetImageConfig",
+      "type": "object"
+    },
+    "TypeformGetInsightsConfig": {
+      "description": "Retrieve insights for a form",
+      "properties": {
+        "operation": {
+          "const": "get_form_insights",
+          "default": "get_form_insights",
+          "title": "Get Form Insights",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Form Insights",
+          "x-display-name": "Get Form Insights",
+          "x-is-trigger": false
+        },
+        "form_id": {
+          "description": "The unique ID of the form",
+          "title": "Form ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "form_id"
+      ],
+      "title": "TypeformGetInsightsConfig",
+      "type": "object"
+    },
+    "TypeformGetResponsesConfig": {
+      "description": "Retrieve responses for a form",
+      "properties": {
+        "operation": {
+          "const": "get_form_responses",
+          "default": "get_form_responses",
+          "title": "Get Form Responses",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Form Response",
+          "x-display-name": "Get Form Responses",
+          "x-is-trigger": false
+        },
+        "form_id": {
+          "description": "The unique ID of the form",
+          "title": "Form ID",
+          "type": "string"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 1000,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "description": "Number of responses per page (default: 25, max: 1000)",
+          "title": "Page Size"
+        },
+        "since": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Retrieve responses after this date/time (ISO 8601 format)",
+          "title": "Since"
+        },
+        "until": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Retrieve responses before this date/time (ISO 8601 format)",
+          "title": "Until"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Retrieve responses after this token (for pagination)",
+          "title": "After"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Retrieve responses before this token (for pagination)",
+          "title": "Before"
+        },
+        "included_response_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of response IDs to include",
+          "title": "Included Response IDs"
+        },
+        "completed": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "If true, return only completed responses",
+          "title": "Completed Only"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "submitted_at,asc",
+                "submitted_at,desc"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "submitted_at,desc",
+          "description": "Sort order for responses",
+          "title": "Sort",
+          "enum": [
+            "submitted_at,asc",
+            "submitted_at,desc"
+          ],
+          "x-enum-searchable": true
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Query string to filter responses",
+          "title": "Query"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of fields to include in response",
+          "title": "Fields"
+        }
+      },
+      "required": [
+        "form_id"
+      ],
+      "title": "TypeformGetResponsesConfig",
+      "type": "object"
+    },
+    "TypeformGetThemeConfig": {
+      "description": "Retrieve a specific theme by ID",
+      "properties": {
+        "operation": {
+          "const": "get_theme",
+          "default": "get_theme",
+          "title": "Get Theme",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Theme",
+          "x-display-name": "Get Theme",
+          "x-is-trigger": false
+        },
+        "theme_id": {
+          "description": "The unique ID of the theme",
+          "title": "Theme ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "theme_id"
+      ],
+      "title": "TypeformGetThemeConfig",
+      "type": "object"
+    },
+    "TypeformGetTranslationConfig": {
+      "description": "Get a specific translation for a form",
+      "properties": {
+        "operation": {
+          "const": "get_form_translation",
+          "default": "get_form_translation",
+          "title": "Get Form Translation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Form",
+          "x-display-name": "Get Form Translation",
+          "x-is-trigger": false
+        },
+        "form_id": {
+          "description": "The unique ID of the form",
+          "title": "Form ID",
+          "type": "string"
+        },
+        "language": {
+          "description": "Language code (e.g., 'es', 'fr', 'de')",
+          "title": "Language Code",
+          "type": "string"
+        }
+      },
+      "required": [
+        "form_id",
+        "language"
+      ],
+      "title": "TypeformGetTranslationConfig",
+      "type": "object"
+    },
+    "TypeformGetTranslationStatusesConfig": {
+      "description": "Get translation statuses for a form",
+      "properties": {
+        "operation": {
+          "const": "get_form_translation_statuses",
+          "default": "get_form_translation_statuses",
+          "title": "Get Form Translation Statuses",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Form",
+          "x-display-name": "Get Form Translation Statuses",
+          "x-is-trigger": false
+        },
+        "form_id": {
+          "description": "The unique ID of the form",
+          "title": "Form ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "form_id"
+      ],
+      "title": "TypeformGetTranslationStatusesConfig",
+      "type": "object"
+    },
+    "TypeformGetVideoMasterConfig": {
+      "description": "Get generated video master file",
+      "properties": {
+        "operation": {
+          "const": "get_generated_video_master",
+          "default": "get_generated_video_master",
+          "title": "Get Generated Video Master",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audio and Video Master",
+          "x-display-name": "Get Generated Video Master",
+          "x-is-trigger": false
+        },
+        "form_id": {
+          "description": "The unique ID of the form",
+          "title": "Form ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "form_id"
+      ],
+      "title": "TypeformGetVideoMasterConfig",
+      "type": "object"
+    },
+    "TypeformGetWebhookConfig": {
+      "description": "Get a specific webhook",
+      "properties": {
+        "operation": {
+          "const": "get_form_webhook",
+          "default": "get_form_webhook",
+          "title": "Get Form Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhook",
+          "x-display-name": "Get Form Webhook",
+          "x-is-trigger": false
+        },
+        "form_id": {
+          "description": "The unique ID of the form",
+          "title": "Form ID",
+          "type": "string"
+        },
+        "tag": {
+          "description": "Tag of the webhook to retrieve",
+          "title": "Tag",
+          "type": "string"
+        }
+      },
+      "required": [
+        "form_id",
+        "tag"
+      ],
+      "title": "TypeformGetWebhookConfig",
+      "type": "object"
+    },
+    "TypeformGetWorkspaceConfig": {
+      "description": "Retrieve a specific workspace by ID",
+      "properties": {
+        "operation": {
+          "const": "get_workspace",
+          "default": "get_workspace",
+          "title": "Get Workspace",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspace",
+          "x-display-name": "Get Workspace",
+          "x-is-trigger": false
+        },
+        "workspace_id": {
+          "description": "The unique ID of the workspace",
+          "title": "Workspace ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace_id"
+      ],
+      "title": "TypeformGetWorkspaceConfig",
+      "type": "object"
+    },
+    "TypeformListAccountWorkspacesConfig": {
+      "description": "List all account workspaces (organization level)",
+      "properties": {
+        "operation": {
+          "const": "list_account_workspaces",
+          "default": "list_account_workspaces",
+          "title": "List Account Workspaces",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspace",
+          "x-display-name": "List Account Workspaces",
+          "x-is-trigger": false
+        },
+        "page": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Page number for pagination (default: 1)",
+          "title": "Page"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 200,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "description": "Number of workspaces per page (default: 10, max: 200)",
+          "title": "Page Size"
+        }
+      },
+      "title": "TypeformListAccountWorkspacesConfig",
+      "type": "object"
+    },
+    "TypeformListFormsConfig": {
+      "description": "List all forms in your account",
+      "properties": {
+        "operation": {
+          "const": "list_forms",
+          "default": "list_forms",
+          "title": "List Forms",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Form",
+          "x-display-name": "List Forms",
+          "x-is-trigger": false
+        },
+        "page": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Page number for pagination (default: 1)",
+          "title": "Page"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 200,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "description": "Number of forms per page (default: 10, max: 200)",
+          "title": "Page Size"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search term to filter forms by title",
+          "title": "Search"
+        },
+        "workspace_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter forms by workspace ID",
+          "title": "Workspace ID"
+        }
+      },
+      "title": "TypeformListFormsConfig",
+      "type": "object"
+    },
+    "TypeformListImagesConfig": {
+      "description": "List all images in your account",
+      "properties": {
+        "operation": {
+          "const": "list_images",
+          "default": "list_images",
+          "title": "List Images",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Image",
+          "x-display-name": "List Images",
+          "x-is-trigger": false
+        }
+      },
+      "title": "TypeformListImagesConfig",
+      "type": "object"
+    },
+    "TypeformListThemesConfig": {
+      "description": "List all themes in your account",
+      "properties": {
+        "operation": {
+          "const": "list_themes",
+          "default": "list_themes",
+          "title": "List Themes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Theme",
+          "x-display-name": "List Themes",
+          "x-is-trigger": false
+        },
+        "page": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Page number for pagination (default: 1)",
+          "title": "Page"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 200,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "description": "Number of themes per page (default: 10, max: 200)",
+          "title": "Page Size"
+        }
+      },
+      "title": "TypeformListThemesConfig",
+      "type": "object"
+    },
+    "TypeformListWebhooksConfig": {
+      "description": "List all webhooks for a form",
+      "properties": {
+        "operation": {
+          "const": "list_form_webhooks",
+          "default": "list_form_webhooks",
+          "title": "List Form Webhooks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhook",
+          "x-display-name": "List Form Webhooks",
+          "x-is-trigger": false
+        },
+        "form_id": {
+          "description": "The unique ID of the form",
+          "title": "Form ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "form_id"
+      ],
+      "title": "TypeformListWebhooksConfig",
+      "type": "object"
+    },
+    "TypeformListWorkspacesConfig": {
+      "description": "List all workspaces in your account",
+      "properties": {
+        "operation": {
+          "const": "list_workspaces",
+          "default": "list_workspaces",
+          "title": "List Workspaces",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspace",
+          "x-display-name": "List Workspaces",
+          "x-is-trigger": false
+        },
+        "page": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Page number for pagination (default: 1)",
+          "title": "Page"
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 200,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "description": "Number of workspaces per page (default: 10, max: 200)",
+          "title": "Page Size"
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search term to filter workspaces by name",
+          "title": "Search"
+        }
+      },
+      "title": "TypeformListWorkspacesConfig",
+      "type": "object"
+    },
+    "TypeformOAuthCredential": {
+      "description": "OAuth 2.0 credential for Typeform.\nTokens are obtained via OAuth flow, not entered manually.\n\nRegister OAuth app at: https://admin.typeform.com/account#/section/tokens\n\nNote: Refresh tokens are only available for standard OAuth apps.\nPersonal Access Token apps don't support refresh tokens.",
+      "properties": {
+        "credential_type": {
+          "const": "typeform_oauth",
+          "default": "typeform_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "OAuth 2.0 access token from Typeform",
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "OAuth 2.0 refresh token for automatic renewal (only for standard OAuth apps)",
+          "title": "Refresh Token"
+        },
+        "expires_at": {
+          "description": "ISO 8601 timestamp when access token expires",
+          "title": "Token Expiry",
+          "type": "string"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Email address of the connected Typeform account",
+          "title": "Account Email"
+        }
+      },
+      "required": [
+        "access_token",
+        "expires_at"
+      ],
+      "title": "TypeformOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-oauth-provider": "typeform",
+      "x-oauth-scopes": [
+        "accounts:read",
+        "forms:read",
+        "forms:write",
+        "images:read",
+        "images:write",
+        "themes:read",
+        "themes:write",
+        "responses:read",
+        "responses:write",
+        "webhooks:read",
+        "webhooks:write",
+        "workspaces:read",
+        "workspaces:write"
+      ]
+    },
+    "TypeformOnNewResponseConfig": {
+      "description": "Trigger: fires when a new response is submitted to a Typeform form.",
+      "properties": {
+        "operation": {
+          "const": "on_new_form_response",
+          "default": "on_new_form_response",
+          "title": "On New Form Response",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On New Form Response",
+          "x-is-trigger": true
+        },
+        "form_id": {
+          "description": "The unique ID of the form to watch for new responses",
+          "title": "Form ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a form ID",
+            "field_name": "form_id",
+            "placeholder": "Select a form...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "typeform_form"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "form_id"
+      ],
+      "title": "TypeformOnNewResponseConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "TypeformPATCredential": {
+      "description": "Personal Access Token credential for Typeform.\n\nGet your PAT at: https://admin.typeform.com/account#/section/tokens",
+      "properties": {
+        "credential_type": {
+          "const": "typeform_pat",
+          "default": "typeform_pat",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "personal_access_token": {
+          "description": "Your Typeform Personal Access Token (PAT)",
+          "title": "Personal Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "personal_access_token"
+      ],
+      "title": "TypeformPATCredential",
+      "type": "object",
+      "x-credential-url": "https://admin.typeform.com/account#/section/tokens"
+    },
+    "TypeformRequestAudioMasterConfig": {
+      "description": "Request generation of audio master file",
+      "properties": {
+        "operation": {
+          "const": "request_audio_master_generation",
+          "default": "request_audio_master_generation",
+          "title": "Request Audio Master Generation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audio and Video Master",
+          "x-display-name": "Request Audio Master Generation",
+          "x-is-trigger": false
+        },
+        "form_id": {
+          "description": "The unique ID of the form",
+          "title": "Form ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "form_id"
+      ],
+      "title": "TypeformRequestAudioMasterConfig",
+      "type": "object"
+    },
+    "TypeformRequestVideoMasterConfig": {
+      "description": "Request generation of video master file",
+      "properties": {
+        "operation": {
+          "const": "request_video_master_generation",
+          "default": "request_video_master_generation",
+          "title": "Request Video Master Generation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audio and Video Master",
+          "x-display-name": "Request Video Master Generation",
+          "x-is-trigger": false
+        },
+        "form_id": {
+          "description": "The unique ID of the form",
+          "title": "Form ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "form_id"
+      ],
+      "title": "TypeformRequestVideoMasterConfig",
+      "type": "object"
+    },
+    "TypeformUpdateFormConfig": {
+      "description": "Update an existing form",
+      "properties": {
+        "operation": {
+          "const": "update_form",
+          "default": "update_form",
+          "title": "Update Form",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Form",
+          "x-display-name": "Update Form",
+          "x-is-trigger": false
+        },
+        "form_id": {
+          "description": "The unique ID of the form to update",
+          "title": "Form ID",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New title for the form",
+          "title": "Title"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "items": {
+                "additionalProperties": true,
+                "type": "object"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated array of field definitions",
+          "title": "Fields",
+          "ui:widget": "textarea"
+        },
+        "settings": {
+          "anyOf": [
+            {
+              "additionalProperties": true,
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated form settings (JSON object)",
+          "title": "Settings",
+          "ui:widget": "textarea"
+        },
+        "theme_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of theme to apply to the form",
+          "title": "Theme ID"
+        },
+        "patch": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "If true, only updates specified fields (PATCH). If false, replaces entire form (PUT)",
+          "title": "Partial Update"
+        }
+      },
+      "required": [
+        "form_id"
+      ],
+      "title": "TypeformUpdateFormConfig",
+      "type": "object"
+    },
+    "TypeformUpdateFormMessagesConfig": {
+      "description": "Update custom messages for a form",
+      "properties": {
+        "operation": {
+          "const": "update_form_custom_messages",
+          "default": "update_form_custom_messages",
+          "title": "Update Form Custom Messages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Form",
+          "x-display-name": "Update Form Custom Messages",
+          "x-is-trigger": false
+        },
+        "form_id": {
+          "description": "The unique ID of the form",
+          "title": "Form ID",
+          "type": "string"
+        },
+        "messages": {
+          "additionalProperties": true,
+          "description": "Custom messages object (JSON)",
+          "title": "Messages",
+          "type": "object",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "form_id",
+        "messages"
+      ],
+      "title": "TypeformUpdateFormMessagesConfig",
+      "type": "object"
+    },
+    "TypeformUpdateThemeConfig": {
+      "description": "Update an existing theme",
+      "properties": {
+        "operation": {
+          "const": "update_theme",
+          "default": "update_theme",
+          "title": "Update Theme",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Theme",
+          "x-display-name": "Update Theme",
+          "x-is-trigger": false
+        },
+        "theme_id": {
+          "description": "The unique ID of the theme to update",
+          "title": "Theme ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New name for the theme",
+          "title": "Name"
+        },
+        "colors": {
+          "anyOf": [
+            {
+              "additionalProperties": {
+                "type": "string"
+              },
+              "type": "object"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated color definitions (JSON object)",
+          "title": "Colors",
+          "ui:widget": "textarea"
+        },
+        "font": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated font family",
+          "title": "Font"
+        },
+        "has_transparent_button": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether to use transparent buttons",
+          "title": "Transparent Button"
+        },
+        "patch": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "If true, only updates specified fields (PATCH). If false, replaces entire theme (PUT)",
+          "title": "Partial Update"
+        }
+      },
+      "required": [
+        "theme_id"
+      ],
+      "title": "TypeformUpdateThemeConfig",
+      "type": "object"
+    },
+    "TypeformUpdateTranslationConfig": {
+      "description": "Update a translation for a form",
+      "properties": {
+        "operation": {
+          "const": "update_form_translation",
+          "default": "update_form_translation",
+          "title": "Update Form Translation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Form",
+          "x-display-name": "Update Form Translation",
+          "x-is-trigger": false
+        },
+        "form_id": {
+          "description": "The unique ID of the form",
+          "title": "Form ID",
+          "type": "string"
+        },
+        "language": {
+          "description": "Language code (e.g., 'es', 'fr', 'de')",
+          "title": "Language Code",
+          "type": "string"
+        },
+        "translation_data": {
+          "additionalProperties": true,
+          "description": "Translation content (JSON object) to update",
+          "title": "Translation Data",
+          "type": "object",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "form_id",
+        "language",
+        "translation_data"
+      ],
+      "title": "TypeformUpdateTranslationConfig",
+      "type": "object"
+    },
+    "TypeformUpdateWebhookConfig": {
+      "description": "Update a webhook",
+      "properties": {
+        "operation": {
+          "const": "update_form_webhook",
+          "default": "update_form_webhook",
+          "title": "Update Form Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhook",
+          "x-display-name": "Update Form Webhook",
+          "x-is-trigger": false
+        },
+        "form_id": {
+          "description": "The unique ID of the form",
+          "title": "Form ID",
+          "type": "string"
+        },
+        "tag": {
+          "description": "Tag of the webhook to update",
+          "title": "Tag",
+          "type": "string"
+        },
+        "url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL to send webhook payloads to",
+          "title": "Webhook URL"
+        },
+        "enabled": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether the webhook is enabled",
+          "title": "Enabled"
+        },
+        "secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Secret for webhook signature verification",
+          "title": "Secret",
+          "ui:widget": "password"
+        },
+        "verify_ssl": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether to verify SSL certificates",
+          "title": "Verify SSL"
+        }
+      },
+      "required": [
+        "form_id",
+        "tag"
+      ],
+      "title": "TypeformUpdateWebhookConfig",
+      "type": "object"
+    },
+    "TypeformUpdateWorkspaceConfig": {
+      "description": "Update an existing workspace",
+      "properties": {
+        "operation": {
+          "const": "update_workspace",
+          "default": "update_workspace",
+          "title": "Update Workspace",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspace",
+          "x-display-name": "Update Workspace",
+          "x-is-trigger": false
+        },
+        "workspace_id": {
+          "description": "The unique ID of the workspace to update",
+          "title": "Workspace ID",
+          "type": "string"
+        },
+        "name": {
+          "description": "New name for the workspace",
+          "title": "Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "name"
+      ],
+      "title": "TypeformUpdateWorkspaceConfig",
+      "type": "object"
+    },
+    "TypeformUploadVideoConfig": {
+      "description": "Upload a video file",
+      "properties": {
+        "operation": {
+          "const": "upload_video",
+          "default": "upload_video",
+          "title": "Upload Video",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Video",
+          "x-display-name": "Upload Video",
+          "x-is-trigger": false
+        },
+        "video_url": {
+          "description": "The video to send \u2014 upload a file, paste a URL, or reference an upstream file (e.g. {{http-1.response.url}}).",
+          "title": "Video URL",
+          "type": "string",
+          "ui:accept": "video/*",
+          "ui:widget": "media_upload"
+        },
+        "file_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional file name for the video",
+          "title": "File Name"
+        }
+      },
+      "required": [
+        "video_url"
+      ],
+      "title": "TypeformUploadVideoConfig",
+      "type": "object"
+    }
+  },
+  "description": "Complete node configuration with operation config and credentials",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "auto_translate_form_to_language": "#/$defs/TypeformAutoTranslateConfig",
+          "create_account_workspace": "#/$defs/TypeformCreateAccountWorkspaceConfig",
+          "create_form": "#/$defs/TypeformCreateFormConfig",
+          "create_form_translation": "#/$defs/TypeformCreateTranslationConfig",
+          "create_form_webhook": "#/$defs/TypeformCreateWebhookConfig",
+          "create_theme": "#/$defs/TypeformCreateThemeConfig",
+          "create_workspace": "#/$defs/TypeformCreateWorkspaceConfig",
+          "delete_form": "#/$defs/TypeformDeleteFormConfig",
+          "delete_form_responses": "#/$defs/TypeformDeleteResponsesConfig",
+          "delete_form_translation": "#/$defs/TypeformDeleteTranslationConfig",
+          "delete_form_webhook": "#/$defs/TypeformDeleteWebhookConfig",
+          "delete_image": "#/$defs/TypeformDeleteImageConfig",
+          "delete_theme": "#/$defs/TypeformDeleteThemeConfig",
+          "delete_workspace": "#/$defs/TypeformDeleteWorkspaceConfig",
+          "download_response_files": "#/$defs/TypeformDownloadFilesConfig",
+          "get_form": "#/$defs/TypeformGetFormConfig",
+          "get_form_custom_messages": "#/$defs/TypeformGetFormMessagesConfig",
+          "get_form_insights": "#/$defs/TypeformGetInsightsConfig",
+          "get_form_responses": "#/$defs/TypeformGetResponsesConfig",
+          "get_form_translation": "#/$defs/TypeformGetTranslationConfig",
+          "get_form_translation_statuses": "#/$defs/TypeformGetTranslationStatusesConfig",
+          "get_form_webhook": "#/$defs/TypeformGetWebhookConfig",
+          "get_generated_audio_master": "#/$defs/TypeformGetAudioMasterConfig",
+          "get_generated_video_master": "#/$defs/TypeformGetVideoMasterConfig",
+          "get_image": "#/$defs/TypeformGetImageConfig",
+          "get_response_file": "#/$defs/TypeformGetFileFromResponseConfig",
+          "get_theme": "#/$defs/TypeformGetThemeConfig",
+          "get_workspace": "#/$defs/TypeformGetWorkspaceConfig",
+          "list_account_workspaces": "#/$defs/TypeformListAccountWorkspacesConfig",
+          "list_form_webhooks": "#/$defs/TypeformListWebhooksConfig",
+          "list_forms": "#/$defs/TypeformListFormsConfig",
+          "list_images": "#/$defs/TypeformListImagesConfig",
+          "list_themes": "#/$defs/TypeformListThemesConfig",
+          "list_workspaces": "#/$defs/TypeformListWorkspacesConfig",
+          "on_new_form_response": "#/$defs/TypeformOnNewResponseConfig",
+          "request_audio_master_generation": "#/$defs/TypeformRequestAudioMasterConfig",
+          "request_video_master_generation": "#/$defs/TypeformRequestVideoMasterConfig",
+          "update_form": "#/$defs/TypeformUpdateFormConfig",
+          "update_form_custom_messages": "#/$defs/TypeformUpdateFormMessagesConfig",
+          "update_form_translation": "#/$defs/TypeformUpdateTranslationConfig",
+          "update_form_webhook": "#/$defs/TypeformUpdateWebhookConfig",
+          "update_theme": "#/$defs/TypeformUpdateThemeConfig",
+          "update_workspace": "#/$defs/TypeformUpdateWorkspaceConfig",
+          "upload_image": "#/$defs/TypeformCreateImageConfig",
+          "upload_video": "#/$defs/TypeformUploadVideoConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/TypeformListFormsConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformGetFormConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformCreateFormConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformUpdateFormConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformDeleteFormConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformGetFormMessagesConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformUpdateFormMessagesConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformListThemesConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformGetThemeConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformCreateThemeConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformUpdateThemeConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformDeleteThemeConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformListImagesConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformGetImageConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformCreateImageConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformDeleteImageConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformUploadVideoConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformListWorkspacesConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformGetWorkspaceConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformCreateWorkspaceConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformUpdateWorkspaceConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformDeleteWorkspaceConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformListAccountWorkspacesConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformCreateAccountWorkspaceConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformGetResponsesConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformDeleteResponsesConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformGetInsightsConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformDownloadFilesConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformGetFileFromResponseConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformRequestAudioMasterConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformGetAudioMasterConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformRequestVideoMasterConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformGetVideoMasterConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformCreateWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformDeleteWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformListWebhooksConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformGetWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformUpdateWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformGetTranslationStatusesConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformGetTranslationConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformCreateTranslationConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformUpdateTranslationConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformAutoTranslateConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformDeleteTranslationConfig"
+        },
+        {
+          "$ref": "#/$defs/TypeformOnNewResponseConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TypeformOAuthCredential"
+        },
+        {
+          "$ref": "#/$defs/TypeformPATCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Typeform Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "List all forms and get metadata for a customer survey",
+    "Create feedback form with multiple choice and text fields",
+    "Get form responses and process them by completion date",
+    "Retrieve insights and analytics for product survey",
+    "Download all responses from subscription form as CSV",
+    "Update form title and description based on feedback",
+    "Create webhook to trigger automation on new form submission"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

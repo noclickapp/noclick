@@ -1,0 +1,468 @@
+name: Release
+
+# A release is a deliberate cut from reviewed main history. The release
+# environment must be configured in GitHub with required reviewers and a
+# main-only deployment policy before Actions or this workflow is enabled for
+# dispatch. Required reviewers are configured only after the repository is
+# public on plans where private environments do not support them.
+#
+# Both images are built and smoke-tested locally. Nothing is logged in to GHCR
+# and no pullable version tag exists until those exact local image IDs pass the
+# schema and HTTP checks below.
+
+on:
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Version to cut, without the leading v (e.g. 1.2.3)"
+        required: true
+        type: string
+
+concurrency:
+  # Serialize all releases. A user-controlled version must not create a second
+  # concurrency lane that can race `latest` or a Git tag.
+  group: public-release-${{ github.repository }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+env:
+  REGISTRY: ghcr.io
+
+jobs:
+  release:
+    # The private review repository is inert, and the only public release path
+    # is a deliberate dispatch from main. The tag this job creates does not
+    # trigger a second release run.
+    if: github.event.repository.visibility == 'public' && github.ref == 'refs/heads/main'
+    environment:
+      name: release
+    runs-on: ubuntu-latest
+    timeout-minutes: 65
+    permissions:
+      contents: write # create a dispatch tag and the GitHub release
+      packages: write # granted only to this protected release job
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          fetch-depth: 0
+          # Build and test code must not inherit the release job's write token
+          # through git's persisted extraheader.
+          persist-credentials: false
+
+      - uses: actions/setup-python@a26af69be951a213d495a4c3e4e4022e16d87065 # v5
+        with:
+          python-version: "3.12"
+
+      - name: Block hidden repository transports in reachable history
+        run: python3 scripts/check-repository-transport.py --history HEAD .
+
+      - name: Resolve a strict release version
+        id: v
+        env:
+          INPUT_VERSION: ${{ inputs.version }}
+        run: |
+          set -euo pipefail
+          version="$INPUT_VERSION"
+          if [[ ! "$version" =~ ^(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)\.(0|[1-9][0-9]*)$ ]]; then
+            echo "::error::'$version' must be a canonical MAJOR.MINOR.PATCH version"
+            exit 1
+          fi
+          revision="$(git rev-parse HEAD)"
+          {
+            echo "version=$version"
+            echo "tag=v$version"
+            echo "revision=$revision"
+          } >> "$GITHUB_OUTPUT"
+
+      - name: Require reviewed main history
+        env:
+          REVISION: ${{ steps.v.outputs.revision }}
+        run: |
+          set -euo pipefail
+          git fetch --no-tags origin \
+            +refs/heads/main:refs/remotes/origin/main
+          if ! git merge-base --is-ancestor "$REVISION" refs/remotes/origin/main; then
+            echo "::error::$REVISION is not reachable from origin/main"
+            exit 1
+          fi
+
+      - name: Validate the release tag
+        id: tag_state
+        env:
+          TAG: ${{ steps.v.outputs.tag }}
+          REVISION: ${{ steps.v.outputs.revision }}
+        run: |
+          set -euo pipefail
+          direct="$(git ls-remote --tags origin "refs/tags/$TAG" | awk 'NR == 1 { print $1 }')"
+          peeled="$(git ls-remote --tags origin "refs/tags/$TAG^{}" | awk 'NR == 1 { print $1 }')"
+          target="${peeled:-$direct}"
+          if [ -n "$target" ] && [ "$target" != "$REVISION" ]; then
+            echo "::error::$TAG points at $target, not this release's $REVISION"
+            exit 1
+          fi
+          if [ -n "$target" ]; then
+            echo "exists=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "exists=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - uses: pnpm/action-setup@b906affcce14559ad1aafd4ab0e942779e9f58b1 # v4^{}
+        with:
+          version: 10.34.4
+
+      - uses: actions/setup-node@49933ea5288caeca8642d1e84afbd3f7d6820020 # v4
+        with:
+          node-version: "20"
+          cache: pnpm
+          cache-dependency-path: frontend/pnpm-lock.yaml
+
+      - name: Verify vendored assets and license material
+        run: |
+          set -euo pipefail
+          npm ci --ignore-scripts
+          npm run vendored:check
+
+      - name: Scan the release tree and history for secrets
+        run: python3 scripts/scan_real_secrets.py .
+
+      - name: Install frontend dependencies
+        run: pnpm --dir frontend install --frozen-lockfile
+
+      - name: Require a clean whole-frontend typecheck
+        run: pnpm --dir frontend typecheck
+
+      - uses: docker/setup-buildx-action@8d2750c68a42422c14e847fe6c8ac0403b4cbd6f # v3
+
+      # These are deliberately local-only names. `load: true` places the exact
+      # image under test in the runner's Docker engine without pushing it.
+      - name: Build the single-origin image locally
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
+        with:
+          context: .
+          file: docker/single-origin.Dockerfile
+          load: true
+          push: false
+          tags: noclick-release-single:${{ steps.v.outputs.revision }}
+          labels: |
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.revision=${{ steps.v.outputs.revision }}
+            org.opencontainers.image.version=${{ steps.v.outputs.version }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Build the backend image locally
+        uses: docker/build-push-action@10e90e3645eae34f1e60eeb005ba3a3d33f178e8 # v6
+        with:
+          context: .
+          file: docker/backend.Dockerfile
+          load: true
+          push: false
+          tags: noclick-release-backend:${{ steps.v.outputs.revision }}
+          labels: |
+            org.opencontainers.image.source=${{ github.server_url }}/${{ github.repository }}
+            org.opencontainers.image.revision=${{ steps.v.outputs.revision }}
+            org.opencontainers.image.version=${{ steps.v.outputs.version }}
+          cache-from: type=gha
+          cache-to: type=gha,mode=max
+
+      - name: Apply the public schema and smoke-test the local images
+        env:
+          IMAGE: noclick-release-single:${{ steps.v.outputs.revision }}
+          BACKEND_IMAGE: noclick-release-backend:${{ steps.v.outputs.revision }}
+          EXPECTED_REVISION: ${{ steps.v.outputs.revision }}
+          EXPECTED_SOURCE: ${{ github.server_url }}/${{ github.repository }}
+          EXPECTED_VERSION: ${{ steps.v.outputs.version }}
+        run: |
+          set -euo pipefail
+
+          cleanup() {
+            status=$?
+            trap - EXIT
+            if [ "$status" -ne 0 ] && docker inspect nc-app >/dev/null 2>&1; then
+              docker logs nc-app 2>&1 | tail -80 || true
+            fi
+            docker rm -f nc-app nc-db >/dev/null 2>&1 || true
+            docker network rm nc-verify >/dev/null 2>&1 || true
+            exit "$status"
+          }
+          trap cleanup EXIT
+
+          for artifact_image in "$IMAGE" "$BACKEND_IMAGE"; do
+            revision="$(docker inspect --format '{{ index .Config.Labels "org.opencontainers.image.revision" }}' "$artifact_image")"
+            source="$(docker inspect --format '{{ index .Config.Labels "org.opencontainers.image.source" }}' "$artifact_image")"
+            version="$(docker inspect --format '{{ index .Config.Labels "org.opencontainers.image.version" }}' "$artifact_image")"
+            [ "$revision" = "$EXPECTED_REVISION" ] || {
+              echo "::error::$artifact_image revision label is '$revision', expected '$EXPECTED_REVISION'"; exit 1;
+            }
+            [ "$source" = "$EXPECTED_SOURCE" ] || {
+              echo "::error::$artifact_image source label is '$source', expected '$EXPECTED_SOURCE'"; exit 1;
+            }
+            [ "$version" = "$EXPECTED_VERSION" ] || {
+              echo "::error::$artifact_image version label is '$version', expected '$EXPECTED_VERSION'"; exit 1;
+            }
+          done
+
+          docker network create nc-verify
+          docker run -d --name nc-db --network nc-verify \
+            -e POSTGRES_PASSWORD=verify -e POSTGRES_DB=postgres \
+            -v "$PWD/docker/db:/docker-entrypoint-initdb.d:ro" postgres:16
+          for _ in $(seq 1 40); do
+            docker exec nc-db pg_isready -U postgres >/dev/null 2>&1 && break
+            sleep 3
+          done
+          docker exec nc-db pg_isready -U postgres
+
+          # GoTrue normally creates this relation before bootstrap runs. The
+          # release gate uses its compatible shape so every shipped migration
+          # is applied against stock Postgres rather than merely parsed.
+          docker exec -i nc-db psql -v ON_ERROR_STOP=1 -U postgres -d postgres <<'SQL'
+          CREATE TABLE auth.users (
+              instance_id UUID,
+              id UUID PRIMARY KEY DEFAULT extensions.gen_random_uuid(),
+              aud VARCHAR(255),
+              role VARCHAR(255),
+              email VARCHAR(255) UNIQUE,
+              encrypted_password VARCHAR(255),
+              email_confirmed_at TIMESTAMPTZ,
+              invited_at TIMESTAMPTZ,
+              confirmation_token VARCHAR(255),
+              confirmation_sent_at TIMESTAMPTZ,
+              recovery_token VARCHAR(255),
+              recovery_sent_at TIMESTAMPTZ,
+              email_change_token_new VARCHAR(255),
+              email_change VARCHAR(255),
+              email_change_sent_at TIMESTAMPTZ,
+              last_sign_in_at TIMESTAMPTZ,
+              raw_app_meta_data JSONB,
+              raw_user_meta_data JSONB,
+              is_super_admin BOOLEAN,
+              created_at TIMESTAMPTZ DEFAULT NOW(),
+              updated_at TIMESTAMPTZ DEFAULT NOW(),
+              phone VARCHAR(255),
+              phone_confirmed_at TIMESTAMPTZ,
+              phone_change VARCHAR(255),
+              phone_change_token VARCHAR(255),
+              phone_change_sent_at TIMESTAMPTZ,
+              email_change_token_current VARCHAR(255),
+              email_change_confirm_status SMALLINT,
+              banned_until TIMESTAMPTZ,
+              reauthentication_token VARCHAR(255),
+              reauthentication_sent_at TIMESTAMPTZ,
+              is_sso_user BOOLEAN DEFAULT FALSE,
+              deleted_at TIMESTAMPTZ,
+              is_anonymous BOOLEAN DEFAULT FALSE
+          );
+          CREATE TABLE auth.identities (
+              id UUID PRIMARY KEY DEFAULT extensions.gen_random_uuid(),
+              provider_id VARCHAR(255) NOT NULL,
+              user_id UUID NOT NULL REFERENCES auth.users(id) ON DELETE CASCADE,
+              identity_data JSONB NOT NULL,
+              provider VARCHAR(255) NOT NULL,
+              last_sign_in_at TIMESTAMPTZ,
+              created_at TIMESTAMPTZ DEFAULT NOW(),
+              updated_at TIMESTAMPTZ DEFAULT NOW()
+          );
+          SQL
+
+          docker run --rm --network nc-verify \
+            -e POSTGRES_URL="postgres://postgres:verify@nc-db:5432/postgres" \
+            -e NOCLICK_BOOTSTRAP_TIMEOUT=30 \
+            "$BACKEND_IMAGE" python /app/docker/bootstrap.py
+
+          # Pin the curated schema boundary in the release itself: exactly the
+          # positive allowlist of 51 public tables, with RLS on every one.
+          table_count="$(docker exec nc-db psql -At -U postgres -d postgres -c \
+            "SELECT count(*) FROM pg_tables WHERE schemaname = 'public'")"
+          [ "$table_count" = "51" ] || {
+            echo "::error::public schema has $table_count tables, expected 51"; exit 1;
+          }
+          without_rls="$(docker exec nc-db psql -At -U postgres -d postgres -c \
+            "SELECT coalesce(string_agg(tablename, ',' ORDER BY tablename), '') FROM pg_tables WHERE schemaname = 'public' AND NOT rowsecurity")"
+          [ -z "$without_rls" ] || {
+            echo "::error::public tables without RLS: $without_rls"; exit 1;
+          }
+          docker exec nc-db psql -At -U postgres -d postgres -c \
+            "SELECT tablename FROM pg_tables WHERE schemaname = 'public' ORDER BY tablename" \
+            > /tmp/community-schema-tables.actual
+          if ! diff -u scripts/community-schema-tables.txt /tmp/community-schema-tables.actual; then
+            echo "::error::applied public schema differs from the reviewed allowlist"
+            exit 1
+          fi
+
+          docker run -d --name nc-app --network nc-verify -p 8080:8080 \
+            -e POSTGRES_POOLER_URL="postgres://postgres:verify@nc-db:5432/postgres" \
+            -e POSTGRES_URL="postgres://postgres:verify@nc-db:5432/postgres" \
+            -e SUPABASE_URL="http://127.0.0.1:9" \
+            -e SUPABASE_ANON_KEY="release-smoke-anon-placeholder" \
+            -e SESSION_SECRET="$(openssl rand -hex 32)" \
+            -e JWT_SECRET="$(openssl rand -hex 32)" \
+            -e CREDENTIALS_ENCRYPTION_KEY="$(python3 -c 'import base64,os;print(base64.urlsafe_b64encode(os.urandom(32)).decode())')" \
+            -e VITE_PUBLIC_URL="http://localhost:8080" \
+            "$IMAGE"
+
+          for _ in $(seq 1 60); do
+            [ "$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 http://localhost:8080/health || true)" = "200" ] && break
+            sleep 5
+          done
+
+          health="$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 http://localhost:8080/health || true)"
+          root="$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 http://localhost:8080/ || true)"
+          share="$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 http://localhost:8080/share/release-smoke || true)"
+          invite="$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 http://localhost:8080/i/release-smoke || true)"
+          cron="$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 http://localhost:8080/local-cron/schedules || true)"
+          echo "/health=$health  /=$root  /share=$share  /i=$invite  /local-cron=$cron"
+
+          [ "$health" = "200" ] || { echo "::error::/health returned $health"; exit 1; }
+          case "$root" in
+            2*|3*) ;;
+            *) echo "::error::the app server did not answer / (got $root)"; exit 1 ;;
+          esac
+          [ "$share" = "404" ] || {
+            echo "::error::the migrated share loader returned $share, expected 404"; exit 1;
+          }
+          [ "$invite" = "200" ] || {
+            echo "::error::the invite loader returned $invite, expected 200"; exit 1;
+          }
+          [ "$cron" != "404" ] || {
+            echo "::error::/local-cron is absent, so this is not the self-hosted edition"; exit 1;
+          }
+          echo "verified local images: OCI labels, curated schema, and public routes"
+
+      # Registry credentials and pullable names appear only after verification.
+      - uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Push the verified revision images
+        env:
+          REVISION: ${{ steps.v.outputs.revision }}
+          SINGLE_IMAGE: ${{ env.REGISTRY }}/${{ github.repository }}
+          BACKEND_IMAGE: ${{ env.REGISTRY }}/${{ github.repository }}-backend
+        run: |
+          set -euo pipefail
+          docker tag "noclick-release-single:$REVISION" "$SINGLE_IMAGE:sha-$REVISION"
+          docker tag "noclick-release-backend:$REVISION" "$BACKEND_IMAGE:sha-$REVISION"
+          docker push "$SINGLE_IMAGE:sha-$REVISION"
+          docker push "$BACKEND_IMAGE:sha-$REVISION"
+
+      - name: Promote the verified revision images idempotently
+        env:
+          REVISION: ${{ steps.v.outputs.revision }}
+          VERSION: ${{ steps.v.outputs.version }}
+          SINGLE_IMAGE: ${{ env.REGISTRY }}/${{ github.repository }}
+          BACKEND_IMAGE: ${{ env.REGISTRY }}/${{ github.repository }}-backend
+        run: |
+          set -euo pipefail
+
+          manifest_digest() {
+            local reference="$1"
+            local digest
+            digest="$(docker buildx imagetools inspect "$reference" \
+              --format '{{json .Manifest.Digest}}' | tr -d '"')"
+            if [[ ! "$digest" =~ ^sha256:[0-9a-f]{64}$ ]]; then
+              echo "::error::could not resolve a canonical digest for $reference" >&2
+              return 1
+            fi
+            printf '%s\n' "$digest"
+          }
+
+          promote_version() {
+            local image="$1"
+            local source="$image:sha-$REVISION"
+            local destination="$image:$VERSION"
+            local source_digest destination_digest destination_json error_file
+            source_digest="$(manifest_digest "$source")"
+            error_file="$(mktemp)"
+
+            if destination_json="$(docker buildx imagetools inspect "$destination" \
+              --format '{{json .Manifest.Digest}}' 2>"$error_file")"; then
+              destination_digest="$(printf '%s' "$destination_json" | tr -d '"[:space:]')"
+              rm -f "$error_file"
+              if [ "$destination_digest" != "$source_digest" ]; then
+                echo "::error::$destination already points at $destination_digest, not verified $source_digest" >&2
+                return 1
+              fi
+              echo "$destination already matches verified $source_digest"
+              return 0
+            fi
+
+            if ! grep -Eiq 'manifest unknown|no such manifest|not found' "$error_file"; then
+              echo "::error::could not determine whether $destination is unused" >&2
+              sed 's/^/registry: /' "$error_file" >&2
+              rm -f "$error_file"
+              return 1
+            fi
+            rm -f "$error_file"
+
+            docker buildx imagetools create \
+              --prefer-index=false --tag "$destination" "$source"
+            destination_digest="$(manifest_digest "$destination")"
+            if [ "$destination_digest" != "$source_digest" ]; then
+              echo "::error::$destination resolved to $destination_digest after promotion, expected $source_digest" >&2
+              return 1
+            fi
+          }
+
+          # Version tags are immutable but resumable: a retry accepts only the
+          # exact digest it just rebuilt, tested and pushed under sha-$REVISION.
+          promote_version "$SINGLE_IMAGE"
+          promote_version "$BACKEND_IMAGE"
+
+          # Both immutable version tags exist before either mutable convenience
+          # tag moves. Re-running safely finishes a partial latest promotion.
+          docker buildx imagetools create \
+            --prefer-index=false \
+            --tag "$SINGLE_IMAGE:latest" "$SINGLE_IMAGE:$VERSION"
+          docker buildx imagetools create \
+            --prefer-index=false \
+            --tag "$BACKEND_IMAGE:latest" "$BACKEND_IMAGE:$VERSION"
+
+      - name: Create the verified tag
+        if: steps.tag_state.outputs.exists != 'true'
+        env:
+          GH_TOKEN: ${{ github.token }}
+          TAG: ${{ steps.v.outputs.tag }}
+          REVISION: ${{ steps.v.outputs.revision }}
+        run: |
+          set -euo pipefail
+          if git ls-remote --exit-code --tags origin "refs/tags/$TAG" >/dev/null 2>&1; then
+            echo "::error::$TAG appeared while this release was building; refusing to replace it."
+            exit 1
+          fi
+          git config user.name "NoClick OSS Maintainers"
+          git config user.email "opensource@noclick.com"
+          git tag -a "$TAG" "$REVISION" -m "Release $TAG"
+          gh auth setup-git
+          git push origin "$TAG"
+
+      - name: Publish the release
+        env:
+          GH_TOKEN: ${{ github.token }}
+          GH_REPO: ${{ github.repository }}
+          VERSION: ${{ steps.v.outputs.version }}
+          TAG: ${{ steps.v.outputs.tag }}
+          IMAGE: ${{ env.REGISTRY }}/${{ github.repository }}
+        run: |
+          set -euo pipefail
+          {
+            echo "Run this release:"
+            echo
+            echo '```'
+            echo "NOCLICK_REF=${TAG} sh -c 'curl -fsSL https://noclick.com/install.sh | sh'"
+            echo '```'
+            echo
+            echo "Or pin an existing compose stack to it with \`NOCLICK_VERSION=${VERSION}\`."
+            echo
+            echo "The bare image is \`${IMAGE}:${VERSION}\`. It needs a Postgres with the"
+            echo "auth schema alongside it (docs/self-hosting.md), which is why the"
+            echo "installer, which brings one, is the one-liner."
+          } > /tmp/notes.md
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            echo "$TAG already has a GitHub release"
+          else
+            gh release create "$TAG" --title "$TAG" --generate-notes --notes-file /tmp/notes.md
+          fi

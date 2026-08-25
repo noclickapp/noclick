@@ -241,18 +241,7 @@ export const valtioCache = {
   delete: (key: string) => idb.delete('valtio-cache', key),
   has: (key: string) => idb.has('valtio-cache', key),
   clear: () => idb.clear('valtio-cache'),
-  getAllKeys: () => idb.getAllKeys('valtio-cache'),
-  // Debug helper to dump all workflow-outputs entries
-  debugWorkflowOutputs: async () => {
-    const keys = await idb.getAllKeys('valtio-cache');
-    const workflowKeys = keys.filter(k => k.startsWith('workflow-outputs:'));
-    const results: Record<string, unknown> = {};
-    for (const key of workflowKeys) {
-      results[key] = await idb.get('valtio-cache', key);
-    }
-    console.log('[valtioCache] Workflow outputs in IndexedDB:', results);
-    return results;
-  }
+  getAllKeys: () => idb.getAllKeys('valtio-cache')
 };
 
 export const userPreferences = {
@@ -266,16 +255,24 @@ export const userPreferences = {
 export { IndexedDBManager };
 export type { IDBConfig, StoredValue };
 
-// Expose debug helper on window for console debugging
-if (typeof window !== 'undefined') {
+// Console-only diagnostics are omitted from production bundles.
+if (import.meta.env.DEV && typeof window !== 'undefined') {
+  const debugWorkflowOutputs = async () => {
+    const keys = await idb.getAllKeys('valtio-cache');
+    const workflowKeys = keys.filter(k => k.startsWith('workflow-outputs:'));
+    const results: Record<string, unknown> = {};
+    for (const key of workflowKeys) {
+      results[key] = await idb.get('valtio-cache', key);
+    }
+    console.log('[valtioCache] Workflow outputs in IndexedDB:', results);
+    return results;
+  };
+
   (window as any).__debugIndexedDB = {
     valtioCache,
     idb,
     // Quick debug: dump all workflow outputs
-    dumpWorkflowOutputs: async () => {
-      const results = await valtioCache.debugWorkflowOutputs();
-      return results;
-    },
+    dumpWorkflowOutputs: debugWorkflowOutputs,
     // Test write/read cycle
     testWriteRead: async () => {
       const testKey = 'test-workflow-outputs';

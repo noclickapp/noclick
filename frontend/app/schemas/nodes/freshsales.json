@@ -1,0 +1,3212 @@
+{
+  "$defs": {
+    "FreshsalesAddContactsToListConfig": {
+      "description": "Add contacts to a marketing list.",
+      "properties": {
+        "operation": {
+          "const": "add_contacts_to_list",
+          "default": "add_contacts_to_list",
+          "title": "Add Contacts to List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lists",
+          "x-display-name": "Add Contacts to List",
+          "x-is-trigger": false
+        },
+        "list_id": {
+          "description": "The marketing list to add contacts to",
+          "title": "List ID",
+          "type": "string"
+        },
+        "contact_ids": {
+          "description": "Comma-separated contact IDs to add",
+          "title": "Contact IDs",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id",
+        "contact_ids"
+      ],
+      "title": "FreshsalesAddContactsToListConfig",
+      "type": "object"
+    },
+    "FreshsalesApiKeyCredential": {
+      "description": "API key credential for Freshsales (Freshworks CRM).",
+      "properties": {
+        "credential_type": {
+          "const": "freshsales_api_key",
+          "default": "freshsales_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "account_domain": {
+          "description": "Your Freshsales bundle alias, e.g. acme.myfreshworks.com (find it in your browser address bar)",
+          "title": "Account Domain",
+          "type": "string"
+        },
+        "api_key": {
+          "description": "Your Freshsales API key from Profile picture -> Settings -> API Settings -> Your API Key",
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "account_domain",
+        "api_key"
+      ],
+      "title": "FreshsalesApiKeyCredential",
+      "type": "object",
+      "x-credential-url": "https://support.freshsales.io/support/solutions/articles/220099-how-to-find-my-api-key-"
+    },
+    "FreshsalesCloneAccountConfig": {
+      "description": "Clone an existing sales account.",
+      "properties": {
+        "operation": {
+          "const": "clone_account",
+          "default": "clone_account",
+          "title": "Clone Account",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounts",
+          "x-display-name": "Clone Account",
+          "x-is-trigger": false
+        },
+        "account_id": {
+          "title": "Account ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 401000067890"
+        }
+      },
+      "required": [
+        "account_id"
+      ],
+      "title": "FreshsalesCloneAccountConfig",
+      "type": "object"
+    },
+    "FreshsalesCloneContactConfig": {
+      "description": "Clone an existing contact.",
+      "properties": {
+        "operation": {
+          "const": "clone_contact",
+          "default": "clone_contact",
+          "title": "Clone Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Clone Contact",
+          "x-is-trigger": false
+        },
+        "contact_id": {
+          "description": "The ID of the contact to clone",
+          "title": "Contact ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 401000012345"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "FreshsalesCloneContactConfig",
+      "type": "object"
+    },
+    "FreshsalesCloneDealConfig": {
+      "description": "Clone an existing deal.",
+      "properties": {
+        "operation": {
+          "const": "clone_deal",
+          "default": "clone_deal",
+          "title": "Clone Deal",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Deals",
+          "x-display-name": "Clone Deal",
+          "x-is-trigger": false
+        },
+        "deal_id": {
+          "title": "Deal ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 401000054321"
+        }
+      },
+      "required": [
+        "deal_id"
+      ],
+      "title": "FreshsalesCloneDealConfig",
+      "type": "object"
+    },
+    "FreshsalesCreateAccountConfig": {
+      "description": "Create a sales account (company/organization).",
+      "properties": {
+        "operation": {
+          "const": "create_account",
+          "default": "create_account",
+          "title": "Create Account",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounts",
+          "x-display-name": "Create Account",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "The account / company name",
+          "title": "Name",
+          "type": "string"
+        },
+        "website": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Company website URL",
+          "title": "Website"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Company phone number",
+          "title": "Phone"
+        },
+        "industry_type_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Industry type ID",
+          "title": "Industry Type ID"
+        },
+        "owner_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Owner (user) assigned to this account",
+          "title": "Owner",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste owner ID",
+            "field_name": "owner_id",
+            "placeholder": "Select an owner...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "FreshsalesCreateAccountConfig",
+      "type": "object"
+    },
+    "FreshsalesCreateAppointmentConfig": {
+      "description": "Create a calendar appointment with attendees.",
+      "properties": {
+        "operation": {
+          "const": "create_appointment",
+          "default": "create_appointment",
+          "title": "Create Appointment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Appointments",
+          "x-display-name": "Create Appointment",
+          "x-is-trigger": false
+        },
+        "title": {
+          "description": "The appointment title",
+          "title": "Title",
+          "type": "string"
+        },
+        "from_date": {
+          "description": "Start time in ISO 8601",
+          "title": "Start",
+          "type": "string"
+        },
+        "end_date": {
+          "description": "End time in ISO 8601",
+          "title": "End",
+          "type": "string"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Appointment location",
+          "title": "Location"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Appointment description",
+          "title": "Description",
+          "ui:widget": "textarea"
+        },
+        "targetable_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The type of record this appointment is linked to",
+          "enum": [
+            "",
+            "Contact",
+            "SalesAccount",
+            "Deal"
+          ],
+          "enumNames": [
+            "None",
+            "Contact",
+            "Sales Account",
+            "Deal"
+          ],
+          "title": "Linked Record Type",
+          "x-enum-searchable": true
+        },
+        "targetable_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ID of the linked record",
+          "title": "Linked Record ID"
+        }
+      },
+      "required": [
+        "title",
+        "from_date",
+        "end_date"
+      ],
+      "title": "FreshsalesCreateAppointmentConfig",
+      "type": "object"
+    },
+    "FreshsalesCreateContactConfig": {
+      "description": "Create a new contact.",
+      "properties": {
+        "operation": {
+          "const": "create_contact",
+          "default": "create_contact",
+          "title": "Create Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Create Contact",
+          "x-is-trigger": false
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact's first name",
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact's last name",
+          "title": "Last Name"
+        },
+        "email": {
+          "description": "Contact's primary email address",
+          "title": "Email",
+          "type": "string"
+        },
+        "mobile_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact's mobile phone number",
+          "title": "Mobile Number"
+        },
+        "work_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact's work phone number",
+          "title": "Work Number"
+        },
+        "job_title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact's job title",
+          "title": "Job Title"
+        },
+        "owner_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Owner (user) assigned to this contact",
+          "title": "Owner",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste owner ID",
+            "field_name": "owner_id",
+            "placeholder": "Select an owner...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "FreshsalesCreateContactConfig",
+      "type": "object"
+    },
+    "FreshsalesCreateCustomRecordConfig": {
+      "description": "Create a record in a custom module.",
+      "properties": {
+        "operation": {
+          "const": "cm_create_record",
+          "default": "cm_create_record",
+          "title": "Create Custom Module Record",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Modules",
+          "x-display-name": "Create Custom Module Record",
+          "x-is-trigger": false
+        },
+        "module_name": {
+          "description": "Custom module API name (e.g. cm_projects)",
+          "title": "Module Name",
+          "type": "string",
+          "ui:placeholder": "e.g. cm_projects"
+        },
+        "data_json": {
+          "description": "Map of field name -> value for the record",
+          "title": "Fields (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "module_name",
+        "data_json"
+      ],
+      "title": "FreshsalesCreateCustomRecordConfig",
+      "type": "object"
+    },
+    "FreshsalesCreateDealConfig": {
+      "description": "Create a new deal (opportunity).",
+      "properties": {
+        "operation": {
+          "const": "create_deal",
+          "default": "create_deal",
+          "title": "Create Deal",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Deals",
+          "x-display-name": "Create Deal",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "The deal name",
+          "title": "Name",
+          "type": "string"
+        },
+        "amount": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Deal value / amount",
+          "title": "Amount"
+        },
+        "deal_stage_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The pipeline stage of the deal",
+          "title": "Deal Stage",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste stage ID",
+            "field_name": "deal_stage_id",
+            "placeholder": "Select a deal stage...",
+            "searchable": true
+          }
+        },
+        "sales_account_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The sales account this deal belongs to",
+          "title": "Sales Account ID"
+        },
+        "owner_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Owner (user) assigned to this deal",
+          "title": "Owner",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste owner ID",
+            "field_name": "owner_id",
+            "placeholder": "Select an owner...",
+            "searchable": true
+          }
+        },
+        "expected_close": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Expected close date (YYYY-MM-DD)",
+          "title": "Expected Close Date"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "FreshsalesCreateDealConfig",
+      "type": "object"
+    },
+    "FreshsalesCreateDocumentLinkConfig": {
+      "description": "Attach an external link (document) to a record.",
+      "properties": {
+        "operation": {
+          "const": "create_document_link",
+          "default": "create_document_link",
+          "title": "Attach Link to Record",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Attach Link to Record",
+          "x-is-trigger": false
+        },
+        "url": {
+          "description": "The link URL to attach",
+          "title": "URL",
+          "type": "string",
+          "ui:placeholder": "https://..."
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Display name for the link",
+          "title": "Name"
+        },
+        "targetable_type": {
+          "default": "Contact",
+          "enum": [
+            "Contact",
+            "SalesAccount",
+            "Deal"
+          ],
+          "enumNames": [
+            "Contact",
+            "Sales Account",
+            "Deal"
+          ],
+          "title": "Linked Record Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "targetable_id": {
+          "title": "Linked Record ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url",
+        "targetable_id"
+      ],
+      "title": "FreshsalesCreateDocumentLinkConfig",
+      "type": "object"
+    },
+    "FreshsalesCreateNoteConfig": {
+      "description": "Attach a note to a contact, account, or deal.",
+      "properties": {
+        "operation": {
+          "const": "create_note",
+          "default": "create_note",
+          "title": "Create Note",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Activities",
+          "x-display-name": "Create Note",
+          "x-is-trigger": false
+        },
+        "description": {
+          "description": "The note content",
+          "title": "Note",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "targetable_type": {
+          "default": "Contact",
+          "description": "The type of record this note is attached to",
+          "enum": [
+            "Contact",
+            "SalesAccount",
+            "Deal"
+          ],
+          "enumNames": [
+            "Contact",
+            "Sales Account",
+            "Deal"
+          ],
+          "title": "Linked Record Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "targetable_id": {
+          "description": "The ID of the linked record",
+          "title": "Linked Record ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "description",
+        "targetable_id"
+      ],
+      "title": "FreshsalesCreateNoteConfig",
+      "type": "object"
+    },
+    "FreshsalesCreateSalesActivityConfig": {
+      "description": "Log a sales activity (call, email, custom activity type).",
+      "properties": {
+        "operation": {
+          "const": "create_sales_activity",
+          "default": "create_sales_activity",
+          "title": "Create Sales Activity",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Activities",
+          "x-display-name": "Create Sales Activity",
+          "x-is-trigger": false
+        },
+        "title": {
+          "description": "The sales activity title",
+          "title": "Title",
+          "type": "string"
+        },
+        "sales_activity_type_id": {
+          "description": "A CUSTOM sales-activity type ID (built-in Task/Meeting/etc. are not accepted here)",
+          "title": "Activity Type ID",
+          "type": "string"
+        },
+        "targetable_type": {
+          "default": "Contact",
+          "description": "The type of record this activity is linked to",
+          "enum": [
+            "Contact",
+            "SalesAccount",
+            "Deal"
+          ],
+          "enumNames": [
+            "Contact",
+            "Sales Account",
+            "Deal"
+          ],
+          "title": "Linked Record Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "targetable_id": {
+          "description": "The ID of the linked record",
+          "title": "Linked Record ID",
+          "type": "string"
+        },
+        "start_date": {
+          "description": "Activity start time (ISO 8601) \u2014 required",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "description": "Activity end time (ISO 8601) \u2014 required",
+          "title": "End Date",
+          "type": "string"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Activity notes",
+          "title": "Notes",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "title",
+        "sales_activity_type_id",
+        "targetable_id",
+        "start_date",
+        "end_date"
+      ],
+      "title": "FreshsalesCreateSalesActivityConfig",
+      "type": "object"
+    },
+    "FreshsalesCreateTaskConfig": {
+      "description": "Create a task linked to a contact / account / deal.",
+      "properties": {
+        "operation": {
+          "const": "create_task",
+          "default": "create_task",
+          "title": "Create Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Create Task",
+          "x-is-trigger": false
+        },
+        "title": {
+          "description": "The task title",
+          "title": "Title",
+          "type": "string"
+        },
+        "due_date": {
+          "description": "Due date/time in ISO 8601",
+          "title": "Due Date",
+          "type": "string"
+        },
+        "owner_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Owner (user) assigned to this task",
+          "title": "Owner",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste owner ID",
+            "field_name": "owner_id",
+            "placeholder": "Select an owner...",
+            "searchable": true
+          }
+        },
+        "targetable_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The type of record this task is linked to",
+          "enum": [
+            "",
+            "Contact",
+            "SalesAccount",
+            "Deal"
+          ],
+          "enumNames": [
+            "None",
+            "Contact",
+            "Sales Account",
+            "Deal"
+          ],
+          "title": "Linked Record Type",
+          "x-enum-searchable": true
+        },
+        "targetable_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The ID of the linked record",
+          "title": "Linked Record ID"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Task description",
+          "title": "Description",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "title",
+        "due_date"
+      ],
+      "title": "FreshsalesCreateTaskConfig",
+      "type": "object"
+    },
+    "FreshsalesDeleteAccountConfig": {
+      "description": "Delete (move to recycle bin) a sales account.",
+      "properties": {
+        "operation": {
+          "const": "delete_account",
+          "default": "delete_account",
+          "title": "Delete Account",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounts",
+          "x-display-name": "Delete Account",
+          "x-is-trigger": false
+        },
+        "account_id": {
+          "description": "The ID of the account to delete",
+          "title": "Account ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 401000067890"
+        }
+      },
+      "required": [
+        "account_id"
+      ],
+      "title": "FreshsalesDeleteAccountConfig",
+      "type": "object"
+    },
+    "FreshsalesDeleteAppointmentConfig": {
+      "description": "Delete an appointment.",
+      "properties": {
+        "operation": {
+          "const": "delete_appointment",
+          "default": "delete_appointment",
+          "title": "Delete Appointment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Appointments",
+          "x-display-name": "Delete Appointment",
+          "x-is-trigger": false
+        },
+        "appointment_id": {
+          "title": "Appointment ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 401000022222"
+        }
+      },
+      "required": [
+        "appointment_id"
+      ],
+      "title": "FreshsalesDeleteAppointmentConfig",
+      "type": "object"
+    },
+    "FreshsalesDeleteContactConfig": {
+      "description": "Delete (move to recycle bin) a contact.",
+      "properties": {
+        "operation": {
+          "const": "delete_contact",
+          "default": "delete_contact",
+          "title": "Delete Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Delete Contact",
+          "x-is-trigger": false
+        },
+        "contact_id": {
+          "description": "The ID of the contact to delete",
+          "title": "Contact ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "FreshsalesDeleteContactConfig",
+      "type": "object"
+    },
+    "FreshsalesDeleteCustomRecordConfig": {
+      "description": "Delete a custom-module record.",
+      "properties": {
+        "operation": {
+          "const": "cm_delete_record",
+          "default": "cm_delete_record",
+          "title": "Delete Custom Module Record",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Modules",
+          "x-display-name": "Delete Custom Module Record",
+          "x-is-trigger": false
+        },
+        "module_name": {
+          "title": "Module Name",
+          "type": "string",
+          "ui:placeholder": "e.g. cm_projects"
+        },
+        "record_id": {
+          "title": "Record ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 401000099999"
+        }
+      },
+      "required": [
+        "module_name",
+        "record_id"
+      ],
+      "title": "FreshsalesDeleteCustomRecordConfig",
+      "type": "object"
+    },
+    "FreshsalesDeleteDealConfig": {
+      "description": "Delete (move to recycle bin) a deal.",
+      "properties": {
+        "operation": {
+          "const": "delete_deal",
+          "default": "delete_deal",
+          "title": "Delete Deal",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Deals",
+          "x-display-name": "Delete Deal",
+          "x-is-trigger": false
+        },
+        "deal_id": {
+          "description": "The ID of the deal to delete",
+          "title": "Deal ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 401000054321"
+        }
+      },
+      "required": [
+        "deal_id"
+      ],
+      "title": "FreshsalesDeleteDealConfig",
+      "type": "object"
+    },
+    "FreshsalesDeleteNoteConfig": {
+      "description": "Delete a note.",
+      "properties": {
+        "operation": {
+          "const": "delete_note",
+          "default": "delete_note",
+          "title": "Delete Note",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Activities",
+          "x-display-name": "Delete Note",
+          "x-is-trigger": false
+        },
+        "note_id": {
+          "title": "Note ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 401000033333"
+        }
+      },
+      "required": [
+        "note_id"
+      ],
+      "title": "FreshsalesDeleteNoteConfig",
+      "type": "object"
+    },
+    "FreshsalesDeleteSalesActivityConfig": {
+      "description": "Delete a sales activity.",
+      "properties": {
+        "operation": {
+          "const": "delete_sales_activity",
+          "default": "delete_sales_activity",
+          "title": "Delete Sales Activity",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Activities",
+          "x-display-name": "Delete Sales Activity",
+          "x-is-trigger": false
+        },
+        "sales_activity_id": {
+          "title": "Sales Activity ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 401000044444"
+        }
+      },
+      "required": [
+        "sales_activity_id"
+      ],
+      "title": "FreshsalesDeleteSalesActivityConfig",
+      "type": "object"
+    },
+    "FreshsalesDeleteTaskConfig": {
+      "description": "Delete a task.",
+      "properties": {
+        "operation": {
+          "const": "delete_task",
+          "default": "delete_task",
+          "title": "Delete Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Delete Task",
+          "x-is-trigger": false
+        },
+        "task_id": {
+          "title": "Task ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 401000011111"
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "FreshsalesDeleteTaskConfig",
+      "type": "object"
+    },
+    "FreshsalesFilteredSearchConfig": {
+      "description": "Query records of an entity by arbitrary field conditions (filter rules).",
+      "properties": {
+        "operation": {
+          "const": "filtered_search",
+          "default": "filtered_search",
+          "title": "Filtered Search",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Search",
+          "x-display-name": "Filtered Search",
+          "x-is-trigger": false
+        },
+        "entity": {
+          "default": "contact",
+          "description": "Entity to query",
+          "enum": [
+            "contact",
+            "sales_account",
+            "deal"
+          ],
+          "enumNames": [
+            "Contact",
+            "Sales Account",
+            "Deal"
+          ],
+          "title": "Entity",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "filter_rule_json": {
+          "description": "Array of field conditions, e.g. [{\"attribute\":\"first_name\",\"operator\":\"is_in\",\"value\":[\"Sam\"]}]",
+          "title": "Filter Rule (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "1",
+          "title": "Page",
+          "ui:placeholder": "e.g. 1"
+        }
+      },
+      "required": [
+        "filter_rule_json"
+      ],
+      "title": "FreshsalesFilteredSearchConfig",
+      "type": "object"
+    },
+    "FreshsalesForgetAccountConfig": {
+      "description": "Forget (GDPR hard-delete) a sales account.",
+      "properties": {
+        "operation": {
+          "const": "forget_account",
+          "default": "forget_account",
+          "title": "Forget Account (GDPR)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounts",
+          "x-display-name": "Forget Account (GDPR)",
+          "x-is-trigger": false
+        },
+        "account_id": {
+          "title": "Account ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 401000067890"
+        }
+      },
+      "required": [
+        "account_id"
+      ],
+      "title": "FreshsalesForgetAccountConfig",
+      "type": "object"
+    },
+    "FreshsalesForgetContactConfig": {
+      "description": "Forget (GDPR hard-delete) a contact and its data.",
+      "properties": {
+        "operation": {
+          "const": "forget_contact",
+          "default": "forget_contact",
+          "title": "Forget Contact (GDPR)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Forget Contact (GDPR)",
+          "x-is-trigger": false
+        },
+        "contact_id": {
+          "description": "The ID of the contact to forget",
+          "title": "Contact ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 401000012345"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "FreshsalesForgetContactConfig",
+      "type": "object"
+    },
+    "FreshsalesForgetDealConfig": {
+      "description": "Forget (GDPR hard-delete) a deal.",
+      "properties": {
+        "operation": {
+          "const": "forget_deal",
+          "default": "forget_deal",
+          "title": "Forget Deal (GDPR)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Deals",
+          "x-display-name": "Forget Deal (GDPR)",
+          "x-is-trigger": false
+        },
+        "deal_id": {
+          "title": "Deal ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 401000054321"
+        }
+      },
+      "required": [
+        "deal_id"
+      ],
+      "title": "FreshsalesForgetDealConfig",
+      "type": "object"
+    },
+    "FreshsalesGetAccountConfig": {
+      "description": "Retrieve a single sales account by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_account",
+          "default": "get_account",
+          "title": "Get Account",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounts",
+          "x-display-name": "Get Account",
+          "x-is-trigger": false
+        },
+        "account_id": {
+          "description": "The ID of the account to retrieve",
+          "title": "Account ID",
+          "type": "string"
+        },
+        "include": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated associations to include",
+          "title": "Include"
+        }
+      },
+      "required": [
+        "account_id"
+      ],
+      "title": "FreshsalesGetAccountConfig",
+      "type": "object"
+    },
+    "FreshsalesGetAppointmentConfig": {
+      "description": "Retrieve a single appointment by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_appointment",
+          "default": "get_appointment",
+          "title": "Get Appointment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Appointments",
+          "x-display-name": "Get Appointment",
+          "x-is-trigger": false
+        },
+        "appointment_id": {
+          "title": "Appointment ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 401000022222"
+        }
+      },
+      "required": [
+        "appointment_id"
+      ],
+      "title": "FreshsalesGetAppointmentConfig",
+      "type": "object"
+    },
+    "FreshsalesGetContactActivitiesConfig": {
+      "description": "List a contact's activity history.",
+      "properties": {
+        "operation": {
+          "const": "get_contact_activities",
+          "default": "get_contact_activities",
+          "title": "Get Contact Activities",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Get Contact Activities",
+          "x-is-trigger": false
+        },
+        "contact_id": {
+          "description": "The contact whose activities to fetch",
+          "title": "Contact ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 401000012345"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "FreshsalesGetContactActivitiesConfig",
+      "type": "object"
+    },
+    "FreshsalesGetContactConfig": {
+      "description": "Retrieve a single contact by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_contact",
+          "default": "get_contact",
+          "title": "Get Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Get Contact",
+          "x-is-trigger": false
+        },
+        "contact_id": {
+          "description": "The ID of the contact to retrieve",
+          "title": "Contact ID",
+          "type": "string"
+        },
+        "include": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated associations to include (e.g. owner,sales_accounts)",
+          "title": "Include"
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "FreshsalesGetContactConfig",
+      "type": "object"
+    },
+    "FreshsalesGetContactFieldsConfig": {
+      "description": "List contact field definitions for dynamic field mapping.",
+      "properties": {
+        "operation": {
+          "const": "get_contact_fields",
+          "default": "get_contact_fields",
+          "title": "Get Contact Fields",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Selectors",
+          "x-display-name": "Get Contact Fields",
+          "x-is-trigger": false
+        }
+      },
+      "title": "FreshsalesGetContactFieldsConfig",
+      "type": "object"
+    },
+    "FreshsalesGetCustomRecordConfig": {
+      "description": "Retrieve a custom-module record by ID.",
+      "properties": {
+        "operation": {
+          "const": "cm_get_record",
+          "default": "cm_get_record",
+          "title": "Get Custom Module Record",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Modules",
+          "x-display-name": "Get Custom Module Record",
+          "x-is-trigger": false
+        },
+        "module_name": {
+          "title": "Module Name",
+          "type": "string",
+          "ui:placeholder": "e.g. cm_projects"
+        },
+        "record_id": {
+          "title": "Record ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 401000099999"
+        }
+      },
+      "required": [
+        "module_name",
+        "record_id"
+      ],
+      "title": "FreshsalesGetCustomRecordConfig",
+      "type": "object"
+    },
+    "FreshsalesGetDealConfig": {
+      "description": "Retrieve a single deal by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_deal",
+          "default": "get_deal",
+          "title": "Get Deal",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Deals",
+          "x-display-name": "Get Deal",
+          "x-is-trigger": false
+        },
+        "deal_id": {
+          "description": "The ID of the deal to retrieve",
+          "title": "Deal ID",
+          "type": "string"
+        },
+        "include": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated associations to include",
+          "title": "Include"
+        }
+      },
+      "required": [
+        "deal_id"
+      ],
+      "title": "FreshsalesGetDealConfig",
+      "type": "object"
+    },
+    "FreshsalesGetListContactsConfig": {
+      "description": "Fetch all contacts belonging to a marketing list.",
+      "properties": {
+        "operation": {
+          "const": "get_list_contacts",
+          "default": "get_list_contacts",
+          "title": "Get List Contacts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lists",
+          "x-display-name": "Get List Contacts",
+          "x-is-trigger": false
+        },
+        "list_id": {
+          "title": "List ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 401000055555"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "FreshsalesGetListContactsConfig",
+      "type": "object"
+    },
+    "FreshsalesGetModuleFieldsConfig": {
+      "description": "List field definitions for a module (contacts / accounts / deals / activities).",
+      "properties": {
+        "operation": {
+          "const": "get_module_fields",
+          "default": "get_module_fields",
+          "title": "Get Module Fields",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Selectors",
+          "x-display-name": "Get Module Fields",
+          "x-is-trigger": false
+        },
+        "entity": {
+          "default": "contacts",
+          "description": "Which module's field definitions to fetch",
+          "enum": [
+            "contacts",
+            "sales_accounts",
+            "deals",
+            "sales_activities"
+          ],
+          "enumNames": [
+            "Contacts",
+            "Sales Accounts",
+            "Deals",
+            "Sales Activities"
+          ],
+          "title": "Module",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "title": "FreshsalesGetModuleFieldsConfig",
+      "type": "object"
+    },
+    "FreshsalesGetSalesActivityConfig": {
+      "description": "Retrieve a single sales activity by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_sales_activity",
+          "default": "get_sales_activity",
+          "title": "Get Sales Activity",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Activities",
+          "x-display-name": "Get Sales Activity",
+          "x-is-trigger": false
+        },
+        "sales_activity_id": {
+          "title": "Sales Activity ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 401000044444"
+        }
+      },
+      "required": [
+        "sales_activity_id"
+      ],
+      "title": "FreshsalesGetSalesActivityConfig",
+      "type": "object"
+    },
+    "FreshsalesGetTaskConfig": {
+      "description": "Retrieve a single task by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_task",
+          "default": "get_task",
+          "title": "Get Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Get Task",
+          "x-is-trigger": false
+        },
+        "task_id": {
+          "title": "Task ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 401000011111"
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "FreshsalesGetTaskConfig",
+      "type": "object"
+    },
+    "FreshsalesListAccountViewsConfig": {
+      "description": "List saved account views/filters.",
+      "properties": {
+        "operation": {
+          "const": "list_account_views",
+          "default": "list_account_views",
+          "title": "List Account Views",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounts",
+          "x-display-name": "List Account Views",
+          "x-is-trigger": false
+        }
+      },
+      "title": "FreshsalesListAccountViewsConfig",
+      "type": "object"
+    },
+    "FreshsalesListAccountsConfig": {
+      "description": "List accounts belonging to a saved view.",
+      "properties": {
+        "operation": {
+          "const": "list_accounts",
+          "default": "list_accounts",
+          "title": "List Accounts (View)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounts",
+          "x-display-name": "List Accounts (View)",
+          "x-is-trigger": false
+        },
+        "view_id": {
+          "description": "The ID of the saved account view to list",
+          "title": "View ID",
+          "type": "string"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "1",
+          "description": "1-indexed page number",
+          "title": "Page"
+        }
+      },
+      "required": [
+        "view_id"
+      ],
+      "title": "FreshsalesListAccountsConfig",
+      "type": "object"
+    },
+    "FreshsalesListAppointmentsConfig": {
+      "description": "List appointments filtered by time.",
+      "properties": {
+        "operation": {
+          "const": "list_appointments",
+          "default": "list_appointments",
+          "title": "List Appointments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Appointments",
+          "x-display-name": "List Appointments",
+          "x-is-trigger": false
+        },
+        "appointment_filter": {
+          "default": "upcoming",
+          "description": "Which appointments to list",
+          "enum": [
+            "upcoming",
+            "past"
+          ],
+          "enumNames": [
+            "Upcoming",
+            "Past"
+          ],
+          "title": "Filter",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "title": "FreshsalesListAppointmentsConfig",
+      "type": "object"
+    },
+    "FreshsalesListContactViewsConfig": {
+      "description": "List saved contact views/filters (returns their IDs for List Contacts).",
+      "properties": {
+        "operation": {
+          "const": "list_contact_views",
+          "default": "list_contact_views",
+          "title": "List Contact Views",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "List Contact Views",
+          "x-is-trigger": false
+        }
+      },
+      "title": "FreshsalesListContactViewsConfig",
+      "type": "object"
+    },
+    "FreshsalesListContactsConfig": {
+      "description": "List contacts belonging to a saved view.",
+      "properties": {
+        "operation": {
+          "const": "list_contacts",
+          "default": "list_contacts",
+          "title": "List Contacts (View)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "List Contacts (View)",
+          "x-is-trigger": false
+        },
+        "view_id": {
+          "description": "The ID of the saved contact view to list",
+          "title": "View ID",
+          "type": "string"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "1",
+          "description": "1-indexed page number",
+          "title": "Page"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Field to sort by",
+          "title": "Sort By"
+        },
+        "sort_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sort direction",
+          "enum": [
+            "",
+            "asc",
+            "desc"
+          ],
+          "enumNames": [
+            "Default",
+            "Ascending",
+            "Descending"
+          ],
+          "title": "Sort Direction",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "view_id"
+      ],
+      "title": "FreshsalesListContactsConfig",
+      "type": "object"
+    },
+    "FreshsalesListDealStagesConfig": {
+      "description": "List configured deal stages.",
+      "properties": {
+        "operation": {
+          "const": "list_deal_stages",
+          "default": "list_deal_stages",
+          "title": "List Deal Stages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Selectors",
+          "x-display-name": "List Deal Stages",
+          "x-is-trigger": false
+        }
+      },
+      "title": "FreshsalesListDealStagesConfig",
+      "type": "object"
+    },
+    "FreshsalesListDealViewsConfig": {
+      "description": "List saved deal views/filters.",
+      "properties": {
+        "operation": {
+          "const": "list_deal_views",
+          "default": "list_deal_views",
+          "title": "List Deal Views",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Deals",
+          "x-display-name": "List Deal Views",
+          "x-is-trigger": false
+        }
+      },
+      "title": "FreshsalesListDealViewsConfig",
+      "type": "object"
+    },
+    "FreshsalesListDealsConfig": {
+      "description": "List deals belonging to a saved view.",
+      "properties": {
+        "operation": {
+          "const": "list_deals",
+          "default": "list_deals",
+          "title": "List Deals (View)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Deals",
+          "x-display-name": "List Deals (View)",
+          "x-is-trigger": false
+        },
+        "view_id": {
+          "description": "The ID of the saved deal view to list",
+          "title": "View ID",
+          "type": "string"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "1",
+          "description": "1-indexed page number",
+          "title": "Page"
+        }
+      },
+      "required": [
+        "view_id"
+      ],
+      "title": "FreshsalesListDealsConfig",
+      "type": "object"
+    },
+    "FreshsalesListDocumentAssociationsConfig": {
+      "description": "List files and links attached to a record.",
+      "properties": {
+        "operation": {
+          "const": "list_document_associations",
+          "default": "list_document_associations",
+          "title": "List Record Documents",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "List Record Documents",
+          "x-is-trigger": false
+        },
+        "targetable_type": {
+          "default": "contacts",
+          "enum": [
+            "contacts",
+            "sales_accounts",
+            "deals"
+          ],
+          "enumNames": [
+            "Contact",
+            "Sales Account",
+            "Deal"
+          ],
+          "title": "Record Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "record_id": {
+          "title": "Record ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "record_id"
+      ],
+      "title": "FreshsalesListDocumentAssociationsConfig",
+      "type": "object"
+    },
+    "FreshsalesListMarketingListsConfig": {
+      "description": "Fetch all marketing / contact lists.",
+      "properties": {
+        "operation": {
+          "const": "list_marketing_lists",
+          "default": "list_marketing_lists",
+          "title": "List Marketing Lists",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lists",
+          "x-display-name": "List Marketing Lists",
+          "x-is-trigger": false
+        }
+      },
+      "title": "FreshsalesListMarketingListsConfig",
+      "type": "object"
+    },
+    "FreshsalesListOwnersConfig": {
+      "description": "List users / owners for assignment dropdowns.",
+      "properties": {
+        "operation": {
+          "const": "list_owners",
+          "default": "list_owners",
+          "title": "List Owners",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Selectors",
+          "x-display-name": "List Owners",
+          "x-is-trigger": false
+        }
+      },
+      "title": "FreshsalesListOwnersConfig",
+      "type": "object"
+    },
+    "FreshsalesListSalesActivitiesConfig": {
+      "description": "List sales activities (paginated).",
+      "properties": {
+        "operation": {
+          "const": "list_sales_activities",
+          "default": "list_sales_activities",
+          "title": "List Sales Activities",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Activities",
+          "x-display-name": "List Sales Activities",
+          "x-is-trigger": false
+        },
+        "page": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "1",
+          "title": "Page",
+          "ui:placeholder": "e.g. 1"
+        }
+      },
+      "title": "FreshsalesListSalesActivitiesConfig",
+      "type": "object"
+    },
+    "FreshsalesListSelectorConfig": {
+      "description": "List values from any Freshsales selector (pipelines, types, currencies, etc.).",
+      "properties": {
+        "operation": {
+          "const": "list_selector",
+          "default": "list_selector",
+          "title": "List Selector",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Selectors",
+          "x-display-name": "List Selector",
+          "x-is-trigger": false
+        },
+        "selector": {
+          "default": "deal_pipelines",
+          "description": "Which selector list to fetch",
+          "enum": [
+            "owners",
+            "territories",
+            "deal_stages",
+            "deal_pipelines",
+            "deal_reasons",
+            "deal_types",
+            "deal_payment_statuses",
+            "deal_products",
+            "currencies",
+            "lead_sources",
+            "industry_types",
+            "business_types",
+            "campaigns",
+            "contact_statuses",
+            "lifecycle_stages",
+            "sales_activity_types",
+            "sales_activity_outcomes",
+            "designations"
+          ],
+          "title": "Selector",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "title": "FreshsalesListSelectorConfig",
+      "type": "object"
+    },
+    "FreshsalesListTasksConfig": {
+      "description": "List tasks filtered by status.",
+      "properties": {
+        "operation": {
+          "const": "list_tasks",
+          "default": "list_tasks",
+          "title": "List Tasks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "List Tasks",
+          "x-is-trigger": false
+        },
+        "task_filter": {
+          "default": "open",
+          "description": "Which tasks to list",
+          "enum": [
+            "open",
+            "due_today",
+            "overdue",
+            "completed"
+          ],
+          "enumNames": [
+            "Open",
+            "Due Today",
+            "Overdue",
+            "Completed"
+          ],
+          "title": "Filter",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "title": "FreshsalesListTasksConfig",
+      "type": "object"
+    },
+    "FreshsalesLogPhoneCallConfig": {
+      "description": "Manually log a phone call against a record.",
+      "properties": {
+        "operation": {
+          "const": "log_phone_call",
+          "default": "log_phone_call",
+          "title": "Log Phone Call",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Activities",
+          "x-display-name": "Log Phone Call",
+          "x-is-trigger": false
+        },
+        "call_direction": {
+          "default": "outgoing",
+          "description": "The direction of the call",
+          "enum": [
+            "incoming",
+            "outgoing"
+          ],
+          "enumNames": [
+            "Incoming",
+            "Outgoing"
+          ],
+          "title": "Direction",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "targetable_type": {
+          "default": "Contact",
+          "description": "The type of record this call is logged against",
+          "enum": [
+            "Contact",
+            "SalesAccount",
+            "Deal"
+          ],
+          "enumNames": [
+            "Contact",
+            "Sales Account",
+            "Deal"
+          ],
+          "title": "Linked Record Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "targetable_id": {
+          "description": "The ID of the linked record",
+          "title": "Linked Record ID",
+          "type": "string"
+        },
+        "note": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Summary / outcome of the call",
+          "title": "Call Note",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "targetable_id"
+      ],
+      "title": "FreshsalesLogPhoneCallConfig",
+      "type": "object"
+    },
+    "FreshsalesLookupConfig": {
+      "description": "Look up a record by a specific field (e.g. email).",
+      "properties": {
+        "operation": {
+          "const": "lookup",
+          "default": "lookup",
+          "title": "Lookup by Field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Search",
+          "x-display-name": "Lookup by Field",
+          "x-is-trigger": false
+        },
+        "value": {
+          "description": "The value to look up",
+          "title": "Value",
+          "type": "string"
+        },
+        "field": {
+          "default": "email",
+          "description": "The field to match against (e.g. email)",
+          "title": "Field",
+          "type": "string"
+        },
+        "entities": {
+          "default": "contact",
+          "description": "Comma-separated entity types to search",
+          "title": "Entities",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "FreshsalesLookupConfig",
+      "type": "object"
+    },
+    "FreshsalesReceiveWebhookConfig": {
+      "description": "Receive outbound webhook events fired by a Freshsales Workflow.",
+      "properties": {
+        "operation": {
+          "const": "receive_webhook",
+          "default": "receive_webhook",
+          "title": "Receive Webhook Events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "Receive Webhook Events",
+          "x-is-trigger": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Add this URL as a Webhook action in a Freshsales Workflow (Admin Settings -> Workflows)",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        }
+      },
+      "title": "FreshsalesReceiveWebhookConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "FreshsalesRemoveContactsFromListConfig": {
+      "description": "Remove contacts from a marketing list.",
+      "properties": {
+        "operation": {
+          "const": "remove_contacts_from_list",
+          "default": "remove_contacts_from_list",
+          "title": "Remove Contacts from List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lists",
+          "x-display-name": "Remove Contacts from List",
+          "x-is-trigger": false
+        },
+        "list_id": {
+          "title": "List ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 401000055555"
+        },
+        "contact_ids": {
+          "description": "Comma-separated contact IDs to remove",
+          "title": "Contact IDs",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id",
+        "contact_ids"
+      ],
+      "title": "FreshsalesRemoveContactsFromListConfig",
+      "type": "object"
+    },
+    "FreshsalesSearchConfig": {
+      "description": "Full-text search across entities.",
+      "properties": {
+        "operation": {
+          "const": "search",
+          "default": "search",
+          "title": "Search",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Search",
+          "x-display-name": "Search",
+          "x-is-trigger": false
+        },
+        "query": {
+          "description": "The search query string",
+          "title": "Query",
+          "type": "string"
+        },
+        "include": {
+          "default": "contact",
+          "description": "Comma-separated entity types to search (contact,sales_account,deal,user)",
+          "title": "Entities",
+          "type": "string"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "FreshsalesSearchConfig",
+      "type": "object"
+    },
+    "FreshsalesUpdateAccountConfig": {
+      "description": "Update fields on a sales account.",
+      "properties": {
+        "operation": {
+          "const": "update_account",
+          "default": "update_account",
+          "title": "Update Account",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounts",
+          "x-display-name": "Update Account",
+          "x-is-trigger": false
+        },
+        "account_id": {
+          "description": "The ID of the account to update",
+          "title": "Account ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated account name",
+          "title": "Name"
+        },
+        "website": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated website URL",
+          "title": "Website"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated phone number",
+          "title": "Phone"
+        },
+        "owner_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reassign the account owner",
+          "title": "Owner",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste owner ID",
+            "field_name": "owner_id",
+            "placeholder": "Select an owner...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "account_id"
+      ],
+      "title": "FreshsalesUpdateAccountConfig",
+      "type": "object"
+    },
+    "FreshsalesUpdateAppointmentConfig": {
+      "description": "Update an appointment.",
+      "properties": {
+        "operation": {
+          "const": "update_appointment",
+          "default": "update_appointment",
+          "title": "Update Appointment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Appointments",
+          "x-display-name": "Update Appointment",
+          "x-is-trigger": false
+        },
+        "appointment_id": {
+          "title": "Appointment ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 401000022222"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Start time in ISO 8601",
+          "title": "Start"
+        },
+        "end_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "End time in ISO 8601",
+          "title": "End"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Location"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "appointment_id"
+      ],
+      "title": "FreshsalesUpdateAppointmentConfig",
+      "type": "object"
+    },
+    "FreshsalesUpdateContactConfig": {
+      "description": "Update fields on an existing contact.",
+      "properties": {
+        "operation": {
+          "const": "update_contact",
+          "default": "update_contact",
+          "title": "Update Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Update Contact",
+          "x-is-trigger": false
+        },
+        "contact_id": {
+          "description": "The ID of the contact to update",
+          "title": "Contact ID",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated first name",
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated last name",
+          "title": "Last Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated primary email",
+          "title": "Email"
+        },
+        "mobile_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated mobile phone number",
+          "title": "Mobile Number"
+        },
+        "job_title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated job title",
+          "title": "Job Title"
+        },
+        "owner_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reassign the contact owner",
+          "title": "Owner",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste owner ID",
+            "field_name": "owner_id",
+            "placeholder": "Select an owner...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "contact_id"
+      ],
+      "title": "FreshsalesUpdateContactConfig",
+      "type": "object"
+    },
+    "FreshsalesUpdateCustomRecordConfig": {
+      "description": "Update a custom-module record.",
+      "properties": {
+        "operation": {
+          "const": "cm_update_record",
+          "default": "cm_update_record",
+          "title": "Update Custom Module Record",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Modules",
+          "x-display-name": "Update Custom Module Record",
+          "x-is-trigger": false
+        },
+        "module_name": {
+          "title": "Module Name",
+          "type": "string",
+          "ui:placeholder": "e.g. cm_projects"
+        },
+        "record_id": {
+          "title": "Record ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 401000099999"
+        },
+        "data_json": {
+          "description": "Fields to update",
+          "title": "Fields (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "module_name",
+        "record_id",
+        "data_json"
+      ],
+      "title": "FreshsalesUpdateCustomRecordConfig",
+      "type": "object"
+    },
+    "FreshsalesUpdateDealConfig": {
+      "description": "Update a deal (stage, amount, owner, etc.).",
+      "properties": {
+        "operation": {
+          "const": "update_deal",
+          "default": "update_deal",
+          "title": "Update Deal",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Deals",
+          "x-display-name": "Update Deal",
+          "x-is-trigger": false
+        },
+        "deal_id": {
+          "description": "The ID of the deal to update",
+          "title": "Deal ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated deal name",
+          "title": "Name"
+        },
+        "amount": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated deal amount",
+          "title": "Amount"
+        },
+        "deal_stage_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Move the deal to a different stage",
+          "title": "Deal Stage",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste stage ID",
+            "field_name": "deal_stage_id",
+            "placeholder": "Select a deal stage...",
+            "searchable": true
+          }
+        },
+        "owner_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reassign the deal owner",
+          "title": "Owner",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste owner ID",
+            "field_name": "owner_id",
+            "placeholder": "Select an owner...",
+            "searchable": true
+          }
+        }
+      },
+      "required": [
+        "deal_id"
+      ],
+      "title": "FreshsalesUpdateDealConfig",
+      "type": "object"
+    },
+    "FreshsalesUpdateNoteConfig": {
+      "description": "Update a note's content.",
+      "properties": {
+        "operation": {
+          "const": "update_note",
+          "default": "update_note",
+          "title": "Update Note",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Activities",
+          "x-display-name": "Update Note",
+          "x-is-trigger": false
+        },
+        "note_id": {
+          "title": "Note ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 401000033333"
+        },
+        "description": {
+          "description": "Updated note content",
+          "title": "Note",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "note_id",
+        "description"
+      ],
+      "title": "FreshsalesUpdateNoteConfig",
+      "type": "object"
+    },
+    "FreshsalesUpdateSalesActivityConfig": {
+      "description": "Update a sales activity.",
+      "properties": {
+        "operation": {
+          "const": "update_sales_activity",
+          "default": "update_sales_activity",
+          "title": "Update Sales Activity",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Activities",
+          "x-display-name": "Update Sales Activity",
+          "x-is-trigger": false
+        },
+        "sales_activity_id": {
+          "title": "Sales Activity ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 401000044444"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Title"
+        },
+        "notes": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Notes",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "sales_activity_id"
+      ],
+      "title": "FreshsalesUpdateSalesActivityConfig",
+      "type": "object"
+    },
+    "FreshsalesUpdateTaskConfig": {
+      "description": "Update a task or mark it complete.",
+      "properties": {
+        "operation": {
+          "const": "update_task",
+          "default": "update_task",
+          "title": "Update / Complete Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Update / Complete Task",
+          "x-is-trigger": false
+        },
+        "task_id": {
+          "description": "The ID of the task to update",
+          "title": "Task ID",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated task title",
+          "title": "Title"
+        },
+        "due_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated due date (ISO 8601)",
+          "title": "Due Date"
+        },
+        "mark_complete": {
+          "default": "false",
+          "description": "Set the task to completed",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Mark Complete",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "task_id"
+      ],
+      "title": "FreshsalesUpdateTaskConfig",
+      "type": "object"
+    },
+    "FreshsalesUpsertAccountConfig": {
+      "description": "Create or update a sales account, matched on name.",
+      "properties": {
+        "operation": {
+          "const": "upsert_account",
+          "default": "upsert_account",
+          "title": "Upsert Account",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Accounts",
+          "x-display-name": "Upsert Account",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Account name (the match value)",
+          "title": "Name",
+          "type": "string"
+        },
+        "website": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Website"
+        },
+        "phone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Phone"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "FreshsalesUpsertAccountConfig",
+      "type": "object"
+    },
+    "FreshsalesUpsertContactConfig": {
+      "description": "Create or update a contact, matched on a unique field (e.g. email).",
+      "properties": {
+        "operation": {
+          "const": "upsert_contact",
+          "default": "upsert_contact",
+          "title": "Upsert Contact",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Contacts",
+          "x-display-name": "Upsert Contact",
+          "x-is-trigger": false
+        },
+        "unique_identifier_field": {
+          "default": "email",
+          "description": "Unique field used to match an existing contact",
+          "enum": [
+            "email",
+            "mobile_number",
+            "work_number"
+          ],
+          "enumNames": [
+            "Email",
+            "Mobile Number",
+            "Work Number"
+          ],
+          "title": "Match Field",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "email": {
+          "description": "Contact's email (the match value)",
+          "title": "Email",
+          "type": "string"
+        },
+        "first_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact's first name",
+          "title": "First Name"
+        },
+        "last_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact's last name",
+          "title": "Last Name"
+        },
+        "mobile_number": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact's mobile phone number",
+          "title": "Mobile Number"
+        },
+        "job_title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact's job title",
+          "title": "Job Title"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "FreshsalesUpsertContactConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the Freshsales node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_contacts_to_list": "#/$defs/FreshsalesAddContactsToListConfig",
+          "clone_account": "#/$defs/FreshsalesCloneAccountConfig",
+          "clone_contact": "#/$defs/FreshsalesCloneContactConfig",
+          "clone_deal": "#/$defs/FreshsalesCloneDealConfig",
+          "cm_create_record": "#/$defs/FreshsalesCreateCustomRecordConfig",
+          "cm_delete_record": "#/$defs/FreshsalesDeleteCustomRecordConfig",
+          "cm_get_record": "#/$defs/FreshsalesGetCustomRecordConfig",
+          "cm_update_record": "#/$defs/FreshsalesUpdateCustomRecordConfig",
+          "create_account": "#/$defs/FreshsalesCreateAccountConfig",
+          "create_appointment": "#/$defs/FreshsalesCreateAppointmentConfig",
+          "create_contact": "#/$defs/FreshsalesCreateContactConfig",
+          "create_deal": "#/$defs/FreshsalesCreateDealConfig",
+          "create_document_link": "#/$defs/FreshsalesCreateDocumentLinkConfig",
+          "create_note": "#/$defs/FreshsalesCreateNoteConfig",
+          "create_sales_activity": "#/$defs/FreshsalesCreateSalesActivityConfig",
+          "create_task": "#/$defs/FreshsalesCreateTaskConfig",
+          "delete_account": "#/$defs/FreshsalesDeleteAccountConfig",
+          "delete_appointment": "#/$defs/FreshsalesDeleteAppointmentConfig",
+          "delete_contact": "#/$defs/FreshsalesDeleteContactConfig",
+          "delete_deal": "#/$defs/FreshsalesDeleteDealConfig",
+          "delete_note": "#/$defs/FreshsalesDeleteNoteConfig",
+          "delete_sales_activity": "#/$defs/FreshsalesDeleteSalesActivityConfig",
+          "delete_task": "#/$defs/FreshsalesDeleteTaskConfig",
+          "filtered_search": "#/$defs/FreshsalesFilteredSearchConfig",
+          "forget_account": "#/$defs/FreshsalesForgetAccountConfig",
+          "forget_contact": "#/$defs/FreshsalesForgetContactConfig",
+          "forget_deal": "#/$defs/FreshsalesForgetDealConfig",
+          "get_account": "#/$defs/FreshsalesGetAccountConfig",
+          "get_appointment": "#/$defs/FreshsalesGetAppointmentConfig",
+          "get_contact": "#/$defs/FreshsalesGetContactConfig",
+          "get_contact_activities": "#/$defs/FreshsalesGetContactActivitiesConfig",
+          "get_contact_fields": "#/$defs/FreshsalesGetContactFieldsConfig",
+          "get_deal": "#/$defs/FreshsalesGetDealConfig",
+          "get_list_contacts": "#/$defs/FreshsalesGetListContactsConfig",
+          "get_module_fields": "#/$defs/FreshsalesGetModuleFieldsConfig",
+          "get_sales_activity": "#/$defs/FreshsalesGetSalesActivityConfig",
+          "get_task": "#/$defs/FreshsalesGetTaskConfig",
+          "list_account_views": "#/$defs/FreshsalesListAccountViewsConfig",
+          "list_accounts": "#/$defs/FreshsalesListAccountsConfig",
+          "list_appointments": "#/$defs/FreshsalesListAppointmentsConfig",
+          "list_contact_views": "#/$defs/FreshsalesListContactViewsConfig",
+          "list_contacts": "#/$defs/FreshsalesListContactsConfig",
+          "list_deal_stages": "#/$defs/FreshsalesListDealStagesConfig",
+          "list_deal_views": "#/$defs/FreshsalesListDealViewsConfig",
+          "list_deals": "#/$defs/FreshsalesListDealsConfig",
+          "list_document_associations": "#/$defs/FreshsalesListDocumentAssociationsConfig",
+          "list_marketing_lists": "#/$defs/FreshsalesListMarketingListsConfig",
+          "list_owners": "#/$defs/FreshsalesListOwnersConfig",
+          "list_sales_activities": "#/$defs/FreshsalesListSalesActivitiesConfig",
+          "list_selector": "#/$defs/FreshsalesListSelectorConfig",
+          "list_tasks": "#/$defs/FreshsalesListTasksConfig",
+          "log_phone_call": "#/$defs/FreshsalesLogPhoneCallConfig",
+          "lookup": "#/$defs/FreshsalesLookupConfig",
+          "receive_webhook": "#/$defs/FreshsalesReceiveWebhookConfig",
+          "remove_contacts_from_list": "#/$defs/FreshsalesRemoveContactsFromListConfig",
+          "search": "#/$defs/FreshsalesSearchConfig",
+          "update_account": "#/$defs/FreshsalesUpdateAccountConfig",
+          "update_appointment": "#/$defs/FreshsalesUpdateAppointmentConfig",
+          "update_contact": "#/$defs/FreshsalesUpdateContactConfig",
+          "update_deal": "#/$defs/FreshsalesUpdateDealConfig",
+          "update_note": "#/$defs/FreshsalesUpdateNoteConfig",
+          "update_sales_activity": "#/$defs/FreshsalesUpdateSalesActivityConfig",
+          "update_task": "#/$defs/FreshsalesUpdateTaskConfig",
+          "upsert_account": "#/$defs/FreshsalesUpsertAccountConfig",
+          "upsert_contact": "#/$defs/FreshsalesUpsertContactConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/FreshsalesCreateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesGetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesUpdateContactConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesUpsertContactConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesDeleteContactConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesCloneContactConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesForgetContactConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesGetContactActivitiesConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesListContactViewsConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesCreateAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesGetAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesUpdateAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesListAccountsConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesUpsertAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesDeleteAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesCloneAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesForgetAccountConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesListAccountViewsConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesCreateDealConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesGetDealConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesUpdateDealConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesListDealsConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesDeleteDealConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesCloneDealConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesForgetDealConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesListDealViewsConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesCreateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesListTasksConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesUpdateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesGetTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesDeleteTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesCreateAppointmentConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesListAppointmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesGetAppointmentConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesUpdateAppointmentConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesDeleteAppointmentConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesCreateNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesUpdateNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesDeleteNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesCreateSalesActivityConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesListSalesActivitiesConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesGetSalesActivityConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesUpdateSalesActivityConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesDeleteSalesActivityConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesLogPhoneCallConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesLookupConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesFilteredSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesListOwnersConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesListDealStagesConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesListSelectorConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesGetContactFieldsConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesGetModuleFieldsConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesListMarketingListsConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesAddContactsToListConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesGetListContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesRemoveContactsFromListConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesCreateCustomRecordConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesGetCustomRecordConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesUpdateCustomRecordConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesDeleteCustomRecordConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesCreateDocumentLinkConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesListDocumentAssociationsConfig"
+        },
+        {
+          "$ref": "#/$defs/FreshsalesReceiveWebhookConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FreshsalesApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Freshsales Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Create a contact in Freshsales when a form is submitted",
+    "Create a deal and assign it to an owner",
+    "Look up a contact by email and update their job title",
+    "Log a phone call against a contact after a sales call",
+    "Trigger a workflow when a Freshsales Workflow fires a webhook"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

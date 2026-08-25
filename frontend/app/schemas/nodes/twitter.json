@@ -1,0 +1,6114 @@
+{
+  "$defs": {
+    "TwitterAddBookmarkConfig": {
+      "description": "Add a tweet to bookmarks",
+      "properties": {
+        "operation": {
+          "const": "add_tweet_to_bookmarks",
+          "default": "add_tweet_to_bookmarks",
+          "title": "Add Tweet to Bookmarks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tweet",
+          "x-display-name": "Add Tweet to Bookmarks",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "bookmark tweet",
+            "save tweet",
+            "add bookmark"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "tweet_id": {
+          "description": "The ID of the tweet to bookmark",
+          "title": "Tweet ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tweet_id"
+      ],
+      "title": "Add Bookmark",
+      "type": "object"
+    },
+    "TwitterAddListMemberConfig": {
+      "description": "Add a member to a list",
+      "properties": {
+        "operation": {
+          "const": "add_member_to_list",
+          "default": "add_member_to_list",
+          "title": "Add Member to List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "List",
+          "x-display-name": "Add Member to List",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "add to list",
+            "put in list",
+            "include member"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "list_id": {
+          "description": "The ID of the list",
+          "title": "List ID",
+          "type": "string"
+        },
+        "user_id": {
+          "description": "The ID of the user to add",
+          "title": "User ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id",
+        "user_id"
+      ],
+      "title": "TwitterAddListMemberConfig",
+      "type": "object"
+    },
+    "TwitterAddStreamRulesConfig": {
+      "description": "Add stream filter rules",
+      "properties": {
+        "operation": {
+          "const": "add_stream_filter_rules",
+          "default": "add_stream_filter_rules",
+          "title": "Add Stream Filter Rules",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Stream",
+          "x-display-name": "Add Stream Filter Rules",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "add stream rule",
+            "new filter rule",
+            "set stream rules"
+          ]
+        },
+        "rules": {
+          "description": "Comma-separated list of filter rules",
+          "title": "Rules",
+          "type": "string"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated tags for each rule (matched by position)",
+          "title": "Tags"
+        }
+      },
+      "required": [
+        "rules"
+      ],
+      "title": "TwitterAddStreamRulesConfig",
+      "type": "object"
+    },
+    "TwitterBearerTokenCredential": {
+      "description": "Bearer Token (App-Only) credential for Twitter/X.\nFor read-only access to public data.\n\nGet your Bearer Token at: https://developer.x.com/en/portal/dashboard",
+      "properties": {
+        "credential_type": {
+          "const": "twitter_bearer_token",
+          "default": "twitter_bearer_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "bearer_token": {
+          "description": "Your Twitter/X App Bearer Token for read-only access",
+          "title": "Bearer Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "bearer_token"
+      ],
+      "title": "TwitterBearerTokenCredential",
+      "type": "object",
+      "x-credential-url": "https://developer.x.com/en/portal/dashboard"
+    },
+    "TwitterBlockDMsConfig": {
+      "description": "Block DMs from a user",
+      "properties": {
+        "operation": {
+          "const": "block_user_dms",
+          "default": "block_user_dms",
+          "title": "Block User Dms",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "DM Block",
+          "x-display-name": "Block User Dms",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "block dms",
+            "stop messages from",
+            "block private messages"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "target_user_id": {
+          "description": "The ID of the user to block DMs from",
+          "title": "Target User ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "target_user_id"
+      ],
+      "title": "TwitterBlockDMsConfig",
+      "type": "object"
+    },
+    "TwitterBlockUserConfig": {
+      "description": "Block a user",
+      "properties": {
+        "operation": {
+          "const": "block_user",
+          "default": "block_user",
+          "title": "Block User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Block",
+          "x-display-name": "Block User",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "block account",
+            "blacklist user"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "target_user_id": {
+          "description": "The ID of the user to block",
+          "title": "Target User ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "target_user_id"
+      ],
+      "title": "Block User",
+      "type": "object"
+    },
+    "TwitterCreateComplianceJobConfig": {
+      "description": "Create a compliance job",
+      "properties": {
+        "operation": {
+          "const": "create_compliance_job",
+          "default": "create_compliance_job",
+          "title": "Create Compliance Job",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Compliance Job",
+          "x-display-name": "Create Compliance Job",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new compliance job",
+            "compliance batch",
+            "start compliance"
+          ],
+          "x-supported-credential-types": [
+            "twitter_bearer_token"
+          ]
+        },
+        "type": {
+          "description": "Type of compliance job",
+          "enum": [
+            "tweets",
+            "users"
+          ],
+          "title": "Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional name for the compliance job",
+          "title": "Name"
+        }
+      },
+      "required": [
+        "type"
+      ],
+      "title": "TwitterCreateComplianceJobConfig",
+      "type": "object"
+    },
+    "TwitterCreateDMConversationConfig": {
+      "description": "Create a group Direct Message conversation",
+      "properties": {
+        "operation": {
+          "const": "create_group_direct_message_conversation",
+          "default": "create_group_direct_message_conversation",
+          "title": "Create Group Direct Message Conversation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Direct Message",
+          "x-display-name": "Create Group Direct Message Conversation",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "group dm",
+            "start group chat",
+            "new group conversation",
+            "group message thread"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "participant_ids": {
+          "description": "Comma-separated list of user IDs to include in conversation",
+          "title": "Participant User IDs",
+          "type": "string"
+        },
+        "message_text": {
+          "description": "The text of the first message",
+          "title": "Message Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "participant_ids",
+        "message_text"
+      ],
+      "title": "Create DM Conversation",
+      "type": "object",
+      "x-requires-tier": "pro",
+      "x-tier-label": "\u2b50\u2b50"
+    },
+    "TwitterCreateListConfig": {
+      "description": "Create a new list",
+      "properties": {
+        "operation": {
+          "const": "create_list",
+          "default": "create_list",
+          "title": "Create List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "List",
+          "x-display-name": "Create List",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "make a list",
+            "new twitter list",
+            "start a list"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "name": {
+          "description": "The name of the list",
+          "title": "List Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Description of the list (optional)",
+          "title": "Description",
+          "ui:widget": "textarea"
+        },
+        "private": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Whether the list is private",
+          "title": "Private"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "TwitterCreateListConfig",
+      "type": "object"
+    },
+    "TwitterCreateMediaMetadataConfig": {
+      "description": "Create metadata for uploaded media",
+      "properties": {
+        "operation": {
+          "const": "create_media_metadata",
+          "default": "create_media_metadata",
+          "title": "Create Media Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Media",
+          "x-display-name": "Create Media Metadata",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "alt text",
+            "media metadata",
+            "image description"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "media_id": {
+          "description": "The ID of the media",
+          "title": "Media ID",
+          "type": "string"
+        },
+        "alt_text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Accessibility alt text for the media",
+          "title": "Alt Text"
+        },
+        "sensitive_media_warnings": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated warnings",
+          "enum": [
+            "adult_content",
+            "graphic_violence",
+            "other"
+          ],
+          "title": "Sensitive Media Warnings",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "media_id"
+      ],
+      "title": "TwitterCreateMediaMetadataConfig",
+      "type": "object"
+    },
+    "TwitterCreateMediaSubtitlesConfig": {
+      "description": "Create subtitles for media",
+      "properties": {
+        "operation": {
+          "const": "create_media_subtitles",
+          "default": "create_media_subtitles",
+          "title": "Create Media Subtitles",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Media",
+          "x-display-name": "Create Media Subtitles",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "add subtitles",
+            "add captions",
+            "closed captions"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "media_id": {
+          "description": "The ID of the media",
+          "title": "Media ID",
+          "type": "string"
+        },
+        "subtitle_data": {
+          "description": "Base64-encoded SRT/VTT subtitle file content",
+          "title": "Subtitle Data",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "language_code": {
+          "description": "Language code (e.g. 'en')",
+          "title": "Language Code",
+          "type": "string"
+        },
+        "display_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Display name for the subtitle track (optional)",
+          "title": "Display Name"
+        }
+      },
+      "required": [
+        "media_id",
+        "subtitle_data",
+        "language_code"
+      ],
+      "title": "TwitterCreateMediaSubtitlesConfig",
+      "type": "object"
+    },
+    "TwitterCreateNoteConfig": {
+      "description": "Create a community note on a tweet",
+      "properties": {
+        "operation": {
+          "const": "create_community_note_on_tweet",
+          "default": "create_community_note_on_tweet",
+          "title": "Create Community Note on Tweet",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tweet",
+          "x-display-name": "Create Community Note on Tweet",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "add community note",
+            "birdwatch note",
+            "fact check note"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "tweet_id": {
+          "description": "The ID of the tweet to add a note to",
+          "title": "Tweet ID",
+          "type": "string"
+        },
+        "note_text": {
+          "description": "Text of the community note",
+          "title": "Note Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "misleading_as": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Classification of why tweet is misleading",
+          "title": "Misleading As"
+        }
+      },
+      "required": [
+        "tweet_id",
+        "note_text"
+      ],
+      "title": "TwitterCreateNoteConfig",
+      "type": "object"
+    },
+    "TwitterCreateStreamLinkConfig": {
+      "description": "Create a stream link for a webhook",
+      "properties": {
+        "operation": {
+          "const": "create_webhook_stream_link",
+          "default": "create_webhook_stream_link",
+          "title": "Create Webhook Stream Link",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhook",
+          "x-display-name": "Create Webhook Stream Link",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "link webhook stream",
+            "attach stream",
+            "connect webhook stream"
+          ],
+          "x-supported-credential-types": [
+            "twitter_bearer_token"
+          ]
+        },
+        "webhook_id": {
+          "description": "The ID of the webhook",
+          "title": "Webhook ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "TwitterCreateStreamLinkConfig",
+      "type": "object"
+    },
+    "TwitterCreateSubscriptionConfig": {
+      "description": "Create an account activity subscription",
+      "properties": {
+        "operation": {
+          "const": "create_account_activity_subscription",
+          "default": "create_account_activity_subscription",
+          "title": "Create Account Activity Subscription",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscription",
+          "x-display-name": "Create Account Activity Subscription",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "subscribe account activity",
+            "add activity feed",
+            "register activity subscription"
+          ],
+          "x-supported-credential-types": [
+            "twitter_bearer_token"
+          ]
+        },
+        "webhook_id": {
+          "description": "Webhook ID to subscribe to",
+          "title": "Webhook ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "TwitterCreateSubscriptionConfig",
+      "type": "object"
+    },
+    "TwitterCreateSubscriptionReplayConfig": {
+      "description": "Create an account activity subscription replay",
+      "properties": {
+        "operation": {
+          "const": "create_account_activity_subscription_replay",
+          "default": "create_account_activity_subscription_replay",
+          "title": "Create Account Activity Subscription Replay",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscription",
+          "x-display-name": "Create Account Activity Subscription Replay",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "replay account activity",
+            "redeliver activity events",
+            "resend activity feed"
+          ],
+          "x-supported-credential-types": [
+            "twitter_bearer_token"
+          ]
+        },
+        "webhook_id": {
+          "description": "The Webhook ID",
+          "title": "Webhook ID",
+          "type": "string"
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 start date for replay",
+          "title": "From Date"
+        },
+        "to_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 end date for replay",
+          "title": "To Date"
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "TwitterCreateSubscriptionReplayConfig",
+      "type": "object"
+    },
+    "TwitterCreateTweetConfig": {
+      "description": "Create a new tweet",
+      "properties": {
+        "operation": {
+          "const": "create_tweet",
+          "default": "create_tweet",
+          "title": "Create Tweet",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tweet",
+          "x-display-name": "Create Tweet",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "compose tweet",
+            "write a tweet",
+            "post status",
+            "new post"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "text": {
+          "description": "The text of the tweet (max 280 characters)",
+          "title": "Tweet Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "reply_to_tweet_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of the tweet to reply to (optional)",
+          "title": "Reply To Tweet ID"
+        },
+        "quote_tweet_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of the tweet to quote (optional)",
+          "title": "Quote Tweet ID"
+        }
+      },
+      "required": [
+        "text"
+      ],
+      "title": "Create Tweet",
+      "type": "object"
+    },
+    "TwitterCreateWebhookConfig": {
+      "description": "Create a webhook",
+      "properties": {
+        "operation": {
+          "const": "create_webhook",
+          "default": "create_webhook",
+          "title": "Create Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhook",
+          "x-display-name": "Create Webhook",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "register webhook",
+            "webhook endpoint",
+            "callback url",
+            "new webhook"
+          ],
+          "x-supported-credential-types": [
+            "twitter_bearer_token"
+          ]
+        },
+        "url": {
+          "description": "The URL for the webhook endpoint",
+          "title": "URL",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional name for the webhook",
+          "title": "Name"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "TwitterCreateWebhookConfig",
+      "type": "object"
+    },
+    "TwitterCreateWebhookReplayConfig": {
+      "description": "Create a webhook replay",
+      "properties": {
+        "operation": {
+          "const": "create_webhook_replay",
+          "default": "create_webhook_replay",
+          "title": "Create Webhook Replay",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhook",
+          "x-display-name": "Create Webhook Replay",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "replay webhook",
+            "redeliver webhook",
+            "resend webhook events"
+          ],
+          "x-supported-credential-types": [
+            "twitter_bearer_token"
+          ]
+        },
+        "webhook_id": {
+          "description": "The ID of the webhook",
+          "title": "Webhook ID",
+          "type": "string"
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 start date for replay",
+          "title": "From Date"
+        },
+        "to_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 end date for replay",
+          "title": "To Date"
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "TwitterCreateWebhookReplayConfig",
+      "type": "object"
+    },
+    "TwitterDeleteDMEventConfig": {
+      "description": "Delete a DM event",
+      "properties": {
+        "operation": {
+          "const": "delete_direct_message_event",
+          "default": "delete_direct_message_event",
+          "title": "Delete Direct Message Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Direct Message",
+          "x-display-name": "Delete Direct Message Event",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove a dm",
+            "delete direct message",
+            "erase dm"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "event_id": {
+          "description": "The ID of the DM event to delete",
+          "title": "Event ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "TwitterDeleteDMEventConfig",
+      "type": "object"
+    },
+    "TwitterDeleteListConfig": {
+      "description": "Delete a list",
+      "properties": {
+        "operation": {
+          "const": "delete_list",
+          "default": "delete_list",
+          "title": "Delete List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "List",
+          "x-display-name": "Delete List",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove a list",
+            "delete twitter list",
+            "erase list"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "list_id": {
+          "description": "The ID of the list to delete",
+          "title": "List ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "TwitterDeleteListConfig",
+      "type": "object"
+    },
+    "TwitterDeleteMediaSubtitlesConfig": {
+      "description": "Delete subtitles from media",
+      "properties": {
+        "operation": {
+          "const": "delete_media_subtitles",
+          "default": "delete_media_subtitles",
+          "title": "Delete Media Subtitles",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Media",
+          "x-display-name": "Delete Media Subtitles",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove subtitles",
+            "remove captions"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "media_id": {
+          "description": "The ID of the media",
+          "title": "Media ID",
+          "type": "string"
+        },
+        "language_code": {
+          "description": "Language code of the subtitle track to delete",
+          "title": "Language Code",
+          "type": "string"
+        }
+      },
+      "required": [
+        "media_id",
+        "language_code"
+      ],
+      "title": "TwitterDeleteMediaSubtitlesConfig",
+      "type": "object"
+    },
+    "TwitterDeleteNoteConfig": {
+      "description": "Delete a community note",
+      "properties": {
+        "operation": {
+          "const": "delete_community_note",
+          "default": "delete_community_note",
+          "title": "Delete Community Note",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tweet",
+          "x-display-name": "Delete Community Note",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove community note",
+            "delete birdwatch"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "note_id": {
+          "description": "The ID of the community note to delete",
+          "title": "Note ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "note_id"
+      ],
+      "title": "TwitterDeleteNoteConfig",
+      "type": "object"
+    },
+    "TwitterDeleteStreamLinkConfig": {
+      "description": "Delete a stream link from a webhook",
+      "properties": {
+        "operation": {
+          "const": "delete_webhook_stream_link",
+          "default": "delete_webhook_stream_link",
+          "title": "Delete Webhook Stream Link",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhook",
+          "x-display-name": "Delete Webhook Stream Link",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "unlink webhook stream",
+            "detach stream",
+            "remove stream link"
+          ],
+          "x-supported-credential-types": [
+            "twitter_bearer_token"
+          ]
+        },
+        "webhook_id": {
+          "description": "The ID of the webhook",
+          "title": "Webhook ID",
+          "type": "string"
+        },
+        "stream_link_id": {
+          "description": "The ID of the stream link to delete",
+          "title": "Stream Link ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "webhook_id",
+        "stream_link_id"
+      ],
+      "title": "TwitterDeleteStreamLinkConfig",
+      "type": "object"
+    },
+    "TwitterDeleteStreamRulesConfig": {
+      "description": "Delete stream filter rules by ID",
+      "properties": {
+        "operation": {
+          "const": "delete_stream_filter_rules",
+          "default": "delete_stream_filter_rules",
+          "title": "Delete Stream Filter Rules",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Stream",
+          "x-display-name": "Delete Stream Filter Rules",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove stream rule",
+            "delete filter rule"
+          ]
+        },
+        "rule_ids": {
+          "description": "Comma-separated rule IDs to delete",
+          "title": "Rule IDs",
+          "type": "string"
+        }
+      },
+      "required": [
+        "rule_ids"
+      ],
+      "title": "TwitterDeleteStreamRulesConfig",
+      "type": "object"
+    },
+    "TwitterDeleteSubscriptionConfig": {
+      "description": "Delete an account activity subscription",
+      "properties": {
+        "operation": {
+          "const": "delete_account_activity_subscription",
+          "default": "delete_account_activity_subscription",
+          "title": "Delete Account Activity Subscription",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscription",
+          "x-display-name": "Delete Account Activity Subscription",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "unsubscribe account activity",
+            "remove activity feed",
+            "drop activity subscription"
+          ],
+          "x-supported-credential-types": [
+            "twitter_bearer_token"
+          ]
+        },
+        "webhook_id": {
+          "description": "Webhook ID of the subscription to delete",
+          "title": "Webhook ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "TwitterDeleteSubscriptionConfig",
+      "type": "object"
+    },
+    "TwitterDeleteTweetConfig": {
+      "description": "Delete a tweet",
+      "properties": {
+        "operation": {
+          "const": "delete_tweet",
+          "default": "delete_tweet",
+          "title": "Delete Tweet",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tweet",
+          "x-display-name": "Delete Tweet",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove tweet",
+            "take down tweet",
+            "delete post"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "tweet_id": {
+          "description": "The ID of the tweet to delete",
+          "title": "Tweet ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tweet_id"
+      ],
+      "title": "Delete Tweet",
+      "type": "object"
+    },
+    "TwitterDeleteWebhookConfig": {
+      "description": "Delete a webhook",
+      "properties": {
+        "operation": {
+          "const": "delete_webhook",
+          "default": "delete_webhook",
+          "title": "Delete Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhook",
+          "x-display-name": "Delete Webhook",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove webhook",
+            "delete callback",
+            "drop webhook"
+          ],
+          "x-supported-credential-types": [
+            "twitter_bearer_token"
+          ]
+        },
+        "webhook_id": {
+          "description": "The ID of the webhook to delete",
+          "title": "Webhook ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "TwitterDeleteWebhookConfig",
+      "type": "object"
+    },
+    "TwitterEvaluateNoteConfig": {
+      "description": "Evaluate a community note",
+      "properties": {
+        "operation": {
+          "const": "evaluate_community_note",
+          "default": "evaluate_community_note",
+          "title": "Evaluate Community Note",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tweet",
+          "x-display-name": "Evaluate Community Note",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "rate community note",
+            "review note",
+            "helpful note vote"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "note_id": {
+          "description": "The ID of the community note to evaluate",
+          "title": "Note ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "note_id"
+      ],
+      "title": "TwitterEvaluateNoteConfig",
+      "type": "object"
+    },
+    "TwitterFollowListConfig": {
+      "description": "Follow a list",
+      "properties": {
+        "operation": {
+          "const": "follow_list",
+          "default": "follow_list",
+          "title": "Follow List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "List",
+          "x-display-name": "Follow List",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "follow a list",
+            "subscribe to list",
+            "track a list"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "list_id": {
+          "description": "The ID of the list to follow",
+          "title": "List ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "TwitterFollowListConfig",
+      "type": "object"
+    },
+    "TwitterFollowUserConfig": {
+      "description": "Follow a user",
+      "properties": {
+        "operation": {
+          "const": "follow_user",
+          "default": "follow_user",
+          "title": "Follow User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Follow User",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "start following",
+            "add follow"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "target_user_id": {
+          "description": "The ID of the user to follow",
+          "title": "Target User ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "target_user_id"
+      ],
+      "title": "Follow User",
+      "type": "object"
+    },
+    "TwitterGetAllDMEventsConfig": {
+      "description": "Get all DM events for the authenticated user",
+      "properties": {
+        "operation": {
+          "const": "get_all_direct_message_events",
+          "default": "get_all_direct_message_events",
+          "title": "Get All Direct Message Events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Direct Message",
+          "x-display-name": "Get All Direct Message Events",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "all my dms",
+            "every direct message",
+            "full dm history",
+            "inbox messages"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "description": "Number of results (1-100)",
+          "title": "Max Results"
+        },
+        "dm_event_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "id,text,created_at,sender_id,participant_ids",
+          "description": "Comma-separated list of fields",
+          "title": "DM Event Fields"
+        }
+      },
+      "title": "Get All DM Events",
+      "type": "object",
+      "x-requires-tier": "pro",
+      "x-tier-label": "\u2b50\u2b50"
+    },
+    "TwitterGetBlockedUsersConfig": {
+      "description": "Get blocked users",
+      "properties": {
+        "operation": {
+          "const": "get_blocked_users",
+          "default": "get_blocked_users",
+          "title": "Get Blocked Users",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Block",
+          "x-display-name": "Get Blocked Users",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "block list",
+            "blocked accounts",
+            "who i blocked"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "description": "Number of results (1-1000)",
+          "title": "Max Results"
+        },
+        "user_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "created_at,description,public_metrics",
+          "description": "Comma-separated list of fields",
+          "title": "User Fields"
+        }
+      },
+      "title": "Get Blocked Users",
+      "type": "object",
+      "x-requires-tier": "basic",
+      "x-tier-label": "\u2b50"
+    },
+    "TwitterGetBookmarkFoldersConfig": {
+      "description": "Get bookmark folders for the authenticated user",
+      "properties": {
+        "operation": {
+          "const": "get_bookmark_folders",
+          "default": "get_bookmark_folders",
+          "title": "Get Bookmark Folders",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bookmark Folder",
+          "x-display-name": "Get Bookmark Folders",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "bookmark folders",
+            "saved folders",
+            "organize bookmarks",
+            "folder list bookmarks"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        }
+      },
+      "title": "TwitterGetBookmarkFoldersConfig",
+      "type": "object"
+    },
+    "TwitterGetBookmarksConfig": {
+      "description": "Get bookmarked tweets",
+      "properties": {
+        "operation": {
+          "const": "get_bookmarked_tweets",
+          "default": "get_bookmarked_tweets",
+          "title": "Get Bookmarked Tweets",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tweet",
+          "x-display-name": "Get Bookmarked Tweets",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "my bookmarks",
+            "saved tweets",
+            "bookmarked posts",
+            "tweets i saved"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "description": "Number of results (10-100)",
+          "title": "Max Results"
+        },
+        "tweet_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "created_at,author_id,public_metrics,text",
+          "description": "Comma-separated list of fields",
+          "title": "Tweet Fields"
+        }
+      },
+      "title": "Get Bookmarks",
+      "type": "object",
+      "x-requires-tier": "basic",
+      "x-tier-label": "\u2b50"
+    },
+    "TwitterGetCommunityConfig": {
+      "description": "Get a community by ID",
+      "properties": {
+        "operation": {
+          "const": "get_community_by_id",
+          "default": "get_community_by_id",
+          "title": "Get Community by Id",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Community",
+          "x-display-name": "Get Community by Id",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "community details",
+            "single community"
+          ]
+        },
+        "community_id": {
+          "description": "The ID of the community",
+          "title": "Community ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "community_id"
+      ],
+      "title": "TwitterGetCommunityConfig",
+      "type": "object"
+    },
+    "TwitterGetComplianceJobConfig": {
+      "description": "Get a compliance job by ID",
+      "properties": {
+        "operation": {
+          "const": "get_compliance_job_by_id",
+          "default": "get_compliance_job_by_id",
+          "title": "Get Compliance Job by Id",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Compliance Job",
+          "x-display-name": "Get Compliance Job by Id",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "compliance job details",
+            "single compliance job"
+          ],
+          "x-supported-credential-types": [
+            "twitter_bearer_token"
+          ]
+        },
+        "job_id": {
+          "description": "The ID of the compliance job",
+          "title": "Job ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "TwitterGetComplianceJobConfig",
+      "type": "object"
+    },
+    "TwitterGetConnectionsConfig": {
+      "description": "Get all streaming connections",
+      "properties": {
+        "operation": {
+          "const": "get_all_streaming_connections",
+          "default": "get_all_streaming_connections",
+          "title": "Get All Streaming Connections",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Stream",
+          "x-display-name": "Get All Streaming Connections",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "list stream connections",
+            "active streams",
+            "open connections"
+          ],
+          "x-supported-credential-types": [
+            "twitter_bearer_token"
+          ]
+        }
+      },
+      "title": "TwitterGetConnectionsConfig",
+      "type": "object"
+    },
+    "TwitterGetDMConversationConfig": {
+      "description": "Get DM conversation events with a specific user",
+      "properties": {
+        "operation": {
+          "const": "get_direct_message_conversation_with_user",
+          "default": "get_direct_message_conversation_with_user",
+          "title": "Get Direct Message Conversation with User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Direct Message",
+          "x-display-name": "Get Direct Message Conversation with User",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "dm history user",
+            "conversation with person",
+            "messages with someone",
+            "chat with user"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "participant_id": {
+          "description": "The user ID of the conversation participant",
+          "title": "Participant User ID",
+          "type": "string"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "description": "Number of results (1-100)",
+          "title": "Max Results"
+        }
+      },
+      "required": [
+        "participant_id"
+      ],
+      "title": "Get DM Conversation",
+      "type": "object",
+      "x-requires-tier": "pro",
+      "x-tier-label": "\u2b50\u2b50"
+    },
+    "TwitterGetDMEventConfig": {
+      "description": "Get a specific DM event by ID",
+      "properties": {
+        "operation": {
+          "const": "get_direct_message_event_by_id",
+          "default": "get_direct_message_event_by_id",
+          "title": "Get Direct Message Event by Id",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Direct Message",
+          "x-display-name": "Get Direct Message Event by Id",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "single dm",
+            "one direct message",
+            "dm details",
+            "specific message"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "event_id": {
+          "description": "The ID of the DM event to retrieve",
+          "title": "Event ID",
+          "type": "string"
+        },
+        "dm_event_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of fields",
+          "title": "DM Event Fields"
+        }
+      },
+      "required": [
+        "event_id"
+      ],
+      "title": "TwitterGetDMEventConfig",
+      "type": "object"
+    },
+    "TwitterGetDMEventsConfig": {
+      "description": "Get DM events for a specific conversation ID",
+      "properties": {
+        "operation": {
+          "const": "get_direct_message_events_for_conversation",
+          "default": "get_direct_message_events_for_conversation",
+          "title": "Get Direct Message Events for Conversation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Direct Message",
+          "x-display-name": "Get Direct Message Events for Conversation",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "dm thread events",
+            "conversation messages",
+            "events for thread",
+            "messages by conversation"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "conversation_id": {
+          "description": "The DM conversation ID",
+          "title": "Conversation ID",
+          "type": "string"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "description": "Number of results (1-100)",
+          "title": "Max Results"
+        }
+      },
+      "required": [
+        "conversation_id"
+      ],
+      "title": "Get DM Events",
+      "type": "object",
+      "x-requires-tier": "pro",
+      "x-tier-label": "\u2b50\u2b50"
+    },
+    "TwitterGetFilteredStreamConfig": {
+      "description": "Connect to filtered stream and collect tweets",
+      "properties": {
+        "operation": {
+          "const": "collect_filtered_stream_tweets",
+          "default": "collect_filtered_stream_tweets",
+          "title": "Collect Filtered Stream Tweets",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Stream",
+          "x-display-name": "Collect Filtered Stream Tweets",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "filtered stream",
+            "live stream tweets",
+            "realtime filter"
+          ]
+        },
+        "max_events": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "description": "Max tweets to collect before disconnecting",
+          "title": "Max Events"
+        },
+        "timeout_seconds": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 30,
+          "description": "Seconds to wait before disconnecting",
+          "title": "Timeout Seconds"
+        },
+        "tweet_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of fields",
+          "title": "Tweet Fields"
+        },
+        "expansions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of expansions",
+          "title": "Expansions"
+        }
+      },
+      "title": "TwitterGetFilteredStreamConfig",
+      "type": "object"
+    },
+    "TwitterGetFollowedListsConfig": {
+      "description": "Get lists followed by a user",
+      "properties": {
+        "operation": {
+          "const": "get_lists_followed_by_user",
+          "default": "get_lists_followed_by_user",
+          "title": "Get Lists Followed by User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "List",
+          "x-display-name": "Get Lists Followed by User",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "lists user follows",
+            "followed lists",
+            "lists subscribed to",
+            "lists i follow"
+          ]
+        },
+        "user_id": {
+          "description": "The user ID",
+          "title": "User ID",
+          "type": "string"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "description": "Number of results (1-100)",
+          "title": "Max Results"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "TwitterGetFollowedListsConfig",
+      "type": "object"
+    },
+    "TwitterGetFollowersConfig": {
+      "description": "Get followers of a user",
+      "properties": {
+        "operation": {
+          "const": "get_user_followers",
+          "default": "get_user_followers",
+          "title": "Get User Followers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Get User Followers",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "followers of user",
+            "who follows",
+            "follower list"
+          ]
+        },
+        "user_id": {
+          "description": "The user ID to get followers for",
+          "title": "User ID",
+          "type": "string"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "description": "Number of results (1-1000)",
+          "title": "Max Results"
+        },
+        "user_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "created_at,description,public_metrics",
+          "description": "Comma-separated list of fields",
+          "title": "User Fields"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "Get Followers",
+      "type": "object",
+      "x-requires-tier": "basic",
+      "x-tier-label": "\u2b50"
+    },
+    "TwitterGetFollowingConfig": {
+      "description": "Get users followed by a user",
+      "properties": {
+        "operation": {
+          "const": "get_users_followed_by_user",
+          "default": "get_users_followed_by_user",
+          "title": "Get Users Followed by User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Get Users Followed by User",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "following list",
+            "accounts followed",
+            "who user follows",
+            "friends list"
+          ]
+        },
+        "user_id": {
+          "description": "The user ID to get following for",
+          "title": "User ID",
+          "type": "string"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "description": "Number of results (1-1000)",
+          "title": "Max Results"
+        },
+        "user_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "created_at,description,public_metrics",
+          "description": "Comma-separated list of fields",
+          "title": "User Fields"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "Get Following",
+      "type": "object",
+      "x-requires-tier": "basic",
+      "x-tier-label": "\u2b50"
+    },
+    "TwitterGetHomeTimelineConfig": {
+      "description": "Get reverse chronological home timeline",
+      "properties": {
+        "operation": {
+          "const": "get_home_timeline",
+          "default": "get_home_timeline",
+          "title": "Get Home Timeline",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Timeline",
+          "x-display-name": "Get Home Timeline",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "home feed",
+            "my timeline",
+            "following feed",
+            "for you feed"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "description": "Number of results (5-100)",
+          "title": "Max Results"
+        },
+        "tweet_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "created_at,author_id,public_metrics,text",
+          "description": "Comma-separated list of fields",
+          "title": "Tweet Fields"
+        }
+      },
+      "title": "TwitterGetHomeTimelineConfig",
+      "type": "object"
+    },
+    "TwitterGetLikedTweetsConfig": {
+      "description": "Get tweets liked by a user",
+      "properties": {
+        "operation": {
+          "const": "get_user_liked_tweets",
+          "default": "get_user_liked_tweets",
+          "title": "Get User Liked Tweets",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tweet",
+          "x-display-name": "Get User Liked Tweets",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "tweets a user liked",
+            "liked posts",
+            "favorites by user"
+          ]
+        },
+        "user_id": {
+          "description": "The user ID to get liked tweets for",
+          "title": "User ID",
+          "type": "string"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "description": "Number of results (10-100)",
+          "title": "Max Results"
+        },
+        "tweet_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "created_at,author_id,public_metrics,text",
+          "description": "Comma-separated list of fields",
+          "title": "Tweet Fields"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "Get Liked Tweets",
+      "type": "object",
+      "x-requires-tier": "basic",
+      "x-tier-label": "\u2b50"
+    },
+    "TwitterGetLikingUsersConfig": {
+      "description": "Get users who liked a tweet",
+      "properties": {
+        "operation": {
+          "const": "get_users_who_liked_tweet",
+          "default": "get_users_who_liked_tweet",
+          "title": "Get Users Who Liked Tweet",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tweet",
+          "x-display-name": "Get Users Who Liked Tweet",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "likers of tweet",
+            "who liked tweet",
+            "accounts that liked"
+          ]
+        },
+        "tweet_id": {
+          "description": "The tweet ID to get liking users for",
+          "title": "Tweet ID",
+          "type": "string"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "description": "Number of results (1-100)",
+          "title": "Max Results"
+        },
+        "user_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "created_at,description,public_metrics",
+          "description": "Comma-separated list of fields",
+          "title": "User Fields"
+        }
+      },
+      "required": [
+        "tweet_id"
+      ],
+      "title": "Get Liking Users",
+      "type": "object",
+      "x-requires-tier": "basic",
+      "x-tier-label": "\u2b50"
+    },
+    "TwitterGetListConfig": {
+      "description": "Get a list by ID",
+      "properties": {
+        "operation": {
+          "const": "get_list_by_id",
+          "default": "get_list_by_id",
+          "title": "Get List by Id",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "List",
+          "x-display-name": "Get List by Id",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "single list",
+            "list details",
+            "one list",
+            "fetch a list"
+          ]
+        },
+        "list_id": {
+          "description": "The ID of the list",
+          "title": "List ID",
+          "type": "string"
+        },
+        "list_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "name,description,member_count,follower_count,private",
+          "description": "Comma-separated list of fields",
+          "title": "List Fields"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "TwitterGetListConfig",
+      "type": "object"
+    },
+    "TwitterGetListFollowersConfig": {
+      "description": "Get followers of a list",
+      "properties": {
+        "operation": {
+          "const": "get_list_followers",
+          "default": "get_list_followers",
+          "title": "Get List Followers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "List",
+          "x-display-name": "Get List Followers",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "who follows list",
+            "list followers",
+            "subscribers of list"
+          ]
+        },
+        "list_id": {
+          "description": "The ID of the list",
+          "title": "List ID",
+          "type": "string"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "description": "Number of results (1-100)",
+          "title": "Max Results"
+        },
+        "user_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of fields",
+          "title": "User Fields"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "TwitterGetListFollowersConfig",
+      "type": "object"
+    },
+    "TwitterGetListMembersConfig": {
+      "description": "Get members of a list",
+      "properties": {
+        "operation": {
+          "const": "get_list_members",
+          "default": "get_list_members",
+          "title": "Get List Members",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "List",
+          "x-display-name": "Get List Members",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "who in list",
+            "list members",
+            "people in list",
+            "members of list"
+          ]
+        },
+        "list_id": {
+          "description": "The ID of the list",
+          "title": "List ID",
+          "type": "string"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "description": "Number of results (1-100)",
+          "title": "Max Results"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "TwitterGetListMembersConfig",
+      "type": "object"
+    },
+    "TwitterGetListTweetsConfig": {
+      "description": "Get tweets from a list",
+      "properties": {
+        "operation": {
+          "const": "get_tweets_from_list",
+          "default": "get_tweets_from_list",
+          "title": "Get Tweets from List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "List",
+          "x-display-name": "Get Tweets from List",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "list timeline",
+            "tweets in list",
+            "posts from list",
+            "list feed"
+          ]
+        },
+        "list_id": {
+          "description": "The ID of the list",
+          "title": "List ID",
+          "type": "string"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "description": "Number of results (10-100)",
+          "title": "Max Results"
+        },
+        "tweet_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "created_at,author_id,public_metrics,text",
+          "description": "Comma-separated list of fields",
+          "title": "Tweet Fields"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "TwitterGetListTweetsConfig",
+      "type": "object"
+    },
+    "TwitterGetMeConfig": {
+      "description": "Get the authenticated user",
+      "properties": {
+        "operation": {
+          "const": "get_authenticated_user",
+          "default": "get_authenticated_user",
+          "title": "Get Authenticated User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Get Authenticated User",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "my profile",
+            "current account",
+            "me",
+            "logged in user"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "user_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "created_at,description,public_metrics,verified",
+          "description": "Comma-separated list of fields",
+          "title": "User Fields"
+        }
+      },
+      "title": "Get Me",
+      "type": "object",
+      "x-requires-tier": "basic",
+      "x-tier-label": "\u2b50"
+    },
+    "TwitterGetMediaAnalyticsConfig": {
+      "description": "Get analytics for media",
+      "properties": {
+        "operation": {
+          "const": "get_media_analytics",
+          "default": "get_media_analytics",
+          "title": "Get Media Analytics",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Media",
+          "x-display-name": "Get Media Analytics",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "media stats",
+            "video analytics",
+            "media insights"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "media_keys": {
+          "description": "Comma-separated list of media keys",
+          "title": "Media Keys",
+          "type": "string"
+        },
+        "start_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 start time",
+          "title": "Start Time"
+        },
+        "end_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 end time",
+          "title": "End Time"
+        }
+      },
+      "required": [
+        "media_keys"
+      ],
+      "title": "TwitterGetMediaAnalyticsConfig",
+      "type": "object"
+    },
+    "TwitterGetMediaUploadStatusConfig": {
+      "description": "Get the upload status of media",
+      "properties": {
+        "operation": {
+          "const": "get_media_upload_status",
+          "default": "get_media_upload_status",
+          "title": "Get Media Upload Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Media",
+          "x-display-name": "Get Media Upload Status",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "upload status",
+            "media processing",
+            "check upload"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "media_id": {
+          "description": "The ID of the media to check status for",
+          "title": "Media ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "media_id"
+      ],
+      "title": "TwitterGetMediaUploadStatusConfig",
+      "type": "object"
+    },
+    "TwitterGetMutedUsersConfig": {
+      "description": "Get muted users",
+      "properties": {
+        "operation": {
+          "const": "get_muted_users",
+          "default": "get_muted_users",
+          "title": "Get Muted Users",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Mute",
+          "x-display-name": "Get Muted Users",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "mute list",
+            "muted accounts",
+            "who i muted"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "description": "Number of results (1-1000)",
+          "title": "Max Results"
+        },
+        "user_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "created_at,description,public_metrics",
+          "description": "Comma-separated list of fields",
+          "title": "User Fields"
+        }
+      },
+      "title": "Get Muted Users",
+      "type": "object",
+      "x-requires-tier": "basic",
+      "x-tier-label": "\u2b50"
+    },
+    "TwitterGetNewsByIdConfig": {
+      "description": "Get a news article by ID",
+      "properties": {
+        "operation": {
+          "const": "get_news_article_by_id",
+          "default": "get_news_article_by_id",
+          "title": "Get News Article by Id",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "News",
+          "x-display-name": "Get News Article by Id",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "news article",
+            "single news story"
+          ]
+        },
+        "news_id": {
+          "description": "The ID of the news article",
+          "title": "News ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "news_id"
+      ],
+      "title": "TwitterGetNewsByIdConfig",
+      "type": "object"
+    },
+    "TwitterGetNotesWrittenConfig": {
+      "description": "Get community notes written by the authenticated user",
+      "properties": {
+        "operation": {
+          "const": "get_community_notes_written",
+          "default": "get_community_notes_written",
+          "title": "Get Community Notes Written",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tweet",
+          "x-display-name": "Get Community Notes Written",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "my community notes",
+            "notes i wrote",
+            "birdwatch written"
+          ]
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "description": "Number of results",
+          "title": "Max Results"
+        }
+      },
+      "title": "TwitterGetNotesWrittenConfig",
+      "type": "object"
+    },
+    "TwitterGetPersonalizedTrendsConfig": {
+      "description": "Get personalized trending topics for the authenticated user",
+      "properties": {
+        "operation": {
+          "const": "get_personalized_trending_topics",
+          "default": "get_personalized_trending_topics",
+          "title": "Get Personalized Trending Topics",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Trend",
+          "x-display-name": "Get Personalized Trending Topics",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "my trends",
+            "personalized trends",
+            "for you trends"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        }
+      },
+      "title": "TwitterGetPersonalizedTrendsConfig",
+      "type": "object"
+    },
+    "TwitterGetPinnedListsConfig": {
+      "description": "Get pinned lists",
+      "properties": {
+        "operation": {
+          "const": "get_user_pinned_lists",
+          "default": "get_user_pinned_lists",
+          "title": "Get User Pinned Lists",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "List",
+          "x-display-name": "Get User Pinned Lists",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "my pinned lists",
+            "pinned lists",
+            "lists i pinned"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "user_id": {
+          "description": "The user ID",
+          "title": "User ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "TwitterGetPinnedListsConfig",
+      "type": "object"
+    },
+    "TwitterGetPostsEligibleForNotesConfig": {
+      "description": "Get posts eligible for community notes",
+      "properties": {
+        "operation": {
+          "const": "get_posts_eligible_for_community_notes",
+          "default": "get_posts_eligible_for_community_notes",
+          "title": "Get Posts Eligible for Community Notes",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bookmark Folder",
+          "x-display-name": "Get Posts Eligible for Community Notes",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "notable posts",
+            "eligible for notes",
+            "posts needing notes"
+          ]
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "description": "Number of results",
+          "title": "Max Results"
+        }
+      },
+      "title": "TwitterGetPostsEligibleForNotesConfig",
+      "type": "object"
+    },
+    "TwitterGetQuoteTweetsConfig": {
+      "description": "Get tweets that quote a specific tweet",
+      "properties": {
+        "operation": {
+          "const": "get_tweets_quoting_tweet",
+          "default": "get_tweets_quoting_tweet",
+          "title": "Get Tweets Quoting Tweet",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tweet",
+          "x-display-name": "Get Tweets Quoting Tweet",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "quote tweets",
+            "quotes of tweet",
+            "who quoted"
+          ]
+        },
+        "tweet_id": {
+          "description": "The ID of the tweet to get quotes for",
+          "title": "Tweet ID",
+          "type": "string"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "description": "Number of results (10-100)",
+          "title": "Max Results"
+        },
+        "tweet_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "created_at,author_id,public_metrics,text",
+          "description": "Comma-separated list of fields",
+          "title": "Tweet Fields"
+        }
+      },
+      "required": [
+        "tweet_id"
+      ],
+      "title": "TwitterGetQuoteTweetsConfig",
+      "type": "object"
+    },
+    "TwitterGetRetweetersConfig": {
+      "description": "Get users who retweeted a tweet",
+      "properties": {
+        "operation": {
+          "const": "get_tweet_retweeters",
+          "default": "get_tweet_retweeters",
+          "title": "Get Tweet Retweeters",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tweet",
+          "x-display-name": "Get Tweet Retweeters",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "who retweeted tweet",
+            "retweeters list",
+            "accounts that retweeted"
+          ]
+        },
+        "tweet_id": {
+          "description": "The tweet ID to get retweeters for",
+          "title": "Tweet ID",
+          "type": "string"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "description": "Number of results (1-100)",
+          "title": "Max Results"
+        },
+        "user_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "created_at,description,public_metrics",
+          "description": "Comma-separated list of fields",
+          "title": "User Fields"
+        }
+      },
+      "required": [
+        "tweet_id"
+      ],
+      "title": "Get Retweeters",
+      "type": "object",
+      "x-requires-tier": "basic",
+      "x-tier-label": "\u2b50"
+    },
+    "TwitterGetRetweetsConfig": {
+      "description": "Get retweets of a tweet",
+      "properties": {
+        "operation": {
+          "const": "get_tweet_retweets",
+          "default": "get_tweet_retweets",
+          "title": "Get Tweet Retweets",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tweet",
+          "x-display-name": "Get Tweet Retweets",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "retweets of tweet",
+            "who retweeted",
+            "tweet reshares"
+          ]
+        },
+        "tweet_id": {
+          "description": "The ID of the tweet to get retweets for",
+          "title": "Tweet ID",
+          "type": "string"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "description": "Number of results (1-100)",
+          "title": "Max Results"
+        },
+        "tweet_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of fields",
+          "title": "Tweet Fields"
+        }
+      },
+      "required": [
+        "tweet_id"
+      ],
+      "title": "TwitterGetRetweetsConfig",
+      "type": "object"
+    },
+    "TwitterGetSampled10StreamConfig": {
+      "description": "Connect to 10% sampled stream and collect tweets",
+      "properties": {
+        "operation": {
+          "const": "collect_10_percent_sampled_stream_tweets",
+          "default": "collect_10_percent_sampled_stream_tweets",
+          "title": "Collect 10 Percent Sampled Stream Tweets",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Stream",
+          "x-display-name": "Collect 10 Percent Sampled Stream Tweets",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "ten percent stream",
+            "decahose",
+            "sample stream tweets"
+          ]
+        },
+        "partition": {
+          "description": "Stream partition (1 or 2)",
+          "title": "Partition",
+          "type": "integer"
+        },
+        "max_events": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "description": "Max tweets to collect before disconnecting",
+          "title": "Max Events"
+        },
+        "timeout_seconds": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 30,
+          "description": "Seconds to wait before disconnecting",
+          "title": "Timeout Seconds"
+        },
+        "tweet_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of fields",
+          "title": "Tweet Fields"
+        }
+      },
+      "required": [
+        "partition"
+      ],
+      "title": "TwitterGetSampled10StreamConfig",
+      "type": "object"
+    },
+    "TwitterGetSampledStreamConfig": {
+      "description": "Connect to sampled stream and collect tweets",
+      "properties": {
+        "operation": {
+          "const": "collect_sampled_stream_tweets",
+          "default": "collect_sampled_stream_tweets",
+          "title": "Collect Sampled Stream Tweets",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Stream",
+          "x-display-name": "Collect Sampled Stream Tweets",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "sampled stream",
+            "random tweets stream",
+            "one percent stream"
+          ]
+        },
+        "max_events": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "description": "Max tweets to collect before disconnecting",
+          "title": "Max Events"
+        },
+        "timeout_seconds": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 30,
+          "description": "Seconds to wait before disconnecting",
+          "title": "Timeout Seconds"
+        },
+        "tweet_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of fields",
+          "title": "Tweet Fields"
+        }
+      },
+      "title": "TwitterGetSampledStreamConfig",
+      "type": "object"
+    },
+    "TwitterGetSpaceBuyersConfig": {
+      "description": "Get buyers (ticket holders) of a Space",
+      "properties": {
+        "operation": {
+          "const": "get_space_ticket_holders",
+          "default": "get_space_ticket_holders",
+          "title": "Get Space Ticket Holders",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Space",
+          "x-display-name": "Get Space Ticket Holders",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "space ticket buyers",
+            "who bought tickets",
+            "ticketed attendees",
+            "space buyers"
+          ]
+        },
+        "space_id": {
+          "description": "The ID of the Space",
+          "title": "Space ID",
+          "type": "string"
+        },
+        "user_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of fields",
+          "title": "User Fields"
+        }
+      },
+      "required": [
+        "space_id"
+      ],
+      "title": "TwitterGetSpaceBuyersConfig",
+      "type": "object"
+    },
+    "TwitterGetSpaceConfig": {
+      "description": "Get a Space by ID",
+      "properties": {
+        "operation": {
+          "const": "get_space_by_id",
+          "default": "get_space_by_id",
+          "title": "Get Space by Id",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Space",
+          "x-display-name": "Get Space by Id",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "single space",
+            "space details",
+            "audio room",
+            "one space"
+          ]
+        },
+        "space_id": {
+          "description": "The ID of the Space",
+          "title": "Space ID",
+          "type": "string"
+        },
+        "space_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "host_ids,created_at,creator_id,id,lang,is_ticketed,participant_count,scheduled_start,speaker_ids,started_at,state,title,updated_at",
+          "description": "Comma-separated list of fields",
+          "title": "Space Fields"
+        }
+      },
+      "required": [
+        "space_id"
+      ],
+      "title": "TwitterGetSpaceConfig",
+      "type": "object"
+    },
+    "TwitterGetSpaceTweetsConfig": {
+      "description": "Get tweets from a Space",
+      "properties": {
+        "operation": {
+          "const": "get_tweets_from_space",
+          "default": "get_tweets_from_space",
+          "title": "Get Tweets from Space",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Space",
+          "x-display-name": "Get Tweets from Space",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "tweets in space",
+            "space tweets",
+            "posts in space"
+          ]
+        },
+        "space_id": {
+          "description": "The ID of the Space",
+          "title": "Space ID",
+          "type": "string"
+        },
+        "tweet_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of fields",
+          "title": "Tweet Fields"
+        }
+      },
+      "required": [
+        "space_id"
+      ],
+      "title": "TwitterGetSpaceTweetsConfig",
+      "type": "object"
+    },
+    "TwitterGetSpacesByCreatorsConfig": {
+      "description": "Get Spaces by creator user IDs",
+      "properties": {
+        "operation": {
+          "const": "get_spaces_by_creator_user_ids",
+          "default": "get_spaces_by_creator_user_ids",
+          "title": "Get Spaces by Creator User Ids",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Space",
+          "x-display-name": "Get Spaces by Creator User Ids",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "spaces by host",
+            "spaces created by",
+            "host audio rooms",
+            "creator spaces"
+          ]
+        },
+        "user_ids": {
+          "description": "Comma-separated list of user IDs (max 100)",
+          "title": "User IDs",
+          "type": "string"
+        },
+        "space_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "host_ids,created_at,creator_id,id,state,title",
+          "description": "Comma-separated list of fields",
+          "title": "Space Fields"
+        }
+      },
+      "required": [
+        "user_ids"
+      ],
+      "title": "TwitterGetSpacesByCreatorsConfig",
+      "type": "object"
+    },
+    "TwitterGetSpacesConfig": {
+      "description": "Get multiple Spaces by IDs",
+      "properties": {
+        "operation": {
+          "const": "get_spaces_by_ids",
+          "default": "get_spaces_by_ids",
+          "title": "Get Spaces by Ids",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Space",
+          "x-display-name": "Get Spaces by Ids",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "multiple spaces",
+            "batch spaces",
+            "several audio rooms",
+            "bulk spaces"
+          ]
+        },
+        "space_ids": {
+          "description": "Comma-separated list of Space IDs (max 100)",
+          "title": "Space IDs",
+          "type": "string"
+        },
+        "space_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "host_ids,created_at,creator_id,id,lang,is_ticketed,participant_count,scheduled_start,speaker_ids,started_at,state,title",
+          "description": "Comma-separated list of fields",
+          "title": "Space Fields"
+        }
+      },
+      "required": [
+        "space_ids"
+      ],
+      "title": "TwitterGetSpacesConfig",
+      "type": "object"
+    },
+    "TwitterGetStreamLinksConfig": {
+      "description": "Get stream links for a webhook",
+      "properties": {
+        "operation": {
+          "const": "get_webhook_stream_links",
+          "default": "get_webhook_stream_links",
+          "title": "Get Webhook Stream Links",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhook",
+          "x-display-name": "Get Webhook Stream Links",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "list stream links",
+            "webhook stream links",
+            "attached streams"
+          ],
+          "x-supported-credential-types": [
+            "twitter_bearer_token"
+          ]
+        },
+        "webhook_id": {
+          "description": "The ID of the webhook",
+          "title": "Webhook ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "TwitterGetStreamLinksConfig",
+      "type": "object"
+    },
+    "TwitterGetStreamRuleCountsConfig": {
+      "description": "Get stream rule counts",
+      "properties": {
+        "operation": {
+          "const": "get_stream_rule_counts",
+          "default": "get_stream_rule_counts",
+          "title": "Get Stream Rule Counts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Stream",
+          "x-display-name": "Get Stream Rule Counts",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "rule counts",
+            "stream rule limits",
+            "filter rule usage"
+          ]
+        }
+      },
+      "title": "TwitterGetStreamRuleCountsConfig",
+      "type": "object"
+    },
+    "TwitterGetStreamRulesConfig": {
+      "description": "Get stream filter rules",
+      "properties": {
+        "operation": {
+          "const": "get_stream_filter_rules",
+          "default": "get_stream_filter_rules",
+          "title": "Get Stream Filter Rules",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Stream",
+          "x-display-name": "Get Stream Filter Rules",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "stream rules",
+            "list filter rules"
+          ]
+        },
+        "rule_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated rule IDs to filter by (optional)",
+          "title": "Rule IDs"
+        }
+      },
+      "title": "TwitterGetStreamRulesConfig",
+      "type": "object"
+    },
+    "TwitterGetSubscriptionCountConfig": {
+      "description": "Get account activity subscription count",
+      "properties": {
+        "operation": {
+          "const": "get_account_activity_subscription_count",
+          "default": "get_account_activity_subscription_count",
+          "title": "Get Account Activity Subscription Count",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscription",
+          "x-display-name": "Get Account Activity Subscription Count",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "subscription count",
+            "how many subscriptions",
+            "activity subscription total"
+          ],
+          "x-supported-credential-types": [
+            "twitter_bearer_token"
+          ]
+        }
+      },
+      "title": "TwitterGetSubscriptionCountConfig",
+      "type": "object"
+    },
+    "TwitterGetSubscriptionsConfig": {
+      "description": "Get account activity subscriptions",
+      "properties": {
+        "operation": {
+          "const": "get_account_activity_subscriptions",
+          "default": "get_account_activity_subscriptions",
+          "title": "Get Account Activity Subscriptions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscription",
+          "x-display-name": "Get Account Activity Subscriptions",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "list activity subscriptions",
+            "active activity feeds",
+            "subscribed accounts"
+          ],
+          "x-supported-credential-types": [
+            "twitter_bearer_token"
+          ]
+        },
+        "webhook_id": {
+          "description": "The Webhook ID to list subscriptions for",
+          "title": "Webhook ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "TwitterGetSubscriptionsConfig",
+      "type": "object"
+    },
+    "TwitterGetTrendsByWOEIDConfig": {
+      "description": "Get trending topics by WOEID",
+      "properties": {
+        "operation": {
+          "const": "get_trending_topics_by_woeid",
+          "default": "get_trending_topics_by_woeid",
+          "title": "Get Trending Topics by Woeid",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Trend",
+          "x-display-name": "Get Trending Topics by Woeid",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "trends by location",
+            "local trends",
+            "woeid trends"
+          ]
+        },
+        "woeid": {
+          "description": "Where On Earth Identifier e.g. 1 for worldwide, 23424977 for USA",
+          "title": "WOEID",
+          "type": "string"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 20,
+          "description": "Number of results",
+          "title": "Max Results"
+        }
+      },
+      "required": [
+        "woeid"
+      ],
+      "title": "TwitterGetTrendsByWOEIDConfig",
+      "type": "object"
+    },
+    "TwitterGetTweetAnalyticsConfig": {
+      "description": "Get analytics for tweets",
+      "properties": {
+        "operation": {
+          "const": "get_tweet_analytics",
+          "default": "get_tweet_analytics",
+          "title": "Get Tweet Analytics",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tweet Analytics",
+          "x-display-name": "Get Tweet Analytics",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "tweet metrics",
+            "tweet impressions",
+            "tweet engagement",
+            "tweet performance"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "tweet_ids": {
+          "description": "Comma-separated list of tweet IDs",
+          "title": "Tweet IDs",
+          "type": "string"
+        },
+        "start_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 start time",
+          "title": "Start Time"
+        },
+        "end_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 end time",
+          "title": "End Time"
+        }
+      },
+      "required": [
+        "tweet_ids"
+      ],
+      "title": "TwitterGetTweetAnalyticsConfig",
+      "type": "object"
+    },
+    "TwitterGetTweetConfig": {
+      "description": "Get a single tweet by ID",
+      "properties": {
+        "operation": {
+          "const": "get_tweet_by_id",
+          "default": "get_tweet_by_id",
+          "title": "Get Tweet by Id",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tweet",
+          "x-display-name": "Get Tweet by Id",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "single tweet",
+            "tweet details",
+            "one tweet",
+            "tweet by id"
+          ]
+        },
+        "tweet_id": {
+          "description": "The ID of the tweet to retrieve",
+          "title": "Tweet ID",
+          "type": "string"
+        },
+        "tweet_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "created_at,author_id,public_metrics,text",
+          "description": "Comma-separated list of fields (e.g., created_at,author_id,public_metrics)",
+          "title": "Tweet Fields"
+        },
+        "expansions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "author_id",
+          "description": "Comma-separated list of expansions (e.g., author_id,attachments.media_keys)",
+          "title": "Expansions"
+        }
+      },
+      "required": [
+        "tweet_id"
+      ],
+      "title": "Get Tweet",
+      "type": "object",
+      "x-requires-tier": "basic",
+      "x-tier-label": "\u2b50"
+    },
+    "TwitterGetTweetCountsAllConfig": {
+      "description": "Get tweet counts for full archive (Enterprise only)",
+      "properties": {
+        "operation": {
+          "const": "get_tweet_counts_full_archive",
+          "default": "get_tweet_counts_full_archive",
+          "title": "Get Tweet Counts Full Archive",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tweet Analytics",
+          "x-display-name": "Get Tweet Counts Full Archive",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "full archive count",
+            "historical tweet volume",
+            "count all tweets",
+            "tweet count archive"
+          ]
+        },
+        "query": {
+          "description": "Search query to count tweets for",
+          "title": "Search Query",
+          "type": "string"
+        },
+        "granularity": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "day",
+          "description": "Time granularity",
+          "enum": [
+            "day",
+            "hour",
+            "minute"
+          ],
+          "title": "Granularity",
+          "x-enum-searchable": true
+        },
+        "start_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 start time",
+          "title": "Start Time"
+        },
+        "end_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 end time",
+          "title": "End Time"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "TwitterGetTweetCountsAllConfig",
+      "type": "object"
+    },
+    "TwitterGetTweetCountsRecentConfig": {
+      "description": "Get tweet counts for recent tweets (last 7 days)",
+      "properties": {
+        "operation": {
+          "const": "get_tweet_counts_recent",
+          "default": "get_tweet_counts_recent",
+          "title": "Get Tweet Counts Recent",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tweet Analytics",
+          "x-display-name": "Get Tweet Counts Recent",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "recent tweet volume",
+            "count recent tweets",
+            "tweet count week",
+            "tweet frequency recent"
+          ]
+        },
+        "query": {
+          "description": "Search query to count tweets for",
+          "title": "Search Query",
+          "type": "string"
+        },
+        "granularity": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "day",
+          "description": "Time granularity",
+          "enum": [
+            "day",
+            "hour",
+            "minute"
+          ],
+          "title": "Granularity",
+          "x-enum-searchable": true
+        },
+        "start_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 start time",
+          "title": "Start Time"
+        },
+        "end_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 end time",
+          "title": "End Time"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "TwitterGetTweetCountsRecentConfig",
+      "type": "object"
+    },
+    "TwitterGetTweetsConfig": {
+      "description": "Get multiple tweets by IDs",
+      "properties": {
+        "operation": {
+          "const": "get_tweets_by_ids",
+          "default": "get_tweets_by_ids",
+          "title": "Get Tweets by Ids",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tweet",
+          "x-display-name": "Get Tweets by Ids",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "multiple tweets",
+            "batch tweets",
+            "several tweets",
+            "tweets by ids"
+          ]
+        },
+        "tweet_ids": {
+          "description": "Comma-separated list of tweet IDs (max 100)",
+          "title": "Tweet IDs",
+          "type": "string"
+        },
+        "tweet_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "created_at,author_id,public_metrics,text",
+          "description": "Comma-separated list of fields",
+          "title": "Tweet Fields"
+        },
+        "expansions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "author_id",
+          "description": "Comma-separated list of expansions",
+          "title": "Expansions"
+        }
+      },
+      "required": [
+        "tweet_ids"
+      ],
+      "title": "Get Tweets",
+      "type": "object",
+      "x-requires-tier": "basic",
+      "x-tier-label": "\u2b50"
+    },
+    "TwitterGetUsageConfig": {
+      "description": "Get API usage data",
+      "properties": {
+        "operation": {
+          "const": "get_api_usage",
+          "default": "get_api_usage",
+          "title": "Get Api Usage",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "API Usage",
+          "x-display-name": "Get Api Usage",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "api usage",
+            "rate limit usage",
+            "quota usage"
+          ],
+          "x-supported-credential-types": [
+            "twitter_bearer_token"
+          ]
+        },
+        "days": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 7,
+          "description": "Number of days of usage data (1-90)",
+          "title": "Days"
+        }
+      },
+      "title": "TwitterGetUsageConfig",
+      "type": "object"
+    },
+    "TwitterGetUserByUsernameConfig": {
+      "description": "Get a user by username",
+      "properties": {
+        "operation": {
+          "const": "get_user_by_username",
+          "default": "get_user_by_username",
+          "title": "Get User by Username",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Get User by Username",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "profile by handle",
+            "by username",
+            "account by handle",
+            "by screen name"
+          ]
+        },
+        "username": {
+          "description": "The Twitter username (without @)",
+          "title": "Username",
+          "type": "string"
+        },
+        "user_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "created_at,description,public_metrics,verified",
+          "description": "Comma-separated list of fields",
+          "title": "User Fields"
+        }
+      },
+      "required": [
+        "username"
+      ],
+      "title": "Get User By Username",
+      "type": "object",
+      "x-requires-tier": "basic",
+      "x-tier-label": "\u2b50"
+    },
+    "TwitterGetUserConfig": {
+      "description": "Get a user by ID",
+      "properties": {
+        "operation": {
+          "const": "get_user_by_id",
+          "default": "get_user_by_id",
+          "title": "Get User by Id",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Get User by Id",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "profile by id",
+            "user details",
+            "account by id"
+          ]
+        },
+        "user_id": {
+          "description": "The Twitter user ID",
+          "title": "User ID",
+          "type": "string"
+        },
+        "user_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "created_at,description,public_metrics,verified",
+          "description": "Comma-separated list of fields",
+          "title": "User Fields"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "Get User",
+      "type": "object",
+      "x-requires-tier": "basic",
+      "x-tier-label": "\u2b50"
+    },
+    "TwitterGetUserListMembershipsConfig": {
+      "description": "Get lists a user is a member of",
+      "properties": {
+        "operation": {
+          "const": "get_user_list_memberships",
+          "default": "get_user_list_memberships",
+          "title": "Get User List Memberships",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "List",
+          "x-display-name": "Get User List Memberships",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "list memberships",
+            "lists containing user",
+            "member of lists",
+            "user belongs to"
+          ]
+        },
+        "user_id": {
+          "description": "The user ID",
+          "title": "User ID",
+          "type": "string"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "description": "Number of results (1-100)",
+          "title": "Max Results"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "TwitterGetUserListMembershipsConfig",
+      "type": "object"
+    },
+    "TwitterGetUserMentionsConfig": {
+      "description": "Get tweets mentioning a user",
+      "properties": {
+        "operation": {
+          "const": "get_tweets_mentioning_user",
+          "default": "get_tweets_mentioning_user",
+          "title": "Get Tweets Mentioning User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tweet",
+          "x-display-name": "Get Tweets Mentioning User",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "mentions",
+            "user mentions",
+            "tweets mentioning"
+          ]
+        },
+        "user_id": {
+          "description": "The user ID",
+          "title": "User ID",
+          "type": "string"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "description": "Number of results (5-100)",
+          "title": "Max Results"
+        },
+        "tweet_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "created_at,author_id,public_metrics,text",
+          "description": "Comma-separated list of fields",
+          "title": "Tweet Fields"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "TwitterGetUserMentionsConfig",
+      "type": "object"
+    },
+    "TwitterGetUserOwnedListsConfig": {
+      "description": "Get lists owned by a user",
+      "properties": {
+        "operation": {
+          "const": "get_user_owned_lists",
+          "default": "get_user_owned_lists",
+          "title": "Get User Owned Lists",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "List",
+          "x-display-name": "Get User Owned Lists",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "lists user owns",
+            "owned lists",
+            "lists created by",
+            "my lists"
+          ]
+        },
+        "user_id": {
+          "description": "The user ID",
+          "title": "User ID",
+          "type": "string"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "description": "Number of results (1-100)",
+          "title": "Max Results"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "TwitterGetUserOwnedListsConfig",
+      "type": "object"
+    },
+    "TwitterGetUserTweetsConfig": {
+      "description": "Get tweets posted by a user",
+      "properties": {
+        "operation": {
+          "const": "get_tweets_posted_by_user",
+          "default": "get_tweets_posted_by_user",
+          "title": "Get Tweets Posted by User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tweet",
+          "x-display-name": "Get Tweets Posted by User",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "user tweets",
+            "someones tweets",
+            "posts by user"
+          ]
+        },
+        "user_id": {
+          "description": "The user ID",
+          "title": "User ID",
+          "type": "string"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "description": "Number of results (5-100)",
+          "title": "Max Results"
+        },
+        "tweet_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "created_at,author_id,public_metrics,text",
+          "description": "Comma-separated list of fields",
+          "title": "Tweet Fields"
+        },
+        "exclude": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated types to exclude (e.g., retweets,replies)",
+          "title": "Exclude"
+        }
+      },
+      "required": [
+        "user_id"
+      ],
+      "title": "TwitterGetUserTweetsConfig",
+      "type": "object"
+    },
+    "TwitterGetUsersByUsernamesConfig": {
+      "description": "Get multiple users by usernames",
+      "properties": {
+        "operation": {
+          "const": "get_users_by_usernames",
+          "default": "get_users_by_usernames",
+          "title": "Get Users by Usernames",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Get Users by Usernames",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "multiple handles",
+            "batch usernames",
+            "accounts by handle",
+            "users by usernames"
+          ]
+        },
+        "usernames": {
+          "description": "Comma-separated list of usernames (without @)",
+          "title": "Usernames",
+          "type": "string"
+        },
+        "user_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of fields",
+          "title": "User Fields"
+        }
+      },
+      "required": [
+        "usernames"
+      ],
+      "title": "TwitterGetUsersByUsernamesConfig",
+      "type": "object"
+    },
+    "TwitterGetUsersConfig": {
+      "description": "Get multiple users by IDs",
+      "properties": {
+        "operation": {
+          "const": "get_users_by_ids",
+          "default": "get_users_by_ids",
+          "title": "Get Users by Ids",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Get Users by Ids",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "multiple users",
+            "batch profiles",
+            "several accounts",
+            "users by ids"
+          ]
+        },
+        "user_ids": {
+          "description": "Comma-separated list of user IDs (max 100)",
+          "title": "User IDs",
+          "type": "string"
+        },
+        "user_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "created_at,description,public_metrics,verified",
+          "description": "Comma-separated list of fields",
+          "title": "User Fields"
+        }
+      },
+      "required": [
+        "user_ids"
+      ],
+      "title": "Get Users",
+      "type": "object",
+      "x-requires-tier": "basic",
+      "x-tier-label": "\u2b50"
+    },
+    "TwitterGetWebhookConfig": {
+      "description": "Get a webhook by ID",
+      "properties": {
+        "operation": {
+          "const": "get_webhook_by_id",
+          "default": "get_webhook_by_id",
+          "title": "Get Webhook by Id",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhook",
+          "x-display-name": "Get Webhook by Id",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "single webhook",
+            "webhook details",
+            "callback by id",
+            "one webhook"
+          ],
+          "x-supported-credential-types": [
+            "twitter_bearer_token"
+          ]
+        },
+        "webhook_id": {
+          "description": "The ID of the webhook",
+          "title": "Webhook ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "TwitterGetWebhookConfig",
+      "type": "object"
+    },
+    "TwitterHideReplyConfig": {
+      "description": "Hide a reply to a tweet",
+      "properties": {
+        "operation": {
+          "const": "hide_reply_to_tweet",
+          "default": "hide_reply_to_tweet",
+          "title": "Hide Reply to Tweet",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tweet",
+          "x-display-name": "Hide Reply to Tweet",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "hide reply",
+            "moderate reply"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "tweet_id": {
+          "description": "The ID of the reply tweet to hide",
+          "title": "Tweet ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tweet_id"
+      ],
+      "title": "TwitterHideReplyConfig",
+      "type": "object"
+    },
+    "TwitterLikeTweetConfig": {
+      "description": "Like a tweet",
+      "properties": {
+        "operation": {
+          "const": "like_tweet",
+          "default": "like_tweet",
+          "title": "Like Tweet",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tweet",
+          "x-display-name": "Like Tweet",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "favorite tweet",
+            "heart tweet"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "tweet_id": {
+          "description": "The ID of the tweet to like",
+          "title": "Tweet ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tweet_id"
+      ],
+      "title": "Like Tweet",
+      "type": "object"
+    },
+    "TwitterListComplianceJobsConfig": {
+      "description": "List compliance jobs",
+      "properties": {
+        "operation": {
+          "const": "list_compliance_jobs",
+          "default": "list_compliance_jobs",
+          "title": "List Compliance Jobs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Compliance Job",
+          "x-display-name": "List Compliance Jobs",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "compliance batches",
+            "list compliance jobs"
+          ],
+          "x-supported-credential-types": [
+            "twitter_bearer_token"
+          ]
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by job type",
+          "enum": [
+            "tweets",
+            "users"
+          ],
+          "title": "Type",
+          "x-enum-searchable": true
+        }
+      },
+      "title": "TwitterListComplianceJobsConfig",
+      "type": "object"
+    },
+    "TwitterMuteUserConfig": {
+      "description": "Mute a user",
+      "properties": {
+        "operation": {
+          "const": "mute_user",
+          "default": "mute_user",
+          "title": "Mute User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Mute",
+          "x-display-name": "Mute User",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "mute account",
+            "silence user"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "target_user_id": {
+          "description": "The ID of the user to mute",
+          "title": "Target User ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "target_user_id"
+      ],
+      "title": "Mute User",
+      "type": "object"
+    },
+    "TwitterOAuthCredential": {
+      "description": "OAuth 2.0 credential for Twitter/X.\n\nUse NoClick's OAuth app (easiest - just click to connect) or provide your own\nclient credentials for premium access and custom rate limits.\n\nRegister your own app at: https://developer.x.com/en/portal/dashboard",
+      "properties": {
+        "credential_type": {
+          "const": "twitter_oauth",
+          "default": "twitter_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refresh Token"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Expiry"
+        },
+        "username": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Twitter Username"
+        },
+        "user_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Twitter User ID"
+        },
+        "client_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Your OAuth 2.0 Client ID - leave empty to use NoClick's OAuth app",
+          "title": "Client ID (Optional)",
+          "x-optional-custom": true
+        },
+        "client_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Your OAuth 2.0 Client Secret - leave empty to use NoClick's OAuth app",
+          "title": "Client Secret (Optional)",
+          "ui:widget": "password",
+          "x-optional-custom": true
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "TwitterOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-oauth-provider": "twitter",
+      "x-oauth-scopes": [
+        "tweet.read",
+        "tweet.write",
+        "users.read",
+        "offline.access",
+        "like.read",
+        "like.write",
+        "follows.read",
+        "follows.write",
+        "bookmark.read",
+        "bookmark.write",
+        "block.read",
+        "block.write",
+        "mute.read",
+        "mute.write",
+        "list.read",
+        "list.write"
+      ],
+      "x-oauth-supports-custom-client": true
+    },
+    "TwitterPinListConfig": {
+      "description": "Pin a list",
+      "properties": {
+        "operation": {
+          "const": "pin_list",
+          "default": "pin_list",
+          "title": "Pin List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "List",
+          "x-display-name": "Pin List",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "pin a list",
+            "pin to top",
+            "favorite list"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "list_id": {
+          "description": "The ID of the list to pin",
+          "title": "List ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "TwitterPinListConfig",
+      "type": "object"
+    },
+    "TwitterRemoveBookmarkConfig": {
+      "description": "Remove a tweet from bookmarks",
+      "properties": {
+        "operation": {
+          "const": "remove_tweet_from_bookmarks",
+          "default": "remove_tweet_from_bookmarks",
+          "title": "Remove Tweet from Bookmarks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tweet",
+          "x-display-name": "Remove Tweet from Bookmarks",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "unbookmark tweet",
+            "remove bookmark",
+            "unsave tweet"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "tweet_id": {
+          "description": "The ID of the tweet to remove from bookmarks",
+          "title": "Tweet ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tweet_id"
+      ],
+      "title": "Remove Bookmark",
+      "type": "object"
+    },
+    "TwitterRemoveListMemberConfig": {
+      "description": "Remove a member from a list",
+      "properties": {
+        "operation": {
+          "const": "remove_member_from_list",
+          "default": "remove_member_from_list",
+          "title": "Remove Member from List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "List",
+          "x-display-name": "Remove Member from List",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove from list",
+            "drop member",
+            "take off list"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "list_id": {
+          "description": "The ID of the list",
+          "title": "List ID",
+          "type": "string"
+        },
+        "user_id": {
+          "description": "The ID of the user to remove",
+          "title": "User ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id",
+        "user_id"
+      ],
+      "title": "TwitterRemoveListMemberConfig",
+      "type": "object"
+    },
+    "TwitterRetweetConfig": {
+      "description": "Retweet a tweet",
+      "properties": {
+        "operation": {
+          "const": "retweet_tweet",
+          "default": "retweet_tweet",
+          "title": "Retweet Tweet",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tweet",
+          "x-display-name": "Retweet Tweet",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "reshare tweet",
+            "repost tweet",
+            "boost tweet"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "tweet_id": {
+          "description": "The ID of the tweet to retweet",
+          "title": "Tweet ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tweet_id"
+      ],
+      "title": "Retweet",
+      "type": "object"
+    },
+    "TwitterSearchAllTweetsConfig": {
+      "description": "Search all tweets (full archive, Enterprise)",
+      "properties": {
+        "operation": {
+          "const": "search_all_tweets_full_archive",
+          "default": "search_all_tweets_full_archive",
+          "title": "Search All Tweets Full Archive",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tweet",
+          "x-display-name": "Search All Tweets Full Archive",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "full archive search",
+            "historical tweets",
+            "all time tweets",
+            "enterprise tweet search"
+          ]
+        },
+        "query": {
+          "description": "Search query for full archive",
+          "title": "Search Query",
+          "type": "string"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "description": "Number of results (10-500)",
+          "title": "Max Results"
+        },
+        "tweet_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of fields",
+          "title": "Tweet Fields"
+        },
+        "expansions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of expansions",
+          "title": "Expansions"
+        },
+        "start_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 start time (e.g. 2020-01-01T00:00:00Z)",
+          "title": "Start Time"
+        },
+        "end_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 end time",
+          "title": "End Time"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "TwitterSearchAllTweetsConfig",
+      "type": "object"
+    },
+    "TwitterSearchCommunitiesConfig": {
+      "description": "Search for communities",
+      "properties": {
+        "operation": {
+          "const": "search_communities",
+          "default": "search_communities",
+          "title": "Search Communities",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Community",
+          "x-display-name": "Search Communities",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "find communities",
+            "discover communities"
+          ]
+        },
+        "query": {
+          "description": "Community search query",
+          "title": "Search Query",
+          "type": "string"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "description": "Number of results",
+          "title": "Max Results"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "TwitterSearchCommunitiesConfig",
+      "type": "object"
+    },
+    "TwitterSearchNewsConfig": {
+      "description": "Search news articles",
+      "properties": {
+        "operation": {
+          "const": "search_news_articles",
+          "default": "search_news_articles",
+          "title": "Search News Articles",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "News",
+          "x-display-name": "Search News Articles",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "find news",
+            "news search"
+          ]
+        },
+        "query": {
+          "description": "News search query (max 2048 characters)",
+          "title": "Search Query",
+          "type": "string"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "description": "Number of results (1-100)",
+          "title": "Max Results"
+        },
+        "start_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 start time",
+          "title": "Start Time"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "TwitterSearchNewsConfig",
+      "type": "object"
+    },
+    "TwitterSearchRecentTweetsConfig": {
+      "description": "Search recent tweets (last 7 days)",
+      "properties": {
+        "operation": {
+          "const": "search_recent_tweets",
+          "default": "search_recent_tweets",
+          "title": "Search Recent Tweets",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tweet",
+          "x-display-name": "Search Recent Tweets",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "recent tweets",
+            "last 7 days",
+            "this week tweets"
+          ]
+        },
+        "query": {
+          "description": "Search query (e.g., 'from:username' or '#hashtag')",
+          "title": "Search Query",
+          "type": "string"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "description": "Number of results (10-100)",
+          "title": "Max Results"
+        },
+        "tweet_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "created_at,author_id,public_metrics,text",
+          "description": "Comma-separated list of fields",
+          "title": "Tweet Fields"
+        },
+        "expansions": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "author_id",
+          "description": "Comma-separated list of expansions",
+          "title": "Expansions"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "Search Recent Tweets",
+      "type": "object",
+      "x-requires-tier": "basic",
+      "x-tier-label": "\u2b50"
+    },
+    "TwitterSearchSpacesConfig": {
+      "description": "Search for Spaces",
+      "properties": {
+        "operation": {
+          "const": "search_spaces",
+          "default": "search_spaces",
+          "title": "Search Spaces",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Space",
+          "x-display-name": "Search Spaces",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "find spaces",
+            "audio room search",
+            "query spaces",
+            "discover spaces"
+          ]
+        },
+        "query": {
+          "description": "Space search query",
+          "title": "Search Query",
+          "type": "string"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "description": "Number of results (1-100)",
+          "title": "Max Results"
+        },
+        "space_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of fields",
+          "title": "Space Fields"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "TwitterSearchSpacesConfig",
+      "type": "object"
+    },
+    "TwitterSearchUsersConfig": {
+      "description": "Search for users",
+      "properties": {
+        "operation": {
+          "const": "search_users",
+          "default": "search_users",
+          "title": "Search Users",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Search Users",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "find people",
+            "find accounts",
+            "discover profiles"
+          ]
+        },
+        "query": {
+          "description": "User search query",
+          "title": "Search Query",
+          "type": "string"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "description": "Number of results (1-100)",
+          "title": "Max Results"
+        },
+        "user_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of fields",
+          "title": "User Fields"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "TwitterSearchUsersConfig",
+      "type": "object"
+    },
+    "TwitterSendDMConfig": {
+      "description": "Send a one-to-one Direct Message",
+      "properties": {
+        "operation": {
+          "const": "send_direct_message",
+          "default": "send_direct_message",
+          "title": "Send Direct Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Direct Message",
+          "x-display-name": "Send Direct Message",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "dm a user",
+            "private message",
+            "direct message user",
+            "message someone"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "participant_id": {
+          "description": "The user ID to send the message to",
+          "title": "Recipient User ID",
+          "type": "string"
+        },
+        "message_text": {
+          "description": "The text of the message",
+          "title": "Message Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "participant_id",
+        "message_text"
+      ],
+      "title": "Send DM",
+      "type": "object",
+      "x-requires-tier": "pro",
+      "x-tier-label": "\u2b50\u2b50"
+    },
+    "TwitterSendDMToConversationConfig": {
+      "description": "Send a message to an existing conversation",
+      "properties": {
+        "operation": {
+          "const": "send_direct_message_to_conversation",
+          "default": "send_direct_message_to_conversation",
+          "title": "Send Direct Message to Conversation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Direct Message",
+          "x-display-name": "Send Direct Message to Conversation",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "reply dm thread",
+            "message existing conversation",
+            "dm to conversation",
+            "send to thread"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "conversation_id": {
+          "description": "The DM conversation ID",
+          "title": "Conversation ID",
+          "type": "string"
+        },
+        "message_text": {
+          "description": "The text of the message",
+          "title": "Message Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "conversation_id",
+        "message_text"
+      ],
+      "title": "Send DM To Conversation",
+      "type": "object",
+      "x-requires-tier": "pro",
+      "x-tier-label": "\u2b50\u2b50"
+    },
+    "TwitterTerminateAllConnectionsConfig": {
+      "description": "Terminate all streaming connections",
+      "properties": {
+        "operation": {
+          "const": "terminate_all_streaming_connections",
+          "default": "terminate_all_streaming_connections",
+          "title": "Terminate All Streaming Connections",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Stream",
+          "x-display-name": "Terminate All Streaming Connections",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "kill all streams",
+            "close all connections",
+            "disconnect everything"
+          ],
+          "x-supported-credential-types": [
+            "twitter_bearer_token"
+          ]
+        }
+      },
+      "title": "TwitterTerminateAllConnectionsConfig",
+      "type": "object"
+    },
+    "TwitterTerminateConnectionConfig": {
+      "description": "Terminate a specific streaming connection",
+      "properties": {
+        "operation": {
+          "const": "terminate_streaming_connection",
+          "default": "terminate_streaming_connection",
+          "title": "Terminate Streaming Connection",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Stream",
+          "x-display-name": "Terminate Streaming Connection",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "kill one stream",
+            "close single connection",
+            "disconnect specific stream"
+          ],
+          "x-supported-credential-types": [
+            "twitter_bearer_token"
+          ]
+        },
+        "connection_id": {
+          "description": "The ID of the connection to terminate",
+          "title": "Connection ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "connection_id"
+      ],
+      "title": "TwitterTerminateConnectionConfig",
+      "type": "object"
+    },
+    "TwitterTerminateConnectionsByEndpointConfig": {
+      "description": "Terminate streaming connections by endpoint type",
+      "properties": {
+        "operation": {
+          "const": "terminate_streaming_connections_by_endpoint_type",
+          "default": "terminate_streaming_connections_by_endpoint_type",
+          "title": "Terminate Streaming Connections by Endpoint Type",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Stream",
+          "x-display-name": "Terminate Streaming Connections by Endpoint Type",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "kill endpoint streams",
+            "close endpoint connections",
+            "disconnect by endpoint"
+          ],
+          "x-supported-credential-types": [
+            "twitter_bearer_token"
+          ]
+        },
+        "endpoint_type": {
+          "description": "Endpoint type to terminate connections for",
+          "title": "Endpoint Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "endpoint_type"
+      ],
+      "title": "TwitterTerminateConnectionsByEndpointConfig",
+      "type": "object"
+    },
+    "TwitterUnblockDMsConfig": {
+      "description": "Unblock DMs from a user",
+      "properties": {
+        "operation": {
+          "const": "unblock_user_dms",
+          "default": "unblock_user_dms",
+          "title": "Unblock User Dms",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "DM Block",
+          "x-display-name": "Unblock User Dms",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "unblock dms",
+            "allow messages again",
+            "unblock private messages"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "target_user_id": {
+          "description": "The ID of the user to unblock DMs from",
+          "title": "Target User ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "target_user_id"
+      ],
+      "title": "TwitterUnblockDMsConfig",
+      "type": "object"
+    },
+    "TwitterUnblockUserConfig": {
+      "description": "Unblock a user",
+      "properties": {
+        "operation": {
+          "const": "unblock_user",
+          "default": "unblock_user",
+          "title": "Unblock User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Block",
+          "x-display-name": "Unblock User",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "unblock account",
+            "remove block",
+            "lift block"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "target_user_id": {
+          "description": "The ID of the user to unblock",
+          "title": "Target User ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "target_user_id"
+      ],
+      "title": "Unblock User",
+      "type": "object"
+    },
+    "TwitterUndoRetweetConfig": {
+      "description": "Undo a retweet",
+      "properties": {
+        "operation": {
+          "const": "undo_retweet",
+          "default": "undo_retweet",
+          "title": "Undo Retweet",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tweet",
+          "x-display-name": "Undo Retweet",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "unretweet",
+            "remove retweet",
+            "cancel reshare"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "tweet_id": {
+          "description": "The ID of the tweet to undo retweet",
+          "title": "Tweet ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tweet_id"
+      ],
+      "title": "Undo Retweet",
+      "type": "object"
+    },
+    "TwitterUnfollowListConfig": {
+      "description": "Unfollow a list",
+      "properties": {
+        "operation": {
+          "const": "unfollow_list",
+          "default": "unfollow_list",
+          "title": "Unfollow List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "List",
+          "x-display-name": "Unfollow List",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "unfollow a list",
+            "unsubscribe from list",
+            "stop following list"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "list_id": {
+          "description": "The ID of the list to unfollow",
+          "title": "List ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "TwitterUnfollowListConfig",
+      "type": "object"
+    },
+    "TwitterUnfollowUserConfig": {
+      "description": "Unfollow a user",
+      "properties": {
+        "operation": {
+          "const": "unfollow_user",
+          "default": "unfollow_user",
+          "title": "Unfollow User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Unfollow User",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "stop following",
+            "remove follow"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "target_user_id": {
+          "description": "The ID of the user to unfollow",
+          "title": "Target User ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "target_user_id"
+      ],
+      "title": "Unfollow User",
+      "type": "object"
+    },
+    "TwitterUnhideReplyConfig": {
+      "description": "Unhide a reply to a tweet",
+      "properties": {
+        "operation": {
+          "const": "unhide_reply_to_tweet",
+          "default": "unhide_reply_to_tweet",
+          "title": "Unhide Reply to Tweet",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tweet",
+          "x-display-name": "Unhide Reply to Tweet",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "unhide reply",
+            "restore reply",
+            "show reply"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "tweet_id": {
+          "description": "The ID of the reply tweet to unhide",
+          "title": "Tweet ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tweet_id"
+      ],
+      "title": "TwitterUnhideReplyConfig",
+      "type": "object"
+    },
+    "TwitterUnlikeTweetConfig": {
+      "description": "Unlike a tweet",
+      "properties": {
+        "operation": {
+          "const": "unlike_tweet",
+          "default": "unlike_tweet",
+          "title": "Unlike Tweet",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tweet",
+          "x-display-name": "Unlike Tweet",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "unfavorite tweet",
+            "remove like",
+            "unheart tweet"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "tweet_id": {
+          "description": "The ID of the tweet to unlike",
+          "title": "Tweet ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "tweet_id"
+      ],
+      "title": "Unlike Tweet",
+      "type": "object"
+    },
+    "TwitterUnmuteUserConfig": {
+      "description": "Unmute a user",
+      "properties": {
+        "operation": {
+          "const": "unmute_user",
+          "default": "unmute_user",
+          "title": "Unmute User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Mute",
+          "x-display-name": "Unmute User",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "unmute account",
+            "remove mute",
+            "unsilence user"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "target_user_id": {
+          "description": "The ID of the user to unmute",
+          "title": "Target User ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "target_user_id"
+      ],
+      "title": "Unmute User",
+      "type": "object"
+    },
+    "TwitterUnpinListConfig": {
+      "description": "Unpin a list",
+      "properties": {
+        "operation": {
+          "const": "unpin_list",
+          "default": "unpin_list",
+          "title": "Unpin List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "List",
+          "x-display-name": "Unpin List",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "unpin a list",
+            "remove pinned list",
+            "unpin from top"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "list_id": {
+          "description": "The ID of the list to unpin",
+          "title": "List ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "TwitterUnpinListConfig",
+      "type": "object"
+    },
+    "TwitterUpdateListConfig": {
+      "description": "Update list metadata",
+      "properties": {
+        "operation": {
+          "const": "update_list_metadata",
+          "default": "update_list_metadata",
+          "title": "Update List Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "List",
+          "x-display-name": "Update List Metadata",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "rename list",
+            "edit list details",
+            "change list name",
+            "list description"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "list_id": {
+          "description": "The ID of the list to update",
+          "title": "List ID",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New name for the list (optional)",
+          "title": "List Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New description (optional)",
+          "title": "Description",
+          "ui:widget": "textarea"
+        },
+        "private": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether the list is private (optional)",
+          "title": "Private"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "TwitterUpdateListConfig",
+      "type": "object"
+    },
+    "TwitterUploadMediaChunkedConfig": {
+      "description": "Upload large media using chunked upload",
+      "properties": {
+        "operation": {
+          "const": "upload_media_chunked",
+          "default": "upload_media_chunked",
+          "title": "Upload Media Chunked",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tweet",
+          "x-display-name": "Upload Media Chunked",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "large upload",
+            "chunked upload",
+            "big video upload"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "media_data": {
+          "description": "The media to upload \u2014 upload a file, paste a URL, or reference an upstream file (e.g. {{http-1.response.url}}).",
+          "title": "Media",
+          "type": "string",
+          "ui:accept": "image/*,video/*",
+          "ui:widget": "media_upload"
+        },
+        "media_type": {
+          "description": "MIME type (e.g., image/jpeg, video/mp4)",
+          "title": "Media Type",
+          "type": "string"
+        },
+        "media_category": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "tweet_image",
+          "description": "Category: tweet_image, tweet_video, tweet_gif",
+          "title": "Media Category"
+        }
+      },
+      "required": [
+        "media_data",
+        "media_type"
+      ],
+      "title": "TwitterUploadMediaChunkedConfig",
+      "type": "object"
+    },
+    "TwitterUploadMediaConfig": {
+      "description": "Upload media (simple upload for small files)",
+      "properties": {
+        "operation": {
+          "const": "upload_media",
+          "default": "upload_media",
+          "title": "Upload Media",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tweet",
+          "x-display-name": "Upload Media",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "attach image",
+            "upload photo",
+            "add media",
+            "simple upload"
+          ],
+          "x-supported-credential-types": [
+            "twitter_oauth"
+          ]
+        },
+        "media_data": {
+          "description": "The media to upload \u2014 upload a file, paste a URL, or reference an upstream file (e.g. {{http-1.response.url}}).",
+          "title": "Media",
+          "type": "string",
+          "ui:accept": "image/*,video/*",
+          "ui:widget": "media_upload"
+        },
+        "media_type": {
+          "description": "MIME type (e.g., image/jpeg, video/mp4)",
+          "title": "Media Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "media_data",
+        "media_type"
+      ],
+      "title": "TwitterUploadMediaConfig",
+      "type": "object"
+    },
+    "TwitterValidateSubscriptionConfig": {
+      "description": "Validate account activity subscription",
+      "properties": {
+        "operation": {
+          "const": "validate_account_activity_subscription",
+          "default": "validate_account_activity_subscription",
+          "title": "Validate Account Activity Subscription",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscription",
+          "x-display-name": "Validate Account Activity Subscription",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "verify activity subscription",
+            "check subscription status",
+            "is subscribed"
+          ],
+          "x-supported-credential-types": [
+            "twitter_bearer_token"
+          ]
+        }
+      },
+      "title": "TwitterValidateSubscriptionConfig",
+      "type": "object"
+    },
+    "TwitterValidateWebhookConfig": {
+      "description": "Validate a webhook",
+      "properties": {
+        "operation": {
+          "const": "validate_webhook",
+          "default": "validate_webhook",
+          "title": "Validate Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhook",
+          "x-display-name": "Validate Webhook",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "verify webhook",
+            "check webhook",
+            "crc challenge",
+            "webhook health"
+          ],
+          "x-supported-credential-types": [
+            "twitter_bearer_token"
+          ]
+        },
+        "webhook_id": {
+          "description": "The ID of the webhook to validate",
+          "title": "Webhook ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "TwitterValidateWebhookConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for Twitter node including credentials",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_member_to_list": "#/$defs/TwitterAddListMemberConfig",
+          "add_stream_filter_rules": "#/$defs/TwitterAddStreamRulesConfig",
+          "add_tweet_to_bookmarks": "#/$defs/TwitterAddBookmarkConfig",
+          "block_user": "#/$defs/TwitterBlockUserConfig",
+          "block_user_dms": "#/$defs/TwitterBlockDMsConfig",
+          "collect_10_percent_sampled_stream_tweets": "#/$defs/TwitterGetSampled10StreamConfig",
+          "collect_filtered_stream_tweets": "#/$defs/TwitterGetFilteredStreamConfig",
+          "collect_sampled_stream_tweets": "#/$defs/TwitterGetSampledStreamConfig",
+          "create_account_activity_subscription": "#/$defs/TwitterCreateSubscriptionConfig",
+          "create_account_activity_subscription_replay": "#/$defs/TwitterCreateSubscriptionReplayConfig",
+          "create_community_note_on_tweet": "#/$defs/TwitterCreateNoteConfig",
+          "create_compliance_job": "#/$defs/TwitterCreateComplianceJobConfig",
+          "create_group_direct_message_conversation": "#/$defs/TwitterCreateDMConversationConfig",
+          "create_list": "#/$defs/TwitterCreateListConfig",
+          "create_media_metadata": "#/$defs/TwitterCreateMediaMetadataConfig",
+          "create_media_subtitles": "#/$defs/TwitterCreateMediaSubtitlesConfig",
+          "create_tweet": "#/$defs/TwitterCreateTweetConfig",
+          "create_webhook": "#/$defs/TwitterCreateWebhookConfig",
+          "create_webhook_replay": "#/$defs/TwitterCreateWebhookReplayConfig",
+          "create_webhook_stream_link": "#/$defs/TwitterCreateStreamLinkConfig",
+          "delete_account_activity_subscription": "#/$defs/TwitterDeleteSubscriptionConfig",
+          "delete_community_note": "#/$defs/TwitterDeleteNoteConfig",
+          "delete_direct_message_event": "#/$defs/TwitterDeleteDMEventConfig",
+          "delete_list": "#/$defs/TwitterDeleteListConfig",
+          "delete_media_subtitles": "#/$defs/TwitterDeleteMediaSubtitlesConfig",
+          "delete_stream_filter_rules": "#/$defs/TwitterDeleteStreamRulesConfig",
+          "delete_tweet": "#/$defs/TwitterDeleteTweetConfig",
+          "delete_webhook": "#/$defs/TwitterDeleteWebhookConfig",
+          "delete_webhook_stream_link": "#/$defs/TwitterDeleteStreamLinkConfig",
+          "evaluate_community_note": "#/$defs/TwitterEvaluateNoteConfig",
+          "follow_list": "#/$defs/TwitterFollowListConfig",
+          "follow_user": "#/$defs/TwitterFollowUserConfig",
+          "get_account_activity_subscription_count": "#/$defs/TwitterGetSubscriptionCountConfig",
+          "get_account_activity_subscriptions": "#/$defs/TwitterGetSubscriptionsConfig",
+          "get_all_direct_message_events": "#/$defs/TwitterGetAllDMEventsConfig",
+          "get_all_streaming_connections": "#/$defs/TwitterGetConnectionsConfig",
+          "get_api_usage": "#/$defs/TwitterGetUsageConfig",
+          "get_authenticated_user": "#/$defs/TwitterGetMeConfig",
+          "get_blocked_users": "#/$defs/TwitterGetBlockedUsersConfig",
+          "get_bookmark_folders": "#/$defs/TwitterGetBookmarkFoldersConfig",
+          "get_bookmarked_tweets": "#/$defs/TwitterGetBookmarksConfig",
+          "get_community_by_id": "#/$defs/TwitterGetCommunityConfig",
+          "get_community_notes_written": "#/$defs/TwitterGetNotesWrittenConfig",
+          "get_compliance_job_by_id": "#/$defs/TwitterGetComplianceJobConfig",
+          "get_direct_message_conversation_with_user": "#/$defs/TwitterGetDMConversationConfig",
+          "get_direct_message_event_by_id": "#/$defs/TwitterGetDMEventConfig",
+          "get_direct_message_events_for_conversation": "#/$defs/TwitterGetDMEventsConfig",
+          "get_home_timeline": "#/$defs/TwitterGetHomeTimelineConfig",
+          "get_list_by_id": "#/$defs/TwitterGetListConfig",
+          "get_list_followers": "#/$defs/TwitterGetListFollowersConfig",
+          "get_list_members": "#/$defs/TwitterGetListMembersConfig",
+          "get_lists_followed_by_user": "#/$defs/TwitterGetFollowedListsConfig",
+          "get_media_analytics": "#/$defs/TwitterGetMediaAnalyticsConfig",
+          "get_media_upload_status": "#/$defs/TwitterGetMediaUploadStatusConfig",
+          "get_muted_users": "#/$defs/TwitterGetMutedUsersConfig",
+          "get_news_article_by_id": "#/$defs/TwitterGetNewsByIdConfig",
+          "get_personalized_trending_topics": "#/$defs/TwitterGetPersonalizedTrendsConfig",
+          "get_posts_eligible_for_community_notes": "#/$defs/TwitterGetPostsEligibleForNotesConfig",
+          "get_space_by_id": "#/$defs/TwitterGetSpaceConfig",
+          "get_space_ticket_holders": "#/$defs/TwitterGetSpaceBuyersConfig",
+          "get_spaces_by_creator_user_ids": "#/$defs/TwitterGetSpacesByCreatorsConfig",
+          "get_spaces_by_ids": "#/$defs/TwitterGetSpacesConfig",
+          "get_stream_filter_rules": "#/$defs/TwitterGetStreamRulesConfig",
+          "get_stream_rule_counts": "#/$defs/TwitterGetStreamRuleCountsConfig",
+          "get_trending_topics_by_woeid": "#/$defs/TwitterGetTrendsByWOEIDConfig",
+          "get_tweet_analytics": "#/$defs/TwitterGetTweetAnalyticsConfig",
+          "get_tweet_by_id": "#/$defs/TwitterGetTweetConfig",
+          "get_tweet_counts_full_archive": "#/$defs/TwitterGetTweetCountsAllConfig",
+          "get_tweet_counts_recent": "#/$defs/TwitterGetTweetCountsRecentConfig",
+          "get_tweet_retweeters": "#/$defs/TwitterGetRetweetersConfig",
+          "get_tweet_retweets": "#/$defs/TwitterGetRetweetsConfig",
+          "get_tweets_by_ids": "#/$defs/TwitterGetTweetsConfig",
+          "get_tweets_from_list": "#/$defs/TwitterGetListTweetsConfig",
+          "get_tweets_from_space": "#/$defs/TwitterGetSpaceTweetsConfig",
+          "get_tweets_mentioning_user": "#/$defs/TwitterGetUserMentionsConfig",
+          "get_tweets_posted_by_user": "#/$defs/TwitterGetUserTweetsConfig",
+          "get_tweets_quoting_tweet": "#/$defs/TwitterGetQuoteTweetsConfig",
+          "get_user_by_id": "#/$defs/TwitterGetUserConfig",
+          "get_user_by_username": "#/$defs/TwitterGetUserByUsernameConfig",
+          "get_user_followers": "#/$defs/TwitterGetFollowersConfig",
+          "get_user_liked_tweets": "#/$defs/TwitterGetLikedTweetsConfig",
+          "get_user_list_memberships": "#/$defs/TwitterGetUserListMembershipsConfig",
+          "get_user_owned_lists": "#/$defs/TwitterGetUserOwnedListsConfig",
+          "get_user_pinned_lists": "#/$defs/TwitterGetPinnedListsConfig",
+          "get_users_by_ids": "#/$defs/TwitterGetUsersConfig",
+          "get_users_by_usernames": "#/$defs/TwitterGetUsersByUsernamesConfig",
+          "get_users_followed_by_user": "#/$defs/TwitterGetFollowingConfig",
+          "get_users_who_liked_tweet": "#/$defs/TwitterGetLikingUsersConfig",
+          "get_webhook_by_id": "#/$defs/TwitterGetWebhookConfig",
+          "get_webhook_stream_links": "#/$defs/TwitterGetStreamLinksConfig",
+          "hide_reply_to_tweet": "#/$defs/TwitterHideReplyConfig",
+          "like_tweet": "#/$defs/TwitterLikeTweetConfig",
+          "list_compliance_jobs": "#/$defs/TwitterListComplianceJobsConfig",
+          "mute_user": "#/$defs/TwitterMuteUserConfig",
+          "pin_list": "#/$defs/TwitterPinListConfig",
+          "remove_member_from_list": "#/$defs/TwitterRemoveListMemberConfig",
+          "remove_tweet_from_bookmarks": "#/$defs/TwitterRemoveBookmarkConfig",
+          "retweet_tweet": "#/$defs/TwitterRetweetConfig",
+          "search_all_tweets_full_archive": "#/$defs/TwitterSearchAllTweetsConfig",
+          "search_communities": "#/$defs/TwitterSearchCommunitiesConfig",
+          "search_news_articles": "#/$defs/TwitterSearchNewsConfig",
+          "search_recent_tweets": "#/$defs/TwitterSearchRecentTweetsConfig",
+          "search_spaces": "#/$defs/TwitterSearchSpacesConfig",
+          "search_users": "#/$defs/TwitterSearchUsersConfig",
+          "send_direct_message": "#/$defs/TwitterSendDMConfig",
+          "send_direct_message_to_conversation": "#/$defs/TwitterSendDMToConversationConfig",
+          "terminate_all_streaming_connections": "#/$defs/TwitterTerminateAllConnectionsConfig",
+          "terminate_streaming_connection": "#/$defs/TwitterTerminateConnectionConfig",
+          "terminate_streaming_connections_by_endpoint_type": "#/$defs/TwitterTerminateConnectionsByEndpointConfig",
+          "unblock_user": "#/$defs/TwitterUnblockUserConfig",
+          "unblock_user_dms": "#/$defs/TwitterUnblockDMsConfig",
+          "undo_retweet": "#/$defs/TwitterUndoRetweetConfig",
+          "unfollow_list": "#/$defs/TwitterUnfollowListConfig",
+          "unfollow_user": "#/$defs/TwitterUnfollowUserConfig",
+          "unhide_reply_to_tweet": "#/$defs/TwitterUnhideReplyConfig",
+          "unlike_tweet": "#/$defs/TwitterUnlikeTweetConfig",
+          "unmute_user": "#/$defs/TwitterUnmuteUserConfig",
+          "unpin_list": "#/$defs/TwitterUnpinListConfig",
+          "update_list_metadata": "#/$defs/TwitterUpdateListConfig",
+          "upload_media": "#/$defs/TwitterUploadMediaConfig",
+          "upload_media_chunked": "#/$defs/TwitterUploadMediaChunkedConfig",
+          "validate_account_activity_subscription": "#/$defs/TwitterValidateSubscriptionConfig",
+          "validate_webhook": "#/$defs/TwitterValidateWebhookConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/TwitterCreateTweetConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterDeleteTweetConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetTweetConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetTweetsConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterSearchRecentTweetsConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterSearchAllTweetsConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetTweetCountsRecentConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetTweetCountsAllConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetTweetAnalyticsConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetRetweetsConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetUserConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetUserByUsernameConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetMeConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetUsersByUsernamesConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterSearchUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterLikeTweetConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterUnlikeTweetConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetLikedTweetsConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetLikingUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterRetweetConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterUndoRetweetConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetRetweetersConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterFollowUserConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterUnfollowUserConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetFollowersConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetFollowingConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterBlockUserConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterUnblockUserConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetBlockedUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterMuteUserConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterUnmuteUserConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetMutedUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterAddBookmarkConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterRemoveBookmarkConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetBookmarksConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetBookmarkFoldersConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterCreateDMConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterSendDMConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterSendDMToConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetDMConversationConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetDMEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetAllDMEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterDeleteDMEventConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetDMEventConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterBlockDMsConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterUnblockDMsConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterCreateListConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterDeleteListConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterUpdateListConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetListConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetUserOwnedListsConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetUserListMembershipsConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetListTweetsConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterAddListMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterRemoveListMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetListMembersConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterPinListConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterUnpinListConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetPinnedListsConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetListFollowersConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetFollowedListsConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterFollowListConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterUnfollowListConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetSpaceConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetSpacesConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetSpacesByCreatorsConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterSearchSpacesConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetSpaceTweetsConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetSpaceBuyersConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterUploadMediaConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterUploadMediaChunkedConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetMediaUploadStatusConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterCreateMediaMetadataConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterCreateMediaSubtitlesConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterDeleteMediaSubtitlesConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetMediaAnalyticsConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetUserTweetsConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetUserMentionsConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetHomeTimelineConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetQuoteTweetsConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterHideReplyConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterUnhideReplyConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetFilteredStreamConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetStreamRulesConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterAddStreamRulesConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterDeleteStreamRulesConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetStreamRuleCountsConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetSampledStreamConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetSampled10StreamConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetTrendsByWOEIDConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetPersonalizedTrendsConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterSearchNewsConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetNewsByIdConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetUsageConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetCommunityConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterSearchCommunitiesConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterCreateNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterDeleteNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterEvaluateNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetNotesWrittenConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetPostsEligibleForNotesConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterCreateComplianceJobConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetComplianceJobConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterListComplianceJobsConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterCreateWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterDeleteWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterValidateWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterCreateStreamLinkConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterDeleteStreamLinkConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetStreamLinksConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterCreateWebhookReplayConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterCreateSubscriptionConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterDeleteSubscriptionConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetSubscriptionsConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetSubscriptionCountConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterValidateSubscriptionConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterCreateSubscriptionReplayConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterGetConnectionsConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterTerminateAllConnectionsConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterTerminateConnectionsByEndpointConfig"
+        },
+        {
+          "$ref": "#/$defs/TwitterTerminateConnectionConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TwitterOAuthCredential"
+        },
+        {
+          "$ref": "#/$defs/TwitterBearerTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Twitter Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Post a tweet announcing the latest product release",
+    "Search tweets mentioning the product name and sentiment",
+    "Retweet announcements from @anthropic about updates",
+    "Like tweets from followers who mention the brand",
+    "Follow accounts that engage with security content",
+    "Get list of users who liked a specific product tweet",
+    "Block spam accounts replying to customer support tweets"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

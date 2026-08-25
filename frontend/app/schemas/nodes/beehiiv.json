@@ -1,0 +1,4356 @@
+{
+  "$defs": {
+    "BeehiivAddSubscriptionTagConfig": {
+      "description": "Attach tags to a subscriber.",
+      "properties": {
+        "operation": {
+          "const": "add_subscription_tag",
+          "default": "add_subscription_tag",
+          "title": "Add Subscription Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Add Subscription Tag",
+          "x-is-trigger": false
+        },
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "subscription_id": {
+          "description": "The subscription ID (sub_...) to tag",
+          "title": "Subscription ID",
+          "type": "string"
+        },
+        "tags": {
+          "description": "Comma-separated list of tag names to attach",
+          "title": "Tags",
+          "type": "string"
+        }
+      },
+      "required": [
+        "publication_id",
+        "subscription_id",
+        "tags"
+      ],
+      "title": "BeehiivAddSubscriptionTagConfig",
+      "type": "object"
+    },
+    "BeehiivAddToAutomationConfig": {
+      "description": "Enroll a subscriber into an automation journey.",
+      "properties": {
+        "operation": {
+          "const": "add_to_automation",
+          "default": "add_to_automation",
+          "title": "Add Subscriber to Automation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Automations",
+          "x-display-name": "Add Subscriber to Automation",
+          "x-is-trigger": false
+        },
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "automation_id": {
+          "description": "The automation (aut_...) to enroll the subscriber into",
+          "title": "Automation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste automation ID (aut_...)",
+            "depends_on": "publication_id",
+            "field_name": "automation_id",
+            "placeholder": "Select an automation...",
+            "searchable": true
+          },
+          "x-resource-type": "beehiiv_automation"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Email of the subscriber to enroll (or use Subscription ID)",
+          "title": "Email"
+        },
+        "subscription_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Subscription ID (sub_...) of the subscriber to enroll",
+          "title": "Subscription ID"
+        }
+      },
+      "required": [
+        "publication_id",
+        "automation_id"
+      ],
+      "title": "BeehiivAddToAutomationConfig",
+      "type": "object"
+    },
+    "BeehiivApiKeyCredential": {
+      "description": "API Key credential for beehiiv.",
+      "properties": {
+        "credential_type": {
+          "const": "beehiiv_api_key",
+          "default": "beehiiv_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Your beehiiv API key from Settings -> API (Workspace Settings). Passed as a Bearer token.",
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "BeehiivApiKeyCredential",
+      "type": "object",
+      "x-credential-url": "https://app.beehiiv.com/settings/integrations/api"
+    },
+    "BeehiivBulkCreateSubscriptionsConfig": {
+      "description": "Import many subscribers in one async job.",
+      "properties": {
+        "operation": {
+          "const": "bulk_create_subscriptions",
+          "default": "bulk_create_subscriptions",
+          "title": "Bulk Create Subscriptions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Bulk Create Subscriptions",
+          "x-is-trigger": false
+        },
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "subscriptions": {
+          "description": "JSON array of subscriber objects, e.g. [{\"email\":\"a@x.com\"},{\"email\":\"b@x.com\"}]",
+          "title": "Subscriptions (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "publication_id",
+        "subscriptions"
+      ],
+      "title": "BeehiivBulkCreateSubscriptionsConfig",
+      "type": "object"
+    },
+    "BeehiivCreateCustomFieldConfig": {
+      "description": "Define a new custom field on subscribers.",
+      "properties": {
+        "operation": {
+          "const": "create_custom_field",
+          "default": "create_custom_field",
+          "title": "Create Custom Field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Fields",
+          "x-display-name": "Create Custom Field",
+          "x-is-trigger": false
+        },
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "display": {
+          "description": "The display name of the custom field",
+          "title": "Display Name",
+          "type": "string"
+        },
+        "kind": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "string",
+          "description": "The data type of the custom field",
+          "enum": [
+            "string",
+            "integer",
+            "boolean",
+            "date",
+            "datetime",
+            "list"
+          ],
+          "enumNames": [
+            "String",
+            "Integer",
+            "Boolean",
+            "Date",
+            "Datetime",
+            "List"
+          ],
+          "title": "Kind",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "publication_id",
+        "display"
+      ],
+      "title": "BeehiivCreateCustomFieldConfig",
+      "type": "object"
+    },
+    "BeehiivCreatePostConfig": {
+      "description": "Create a draft/scheduled post for a publication.",
+      "properties": {
+        "operation": {
+          "const": "create_post",
+          "default": "create_post",
+          "title": "Create Post",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Posts",
+          "x-creates-resource": true,
+          "x-display-name": "Create Post",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "beehiiv_post"
+        },
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "title": {
+          "description": "The post title",
+          "title": "Title",
+          "type": "string"
+        },
+        "body_content": {
+          "description": "The post body (HTML or markdown)",
+          "title": "Body Content",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "subtitle": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional post subtitle",
+          "title": "Subtitle"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "draft",
+          "description": "The status to create the post in",
+          "enum": [
+            "draft",
+            "confirmed",
+            "scheduled"
+          ],
+          "enumNames": [
+            "Draft",
+            "Confirmed",
+            "Scheduled"
+          ],
+          "title": "Status",
+          "x-enum-searchable": true
+        },
+        "scheduled_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 send time (when status is scheduled)",
+          "title": "Scheduled At"
+        }
+      },
+      "required": [
+        "publication_id",
+        "title",
+        "body_content"
+      ],
+      "title": "BeehiivCreatePostConfig",
+      "type": "object"
+    },
+    "BeehiivCreateSubscriptionConfig": {
+      "description": "Add a new subscriber to a publication.",
+      "properties": {
+        "operation": {
+          "const": "create_subscription",
+          "default": "create_subscription",
+          "title": "Create Subscription",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Create Subscription",
+          "x-is-trigger": false
+        },
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "email": {
+          "description": "The subscriber's email address",
+          "title": "Email",
+          "type": "string"
+        },
+        "reactivate_existing": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "false",
+          "description": "Reactivate the subscriber if they previously unsubscribed",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Reactivate Existing",
+          "x-enum-searchable": true
+        },
+        "send_welcome_email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "false",
+          "description": "Send the publication's welcome email to the new subscriber",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Send Welcome Email",
+          "x-enum-searchable": true
+        },
+        "utm_source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "UTM source attribution",
+          "title": "UTM Source"
+        },
+        "utm_medium": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "UTM medium attribution",
+          "title": "UTM Medium"
+        },
+        "utm_campaign": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "UTM campaign attribution",
+          "title": "UTM Campaign"
+        },
+        "referring_site": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL the subscriber came from",
+          "title": "Referring Site"
+        },
+        "custom_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array of custom fields, e.g. [{\"name\":\"First Name\",\"value\":\"Ada\"}]",
+          "title": "Custom Fields (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "publication_id",
+        "email"
+      ],
+      "title": "BeehiivCreateSubscriptionConfig",
+      "type": "object"
+    },
+    "BeehiivCreateWebhookConfig": {
+      "description": "Subscribe an endpoint URL to event types.",
+      "properties": {
+        "operation": {
+          "const": "create_webhook",
+          "default": "create_webhook",
+          "title": "Create Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-creates-resource": true,
+          "x-display-name": "Create Webhook",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "beehiiv_webhook"
+        },
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "url": {
+          "description": "The URL to receive webhook events",
+          "title": "Endpoint URL",
+          "type": "string"
+        },
+        "event_types": {
+          "description": "Comma-separated event types (e.g. subscription.created, post.sent)",
+          "title": "Event Types",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional description for the webhook",
+          "title": "Description"
+        }
+      },
+      "required": [
+        "publication_id",
+        "url",
+        "event_types"
+      ],
+      "title": "BeehiivCreateWebhookConfig",
+      "type": "object"
+    },
+    "BeehiivDeleteCustomFieldConfig": {
+      "description": "Delete a custom subscriber field.",
+      "properties": {
+        "operation": {
+          "const": "delete_custom_field",
+          "default": "delete_custom_field",
+          "title": "Delete Custom Field",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Fields",
+          "x-display-name": "Delete Custom Field",
+          "x-is-trigger": false
+        },
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "field_id": {
+          "description": "The ID of the custom field to delete",
+          "title": "Field ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "publication_id",
+        "field_id"
+      ],
+      "title": "BeehiivDeleteCustomFieldConfig",
+      "type": "object"
+    },
+    "BeehiivDeletePostConfig": {
+      "description": "Delete a post.",
+      "properties": {
+        "operation": {
+          "const": "delete_post",
+          "default": "delete_post",
+          "title": "Delete Post",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Posts",
+          "x-display-name": "Delete Post",
+          "x-is-trigger": false
+        },
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "post_id": {
+          "description": "The post (post_...) to operate on",
+          "title": "Post",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste post ID (post_...)",
+            "depends_on": "publication_id",
+            "field_name": "post_id",
+            "placeholder": "Select a post...",
+            "searchable": true
+          },
+          "x-resource-type": "beehiiv_post"
+        }
+      },
+      "required": [
+        "publication_id",
+        "post_id"
+      ],
+      "title": "BeehiivDeletePostConfig",
+      "type": "object"
+    },
+    "BeehiivDeleteSegmentConfig": {
+      "description": "Delete a segment.",
+      "properties": {
+        "operation": {
+          "const": "delete_segment",
+          "default": "delete_segment",
+          "title": "Delete Segment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Segments",
+          "x-display-name": "Delete Segment",
+          "x-is-trigger": false
+        },
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "segment_id": {
+          "description": "The segment to operate on",
+          "title": "Segment",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste segment ID",
+            "depends_on": "publication_id",
+            "field_name": "segment_id",
+            "placeholder": "Select a segment...",
+            "searchable": true
+          },
+          "x-resource-type": "beehiiv_segment"
+        }
+      },
+      "required": [
+        "publication_id",
+        "segment_id"
+      ],
+      "title": "BeehiivDeleteSegmentConfig",
+      "type": "object"
+    },
+    "BeehiivDeleteSubscriptionConfig": {
+      "description": "Remove a subscriber from the publication.",
+      "properties": {
+        "operation": {
+          "const": "delete_subscription",
+          "default": "delete_subscription",
+          "title": "Delete Subscription",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Delete Subscription",
+          "x-is-trigger": false
+        },
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "subscription_id": {
+          "description": "The subscription ID (sub_...) to delete",
+          "title": "Subscription ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "publication_id",
+        "subscription_id"
+      ],
+      "title": "BeehiivDeleteSubscriptionConfig",
+      "type": "object"
+    },
+    "BeehiivDeleteWebhookConfig": {
+      "description": "Remove a webhook subscription.",
+      "properties": {
+        "operation": {
+          "const": "delete_webhook",
+          "default": "delete_webhook",
+          "title": "Delete Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Delete Webhook",
+          "x-is-trigger": false
+        },
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "webhook_id": {
+          "description": "The webhook endpoint to delete",
+          "title": "Webhook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste webhook ID",
+            "depends_on": "publication_id",
+            "field_name": "webhook_id",
+            "placeholder": "Select a webhook...",
+            "searchable": true
+          },
+          "x-resource-type": "beehiiv_webhook"
+        }
+      },
+      "required": [
+        "publication_id",
+        "webhook_id"
+      ],
+      "title": "BeehiivDeleteWebhookConfig",
+      "type": "object"
+    },
+    "BeehiivGetAutomationConfig": {
+      "description": "Retrieve a single automation by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_automation",
+          "default": "get_automation",
+          "title": "Get Automation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Automations",
+          "x-display-name": "Get Automation",
+          "x-is-trigger": false
+        },
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "automation_id": {
+          "description": "The automation (aut_...) to enroll the subscriber into",
+          "title": "Automation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste automation ID (aut_...)",
+            "depends_on": "publication_id",
+            "field_name": "automation_id",
+            "placeholder": "Select an automation...",
+            "searchable": true
+          },
+          "x-resource-type": "beehiiv_automation"
+        }
+      },
+      "required": [
+        "publication_id",
+        "automation_id"
+      ],
+      "title": "BeehiivGetAutomationConfig",
+      "type": "object"
+    },
+    "BeehiivGetPollConfig": {
+      "description": "Retrieve a single poll.",
+      "properties": {
+        "operation": {
+          "const": "get_poll",
+          "default": "get_poll",
+          "title": "Get Poll",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lists & Polls",
+          "x-display-name": "Get Poll",
+          "x-is-trigger": false
+        },
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "poll_id": {
+          "description": "The poll ID to retrieve",
+          "title": "Poll ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "publication_id",
+        "poll_id"
+      ],
+      "title": "BeehiivGetPollConfig",
+      "type": "object"
+    },
+    "BeehiivGetPollResponsesConfig": {
+      "description": "List responses for a poll.",
+      "properties": {
+        "operation": {
+          "const": "get_poll_responses",
+          "default": "get_poll_responses",
+          "title": "Get Poll Responses",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lists & Polls",
+          "x-display-name": "Get Poll Responses",
+          "x-is-trigger": false
+        },
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "poll_id": {
+          "description": "The poll ID to get responses for",
+          "title": "Poll ID",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "10",
+          "description": "Max number of responses to return (1-100)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "publication_id",
+        "poll_id"
+      ],
+      "title": "BeehiivGetPollResponsesConfig",
+      "type": "object"
+    },
+    "BeehiivGetPostConfig": {
+      "description": "Retrieve a single post.",
+      "properties": {
+        "operation": {
+          "const": "get_post",
+          "default": "get_post",
+          "title": "Get Post",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Posts",
+          "x-display-name": "Get Post",
+          "x-is-trigger": false
+        },
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "post_id": {
+          "description": "The post (post_...) to operate on",
+          "title": "Post",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste post ID (post_...)",
+            "depends_on": "publication_id",
+            "field_name": "post_id",
+            "placeholder": "Select a post...",
+            "searchable": true
+          },
+          "x-resource-type": "beehiiv_post"
+        },
+        "expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated fields to expand (e.g. free_web_content,stats)",
+          "title": "Expand"
+        }
+      },
+      "required": [
+        "publication_id",
+        "post_id"
+      ],
+      "title": "BeehiivGetPostConfig",
+      "type": "object"
+    },
+    "BeehiivGetPostStatsConfig": {
+      "description": "Retrieve open/click/engagement stats for a post.",
+      "properties": {
+        "operation": {
+          "const": "get_post_stats",
+          "default": "get_post_stats",
+          "title": "Get Post Stats",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Posts",
+          "x-display-name": "Get Post Stats",
+          "x-is-trigger": false
+        },
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "post_id": {
+          "description": "The post (post_...) to operate on",
+          "title": "Post",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste post ID (post_...)",
+            "depends_on": "publication_id",
+            "field_name": "post_id",
+            "placeholder": "Select a post...",
+            "searchable": true
+          },
+          "x-resource-type": "beehiiv_post"
+        }
+      },
+      "required": [
+        "publication_id",
+        "post_id"
+      ],
+      "title": "BeehiivGetPostStatsConfig",
+      "type": "object"
+    },
+    "BeehiivGetPublicationConfig": {
+      "description": "Retrieve a single publication.",
+      "properties": {
+        "operation": {
+          "const": "get_publication",
+          "default": "get_publication",
+          "title": "Get Publication",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Publications",
+          "x-display-name": "Get Publication",
+          "x-is-trigger": false
+        },
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "expand": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated fields to expand (e.g. stats)",
+          "title": "Expand"
+        }
+      },
+      "required": [
+        "publication_id"
+      ],
+      "title": "BeehiivGetPublicationConfig",
+      "type": "object"
+    },
+    "BeehiivGetReferralProgramConfig": {
+      "description": "Retrieve referral program milestones/rewards.",
+      "properties": {
+        "operation": {
+          "const": "get_referral_program",
+          "default": "get_referral_program",
+          "title": "Get Referral Program",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tiers & Referrals",
+          "x-display-name": "Get Referral Program",
+          "x-is-trigger": false
+        },
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        }
+      },
+      "required": [
+        "publication_id"
+      ],
+      "title": "BeehiivGetReferralProgramConfig",
+      "type": "object"
+    },
+    "BeehiivGetSegmentConfig": {
+      "description": "Retrieve a single segment.",
+      "properties": {
+        "operation": {
+          "const": "get_segment",
+          "default": "get_segment",
+          "title": "Get Segment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Segments",
+          "x-display-name": "Get Segment",
+          "x-is-trigger": false
+        },
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "segment_id": {
+          "description": "The segment to operate on",
+          "title": "Segment",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste segment ID",
+            "depends_on": "publication_id",
+            "field_name": "segment_id",
+            "placeholder": "Select a segment...",
+            "searchable": true
+          },
+          "x-resource-type": "beehiiv_segment"
+        }
+      },
+      "required": [
+        "publication_id",
+        "segment_id"
+      ],
+      "title": "BeehiivGetSegmentConfig",
+      "type": "object"
+    },
+    "BeehiivGetSubscriptionByEmailConfig": {
+      "description": "Look up a subscriber by email address.",
+      "properties": {
+        "operation": {
+          "const": "get_subscription_by_email",
+          "default": "get_subscription_by_email",
+          "title": "Get Subscription by Email",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Get Subscription by Email",
+          "x-is-trigger": false
+        },
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "email": {
+          "description": "The subscriber's email address",
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "publication_id",
+        "email"
+      ],
+      "title": "BeehiivGetSubscriptionByEmailConfig",
+      "type": "object"
+    },
+    "BeehiivGetSubscriptionConfig": {
+      "description": "Retrieve a single subscription by its prefixed ID.",
+      "properties": {
+        "operation": {
+          "const": "get_subscription",
+          "default": "get_subscription",
+          "title": "Get Subscription",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Get Subscription",
+          "x-is-trigger": false
+        },
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "subscription_id": {
+          "description": "The subscription ID (sub_...)",
+          "title": "Subscription ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "publication_id",
+        "subscription_id"
+      ],
+      "title": "BeehiivGetSubscriptionConfig",
+      "type": "object"
+    },
+    "BeehiivGetWebhookConfig": {
+      "description": "Retrieve a single webhook endpoint.",
+      "properties": {
+        "operation": {
+          "const": "get_webhook",
+          "default": "get_webhook",
+          "title": "Get Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Get Webhook",
+          "x-is-trigger": false
+        },
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "webhook_id": {
+          "description": "The webhook endpoint to delete",
+          "title": "Webhook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste webhook ID",
+            "depends_on": "publication_id",
+            "field_name": "webhook_id",
+            "placeholder": "Select a webhook...",
+            "searchable": true
+          },
+          "x-resource-type": "beehiiv_webhook"
+        }
+      },
+      "required": [
+        "publication_id",
+        "webhook_id"
+      ],
+      "title": "BeehiivGetWebhookConfig",
+      "type": "object"
+    },
+    "BeehiivListAutomationsConfig": {
+      "description": "List automation flows for a publication.",
+      "properties": {
+        "operation": {
+          "const": "list_automations",
+          "default": "list_automations",
+          "title": "List Automations",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Automations",
+          "x-display-name": "List Automations",
+          "x-is-trigger": false
+        },
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "10",
+          "description": "Max number of automations to return (1-100)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "publication_id"
+      ],
+      "title": "BeehiivListAutomationsConfig",
+      "type": "object"
+    },
+    "BeehiivListCustomFieldsConfig": {
+      "description": "List custom subscriber fields.",
+      "properties": {
+        "operation": {
+          "const": "list_custom_fields",
+          "default": "list_custom_fields",
+          "title": "List Custom Fields",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Custom Fields",
+          "x-display-name": "List Custom Fields",
+          "x-is-trigger": false
+        },
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        }
+      },
+      "required": [
+        "publication_id"
+      ],
+      "title": "BeehiivListCustomFieldsConfig",
+      "type": "object"
+    },
+    "BeehiivListNewsletterListsConfig": {
+      "description": "List newsletter lists (multi-list feature, beta).",
+      "properties": {
+        "operation": {
+          "const": "list_newsletter_lists",
+          "default": "list_newsletter_lists",
+          "title": "List Newsletter Lists",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lists & Polls",
+          "x-display-name": "List Newsletter Lists",
+          "x-is-trigger": false
+        },
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        }
+      },
+      "required": [
+        "publication_id"
+      ],
+      "title": "BeehiivListNewsletterListsConfig",
+      "type": "object"
+    },
+    "BeehiivListPollsConfig": {
+      "description": "List polls and their responses.",
+      "properties": {
+        "operation": {
+          "const": "list_polls",
+          "default": "list_polls",
+          "title": "List Polls",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lists & Polls",
+          "x-display-name": "List Polls",
+          "x-is-trigger": false
+        },
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "10",
+          "description": "Max number of polls to return (1-100)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "publication_id"
+      ],
+      "title": "BeehiivListPollsConfig",
+      "type": "object"
+    },
+    "BeehiivListPostsConfig": {
+      "description": "List newsletter posts for a publication.",
+      "properties": {
+        "operation": {
+          "const": "list_posts",
+          "default": "list_posts",
+          "title": "List Posts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Posts",
+          "x-display-name": "List Posts",
+          "x-is-trigger": false
+        },
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by post status",
+          "enum": [
+            "",
+            "draft",
+            "confirmed",
+            "archived"
+          ],
+          "enumNames": [
+            "Any",
+            "Draft",
+            "Confirmed",
+            "Archived"
+          ],
+          "title": "Status",
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "10",
+          "description": "Max number of posts to return (1-100)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "publication_id"
+      ],
+      "title": "BeehiivListPostsConfig",
+      "type": "object"
+    },
+    "BeehiivListPublicationsConfig": {
+      "description": "List all publications associated with the API key.",
+      "properties": {
+        "operation": {
+          "const": "list_publications",
+          "default": "list_publications",
+          "title": "List Publications",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Publications",
+          "x-display-name": "List Publications",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "10",
+          "description": "Max number of publications to return (1-100)",
+          "title": "Limit"
+        }
+      },
+      "title": "BeehiivListPublicationsConfig",
+      "type": "object"
+    },
+    "BeehiivListSegmentSubscribersConfig": {
+      "description": "List subscribers matching a segment.",
+      "properties": {
+        "operation": {
+          "const": "list_segment_subscribers",
+          "default": "list_segment_subscribers",
+          "title": "List Segment Subscribers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Segments",
+          "x-display-name": "List Segment Subscribers",
+          "x-is-trigger": false
+        },
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "segment_id": {
+          "description": "The segment to operate on",
+          "title": "Segment",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste segment ID",
+            "depends_on": "publication_id",
+            "field_name": "segment_id",
+            "placeholder": "Select a segment...",
+            "searchable": true
+          },
+          "x-resource-type": "beehiiv_segment"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "10",
+          "description": "Max number of subscribers to return (1-100)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "publication_id",
+        "segment_id"
+      ],
+      "title": "BeehiivListSegmentSubscribersConfig",
+      "type": "object"
+    },
+    "BeehiivListSegmentsConfig": {
+      "description": "List all segments for a publication.",
+      "properties": {
+        "operation": {
+          "const": "list_segments",
+          "default": "list_segments",
+          "title": "List Segments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Segments",
+          "x-display-name": "List Segments",
+          "x-is-trigger": false
+        },
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "10",
+          "description": "Max number of segments to return (1-100)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "publication_id"
+      ],
+      "title": "BeehiivListSegmentsConfig",
+      "type": "object"
+    },
+    "BeehiivListSubscriptionsConfig": {
+      "description": "List all subscriptions for a publication.",
+      "properties": {
+        "operation": {
+          "const": "list_subscriptions",
+          "default": "list_subscriptions",
+          "title": "List Subscriptions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "List Subscriptions",
+          "x-is-trigger": false
+        },
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by subscription status",
+          "enum": [
+            "",
+            "active",
+            "inactive",
+            "pending",
+            "validating",
+            "invalid"
+          ],
+          "enumNames": [
+            "Any",
+            "Active",
+            "Inactive",
+            "Pending",
+            "Validating",
+            "Invalid"
+          ],
+          "title": "Status",
+          "x-enum-searchable": true
+        },
+        "tier": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by tier",
+          "enum": [
+            "",
+            "free",
+            "premium"
+          ],
+          "enumNames": [
+            "Any",
+            "Free",
+            "Premium"
+          ],
+          "title": "Tier",
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "10",
+          "description": "Max number of subscriptions to return (1-100)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "publication_id"
+      ],
+      "title": "BeehiivListSubscriptionsConfig",
+      "type": "object"
+    },
+    "BeehiivListTiersConfig": {
+      "description": "List paid subscription tiers.",
+      "properties": {
+        "operation": {
+          "const": "list_tiers",
+          "default": "list_tiers",
+          "title": "List Tiers",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tiers & Referrals",
+          "x-display-name": "List Tiers",
+          "x-is-trigger": false
+        },
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        }
+      },
+      "required": [
+        "publication_id"
+      ],
+      "title": "BeehiivListTiersConfig",
+      "type": "object"
+    },
+    "BeehiivListWebhooksConfig": {
+      "description": "List configured webhook endpoints.",
+      "properties": {
+        "operation": {
+          "const": "list_webhooks",
+          "default": "list_webhooks",
+          "title": "List Webhooks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "List Webhooks",
+          "x-is-trigger": false
+        },
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        }
+      },
+      "required": [
+        "publication_id"
+      ],
+      "title": "BeehiivListWebhooksConfig",
+      "type": "object"
+    },
+    "BeehiivOnNewsletterListEventConfig": {
+      "description": "Trigger: fires when a subscriber joins, leaves, pauses, or resumes a newsletter list.",
+      "properties": {
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "beehiiv posts events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_newsletter_list_event",
+          "default": "on_newsletter_list_event",
+          "title": "On Newsletter List Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Newsletter List Event",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "newsletter list",
+            "list subscription",
+            "list joined",
+            "list unsubscribed",
+            "list event"
+          ]
+        }
+      },
+      "required": [
+        "publication_id"
+      ],
+      "title": "BeehiivOnNewsletterListEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "BeehiivOnPostScheduledConfig": {
+      "description": "Trigger: fires when a post is scheduled for future delivery.",
+      "properties": {
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "beehiiv posts events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_post_scheduled",
+          "default": "on_post_scheduled",
+          "title": "On Post Scheduled",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Post Scheduled",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "post scheduled",
+            "newsletter scheduled",
+            "scheduled post",
+            "upcoming post"
+          ]
+        }
+      },
+      "required": [
+        "publication_id"
+      ],
+      "title": "BeehiivOnPostScheduledConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "BeehiivOnPostSentConfig": {
+      "description": "Trigger: fires when a post is sent to subscribers.",
+      "properties": {
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "beehiiv posts events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_post_sent",
+          "default": "on_post_sent",
+          "title": "On Post Sent",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Post Sent",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "post sent",
+            "newsletter sent",
+            "email sent",
+            "post published",
+            "newsletter delivered"
+          ]
+        }
+      },
+      "required": [
+        "publication_id"
+      ],
+      "title": "BeehiivOnPostSentConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "BeehiivOnPostUpdatedConfig": {
+      "description": "Trigger: fires when an existing post is updated.",
+      "properties": {
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "beehiiv posts events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_post_updated",
+          "default": "on_post_updated",
+          "title": "On Post Updated",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Post Updated",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "post updated",
+            "newsletter updated",
+            "content changed",
+            "post edited"
+          ]
+        }
+      },
+      "required": [
+        "publication_id"
+      ],
+      "title": "BeehiivOnPostUpdatedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "BeehiivOnSubscriberConfirmedConfig": {
+      "description": "Trigger: fires when a subscriber confirms their email (double opt-in).",
+      "properties": {
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "beehiiv posts events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_subscriber_confirmed",
+          "default": "on_subscriber_confirmed",
+          "title": "On Subscriber Confirmed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Subscriber Confirmed",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "subscriber confirmed",
+            "double opt-in confirmed",
+            "email confirmed"
+          ]
+        }
+      },
+      "required": [
+        "publication_id"
+      ],
+      "title": "BeehiivOnSubscriberConfirmedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "BeehiivOnSubscriberCreatedConfig": {
+      "description": "Trigger: fires when a new subscriber is created.",
+      "properties": {
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "beehiiv posts events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_subscriber_created",
+          "default": "on_subscriber_created",
+          "title": "On New Subscriber",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On New Subscriber",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "new subscriber",
+            "subscription created",
+            "new signup",
+            "subscriber joined",
+            "new reader"
+          ]
+        }
+      },
+      "required": [
+        "publication_id"
+      ],
+      "title": "BeehiivOnSubscriberCreatedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "BeehiivOnSubscriptionDeletedConfig": {
+      "description": "Trigger: fires when a subscriber unsubscribes or is deleted.",
+      "properties": {
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "beehiiv posts events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_subscription_deleted",
+          "default": "on_subscription_deleted",
+          "title": "On Subscriber Unsubscribed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Subscriber Unsubscribed",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "subscriber deleted",
+            "unsubscribed",
+            "subscriber removed",
+            "churn",
+            "cancel subscription"
+          ]
+        }
+      },
+      "required": [
+        "publication_id"
+      ],
+      "title": "BeehiivOnSubscriptionDeletedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "BeehiivOnSubscriptionDowngradedConfig": {
+      "description": "Trigger: fires when a subscription is downgraded.",
+      "properties": {
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "beehiiv posts events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_subscription_downgraded",
+          "default": "on_subscription_downgraded",
+          "title": "On Subscription Downgraded",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Subscription Downgraded",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "subscription downgraded",
+            "tier downgraded",
+            "downgrade",
+            "churn signal"
+          ]
+        }
+      },
+      "required": [
+        "publication_id"
+      ],
+      "title": "BeehiivOnSubscriptionDowngradedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "BeehiivOnSubscriptionPausedConfig": {
+      "description": "Trigger: fires when a subscription is paused.",
+      "properties": {
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "beehiiv posts events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_subscription_paused",
+          "default": "on_subscription_paused",
+          "title": "On Subscription Paused",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Subscription Paused",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "subscription paused",
+            "subscriber paused",
+            "paused subscription"
+          ]
+        }
+      },
+      "required": [
+        "publication_id"
+      ],
+      "title": "BeehiivOnSubscriptionPausedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "BeehiivOnSubscriptionResumedConfig": {
+      "description": "Trigger: fires when a paused subscription is resumed.",
+      "properties": {
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "beehiiv posts events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_subscription_resumed",
+          "default": "on_subscription_resumed",
+          "title": "On Subscription Resumed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Subscription Resumed",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "subscription resumed",
+            "reactivated",
+            "subscriber returned",
+            "resumed subscription"
+          ]
+        }
+      },
+      "required": [
+        "publication_id"
+      ],
+      "title": "BeehiivOnSubscriptionResumedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "BeehiivOnSubscriptionUpgradedConfig": {
+      "description": "Trigger: fires when a subscription is upgraded to a paid tier.",
+      "properties": {
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "beehiiv posts events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_subscription_upgraded",
+          "default": "on_subscription_upgraded",
+          "title": "On Subscription Upgraded",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Subscription Upgraded",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "subscription upgraded",
+            "paid upgrade",
+            "premium subscriber",
+            "tier upgrade"
+          ]
+        }
+      },
+      "required": [
+        "publication_id"
+      ],
+      "title": "BeehiivOnSubscriptionUpgradedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "BeehiivOnSurveyResponseConfig": {
+      "description": "Trigger: fires when a subscriber submits a survey response.",
+      "properties": {
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "beehiiv posts events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_survey_response",
+          "default": "on_survey_response",
+          "title": "On Survey Response",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Survey Response",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "survey response",
+            "survey submitted",
+            "survey answer",
+            "reader survey"
+          ]
+        }
+      },
+      "required": [
+        "publication_id"
+      ],
+      "title": "BeehiivOnSurveyResponseConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "BeehiivOnTierChangedConfig": {
+      "description": "Trigger: fires when a subscription tier is created, deleted, paused, or resumed.",
+      "properties": {
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "beehiiv posts events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_tier_changed",
+          "default": "on_tier_changed",
+          "title": "On Tier Changed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Tier Changed",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "tier changed",
+            "premium tier",
+            "subscription tier event",
+            "tier lifecycle"
+          ]
+        }
+      },
+      "required": [
+        "publication_id"
+      ],
+      "title": "BeehiivOnTierChangedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "BeehiivTriggerConfig": {
+      "description": "Trigger: fires on any beehiiv event (catch-all).",
+      "properties": {
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "beehiiv posts events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_beehiiv_event",
+          "default": "on_beehiiv_event",
+          "title": "On beehiiv Event (Any)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On beehiiv Event (Any)",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "any beehiiv event",
+            "beehiiv webhook",
+            "all events"
+          ]
+        }
+      },
+      "required": [
+        "publication_id"
+      ],
+      "title": "BeehiivTriggerConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "BeehiivUpdatePostConfig": {
+      "description": "Update an existing post's content or scheduling.",
+      "properties": {
+        "operation": {
+          "const": "update_post",
+          "default": "update_post",
+          "title": "Update Post",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Posts",
+          "x-display-name": "Update Post",
+          "x-is-trigger": false
+        },
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "post_id": {
+          "description": "The post (post_...) to operate on",
+          "title": "Post",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste post ID (post_...)",
+            "depends_on": "publication_id",
+            "field_name": "post_id",
+            "placeholder": "Select a post...",
+            "searchable": true
+          },
+          "x-resource-type": "beehiiv_post"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated post title",
+          "title": "Title"
+        },
+        "body_content": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated post body (HTML or markdown)",
+          "title": "Body Content",
+          "ui:widget": "textarea"
+        },
+        "scheduled_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Updated ISO 8601 send time",
+          "title": "Scheduled At"
+        }
+      },
+      "required": [
+        "publication_id",
+        "post_id"
+      ],
+      "title": "BeehiivUpdatePostConfig",
+      "type": "object"
+    },
+    "BeehiivUpdateSubscriptionConfig": {
+      "description": "Update a subscriber's tier, custom fields, or status.",
+      "properties": {
+        "operation": {
+          "const": "update_subscription",
+          "default": "update_subscription",
+          "title": "Update Subscription",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subscriptions",
+          "x-display-name": "Update Subscription",
+          "x-is-trigger": false
+        },
+        "publication_id": {
+          "description": "The beehiiv publication (pub_...) to operate on",
+          "title": "Publication",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste publication ID (pub_...)",
+            "field_name": "publication_id",
+            "placeholder": "Select a publication...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "beehiiv_publication"
+        },
+        "subscription_id": {
+          "description": "The subscription ID (sub_...) to update",
+          "title": "Subscription ID",
+          "type": "string"
+        },
+        "tier": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New tier for the subscriber",
+          "enum": [
+            "",
+            "free",
+            "premium"
+          ],
+          "enumNames": [
+            "Unchanged",
+            "Free",
+            "Premium"
+          ],
+          "title": "Tier",
+          "x-enum-searchable": true
+        },
+        "unsubscribe": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "false",
+          "description": "Set to Yes to unsubscribe this subscriber",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Unsubscribe",
+          "x-enum-searchable": true
+        },
+        "custom_fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array of custom fields to set, e.g. [{\"name\":\"First Name\",\"value\":\"Ada\"}]",
+          "title": "Custom Fields (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "publication_id",
+        "subscription_id"
+      ],
+      "title": "BeehiivUpdateSubscriptionConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the beehiiv node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_subscription_tag": "#/$defs/BeehiivAddSubscriptionTagConfig",
+          "add_to_automation": "#/$defs/BeehiivAddToAutomationConfig",
+          "bulk_create_subscriptions": "#/$defs/BeehiivBulkCreateSubscriptionsConfig",
+          "create_custom_field": "#/$defs/BeehiivCreateCustomFieldConfig",
+          "create_post": "#/$defs/BeehiivCreatePostConfig",
+          "create_subscription": "#/$defs/BeehiivCreateSubscriptionConfig",
+          "create_webhook": "#/$defs/BeehiivCreateWebhookConfig",
+          "delete_custom_field": "#/$defs/BeehiivDeleteCustomFieldConfig",
+          "delete_post": "#/$defs/BeehiivDeletePostConfig",
+          "delete_segment": "#/$defs/BeehiivDeleteSegmentConfig",
+          "delete_subscription": "#/$defs/BeehiivDeleteSubscriptionConfig",
+          "delete_webhook": "#/$defs/BeehiivDeleteWebhookConfig",
+          "get_automation": "#/$defs/BeehiivGetAutomationConfig",
+          "get_poll": "#/$defs/BeehiivGetPollConfig",
+          "get_poll_responses": "#/$defs/BeehiivGetPollResponsesConfig",
+          "get_post": "#/$defs/BeehiivGetPostConfig",
+          "get_post_stats": "#/$defs/BeehiivGetPostStatsConfig",
+          "get_publication": "#/$defs/BeehiivGetPublicationConfig",
+          "get_referral_program": "#/$defs/BeehiivGetReferralProgramConfig",
+          "get_segment": "#/$defs/BeehiivGetSegmentConfig",
+          "get_subscription": "#/$defs/BeehiivGetSubscriptionConfig",
+          "get_subscription_by_email": "#/$defs/BeehiivGetSubscriptionByEmailConfig",
+          "get_webhook": "#/$defs/BeehiivGetWebhookConfig",
+          "list_automations": "#/$defs/BeehiivListAutomationsConfig",
+          "list_custom_fields": "#/$defs/BeehiivListCustomFieldsConfig",
+          "list_newsletter_lists": "#/$defs/BeehiivListNewsletterListsConfig",
+          "list_polls": "#/$defs/BeehiivListPollsConfig",
+          "list_posts": "#/$defs/BeehiivListPostsConfig",
+          "list_publications": "#/$defs/BeehiivListPublicationsConfig",
+          "list_segment_subscribers": "#/$defs/BeehiivListSegmentSubscribersConfig",
+          "list_segments": "#/$defs/BeehiivListSegmentsConfig",
+          "list_subscriptions": "#/$defs/BeehiivListSubscriptionsConfig",
+          "list_tiers": "#/$defs/BeehiivListTiersConfig",
+          "list_webhooks": "#/$defs/BeehiivListWebhooksConfig",
+          "on_beehiiv_event": "#/$defs/BeehiivTriggerConfig",
+          "on_newsletter_list_event": "#/$defs/BeehiivOnNewsletterListEventConfig",
+          "on_post_scheduled": "#/$defs/BeehiivOnPostScheduledConfig",
+          "on_post_sent": "#/$defs/BeehiivOnPostSentConfig",
+          "on_post_updated": "#/$defs/BeehiivOnPostUpdatedConfig",
+          "on_subscriber_confirmed": "#/$defs/BeehiivOnSubscriberConfirmedConfig",
+          "on_subscriber_created": "#/$defs/BeehiivOnSubscriberCreatedConfig",
+          "on_subscription_deleted": "#/$defs/BeehiivOnSubscriptionDeletedConfig",
+          "on_subscription_downgraded": "#/$defs/BeehiivOnSubscriptionDowngradedConfig",
+          "on_subscription_paused": "#/$defs/BeehiivOnSubscriptionPausedConfig",
+          "on_subscription_resumed": "#/$defs/BeehiivOnSubscriptionResumedConfig",
+          "on_subscription_upgraded": "#/$defs/BeehiivOnSubscriptionUpgradedConfig",
+          "on_survey_response": "#/$defs/BeehiivOnSurveyResponseConfig",
+          "on_tier_changed": "#/$defs/BeehiivOnTierChangedConfig",
+          "update_post": "#/$defs/BeehiivUpdatePostConfig",
+          "update_subscription": "#/$defs/BeehiivUpdateSubscriptionConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/BeehiivListPublicationsConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivGetPublicationConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivListSubscriptionsConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivCreateSubscriptionConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivGetSubscriptionByEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivGetSubscriptionConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivUpdateSubscriptionConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivDeleteSubscriptionConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivBulkCreateSubscriptionsConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivAddSubscriptionTagConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivListPostsConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivGetPostConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivCreatePostConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivUpdatePostConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivDeletePostConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivGetPostStatsConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivListSegmentsConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivGetSegmentConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivListSegmentSubscribersConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivDeleteSegmentConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivListCustomFieldsConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivCreateCustomFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivDeleteCustomFieldConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivListAutomationsConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivGetAutomationConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivAddToAutomationConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivListTiersConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivGetReferralProgramConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivListNewsletterListsConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivListPollsConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivGetPollConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivGetPollResponsesConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivGetWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivListWebhooksConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivCreateWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivDeleteWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivOnSubscriberCreatedConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivOnSubscriberConfirmedConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivOnSubscriptionUpgradedConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivOnSubscriptionDowngradedConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivOnSubscriptionPausedConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivOnSubscriptionResumedConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivOnSubscriptionDeletedConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivOnPostSentConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivOnPostScheduledConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivOnPostUpdatedConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivOnSurveyResponseConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivOnTierChangedConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivOnNewsletterListEventConfig"
+        },
+        {
+          "$ref": "#/$defs/BeehiivTriggerConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BeehiivApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Beehiiv Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Add a new subscriber to my newsletter when a user signs up",
+    "Create and schedule a newsletter post",
+    "Look up a subscriber by their email address",
+    "List all active subscriptions for a publication",
+    "Trigger a workflow whenever a new subscriber confirms"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

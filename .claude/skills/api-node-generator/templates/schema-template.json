@@ -1,0 +1,170 @@
+{
+  "$defs": {
+    "{ServiceName}List{Resource}Config": {
+      "description": "List all {resources}",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "list_{resources}",
+          "title": "Operation",
+          "ui:hidden": true
+        },
+        "page": {
+          "type": "integer",
+          "title": "Page",
+          "description": "Page number (starts at 1)",
+          "default": 1
+        },
+        "per_page": {
+          "type": "integer",
+          "title": "Per Page",
+          "description": "Number of results per page (max 100)",
+          "default": 20
+        },
+        "status": {
+          "type": "string",
+          "title": "Status",
+          "description": "Filter by status",
+          "enum": ["active", "inactive", "all"]
+        }
+      },
+      "required": [],
+      "title": "List {Resources}",
+      "type": "object"
+    },
+    "{ServiceName}Get{Resource}Config": {
+      "description": "Get a specific {resource}",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "get_{resource}",
+          "title": "Operation",
+          "ui:hidden": true
+        },
+        "{resource}_id": {
+          "type": "string",
+          "title": "{Resource} ID",
+          "description": "The unique identifier of the {resource}"
+        }
+      },
+      "required": ["{resource}_id"],
+      "title": "Get {Resource}",
+      "type": "object"
+    },
+    "{ServiceName}Create{Resource}Config": {
+      "description": "Create a new {resource}",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "create_{resource}",
+          "title": "Operation",
+          "ui:hidden": true
+        },
+        "name": {
+          "type": "string",
+          "title": "Name",
+          "description": "{Resource} name"
+        },
+        "description": {
+          "type": "string",
+          "title": "Description",
+          "description": "{Resource} description",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": ["name"],
+      "title": "Create {Resource}",
+      "type": "object"
+    },
+    "{ServiceName}Update{Resource}Config": {
+      "description": "Update an existing {resource}",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "update_{resource}",
+          "title": "Operation",
+          "ui:hidden": true
+        },
+        "{resource}_id": {
+          "type": "string",
+          "title": "{Resource} ID",
+          "description": "The ID of the {resource} to update"
+        },
+        "name": {
+          "type": "string",
+          "title": "Name",
+          "description": "New name for the {resource}"
+        },
+        "description": {
+          "type": "string",
+          "title": "Description",
+          "description": "New description",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": ["{resource}_id"],
+      "title": "Update {Resource}",
+      "type": "object"
+    },
+    "{ServiceName}Delete{Resource}Config": {
+      "description": "Delete a {resource}",
+      "properties": {
+        "operation": {
+          "type": "string",
+          "const": "delete_{resource}",
+          "title": "Operation",
+          "ui:hidden": true
+        },
+        "{resource}_id": {
+          "type": "string",
+          "title": "{Resource} ID",
+          "description": "The ID of the {resource} to delete"
+        }
+      },
+      "required": ["{resource}_id"],
+      "title": "Delete {Resource}",
+      "type": "object"
+    },
+    "{ServiceName}Credential": {
+      "description": "API credential for {SERVICE_NAME}. Get your API key at {CREDENTIAL_URL}",
+      "properties": {
+        "api_key": {
+          "type": "string",
+          "title": "API Key",
+          "description": "Your {SERVICE_NAME} API key",
+          "ui:widget": "password"
+        }
+      },
+      "required": ["api_key"],
+      "title": "{ServiceName}Credential",
+      "type": "object",
+      "x-credential-url": "{CREDENTIAL_URL}"
+    }
+  },
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "description": "Full configuration for {SERVICE_NAME} node including credentials",
+  "properties": {
+    "config": {
+      "anyOf": [
+        { "$ref": "#/$defs/{ServiceName}List{Resource}Config" },
+        { "$ref": "#/$defs/{ServiceName}Get{Resource}Config" },
+        { "$ref": "#/$defs/{ServiceName}Create{Resource}Config" },
+        { "$ref": "#/$defs/{ServiceName}Update{Resource}Config" },
+        { "$ref": "#/$defs/{ServiceName}Delete{Resource}Config" }
+      ],
+      "description": "Node-specific configuration",
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        { "$ref": "#/$defs/{ServiceName}Credential" },
+        { "type": "null" }
+      ],
+      "default": null,
+      "description": "Credentials for this node"
+    }
+  },
+  "required": ["config"],
+  "title": "{SERVICE_NAME} Node Configuration",
+  "type": "object"
+}

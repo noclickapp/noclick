@@ -1,0 +1,107 @@
+{
+  "$defs": {
+    "SwitchCase": {
+      "description": "A single case for the switch node. The value doubles as the output handle name.",
+      "properties": {
+        "value": {
+          "description": "Value to match against (also used as the output handle name)",
+          "title": "Match Value",
+          "type": "string"
+        }
+      },
+      "required": [
+        "value"
+      ],
+      "title": "SwitchCase",
+      "type": "object"
+    },
+    "SwitchInnerConfig": {
+      "description": "Configuration for the switch node.",
+      "properties": {
+        "input_data": {
+          "description": "Reference to the data to evaluate (e.g., {{trigger.data}})",
+          "placeholder": "{{node-id.field}}",
+          "title": "Input Data",
+          "ui:widget": "textarea"
+        },
+        "switch_cases": {
+          "anyOf": [
+            {
+              "items": {
+                "$ref": "#/$defs/SwitchCase"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "List of value-to-output mappings",
+          "title": "Cases",
+          "ui:widget": "switch_cases"
+        },
+        "default_output": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Case to route to when no cases match",
+          "title": "Default Output",
+          "ui:widget": "switch_default_output"
+        },
+        "case_sensitive": {
+          "default": "false",
+          "description": "Whether value matching should be case sensitive",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Case Sensitive",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "input_data"
+      ],
+      "title": "SwitchInnerConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for switch node (no credentials needed).",
+  "properties": {
+    "config": {
+      "$ref": "#/$defs/SwitchInnerConfig",
+      "description": "Node-specific configuration"
+    },
+    "credentials": {
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials",
+      "type": "null"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Switch Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Add a new case matching status=completed to route approved flow",
+    "Change input data to reference {{http.response_status}} instead",
+    "Enable case-sensitive matching for exact value comparison",
+    "Set default output to handle case and remove case validation",
+    "Add more cases for different environment types (prod/staging/dev)"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

@@ -1,0 +1,3167 @@
+{
+  "$defs": {
+    "CalendlyCancelScheduledEventConfig": {
+      "description": "Cancel a scheduled event (fires invitee.canceled).",
+      "properties": {
+        "operation": {
+          "const": "cancel_scheduled_event",
+          "default": "cancel_scheduled_event",
+          "title": "Cancel Scheduled Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Scheduled Events",
+          "x-display-name": "Cancel Scheduled Event",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "cancel meeting"
+          ]
+        },
+        "scheduled_event": {
+          "description": "Scheduled Event URI or UUID",
+          "title": "Scheduled Event",
+          "type": "string"
+        },
+        "reason": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cancellation reason (<=10000 chars)",
+          "title": "Reason"
+        }
+      },
+      "required": [
+        "scheduled_event"
+      ],
+      "title": "CalendlyCancelScheduledEventConfig",
+      "type": "object"
+    },
+    "CalendlyCreateInvitationConfig": {
+      "description": "Invite a user to the organization.",
+      "properties": {
+        "operation": {
+          "const": "create_organization_invitation",
+          "default": "create_organization_invitation",
+          "title": "Invite User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "Invite User",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "add member",
+            "send invite"
+          ]
+        },
+        "organization": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Defaults to the connected organization",
+          "title": "Organization URI"
+        },
+        "email": {
+          "description": "Email address to invite",
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "CalendlyCreateInvitationConfig",
+      "type": "object"
+    },
+    "CalendlyCreateNoShowConfig": {
+      "description": "Mark an invitee as a no-show.",
+      "properties": {
+        "operation": {
+          "const": "create_no_show",
+          "default": "create_no_show",
+          "title": "Mark No-Show",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "No-Shows",
+          "x-display-name": "Mark No-Show",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "didn't attend"
+          ]
+        },
+        "invitee": {
+          "description": "Full invitee URI to mark as a no-show",
+          "title": "Invitee URI",
+          "type": "string"
+        }
+      },
+      "required": [
+        "invitee"
+      ],
+      "title": "CalendlyCreateNoShowConfig",
+      "type": "object"
+    },
+    "CalendlyCreateSchedulingLinkConfig": {
+      "description": "Create a single-use scheduling link for an event type.",
+      "properties": {
+        "operation": {
+          "const": "create_scheduling_link",
+          "default": "create_scheduling_link",
+          "title": "Create Scheduling Link",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Scheduling",
+          "x-display-name": "Create Scheduling Link",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "one-time booking link"
+          ]
+        },
+        "owner": {
+          "description": "Event Type URI the link books",
+          "title": "Event Type URI",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste the full URI",
+            "field_name": "event_type",
+            "placeholder": "Select a event type...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "owner"
+      ],
+      "title": "CalendlyCreateSchedulingLinkConfig",
+      "type": "object"
+    },
+    "CalendlyCreateShareConfig": {
+      "description": "Create a shareable, customization-limited copy of an event type.",
+      "properties": {
+        "operation": {
+          "const": "create_share",
+          "default": "create_share",
+          "title": "Create Share",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Scheduling",
+          "x-display-name": "Create Share",
+          "x-is-trigger": false
+        },
+        "event_type": {
+          "description": "Event Type URI to share",
+          "title": "Event Type URI",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste the full URI",
+            "field_name": "event_type",
+            "placeholder": "Select a event type...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional share overrides as JSON",
+          "title": "Overrides (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "event_type"
+      ],
+      "title": "CalendlyCreateShareConfig",
+      "type": "object"
+    },
+    "CalendlyCustomRequestConfig": {
+      "description": "Call any authenticated Calendly REST endpoint (covers the long tail:\ncontacts, outgoing communications, analytics, and anything new).",
+      "properties": {
+        "operation": {
+          "const": "custom_request",
+          "default": "custom_request",
+          "title": "Custom Request",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Advanced",
+          "x-display-name": "Custom Request",
+          "x-is-trigger": false
+        },
+        "method": {
+          "default": "GET",
+          "enum": [
+            "GET",
+            "POST",
+            "PATCH",
+            "DELETE"
+          ],
+          "title": "Method",
+          "type": "string"
+        },
+        "path": {
+          "description": "Path after https://api.calendly.com, e.g. /contacts or /event_types/UUID",
+          "title": "Path",
+          "type": "string"
+        },
+        "query_params": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "e.g. organization=...&count=100",
+          "title": "Query Parameters"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional JSON body for POST/PATCH",
+          "title": "JSON Body",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "title": "CalendlyCustomRequestConfig",
+      "type": "object"
+    },
+    "CalendlyDeleteEventDataConfig": {
+      "description": "Delete scheduled-event data by time range (Enterprise).",
+      "properties": {
+        "operation": {
+          "const": "delete_event_data",
+          "default": "delete_event_data",
+          "title": "Delete Event Data",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Enterprise",
+          "x-display-name": "Delete Event Data",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "gdpr",
+            "erase events"
+          ]
+        },
+        "start_time": {
+          "description": "ISO 8601 range start",
+          "title": "Start Time",
+          "type": "string"
+        },
+        "end_time": {
+          "description": "ISO 8601 range end",
+          "title": "End Time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "start_time",
+        "end_time"
+      ],
+      "title": "CalendlyDeleteEventDataConfig",
+      "type": "object"
+    },
+    "CalendlyDeleteInviteeDataConfig": {
+      "description": "GDPR-delete invitee data by email (Enterprise).",
+      "properties": {
+        "operation": {
+          "const": "delete_invitee_data",
+          "default": "delete_invitee_data",
+          "title": "Delete Invitee Data",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Enterprise",
+          "x-display-name": "Delete Invitee Data",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "gdpr",
+            "erase invitee"
+          ]
+        },
+        "emails": {
+          "description": "Comma-separated invitee emails to delete",
+          "title": "Emails",
+          "type": "string"
+        }
+      },
+      "required": [
+        "emails"
+      ],
+      "title": "CalendlyDeleteInviteeDataConfig",
+      "type": "object"
+    },
+    "CalendlyDeleteNoShowConfig": {
+      "description": "Undo a no-show marking.",
+      "properties": {
+        "operation": {
+          "const": "delete_no_show",
+          "default": "delete_no_show",
+          "title": "Undo No-Show",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "No-Shows",
+          "x-display-name": "Undo No-Show",
+          "x-is-trigger": false
+        },
+        "no_show": {
+          "description": "Invitee No-Show URI or UUID",
+          "title": "No-Show",
+          "type": "string"
+        }
+      },
+      "required": [
+        "no_show"
+      ],
+      "title": "CalendlyDeleteNoShowConfig",
+      "type": "object"
+    },
+    "CalendlyGetCurrentUserConfig": {
+      "description": "Get the authenticated user (/users/me).",
+      "properties": {
+        "operation": {
+          "const": "get_current_user",
+          "default": "get_current_user",
+          "title": "Get Current User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Get Current User",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "whoami",
+            "me",
+            "current account"
+          ]
+        }
+      },
+      "title": "CalendlyGetCurrentUserConfig",
+      "type": "object"
+    },
+    "CalendlyGetEventInviteeConfig": {
+      "description": "Get a single invitee of a scheduled event.",
+      "properties": {
+        "operation": {
+          "const": "get_event_invitee",
+          "default": "get_event_invitee",
+          "title": "Get Event Invitee",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Scheduled Events",
+          "x-display-name": "Get Event Invitee",
+          "x-is-trigger": false
+        },
+        "scheduled_event": {
+          "description": "Scheduled Event URI or UUID",
+          "title": "Scheduled Event",
+          "type": "string"
+        },
+        "invitee": {
+          "description": "Invitee URI or UUID",
+          "title": "Invitee",
+          "type": "string"
+        }
+      },
+      "required": [
+        "scheduled_event",
+        "invitee"
+      ],
+      "title": "CalendlyGetEventInviteeConfig",
+      "type": "object"
+    },
+    "CalendlyGetEventTypeConfig": {
+      "description": "Get a single event type.",
+      "properties": {
+        "operation": {
+          "const": "get_event_type",
+          "default": "get_event_type",
+          "title": "Get Event Type",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Event Types",
+          "x-display-name": "Get Event Type",
+          "x-is-trigger": false
+        },
+        "event_type": {
+          "description": "Event Type URI or UUID",
+          "title": "Event Type",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste the full URI",
+            "field_name": "event_type",
+            "placeholder": "Select a event type...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "event_type"
+      ],
+      "title": "CalendlyGetEventTypeConfig",
+      "type": "object"
+    },
+    "CalendlyGetMembershipConfig": {
+      "description": "Get an organization membership.",
+      "properties": {
+        "operation": {
+          "const": "get_organization_membership",
+          "default": "get_organization_membership",
+          "title": "Get Membership",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "Get Membership",
+          "x-is-trigger": false
+        },
+        "membership": {
+          "description": "Organization Membership URI or UUID",
+          "title": "Membership",
+          "type": "string"
+        }
+      },
+      "required": [
+        "membership"
+      ],
+      "title": "CalendlyGetMembershipConfig",
+      "type": "object"
+    },
+    "CalendlyGetNoShowConfig": {
+      "description": "Get a no-show record.",
+      "properties": {
+        "operation": {
+          "const": "get_no_show",
+          "default": "get_no_show",
+          "title": "Get No-Show",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "No-Shows",
+          "x-display-name": "Get No-Show",
+          "x-is-trigger": false
+        },
+        "no_show": {
+          "description": "Invitee No-Show URI or UUID",
+          "title": "No-Show",
+          "type": "string"
+        }
+      },
+      "required": [
+        "no_show"
+      ],
+      "title": "CalendlyGetNoShowConfig",
+      "type": "object"
+    },
+    "CalendlyGetOrganizationConfig": {
+      "description": "Get an organization.",
+      "properties": {
+        "operation": {
+          "const": "get_organization",
+          "default": "get_organization",
+          "title": "Get Organization",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "Get Organization",
+          "x-is-trigger": false
+        },
+        "organization": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Defaults to the connected organization",
+          "title": "Organization URI"
+        }
+      },
+      "title": "CalendlyGetOrganizationConfig",
+      "type": "object"
+    },
+    "CalendlyGetScheduledEventConfig": {
+      "description": "Get a single scheduled event.",
+      "properties": {
+        "operation": {
+          "const": "get_scheduled_event",
+          "default": "get_scheduled_event",
+          "title": "Get Scheduled Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Scheduled Events",
+          "x-display-name": "Get Scheduled Event",
+          "x-is-trigger": false
+        },
+        "scheduled_event": {
+          "description": "Scheduled Event URI or UUID",
+          "title": "Scheduled Event",
+          "type": "string"
+        }
+      },
+      "required": [
+        "scheduled_event"
+      ],
+      "title": "CalendlyGetScheduledEventConfig",
+      "type": "object"
+    },
+    "CalendlyGetUserConfig": {
+      "description": "Get a user by URI or UUID.",
+      "properties": {
+        "operation": {
+          "const": "get_user",
+          "default": "get_user",
+          "title": "Get User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Get User",
+          "x-is-trigger": false
+        },
+        "user": {
+          "description": "User URI or UUID",
+          "title": "User",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste the full URI",
+            "field_name": "user",
+            "placeholder": "Select a user...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "user"
+      ],
+      "title": "CalendlyGetUserConfig",
+      "type": "object"
+    },
+    "CalendlyListActivityLogConfig": {
+      "description": "List organization activity log entries (Enterprise).",
+      "properties": {
+        "operation": {
+          "const": "list_activity_log",
+          "default": "list_activity_log",
+          "title": "List Activity Log",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Enterprise",
+          "x-display-name": "List Activity Log",
+          "x-is-trigger": false
+        },
+        "organization": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Defaults to the connected organization",
+          "title": "Organization URI"
+        },
+        "search_term": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Search"
+        },
+        "min_occurred_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601",
+          "title": "From"
+        },
+        "max_occurred_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601",
+          "title": "To"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "e.g. occurred_at:desc",
+          "title": "Sort"
+        },
+        "count": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Page size (max 100)",
+          "title": "Count"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque cursor for the next page",
+          "title": "Page Token"
+        }
+      },
+      "title": "CalendlyListActivityLogConfig",
+      "type": "object"
+    },
+    "CalendlyListAvailabilitySchedulesConfig": {
+      "description": "List a user's availability schedules.",
+      "properties": {
+        "operation": {
+          "const": "list_user_availability_schedules",
+          "default": "list_user_availability_schedules",
+          "title": "List Availability Schedules",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Availability",
+          "x-display-name": "List Availability Schedules",
+          "x-is-trigger": false
+        },
+        "user": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Defaults to the connected user",
+          "title": "User URI",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste the full URI",
+            "field_name": "user",
+            "placeholder": "Select a user...",
+            "searchable": true
+          }
+        }
+      },
+      "title": "CalendlyListAvailabilitySchedulesConfig",
+      "type": "object"
+    },
+    "CalendlyListBusyTimesConfig": {
+      "description": "List a user's busy times (window must be future, <=7 days).",
+      "properties": {
+        "operation": {
+          "const": "list_user_busy_times",
+          "default": "list_user_busy_times",
+          "title": "List Busy Times",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Availability",
+          "x-display-name": "List Busy Times",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "blocked time",
+            "unavailable"
+          ]
+        },
+        "user": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Defaults to the connected user",
+          "title": "User URI",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste the full URI",
+            "field_name": "user",
+            "placeholder": "Select a user...",
+            "searchable": true
+          }
+        },
+        "start_time": {
+          "description": "ISO 8601 (future)",
+          "title": "Start Time",
+          "type": "string"
+        },
+        "end_time": {
+          "description": "ISO 8601 (<=7 days after start)",
+          "title": "End Time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "start_time",
+        "end_time"
+      ],
+      "title": "CalendlyListBusyTimesConfig",
+      "type": "object"
+    },
+    "CalendlyListEventInviteesConfig": {
+      "description": "List invitees of a scheduled event.",
+      "properties": {
+        "operation": {
+          "const": "list_event_invitees",
+          "default": "list_event_invitees",
+          "title": "List Event Invitees",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Scheduled Events",
+          "x-display-name": "List Event Invitees",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "attendees",
+            "guests"
+          ]
+        },
+        "scheduled_event": {
+          "description": "Scheduled Event URI or UUID",
+          "title": "Scheduled Event",
+          "type": "string"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "",
+            "active",
+            "canceled"
+          ],
+          "enumNames": [
+            "Any",
+            "Active",
+            "Canceled"
+          ],
+          "title": "Status",
+          "x-enum-searchable": true
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by invitee email",
+          "title": "Email"
+        },
+        "count": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Page size (max 100)",
+          "title": "Count"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque cursor for the next page",
+          "title": "Page Token"
+        }
+      },
+      "required": [
+        "scheduled_event"
+      ],
+      "title": "CalendlyListEventInviteesConfig",
+      "type": "object"
+    },
+    "CalendlyListEventTypeAvailableTimesConfig": {
+      "description": "List bookable time slots for an event type (window must be future, <=7 days).",
+      "properties": {
+        "operation": {
+          "const": "list_event_type_available_times",
+          "default": "list_event_type_available_times",
+          "title": "List Available Times",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Event Types",
+          "x-display-name": "List Available Times",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "open slots",
+            "availability"
+          ]
+        },
+        "event_type": {
+          "description": "Event Type URI",
+          "title": "Event Type",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste the full URI",
+            "field_name": "event_type",
+            "placeholder": "Select a event type...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "start_time": {
+          "description": "ISO 8601 start (future)",
+          "title": "Start Time",
+          "type": "string"
+        },
+        "end_time": {
+          "description": "ISO 8601 end (<=7 days after start)",
+          "title": "End Time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "event_type",
+        "start_time",
+        "end_time"
+      ],
+      "title": "CalendlyListEventTypeAvailableTimesConfig",
+      "type": "object"
+    },
+    "CalendlyListEventTypesConfig": {
+      "description": "List event types for a user or organization.",
+      "properties": {
+        "operation": {
+          "const": "list_event_types",
+          "default": "list_event_types",
+          "title": "List Event Types",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Event Types",
+          "x-display-name": "List Event Types",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "meeting types",
+            "booking pages"
+          ]
+        },
+        "user": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Scope to a user (defaults to the connected user)",
+          "title": "User URI",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste the full URI",
+            "field_name": "user",
+            "placeholder": "Select a user...",
+            "searchable": true
+          }
+        },
+        "organization": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Scope to an organization instead of a user",
+          "title": "Organization URI"
+        },
+        "active": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "",
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Any",
+            "Active only",
+            "Inactive only"
+          ],
+          "title": "Active",
+          "x-enum-searchable": true
+        },
+        "count": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Page size (max 100)",
+          "title": "Count"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque cursor for the next page",
+          "title": "Page Token"
+        }
+      },
+      "title": "CalendlyListEventTypesConfig",
+      "type": "object"
+    },
+    "CalendlyListGroupRelationshipsConfig": {
+      "description": "List group relationships (group membership is exposed only here).",
+      "properties": {
+        "operation": {
+          "const": "list_group_relationships",
+          "default": "list_group_relationships",
+          "title": "List Group Relationships",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "List Group Relationships",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "group members"
+          ]
+        },
+        "organization": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Scope by organization",
+          "title": "Organization URI"
+        },
+        "owner": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Scope by owner",
+          "title": "Owner URI"
+        },
+        "group": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Scope by group",
+          "title": "Group URI"
+        },
+        "count": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Page size (max 100)",
+          "title": "Count"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque cursor for the next page",
+          "title": "Page Token"
+        }
+      },
+      "title": "CalendlyListGroupRelationshipsConfig",
+      "type": "object"
+    },
+    "CalendlyListGroupsConfig": {
+      "description": "List groups (Teams/Enterprise).",
+      "properties": {
+        "operation": {
+          "const": "list_groups",
+          "default": "list_groups",
+          "title": "List Groups",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "List Groups",
+          "x-is-trigger": false
+        },
+        "organization": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Defaults to the connected organization",
+          "title": "Organization URI"
+        },
+        "count": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Page size (max 100)",
+          "title": "Count"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque cursor for the next page",
+          "title": "Page Token"
+        }
+      },
+      "title": "CalendlyListGroupsConfig",
+      "type": "object"
+    },
+    "CalendlyListInvitationsConfig": {
+      "description": "List organization invitations.",
+      "properties": {
+        "operation": {
+          "const": "list_organization_invitations",
+          "default": "list_organization_invitations",
+          "title": "List Invitations",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "List Invitations",
+          "x-is-trigger": false
+        },
+        "organization": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Defaults to the connected organization",
+          "title": "Organization URI"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "",
+            "pending",
+            "accepted",
+            "declined"
+          ],
+          "enumNames": [
+            "Any",
+            "Pending",
+            "Accepted",
+            "Declined"
+          ],
+          "title": "Status",
+          "x-enum-searchable": true
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Email"
+        },
+        "count": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Page size (max 100)",
+          "title": "Count"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque cursor for the next page",
+          "title": "Page Token"
+        }
+      },
+      "title": "CalendlyListInvitationsConfig",
+      "type": "object"
+    },
+    "CalendlyListMembershipsConfig": {
+      "description": "List organization memberships (members).",
+      "properties": {
+        "operation": {
+          "const": "list_organization_memberships",
+          "default": "list_organization_memberships",
+          "title": "List Memberships",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "List Memberships",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "team members",
+            "users in org"
+          ]
+        },
+        "organization": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Defaults to the connected organization",
+          "title": "Organization URI"
+        },
+        "user": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter to a single user",
+          "title": "User URI",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste the full URI",
+            "field_name": "user",
+            "placeholder": "Select a user...",
+            "searchable": true
+          }
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by member email",
+          "title": "Email"
+        },
+        "count": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Page size (max 100)",
+          "title": "Count"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque cursor for the next page",
+          "title": "Page Token"
+        }
+      },
+      "title": "CalendlyListMembershipsConfig",
+      "type": "object"
+    },
+    "CalendlyListRoutingFormsConfig": {
+      "description": "List routing forms (Teams+).",
+      "properties": {
+        "operation": {
+          "const": "list_routing_forms",
+          "default": "list_routing_forms",
+          "title": "List Routing Forms",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Routing",
+          "x-display-name": "List Routing Forms",
+          "x-is-trigger": false
+        },
+        "organization": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Defaults to the connected organization",
+          "title": "Organization URI"
+        },
+        "count": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Page size (max 100)",
+          "title": "Count"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque cursor for the next page",
+          "title": "Page Token"
+        }
+      },
+      "title": "CalendlyListRoutingFormsConfig",
+      "type": "object"
+    },
+    "CalendlyListRoutingSubmissionsConfig": {
+      "description": "List routing form submissions (Teams+).",
+      "properties": {
+        "operation": {
+          "const": "list_routing_form_submissions",
+          "default": "list_routing_form_submissions",
+          "title": "List Routing Form Submissions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Routing",
+          "x-display-name": "List Routing Form Submissions",
+          "x-is-trigger": false
+        },
+        "form": {
+          "description": "Routing Form URI",
+          "title": "Routing Form URI",
+          "type": "string"
+        },
+        "count": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Page size (max 100)",
+          "title": "Count"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque cursor for the next page",
+          "title": "Page Token"
+        }
+      },
+      "required": [
+        "form"
+      ],
+      "title": "CalendlyListRoutingSubmissionsConfig",
+      "type": "object"
+    },
+    "CalendlyListScheduledEventsConfig": {
+      "description": "List scheduled events (meetings).",
+      "properties": {
+        "operation": {
+          "const": "list_scheduled_events",
+          "default": "list_scheduled_events",
+          "title": "List Scheduled Events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Scheduled Events",
+          "x-display-name": "List Scheduled Events",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "meetings",
+            "bookings",
+            "appointments"
+          ]
+        },
+        "user": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Scope to a user (defaults to the connected user)",
+          "title": "User URI",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste the full URI",
+            "field_name": "user",
+            "placeholder": "Select a user...",
+            "searchable": true
+          }
+        },
+        "organization": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Scope to an organization",
+          "title": "Organization URI"
+        },
+        "invitee_email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by invitee email",
+          "title": "Invitee Email"
+        },
+        "status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "",
+            "active",
+            "canceled"
+          ],
+          "enumNames": [
+            "Any",
+            "Active",
+            "Canceled"
+          ],
+          "title": "Status",
+          "x-enum-searchable": true
+        },
+        "min_start_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601",
+          "title": "Min Start Time"
+        },
+        "max_start_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601",
+          "title": "Max Start Time"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "e.g. start_time:asc",
+          "title": "Sort"
+        },
+        "count": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "20",
+          "description": "Page size (max 100)",
+          "title": "Count"
+        },
+        "page_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Opaque cursor for the next page",
+          "title": "Page Token"
+        }
+      },
+      "title": "CalendlyListScheduledEventsConfig",
+      "type": "object"
+    },
+    "CalendlyOAuthCredential": {
+      "description": "OAuth 2.0 credential for Calendly (authorization_code flow).\n\nTokens are obtained via the consent flow, not entered manually. Access tokens\nexpire ~2h and are auto-refreshed via the rotating refresh token.",
+      "properties": {
+        "credential_type": {
+          "const": "calendly_oauth",
+          "default": "calendly_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "Calendly OAuth access token (Bearer).",
+          "title": "Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refresh Token"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Expiry"
+        },
+        "owner": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User URI"
+        },
+        "organization": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Organization URI"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Email"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Name"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "CalendlyOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://developer.calendly.com/",
+      "x-oauth-provider": "calendly",
+      "x-oauth-scopes": []
+    },
+    "CalendlyOnContactCreatedConfig": {
+      "description": "Fires when a CRM contact is created.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "scope": {
+          "default": "organization",
+          "description": "Fire for the whole organization (Owner/Admin) or just the connected user. Routing-form/contact events are organization-scoped only.",
+          "enum": [
+            "user",
+            "organization"
+          ],
+          "enumNames": [
+            "Organization",
+            "User"
+          ],
+          "title": "Scope",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_contact_created",
+          "default": "on_contact_created",
+          "title": "On Contact Created",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Contact Created",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "new contact"
+          ]
+        }
+      },
+      "title": "CalendlyOnContactCreatedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "CalendlyOnContactDeletedConfig": {
+      "description": "Fires when a CRM contact is deleted.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "scope": {
+          "default": "organization",
+          "description": "Fire for the whole organization (Owner/Admin) or just the connected user. Routing-form/contact events are organization-scoped only.",
+          "enum": [
+            "user",
+            "organization"
+          ],
+          "enumNames": [
+            "Organization",
+            "User"
+          ],
+          "title": "Scope",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_contact_deleted",
+          "default": "on_contact_deleted",
+          "title": "On Contact Deleted",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Contact Deleted",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "contact removed"
+          ]
+        }
+      },
+      "title": "CalendlyOnContactDeletedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "CalendlyOnContactUpdatedConfig": {
+      "description": "Fires when a CRM contact is updated.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "scope": {
+          "default": "organization",
+          "description": "Fire for the whole organization (Owner/Admin) or just the connected user. Routing-form/contact events are organization-scoped only.",
+          "enum": [
+            "user",
+            "organization"
+          ],
+          "enumNames": [
+            "Organization",
+            "User"
+          ],
+          "title": "Scope",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_contact_updated",
+          "default": "on_contact_updated",
+          "title": "On Contact Updated",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Contact Updated",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "contact changed"
+          ]
+        }
+      },
+      "title": "CalendlyOnContactUpdatedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "CalendlyOnInviteeCanceledConfig": {
+      "description": "Fires when a booking is canceled (invitee.canceled).",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "scope": {
+          "default": "organization",
+          "description": "Fire for the whole organization (Owner/Admin) or just the connected user. Routing-form/contact events are organization-scoped only.",
+          "enum": [
+            "user",
+            "organization"
+          ],
+          "enumNames": [
+            "Organization",
+            "User"
+          ],
+          "title": "Scope",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_invitee_canceled",
+          "default": "on_invitee_canceled",
+          "title": "On Invitee Canceled",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Invitee Canceled",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "cancellation",
+            "meeting canceled",
+            "booking canceled"
+          ]
+        }
+      },
+      "title": "CalendlyOnInviteeCanceledConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "CalendlyOnInviteeCreatedConfig": {
+      "description": "Fires when someone books a meeting (invitee.created).",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "scope": {
+          "default": "organization",
+          "description": "Fire for the whole organization (Owner/Admin) or just the connected user. Routing-form/contact events are organization-scoped only.",
+          "enum": [
+            "user",
+            "organization"
+          ],
+          "enumNames": [
+            "Organization",
+            "User"
+          ],
+          "title": "Scope",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_invitee_created",
+          "default": "on_invitee_created",
+          "title": "On Invitee Created",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Invitee Created",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "new booking",
+            "meeting scheduled",
+            "someone booked"
+          ]
+        }
+      },
+      "title": "CalendlyOnInviteeCreatedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "CalendlyOnNoShowCreatedConfig": {
+      "description": "Fires when an invitee is marked a no-show.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "scope": {
+          "default": "organization",
+          "description": "Fire for the whole organization (Owner/Admin) or just the connected user. Routing-form/contact events are organization-scoped only.",
+          "enum": [
+            "user",
+            "organization"
+          ],
+          "enumNames": [
+            "Organization",
+            "User"
+          ],
+          "title": "Scope",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_invitee_no_show_created",
+          "default": "on_invitee_no_show_created",
+          "title": "On No-Show Marked",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On No-Show Marked",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "no show",
+            "didn't attend"
+          ]
+        }
+      },
+      "title": "CalendlyOnNoShowCreatedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "CalendlyOnNoShowDeletedConfig": {
+      "description": "Fires when a no-show marking is removed.",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "scope": {
+          "default": "organization",
+          "description": "Fire for the whole organization (Owner/Admin) or just the connected user. Routing-form/contact events are organization-scoped only.",
+          "enum": [
+            "user",
+            "organization"
+          ],
+          "enumNames": [
+            "Organization",
+            "User"
+          ],
+          "title": "Scope",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_invitee_no_show_deleted",
+          "default": "on_invitee_no_show_deleted",
+          "title": "On No-Show Undone",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On No-Show Undone",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "no show removed"
+          ]
+        }
+      },
+      "title": "CalendlyOnNoShowDeletedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "CalendlyOnRoutingSubmissionConfig": {
+      "description": "Fires when a routing form is submitted (organization scope only).",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "scope": {
+          "default": "organization",
+          "description": "Fire for the whole organization (Owner/Admin) or just the connected user. Routing-form/contact events are organization-scoped only.",
+          "enum": [
+            "user",
+            "organization"
+          ],
+          "enumNames": [
+            "Organization",
+            "User"
+          ],
+          "title": "Scope",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_routing_form_submission_created",
+          "default": "on_routing_form_submission_created",
+          "title": "On Routing Form Submission",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Routing Form Submission",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "routing form submitted",
+            "lead routed"
+          ]
+        }
+      },
+      "title": "CalendlyOnRoutingSubmissionConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "CalendlyPATCredential": {
+      "description": "Personal Access Token credential for Calendly.\n\nCreate at Calendly \u2192 Integrations \u2192 API & Webhooks. Used as a Bearer token;\nthe node resolves the current user/organization URIs from /users/me on demand.",
+      "properties": {
+        "credential_type": {
+          "const": "calendly_pat",
+          "default": "calendly_pat",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "personal_access_token": {
+          "description": "Your Calendly Personal Access Token",
+          "title": "Personal Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "personal_access_token"
+      ],
+      "title": "CalendlyPATCredential",
+      "type": "object",
+      "x-credential-url": "https://calendly.com/integrations/api_webhooks",
+      "x-help-text": "Calendly \u2192 Integrations \u2192 API & Webhooks \u2192 Generate token."
+    },
+    "CalendlyRemoveMembershipConfig": {
+      "description": "Remove a user from the organization.",
+      "properties": {
+        "operation": {
+          "const": "remove_organization_membership",
+          "default": "remove_organization_membership",
+          "title": "Remove Member",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "Remove Member",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "kick user",
+            "revoke access"
+          ]
+        },
+        "membership": {
+          "description": "Organization Membership URI or UUID",
+          "title": "Membership",
+          "type": "string"
+        }
+      },
+      "required": [
+        "membership"
+      ],
+      "title": "CalendlyRemoveMembershipConfig",
+      "type": "object"
+    },
+    "CalendlyRevokeInvitationConfig": {
+      "description": "Revoke a pending organization invitation.",
+      "properties": {
+        "operation": {
+          "const": "revoke_organization_invitation",
+          "default": "revoke_organization_invitation",
+          "title": "Revoke Invitation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "Revoke Invitation",
+          "x-is-trigger": false
+        },
+        "organization": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Defaults to the connected organization",
+          "title": "Organization URI"
+        },
+        "invitation": {
+          "description": "Invitation URI or UUID",
+          "title": "Invitation",
+          "type": "string"
+        }
+      },
+      "required": [
+        "invitation"
+      ],
+      "title": "CalendlyRevokeInvitationConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the Calendly node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_scheduled_event": "#/$defs/CalendlyCancelScheduledEventConfig",
+          "create_no_show": "#/$defs/CalendlyCreateNoShowConfig",
+          "create_organization_invitation": "#/$defs/CalendlyCreateInvitationConfig",
+          "create_scheduling_link": "#/$defs/CalendlyCreateSchedulingLinkConfig",
+          "create_share": "#/$defs/CalendlyCreateShareConfig",
+          "custom_request": "#/$defs/CalendlyCustomRequestConfig",
+          "delete_event_data": "#/$defs/CalendlyDeleteEventDataConfig",
+          "delete_invitee_data": "#/$defs/CalendlyDeleteInviteeDataConfig",
+          "delete_no_show": "#/$defs/CalendlyDeleteNoShowConfig",
+          "get_current_user": "#/$defs/CalendlyGetCurrentUserConfig",
+          "get_event_invitee": "#/$defs/CalendlyGetEventInviteeConfig",
+          "get_event_type": "#/$defs/CalendlyGetEventTypeConfig",
+          "get_no_show": "#/$defs/CalendlyGetNoShowConfig",
+          "get_organization": "#/$defs/CalendlyGetOrganizationConfig",
+          "get_organization_membership": "#/$defs/CalendlyGetMembershipConfig",
+          "get_scheduled_event": "#/$defs/CalendlyGetScheduledEventConfig",
+          "get_user": "#/$defs/CalendlyGetUserConfig",
+          "list_activity_log": "#/$defs/CalendlyListActivityLogConfig",
+          "list_event_invitees": "#/$defs/CalendlyListEventInviteesConfig",
+          "list_event_type_available_times": "#/$defs/CalendlyListEventTypeAvailableTimesConfig",
+          "list_event_types": "#/$defs/CalendlyListEventTypesConfig",
+          "list_group_relationships": "#/$defs/CalendlyListGroupRelationshipsConfig",
+          "list_groups": "#/$defs/CalendlyListGroupsConfig",
+          "list_organization_invitations": "#/$defs/CalendlyListInvitationsConfig",
+          "list_organization_memberships": "#/$defs/CalendlyListMembershipsConfig",
+          "list_routing_form_submissions": "#/$defs/CalendlyListRoutingSubmissionsConfig",
+          "list_routing_forms": "#/$defs/CalendlyListRoutingFormsConfig",
+          "list_scheduled_events": "#/$defs/CalendlyListScheduledEventsConfig",
+          "list_user_availability_schedules": "#/$defs/CalendlyListAvailabilitySchedulesConfig",
+          "list_user_busy_times": "#/$defs/CalendlyListBusyTimesConfig",
+          "on_contact_created": "#/$defs/CalendlyOnContactCreatedConfig",
+          "on_contact_deleted": "#/$defs/CalendlyOnContactDeletedConfig",
+          "on_contact_updated": "#/$defs/CalendlyOnContactUpdatedConfig",
+          "on_invitee_canceled": "#/$defs/CalendlyOnInviteeCanceledConfig",
+          "on_invitee_created": "#/$defs/CalendlyOnInviteeCreatedConfig",
+          "on_invitee_no_show_created": "#/$defs/CalendlyOnNoShowCreatedConfig",
+          "on_invitee_no_show_deleted": "#/$defs/CalendlyOnNoShowDeletedConfig",
+          "on_routing_form_submission_created": "#/$defs/CalendlyOnRoutingSubmissionConfig",
+          "remove_organization_membership": "#/$defs/CalendlyRemoveMembershipConfig",
+          "revoke_organization_invitation": "#/$defs/CalendlyRevokeInvitationConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/CalendlyGetCurrentUserConfig"
+        },
+        {
+          "$ref": "#/$defs/CalendlyGetUserConfig"
+        },
+        {
+          "$ref": "#/$defs/CalendlyListEventTypesConfig"
+        },
+        {
+          "$ref": "#/$defs/CalendlyGetEventTypeConfig"
+        },
+        {
+          "$ref": "#/$defs/CalendlyListEventTypeAvailableTimesConfig"
+        },
+        {
+          "$ref": "#/$defs/CalendlyListScheduledEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/CalendlyGetScheduledEventConfig"
+        },
+        {
+          "$ref": "#/$defs/CalendlyCancelScheduledEventConfig"
+        },
+        {
+          "$ref": "#/$defs/CalendlyListEventInviteesConfig"
+        },
+        {
+          "$ref": "#/$defs/CalendlyGetEventInviteeConfig"
+        },
+        {
+          "$ref": "#/$defs/CalendlyCreateNoShowConfig"
+        },
+        {
+          "$ref": "#/$defs/CalendlyGetNoShowConfig"
+        },
+        {
+          "$ref": "#/$defs/CalendlyDeleteNoShowConfig"
+        },
+        {
+          "$ref": "#/$defs/CalendlyGetOrganizationConfig"
+        },
+        {
+          "$ref": "#/$defs/CalendlyListMembershipsConfig"
+        },
+        {
+          "$ref": "#/$defs/CalendlyGetMembershipConfig"
+        },
+        {
+          "$ref": "#/$defs/CalendlyRemoveMembershipConfig"
+        },
+        {
+          "$ref": "#/$defs/CalendlyListInvitationsConfig"
+        },
+        {
+          "$ref": "#/$defs/CalendlyCreateInvitationConfig"
+        },
+        {
+          "$ref": "#/$defs/CalendlyRevokeInvitationConfig"
+        },
+        {
+          "$ref": "#/$defs/CalendlyCreateSchedulingLinkConfig"
+        },
+        {
+          "$ref": "#/$defs/CalendlyCreateShareConfig"
+        },
+        {
+          "$ref": "#/$defs/CalendlyListAvailabilitySchedulesConfig"
+        },
+        {
+          "$ref": "#/$defs/CalendlyListBusyTimesConfig"
+        },
+        {
+          "$ref": "#/$defs/CalendlyListRoutingFormsConfig"
+        },
+        {
+          "$ref": "#/$defs/CalendlyListRoutingSubmissionsConfig"
+        },
+        {
+          "$ref": "#/$defs/CalendlyListGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/CalendlyListGroupRelationshipsConfig"
+        },
+        {
+          "$ref": "#/$defs/CalendlyListActivityLogConfig"
+        },
+        {
+          "$ref": "#/$defs/CalendlyDeleteInviteeDataConfig"
+        },
+        {
+          "$ref": "#/$defs/CalendlyDeleteEventDataConfig"
+        },
+        {
+          "$ref": "#/$defs/CalendlyCustomRequestConfig"
+        },
+        {
+          "$ref": "#/$defs/CalendlyOnInviteeCreatedConfig"
+        },
+        {
+          "$ref": "#/$defs/CalendlyOnInviteeCanceledConfig"
+        },
+        {
+          "$ref": "#/$defs/CalendlyOnNoShowCreatedConfig"
+        },
+        {
+          "$ref": "#/$defs/CalendlyOnNoShowDeletedConfig"
+        },
+        {
+          "$ref": "#/$defs/CalendlyOnRoutingSubmissionConfig"
+        },
+        {
+          "$ref": "#/$defs/CalendlyOnContactCreatedConfig"
+        },
+        {
+          "$ref": "#/$defs/CalendlyOnContactUpdatedConfig"
+        },
+        {
+          "$ref": "#/$defs/CalendlyOnContactDeletedConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/CalendlyOAuthCredential"
+        },
+        {
+          "$ref": "#/$defs/CalendlyPATCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Calendly Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "List all upcoming Calendly meetings",
+    "Get the invitees of a scheduled event",
+    "Cancel a scheduled meeting",
+    "List my event types",
+    "When someone books a meeting, add them to a CRM"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

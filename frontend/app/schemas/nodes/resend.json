@@ -1,0 +1,369 @@
+{
+  "$defs": {
+    "ResendAPIKeyCredential": {
+      "description": "API Key credential for Resend.",
+      "properties": {
+        "credential_type": {
+          "const": "resend_api_key",
+          "default": "resend_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Your Resend API key (starts with re_) from the API Keys page",
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "ResendAPIKeyCredential",
+      "type": "object",
+      "x-credential-url": "https://resend.com/api-keys"
+    },
+    "ResendCancelEmailConfig": {
+      "description": "Cancel a scheduled email before it is sent.",
+      "properties": {
+        "operation": {
+          "const": "cancel_email",
+          "default": "cancel_email",
+          "title": "Cancel Email",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email",
+          "x-display-name": "Cancel Email",
+          "x-is-trigger": false
+        },
+        "email_id": {
+          "description": "The ID of the scheduled email to cancel",
+          "title": "Email ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email_id"
+      ],
+      "title": "ResendCancelEmailConfig",
+      "type": "object"
+    },
+    "ResendGetEmailConfig": {
+      "description": "Retrieve the status and details of a sent email.",
+      "properties": {
+        "operation": {
+          "const": "get_email",
+          "default": "get_email",
+          "title": "Get Email",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email",
+          "x-display-name": "Get Email",
+          "x-is-trigger": false
+        },
+        "email_id": {
+          "description": "The ID returned when the email was sent",
+          "title": "Email ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email_id"
+      ],
+      "title": "ResendGetEmailConfig",
+      "type": "object"
+    },
+    "ResendReceiveWebhookConfig": {
+      "description": "Receive webhook events from Resend (delivered, bounced, opened, complained).",
+      "properties": {
+        "operation": {
+          "const": "receive_webhook",
+          "default": "receive_webhook",
+          "title": "Receive Webhook Events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "Receive Webhook Events",
+          "x-is-trigger": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Add this URL as an endpoint at resend.com/webhooks and select which events to send",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        }
+      },
+      "title": "ResendReceiveWebhookConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "ResendSendEmailConfig": {
+      "description": "Send a transactional email through Resend.",
+      "properties": {
+        "operation": {
+          "const": "send_email",
+          "default": "send_email",
+          "title": "Send Email",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email",
+          "x-display-name": "Send Email",
+          "x-is-trigger": false
+        },
+        "from_address": {
+          "description": "Sender address on a verified domain. Optionally include a name: \"NoClick <hello@example.com>\"",
+          "title": "From",
+          "type": "string"
+        },
+        "to": {
+          "description": "Recipient email address. For multiple recipients, separate with commas (max 50)",
+          "title": "To",
+          "type": "string"
+        },
+        "subject": {
+          "description": "Email subject line",
+          "title": "Subject",
+          "type": "string"
+        },
+        "html": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "HTML version of the message body",
+          "title": "HTML Body",
+          "ui:widget": "textarea"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Plain text version. Auto-generated from HTML if omitted",
+          "title": "Plain Text Body",
+          "ui:widget": "textarea"
+        },
+        "cc": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Carbon copy recipients, comma-separated",
+          "title": "CC"
+        },
+        "bcc": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Blind carbon copy recipients, comma-separated",
+          "title": "BCC"
+        },
+        "reply_to": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Reply-to address(es), comma-separated",
+          "title": "Reply-To"
+        },
+        "scheduled_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Schedule delivery using natural language (\"in 1 hour\") or ISO 8601",
+          "title": "Scheduled At"
+        },
+        "attachments": {
+          "description": "Files to attach: workflow resource ids or URLs (max 10MB per file, 20MB total)",
+          "items": {
+            "type": "string"
+          },
+          "placeholder": "{{node.resource_id}}",
+          "title": "Attachments",
+          "type": "array",
+          "ui:widget": "list"
+        }
+      },
+      "required": [
+        "from_address",
+        "to",
+        "subject"
+      ],
+      "title": "ResendSendEmailConfig",
+      "type": "object"
+    },
+    "ResendUpdateEmailConfig": {
+      "description": "Reschedule a previously scheduled email.",
+      "properties": {
+        "operation": {
+          "const": "update_email",
+          "default": "update_email",
+          "title": "Reschedule Email",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Email",
+          "x-display-name": "Reschedule Email",
+          "x-is-trigger": false
+        },
+        "email_id": {
+          "description": "The ID of the scheduled email to reschedule",
+          "title": "Email ID",
+          "type": "string"
+        },
+        "scheduled_at": {
+          "description": "New delivery time using natural language (\"in 1 hour\") or ISO 8601",
+          "title": "Scheduled At",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email_id",
+        "scheduled_at"
+      ],
+      "title": "ResendUpdateEmailConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for Resend node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_email": "#/$defs/ResendCancelEmailConfig",
+          "get_email": "#/$defs/ResendGetEmailConfig",
+          "receive_webhook": "#/$defs/ResendReceiveWebhookConfig",
+          "send_email": "#/$defs/ResendSendEmailConfig",
+          "update_email": "#/$defs/ResendUpdateEmailConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ResendSendEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/ResendGetEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/ResendUpdateEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/ResendCancelEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/ResendReceiveWebhookConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ResendAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Resend Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Send a welcome email when a new user signs up",
+    "Send a scheduled follow-up email 2 days after signup",
+    "Check the delivery status of a previously sent email",
+    "Cancel a scheduled email if the user already converted",
+    "Trigger a workflow when an email bounces or a recipient complains"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

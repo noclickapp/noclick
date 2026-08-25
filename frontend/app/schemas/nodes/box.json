@@ -1,0 +1,1899 @@
+{
+  "$defs": {
+    "BoxAddCollaborationConfig": {
+      "description": "Share a file or folder with a user at a given role.",
+      "properties": {
+        "operation": {
+          "const": "add_collaboration",
+          "default": "add_collaboration",
+          "title": "Add Collaboration",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collaboration",
+          "x-display-name": "Add Collaboration",
+          "x-is-trigger": false
+        },
+        "item_type": {
+          "default": "folder",
+          "description": "Whether you are sharing a file or a folder",
+          "enum": [
+            "folder",
+            "file"
+          ],
+          "enumNames": [
+            "Folder",
+            "File"
+          ],
+          "title": "Item Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "item_id": {
+          "description": "ID of the file or folder to share",
+          "title": "Item ID",
+          "type": "string"
+        },
+        "login": {
+          "description": "Email (login) of the user to add as a collaborator",
+          "title": "Collaborator Email",
+          "type": "string"
+        },
+        "role": {
+          "default": "viewer",
+          "description": "Permission level granted to the collaborator",
+          "enum": [
+            "editor",
+            "viewer",
+            "previewer",
+            "uploader",
+            "co-owner",
+            "viewer uploader",
+            "previewer uploader"
+          ],
+          "title": "Role",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "item_id",
+        "login"
+      ],
+      "title": "BoxAddCollaborationConfig",
+      "type": "object"
+    },
+    "BoxAddCommentConfig": {
+      "description": "Add a comment to a file.",
+      "properties": {
+        "operation": {
+          "const": "add_comment",
+          "default": "add_comment",
+          "title": "Add Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comments",
+          "x-display-name": "Add Comment",
+          "x-is-trigger": false
+        },
+        "file_id": {
+          "description": "ID of the file to comment on",
+          "title": "File ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "file_id",
+            "placeholder": "Select a file\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "box_file"
+        },
+        "message": {
+          "description": "The comment text",
+          "title": "Message",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "file_id",
+        "message"
+      ],
+      "title": "BoxAddCommentConfig",
+      "type": "object"
+    },
+    "BoxCopyFileConfig": {
+      "description": "Copy a file into a destination folder.",
+      "properties": {
+        "operation": {
+          "const": "copy_file",
+          "default": "copy_file",
+          "title": "Copy File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Files",
+          "x-display-name": "Copy File",
+          "x-is-trigger": false
+        },
+        "file_id": {
+          "description": "ID of the file to copy",
+          "title": "File ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "file_id",
+            "placeholder": "Select a file\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "box_file"
+        },
+        "parent_id": {
+          "description": "ID of the destination folder",
+          "title": "Destination Folder ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste folder ID",
+            "field_name": "parent_id",
+            "placeholder": "Select a folder\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "box_folder"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional new name for the copied file",
+          "title": "New Name"
+        }
+      },
+      "required": [
+        "file_id",
+        "parent_id"
+      ],
+      "title": "BoxCopyFileConfig",
+      "type": "object"
+    },
+    "BoxCopyFolderConfig": {
+      "description": "Copy a folder (and its contents) into a destination parent.",
+      "properties": {
+        "operation": {
+          "const": "copy_folder",
+          "default": "copy_folder",
+          "title": "Copy Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Folders",
+          "x-display-name": "Copy Folder",
+          "x-is-trigger": false
+        },
+        "folder_id": {
+          "description": "ID of the folder to copy",
+          "title": "Folder ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste folder ID",
+            "field_name": "folder_id",
+            "placeholder": "Select a folder\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "box_folder"
+        },
+        "parent_id": {
+          "description": "ID of the destination parent folder",
+          "title": "Destination Parent ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste folder ID",
+            "field_name": "parent_id",
+            "placeholder": "Select a folder\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "box_folder"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional new name for the copied folder",
+          "title": "New Name"
+        }
+      },
+      "required": [
+        "folder_id",
+        "parent_id"
+      ],
+      "title": "BoxCopyFolderConfig",
+      "type": "object"
+    },
+    "BoxCreateFileSharedLinkConfig": {
+      "description": "Create or update a public shared link on a file.",
+      "properties": {
+        "operation": {
+          "const": "create_file_shared_link",
+          "default": "create_file_shared_link",
+          "title": "Create File Shared Link",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sharing",
+          "x-display-name": "Create File Shared Link",
+          "x-is-trigger": false
+        },
+        "file_id": {
+          "description": "ID of the file to share",
+          "title": "File ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "file_id",
+            "placeholder": "Select a file\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "box_file"
+        },
+        "access": {
+          "default": "open",
+          "description": "Who can access the shared link",
+          "enum": [
+            "open",
+            "company",
+            "collaborators"
+          ],
+          "enumNames": [
+            "Anyone with the link",
+            "People in your company",
+            "Collaborators only"
+          ],
+          "title": "Access",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "BoxCreateFileSharedLinkConfig",
+      "type": "object"
+    },
+    "BoxCreateFolderConfig": {
+      "description": "Create a new folder under a parent.",
+      "properties": {
+        "operation": {
+          "const": "create_folder",
+          "default": "create_folder",
+          "title": "Create Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Folders",
+          "x-creates-resource": true,
+          "x-display-name": "Create Folder",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "box_folder"
+        },
+        "name": {
+          "description": "Name for the new folder",
+          "title": "Name",
+          "type": "string"
+        },
+        "parent_id": {
+          "default": "0",
+          "description": "ID of the parent folder (use 0 for root)",
+          "title": "Parent Folder ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste folder ID",
+            "field_name": "parent_id",
+            "placeholder": "Select a folder\u2026",
+            "searchable": true
+          },
+          "x-resource-type": "box_folder"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "BoxCreateFolderConfig",
+      "type": "object"
+    },
+    "BoxCreateFolderSharedLinkConfig": {
+      "description": "Create or update a shared link on a folder.",
+      "properties": {
+        "operation": {
+          "const": "create_folder_shared_link",
+          "default": "create_folder_shared_link",
+          "title": "Create Folder Shared Link",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Sharing",
+          "x-display-name": "Create Folder Shared Link",
+          "x-is-trigger": false
+        },
+        "folder_id": {
+          "description": "ID of the folder to share",
+          "title": "Folder ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste folder ID",
+            "field_name": "folder_id",
+            "placeholder": "Select a folder\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "box_folder"
+        },
+        "access": {
+          "default": "open",
+          "description": "Who can access the shared link",
+          "enum": [
+            "open",
+            "company",
+            "collaborators"
+          ],
+          "enumNames": [
+            "Anyone with the link",
+            "People in your company",
+            "Collaborators only"
+          ],
+          "title": "Access",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "folder_id"
+      ],
+      "title": "BoxCreateFolderSharedLinkConfig",
+      "type": "object"
+    },
+    "BoxCreateTaskConfig": {
+      "description": "Create a review or approval task on a file.",
+      "properties": {
+        "operation": {
+          "const": "create_task",
+          "default": "create_task",
+          "title": "Create Task",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tasks",
+          "x-display-name": "Create Task",
+          "x-is-trigger": false
+        },
+        "file_id": {
+          "description": "ID of the file the task is on",
+          "title": "File ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "file_id",
+            "placeholder": "Select a file\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "box_file"
+        },
+        "message": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Instructions shown to the assignee",
+          "title": "Message"
+        },
+        "action": {
+          "default": "review",
+          "description": "The type of task",
+          "enum": [
+            "review",
+            "complete"
+          ],
+          "enumNames": [
+            "Review",
+            "Complete"
+          ],
+          "title": "Action",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "BoxCreateTaskConfig",
+      "type": "object"
+    },
+    "BoxCreateWebhookConfig": {
+      "description": "Register a webhook on a file or folder (manual, not the trigger).",
+      "properties": {
+        "operation": {
+          "const": "create_webhook",
+          "default": "create_webhook",
+          "title": "Create Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-creates-resource": true,
+          "x-display-name": "Create Webhook",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "box_webhook"
+        },
+        "target_type": {
+          "default": "folder",
+          "description": "Whether the webhook attaches to a file or folder",
+          "enum": [
+            "folder",
+            "file"
+          ],
+          "enumNames": [
+            "Folder",
+            "File"
+          ],
+          "title": "Target Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "target_id": {
+          "description": "ID of the file or folder",
+          "title": "Target ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste folder ID",
+            "field_name": "target_id",
+            "placeholder": "Select a folder\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "box_folder"
+        },
+        "address": {
+          "description": "URL Box should POST events to",
+          "title": "Address",
+          "type": "string"
+        },
+        "triggers": {
+          "default": "FILE.UPLOADED",
+          "description": "Comma-separated event names (e.g. FILE.UPLOADED,FILE.DELETED)",
+          "title": "Triggers",
+          "type": "string"
+        }
+      },
+      "required": [
+        "target_id",
+        "address"
+      ],
+      "title": "BoxCreateWebhookConfig",
+      "type": "object"
+    },
+    "BoxDeleteFileConfig": {
+      "description": "Move a file to the trash.",
+      "properties": {
+        "operation": {
+          "const": "delete_file",
+          "default": "delete_file",
+          "title": "Delete File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Files",
+          "x-display-name": "Delete File",
+          "x-is-trigger": false
+        },
+        "file_id": {
+          "description": "ID of the file to delete",
+          "title": "File ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "file_id",
+            "placeholder": "Select a file\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "box_file"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "BoxDeleteFileConfig",
+      "type": "object"
+    },
+    "BoxDeleteFolderConfig": {
+      "description": "Delete a folder (moves it to the trash).",
+      "properties": {
+        "operation": {
+          "const": "delete_folder",
+          "default": "delete_folder",
+          "title": "Delete Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Folders",
+          "x-display-name": "Delete Folder",
+          "x-is-trigger": false
+        },
+        "folder_id": {
+          "description": "ID of the folder to delete",
+          "title": "Folder ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste folder ID",
+            "field_name": "folder_id",
+            "placeholder": "Select a folder\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "box_folder"
+        },
+        "recursive": {
+          "default": "true",
+          "description": "Delete the folder even if it is not empty",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Recursive",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "folder_id"
+      ],
+      "title": "BoxDeleteFolderConfig",
+      "type": "object"
+    },
+    "BoxDeleteWebhookConfig": {
+      "description": "Delete a webhook.",
+      "properties": {
+        "operation": {
+          "const": "delete_webhook",
+          "default": "delete_webhook",
+          "title": "Delete Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Delete Webhook",
+          "x-is-trigger": false
+        },
+        "webhook_id": {
+          "description": "ID of the webhook to delete",
+          "title": "Webhook ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste webhook ID",
+            "field_name": "webhook_id",
+            "placeholder": "Select a webhook\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "box_webhook"
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "BoxDeleteWebhookConfig",
+      "type": "object"
+    },
+    "BoxDeveloperTokenCredential": {
+      "description": "Box Developer Token credential (Bearer token, self-serve).\n\nA Developer Token is generated by hand in the Box Developer Console and is\nvalid for ~60 minutes \u2014 ideal for testing without a full OAuth app, passed\nthe same way as an OAuth access token (`Authorization: Bearer <token>`).",
+      "properties": {
+        "credential_type": {
+          "const": "box_developer_token",
+          "default": "box_developer_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "Box Developer Token from your app's Configuration tab in the Developer Console (valid ~60 min)",
+          "title": "Developer Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "webhook_signing_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Primary signature key from Box Developer Console \u2192 Webhooks \u2192 Manage signature keys. Required for webhook trigger signature verification.",
+          "title": "Webhook Primary Signing Key",
+          "ui:widget": "password",
+          "x-optional-custom": true
+        },
+        "webhook_signing_key_secondary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Secondary signature key (allows zero-downtime key rotation). Leave blank if you only have one key.",
+          "title": "Webhook Secondary Signing Key",
+          "ui:widget": "password",
+          "x-optional-custom": true
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "BoxDeveloperTokenCredential",
+      "type": "object",
+      "x-credential-url": "https://app.box.com/developers/console"
+    },
+    "BoxGetDownloadUrlConfig": {
+      "description": "Get a download URL for a file (follows Box's 302 redirect).",
+      "properties": {
+        "operation": {
+          "const": "get_download_url",
+          "default": "get_download_url",
+          "title": "Get File Download URL",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Files",
+          "x-display-name": "Get File Download URL",
+          "x-is-trigger": false
+        },
+        "file_id": {
+          "description": "ID of the file to download",
+          "title": "File ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "file_id",
+            "placeholder": "Select a file\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "box_file"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "BoxGetDownloadUrlConfig",
+      "type": "object"
+    },
+    "BoxGetFileConfig": {
+      "description": "Retrieve file metadata.",
+      "properties": {
+        "operation": {
+          "const": "get_file",
+          "default": "get_file",
+          "title": "Get File Info",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Files",
+          "x-display-name": "Get File Info",
+          "x-is-trigger": false
+        },
+        "file_id": {
+          "description": "ID of the file",
+          "title": "File ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "file_id",
+            "placeholder": "Select a file\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "box_file"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "BoxGetFileConfig",
+      "type": "object"
+    },
+    "BoxGetFolderConfig": {
+      "description": "Retrieve metadata for a folder.",
+      "properties": {
+        "operation": {
+          "const": "get_folder",
+          "default": "get_folder",
+          "title": "Get Folder Info",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Folders",
+          "x-display-name": "Get Folder Info",
+          "x-is-trigger": false
+        },
+        "folder_id": {
+          "description": "ID of the folder",
+          "title": "Folder ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste folder ID",
+            "field_name": "folder_id",
+            "placeholder": "Select a folder\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "box_folder"
+        }
+      },
+      "required": [
+        "folder_id"
+      ],
+      "title": "BoxGetFolderConfig",
+      "type": "object"
+    },
+    "BoxGetMeConfig": {
+      "description": "Retrieve the authenticated user's profile.",
+      "properties": {
+        "operation": {
+          "const": "get_me",
+          "default": "get_me",
+          "title": "Get Current User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "Get Current User",
+          "x-is-trigger": false
+        }
+      },
+      "title": "BoxGetMeConfig",
+      "type": "object"
+    },
+    "BoxListCollaborationsConfig": {
+      "description": "List collaborators on a folder or file.",
+      "properties": {
+        "operation": {
+          "const": "list_collaborations",
+          "default": "list_collaborations",
+          "title": "List Collaborations",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collaboration",
+          "x-display-name": "List Collaborations",
+          "x-is-trigger": false
+        },
+        "item_type": {
+          "default": "folder",
+          "description": "Whether to list collaborators on a file or folder",
+          "enum": [
+            "folder",
+            "file"
+          ],
+          "enumNames": [
+            "Folder",
+            "File"
+          ],
+          "title": "Item Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "item_id": {
+          "description": "ID of the file or folder",
+          "title": "Item ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "BoxListCollaborationsConfig",
+      "type": "object"
+    },
+    "BoxListCommentsConfig": {
+      "description": "List comments on a file.",
+      "properties": {
+        "operation": {
+          "const": "list_comments",
+          "default": "list_comments",
+          "title": "List File Comments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Comments",
+          "x-display-name": "List File Comments",
+          "x-is-trigger": false
+        },
+        "file_id": {
+          "description": "ID of the file",
+          "title": "File ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "file_id",
+            "placeholder": "Select a file\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "box_file"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "BoxListCommentsConfig",
+      "type": "object"
+    },
+    "BoxListFolderItemsConfig": {
+      "description": "List files, folders, and web links inside a folder.",
+      "properties": {
+        "operation": {
+          "const": "list_folder_items",
+          "default": "list_folder_items",
+          "title": "List Folder Items",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Folders",
+          "x-display-name": "List Folder Items",
+          "x-is-trigger": false
+        },
+        "folder_id": {
+          "default": "0",
+          "description": "ID of the folder to list (use 0 for the root 'All Files' folder)",
+          "title": "Folder ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste folder ID",
+            "field_name": "folder_id",
+            "placeholder": "Select a folder\u2026",
+            "searchable": true
+          },
+          "x-resource-type": "box_folder"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "100",
+          "description": "Max number of items to return (1-1000)",
+          "title": "Limit"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Offset for pagination (0-based)",
+          "title": "Offset"
+        }
+      },
+      "title": "BoxListFolderItemsConfig",
+      "type": "object"
+    },
+    "BoxListTrashConfig": {
+      "description": "List items currently in the trash.",
+      "properties": {
+        "operation": {
+          "const": "list_trash",
+          "default": "list_trash",
+          "title": "List Trashed Items",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Folders",
+          "x-display-name": "List Trashed Items",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "100",
+          "description": "Max number of trashed items to return (1-1000)",
+          "title": "Limit"
+        }
+      },
+      "title": "BoxListTrashConfig",
+      "type": "object"
+    },
+    "BoxListUsersConfig": {
+      "description": "List managed users in the enterprise (admin / server auth).",
+      "properties": {
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "List Enterprise Users",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Users",
+          "x-display-name": "List Enterprise Users",
+          "x-is-trigger": false
+        },
+        "filter_term": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter users whose name or login contains this text",
+          "title": "Filter Term"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "100",
+          "description": "Max number of users to return (1-1000)",
+          "title": "Limit"
+        }
+      },
+      "title": "BoxListUsersConfig",
+      "type": "object"
+    },
+    "BoxListWebhooksConfig": {
+      "description": "List all webhooks created by the app for the user.",
+      "properties": {
+        "operation": {
+          "const": "list_webhooks",
+          "default": "list_webhooks",
+          "title": "List Webhooks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "List Webhooks",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "100",
+          "description": "Max number of webhooks to return",
+          "title": "Limit"
+        }
+      },
+      "title": "BoxListWebhooksConfig",
+      "type": "object"
+    },
+    "BoxOAuthCredential": {
+      "description": "OAuth 2.0 (Authorization Code) credential for Box.\n\nTokens are obtained via the OAuth flow, not entered manually. Box access\ntokens last ~60 minutes; refresh tokens are single-use and rotate on every\nrefresh, so the newest refresh token must always be persisted.\n\nRegister a Custom App (\"User Authentication / OAuth 2.0\") at:\nhttps://app.box.com/developers/console",
+      "properties": {
+        "credential_type": {
+          "const": "box_oauth",
+          "default": "box_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refresh Token"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Expiry"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Email"
+        },
+        "webhook_signing_key": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Primary signature key from Box Developer Console \u2192 Webhooks \u2192 Manage signature keys. Required for webhook trigger signature verification.",
+          "title": "Webhook Primary Signing Key",
+          "ui:widget": "password",
+          "x-optional-custom": true
+        },
+        "webhook_signing_key_secondary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Secondary signature key (allows zero-downtime key rotation). Leave blank if you only have one key.",
+          "title": "Webhook Secondary Signing Key",
+          "ui:widget": "password",
+          "x-optional-custom": true
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "BoxOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://app.box.com/developers/console",
+      "x-oauth-custom-client-help": "Optionally bring your own Box OAuth app. Create a Custom App ('User Authentication / OAuth 2.0') at https://app.box.com/developers/console, set its redirect URI to NoClick's Box callback, and paste its client ID and secret here. Leave blank to use NoClick's shared Box app.",
+      "x-oauth-provider": "box",
+      "x-oauth-scopes": [
+        "root_readwrite",
+        "manage_managed_users",
+        "manage_groups",
+        "manage_webhook",
+        "manage_enterprise_properties"
+      ],
+      "x-oauth-supports-custom-client": true
+    },
+    "BoxRemoveCollaborationConfig": {
+      "description": "Remove a collaborator.",
+      "properties": {
+        "operation": {
+          "const": "remove_collaboration",
+          "default": "remove_collaboration",
+          "title": "Remove Collaboration",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Collaboration",
+          "x-display-name": "Remove Collaboration",
+          "x-is-trigger": false
+        },
+        "collaboration_id": {
+          "description": "ID of the collaboration to remove",
+          "title": "Collaboration ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "collaboration_id"
+      ],
+      "title": "BoxRemoveCollaborationConfig",
+      "type": "object"
+    },
+    "BoxSearchConfig": {
+      "description": "Search files, folders, and web links by query.",
+      "properties": {
+        "operation": {
+          "const": "search",
+          "default": "search",
+          "title": "Search Content",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Search",
+          "x-display-name": "Search Content",
+          "x-is-trigger": false
+        },
+        "query": {
+          "description": "Search keywords",
+          "title": "Query",
+          "type": "string"
+        },
+        "type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Restrict results to a single item type",
+          "enum": [
+            "",
+            "file",
+            "folder",
+            "web_link"
+          ],
+          "enumNames": [
+            "Any",
+            "Files",
+            "Folders",
+            "Web Links"
+          ],
+          "title": "Type",
+          "x-enum-searchable": true
+        },
+        "ancestor_folder_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Limit the search to these folder IDs, comma-separated",
+          "title": "Ancestor Folder IDs"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "30",
+          "description": "Max number of results (1-200)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "BoxSearchConfig",
+      "type": "object"
+    },
+    "BoxUpdateFileConfig": {
+      "description": "Rename, move, or change a file's description.",
+      "properties": {
+        "operation": {
+          "const": "update_file",
+          "default": "update_file",
+          "title": "Update File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Files",
+          "x-display-name": "Update File",
+          "x-is-trigger": false
+        },
+        "file_id": {
+          "description": "ID of the file to update",
+          "title": "File ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "file_id",
+            "placeholder": "Select a file\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "box_file"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New file name",
+          "title": "New Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New file description",
+          "title": "Description"
+        },
+        "parent_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Move the file under this parent ID",
+          "title": "New Parent Folder ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste folder ID",
+            "field_name": "parent_id",
+            "placeholder": "Select a folder\u2026",
+            "searchable": true
+          },
+          "x-resource-type": "box_folder"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "BoxUpdateFileConfig",
+      "type": "object"
+    },
+    "BoxUpdateFolderConfig": {
+      "description": "Rename, move, or change folder properties.",
+      "properties": {
+        "operation": {
+          "const": "update_folder",
+          "default": "update_folder",
+          "title": "Update Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Folders",
+          "x-display-name": "Update Folder",
+          "x-is-trigger": false
+        },
+        "folder_id": {
+          "description": "ID of the folder to update",
+          "title": "Folder ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste folder ID",
+            "field_name": "folder_id",
+            "placeholder": "Select a folder\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "box_folder"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New folder name",
+          "title": "New Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New folder description",
+          "title": "Description"
+        },
+        "parent_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Move the folder under this parent ID",
+          "title": "New Parent Folder ID",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste folder ID",
+            "field_name": "parent_id",
+            "placeholder": "Select a folder\u2026",
+            "searchable": true
+          },
+          "x-resource-type": "box_folder"
+        }
+      },
+      "required": [
+        "folder_id"
+      ],
+      "title": "BoxUpdateFolderConfig",
+      "type": "object"
+    },
+    "BoxUploadFileConfig": {
+      "description": "Upload a new file from inline text content into a folder.",
+      "properties": {
+        "operation": {
+          "const": "upload_file",
+          "default": "upload_file",
+          "title": "Upload File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Files",
+          "x-display-name": "Upload File",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Name for the uploaded file (e.g. notes.txt)",
+          "title": "File Name",
+          "type": "string"
+        },
+        "parent_id": {
+          "default": "0",
+          "description": "ID of the destination folder (0 for root)",
+          "title": "Parent Folder ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste folder ID",
+            "field_name": "parent_id",
+            "placeholder": "Select a folder\u2026",
+            "searchable": true
+          },
+          "x-resource-type": "box_folder"
+        },
+        "content": {
+          "description": "Text content to upload as the file body",
+          "title": "Content",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "name",
+        "content"
+      ],
+      "title": "BoxUploadFileConfig",
+      "type": "object"
+    },
+    "BoxUploadVersionConfig": {
+      "description": "Upload a new version of an existing file from inline text content.",
+      "properties": {
+        "operation": {
+          "const": "upload_version",
+          "default": "upload_version",
+          "title": "Upload New Version",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Files",
+          "x-display-name": "Upload New Version",
+          "x-is-trigger": false
+        },
+        "file_id": {
+          "description": "ID of the file to add a version to",
+          "title": "File ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste file ID",
+            "field_name": "file_id",
+            "placeholder": "Select a file\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "box_file"
+        },
+        "content": {
+          "description": "New text content for the file version",
+          "title": "Content",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "file_id",
+        "content"
+      ],
+      "title": "BoxUploadVersionConfig",
+      "type": "object"
+    },
+    "BoxWebhookTriggerConfig": {
+      "description": "Fire the workflow when a Box file/folder event occurs (FILE.UPLOADED, etc.).",
+      "properties": {
+        "operation": {
+          "const": "on_box_event",
+          "default": "on_box_event",
+          "title": "On File or Folder Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On File or Folder Event",
+          "x-is-trigger": true
+        },
+        "target_type": {
+          "default": "folder",
+          "description": "Whether to watch a file or a folder for events",
+          "enum": [
+            "folder",
+            "file"
+          ],
+          "enumNames": [
+            "Folder",
+            "File"
+          ],
+          "title": "Target Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "target_id": {
+          "default": "0",
+          "description": "ID of the file or folder to watch (use 0 for the root folder)",
+          "title": "Target ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste folder ID",
+            "field_name": "target_id",
+            "placeholder": "Select a folder\u2026",
+            "searchable": true
+          },
+          "x-resource-type": "box_folder"
+        },
+        "event_types": {
+          "default": "FILE.UPLOADED",
+          "description": "Comma-separated Box events that fire the workflow. Box delivers all subscribed events to one URL, so only the selected events run the workflow; the rest are skipped. Leave blank to fire on every event. Available: FILE.UPLOADED (File uploaded), FILE.PREVIEWED (File previewed), FILE.DOWNLOADED (File downloaded), FILE.TRASHED (File trashed), FILE.DELETED (File permanently deleted), FILE.RESTORED (File restored from trash), FILE.COPIED (File copied), FILE.MOVED (File moved), FILE.LOCKED (File locked), FILE.UNLOCKED (File unlocked), FILE.RENAMED (File renamed), COMMENT.CREATED (Comment added), COMMENT.UPDATED (Comment updated), COMMENT.DELETED (Comment deleted), TASK_ASSIGNMENT.CREATED (Task assigned), TASK_ASSIGNMENT.UPDATED (Task assignment updated), METADATA_INSTANCE.CREATED (Metadata added), METADATA_INSTANCE.UPDATED (Metadata updated), METADATA_INSTANCE.DELETED (Metadata deleted), COLLABORATION.CREATED (Collaboration created), COLLABORATION.ACCEPTED (Collaboration accepted), COLLABORATION.REJECTED (Collaboration rejected), COLLABORATION.REMOVED (Collaboration removed), COLLABORATION.UPDATED (Collaboration updated), SHARED_LINK.CREATED (Shared link created), SHARED_LINK.UPDATED (Shared link updated), SHARED_LINK.DELETED (Shared link deleted), FOLDER.CREATED (Folder created), FOLDER.RENAMED (Folder renamed), FOLDER.DOWNLOADED (Folder downloaded), FOLDER.TRASHED (Folder trashed), FOLDER.DELETED (Folder permanently deleted), FOLDER.RESTORED (Folder restored from trash), FOLDER.COPIED (Folder copied), FOLDER.MOVED (Folder moved), WEBHOOK.DELETED (Webhook deleted)",
+          "enum": [
+            "FILE.UPLOADED",
+            "FILE.PREVIEWED",
+            "FILE.DOWNLOADED",
+            "FILE.TRASHED",
+            "FILE.DELETED",
+            "FILE.RESTORED",
+            "FILE.COPIED",
+            "FILE.MOVED",
+            "FILE.LOCKED",
+            "FILE.UNLOCKED",
+            "FILE.RENAMED",
+            "COMMENT.CREATED",
+            "COMMENT.UPDATED",
+            "COMMENT.DELETED",
+            "TASK_ASSIGNMENT.CREATED",
+            "TASK_ASSIGNMENT.UPDATED",
+            "METADATA_INSTANCE.CREATED",
+            "METADATA_INSTANCE.UPDATED",
+            "METADATA_INSTANCE.DELETED",
+            "COLLABORATION.CREATED",
+            "COLLABORATION.ACCEPTED",
+            "COLLABORATION.REJECTED",
+            "COLLABORATION.REMOVED",
+            "COLLABORATION.UPDATED",
+            "SHARED_LINK.CREATED",
+            "SHARED_LINK.UPDATED",
+            "SHARED_LINK.DELETED",
+            "FOLDER.CREATED",
+            "FOLDER.RENAMED",
+            "FOLDER.DOWNLOADED",
+            "FOLDER.TRASHED",
+            "FOLDER.DELETED",
+            "FOLDER.RESTORED",
+            "FOLDER.COPIED",
+            "FOLDER.MOVED",
+            "WEBHOOK.DELETED"
+          ],
+          "enumNames": [
+            "File uploaded",
+            "File previewed",
+            "File downloaded",
+            "File trashed",
+            "File permanently deleted",
+            "File restored from trash",
+            "File copied",
+            "File moved",
+            "File locked",
+            "File unlocked",
+            "File renamed",
+            "Comment added",
+            "Comment updated",
+            "Comment deleted",
+            "Task assigned",
+            "Task assignment updated",
+            "Metadata added",
+            "Metadata updated",
+            "Metadata deleted",
+            "Collaboration created",
+            "Collaboration accepted",
+            "Collaboration rejected",
+            "Collaboration removed",
+            "Collaboration updated",
+            "Shared link created",
+            "Shared link updated",
+            "Shared link deleted",
+            "Folder created",
+            "Folder renamed",
+            "Folder downloaded",
+            "Folder trashed",
+            "Folder permanently deleted",
+            "Folder restored from trash",
+            "Folder copied",
+            "Folder moved",
+            "Webhook deleted"
+          ],
+          "title": "Trigger On Events",
+          "type": "string",
+          "ui:placeholder": "FILE.UPLOADED,FOLDER.CREATED (blank = all events)",
+          "x-enum-searchable": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Box posts events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "signing_secret_secondary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret Secondary",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        }
+      },
+      "title": "BoxWebhookTriggerConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    }
+  },
+  "description": "Full configuration for the Box node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_collaboration": "#/$defs/BoxAddCollaborationConfig",
+          "add_comment": "#/$defs/BoxAddCommentConfig",
+          "copy_file": "#/$defs/BoxCopyFileConfig",
+          "copy_folder": "#/$defs/BoxCopyFolderConfig",
+          "create_file_shared_link": "#/$defs/BoxCreateFileSharedLinkConfig",
+          "create_folder": "#/$defs/BoxCreateFolderConfig",
+          "create_folder_shared_link": "#/$defs/BoxCreateFolderSharedLinkConfig",
+          "create_task": "#/$defs/BoxCreateTaskConfig",
+          "create_webhook": "#/$defs/BoxCreateWebhookConfig",
+          "delete_file": "#/$defs/BoxDeleteFileConfig",
+          "delete_folder": "#/$defs/BoxDeleteFolderConfig",
+          "delete_webhook": "#/$defs/BoxDeleteWebhookConfig",
+          "get_download_url": "#/$defs/BoxGetDownloadUrlConfig",
+          "get_file": "#/$defs/BoxGetFileConfig",
+          "get_folder": "#/$defs/BoxGetFolderConfig",
+          "get_me": "#/$defs/BoxGetMeConfig",
+          "list_collaborations": "#/$defs/BoxListCollaborationsConfig",
+          "list_comments": "#/$defs/BoxListCommentsConfig",
+          "list_folder_items": "#/$defs/BoxListFolderItemsConfig",
+          "list_trash": "#/$defs/BoxListTrashConfig",
+          "list_users": "#/$defs/BoxListUsersConfig",
+          "list_webhooks": "#/$defs/BoxListWebhooksConfig",
+          "on_box_event": "#/$defs/BoxWebhookTriggerConfig",
+          "remove_collaboration": "#/$defs/BoxRemoveCollaborationConfig",
+          "search": "#/$defs/BoxSearchConfig",
+          "update_file": "#/$defs/BoxUpdateFileConfig",
+          "update_folder": "#/$defs/BoxUpdateFolderConfig",
+          "upload_file": "#/$defs/BoxUploadFileConfig",
+          "upload_version": "#/$defs/BoxUploadVersionConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/BoxGetMeConfig"
+        },
+        {
+          "$ref": "#/$defs/BoxListUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/BoxListFolderItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/BoxGetFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/BoxCreateFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/BoxUpdateFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/BoxDeleteFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/BoxCopyFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/BoxListTrashConfig"
+        },
+        {
+          "$ref": "#/$defs/BoxGetFileConfig"
+        },
+        {
+          "$ref": "#/$defs/BoxGetDownloadUrlConfig"
+        },
+        {
+          "$ref": "#/$defs/BoxUploadFileConfig"
+        },
+        {
+          "$ref": "#/$defs/BoxUploadVersionConfig"
+        },
+        {
+          "$ref": "#/$defs/BoxUpdateFileConfig"
+        },
+        {
+          "$ref": "#/$defs/BoxDeleteFileConfig"
+        },
+        {
+          "$ref": "#/$defs/BoxCopyFileConfig"
+        },
+        {
+          "$ref": "#/$defs/BoxCreateFileSharedLinkConfig"
+        },
+        {
+          "$ref": "#/$defs/BoxCreateFolderSharedLinkConfig"
+        },
+        {
+          "$ref": "#/$defs/BoxSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/BoxAddCollaborationConfig"
+        },
+        {
+          "$ref": "#/$defs/BoxListCollaborationsConfig"
+        },
+        {
+          "$ref": "#/$defs/BoxRemoveCollaborationConfig"
+        },
+        {
+          "$ref": "#/$defs/BoxAddCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/BoxListCommentsConfig"
+        },
+        {
+          "$ref": "#/$defs/BoxCreateTaskConfig"
+        },
+        {
+          "$ref": "#/$defs/BoxCreateWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/BoxListWebhooksConfig"
+        },
+        {
+          "$ref": "#/$defs/BoxDeleteWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/BoxWebhookTriggerConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/BoxOAuthCredential"
+        },
+        {
+          "$ref": "#/$defs/BoxDeveloperTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Box Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "List the files in my root Box folder",
+    "Upload a text file to a Box folder",
+    "Create a public shared link for a Box file",
+    "Search Box for documents matching a keyword",
+    "Add a teammate as an editor on a Box folder",
+    "Trigger a workflow whenever a file is uploaded to a Box folder"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

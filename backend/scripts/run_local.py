@@ -1,0 +1,299 @@
+#!/usr/bin/env python3
+"""One-command local NoClick: `python backend/scripts/run_local.py` (or `make local`).
+
+Boots the full self-hosted stack on one machine:
+  1. Supabase local stack via the supabase CLI (Postgres + auth + storage,
+     Docker) — the same stack `infra/supabase` migrations target.
+  2. Backend (uvicorn, NOCLICK_LOCAL=1): in-process event relay (/relay),
+     in-process cron scheduler (/local-cron), path-based webhook URLs.
+  3. Frontend (Remix dev server) pointed at both.
+
+External services are configured by environment variables; no managed
+deployment step or Redis service is required (features that cache in Redis degrade gracefully; set REDIS_URL
+to a local Redis to enable them). Media uploads use Supabase Storage's
+S3-compatible endpoint through the same presigned-URL code that talks to R2 in
+the cloud. Generated secrets persist in .noclick/local.env at the repo root.
+
+Prerequisites: Docker, the supabase CLI, Python deps (pip install -r
+requirements.txt), and pnpm/npm for the frontend.
+"""
+
+import os
+import secrets
+import shutil
+import signal
+import subprocess
+import sys
+import time
+from pathlib import Path
+
+import httpx
+
+REPO_ROOT = Path(__file__).resolve().parents[2]
+INFRA_DIR = REPO_ROOT / "infra"
+BACKEND_DIR = REPO_ROOT / "backend"
+FRONTEND_DIR = REPO_ROOT / "frontend"
+# All generated state (secrets, agent workspaces, volumes) lives under one
+# root so a second install — or a throwaway test — can be fully isolated with
+# NOCLICK_HOME instead of sharing ~/.noclick with everything else.
+STATE_DIR = Path(os.environ.get("NOCLICK_HOME") or (REPO_ROOT / ".noclick"))
+SECRETS_FILE = STATE_DIR / "local.env"
+
+BACKEND_PORT = int(os.environ.get("NOCLICK_BACKEND_PORT", "8000"))
+FRONTEND_PORT = int(os.environ.get("NOCLICK_FRONTEND_PORT", "5173"))
+BACKEND_URL = f"http://127.0.0.1:{BACKEND_PORT}"
+FRONTEND_URL = f"http://127.0.0.1:{FRONTEND_PORT}"
+
+RESOURCE_BUCKET = "workflow-resources"
+CAS_BUCKET = "workflow-cas"
+
+
+def fail(msg: str) -> "NoReturn":  # noqa: F821
+    print(f"\n✗ {msg}", file=sys.stderr)
+    sys.exit(1)
+
+
+def check_prerequisites() -> None:
+    for cmd, hint in (
+        ("docker", "https://docs.docker.com/get-docker/"),
+        ("supabase", "https://supabase.com/docs/guides/cli — brew install supabase/tap/supabase"),
+    ):
+        if shutil.which(cmd) is None:
+            fail(f"`{cmd}` not found — install it first ({hint})")
+    if shutil.which("pnpm") is None and shutil.which("npm") is None:
+        fail("pnpm or npm not found — needed for the frontend")
+
+
+def supabase_env() -> dict:
+    """Start the local Supabase stack (idempotent) and return its settings."""
+    status = subprocess.run(
+        ["supabase", "status", "-o", "env"], cwd=INFRA_DIR, capture_output=True, text=True,
+    )
+    if status.returncode != 0:
+        print("→ Starting local Supabase stack (first run downloads images — takes a few minutes)…")
+        up = subprocess.run(["supabase", "start"], cwd=INFRA_DIR)
+        if up.returncode != 0:
+            fail("`supabase start` failed — is Docker running?")
+        status = subprocess.run(
+            ["supabase", "status", "-o", "env"], cwd=INFRA_DIR, capture_output=True, text=True,
+        )
+        if status.returncode != 0:
+            fail(f"`supabase status` failed after start: {status.stderr.strip()}")
+
+    env: dict = {}
+    for line in status.stdout.splitlines():
+        if "=" in line:
+            key, _, value = line.partition("=")
+            env[key.strip()] = value.strip().strip('"')
+    for required in ("API_URL", "DB_URL", "JWT_SECRET", "ANON_KEY", "SERVICE_ROLE_KEY"):
+        if required not in env:
+            fail(f"`supabase status` output missing {required} — CLI too old? Update the supabase CLI.")
+    return env
+
+
+def apply_migrations() -> None:
+    print("→ Applying database migrations…")
+    result = subprocess.run(["supabase", "migration", "up", "--local"], cwd=INFRA_DIR)
+    if result.returncode != 0:
+        fail("`supabase migration up --local` failed")
+
+
+def local_secrets() -> dict:
+    """Generate once, reuse forever — WORKFLOW_JWT_SECRET signs collab tokens,
+    CRON_SCHEDULER_SECRET guards the in-process scheduler API."""
+    STATE_DIR.mkdir(parents=True, exist_ok=True)
+    stored: dict = {}
+    if SECRETS_FILE.exists():
+        for line in SECRETS_FILE.read_text().splitlines():
+            if "=" in line and not line.startswith("#"):
+                key, _, value = line.partition("=")
+                stored[key.strip()] = value.strip()
+    changed = False
+    for key in ("WORKFLOW_JWT_SECRET", "CRON_SCHEDULER_SECRET", "SESSION_SECRET"):
+        if not stored.get(key):
+            stored[key] = secrets.token_urlsafe(48)
+            changed = True
+    if not stored.get("CREDENTIALS_ENCRYPTION_KEY"):
+        from cryptography.fernet import Fernet
+        stored["CREDENTIALS_ENCRYPTION_KEY"] = Fernet.generate_key().decode()
+        changed = True
+    if changed:
+        SECRETS_FILE.write_text(
+            "# Generated by run_local.py — local-only secrets, do not commit.\n"
+            + "".join(f"{k}={v}\n" for k, v in stored.items())
+        )
+    return stored
+
+
+def ensure_storage_buckets(api_url: str, service_key: str) -> None:
+    try:
+        for bucket in (RESOURCE_BUCKET, CAS_BUCKET):
+            response = httpx.post(
+                f"{api_url}/storage/v1/bucket",
+                # Both buckets are private. Resource access is authenticated by
+                # the backend then handed to the browser as a short-lived signed
+                # URL; CAS blobs never need browser access at all.
+                json={"id": bucket, "name": bucket, "public": False},
+                headers={"Authorization": f"Bearer {service_key}", "apikey": service_key},
+                timeout=10,
+            )
+            if response.status_code in (400, 409):
+                update = httpx.put(
+                    f"{api_url}/storage/v1/bucket/{bucket}",
+                    json={"public": False},
+                    headers={"Authorization": f"Bearer {service_key}", "apikey": service_key},
+                    timeout=10,
+                )
+                if update.status_code not in (200, 201):
+                    print(f"⚠ could not make the {bucket} bucket private "
+                          f"(HTTP {update.status_code})")
+            elif response.status_code not in (200, 201):
+                print(f"⚠ storage bucket {bucket} setup returned HTTP "
+                      f"{response.status_code}: {response.text[:200]}")
+    except Exception as e:
+        print(f"⚠ could not reach local Supabase storage: {e}")
+
+
+def compose_backend_env(sb: dict, sec: dict) -> dict:
+    env = {
+        "NOCLICK_LOCAL": "1",
+        "NOCLICK_HOME": str(STATE_DIR),
+        "PORT": str(BACKEND_PORT),
+        # Database — both URLs point at the local stack (no PgBouncer locally).
+        "POSTGRES_POOLER_URL": sb["DB_URL"],
+        "POSTGRES_URL": sb["DB_URL"],
+        # Auth — the local gotrue signs ES256; the backend verifies against its
+        # JWKS endpoint (the JWT secret stays for symmetric-only deployments).
+        "SUPABASE_URL": sb["API_URL"],
+        "SUPABASE_JWK_URL": f"{sb['API_URL']}/auth/v1/.well-known/jwks.json",
+        "SUPABASE_JWT_SECRET": sb["JWT_SECRET"],
+        "SUPABASE_SERVICE_ROLE_KEY": sb["SERVICE_ROLE_KEY"],
+        # In-process replacements for the Cloudflare pieces.
+        "WORKFLOW_JWT_SECRET": sec["WORKFLOW_JWT_SECRET"],
+        # The app's origin, so the backend's CORS allowlist accepts the
+        # browser's REST calls (model catalog, uploads) on any port.
+        "FRONTEND_URL": FRONTEND_URL,
+        "CRON_SCHEDULER_URL": f"{BACKEND_URL}/local-cron",
+        "CRON_SCHEDULER_SECRET": sec["CRON_SCHEDULER_SECRET"],
+        "WEBHOOK_URL_BASE": BACKEND_URL,
+        "MCP_BASE_URL": BACKEND_URL,
+        # Credential encryption at rest (Fernet; losing it orphans credentials).
+        "CREDENTIALS_ENCRYPTION_KEY": sec["CREDENTIALS_ENCRYPTION_KEY"],
+    }
+    # Media/CAS storage: Supabase Storage's S3-compatible endpoint through the
+    # shared object-store client. Older CLIs don't expose S3 credentials —
+    # uploads and large-output persistence are disabled then.
+    s3_key = sb.get("S3_PROTOCOL_ACCESS_KEY_ID")
+    s3_secret = sb.get("S3_PROTOCOL_ACCESS_KEY_SECRET")
+    if s3_key and s3_secret:
+        env.update({
+            "OBJECT_STORAGE_ENDPOINT": f"{sb['API_URL']}/storage/v1/s3",
+            "OBJECT_STORAGE_ACCESS_KEY_ID": s3_key,
+            "OBJECT_STORAGE_SECRET_ACCESS_KEY": s3_secret,
+            "OBJECT_STORAGE_REGION": "us-east-1",
+        })
+    else:
+        print("⚠ Supabase CLI exposes no S3 credentials — file/media uploads will be unavailable.")
+    if os.environ.get("REDIS_URL"):
+        env["REDIS_URL"] = os.environ["REDIS_URL"]
+    return env
+
+
+def compose_frontend_env(sb: dict, sec: dict) -> dict:
+    return {
+        "PORT": str(FRONTEND_PORT),
+        "PUBLIC_URL": FRONTEND_URL,
+        "VITE_PUBLIC_URL": FRONTEND_URL,
+        "VITE_API_URL": BACKEND_URL,
+        "VITE_RELAY_URL": f"ws://127.0.0.1:{BACKEND_PORT}/relay",
+        "SUPABASE_URL": sb["API_URL"],
+        "SUPABASE_ANON_KEY": sb["ANON_KEY"],
+        "SESSION_SECRET": sec["SESSION_SECRET"],
+        # Mirrors NOCLICK_LOCAL for the UI (app/lib/edition.ts): drops Google
+        # sign-in, which needs a provider configured in a hosted Supabase
+        # project, and the onboarding questionnaire.
+        "VITE_NOCLICK_LOCAL": "1",
+        # No bot risk on a local install, and a captcha keyed to another
+        # domain would never emit a token — leaving Sign up disabled forever.
+        "VITE_DISABLE_CAPTCHA": "true",
+    }
+
+
+def wait_for(url: str, name: str, timeout: float = 120.0) -> None:
+    deadline = time.time() + timeout
+    while time.time() < deadline:
+        try:
+            if httpx.get(url, timeout=2).status_code < 500:
+                return
+        except Exception:
+            pass
+        time.sleep(1.0)
+    fail(f"{name} did not come up at {url} within {timeout:.0f}s")
+
+
+def main() -> None:
+    check_prerequisites()
+    sb = supabase_env()
+    apply_migrations()
+    sec = local_secrets()
+    ensure_storage_buckets(sb["API_URL"], sb["SERVICE_ROLE_KEY"])
+
+    backend_env = {**os.environ, **compose_backend_env(sb, sec)}
+    frontend_env = {**os.environ, **compose_frontend_env(sb, sec)}
+
+    print(f"→ Starting backend on {BACKEND_URL} …")
+    backend = subprocess.Popen(
+        [sys.executable, "-m", "uvicorn", "server:web_app",
+         "--host", "127.0.0.1", "--port", str(BACKEND_PORT)],
+        cwd=BACKEND_DIR, env=backend_env,
+    )
+
+    procs = [backend]
+    try:
+        wait_for(f"{BACKEND_URL}/health", "backend")
+
+        pm = "pnpm" if shutil.which("pnpm") else "npm"
+        if not (FRONTEND_DIR / "node_modules").exists():
+            print(f"→ Installing frontend dependencies ({pm} install)…")
+            install = subprocess.run([pm, "install"], cwd=FRONTEND_DIR, env=frontend_env)
+            if install.returncode != 0:
+                fail(f"{pm} install failed in frontend/")
+        print(f"→ Starting frontend on {FRONTEND_URL} ({pm} run dev)…")
+        # npm needs the `--` separator to forward args; pnpm forwards them
+        # verbatim (a literal `--` would reach remix vite:dev and crash it).
+        port_args = (["--"] if pm == "npm" else []) + ["--port", str(FRONTEND_PORT)]
+        frontend = subprocess.Popen(
+            [pm, "run", "dev", *port_args],
+            cwd=FRONTEND_DIR, env=frontend_env,
+        )
+        procs.append(frontend)
+
+        print(
+            f"\n✓ NoClick is running:\n"
+            f"    app       {FRONTEND_URL}\n"
+            f"    backend   {BACKEND_URL}\n"
+            f"    supabase  {sb['API_URL']}  (studio: {sb.get('STUDIO_URL', 'see `supabase status`')})\n"
+            f"\n  Sign up with any email — local auth auto-confirms.\n"
+            f"  Ctrl-C stops backend + frontend (supabase keeps running; `supabase stop` in infra/).\n"
+        )
+        # Wait until either child exits or the user interrupts.
+        while all(p.poll() is None for p in procs):
+            time.sleep(1.0)
+        for p in procs:
+            if p.poll() is not None:
+                fail(f"process exited unexpectedly (code {p.returncode})")
+    except KeyboardInterrupt:
+        print("\n→ Shutting down…")
+    finally:
+        for p in procs:
+            if p.poll() is None:
+                p.send_signal(signal.SIGINT)
+        for p in procs:
+            try:
+                p.wait(timeout=15)
+            except subprocess.TimeoutExpired:
+                p.kill()
+
+
+if __name__ == "__main__":
+    main()

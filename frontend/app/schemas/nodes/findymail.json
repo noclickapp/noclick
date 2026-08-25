@@ -1,0 +1,2454 @@
+{
+  "$defs": {
+    "FindymailAddExcludedDomainsConfig": {
+      "description": "Add domains to the exclusion list.",
+      "properties": {
+        "operation": {
+          "const": "add_excluded_domains",
+          "default": "add_excluded_domains",
+          "title": "Add Excluded Domains",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Intellimatch",
+          "x-display-name": "Add Excluded Domains",
+          "x-is-trigger": false
+        },
+        "domains": {
+          "description": "Comma-separated domains to exclude",
+          "title": "Domains",
+          "type": "string"
+        },
+        "excluded_domain_list_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional list to add domains to; leave empty for global exclusions",
+          "title": "Exclusion List",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a list ID",
+            "field_name": "excluded_domain_list_id",
+            "placeholder": "Optional: choose a list...",
+            "searchable": true
+          },
+          "x-resource-type": "findymail_exclusion_list"
+        }
+      },
+      "required": [
+        "domains"
+      ],
+      "title": "FindymailAddExcludedDomainsConfig",
+      "type": "object"
+    },
+    "FindymailApiKeyCredential": {
+      "description": "API Key credential for Findymail.",
+      "properties": {
+        "credential_type": {
+          "const": "findymail_api_key",
+          "default": "findymail_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Your Findymail API token from Settings -> API Tokens",
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "FindymailApiKeyCredential",
+      "type": "object",
+      "x-credential-url": "https://app.findymail.com/user/api-tokens"
+    },
+    "FindymailCreateContactListConfig": {
+      "description": "Create a new contact list.",
+      "properties": {
+        "operation": {
+          "const": "create_contact_list",
+          "default": "create_contact_list",
+          "title": "Create Contact List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lists",
+          "x-creates-resource": true,
+          "x-display-name": "Create Contact List",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "findymail_contact_list"
+        },
+        "name": {
+          "description": "A name for the contact list",
+          "title": "List Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "FindymailCreateContactListConfig",
+      "type": "object"
+    },
+    "FindymailCreateExclusionListConfig": {
+      "description": "Create an Intellimatch exclusion list.",
+      "properties": {
+        "operation": {
+          "const": "create_exclusion_list",
+          "default": "create_exclusion_list",
+          "title": "Create Exclusion List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Intellimatch",
+          "x-creates-resource": true,
+          "x-display-name": "Create Exclusion List",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "findymail_exclusion_list"
+        },
+        "name": {
+          "description": "Unique exclusion-list name",
+          "title": "List Name",
+          "type": "string"
+        },
+        "is_shared": {
+          "default": "false",
+          "description": "Whether to share this exclusion list with your current team",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Share With Team",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "FindymailCreateExclusionListConfig",
+      "type": "object"
+    },
+    "FindymailCreateSignalMonitorConfig": {
+      "description": "Create a signal monitor.",
+      "properties": {
+        "operation": {
+          "const": "create_signal_monitor",
+          "default": "create_signal_monitor",
+          "title": "Create Signal Monitor",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Signals",
+          "x-display-name": "Create Signal Monitor",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "A name for the monitor",
+          "title": "Monitor Name",
+          "type": "string"
+        },
+        "signal_type": {
+          "description": "The signal source to monitor",
+          "enum": [
+            "keyword_mention",
+            "new_hire",
+            "job_change",
+            "post_engagement",
+            "company_hiring"
+          ],
+          "enumNames": [
+            "Keyword Mention",
+            "New Hire",
+            "Job Change",
+            "Post Engagement",
+            "Company Hiring"
+          ],
+          "title": "Signal Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "keywords": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated keywords. Required for keyword mentions and some post-engagement monitors.",
+          "title": "Keywords"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional HTTPS URL to receive new matching signals",
+          "title": "Webhook URL"
+        },
+        "post_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required for post-engagement monitors when tracking one post",
+          "title": "LinkedIn Post URL"
+        },
+        "profile_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional LinkedIn profile URL for post-engagement monitors",
+          "title": "LinkedIn Profile URL"
+        },
+        "engagement_types": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated engagement types, e.g. like, comment",
+          "title": "Engagement Types"
+        },
+        "enrichment_level": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact enrichment level for matched signals",
+          "enum": [
+            "email",
+            "email_phone"
+          ],
+          "enumNames": [
+            "Email Only",
+            "Email and Phone"
+          ],
+          "title": "Enrichment Level",
+          "x-enum-searchable": true
+        },
+        "lead_list_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional contact list to add matched contacts to",
+          "title": "Lead List",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a list ID",
+            "field_name": "lead_list_id",
+            "placeholder": "Optional: select a contact list...",
+            "searchable": true
+          },
+          "x-resource-type": "findymail_contact_list"
+        },
+        "ai_relevance_prompt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional custom relevance prompt",
+          "title": "AI Relevance Prompt",
+          "ui:widget": "textarea"
+        },
+        "target_companies": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated company names or domains",
+          "title": "Target Companies"
+        },
+        "is_shared": {
+          "default": "false",
+          "description": "Whether to share this monitor with your current team",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Share With Team",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "icp_industries": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated industries",
+          "title": "ICP Industries"
+        },
+        "icp_employee_count_ranges": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated employee ranges, e.g. 51-200, 201-500",
+          "title": "ICP Employee Count Ranges"
+        },
+        "icp_countries": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated 2-letter country codes, e.g. US, FR",
+          "title": "ICP Countries"
+        },
+        "icp_job_title_keywords": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated job-title keywords",
+          "title": "ICP Job Title Keywords"
+        },
+        "icp_seniority_levels": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated seniority levels, e.g. 11, 13, 14",
+          "title": "ICP Seniority Levels"
+        },
+        "job_offer_title_keywords": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated job-title keywords for company-hiring monitors",
+          "title": "Job Offer Title Keywords"
+        }
+      },
+      "required": [
+        "name",
+        "signal_type"
+      ],
+      "title": "FindymailCreateSignalMonitorConfig",
+      "type": "object"
+    },
+    "FindymailDeleteContactListConfig": {
+      "description": "Delete a contact list.",
+      "properties": {
+        "operation": {
+          "const": "delete_contact_list",
+          "default": "delete_contact_list",
+          "title": "Delete Contact List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lists",
+          "x-display-name": "Delete Contact List",
+          "x-is-trigger": false
+        },
+        "list_id": {
+          "description": "The contact list id to delete",
+          "title": "List ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "FindymailDeleteContactListConfig",
+      "type": "object"
+    },
+    "FindymailDeleteExclusionListConfig": {
+      "description": "Delete an exclusion list.",
+      "properties": {
+        "operation": {
+          "const": "delete_exclusion_list",
+          "default": "delete_exclusion_list",
+          "title": "Delete Exclusion List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Intellimatch",
+          "x-display-name": "Delete Exclusion List",
+          "x-is-trigger": false
+        },
+        "excluded_domain_list_id": {
+          "description": "The exclusion list to delete",
+          "title": "Exclusion List",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a list ID",
+            "field_name": "excluded_domain_list_id",
+            "placeholder": "Select an exclusion list...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "findymail_exclusion_list"
+        }
+      },
+      "required": [
+        "excluded_domain_list_id"
+      ],
+      "title": "FindymailDeleteExclusionListConfig",
+      "type": "object"
+    },
+    "FindymailDeleteSignalMonitorConfig": {
+      "description": "Delete a signal monitor.",
+      "properties": {
+        "operation": {
+          "const": "delete_signal_monitor",
+          "default": "delete_signal_monitor",
+          "title": "Delete Signal Monitor",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Signals",
+          "x-display-name": "Delete Signal Monitor",
+          "x-is-trigger": false
+        },
+        "monitor_id": {
+          "description": "The signal monitor id to delete",
+          "title": "Monitor ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "monitor_id"
+      ],
+      "title": "FindymailDeleteSignalMonitorConfig",
+      "type": "object"
+    },
+    "FindymailFindEmailFromNameConfig": {
+      "description": "Find a verified email from a person's name and company domain.",
+      "properties": {
+        "operation": {
+          "const": "find_email_from_name",
+          "default": "find_email_from_name",
+          "title": "Find Email From Name",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Finder",
+          "x-display-name": "Find Email From Name",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "The person's full name",
+          "title": "Full Name",
+          "type": "string"
+        },
+        "domain": {
+          "description": "The company domain (e.g. acme.com)",
+          "title": "Company Domain",
+          "type": "string"
+        }
+      },
+      "required": [
+        "name",
+        "domain"
+      ],
+      "title": "FindymailFindEmailFromNameConfig",
+      "type": "object"
+    },
+    "FindymailFindEmailsFromDomainConfig": {
+      "description": "Find emails associated with a company domain.",
+      "properties": {
+        "operation": {
+          "const": "find_emails_from_domain",
+          "default": "find_emails_from_domain",
+          "title": "Find Emails From Domain",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Finder",
+          "x-display-name": "Find Emails From Domain",
+          "x-is-trigger": false
+        },
+        "domain": {
+          "description": "The company domain (e.g. acme.com)",
+          "title": "Company Domain",
+          "type": "string"
+        },
+        "roles": {
+          "default": "Founder",
+          "description": "Comma-separated target roles to search for, max 3",
+          "title": "Target Roles",
+          "type": "string"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional webhook for asynchronous processing",
+          "title": "Webhook URL"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "FindymailFindEmailsFromDomainConfig",
+      "type": "object"
+    },
+    "FindymailFindEmployeesConfig": {
+      "description": "Find employees at a company by website and job titles.",
+      "properties": {
+        "operation": {
+          "const": "find_employees",
+          "default": "find_employees",
+          "title": "Find Employees",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Finder",
+          "x-display-name": "Find Employees",
+          "x-is-trigger": false
+        },
+        "website": {
+          "description": "The company website (e.g. acme.com)",
+          "title": "Company Website",
+          "type": "string"
+        },
+        "job_titles": {
+          "description": "Target job titles, comma-separated (e.g. CEO, VP Sales)",
+          "title": "Job Titles",
+          "type": "string"
+        },
+        "count": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max number of employees to return",
+          "title": "Count"
+        }
+      },
+      "required": [
+        "website",
+        "job_titles"
+      ],
+      "title": "FindymailFindEmployeesConfig",
+      "type": "object"
+    },
+    "FindymailFindFromBusinessProfileConfig": {
+      "description": "Find an email from a LinkedIn / business profile URL.",
+      "properties": {
+        "operation": {
+          "const": "find_from_business_profile",
+          "default": "find_from_business_profile",
+          "title": "Find From Business Profile",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Finder",
+          "x-display-name": "Find From Business Profile",
+          "x-is-trigger": false
+        },
+        "linkedin_url": {
+          "description": "The LinkedIn or business profile URL",
+          "title": "LinkedIn / Profile URL",
+          "type": "string"
+        }
+      },
+      "required": [
+        "linkedin_url"
+      ],
+      "title": "FindymailFindFromBusinessProfileConfig",
+      "type": "object"
+    },
+    "FindymailFindPhoneConfig": {
+      "description": "Find a direct phone number from a LinkedIn URL (GDPR-compliant, no EU).",
+      "properties": {
+        "operation": {
+          "const": "find_phone",
+          "default": "find_phone",
+          "title": "Find Phone",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Finder",
+          "x-display-name": "Find Phone",
+          "x-is-trigger": false
+        },
+        "linkedin_url": {
+          "description": "The LinkedIn profile URL",
+          "title": "LinkedIn URL",
+          "type": "string"
+        }
+      },
+      "required": [
+        "linkedin_url"
+      ],
+      "title": "FindymailFindPhoneConfig",
+      "type": "object"
+    },
+    "FindymailGetCompanyConfig": {
+      "description": "Enrich a company by domain, LinkedIn URL, or name.",
+      "properties": {
+        "operation": {
+          "const": "get_company",
+          "default": "get_company",
+          "title": "Get Company Information",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Finder",
+          "x-display-name": "Get Company Information",
+          "x-is-trigger": false
+        },
+        "domain": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The company domain (e.g. acme.com)",
+          "title": "Company Domain"
+        },
+        "linkedin_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The company LinkedIn URL",
+          "title": "LinkedIn URL"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The company name",
+          "title": "Company Name"
+        }
+      },
+      "title": "FindymailGetCompanyConfig",
+      "type": "object"
+    },
+    "FindymailGetContactsConfig": {
+      "description": "Retrieve contacts saved in a given list.",
+      "properties": {
+        "operation": {
+          "const": "get_contacts",
+          "default": "get_contacts",
+          "title": "Get Contacts In A List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lists",
+          "x-display-name": "Get Contacts In A List",
+          "x-is-trigger": false
+        },
+        "list_id": {
+          "description": "The contact list to read",
+          "title": "Contact List",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a list ID",
+            "field_name": "list_id",
+            "placeholder": "Select a contact list...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "findymail_contact_list"
+        }
+      },
+      "required": [
+        "list_id"
+      ],
+      "title": "FindymailGetContactsConfig",
+      "type": "object"
+    },
+    "FindymailGetCreditsConfig": {
+      "description": "Return remaining finder / verifier credit balance.",
+      "properties": {
+        "operation": {
+          "const": "get_credits",
+          "default": "get_credits",
+          "title": "Get Remaining Credits",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Credits",
+          "x-display-name": "Get Remaining Credits",
+          "x-is-trigger": false
+        }
+      },
+      "title": "FindymailGetCreditsConfig",
+      "type": "object"
+    },
+    "FindymailGetExclusionListConfig": {
+      "description": "Fetch one exclusion list by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_exclusion_list",
+          "default": "get_exclusion_list",
+          "title": "Get Exclusion List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Intellimatch",
+          "x-display-name": "Get Exclusion List",
+          "x-is-trigger": false
+        },
+        "excluded_domain_list_id": {
+          "description": "The exclusion list to retrieve",
+          "title": "Exclusion List",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a list ID",
+            "field_name": "excluded_domain_list_id",
+            "placeholder": "Select an exclusion list...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "findymail_exclusion_list"
+        }
+      },
+      "required": [
+        "excluded_domain_list_id"
+      ],
+      "title": "FindymailGetExclusionListConfig",
+      "type": "object"
+    },
+    "FindymailGetSignalConfig": {
+      "description": "Fetch one signal by its id.",
+      "properties": {
+        "operation": {
+          "const": "get_signal",
+          "default": "get_signal",
+          "title": "Get A Signal",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Signals",
+          "x-display-name": "Get A Signal",
+          "x-is-trigger": false
+        },
+        "signal_id": {
+          "description": "The signal id to fetch",
+          "title": "Signal ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "signal_id"
+      ],
+      "title": "FindymailGetSignalConfig",
+      "type": "object"
+    },
+    "FindymailGetTeamUsageSummaryConfig": {
+      "description": "Return the per-team credit usage report.",
+      "properties": {
+        "operation": {
+          "const": "get_team_usage_summary",
+          "default": "get_team_usage_summary",
+          "title": "Get Team Usage Summary",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Credits",
+          "x-display-name": "Get Team Usage Summary",
+          "x-is-trigger": false
+        },
+        "from_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inclusive start date in YYYY-MM-DD format",
+          "title": "From Date"
+        },
+        "to_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Inclusive end date in YYYY-MM-DD format",
+          "title": "To Date"
+        }
+      },
+      "title": "FindymailGetTeamUsageSummaryConfig",
+      "type": "object"
+    },
+    "FindymailGetUsageSummaryConfig": {
+      "description": "Return the per-account credit usage report.",
+      "properties": {
+        "operation": {
+          "const": "get_usage_summary",
+          "default": "get_usage_summary",
+          "title": "Get Usage Summary",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Credits",
+          "x-display-name": "Get Usage Summary",
+          "x-is-trigger": false
+        }
+      },
+      "title": "FindymailGetUsageSummaryConfig",
+      "type": "object"
+    },
+    "FindymailIntellimatchDataConfig": {
+      "description": "Fetch paginated Intellimatch export results.",
+      "properties": {
+        "operation": {
+          "const": "intellimatch_data",
+          "default": "intellimatch_data",
+          "title": "Get Intellimatch Results",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Intellimatch",
+          "x-display-name": "Get Intellimatch Results",
+          "x-is-trigger": false
+        },
+        "hash": {
+          "description": "The search hash",
+          "title": "Export Hash",
+          "type": "string"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "1",
+          "description": "Page number (default 1)",
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "100",
+          "description": "Results per page (max 500, default 100)",
+          "title": "Per Page"
+        }
+      },
+      "required": [
+        "hash"
+      ],
+      "title": "FindymailIntellimatchDataConfig",
+      "type": "object"
+    },
+    "FindymailIntellimatchSearchConfig": {
+      "description": "Run a natural-language lead search (kicks off an async export).",
+      "properties": {
+        "operation": {
+          "const": "intellimatch_search",
+          "default": "intellimatch_search",
+          "title": "Search Leads (Intellimatch)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Intellimatch",
+          "x-display-name": "Search Leads (Intellimatch)",
+          "x-is-trigger": false
+        },
+        "query": {
+          "description": "Natural-language description of the leads you want",
+          "title": "Search Query",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max number of leads to return",
+          "title": "Limit"
+        },
+        "find_contact": {
+          "default": "true",
+          "description": "Resolve contact details for matched leads",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Find Contacts",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "find_email": {
+          "default": "true",
+          "description": "Resolve verified emails for matched leads",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Find Emails",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "find_phone": {
+          "default": "false",
+          "description": "Resolve direct phone numbers for matched leads",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Find Phone Numbers",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "target_job_titles": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated job titles to target for contacts",
+          "title": "Target Job Titles"
+        },
+        "lead_list_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional contact list to add matched contacts to",
+          "title": "Lead List",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a list ID",
+            "field_name": "lead_list_id",
+            "placeholder": "Optional: select a contact list...",
+            "searchable": true
+          },
+          "x-resource-type": "findymail_contact_list"
+        },
+        "mode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Export mode",
+          "enum": [
+            "broad",
+            "targeted"
+          ],
+          "enumNames": [
+            "Broad",
+            "Targeted"
+          ],
+          "title": "Mode",
+          "x-enum-searchable": true
+        },
+        "require_email": {
+          "default": "false",
+          "description": "Only return companies where an email was found",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Require Email",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "add_to_exclusion_list": {
+          "default": "false",
+          "description": "Add exported companies to an exclusion list",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Add To Exclusion List",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "exclusion_list_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Exclusion list to add exported companies to",
+          "title": "Exclusion List To Add To",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a list ID",
+            "field_name": "excluded_domain_list_id",
+            "placeholder": "Optional: choose a list...",
+            "searchable": true
+          },
+          "x-resource-type": "findymail_exclusion_list"
+        },
+        "exclusion_filter_list_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated exclusion list IDs to filter results by",
+          "title": "Exclusion Filter List IDs"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "FindymailIntellimatchSearchConfig",
+      "type": "object"
+    },
+    "FindymailIntellimatchStatusConfig": {
+      "description": "Poll the status of an Intellimatch search/export job.",
+      "properties": {
+        "operation": {
+          "const": "intellimatch_status",
+          "default": "intellimatch_status",
+          "title": "Get Export Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Intellimatch",
+          "x-display-name": "Get Export Status",
+          "x-is-trigger": false
+        },
+        "hash": {
+          "description": "The search hash to poll",
+          "title": "Export Hash",
+          "type": "string"
+        }
+      },
+      "required": [
+        "hash"
+      ],
+      "title": "FindymailIntellimatchStatusConfig",
+      "type": "object"
+    },
+    "FindymailListContactListsConfig": {
+      "description": "List the user's saved contact lists.",
+      "properties": {
+        "operation": {
+          "const": "list_contact_lists",
+          "default": "list_contact_lists",
+          "title": "List Contact Lists",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lists",
+          "x-display-name": "List Contact Lists",
+          "x-is-trigger": false
+        }
+      },
+      "title": "FindymailListContactListsConfig",
+      "type": "object"
+    },
+    "FindymailListExcludedDomainsConfig": {
+      "description": "List excluded domains.",
+      "properties": {
+        "operation": {
+          "const": "list_excluded_domains",
+          "default": "list_excluded_domains",
+          "title": "List Excluded Domains",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Intellimatch",
+          "x-display-name": "List Excluded Domains",
+          "x-is-trigger": false
+        },
+        "query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter domains by substring",
+          "title": "Search Query"
+        },
+        "excluded_domain_list_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional exclusion list to filter by",
+          "title": "Exclusion List",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a list ID",
+            "field_name": "excluded_domain_list_id",
+            "placeholder": "Optional: choose a list...",
+            "searchable": true
+          },
+          "x-resource-type": "findymail_exclusion_list"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "15",
+          "description": "Domains per page",
+          "title": "Per Page"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "1",
+          "description": "Page number",
+          "title": "Page"
+        }
+      },
+      "title": "FindymailListExcludedDomainsConfig",
+      "type": "object"
+    },
+    "FindymailListExclusionListsConfig": {
+      "description": "List Intellimatch exclusion lists.",
+      "properties": {
+        "operation": {
+          "const": "list_exclusion_lists",
+          "default": "list_exclusion_lists",
+          "title": "List Exclusion Lists",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Intellimatch",
+          "x-display-name": "List Exclusion Lists",
+          "x-is-trigger": false
+        }
+      },
+      "title": "FindymailListExclusionListsConfig",
+      "type": "object"
+    },
+    "FindymailListSignalMonitorsConfig": {
+      "description": "List signal monitors.",
+      "properties": {
+        "operation": {
+          "const": "list_signal_monitors",
+          "default": "list_signal_monitors",
+          "title": "List Signal Monitors",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Signals",
+          "x-display-name": "List Signal Monitors",
+          "x-is-trigger": false
+        },
+        "ownership": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter monitors by ownership scope",
+          "enum": [
+            "my",
+            "team",
+            "all"
+          ],
+          "enumNames": [
+            "My Monitors",
+            "Team Monitors",
+            "All Accessible"
+          ],
+          "title": "Ownership",
+          "x-enum-searchable": true
+        }
+      },
+      "title": "FindymailListSignalMonitorsConfig",
+      "type": "object"
+    },
+    "FindymailListSignalsConfig": {
+      "description": "List buying / intent signals.",
+      "properties": {
+        "operation": {
+          "const": "list_signals",
+          "default": "list_signals",
+          "title": "List Signals",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Signals",
+          "x-display-name": "List Signals",
+          "x-is-trigger": false
+        },
+        "page": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "1",
+          "description": "Page number (default 1)",
+          "title": "Page"
+        },
+        "per_page": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "50",
+          "description": "Results per page (max 100, default 50)",
+          "title": "Per Page"
+        }
+      },
+      "title": "FindymailListSignalsConfig",
+      "type": "object"
+    },
+    "FindymailLookalikeSearchConfig": {
+      "description": "Find companies similar to seed companies.",
+      "properties": {
+        "operation": {
+          "const": "lookalike_search",
+          "default": "lookalike_search",
+          "title": "Search Lookalike Companies",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Discovery",
+          "x-display-name": "Search Lookalike Companies",
+          "x-is-trigger": false
+        },
+        "domains": {
+          "description": "Seed company domains, comma-separated (e.g. acme.com, globex.com)",
+          "title": "Seed Domains",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max number of lookalike companies to return",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "domains"
+      ],
+      "title": "FindymailLookalikeSearchConfig",
+      "type": "object"
+    },
+    "FindymailRemoveExcludedDomainsConfig": {
+      "description": "Remove excluded domains by ID.",
+      "properties": {
+        "operation": {
+          "const": "remove_excluded_domains",
+          "default": "remove_excluded_domains",
+          "title": "Remove Excluded Domains",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Intellimatch",
+          "x-display-name": "Remove Excluded Domains",
+          "x-is-trigger": false
+        },
+        "ids": {
+          "description": "Comma-separated excluded-domain IDs to remove",
+          "title": "Domain IDs",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ids"
+      ],
+      "title": "FindymailRemoveExcludedDomainsConfig",
+      "type": "object"
+    },
+    "FindymailReverseEmailConfig": {
+      "description": "Find a LinkedIn profile from an email address.",
+      "properties": {
+        "operation": {
+          "const": "reverse_email",
+          "default": "reverse_email",
+          "title": "Reverse Email Lookup",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Finder",
+          "x-display-name": "Reverse Email Lookup",
+          "x-is-trigger": false
+        },
+        "email": {
+          "description": "The email address to look up",
+          "title": "Email",
+          "type": "string"
+        },
+        "with_profile": {
+          "default": "false",
+          "description": "Return the full profile (costs 2 credits instead of 1)",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Full Profile",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "FindymailReverseEmailConfig",
+      "type": "object"
+    },
+    "FindymailSignalTriggerConfig": {
+      "description": "Fire the workflow when a signal monitor matches a new buying/intent signal.",
+      "properties": {
+        "operation": {
+          "const": "on_signal_match",
+          "default": "on_signal_match",
+          "title": "On Signal Match",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Signal Match",
+          "x-is-trigger": true
+        },
+        "monitor_name": {
+          "default": "NoClick Trigger",
+          "description": "Name for the signal monitor created to power this trigger",
+          "title": "Monitor Name",
+          "type": "string"
+        },
+        "signal_type": {
+          "default": "job_change",
+          "description": "The signal source to monitor for this trigger",
+          "enum": [
+            "keyword_mention",
+            "new_hire",
+            "job_change",
+            "post_engagement",
+            "company_hiring"
+          ],
+          "enumNames": [
+            "Keyword Mention",
+            "New Hire",
+            "Job Change",
+            "Post Engagement",
+            "Company Hiring"
+          ],
+          "title": "Signal Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "keywords": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated keywords. Required for keyword mentions and some post-engagement monitors.",
+          "title": "Keywords"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Findymail posts new matching signals here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "post_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required for post-engagement monitors when tracking one post",
+          "title": "LinkedIn Post URL"
+        },
+        "profile_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional LinkedIn profile URL for post-engagement monitors",
+          "title": "LinkedIn Profile URL"
+        },
+        "engagement_types": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated engagement types, e.g. like, comment",
+          "title": "Engagement Types"
+        },
+        "enrichment_level": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact enrichment level for matched signals",
+          "enum": [
+            "email",
+            "email_phone"
+          ],
+          "enumNames": [
+            "Email Only",
+            "Email and Phone"
+          ],
+          "title": "Enrichment Level",
+          "x-enum-searchable": true
+        },
+        "lead_list_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional contact list to add matched contacts to",
+          "title": "Lead List",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a list ID",
+            "field_name": "lead_list_id",
+            "placeholder": "Optional: select a contact list...",
+            "searchable": true
+          },
+          "x-resource-type": "findymail_contact_list"
+        },
+        "ai_relevance_prompt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional custom relevance prompt",
+          "title": "AI Relevance Prompt",
+          "ui:widget": "textarea"
+        },
+        "target_companies": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated company names or domains",
+          "title": "Target Companies"
+        },
+        "is_shared": {
+          "default": "false",
+          "description": "Whether to share this monitor with your current team",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Share With Team",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "icp_industries": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated industries",
+          "title": "ICP Industries"
+        },
+        "icp_employee_count_ranges": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated employee ranges, e.g. 51-200, 201-500",
+          "title": "ICP Employee Count Ranges"
+        },
+        "icp_countries": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated 2-letter country codes, e.g. US, FR",
+          "title": "ICP Countries"
+        },
+        "icp_job_title_keywords": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated job-title keywords",
+          "title": "ICP Job Title Keywords"
+        },
+        "icp_seniority_levels": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated seniority levels, e.g. 11, 13, 14",
+          "title": "ICP Seniority Levels"
+        },
+        "job_offer_title_keywords": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated job-title keywords for company-hiring monitors",
+          "title": "Job Offer Title Keywords"
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        }
+      },
+      "title": "FindymailSignalTriggerConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "FindymailTechnologiesLookupConfig": {
+      "description": "Look up the tech stack detected for a domain.",
+      "properties": {
+        "operation": {
+          "const": "technologies_lookup",
+          "default": "technologies_lookup",
+          "title": "Lookup Technologies By Domain",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Discovery",
+          "x-display-name": "Lookup Technologies By Domain",
+          "x-is-trigger": false
+        },
+        "domain": {
+          "description": "The domain to inspect (e.g. acme.com)",
+          "title": "Domain",
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "FindymailTechnologiesLookupConfig",
+      "type": "object"
+    },
+    "FindymailTechnologiesSearchConfig": {
+      "description": "Search the technology catalog.",
+      "properties": {
+        "operation": {
+          "const": "technologies_search",
+          "default": "technologies_search",
+          "title": "Search Technologies",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Discovery",
+          "x-display-name": "Search Technologies",
+          "x-is-trigger": false
+        },
+        "query": {
+          "description": "Technology name to search for (e.g. Shopify)",
+          "title": "Query",
+          "type": "string"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "FindymailTechnologiesSearchConfig",
+      "type": "object"
+    },
+    "FindymailUpdateContactListConfig": {
+      "description": "Rename / update a contact list.",
+      "properties": {
+        "operation": {
+          "const": "update_contact_list",
+          "default": "update_contact_list",
+          "title": "Update Contact List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Lists",
+          "x-display-name": "Update Contact List",
+          "x-is-trigger": false
+        },
+        "list_id": {
+          "description": "The contact list id to update",
+          "title": "List ID",
+          "type": "string"
+        },
+        "name": {
+          "description": "The new list name",
+          "title": "List Name",
+          "type": "string"
+        },
+        "is_shared": {
+          "default": "false",
+          "description": "Whether to share the list with your team",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Share With Team",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "list_id",
+        "name"
+      ],
+      "title": "FindymailUpdateContactListConfig",
+      "type": "object"
+    },
+    "FindymailUpdateExclusionListConfig": {
+      "description": "Update an exclusion list.",
+      "properties": {
+        "operation": {
+          "const": "update_exclusion_list",
+          "default": "update_exclusion_list",
+          "title": "Update Exclusion List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Intellimatch",
+          "x-display-name": "Update Exclusion List",
+          "x-is-trigger": false
+        },
+        "excluded_domain_list_id": {
+          "description": "The exclusion list to update",
+          "title": "Exclusion List",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a list ID",
+            "field_name": "excluded_domain_list_id",
+            "placeholder": "Select an exclusion list...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "findymail_exclusion_list"
+        },
+        "name": {
+          "description": "New exclusion-list name",
+          "title": "List Name",
+          "type": "string"
+        },
+        "is_shared": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Set to yes to share with your current team",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Share With Team",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "excluded_domain_list_id",
+        "name"
+      ],
+      "title": "FindymailUpdateExclusionListConfig",
+      "type": "object"
+    },
+    "FindymailUpdateSignalMonitorConfig": {
+      "description": "Update a signal monitor.",
+      "properties": {
+        "operation": {
+          "const": "update_signal_monitor",
+          "default": "update_signal_monitor",
+          "title": "Update Signal Monitor",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Signals",
+          "x-display-name": "Update Signal Monitor",
+          "x-is-trigger": false
+        },
+        "monitor_id": {
+          "description": "The signal monitor id to update",
+          "title": "Monitor ID",
+          "type": "string"
+        },
+        "name": {
+          "description": "New monitor name",
+          "title": "Monitor Name",
+          "type": "string"
+        },
+        "keywords": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated keywords for the monitor",
+          "title": "Keywords"
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New HTTPS callback URL",
+          "title": "Webhook URL"
+        },
+        "engagement_types": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated engagement types, e.g. like, comment",
+          "title": "Engagement Types"
+        },
+        "enrichment_level": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Contact enrichment level for matched signals",
+          "enum": [
+            "email",
+            "email_phone"
+          ],
+          "enumNames": [
+            "Email Only",
+            "Email and Phone"
+          ],
+          "title": "Enrichment Level",
+          "x-enum-searchable": true
+        },
+        "lead_list_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional contact list to add matched contacts to",
+          "title": "Lead List",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a list ID",
+            "field_name": "lead_list_id",
+            "placeholder": "Optional: select a contact list...",
+            "searchable": true
+          },
+          "x-resource-type": "findymail_contact_list"
+        },
+        "ai_relevance_prompt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional custom relevance prompt",
+          "title": "AI Relevance Prompt",
+          "ui:widget": "textarea"
+        },
+        "target_companies": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated company names or domains",
+          "title": "Target Companies"
+        },
+        "is_shared": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Whether to share this monitor with your current team",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Share With Team",
+          "x-enum-searchable": true
+        },
+        "icp_industries": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated industries",
+          "title": "ICP Industries"
+        },
+        "icp_employee_count_ranges": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated employee ranges, e.g. 51-200, 201-500",
+          "title": "ICP Employee Count Ranges"
+        },
+        "icp_countries": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated 2-letter country codes, e.g. US, FR",
+          "title": "ICP Countries"
+        },
+        "icp_job_title_keywords": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated job-title keywords",
+          "title": "ICP Job Title Keywords"
+        },
+        "icp_seniority_levels": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated seniority levels, e.g. 11, 13, 14",
+          "title": "ICP Seniority Levels"
+        },
+        "job_offer_title_keywords": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated job-title keywords for company-hiring monitors",
+          "title": "Job Offer Title Keywords"
+        }
+      },
+      "required": [
+        "monitor_id",
+        "name"
+      ],
+      "title": "FindymailUpdateSignalMonitorConfig",
+      "type": "object"
+    },
+    "FindymailVerifyEmailConfig": {
+      "description": "Verify the deliverability of an email address.",
+      "properties": {
+        "operation": {
+          "const": "verify_email",
+          "default": "verify_email",
+          "title": "Verify Email",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Verifier",
+          "x-display-name": "Verify Email",
+          "x-is-trigger": false
+        },
+        "email": {
+          "description": "The email address to verify",
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "email"
+      ],
+      "title": "FindymailVerifyEmailConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the Findymail node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_excluded_domains": "#/$defs/FindymailAddExcludedDomainsConfig",
+          "create_contact_list": "#/$defs/FindymailCreateContactListConfig",
+          "create_exclusion_list": "#/$defs/FindymailCreateExclusionListConfig",
+          "create_signal_monitor": "#/$defs/FindymailCreateSignalMonitorConfig",
+          "delete_contact_list": "#/$defs/FindymailDeleteContactListConfig",
+          "delete_exclusion_list": "#/$defs/FindymailDeleteExclusionListConfig",
+          "delete_signal_monitor": "#/$defs/FindymailDeleteSignalMonitorConfig",
+          "find_email_from_name": "#/$defs/FindymailFindEmailFromNameConfig",
+          "find_emails_from_domain": "#/$defs/FindymailFindEmailsFromDomainConfig",
+          "find_employees": "#/$defs/FindymailFindEmployeesConfig",
+          "find_from_business_profile": "#/$defs/FindymailFindFromBusinessProfileConfig",
+          "find_phone": "#/$defs/FindymailFindPhoneConfig",
+          "get_company": "#/$defs/FindymailGetCompanyConfig",
+          "get_contacts": "#/$defs/FindymailGetContactsConfig",
+          "get_credits": "#/$defs/FindymailGetCreditsConfig",
+          "get_exclusion_list": "#/$defs/FindymailGetExclusionListConfig",
+          "get_signal": "#/$defs/FindymailGetSignalConfig",
+          "get_team_usage_summary": "#/$defs/FindymailGetTeamUsageSummaryConfig",
+          "get_usage_summary": "#/$defs/FindymailGetUsageSummaryConfig",
+          "intellimatch_data": "#/$defs/FindymailIntellimatchDataConfig",
+          "intellimatch_search": "#/$defs/FindymailIntellimatchSearchConfig",
+          "intellimatch_status": "#/$defs/FindymailIntellimatchStatusConfig",
+          "list_contact_lists": "#/$defs/FindymailListContactListsConfig",
+          "list_excluded_domains": "#/$defs/FindymailListExcludedDomainsConfig",
+          "list_exclusion_lists": "#/$defs/FindymailListExclusionListsConfig",
+          "list_signal_monitors": "#/$defs/FindymailListSignalMonitorsConfig",
+          "list_signals": "#/$defs/FindymailListSignalsConfig",
+          "lookalike_search": "#/$defs/FindymailLookalikeSearchConfig",
+          "on_signal_match": "#/$defs/FindymailSignalTriggerConfig",
+          "remove_excluded_domains": "#/$defs/FindymailRemoveExcludedDomainsConfig",
+          "reverse_email": "#/$defs/FindymailReverseEmailConfig",
+          "technologies_lookup": "#/$defs/FindymailTechnologiesLookupConfig",
+          "technologies_search": "#/$defs/FindymailTechnologiesSearchConfig",
+          "update_contact_list": "#/$defs/FindymailUpdateContactListConfig",
+          "update_exclusion_list": "#/$defs/FindymailUpdateExclusionListConfig",
+          "update_signal_monitor": "#/$defs/FindymailUpdateSignalMonitorConfig",
+          "verify_email": "#/$defs/FindymailVerifyEmailConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/FindymailFindEmailFromNameConfig"
+        },
+        {
+          "$ref": "#/$defs/FindymailFindEmailsFromDomainConfig"
+        },
+        {
+          "$ref": "#/$defs/FindymailFindFromBusinessProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/FindymailReverseEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/FindymailFindPhoneConfig"
+        },
+        {
+          "$ref": "#/$defs/FindymailGetCompanyConfig"
+        },
+        {
+          "$ref": "#/$defs/FindymailFindEmployeesConfig"
+        },
+        {
+          "$ref": "#/$defs/FindymailVerifyEmailConfig"
+        },
+        {
+          "$ref": "#/$defs/FindymailIntellimatchSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/FindymailIntellimatchStatusConfig"
+        },
+        {
+          "$ref": "#/$defs/FindymailIntellimatchDataConfig"
+        },
+        {
+          "$ref": "#/$defs/FindymailListExclusionListsConfig"
+        },
+        {
+          "$ref": "#/$defs/FindymailCreateExclusionListConfig"
+        },
+        {
+          "$ref": "#/$defs/FindymailGetExclusionListConfig"
+        },
+        {
+          "$ref": "#/$defs/FindymailUpdateExclusionListConfig"
+        },
+        {
+          "$ref": "#/$defs/FindymailDeleteExclusionListConfig"
+        },
+        {
+          "$ref": "#/$defs/FindymailListExcludedDomainsConfig"
+        },
+        {
+          "$ref": "#/$defs/FindymailAddExcludedDomainsConfig"
+        },
+        {
+          "$ref": "#/$defs/FindymailRemoveExcludedDomainsConfig"
+        },
+        {
+          "$ref": "#/$defs/FindymailLookalikeSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/FindymailTechnologiesLookupConfig"
+        },
+        {
+          "$ref": "#/$defs/FindymailTechnologiesSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/FindymailListSignalsConfig"
+        },
+        {
+          "$ref": "#/$defs/FindymailGetSignalConfig"
+        },
+        {
+          "$ref": "#/$defs/FindymailListSignalMonitorsConfig"
+        },
+        {
+          "$ref": "#/$defs/FindymailCreateSignalMonitorConfig"
+        },
+        {
+          "$ref": "#/$defs/FindymailUpdateSignalMonitorConfig"
+        },
+        {
+          "$ref": "#/$defs/FindymailDeleteSignalMonitorConfig"
+        },
+        {
+          "$ref": "#/$defs/FindymailListContactListsConfig"
+        },
+        {
+          "$ref": "#/$defs/FindymailCreateContactListConfig"
+        },
+        {
+          "$ref": "#/$defs/FindymailUpdateContactListConfig"
+        },
+        {
+          "$ref": "#/$defs/FindymailDeleteContactListConfig"
+        },
+        {
+          "$ref": "#/$defs/FindymailGetContactsConfig"
+        },
+        {
+          "$ref": "#/$defs/FindymailGetCreditsConfig"
+        },
+        {
+          "$ref": "#/$defs/FindymailGetUsageSummaryConfig"
+        },
+        {
+          "$ref": "#/$defs/FindymailGetTeamUsageSummaryConfig"
+        },
+        {
+          "$ref": "#/$defs/FindymailSignalTriggerConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/FindymailApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Findymail Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Find the verified email for a prospect by name and company domain",
+    "Verify whether an email address is deliverable",
+    "Enrich a company by its domain to get firmographics",
+    "Find direct phone numbers for a list of LinkedIn URLs",
+    "Trigger a workflow when a signal monitor matches a new buying signal"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

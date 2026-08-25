@@ -1,0 +1,1871 @@
+{
+  "$defs": {
+    "GoogleCalendarClearCalendarConfig": {
+      "description": "Configuration for clearing all events from a calendar",
+      "properties": {
+        "operation": {
+          "const": "clear_calendar_events",
+          "default": "clear_calendar_events",
+          "description": "Clear all events",
+          "title": "Clear Calendar Events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "Clear Calendar Events",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "empty calendar",
+            "wipe all events",
+            "clear schedule",
+            "delete all events",
+            "purge calendar"
+          ]
+        },
+        "calendar_id": {
+          "description": "Select a calendar to clear (WARNING: This deletes all events!)",
+          "title": "Calendar",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter calendar ID",
+            "field_name": "calendar_id",
+            "placeholder": "Select a calendar...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_calendar"
+        }
+      },
+      "required": [
+        "calendar_id"
+      ],
+      "title": "GoogleCalendarClearCalendarConfig",
+      "type": "object"
+    },
+    "GoogleCalendarCreateCalendarConfig": {
+      "description": "Configuration for creating a new calendar",
+      "properties": {
+        "operation": {
+          "const": "create_new_calendar",
+          "default": "create_new_calendar",
+          "description": "Create a new calendar",
+          "title": "Create New Calendar",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-creates-resource": true,
+          "x-display-name": "Create New Calendar",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new calendar",
+            "make a calendar",
+            "add calendar",
+            "create secondary calendar"
+          ],
+          "x-resource-id-path": "calendar.id",
+          "x-resource-type": "google_calendar"
+        },
+        "summary": {
+          "description": "Name of the new calendar",
+          "placeholder": "Work Projects",
+          "title": "Calendar Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Description of the calendar",
+          "placeholder": "Calendar for tracking work projects...",
+          "title": "Description",
+          "ui:widget": "textarea"
+        },
+        "timezone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Timezone for the calendar (e.g., America/New_York)",
+          "placeholder": "America/New_York (optional)",
+          "title": "Timezone"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Geographic location of the calendar",
+          "placeholder": "New York, NY (optional)",
+          "title": "Location"
+        }
+      },
+      "required": [
+        "summary"
+      ],
+      "title": "GoogleCalendarCreateCalendarConfig",
+      "type": "object"
+    },
+    "GoogleCalendarCreateEventConfig": {
+      "description": "Configuration for creating a new event",
+      "properties": {
+        "operation": {
+          "const": "create_calendar_event",
+          "default": "create_calendar_event",
+          "description": "Create a new event",
+          "title": "Create Calendar Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Event",
+          "x-display-name": "Create Calendar Event",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "schedule meeting",
+            "book appointment",
+            "add event",
+            "put on calendar",
+            "new event",
+            "invite attendees"
+          ]
+        },
+        "calendar_id": {
+          "description": "Select a calendar to create the event in",
+          "title": "Calendar",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter calendar ID (e.g., primary)",
+            "field_name": "calendar_id",
+            "placeholder": "Select a calendar...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_calendar"
+        },
+        "summary": {
+          "description": "Title of the event",
+          "placeholder": "Meeting with John",
+          "title": "Event Title",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Description or notes for the event",
+          "placeholder": "Event details...",
+          "title": "Description",
+          "ui:widget": "textarea"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Location of the event",
+          "placeholder": "Conference Room A",
+          "title": "Location"
+        },
+        "start_time": {
+          "description": "Event start time (ISO 8601 format, e.g., 2024-01-15T10:00:00-05:00)",
+          "placeholder": "2024-01-15T10:00:00-05:00",
+          "title": "Start Time",
+          "type": "string"
+        },
+        "end_time": {
+          "description": "Event end time (ISO 8601 format)",
+          "placeholder": "2024-01-15T11:00:00-05:00",
+          "title": "End Time",
+          "type": "string"
+        },
+        "timezone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Timezone for the event (e.g., America/New_York). Defaults to calendar timezone.",
+          "placeholder": "America/New_York (optional)",
+          "title": "Timezone"
+        },
+        "attendees": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of attendee email addresses",
+          "placeholder": "john@example.com, jane@example.com",
+          "title": "Attendees"
+        },
+        "send_notifications": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "Whether to send notifications to attendees",
+          "title": "Send Notifications"
+        }
+      },
+      "required": [
+        "calendar_id",
+        "summary",
+        "start_time",
+        "end_time"
+      ],
+      "title": "GoogleCalendarCreateEventConfig",
+      "type": "object"
+    },
+    "GoogleCalendarDeleteEventConfig": {
+      "description": "Configuration for deleting an event",
+      "properties": {
+        "operation": {
+          "const": "delete_calendar_event",
+          "default": "delete_calendar_event",
+          "description": "Delete an event",
+          "title": "Delete Calendar Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Event",
+          "x-display-name": "Delete Calendar Event",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "cancel meeting",
+            "remove event",
+            "delete appointment",
+            "cancel calendar entry"
+          ]
+        },
+        "calendar_id": {
+          "description": "Select a calendar",
+          "title": "Calendar",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter calendar ID (e.g., primary)",
+            "field_name": "calendar_id",
+            "placeholder": "Select a calendar...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_calendar"
+        },
+        "event_id": {
+          "description": "The ID of the event to delete",
+          "placeholder": "Event ID",
+          "title": "Event ID",
+          "type": "string"
+        },
+        "send_notifications": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "Whether to send cancellation notifications to attendees",
+          "title": "Send Notifications"
+        }
+      },
+      "required": [
+        "calendar_id",
+        "event_id"
+      ],
+      "title": "GoogleCalendarDeleteEventConfig",
+      "type": "object"
+    },
+    "GoogleCalendarGetCalendarConfig": {
+      "description": "Configuration for getting calendar metadata",
+      "properties": {
+        "operation": {
+          "const": "fetch_calendar_metadata",
+          "default": "fetch_calendar_metadata",
+          "description": "Get calendar details",
+          "title": "Fetch Calendar Metadata",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "Fetch Calendar Metadata",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "calendar details",
+            "calendar timezone",
+            "calendar info",
+            "get calendar settings"
+          ]
+        },
+        "calendar_id": {
+          "description": "Select a calendar to get details for",
+          "title": "Calendar",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter calendar ID (e.g., primary)",
+            "field_name": "calendar_id",
+            "placeholder": "Select a calendar...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_calendar"
+        }
+      },
+      "required": [
+        "calendar_id"
+      ],
+      "title": "GoogleCalendarGetCalendarConfig",
+      "type": "object"
+    },
+    "GoogleCalendarGetEventConfig": {
+      "description": "Configuration for getting a single event",
+      "properties": {
+        "operation": {
+          "const": "fetch_calendar_event",
+          "default": "fetch_calendar_event",
+          "description": "Get a specific event",
+          "title": "Fetch Calendar Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Event",
+          "x-display-name": "Fetch Calendar Event",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "get single event",
+            "event details",
+            "look up meeting",
+            "one event by id",
+            "open appointment"
+          ]
+        },
+        "calendar_id": {
+          "description": "Select a calendar",
+          "title": "Calendar",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter calendar ID (e.g., primary)",
+            "field_name": "calendar_id",
+            "placeholder": "Select a calendar...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_calendar"
+        },
+        "event_id": {
+          "description": "The ID of the event to retrieve",
+          "placeholder": "Event ID",
+          "title": "Event ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "calendar_id",
+        "event_id"
+      ],
+      "title": "GoogleCalendarGetEventConfig",
+      "type": "object"
+    },
+    "GoogleCalendarGetInstancesConfig": {
+      "description": "Configuration for getting instances of a recurring event",
+      "properties": {
+        "operation": {
+          "const": "fetch_recurring_event_instances",
+          "default": "fetch_recurring_event_instances",
+          "description": "Get recurring event instances",
+          "title": "Fetch Recurring Event Instances",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Event",
+          "x-display-name": "Fetch Recurring Event Instances",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "recurring event instances",
+            "repeating meeting occurrences",
+            "series instances",
+            "expand recurrence",
+            "all occurrences"
+          ]
+        },
+        "calendar_id": {
+          "description": "Select a calendar",
+          "title": "Calendar",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter calendar ID (e.g., primary)",
+            "field_name": "calendar_id",
+            "placeholder": "Select a calendar...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_calendar"
+        },
+        "event_id": {
+          "description": "The ID of the recurring event",
+          "placeholder": "Recurring event ID",
+          "title": "Event ID",
+          "type": "string"
+        },
+        "time_min": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter instances starting from this time (ISO 8601 format)",
+          "placeholder": "2024-01-01T00:00:00Z (optional)",
+          "title": "Start Time"
+        },
+        "time_max": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter instances ending before this time (ISO 8601 format)",
+          "placeholder": "2024-12-31T23:59:59Z (optional)",
+          "title": "End Time"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "maximum": 2500,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "description": "Maximum number of instances to return (1-2500)",
+          "title": "Max Results"
+        }
+      },
+      "required": [
+        "calendar_id",
+        "event_id"
+      ],
+      "title": "GoogleCalendarGetInstancesConfig",
+      "type": "object"
+    },
+    "GoogleCalendarListCalendarsConfig": {
+      "description": "Configuration for listing all calendars",
+      "properties": {
+        "operation": {
+          "const": "list_user_calendars",
+          "default": "list_user_calendars",
+          "description": "List all calendars",
+          "title": "List User Calendars",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Calendar",
+          "x-display-name": "List User Calendars",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "list calendars",
+            "my calendars",
+            "show all calendars",
+            "calendar list"
+          ]
+        },
+        "show_hidden": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Whether to include hidden calendars",
+          "title": "Show Hidden"
+        },
+        "show_deleted": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Whether to include deleted calendars",
+          "title": "Show Deleted"
+        }
+      },
+      "title": "GoogleCalendarListCalendarsConfig",
+      "type": "object"
+    },
+    "GoogleCalendarListEventsConfig": {
+      "description": "Configuration for listing events from a calendar",
+      "properties": {
+        "operation": {
+          "const": "list_calendar_events",
+          "default": "list_calendar_events",
+          "description": "List events from calendar",
+          "title": "List Calendar Events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Event",
+          "x-display-name": "List Calendar Events",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "list events",
+            "show my schedule",
+            "upcoming meetings",
+            "agenda",
+            "whats on calendar",
+            "events between dates"
+          ]
+        },
+        "calendar_id": {
+          "description": "Select a calendar to list events from",
+          "title": "Calendar",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter calendar ID (e.g., primary)",
+            "field_name": "calendar_id",
+            "placeholder": "Select a calendar...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_calendar"
+        },
+        "time_min": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter events starting from this time (ISO 8601 format, e.g., 2024-01-01T00:00:00Z)",
+          "placeholder": "2024-01-01T00:00:00Z (optional)",
+          "title": "Start Time"
+        },
+        "time_max": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter events ending before this time (ISO 8601 format)",
+          "placeholder": "2024-12-31T23:59:59Z (optional)",
+          "title": "End Time"
+        },
+        "max_results": {
+          "anyOf": [
+            {
+              "maximum": 2500,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "description": "Maximum number of events to return (1-2500)",
+          "title": "Max Results"
+        },
+        "search_query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Free text search terms to filter events",
+          "placeholder": "meeting, lunch, etc. (optional)",
+          "title": "Search Query"
+        }
+      },
+      "required": [
+        "calendar_id"
+      ],
+      "title": "GoogleCalendarListEventsConfig",
+      "type": "object"
+    },
+    "GoogleCalendarMoveEventConfig": {
+      "description": "Configuration for moving an event to another calendar",
+      "properties": {
+        "operation": {
+          "const": "move_event_to_calendar",
+          "default": "move_event_to_calendar",
+          "description": "Move event to another calendar",
+          "title": "Move Event to Calendar",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Event",
+          "x-display-name": "Move Event to Calendar",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "move event",
+            "transfer to another calendar",
+            "reassign event calendar",
+            "switch event calendar"
+          ]
+        },
+        "calendar_id": {
+          "description": "Select the calendar containing the event",
+          "title": "Source Calendar",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter calendar ID (e.g., primary)",
+            "field_name": "calendar_id",
+            "placeholder": "Select source calendar...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_calendar"
+        },
+        "event_id": {
+          "description": "The ID of the event to move",
+          "placeholder": "Event ID",
+          "title": "Event ID",
+          "type": "string"
+        },
+        "destination_calendar_id": {
+          "description": "Select the calendar to move the event to",
+          "title": "Destination Calendar",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter destination calendar ID",
+            "field_name": "destination_calendar_id",
+            "placeholder": "Select destination calendar...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_calendar"
+        },
+        "send_notifications": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "Whether to send notifications about the move",
+          "title": "Send Notifications"
+        }
+      },
+      "required": [
+        "calendar_id",
+        "event_id",
+        "destination_calendar_id"
+      ],
+      "title": "GoogleCalendarMoveEventConfig",
+      "type": "object"
+    },
+    "GoogleCalendarOAuthCredential": {
+      "description": "OAuth credential for Google Calendar access.\nTokens are obtained via OAuth flow, not entered manually.",
+      "properties": {
+        "credential_type": {
+          "const": "google_calendar_oauth",
+          "default": "google_calendar_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "OAuth 2.0 access token from Google",
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "description": "OAuth 2.0 refresh token for automatic renewal",
+          "title": "Refresh Token",
+          "type": "string"
+        },
+        "expires_at": {
+          "description": "ISO 8601 timestamp when access token expires",
+          "title": "Token Expiry",
+          "type": "string"
+        },
+        "email": {
+          "description": "Email address of the connected Google account",
+          "title": "Google Account",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "email"
+      ],
+      "title": "GoogleCalendarOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-oauth-provider": "google",
+      "x-oauth-scopes": [
+        "https://www.googleapis.com/auth/calendar"
+      ]
+    },
+    "GoogleCalendarOnEventCancelledConfig": {
+      "description": "Trigger: fires when a calendar event is cancelled or deleted.",
+      "properties": {
+        "operation": {
+          "const": "on_event_cancelled",
+          "default": "on_event_cancelled",
+          "title": "On Event Cancelled",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Event Cancelled",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "when event cancelled",
+            "on event deleted",
+            "watch for cancellations",
+            "meeting cancelled",
+            "event removed"
+          ]
+        },
+        "calendar_id": {
+          "default": "primary",
+          "description": "The calendar to watch ('primary' for the main calendar)",
+          "title": "Calendar",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a calendar ID",
+            "field_name": "calendar_id",
+            "placeholder": "Select a calendar...",
+            "searchable": true
+          },
+          "x-resource-type": "google_calendar"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "calendar_sync_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Calendar Sync Token",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        }
+      },
+      "title": "GoogleCalendarOnEventCancelledConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "GoogleCalendarOnEventConfig": {
+      "description": "Trigger: fires when events change on a Google Calendar.",
+      "properties": {
+        "operation": {
+          "const": "on_calendar_event",
+          "default": "on_calendar_event",
+          "title": "On Calendar Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Calendar Event",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "when calendar changes",
+            "on event change",
+            "watch calendar",
+            "calendar activity",
+            "any event change"
+          ]
+        },
+        "calendar_id": {
+          "default": "primary",
+          "description": "The calendar to watch ('primary' for the main calendar)",
+          "title": "Calendar",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a calendar ID",
+            "field_name": "calendar_id",
+            "placeholder": "Select a calendar...",
+            "searchable": true
+          },
+          "x-resource-type": "google_calendar"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "calendar_sync_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Calendar Sync Token",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        }
+      },
+      "title": "GoogleCalendarOnEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "GoogleCalendarOnEventCreatedConfig": {
+      "description": "Trigger: fires when a new calendar event is created.",
+      "properties": {
+        "operation": {
+          "const": "on_event_created",
+          "default": "on_event_created",
+          "title": "On Event Created",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Event Created",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "when new event",
+            "on event scheduled",
+            "watch for new meetings",
+            "new appointment added",
+            "event booked"
+          ]
+        },
+        "calendar_id": {
+          "default": "primary",
+          "description": "The calendar to watch ('primary' for the main calendar)",
+          "title": "Calendar",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a calendar ID",
+            "field_name": "calendar_id",
+            "placeholder": "Select a calendar...",
+            "searchable": true
+          },
+          "x-resource-type": "google_calendar"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "calendar_sync_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Calendar Sync Token",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        }
+      },
+      "title": "GoogleCalendarOnEventCreatedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "GoogleCalendarOnEventTentativeConfig": {
+      "description": "Trigger: fires when a calendar event is tentatively accepted.",
+      "properties": {
+        "operation": {
+          "const": "on_event_tentative",
+          "default": "on_event_tentative",
+          "title": "On Event Tentative",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Event Tentative",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "when tentatively accepted",
+            "maybe rsvp",
+            "on tentative response",
+            "watch tentative",
+            "event maybe"
+          ]
+        },
+        "calendar_id": {
+          "default": "primary",
+          "description": "The calendar to watch ('primary' for the main calendar)",
+          "title": "Calendar",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a calendar ID",
+            "field_name": "calendar_id",
+            "placeholder": "Select a calendar...",
+            "searchable": true
+          },
+          "x-resource-type": "google_calendar"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "calendar_sync_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Calendar Sync Token",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        }
+      },
+      "title": "GoogleCalendarOnEventTentativeConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "GoogleCalendarOnEventUpdatedConfig": {
+      "description": "Trigger: fires when an existing calendar event is modified.",
+      "properties": {
+        "operation": {
+          "const": "on_event_updated",
+          "default": "on_event_updated",
+          "title": "On Event Updated",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Event Updated",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "when event changed",
+            "on event rescheduled",
+            "watch for edits",
+            "meeting moved",
+            "event time changed"
+          ]
+        },
+        "calendar_id": {
+          "default": "primary",
+          "description": "The calendar to watch ('primary' for the main calendar)",
+          "title": "Calendar",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a calendar ID",
+            "field_name": "calendar_id",
+            "placeholder": "Select a calendar...",
+            "searchable": true
+          },
+          "x-resource-type": "google_calendar"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "calendar_sync_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Calendar Sync Token",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        }
+      },
+      "title": "GoogleCalendarOnEventUpdatedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "GoogleCalendarQueryFreebusyConfig": {
+      "description": "Configuration for querying free/busy information",
+      "properties": {
+        "operation": {
+          "const": "query_calendar_availability",
+          "default": "query_calendar_availability",
+          "description": "Check availability",
+          "title": "Query Calendar Availability",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Availability",
+          "x-display-name": "Query Calendar Availability",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "check availability",
+            "free busy",
+            "when am i free",
+            "find open slots",
+            "busy times",
+            "scheduling availability"
+          ]
+        },
+        "calendar_ids": {
+          "description": "Comma-separated list of calendar IDs to check (e.g., 'primary, john@example.com')",
+          "placeholder": "primary, colleague@example.com",
+          "title": "Calendar IDs",
+          "type": "string"
+        },
+        "time_min": {
+          "description": "Start of the interval to query (ISO 8601 format)",
+          "placeholder": "2024-01-15T09:00:00Z",
+          "title": "Start Time",
+          "type": "string"
+        },
+        "time_max": {
+          "description": "End of the interval to query (ISO 8601 format)",
+          "placeholder": "2024-01-15T18:00:00Z",
+          "title": "End Time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "calendar_ids",
+        "time_min",
+        "time_max"
+      ],
+      "title": "GoogleCalendarQueryFreebusyConfig",
+      "type": "object"
+    },
+    "GoogleCalendarQuickAddConfig": {
+      "description": "Configuration for creating an event from natural language text",
+      "properties": {
+        "operation": {
+          "const": "create_event_from_text",
+          "default": "create_event_from_text",
+          "description": "Create event from text",
+          "title": "Create Event from Text",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Event",
+          "x-display-name": "Create Event from Text",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "quick add",
+            "natural language event",
+            "type to schedule",
+            "smart add event",
+            "parse text to event",
+            "lunch tomorrow at noon"
+          ]
+        },
+        "calendar_id": {
+          "description": "Select a calendar to create the event in",
+          "title": "Calendar",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter calendar ID (e.g., primary)",
+            "field_name": "calendar_id",
+            "placeholder": "Select a calendar...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_calendar"
+        },
+        "text": {
+          "description": "Natural language text describing the event (e.g., 'Meeting with John tomorrow at 3pm')",
+          "placeholder": "Meeting with John tomorrow at 3pm",
+          "title": "Event Text",
+          "type": "string"
+        },
+        "send_notifications": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "Whether to send notifications to attendees",
+          "title": "Send Notifications"
+        }
+      },
+      "required": [
+        "calendar_id",
+        "text"
+      ],
+      "title": "GoogleCalendarQuickAddConfig",
+      "type": "object"
+    },
+    "GoogleCalendarUpdateEventConfig": {
+      "description": "Configuration for updating an existing event",
+      "properties": {
+        "operation": {
+          "const": "update_calendar_event",
+          "default": "update_calendar_event",
+          "description": "Update an existing event",
+          "title": "Update Calendar Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Event",
+          "x-display-name": "Update Calendar Event",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "reschedule meeting",
+            "edit event",
+            "change event time",
+            "move appointment",
+            "modify meeting"
+          ]
+        },
+        "calendar_id": {
+          "description": "Select a calendar",
+          "title": "Calendar",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter calendar ID (e.g., primary)",
+            "field_name": "calendar_id",
+            "placeholder": "Select a calendar...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_calendar"
+        },
+        "event_id": {
+          "description": "The ID of the event to update",
+          "placeholder": "Event ID",
+          "title": "Event ID",
+          "type": "string"
+        },
+        "summary": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New title for the event (leave empty to keep current)",
+          "placeholder": "New title (optional)",
+          "title": "Event Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New description (leave empty to keep current)",
+          "placeholder": "New description (optional)",
+          "title": "Description",
+          "ui:widget": "textarea"
+        },
+        "location": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New location (leave empty to keep current)",
+          "placeholder": "New location (optional)",
+          "title": "Location"
+        },
+        "start_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New start time (ISO 8601 format, leave empty to keep current)",
+          "placeholder": "2024-01-15T10:00:00-05:00 (optional)",
+          "title": "Start Time"
+        },
+        "end_time": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New end time (ISO 8601 format, leave empty to keep current)",
+          "placeholder": "2024-01-15T11:00:00-05:00 (optional)",
+          "title": "End Time"
+        },
+        "timezone": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Timezone for the event times",
+          "placeholder": "America/New_York (optional)",
+          "title": "Timezone"
+        },
+        "send_notifications": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "Whether to send notifications about the update",
+          "title": "Send Notifications"
+        }
+      },
+      "required": [
+        "calendar_id",
+        "event_id"
+      ],
+      "title": "GoogleCalendarUpdateEventConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for Google Calendar node including credentials",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "clear_calendar_events": "#/$defs/GoogleCalendarClearCalendarConfig",
+          "create_calendar_event": "#/$defs/GoogleCalendarCreateEventConfig",
+          "create_event_from_text": "#/$defs/GoogleCalendarQuickAddConfig",
+          "create_new_calendar": "#/$defs/GoogleCalendarCreateCalendarConfig",
+          "delete_calendar_event": "#/$defs/GoogleCalendarDeleteEventConfig",
+          "fetch_calendar_event": "#/$defs/GoogleCalendarGetEventConfig",
+          "fetch_calendar_metadata": "#/$defs/GoogleCalendarGetCalendarConfig",
+          "fetch_recurring_event_instances": "#/$defs/GoogleCalendarGetInstancesConfig",
+          "list_calendar_events": "#/$defs/GoogleCalendarListEventsConfig",
+          "list_user_calendars": "#/$defs/GoogleCalendarListCalendarsConfig",
+          "move_event_to_calendar": "#/$defs/GoogleCalendarMoveEventConfig",
+          "on_calendar_event": "#/$defs/GoogleCalendarOnEventConfig",
+          "on_event_cancelled": "#/$defs/GoogleCalendarOnEventCancelledConfig",
+          "on_event_created": "#/$defs/GoogleCalendarOnEventCreatedConfig",
+          "on_event_tentative": "#/$defs/GoogleCalendarOnEventTentativeConfig",
+          "on_event_updated": "#/$defs/GoogleCalendarOnEventUpdatedConfig",
+          "query_calendar_availability": "#/$defs/GoogleCalendarQueryFreebusyConfig",
+          "update_calendar_event": "#/$defs/GoogleCalendarUpdateEventConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GoogleCalendarOnEventConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleCalendarOnEventCancelledConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleCalendarOnEventCreatedConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleCalendarOnEventUpdatedConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleCalendarOnEventTentativeConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleCalendarListEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleCalendarGetEventConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleCalendarCreateEventConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleCalendarUpdateEventConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleCalendarDeleteEventConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleCalendarQuickAddConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleCalendarGetInstancesConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleCalendarMoveEventConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleCalendarQueryFreebusyConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleCalendarListCalendarsConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleCalendarGetCalendarConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleCalendarCreateCalendarConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleCalendarClearCalendarConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GoogleCalendarOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Google-calendar Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Schedule a team standup on the #engineering calendar for 9am tomorrow",
+    "Check availability for the next 2 weeks across all team member calendars",
+    "Create a recurring weekly sync with product leads for the next quarter",
+    "Move all meetings from the old calendar to the new shared project calendar",
+    "Get all events in December and export to a CSV with attendee lists",
+    "Quick-add \"Client demo at 3pm\" using natural language on main calendar",
+    "Update the next 5 all-hands meetings with new conference room details"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

@@ -1,0 +1,622 @@
+{
+  "$defs": {
+    "TikTokCheckPublishStatusConfig": {
+      "description": "Check the status of a pending or completed video publish operation",
+      "properties": {
+        "operation": {
+          "const": "check_video_publish_status",
+          "default": "check_video_publish_status",
+          "title": "Check Video Publish Status",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Video",
+          "x-display-name": "Check Video Publish Status",
+          "x-is-trigger": false
+        },
+        "publish_id": {
+          "description": "The publish_id returned by the publish_video operation",
+          "title": "Publish ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "publish_id"
+      ],
+      "title": "TikTokCheckPublishStatusConfig",
+      "type": "object"
+    },
+    "TikTokDirectPostPhotoConfig": {
+      "description": "Publish a photo carousel directly to the creator's TikTok profile. Photos\nare pulled by TikTok from public URLs. Requires video.publish scope.",
+      "properties": {
+        "operation": {
+          "const": "direct_post_photo",
+          "default": "direct_post_photo",
+          "title": "Direct Post Photo",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Photo",
+          "x-display-name": "Direct Post Photo",
+          "x-is-trigger": false
+        },
+        "photo_urls": {
+          "description": "Comma-separated public image URLs in carousel order (up to 10). JPEG or WebP only (TikTok rejects PNG). Each must be reachable by TikTok \u2014 use the upload button on another node or {{http-1.response.url}} to host images.",
+          "title": "Photo URLs",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Photo post title (max 90 characters)",
+          "title": "Title"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Photo post description / caption (max 4000 characters)",
+          "title": "Description",
+          "ui:widget": "textarea"
+        },
+        "privacy_level": {
+          "default": "PUBLIC_TO_EVERYONE",
+          "description": "Who can see the post. The creator's account settings can restrict which levels are allowed \u2014 use Query Creator Info to confirm the available options for an account.",
+          "enum": [
+            "PUBLIC_TO_EVERYONE",
+            "MUTUAL_FOLLOW_FRIENDS",
+            "FOLLOWER_OF_CREATOR",
+            "SELF_ONLY"
+          ],
+          "enumNames": [
+            "Public",
+            "Friends (mutual follow)",
+            "Followers only",
+            "Only me (private)"
+          ],
+          "title": "Privacy Level",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "photo_cover_index": {
+          "default": 0,
+          "description": "Zero-based index of the photo to use as the cover.",
+          "title": "Cover Photo Index",
+          "type": "integer"
+        },
+        "disable_comment": {
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Disable Comments",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "auto_add_music": {
+          "default": "true",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Auto-add Music",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "photo_urls"
+      ],
+      "title": "TikTokDirectPostPhotoConfig",
+      "type": "object"
+    },
+    "TikTokDirectPostVideoConfig": {
+      "description": "Publish a video directly to the creator's TikTok profile via FILE_UPLOAD\n(the bytes are uploaded straight to TikTok, no public URL needed). Requires\nthe video.publish scope.",
+      "properties": {
+        "operation": {
+          "const": "direct_post_video",
+          "default": "direct_post_video",
+          "title": "Direct Post Video",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Video",
+          "x-display-name": "Direct Post Video",
+          "x-is-trigger": false
+        },
+        "video_url": {
+          "description": "The video to post \u2014 upload a file, paste a URL, or reference an upstream file (e.g. {{http-1.response.url}}). The bytes are uploaded directly to TikTok (MP4 recommended, max 64 MB).",
+          "title": "Video",
+          "type": "string",
+          "ui:accept": "video/*",
+          "ui:widget": "media_upload"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Video caption (max 2200 characters). Hashtags and @mentions are supported.",
+          "title": "Caption",
+          "ui:widget": "textarea"
+        },
+        "privacy_level": {
+          "default": "PUBLIC_TO_EVERYONE",
+          "description": "Who can see the post. The creator's account settings can restrict which levels are allowed \u2014 use Query Creator Info to confirm the available options for an account.",
+          "enum": [
+            "PUBLIC_TO_EVERYONE",
+            "MUTUAL_FOLLOW_FRIENDS",
+            "FOLLOWER_OF_CREATOR",
+            "SELF_ONLY"
+          ],
+          "enumNames": [
+            "Public",
+            "Friends (mutual follow)",
+            "Followers only",
+            "Only me (private)"
+          ],
+          "title": "Privacy Level",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "disable_comment": {
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Disable Comments",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "disable_duet": {
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Disable Duet",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "disable_stitch": {
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Disable Stitch",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "video_cover_timestamp_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Timestamp in milliseconds of the frame to use as the cover image.",
+          "title": "Cover Frame (ms)"
+        }
+      },
+      "required": [
+        "video_url"
+      ],
+      "title": "TikTokDirectPostVideoConfig",
+      "type": "object"
+    },
+    "TikTokGetUserInfoConfig": {
+      "description": "Get the authenticated user's TikTok profile and statistics",
+      "properties": {
+        "operation": {
+          "const": "get_authenticated_user_info",
+          "default": "get_authenticated_user_info",
+          "title": "Get Authenticated User Info",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Get Authenticated User Info",
+          "x-is-trigger": false
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "open_id,union_id,avatar_url,display_name,bio_description,profile_deep_link,username,is_verified,follower_count,following_count,likes_count,video_count",
+          "description": "Comma-separated fields to retrieve. Stats fields (follower_count, following_count, etc.) require user.info.stats scope.",
+          "title": "Fields"
+        }
+      },
+      "title": "TikTokGetUserInfoConfig",
+      "type": "object"
+    },
+    "TikTokListVideosConfig": {
+      "description": "List the authenticated user's recent public videos",
+      "properties": {
+        "operation": {
+          "const": "list_user_public_videos",
+          "default": "list_user_public_videos",
+          "title": "List User Public Videos",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Video",
+          "x-display-name": "List User Public Videos",
+          "x-is-trigger": false
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "id,create_time,cover_image_url,share_url,video_description,duration,height,width,title,like_count,comment_count,share_count,view_count",
+          "description": "Comma-separated fields to retrieve for each video",
+          "title": "Fields"
+        },
+        "max_count": {
+          "anyOf": [
+            {
+              "maximum": 20,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 20,
+          "description": "Maximum number of videos to return (1\u201320)",
+          "title": "Max Count"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from a previous response to get the next page",
+          "title": "Cursor"
+        }
+      },
+      "title": "TikTokListVideosConfig",
+      "type": "object"
+    },
+    "TikTokOAuthCredential": {
+      "description": "OAuth 2.0 credential for TikTok Open Platform.\nTokens are obtained via TikTok OAuth flow, not entered manually.\n\nRegister your app at: https://developers.tiktok.com/\nAccess tokens expire in 24 hours; refresh tokens rotate on each refresh.",
+      "properties": {
+        "credential_type": {
+          "const": "tiktok_oauth",
+          "default": "tiktok_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "OAuth 2.0 access token (expires in 24 hours)",
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Long-lived refresh token for renewing access",
+          "title": "Refresh Token"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 timestamp when access token expires",
+          "title": "Token Expiry"
+        },
+        "refresh_expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ISO 8601 timestamp when refresh token expires",
+          "title": "Refresh Token Expiry"
+        },
+        "open_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The authenticated user's unique TikTok ID for this app",
+          "title": "Open ID"
+        },
+        "display_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The authenticated user's TikTok display name",
+          "title": "Display Name"
+        },
+        "avatar_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "URL of the authenticated user's profile picture",
+          "title": "Avatar URL"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "TikTokOAuthCredential",
+      "type": "object",
+      "x-credential-instructions": "Connect your TikTok account via OAuth. You need a TikTok developer app with TIKTOK_CLIENT_KEY and TIKTOK_CLIENT_SECRET configured.",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://developers.tiktok.com/",
+      "x-oauth-provider": "tiktok",
+      "x-oauth-scopes": [
+        "user.info.basic",
+        "user.info.profile",
+        "user.info.stats",
+        "video.list",
+        "video.upload",
+        "video.publish"
+      ]
+    },
+    "TikTokPublishVideoConfig": {
+      "description": "Upload a video to TikTok creator inbox as a draft via PULL_FROM_URL (requires video.upload scope).\nThe creator receives an inbox notification and can review/edit before posting.\nTo publish straight to the profile instead, use the Direct Post Video operation.",
+      "properties": {
+        "operation": {
+          "const": "upload_video_to_creator_inbox",
+          "default": "upload_video_to_creator_inbox",
+          "title": "Upload Video to Creator Inbox",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Video",
+          "x-display-name": "Upload Video to Creator Inbox",
+          "x-is-trigger": false
+        },
+        "video_url": {
+          "description": "The video to send \u2014 upload a file, paste a URL, or reference an upstream file (e.g. {{http-1.response.url}}). MP4 recommended, max 64 MB. Must be publicly accessible by TikTok's servers.",
+          "title": "Video URL",
+          "type": "string",
+          "ui:accept": "video/*",
+          "ui:widget": "media_upload"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Video title or caption (max 150 characters)",
+          "title": "Title / Caption",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "video_url"
+      ],
+      "title": "TikTokPublishVideoConfig",
+      "type": "object"
+    },
+    "TikTokQueryCreatorInfoConfig": {
+      "description": "Query the creator's posting options before a direct post (privacy options,\ninteraction toggles, max video duration). Requires video.publish scope.",
+      "properties": {
+        "operation": {
+          "const": "query_creator_info",
+          "default": "query_creator_info",
+          "title": "Query Creator Info",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Video",
+          "x-display-name": "Query Creator Info",
+          "x-is-trigger": false
+        }
+      },
+      "title": "TikTokQueryCreatorInfoConfig",
+      "type": "object"
+    },
+    "TikTokQueryVideosConfig": {
+      "description": "Query specific videos by ID to retrieve their metrics and details",
+      "properties": {
+        "operation": {
+          "const": "query_video_metrics_by_id",
+          "default": "query_video_metrics_by_id",
+          "title": "Query Video Metrics by Id",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Video",
+          "x-display-name": "Query Video Metrics by Id",
+          "x-is-trigger": false
+        },
+        "video_ids": {
+          "description": "Comma-separated list of video IDs to query (up to 20)",
+          "title": "Video IDs",
+          "type": "string"
+        },
+        "fields": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "id,create_time,cover_image_url,share_url,video_description,duration,height,width,title,like_count,comment_count,share_count,view_count",
+          "description": "Comma-separated fields to retrieve for each video",
+          "title": "Fields"
+        }
+      },
+      "required": [
+        "video_ids"
+      ],
+      "title": "TikTokQueryVideosConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for TikTok node including credentials",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "check_video_publish_status": "#/$defs/TikTokCheckPublishStatusConfig",
+          "direct_post_photo": "#/$defs/TikTokDirectPostPhotoConfig",
+          "direct_post_video": "#/$defs/TikTokDirectPostVideoConfig",
+          "get_authenticated_user_info": "#/$defs/TikTokGetUserInfoConfig",
+          "list_user_public_videos": "#/$defs/TikTokListVideosConfig",
+          "query_creator_info": "#/$defs/TikTokQueryCreatorInfoConfig",
+          "query_video_metrics_by_id": "#/$defs/TikTokQueryVideosConfig",
+          "upload_video_to_creator_inbox": "#/$defs/TikTokPublishVideoConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/TikTokGetUserInfoConfig"
+        },
+        {
+          "$ref": "#/$defs/TikTokListVideosConfig"
+        },
+        {
+          "$ref": "#/$defs/TikTokQueryVideosConfig"
+        },
+        {
+          "$ref": "#/$defs/TikTokPublishVideoConfig"
+        },
+        {
+          "$ref": "#/$defs/TikTokCheckPublishStatusConfig"
+        },
+        {
+          "$ref": "#/$defs/TikTokQueryCreatorInfoConfig"
+        },
+        {
+          "$ref": "#/$defs/TikTokDirectPostVideoConfig"
+        },
+        {
+          "$ref": "#/$defs/TikTokDirectPostPhotoConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TikTokOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Tiktok Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Get authenticated user profile with follower and video count stats",
+    "List last 20 videos and retrieve view/engagement metrics per video",
+    "Query specific videos by ID to track performance over time",
+    "Upload video to creator inbox as draft for review before posting",
+    "Check publish status of pending video upload to inbox",
+    "Fetch user stats and recent video performance for analytics",
+    "Get video list with cursor for pagination and load next batch",
+    "Query creator info for allowed privacy levels before a direct post",
+    "Direct post a video to the profile by uploading the file to TikTok",
+    "Direct post a photo carousel to the profile from public image URLs"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

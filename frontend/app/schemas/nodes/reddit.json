@@ -1,0 +1,3992 @@
+{
+  "$defs": {
+    "RedditAddSubredditToMultiConfig": {
+      "description": "Add a subreddit to a multireddit",
+      "properties": {
+        "operation": {
+          "const": "add_subreddit_to_multireddit",
+          "default": "add_subreddit_to_multireddit",
+          "title": "Add Subreddit to Multireddit",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subreddit",
+          "x-display-name": "Add Subreddit to Multireddit",
+          "x-is-trigger": false
+        },
+        "multiname": {
+          "description": "Name of the multireddit",
+          "title": "Multireddit Name",
+          "type": "string"
+        },
+        "subreddit": {
+          "description": "Subreddit to add (without r/)",
+          "title": "Subreddit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "multiname",
+        "subreddit"
+      ],
+      "title": "Add Subreddit to Multi",
+      "type": "object"
+    },
+    "RedditApproveConfig": {
+      "description": "Approve a post or comment (moderator only)",
+      "properties": {
+        "operation": {
+          "const": "approve_post_or_comment",
+          "default": "approve_post_or_comment",
+          "title": "Approve Post or Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Approve Post or Comment",
+          "x-is-trigger": false
+        },
+        "thing_id": {
+          "description": "Full ID of post (t3_xxx) or comment (t1_xxx) to approve",
+          "title": "Thing ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "thing_id"
+      ],
+      "title": "Approve",
+      "type": "object"
+    },
+    "RedditBlockUserConfig": {
+      "description": "Block a user",
+      "properties": {
+        "operation": {
+          "const": "block_user",
+          "default": "block_user",
+          "title": "Block User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Block User",
+          "x-is-trigger": false
+        },
+        "username": {
+          "description": "Username to block (without u/)",
+          "title": "Username",
+          "type": "string"
+        }
+      },
+      "required": [
+        "username"
+      ],
+      "title": "Block User",
+      "type": "object"
+    },
+    "RedditCheckUsernameConfig": {
+      "description": "Check if a username is available",
+      "properties": {
+        "operation": {
+          "const": "check_username_availability",
+          "default": "check_username_availability",
+          "title": "Check Username Availability",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Check Username Availability",
+          "x-is-trigger": false
+        },
+        "username": {
+          "description": "Username to check availability for",
+          "title": "Username",
+          "type": "string"
+        }
+      },
+      "required": [
+        "username"
+      ],
+      "title": "Check Username",
+      "type": "object"
+    },
+    "RedditCloseLiveThreadConfig": {
+      "description": "Close a live thread",
+      "properties": {
+        "operation": {
+          "const": "close_live_thread",
+          "default": "close_live_thread",
+          "title": "Close Live Thread",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Live Thread",
+          "x-display-name": "Close Live Thread",
+          "x-is-trigger": false
+        },
+        "thread_id": {
+          "description": "Live thread ID to close",
+          "title": "Thread ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "thread_id"
+      ],
+      "title": "Close Live Thread",
+      "type": "object"
+    },
+    "RedditCreateLiveThreadConfig": {
+      "description": "Create a new live thread",
+      "properties": {
+        "operation": {
+          "const": "create_live_thread",
+          "default": "create_live_thread",
+          "title": "Create Live Thread",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Live Thread",
+          "x-display-name": "Create Live Thread",
+          "x-is-trigger": false
+        },
+        "title": {
+          "description": "Title of the live thread",
+          "title": "Title",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Description of the live thread (Markdown supported)",
+          "title": "Description",
+          "ui:widget": "textarea"
+        },
+        "nsfw": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Mark as NSFW content",
+          "title": "NSFW"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "Create Live Thread",
+      "type": "object"
+    },
+    "RedditCreateMultiredditConfig": {
+      "description": "Create a new multireddit",
+      "properties": {
+        "operation": {
+          "const": "create_multireddit",
+          "default": "create_multireddit",
+          "title": "Create Multireddit",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Multireddit",
+          "x-display-name": "Create Multireddit",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "Name for the multireddit",
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Description of the multireddit (Markdown supported)",
+          "title": "Description",
+          "ui:widget": "textarea"
+        },
+        "subreddits": {
+          "description": "Comma-separated list of subreddits to include",
+          "title": "Subreddits",
+          "type": "string"
+        },
+        "visibility": {
+          "anyOf": [
+            {
+              "enum": [
+                "private",
+                "public",
+                "hidden"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "private",
+          "description": "Visibility of the multireddit",
+          "title": "Visibility",
+          "enum": [
+            "private",
+            "public",
+            "hidden"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "name",
+        "subreddits"
+      ],
+      "title": "Create Multireddit",
+      "type": "object"
+    },
+    "RedditCrosspostConfig": {
+      "description": "Crosspost a post to another subreddit",
+      "properties": {
+        "operation": {
+          "const": "crosspost_to_subreddit",
+          "default": "crosspost_to_subreddit",
+          "title": "Crosspost to Subreddit",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Crosspost to Subreddit",
+          "x-is-trigger": false
+        },
+        "thing_id": {
+          "description": "Full ID of post (t3_xxx) to crosspost",
+          "title": "Original Post ID",
+          "type": "string"
+        },
+        "subreddit": {
+          "description": "Subreddit to crosspost to (without r/)",
+          "title": "Target Subreddit",
+          "type": "string"
+        },
+        "title": {
+          "description": "Title for the crosspost",
+          "title": "Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "thing_id",
+        "subreddit",
+        "title"
+      ],
+      "title": "Crosspost",
+      "type": "object"
+    },
+    "RedditDeleteConfig": {
+      "description": "Delete a post or comment",
+      "properties": {
+        "operation": {
+          "const": "delete_post_or_comment",
+          "default": "delete_post_or_comment",
+          "title": "Delete Post or Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Delete Post or Comment",
+          "x-is-trigger": false
+        },
+        "thing_id": {
+          "description": "Full ID of post (t3_xxx) or comment (t1_xxx) to delete",
+          "title": "Thing ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "thing_id"
+      ],
+      "title": "Delete",
+      "type": "object"
+    },
+    "RedditDeleteMessageConfig": {
+      "description": "Delete a message",
+      "properties": {
+        "operation": {
+          "const": "delete_message",
+          "default": "delete_message",
+          "title": "Delete Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Delete Message",
+          "x-is-trigger": false
+        },
+        "thing_id": {
+          "description": "Full ID of message (t4_xxx) to delete",
+          "title": "Message ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "thing_id"
+      ],
+      "title": "Delete Message",
+      "type": "object"
+    },
+    "RedditDeleteMultiredditConfig": {
+      "description": "Delete a multireddit",
+      "properties": {
+        "operation": {
+          "const": "delete_multireddit",
+          "default": "delete_multireddit",
+          "title": "Delete Multireddit",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Multireddit",
+          "x-display-name": "Delete Multireddit",
+          "x-is-trigger": false
+        },
+        "multiname": {
+          "description": "Name of the multireddit to delete",
+          "title": "Multireddit Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "multiname"
+      ],
+      "title": "Delete Multireddit",
+      "type": "object"
+    },
+    "RedditDistinguishConfig": {
+      "description": "Distinguish a post or comment as moderator",
+      "properties": {
+        "operation": {
+          "const": "distinguish_post_or_comment",
+          "default": "distinguish_post_or_comment",
+          "title": "Distinguish Post or Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Distinguish Post or Comment",
+          "x-is-trigger": false
+        },
+        "thing_id": {
+          "description": "Full ID of post (t3_xxx) or comment (t1_xxx)",
+          "title": "Thing ID",
+          "type": "string"
+        },
+        "how": {
+          "default": "yes",
+          "description": "yes=mod, no=remove, admin=admin (admin only), special=special",
+          "enum": [
+            "yes",
+            "no",
+            "admin",
+            "special"
+          ],
+          "title": "How",
+          "type": "string"
+        },
+        "sticky": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Make the comment sticky (top-level comments only)",
+          "title": "Sticky"
+        }
+      },
+      "required": [
+        "thing_id"
+      ],
+      "title": "Distinguish",
+      "type": "object"
+    },
+    "RedditEditConfig": {
+      "description": "Edit a post or comment",
+      "properties": {
+        "operation": {
+          "const": "edit_post_or_comment",
+          "default": "edit_post_or_comment",
+          "title": "Edit Post or Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Edit Post or Comment",
+          "x-is-trigger": false
+        },
+        "thing_id": {
+          "description": "Full ID of post (t3_xxx) or comment (t1_xxx) to edit",
+          "title": "Thing ID",
+          "type": "string"
+        },
+        "text": {
+          "description": "New content (Markdown supported)",
+          "title": "New Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "thing_id",
+        "text"
+      ],
+      "title": "Edit",
+      "type": "object"
+    },
+    "RedditGetBestConfig": {
+      "description": "Get best posts (personalized front page)",
+      "properties": {
+        "operation": {
+          "const": "get_best_posts",
+          "default": "get_best_posts",
+          "title": "Get Best Posts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Get Best Posts",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "description": "Number of posts to return (max 100)",
+          "title": "Limit"
+        },
+        "time": {
+          "anyOf": [
+            {
+              "enum": [
+                "hour",
+                "day",
+                "week",
+                "month",
+                "year",
+                "all"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "day",
+          "description": "Time period filter",
+          "title": "Time Period",
+          "enum": [
+            "hour",
+            "day",
+            "week",
+            "month",
+            "year",
+            "all"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "title": "Get Best",
+      "type": "object"
+    },
+    "RedditGetBlockedUsersConfig": {
+      "description": "Get the authenticated user's blocked users",
+      "properties": {
+        "operation": {
+          "const": "get_blocked_users",
+          "default": "get_blocked_users",
+          "title": "Get Blocked Users",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Get Blocked Users",
+          "x-is-trigger": false
+        }
+      },
+      "title": "Get Blocked Users",
+      "type": "object"
+    },
+    "RedditGetDefaultSubredditsConfig": {
+      "description": "Get default subreddits",
+      "properties": {
+        "operation": {
+          "const": "get_default_subreddits",
+          "default": "get_default_subreddits",
+          "title": "Get Default Subreddits",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subreddit",
+          "x-display-name": "Get Default Subreddits",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "description": "Number of subreddits to return (max 100)",
+          "title": "Limit"
+        }
+      },
+      "title": "Get Default Subreddits",
+      "type": "object"
+    },
+    "RedditGetDuplicatesConfig": {
+      "description": "Get duplicate posts (crossposts and reposts)",
+      "properties": {
+        "operation": {
+          "const": "get_duplicate_posts",
+          "default": "get_duplicate_posts",
+          "title": "Get Duplicate Posts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Get Duplicate Posts",
+          "x-is-trigger": false
+        },
+        "post_id": {
+          "description": "Post ID to find duplicates of",
+          "title": "Post ID",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "description": "Number of duplicates to return (max 100)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "post_id"
+      ],
+      "title": "Get Duplicates",
+      "type": "object"
+    },
+    "RedditGetFriendsConfig": {
+      "description": "Get the authenticated user's friends list",
+      "properties": {
+        "operation": {
+          "const": "get_friends_list",
+          "default": "get_friends_list",
+          "title": "Get Friends List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Get Friends List",
+          "x-is-trigger": false
+        }
+      },
+      "title": "Get Friends",
+      "type": "object"
+    },
+    "RedditGetGildedConfig": {
+      "description": "Get gilded (awarded) content",
+      "properties": {
+        "operation": {
+          "const": "get_gilded_content",
+          "default": "get_gilded_content",
+          "title": "Get Gilded Content",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Get Gilded Content",
+          "x-is-trigger": false
+        },
+        "subreddit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Subreddit name (leave empty for all)",
+          "title": "Subreddit"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "description": "Number of items to return (max 100)",
+          "title": "Limit"
+        }
+      },
+      "title": "Get Gilded",
+      "type": "object"
+    },
+    "RedditGetInboxConfig": {
+      "description": "Get the authenticated user's inbox messages",
+      "properties": {
+        "operation": {
+          "const": "get_inbox_messages",
+          "default": "get_inbox_messages",
+          "title": "Get Inbox Messages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Get Inbox Messages",
+          "x-is-trigger": false
+        },
+        "where": {
+          "anyOf": [
+            {
+              "enum": [
+                "inbox",
+                "unread",
+                "messages",
+                "sent",
+                "mentions"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "inbox",
+          "description": "Type of messages to retrieve",
+          "title": "Type",
+          "enum": [
+            "inbox",
+            "unread",
+            "messages",
+            "sent",
+            "mentions"
+          ],
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "description": "Number of messages to return (max 100)",
+          "title": "Limit"
+        }
+      },
+      "title": "Get Inbox",
+      "type": "object"
+    },
+    "RedditGetInfoConfig": {
+      "description": "Get info about things by fullname (batch query)",
+      "properties": {
+        "operation": {
+          "const": "get_info_by_fullname_batch",
+          "default": "get_info_by_fullname_batch",
+          "title": "Get Info by Fullname Batch",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Misc",
+          "x-display-name": "Get Info by Fullname Batch",
+          "x-is-trigger": false
+        },
+        "ids": {
+          "description": "Comma-separated list of fullnames (t1_, t2_, t3_, t4_, t5_, t6_)",
+          "title": "IDs",
+          "type": "string"
+        }
+      },
+      "required": [
+        "ids"
+      ],
+      "title": "Get Info",
+      "type": "object"
+    },
+    "RedditGetKarmaConfig": {
+      "description": "Get karma breakdown by subreddit",
+      "properties": {
+        "operation": {
+          "const": "get_karma_breakdown",
+          "default": "get_karma_breakdown",
+          "title": "Get Karma Breakdown",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Get Karma Breakdown",
+          "x-is-trigger": false
+        }
+      },
+      "title": "Get Karma",
+      "type": "object"
+    },
+    "RedditGetLinkFlairConfig": {
+      "description": "Get available link flair options for a subreddit",
+      "properties": {
+        "operation": {
+          "const": "get_subreddit_link_flair_options",
+          "default": "get_subreddit_link_flair_options",
+          "title": "Get Subreddit Link Flair Options",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subreddit",
+          "x-display-name": "Get Subreddit Link Flair Options",
+          "x-is-trigger": false
+        },
+        "subreddit": {
+          "description": "Subreddit to get flair options from (without r/)",
+          "title": "Subreddit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "subreddit"
+      ],
+      "title": "Get Link Flair",
+      "type": "object"
+    },
+    "RedditGetLiveThreadConfig": {
+      "description": "Get live thread information",
+      "properties": {
+        "operation": {
+          "const": "get_live_thread",
+          "default": "get_live_thread",
+          "title": "Get Live Thread",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Live Thread",
+          "x-display-name": "Get Live Thread",
+          "x-is-trigger": false
+        },
+        "thread_id": {
+          "description": "Live thread ID",
+          "title": "Thread ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "thread_id"
+      ],
+      "title": "Get Live Thread",
+      "type": "object"
+    },
+    "RedditGetLiveThreadUpdatesConfig": {
+      "description": "Get updates from a live thread",
+      "properties": {
+        "operation": {
+          "const": "get_live_thread_updates",
+          "default": "get_live_thread_updates",
+          "title": "Get Live Thread Updates",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Live Thread",
+          "x-display-name": "Get Live Thread Updates",
+          "x-is-trigger": false
+        },
+        "thread_id": {
+          "description": "Live thread ID",
+          "title": "Thread ID",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "description": "Number of updates to return (max 100)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "thread_id"
+      ],
+      "title": "Get Live Thread Updates",
+      "type": "object"
+    },
+    "RedditGetMeConfig": {
+      "description": "Get information about the authenticated user",
+      "properties": {
+        "operation": {
+          "const": "get_authenticated_user_info",
+          "default": "get_authenticated_user_info",
+          "title": "Get Authenticated User Info",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Get Authenticated User Info",
+          "x-is-trigger": false
+        }
+      },
+      "title": "Get Me",
+      "type": "object"
+    },
+    "RedditGetMoreCommentsConfig": {
+      "description": "Load more comments from a 'more' object",
+      "properties": {
+        "operation": {
+          "const": "load_more_comments",
+          "default": "load_more_comments",
+          "title": "Load More Comments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Load More Comments",
+          "x-is-trigger": false
+        },
+        "link_id": {
+          "description": "Fullname of the link (post) - t3_xxx",
+          "title": "Link ID",
+          "type": "string"
+        },
+        "children": {
+          "description": "Comma-separated list of comment IDs to fetch",
+          "title": "Children",
+          "type": "string"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "confidence",
+                "top",
+                "new",
+                "controversial",
+                "old",
+                "qa"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "confidence",
+          "description": "How to sort comments",
+          "title": "Sort",
+          "enum": [
+            "confidence",
+            "top",
+            "new",
+            "controversial",
+            "old",
+            "qa"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "link_id",
+        "children"
+      ],
+      "title": "Get More Comments",
+      "type": "object"
+    },
+    "RedditGetMultiredditConfig": {
+      "description": "Get a specific multireddit",
+      "properties": {
+        "operation": {
+          "const": "get_multireddit",
+          "default": "get_multireddit",
+          "title": "Get Multireddit",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Multireddit",
+          "x-display-name": "Get Multireddit",
+          "x-is-trigger": false
+        },
+        "username": {
+          "description": "Owner of the multireddit (without u/)",
+          "title": "Username",
+          "type": "string"
+        },
+        "multiname": {
+          "description": "Name of the multireddit",
+          "title": "Multireddit Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "username",
+        "multiname"
+      ],
+      "title": "Get Multireddit",
+      "type": "object"
+    },
+    "RedditGetMultiredditPostsConfig": {
+      "description": "Get posts from a multireddit",
+      "properties": {
+        "operation": {
+          "const": "get_multireddit_posts",
+          "default": "get_multireddit_posts",
+          "title": "Get Multireddit Posts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Multireddit",
+          "x-display-name": "Get Multireddit Posts",
+          "x-is-trigger": false
+        },
+        "username": {
+          "description": "Owner of the multireddit (without u/)",
+          "title": "Username",
+          "type": "string"
+        },
+        "multiname": {
+          "description": "Name of the multireddit",
+          "title": "Multireddit Name",
+          "type": "string"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "hot",
+                "new",
+                "top",
+                "rising",
+                "controversial"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "hot",
+          "description": "How to sort posts",
+          "title": "Sort",
+          "enum": [
+            "hot",
+            "new",
+            "top",
+            "rising",
+            "controversial"
+          ],
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "description": "Number of posts to return (max 100)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "username",
+        "multiname"
+      ],
+      "title": "Get Multireddit Posts",
+      "type": "object"
+    },
+    "RedditGetMyMultiredditsConfig": {
+      "description": "Get the authenticated user's multireddits",
+      "properties": {
+        "operation": {
+          "const": "get_my_multireddits",
+          "default": "get_my_multireddits",
+          "title": "Get My Multireddits",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Multireddit",
+          "x-display-name": "Get My Multireddits",
+          "x-is-trigger": false
+        }
+      },
+      "title": "Get My Multireddits",
+      "type": "object"
+    },
+    "RedditGetMySubredditsConfig": {
+      "description": "Get the authenticated user's subscribed subreddits",
+      "properties": {
+        "operation": {
+          "const": "get_my_subscribed_subreddits",
+          "default": "get_my_subscribed_subreddits",
+          "title": "Get My Subscribed Subreddits",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subreddit",
+          "x-display-name": "Get My Subscribed Subreddits",
+          "x-is-trigger": false
+        },
+        "where": {
+          "anyOf": [
+            {
+              "enum": [
+                "subscriber",
+                "moderator",
+                "contributor"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "subscriber",
+          "description": "Filter by relationship to subreddit",
+          "title": "Relationship",
+          "enum": [
+            "subscriber",
+            "moderator",
+            "contributor"
+          ],
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "description": "Number of subreddits to return (max 100)",
+          "title": "Limit"
+        }
+      },
+      "title": "Get My Subreddits",
+      "type": "object"
+    },
+    "RedditGetNewSubredditsConfig": {
+      "description": "Get new subreddits",
+      "properties": {
+        "operation": {
+          "const": "get_new_subreddits",
+          "default": "get_new_subreddits",
+          "title": "Get New Subreddits",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subreddit",
+          "x-display-name": "Get New Subreddits",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "description": "Number of subreddits to return (max 100)",
+          "title": "Limit"
+        }
+      },
+      "title": "Get New Subreddits",
+      "type": "object"
+    },
+    "RedditGetPopularSubredditsConfig": {
+      "description": "Get popular subreddits",
+      "properties": {
+        "operation": {
+          "const": "get_popular_subreddits",
+          "default": "get_popular_subreddits",
+          "title": "Get Popular Subreddits",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subreddit",
+          "x-display-name": "Get Popular Subreddits",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "description": "Number of subreddits to return (max 100)",
+          "title": "Limit"
+        }
+      },
+      "title": "Get Popular Subreddits",
+      "type": "object"
+    },
+    "RedditGetPostCommentsConfig": {
+      "description": "Get comments on a post",
+      "properties": {
+        "operation": {
+          "const": "get_post_comments",
+          "default": "get_post_comments",
+          "title": "Get Post Comments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Get Post Comments",
+          "x-is-trigger": false
+        },
+        "post_id": {
+          "description": "Reddit post ID",
+          "title": "Post ID",
+          "type": "string"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "confidence",
+                "top",
+                "new",
+                "controversial",
+                "old",
+                "qa"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "confidence",
+          "description": "How to sort comments",
+          "title": "Sort",
+          "enum": [
+            "confidence",
+            "top",
+            "new",
+            "controversial",
+            "old",
+            "qa"
+          ],
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "description": "Number of comments to return",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "post_id"
+      ],
+      "title": "Get Post Comments",
+      "type": "object"
+    },
+    "RedditGetPostConfig": {
+      "description": "Get a specific post by ID",
+      "properties": {
+        "operation": {
+          "const": "get_post",
+          "default": "get_post",
+          "title": "Get Post",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Get Post",
+          "x-is-trigger": false
+        },
+        "post_id": {
+          "description": "Reddit post ID (the 'thing' ID, e.g., 't3_abc123' or just 'abc123')",
+          "title": "Post ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "post_id"
+      ],
+      "title": "Get Post",
+      "type": "object"
+    },
+    "RedditGetPreferencesConfig": {
+      "description": "Get the authenticated user's preferences",
+      "properties": {
+        "operation": {
+          "const": "get_authenticated_user_preferences",
+          "default": "get_authenticated_user_preferences",
+          "title": "Get Authenticated User Preferences",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Get Authenticated User Preferences",
+          "x-is-trigger": false
+        }
+      },
+      "title": "Get Preferences",
+      "type": "object"
+    },
+    "RedditGetRandomSubmissionConfig": {
+      "description": "Get a random submission from a subreddit",
+      "properties": {
+        "operation": {
+          "const": "get_random_submission",
+          "default": "get_random_submission",
+          "title": "Get Random Submission",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Get Random Submission",
+          "x-is-trigger": false
+        },
+        "subreddit": {
+          "description": "Subreddit to get random post from (without r/)",
+          "title": "Subreddit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "subreddit"
+      ],
+      "title": "Get Random Submission",
+      "type": "object"
+    },
+    "RedditGetRandomSubredditConfig": {
+      "description": "Get a random subreddit",
+      "properties": {
+        "operation": {
+          "const": "get_random_subreddit",
+          "default": "get_random_subreddit",
+          "title": "Get Random Subreddit",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subreddit",
+          "x-display-name": "Get Random Subreddit",
+          "x-is-trigger": false
+        },
+        "nsfw": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Include NSFW subreddits",
+          "title": "Include NSFW"
+        }
+      },
+      "title": "Get Random Subreddit",
+      "type": "object"
+    },
+    "RedditGetSubredditCommentsConfig": {
+      "description": "Get recent comments from a subreddit",
+      "properties": {
+        "operation": {
+          "const": "get_subreddit_comments",
+          "default": "get_subreddit_comments",
+          "title": "Get Subreddit Comments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subreddit",
+          "x-display-name": "Get Subreddit Comments",
+          "x-is-trigger": false
+        },
+        "subreddit": {
+          "description": "Subreddit name (without r/)",
+          "title": "Subreddit",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "description": "Number of comments to return (max 100)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "subreddit"
+      ],
+      "title": "Get Subreddit Comments",
+      "type": "object"
+    },
+    "RedditGetSubredditInfoConfig": {
+      "description": "Get information about a subreddit",
+      "properties": {
+        "operation": {
+          "const": "get_subreddit_info",
+          "default": "get_subreddit_info",
+          "title": "Get Subreddit Info",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subreddit",
+          "x-display-name": "Get Subreddit Info",
+          "x-is-trigger": false
+        },
+        "subreddit": {
+          "description": "Subreddit name (without r/)",
+          "title": "Subreddit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "subreddit"
+      ],
+      "title": "Get Subreddit Info",
+      "type": "object"
+    },
+    "RedditGetSubredditModeratorsConfig": {
+      "description": "Get moderators of a subreddit",
+      "properties": {
+        "operation": {
+          "const": "get_subreddit_moderators",
+          "default": "get_subreddit_moderators",
+          "title": "Get Subreddit Moderators",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subreddit",
+          "x-display-name": "Get Subreddit Moderators",
+          "x-is-trigger": false
+        },
+        "subreddit": {
+          "description": "Subreddit name (without r/)",
+          "title": "Subreddit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "subreddit"
+      ],
+      "title": "Get Subreddit Moderators",
+      "type": "object"
+    },
+    "RedditGetSubredditPostsConfig": {
+      "description": "Fetch public posts from a subreddit feed without Reddit credentials",
+      "properties": {
+        "operation": {
+          "const": "get_subreddit_posts",
+          "default": "get_subreddit_posts",
+          "title": "Get Subreddit Posts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subreddit",
+          "x-display-name": "Get Subreddit Posts",
+          "x-is-trigger": false
+        },
+        "subreddit": {
+          "description": "Subreddit name (without r/)",
+          "title": "Subreddit",
+          "type": "string"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "",
+                "hot",
+                "new",
+                "top",
+                "rising",
+                "controversial"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "hot",
+          "description": "Sort order for posts",
+          "enum": [
+            "",
+            "hot",
+            "new",
+            "top",
+            "rising",
+            "controversial"
+          ],
+          "enumNames": [
+            "Default Feed",
+            "Hot",
+            "New",
+            "Top",
+            "Rising",
+            "Controversial"
+          ],
+          "title": "Sort By",
+          "x-enum-searchable": true
+        },
+        "time": {
+          "anyOf": [
+            {
+              "enum": [
+                "hour",
+                "day",
+                "week",
+                "month",
+                "year",
+                "all"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "day",
+          "description": "Time period for top/controversial sorting (fast mode only)",
+          "enum": [
+            "hour",
+            "day",
+            "week",
+            "month",
+            "year",
+            "all"
+          ],
+          "enumNames": [
+            "Past Hour",
+            "Past 24 Hours",
+            "Past Week",
+            "Past Month",
+            "Past Year",
+            "All Time"
+          ],
+          "title": "Time Period",
+          "ui:show-if": {
+            "containsAny": [
+              "top",
+              "controversial"
+            ],
+            "field": "sort"
+          },
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "description": "Number of top-level posts to fetch. When comments are enabled, each returned entry is one post with corresponding comments nested under it when available.",
+          "title": "Limit"
+        },
+        "fetch_comments": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "false",
+          "description": "Fetch top comments for each post (adds latency - 1-2 seconds per post)",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Fetch Comments",
+          "x-enum-searchable": true
+        },
+        "content_mode": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "fast",
+          "description": "Fast uses Reddit RSS and is usually quicker. Rich uses Bright Data's Reddit scraper for richer post metadata and may take significantly longer. Rich mode does not support the Time Period filter.",
+          "enum": [
+            "fast",
+            "rich"
+          ],
+          "enumNames": [
+            "Fast (RSS, less detail)",
+            "Rich (Bright Data, slower)"
+          ],
+          "title": "Content Detail",
+          "x-enum-searchable": true
+        },
+        "use_proxy": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "auto",
+          "description": "How the fast RSS path should handle Reddit blocks. Auto tries direct first and retries through Bright Data proxy only if needed. Always forces proxy. Never keeps requests direct-only.",
+          "enum": [
+            "auto",
+            "always",
+            "never"
+          ],
+          "enumNames": [
+            "Auto (direct + proxy retry)",
+            "Always use proxy",
+            "Never use proxy"
+          ],
+          "title": "Proxy Mode",
+          "ui:category": "Advanced",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "subreddit"
+      ],
+      "title": "Get Subreddit Posts",
+      "type": "object",
+      "ui:help": "Fetches public subreddit posts without Reddit credentials. Fast mode uses Reddit's public RSS feed directly and retries through the configured proxy only when needed. Rich mode uses Bright Data's Reddit scraper and may take longer, but can return richer metadata.",
+      "x-credentials-optional": true
+    },
+    "RedditGetSubredditRulesConfig": {
+      "description": "Get rules for a subreddit",
+      "properties": {
+        "operation": {
+          "const": "get_subreddit_rules",
+          "default": "get_subreddit_rules",
+          "title": "Get Subreddit Rules",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subreddit",
+          "x-display-name": "Get Subreddit Rules",
+          "x-is-trigger": false
+        },
+        "subreddit": {
+          "description": "Subreddit to get rules from (without r/)",
+          "title": "Subreddit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "subreddit"
+      ],
+      "title": "Get Subreddit Rules",
+      "type": "object"
+    },
+    "RedditGetSubredditTrafficConfig": {
+      "description": "Get subreddit traffic statistics (moderator only)",
+      "properties": {
+        "operation": {
+          "const": "get_subreddit_traffic_stats",
+          "default": "get_subreddit_traffic_stats",
+          "title": "Get Subreddit Traffic Stats",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subreddit",
+          "x-display-name": "Get Subreddit Traffic Stats",
+          "x-is-trigger": false
+        },
+        "subreddit": {
+          "description": "Subreddit name (without r/)",
+          "title": "Subreddit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "subreddit"
+      ],
+      "title": "Get Subreddit Traffic",
+      "type": "object"
+    },
+    "RedditGetTrophiesConfig": {
+      "description": "Get a user's trophies/awards",
+      "properties": {
+        "operation": {
+          "const": "get_user_trophies",
+          "default": "get_user_trophies",
+          "title": "Get User Trophies",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Get User Trophies",
+          "x-is-trigger": false
+        },
+        "username": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Username to get trophies for (leave empty for yourself)",
+          "title": "Username"
+        }
+      },
+      "title": "Get Trophies",
+      "type": "object"
+    },
+    "RedditGetUserCommentsConfig": {
+      "description": "Get comments by a specific user",
+      "properties": {
+        "operation": {
+          "const": "get_user_comments",
+          "default": "get_user_comments",
+          "title": "Get User Comments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Get User Comments",
+          "x-is-trigger": false
+        },
+        "username": {
+          "description": "Reddit username (without u/)",
+          "title": "Username",
+          "type": "string"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "hot",
+                "new",
+                "top",
+                "controversial"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "new",
+          "description": "How to sort comments",
+          "enum": [
+            "hot",
+            "new",
+            "top",
+            "controversial"
+          ],
+          "enumNames": [
+            "Hot",
+            "New",
+            "Top",
+            "Controversial"
+          ],
+          "title": "Sort",
+          "x-enum-searchable": true
+        },
+        "time": {
+          "anyOf": [
+            {
+              "enum": [
+                "hour",
+                "day",
+                "week",
+                "month",
+                "year",
+                "all"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "all",
+          "description": "Time period for top/controversial sorting",
+          "enum": [
+            "hour",
+            "day",
+            "week",
+            "month",
+            "year",
+            "all"
+          ],
+          "enumNames": [
+            "Past Hour",
+            "Past 24 Hours",
+            "Past Week",
+            "Past Month",
+            "Past Year",
+            "All Time"
+          ],
+          "title": "Time Period",
+          "ui:show-if": {
+            "containsAny": [
+              "top",
+              "controversial"
+            ],
+            "field": "sort"
+          },
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "description": "Number of comments to return (max 100)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "username"
+      ],
+      "title": "Get User Comments",
+      "type": "object"
+    },
+    "RedditGetUserConfig": {
+      "description": "Get information about a specific user",
+      "properties": {
+        "operation": {
+          "const": "get_user_info",
+          "default": "get_user_info",
+          "title": "Get User Info",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Get User Info",
+          "x-is-trigger": false
+        },
+        "username": {
+          "description": "Reddit username (without u/)",
+          "title": "Username",
+          "type": "string"
+        }
+      },
+      "required": [
+        "username"
+      ],
+      "title": "Get User",
+      "type": "object"
+    },
+    "RedditGetUserFlairConfig": {
+      "description": "Get user flair options for a subreddit",
+      "properties": {
+        "operation": {
+          "const": "get_user_flair_options",
+          "default": "get_user_flair_options",
+          "title": "Get User Flair Options",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Get User Flair Options",
+          "x-is-trigger": false
+        },
+        "subreddit": {
+          "description": "Subreddit to get flair options from (without r/)",
+          "title": "Subreddit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "subreddit"
+      ],
+      "title": "Get User Flair",
+      "type": "object"
+    },
+    "RedditGetUserPostsConfig": {
+      "description": "Get posts by a specific user",
+      "properties": {
+        "operation": {
+          "const": "get_user_posts",
+          "default": "get_user_posts",
+          "title": "Get User Posts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Get User Posts",
+          "x-is-trigger": false
+        },
+        "username": {
+          "description": "Reddit username (without u/)",
+          "title": "Username",
+          "type": "string"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "hot",
+                "new",
+                "top",
+                "controversial"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "new",
+          "description": "How to sort posts",
+          "enum": [
+            "hot",
+            "new",
+            "top",
+            "controversial"
+          ],
+          "enumNames": [
+            "Hot",
+            "New",
+            "Top",
+            "Controversial"
+          ],
+          "title": "Sort",
+          "x-enum-searchable": true
+        },
+        "time": {
+          "anyOf": [
+            {
+              "enum": [
+                "hour",
+                "day",
+                "week",
+                "month",
+                "year",
+                "all"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "all",
+          "description": "Time period for top/controversial sorting",
+          "enum": [
+            "hour",
+            "day",
+            "week",
+            "month",
+            "year",
+            "all"
+          ],
+          "enumNames": [
+            "Past Hour",
+            "Past 24 Hours",
+            "Past Week",
+            "Past Month",
+            "Past Year",
+            "All Time"
+          ],
+          "title": "Time Period",
+          "ui:show-if": {
+            "containsAny": [
+              "top",
+              "controversial"
+            ],
+            "field": "sort"
+          },
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "description": "Number of posts to return (max 100)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "username"
+      ],
+      "title": "Get User Posts",
+      "type": "object"
+    },
+    "RedditGetUserSavedConfig": {
+      "description": "Get a user's saved posts and comments",
+      "properties": {
+        "operation": {
+          "const": "get_user_saved_posts_and_comments",
+          "default": "get_user_saved_posts_and_comments",
+          "title": "Get User Saved Posts and Comments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Get User Saved Posts and Comments",
+          "x-is-trigger": false
+        },
+        "username": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Username to get saved items for (leave empty for yourself)",
+          "title": "Username"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "description": "Number of items to return (max 100)",
+          "title": "Limit"
+        }
+      },
+      "title": "Get User Saved",
+      "type": "object"
+    },
+    "RedditGetWikiPageConfig": {
+      "description": "Get a specific wiki page",
+      "properties": {
+        "operation": {
+          "const": "get_wiki_page",
+          "default": "get_wiki_page",
+          "title": "Get Wiki Page",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Wiki",
+          "x-display-name": "Get Wiki Page",
+          "x-is-trigger": false
+        },
+        "subreddit": {
+          "description": "Subreddit name (without r/)",
+          "title": "Subreddit",
+          "type": "string"
+        },
+        "page": {
+          "description": "Wiki page name (e.g., 'index', 'rules')",
+          "title": "Page Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "subreddit",
+        "page"
+      ],
+      "title": "Get Wiki Page",
+      "type": "object"
+    },
+    "RedditGetWikiPagesConfig": {
+      "description": "List all wiki pages in a subreddit",
+      "properties": {
+        "operation": {
+          "const": "list_wiki_pages",
+          "default": "list_wiki_pages",
+          "title": "List Wiki Pages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Wiki",
+          "x-display-name": "List Wiki Pages",
+          "x-is-trigger": false
+        },
+        "subreddit": {
+          "description": "Subreddit name (without r/)",
+          "title": "Subreddit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "subreddit"
+      ],
+      "title": "Get Wiki Pages",
+      "type": "object"
+    },
+    "RedditGetWikiRevisionsConfig": {
+      "description": "Get wiki page revision history",
+      "properties": {
+        "operation": {
+          "const": "get_wiki_page_revisions",
+          "default": "get_wiki_page_revisions",
+          "title": "Get Wiki Page Revisions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Wiki",
+          "x-display-name": "Get Wiki Page Revisions",
+          "x-is-trigger": false
+        },
+        "subreddit": {
+          "description": "Subreddit name (without r/)",
+          "title": "Subreddit",
+          "type": "string"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Wiki page name (leave empty for all pages)",
+          "title": "Page Name"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "description": "Number of revisions to return (max 100)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "subreddit"
+      ],
+      "title": "Get Wiki Revisions",
+      "type": "object"
+    },
+    "RedditGiveAwardConfig": {
+      "description": "Give an award to a post or comment",
+      "properties": {
+        "operation": {
+          "const": "give_award_to_post_or_comment",
+          "default": "give_award_to_post_or_comment",
+          "title": "Give Award to Post or Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Give Award to Post or Comment",
+          "x-is-trigger": false
+        },
+        "thing_id": {
+          "description": "Full ID of post (t3_xxx) or comment (t1_xxx) to award",
+          "title": "Thing ID",
+          "type": "string"
+        },
+        "gild_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "gid_2",
+          "description": "Type of award to give (gid_1=silver, gid_2=gold, gid_3=platinum)",
+          "title": "Award Type"
+        },
+        "is_anonymous": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Give award anonymously",
+          "title": "Anonymous"
+        }
+      },
+      "required": [
+        "thing_id"
+      ],
+      "title": "Give Award",
+      "type": "object"
+    },
+    "RedditHideConfig": {
+      "description": "Hide a post from your feed",
+      "properties": {
+        "operation": {
+          "const": "hide_post_from_feed",
+          "default": "hide_post_from_feed",
+          "title": "Hide Post from Feed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Hide Post from Feed",
+          "x-is-trigger": false
+        },
+        "thing_id": {
+          "description": "Full ID of post (t3_xxx) to hide",
+          "title": "Thing ID",
+          "type": "string"
+        },
+        "unhide": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Set to true to unhide instead of hide",
+          "title": "Unhide"
+        }
+      },
+      "required": [
+        "thing_id"
+      ],
+      "title": "Hide",
+      "type": "object"
+    },
+    "RedditIgnoreReportsConfig": {
+      "description": "Ignore or unignore reports on a post or comment (moderator only)",
+      "properties": {
+        "operation": {
+          "const": "ignore_reports_on_content",
+          "default": "ignore_reports_on_content",
+          "title": "Ignore Reports on Content",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Ignore Reports on Content",
+          "x-is-trigger": false
+        },
+        "thing_id": {
+          "description": "Full ID of post (t3_xxx) or comment (t1_xxx)",
+          "title": "Thing ID",
+          "type": "string"
+        },
+        "unignore": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Set to true to unignore reports",
+          "title": "Unignore"
+        }
+      },
+      "required": [
+        "thing_id"
+      ],
+      "title": "Ignore Reports",
+      "type": "object"
+    },
+    "RedditLockConfig": {
+      "description": "Lock a post or comment (moderator only)",
+      "properties": {
+        "operation": {
+          "const": "lock_post_or_comment",
+          "default": "lock_post_or_comment",
+          "title": "Lock Post or Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Lock Post or Comment",
+          "x-is-trigger": false
+        },
+        "thing_id": {
+          "description": "Full ID of post (t3_xxx) or comment (t1_xxx) to lock",
+          "title": "Thing ID",
+          "type": "string"
+        },
+        "unlock": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Set to true to unlock instead of lock",
+          "title": "Unlock"
+        }
+      },
+      "required": [
+        "thing_id"
+      ],
+      "title": "Lock",
+      "type": "object"
+    },
+    "RedditMarkAllMessagesReadConfig": {
+      "description": "Mark all messages as read",
+      "properties": {
+        "operation": {
+          "const": "mark_all_messages_as_read",
+          "default": "mark_all_messages_as_read",
+          "title": "Mark All Messages As Read",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Mark All Messages As Read",
+          "x-is-trigger": false
+        }
+      },
+      "title": "Mark All Messages Read",
+      "type": "object"
+    },
+    "RedditMarkMessagesReadConfig": {
+      "description": "Mark messages as read",
+      "properties": {
+        "operation": {
+          "const": "mark_messages_as_read",
+          "default": "mark_messages_as_read",
+          "title": "Mark Messages As Read",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Mark Messages As Read",
+          "x-is-trigger": false
+        },
+        "thing_ids": {
+          "description": "Comma-separated list of message IDs (t4_xxx) to mark as read",
+          "title": "Message IDs",
+          "type": "string"
+        }
+      },
+      "required": [
+        "thing_ids"
+      ],
+      "title": "Mark Messages Read",
+      "type": "object"
+    },
+    "RedditMarkNsfwConfig": {
+      "description": "Mark or unmark a post as NSFW",
+      "properties": {
+        "operation": {
+          "const": "mark_post_as_nsfw",
+          "default": "mark_post_as_nsfw",
+          "title": "Mark Post As Nsfw",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Mark Post As Nsfw",
+          "x-is-trigger": false
+        },
+        "thing_id": {
+          "description": "Full ID of post (t3_xxx) to mark",
+          "title": "Post ID",
+          "type": "string"
+        },
+        "unmark": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Set to true to unmark NSFW",
+          "title": "Unmark"
+        }
+      },
+      "required": [
+        "thing_id"
+      ],
+      "title": "Mark NSFW",
+      "type": "object"
+    },
+    "RedditMarkSpoilerConfig": {
+      "description": "Mark or unmark a post as spoiler",
+      "properties": {
+        "operation": {
+          "const": "mark_post_as_spoiler",
+          "default": "mark_post_as_spoiler",
+          "title": "Mark Post As Spoiler",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Mark Post As Spoiler",
+          "x-is-trigger": false
+        },
+        "thing_id": {
+          "description": "Full ID of post (t3_xxx) to mark",
+          "title": "Post ID",
+          "type": "string"
+        },
+        "unmark": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Set to true to unmark spoiler",
+          "title": "Unmark"
+        }
+      },
+      "required": [
+        "thing_id"
+      ],
+      "title": "Mark Spoiler",
+      "type": "object"
+    },
+    "RedditOAuthCredential": {
+      "description": "OAuth 2.0 credential for Reddit.\nTokens are obtained via OAuth flow, not entered manually.\n\nRegister OAuth app at: https://www.reddit.com/prefs/apps",
+      "properties": {
+        "credential_type": {
+          "const": "reddit_oauth",
+          "default": "reddit_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "title": "Refresh Token",
+          "type": "string"
+        },
+        "expires_at": {
+          "title": "Token Expiry",
+          "type": "string"
+        },
+        "username": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Reddit Username"
+        }
+      },
+      "required": [
+        "access_token",
+        "refresh_token",
+        "expires_at"
+      ],
+      "title": "RedditOAuthCredential",
+      "type": "object",
+      "x-credential-hidden": true,
+      "x-credential-type": "oauth",
+      "x-oauth-provider": "reddit",
+      "x-oauth-scopes": [
+        "identity",
+        "read",
+        "submit",
+        "vote",
+        "edit",
+        "history",
+        "privatemessages",
+        "mysubreddits",
+        "save",
+        "subscribe",
+        "report",
+        "flair",
+        "modflair",
+        "modposts",
+        "modconfig",
+        "modlog",
+        "wikiread",
+        "wikiedit",
+        "livemanage"
+      ]
+    },
+    "RedditRemoveConfig": {
+      "description": "Remove a post or comment (moderator only)",
+      "properties": {
+        "operation": {
+          "const": "remove_post_or_comment",
+          "default": "remove_post_or_comment",
+          "title": "Remove Post or Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Remove Post or Comment",
+          "x-is-trigger": false
+        },
+        "thing_id": {
+          "description": "Full ID of post (t3_xxx) or comment (t1_xxx) to remove",
+          "title": "Thing ID",
+          "type": "string"
+        },
+        "spam": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Mark the item as spam",
+          "title": "Mark as Spam"
+        }
+      },
+      "required": [
+        "thing_id"
+      ],
+      "title": "Remove",
+      "type": "object"
+    },
+    "RedditRemoveSubredditFromMultiConfig": {
+      "description": "Remove a subreddit from a multireddit",
+      "properties": {
+        "operation": {
+          "const": "remove_subreddit_from_multireddit",
+          "default": "remove_subreddit_from_multireddit",
+          "title": "Remove Subreddit from Multireddit",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subreddit",
+          "x-display-name": "Remove Subreddit from Multireddit",
+          "x-is-trigger": false
+        },
+        "multiname": {
+          "description": "Name of the multireddit",
+          "title": "Multireddit Name",
+          "type": "string"
+        },
+        "subreddit": {
+          "description": "Subreddit to remove (without r/)",
+          "title": "Subreddit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "multiname",
+        "subreddit"
+      ],
+      "title": "Remove Subreddit from Multi",
+      "type": "object"
+    },
+    "RedditReplyMessageConfig": {
+      "description": "Reply to a message",
+      "properties": {
+        "operation": {
+          "const": "reply_to_message",
+          "default": "reply_to_message",
+          "title": "Reply to Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Reply to Message",
+          "x-is-trigger": false
+        },
+        "thing_id": {
+          "description": "Full ID of message (t4_xxx) to reply to",
+          "title": "Message ID",
+          "type": "string"
+        },
+        "text": {
+          "description": "Reply message body (Markdown supported)",
+          "title": "Reply Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "thing_id",
+        "text"
+      ],
+      "title": "Reply to Message",
+      "type": "object"
+    },
+    "RedditReportConfig": {
+      "description": "Report a post or comment",
+      "properties": {
+        "operation": {
+          "const": "report_post_or_comment",
+          "default": "report_post_or_comment",
+          "title": "Report Post or Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Report Post or Comment",
+          "x-is-trigger": false
+        },
+        "thing_id": {
+          "description": "Full ID of post (t3_xxx) or comment (t1_xxx) to report",
+          "title": "Thing ID",
+          "type": "string"
+        },
+        "reason": {
+          "description": "Reason for reporting",
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "thing_id",
+        "reason"
+      ],
+      "title": "Report",
+      "type": "object"
+    },
+    "RedditReportUserConfig": {
+      "description": "Report a user",
+      "properties": {
+        "operation": {
+          "const": "report_user",
+          "default": "report_user",
+          "title": "Report User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Report User",
+          "x-is-trigger": false
+        },
+        "username": {
+          "description": "Username to report (without u/)",
+          "title": "Username",
+          "type": "string"
+        },
+        "reason": {
+          "description": "Reason for reporting",
+          "title": "Reason",
+          "type": "string"
+        }
+      },
+      "required": [
+        "username",
+        "reason"
+      ],
+      "title": "Report User",
+      "type": "object"
+    },
+    "RedditSaveConfig": {
+      "description": "Save or unsave a post or comment",
+      "properties": {
+        "operation": {
+          "const": "save_post_or_comment",
+          "default": "save_post_or_comment",
+          "title": "Save Post or Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Save Post or Comment",
+          "x-is-trigger": false
+        },
+        "thing_id": {
+          "description": "Full ID of post (t3_xxx) or comment (t1_xxx)",
+          "title": "Thing ID",
+          "type": "string"
+        },
+        "unsave": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Set to true to unsave instead of save",
+          "title": "Unsave"
+        }
+      },
+      "required": [
+        "thing_id"
+      ],
+      "title": "Save",
+      "type": "object"
+    },
+    "RedditScriptCredential": {
+      "description": "Script/Personal Use credential for Reddit.\nUsers provide their own Reddit app credentials.\n\nCreate a \"script\" app at: https://www.reddit.com/prefs/apps\n1. Click \"create another app...\" at the bottom\n2. Select \"script\" as the app type\n3. Set redirect uri to http://localhost:8080 (not used for script apps)\n4. Copy the client_id (under the app name) and client_secret",
+      "properties": {
+        "credential_type": {
+          "const": "reddit_script",
+          "default": "reddit_script",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "client_id": {
+          "description": "Your Reddit app's client ID (found under app name)",
+          "title": "Client ID",
+          "type": "string",
+          "ui:help": "Create app at https://www.reddit.com/prefs/apps"
+        },
+        "client_secret": {
+          "description": "Your Reddit app's client secret",
+          "title": "Client Secret",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "username": {
+          "description": "Your Reddit username",
+          "title": "Reddit Username",
+          "type": "string"
+        },
+        "password": {
+          "description": "Your Reddit account password",
+          "title": "Reddit Password",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "client_id",
+        "client_secret",
+        "username",
+        "password"
+      ],
+      "title": "RedditScriptCredential",
+      "type": "object",
+      "x-credential-type": "script",
+      "x-help-text": "Create a 'script' type app to get your credentials",
+      "x-help-url": "https://www.reddit.com/prefs/apps"
+    },
+    "RedditSearchConfig": {
+      "description": "Search Reddit",
+      "properties": {
+        "operation": {
+          "const": "search_reddit",
+          "default": "search_reddit",
+          "title": "Search Reddit",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Misc",
+          "x-display-name": "Search Reddit",
+          "x-is-trigger": false
+        },
+        "query": {
+          "description": "Search query",
+          "title": "Search Query",
+          "type": "string"
+        },
+        "subreddit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Limit search to a specific subreddit (without r/)",
+          "title": "Subreddit"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "relevance",
+                "hot",
+                "top",
+                "new",
+                "comments"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "relevance",
+          "description": "How to sort search results",
+          "title": "Sort",
+          "enum": [
+            "relevance",
+            "hot",
+            "top",
+            "new",
+            "comments"
+          ],
+          "x-enum-searchable": true
+        },
+        "time": {
+          "anyOf": [
+            {
+              "enum": [
+                "hour",
+                "day",
+                "week",
+                "month",
+                "year",
+                "all"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "all",
+          "description": "Time period to search within",
+          "enum": [
+            "hour",
+            "day",
+            "week",
+            "month",
+            "year",
+            "all"
+          ],
+          "enumNames": [
+            "Past Hour",
+            "Past 24 Hours",
+            "Past Week",
+            "Past Month",
+            "Past Year",
+            "All Time"
+          ],
+          "title": "Time Period",
+          "x-enum-searchable": true
+        },
+        "type": {
+          "anyOf": [
+            {
+              "enum": [
+                "link",
+                "sr",
+                "user"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "link",
+          "description": "Type of results: link (posts), sr (subreddits), user (users)",
+          "title": "Result Type",
+          "enum": [
+            "link",
+            "sr",
+            "user"
+          ],
+          "x-enum-searchable": true
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "description": "Number of results to return (max 100)",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "Search",
+      "type": "object"
+    },
+    "RedditSearchSubredditsConfig": {
+      "description": "Search for subreddits by name",
+      "properties": {
+        "operation": {
+          "const": "search_subreddits",
+          "default": "search_subreddits",
+          "title": "Search Subreddits",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subreddit",
+          "x-display-name": "Search Subreddits",
+          "x-is-trigger": false
+        },
+        "query": {
+          "description": "Search query for subreddit names",
+          "title": "Search Query",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 25,
+          "description": "Number of results to return (max 100)",
+          "title": "Limit"
+        },
+        "include_over_18": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Include NSFW subreddits in results",
+          "title": "Include NSFW"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "Search Subreddits",
+      "type": "object"
+    },
+    "RedditSendMessageConfig": {
+      "description": "Send a private message to a user",
+      "properties": {
+        "operation": {
+          "const": "send_private_message",
+          "default": "send_private_message",
+          "title": "Send Private Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Send Private Message",
+          "x-is-trigger": false
+        },
+        "to": {
+          "description": "Username to send message to (without u/)",
+          "title": "Recipient",
+          "type": "string"
+        },
+        "subject": {
+          "description": "Message subject",
+          "title": "Subject",
+          "type": "string"
+        },
+        "text": {
+          "description": "Message body (Markdown supported)",
+          "title": "Message",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "to",
+        "subject",
+        "text"
+      ],
+      "title": "Send Message",
+      "type": "object"
+    },
+    "RedditSendRepliesConfig": {
+      "description": "Enable or disable inbox replies for a post or comment",
+      "properties": {
+        "operation": {
+          "const": "toggle_post_inbox_replies",
+          "default": "toggle_post_inbox_replies",
+          "title": "Toggle Post Inbox Replies",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Toggle Post Inbox Replies",
+          "x-is-trigger": false
+        },
+        "thing_id": {
+          "description": "Full ID of post (t3_xxx) or comment (t1_xxx)",
+          "title": "Thing ID",
+          "type": "string"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "True to enable, False to disable inbox replies",
+          "title": "Enable"
+        }
+      },
+      "required": [
+        "thing_id"
+      ],
+      "title": "Send Replies",
+      "type": "object"
+    },
+    "RedditSetContestModeConfig": {
+      "description": "Set or unset contest mode on a post (moderator only)",
+      "properties": {
+        "operation": {
+          "const": "set_post_contest_mode",
+          "default": "set_post_contest_mode",
+          "title": "Set Post Contest Mode",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Set Post Contest Mode",
+          "x-is-trigger": false
+        },
+        "thing_id": {
+          "description": "Full ID of post (t3_xxx)",
+          "title": "Post ID",
+          "type": "string"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "True to enable, False to disable contest mode",
+          "title": "Enable"
+        }
+      },
+      "required": [
+        "thing_id"
+      ],
+      "title": "Set Contest Mode",
+      "type": "object"
+    },
+    "RedditSetLinkFlairConfig": {
+      "description": "Set flair on a post",
+      "properties": {
+        "operation": {
+          "const": "set_post_link_flair",
+          "default": "set_post_link_flair",
+          "title": "Set Post Link Flair",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Set Post Link Flair",
+          "x-is-trigger": false
+        },
+        "thing_id": {
+          "description": "Full ID of post (t3_xxx) to set flair on",
+          "title": "Post ID",
+          "type": "string"
+        },
+        "flair_template_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of the flair template to use",
+          "title": "Flair Template ID"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom flair text (if allowed)",
+          "title": "Flair Text"
+        }
+      },
+      "required": [
+        "thing_id"
+      ],
+      "title": "Set Link Flair",
+      "type": "object"
+    },
+    "RedditSetSuggestedSortConfig": {
+      "description": "Set suggested sort for a post (moderator only)",
+      "properties": {
+        "operation": {
+          "const": "set_post_suggested_sort",
+          "default": "set_post_suggested_sort",
+          "title": "Set Post Suggested Sort",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Set Post Suggested Sort",
+          "x-is-trigger": false
+        },
+        "thing_id": {
+          "description": "Full ID of post (t3_xxx)",
+          "title": "Post ID",
+          "type": "string"
+        },
+        "sort": {
+          "anyOf": [
+            {
+              "enum": [
+                "confidence",
+                "top",
+                "new",
+                "controversial",
+                "old",
+                "qa",
+                "live",
+                "blank"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "blank",
+          "description": "Suggested sort (blank to clear)",
+          "title": "Sort",
+          "enum": [
+            "confidence",
+            "top",
+            "new",
+            "controversial",
+            "old",
+            "qa",
+            "live",
+            "blank"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "thing_id"
+      ],
+      "title": "Set Suggested Sort",
+      "type": "object"
+    },
+    "RedditSetUserFlairConfig": {
+      "description": "Set user flair in a subreddit",
+      "properties": {
+        "operation": {
+          "const": "set_user_flair_in_subreddit",
+          "default": "set_user_flair_in_subreddit",
+          "title": "Set User Flair in Subreddit",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Set User Flair in Subreddit",
+          "x-is-trigger": false
+        },
+        "subreddit": {
+          "description": "Subreddit to set flair in (without r/)",
+          "title": "Subreddit",
+          "type": "string"
+        },
+        "flair_template_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "ID of the flair template to use",
+          "title": "Flair Template ID"
+        },
+        "text": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom flair text (if allowed)",
+          "title": "Flair Text"
+        }
+      },
+      "required": [
+        "subreddit"
+      ],
+      "title": "Set User Flair",
+      "type": "object"
+    },
+    "RedditStickyPostConfig": {
+      "description": "Sticky or unsticky a post in a subreddit (moderator only)",
+      "properties": {
+        "operation": {
+          "const": "sticky_or_unsticky_post",
+          "default": "sticky_or_unsticky_post",
+          "title": "Sticky or Unsticky Post",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Sticky or Unsticky Post",
+          "x-is-trigger": false
+        },
+        "thing_id": {
+          "description": "Full ID of post (t3_xxx) to sticky",
+          "title": "Post ID",
+          "type": "string"
+        },
+        "state": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "True to sticky, False to unsticky",
+          "title": "Sticky"
+        },
+        "num": {
+          "anyOf": [
+            {
+              "enum": [
+                1,
+                2
+              ],
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Sticky slot (1 or 2)",
+          "title": "Slot"
+        }
+      },
+      "required": [
+        "thing_id"
+      ],
+      "title": "Sticky Post",
+      "type": "object"
+    },
+    "RedditSubmitCommentConfig": {
+      "description": "Submit a comment on a post or reply to a comment",
+      "properties": {
+        "operation": {
+          "const": "submit_comment",
+          "default": "submit_comment",
+          "title": "Submit Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Submit Comment",
+          "x-is-trigger": false
+        },
+        "thing_id": {
+          "description": "Full ID of post (t3_xxx) or comment (t1_xxx) to reply to",
+          "title": "Thing ID",
+          "type": "string"
+        },
+        "text": {
+          "description": "Comment body (Markdown supported)",
+          "title": "Comment Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "thing_id",
+        "text"
+      ],
+      "title": "Submit Comment",
+      "type": "object"
+    },
+    "RedditSubmitLinkPostConfig": {
+      "description": "Submit a link post to a subreddit",
+      "properties": {
+        "operation": {
+          "const": "submit_link_post",
+          "default": "submit_link_post",
+          "title": "Submit Link Post",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Submit Link Post",
+          "x-is-trigger": false
+        },
+        "subreddit": {
+          "description": "Subreddit to post to (without r/)",
+          "title": "Subreddit",
+          "type": "string"
+        },
+        "title": {
+          "description": "Post title",
+          "title": "Title",
+          "type": "string"
+        },
+        "url": {
+          "description": "URL to link to",
+          "title": "URL",
+          "type": "string"
+        },
+        "nsfw": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Mark as NSFW content",
+          "title": "NSFW"
+        },
+        "spoiler": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Mark as containing spoilers",
+          "title": "Spoiler"
+        }
+      },
+      "required": [
+        "subreddit",
+        "title",
+        "url"
+      ],
+      "title": "Submit Link Post",
+      "type": "object"
+    },
+    "RedditSubmitTextPostConfig": {
+      "description": "Submit a text post to a subreddit",
+      "properties": {
+        "operation": {
+          "const": "submit_text_post",
+          "default": "submit_text_post",
+          "title": "Submit Text Post",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Submit Text Post",
+          "x-is-trigger": false
+        },
+        "subreddit": {
+          "description": "Subreddit to post to (without r/)",
+          "title": "Subreddit",
+          "type": "string"
+        },
+        "title": {
+          "description": "Post title",
+          "title": "Title",
+          "type": "string"
+        },
+        "text": {
+          "description": "Post body (Markdown supported)",
+          "title": "Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "nsfw": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Mark as NSFW content",
+          "title": "NSFW"
+        },
+        "spoiler": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Mark as containing spoilers",
+          "title": "Spoiler"
+        }
+      },
+      "required": [
+        "subreddit",
+        "title",
+        "text"
+      ],
+      "title": "Submit Text Post",
+      "type": "object"
+    },
+    "RedditSubscribeConfig": {
+      "description": "Subscribe or unsubscribe from a subreddit",
+      "properties": {
+        "operation": {
+          "const": "subscribe_to_subreddit",
+          "default": "subscribe_to_subreddit",
+          "title": "Subscribe to Subreddit",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subreddit",
+          "x-display-name": "Subscribe to Subreddit",
+          "x-is-trigger": false
+        },
+        "subreddit": {
+          "description": "Subreddit name (without r/)",
+          "title": "Subreddit",
+          "type": "string"
+        },
+        "unsubscribe": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Set to true to unsubscribe instead of subscribe",
+          "title": "Unsubscribe"
+        }
+      },
+      "required": [
+        "subreddit"
+      ],
+      "title": "Subscribe",
+      "type": "object"
+    },
+    "RedditUnblockUserConfig": {
+      "description": "Unblock a user",
+      "properties": {
+        "operation": {
+          "const": "unblock_user",
+          "default": "unblock_user",
+          "title": "Unblock User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "User",
+          "x-display-name": "Unblock User",
+          "x-is-trigger": false
+        },
+        "username": {
+          "description": "Username to unblock (without u/)",
+          "title": "Username",
+          "type": "string"
+        }
+      },
+      "required": [
+        "username"
+      ],
+      "title": "Unblock User",
+      "type": "object"
+    },
+    "RedditUnreadMessageConfig": {
+      "description": "Mark a message as unread",
+      "properties": {
+        "operation": {
+          "const": "mark_messages_as_unread",
+          "default": "mark_messages_as_unread",
+          "title": "Mark Messages As Unread",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Mark Messages As Unread",
+          "x-is-trigger": false
+        },
+        "thing_ids": {
+          "description": "Comma-separated list of message IDs (t4_xxx) to mark as unread",
+          "title": "Message IDs",
+          "type": "string"
+        }
+      },
+      "required": [
+        "thing_ids"
+      ],
+      "title": "Unread Message",
+      "type": "object"
+    },
+    "RedditUpdateLiveThreadConfig": {
+      "description": "Post an update to a live thread",
+      "properties": {
+        "operation": {
+          "const": "post_live_thread_update",
+          "default": "post_live_thread_update",
+          "title": "Post Live Thread Update",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Live Thread",
+          "x-display-name": "Post Live Thread Update",
+          "x-is-trigger": false
+        },
+        "thread_id": {
+          "description": "Live thread ID",
+          "title": "Thread ID",
+          "type": "string"
+        },
+        "body": {
+          "description": "The update content (Markdown supported)",
+          "title": "Update Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "thread_id",
+        "body"
+      ],
+      "title": "Update Live Thread",
+      "type": "object"
+    },
+    "RedditUpdateMultiredditConfig": {
+      "description": "Update a multireddit",
+      "properties": {
+        "operation": {
+          "const": "update_multireddit",
+          "default": "update_multireddit",
+          "title": "Update Multireddit",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Multireddit",
+          "x-display-name": "Update Multireddit",
+          "x-is-trigger": false
+        },
+        "multiname": {
+          "description": "Name of the multireddit to update",
+          "title": "Multireddit Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New description (Markdown supported)",
+          "title": "Description",
+          "ui:widget": "textarea"
+        },
+        "visibility": {
+          "anyOf": [
+            {
+              "enum": [
+                "private",
+                "public",
+                "hidden"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New visibility setting",
+          "title": "Visibility",
+          "enum": [
+            "private",
+            "public",
+            "hidden"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "multiname"
+      ],
+      "title": "Update Multireddit",
+      "type": "object"
+    },
+    "RedditVoteConfig": {
+      "description": "Vote on a post or comment",
+      "properties": {
+        "operation": {
+          "const": "vote_on_post_or_comment",
+          "default": "vote_on_post_or_comment",
+          "title": "Vote on Post or Comment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Post",
+          "x-display-name": "Vote on Post or Comment",
+          "x-is-trigger": false
+        },
+        "thing_id": {
+          "description": "Full ID of post (t3_xxx) or comment (t1_xxx) to vote on",
+          "title": "Thing ID",
+          "type": "string"
+        },
+        "direction": {
+          "description": "Vote direction: up (upvote), down (downvote), none (remove vote)",
+          "enum": [
+            "up",
+            "down",
+            "none"
+          ],
+          "title": "Direction",
+          "type": "string"
+        }
+      },
+      "required": [
+        "thing_id",
+        "direction"
+      ],
+      "title": "Vote",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for Reddit node including credentials",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_subreddit_to_multireddit": "#/$defs/RedditAddSubredditToMultiConfig",
+          "approve_post_or_comment": "#/$defs/RedditApproveConfig",
+          "block_user": "#/$defs/RedditBlockUserConfig",
+          "check_username_availability": "#/$defs/RedditCheckUsernameConfig",
+          "close_live_thread": "#/$defs/RedditCloseLiveThreadConfig",
+          "create_live_thread": "#/$defs/RedditCreateLiveThreadConfig",
+          "create_multireddit": "#/$defs/RedditCreateMultiredditConfig",
+          "crosspost_to_subreddit": "#/$defs/RedditCrosspostConfig",
+          "delete_message": "#/$defs/RedditDeleteMessageConfig",
+          "delete_multireddit": "#/$defs/RedditDeleteMultiredditConfig",
+          "delete_post_or_comment": "#/$defs/RedditDeleteConfig",
+          "distinguish_post_or_comment": "#/$defs/RedditDistinguishConfig",
+          "edit_post_or_comment": "#/$defs/RedditEditConfig",
+          "get_authenticated_user_info": "#/$defs/RedditGetMeConfig",
+          "get_authenticated_user_preferences": "#/$defs/RedditGetPreferencesConfig",
+          "get_best_posts": "#/$defs/RedditGetBestConfig",
+          "get_blocked_users": "#/$defs/RedditGetBlockedUsersConfig",
+          "get_default_subreddits": "#/$defs/RedditGetDefaultSubredditsConfig",
+          "get_duplicate_posts": "#/$defs/RedditGetDuplicatesConfig",
+          "get_friends_list": "#/$defs/RedditGetFriendsConfig",
+          "get_gilded_content": "#/$defs/RedditGetGildedConfig",
+          "get_inbox_messages": "#/$defs/RedditGetInboxConfig",
+          "get_info_by_fullname_batch": "#/$defs/RedditGetInfoConfig",
+          "get_karma_breakdown": "#/$defs/RedditGetKarmaConfig",
+          "get_live_thread": "#/$defs/RedditGetLiveThreadConfig",
+          "get_live_thread_updates": "#/$defs/RedditGetLiveThreadUpdatesConfig",
+          "get_multireddit": "#/$defs/RedditGetMultiredditConfig",
+          "get_multireddit_posts": "#/$defs/RedditGetMultiredditPostsConfig",
+          "get_my_multireddits": "#/$defs/RedditGetMyMultiredditsConfig",
+          "get_my_subscribed_subreddits": "#/$defs/RedditGetMySubredditsConfig",
+          "get_new_subreddits": "#/$defs/RedditGetNewSubredditsConfig",
+          "get_popular_subreddits": "#/$defs/RedditGetPopularSubredditsConfig",
+          "get_post": "#/$defs/RedditGetPostConfig",
+          "get_post_comments": "#/$defs/RedditGetPostCommentsConfig",
+          "get_random_submission": "#/$defs/RedditGetRandomSubmissionConfig",
+          "get_random_subreddit": "#/$defs/RedditGetRandomSubredditConfig",
+          "get_subreddit_comments": "#/$defs/RedditGetSubredditCommentsConfig",
+          "get_subreddit_info": "#/$defs/RedditGetSubredditInfoConfig",
+          "get_subreddit_link_flair_options": "#/$defs/RedditGetLinkFlairConfig",
+          "get_subreddit_moderators": "#/$defs/RedditGetSubredditModeratorsConfig",
+          "get_subreddit_posts": "#/$defs/RedditGetSubredditPostsConfig",
+          "get_subreddit_rules": "#/$defs/RedditGetSubredditRulesConfig",
+          "get_subreddit_traffic_stats": "#/$defs/RedditGetSubredditTrafficConfig",
+          "get_user_comments": "#/$defs/RedditGetUserCommentsConfig",
+          "get_user_flair_options": "#/$defs/RedditGetUserFlairConfig",
+          "get_user_info": "#/$defs/RedditGetUserConfig",
+          "get_user_posts": "#/$defs/RedditGetUserPostsConfig",
+          "get_user_saved_posts_and_comments": "#/$defs/RedditGetUserSavedConfig",
+          "get_user_trophies": "#/$defs/RedditGetTrophiesConfig",
+          "get_wiki_page": "#/$defs/RedditGetWikiPageConfig",
+          "get_wiki_page_revisions": "#/$defs/RedditGetWikiRevisionsConfig",
+          "give_award_to_post_or_comment": "#/$defs/RedditGiveAwardConfig",
+          "hide_post_from_feed": "#/$defs/RedditHideConfig",
+          "ignore_reports_on_content": "#/$defs/RedditIgnoreReportsConfig",
+          "list_wiki_pages": "#/$defs/RedditGetWikiPagesConfig",
+          "load_more_comments": "#/$defs/RedditGetMoreCommentsConfig",
+          "lock_post_or_comment": "#/$defs/RedditLockConfig",
+          "mark_all_messages_as_read": "#/$defs/RedditMarkAllMessagesReadConfig",
+          "mark_messages_as_read": "#/$defs/RedditMarkMessagesReadConfig",
+          "mark_messages_as_unread": "#/$defs/RedditUnreadMessageConfig",
+          "mark_post_as_nsfw": "#/$defs/RedditMarkNsfwConfig",
+          "mark_post_as_spoiler": "#/$defs/RedditMarkSpoilerConfig",
+          "post_live_thread_update": "#/$defs/RedditUpdateLiveThreadConfig",
+          "remove_post_or_comment": "#/$defs/RedditRemoveConfig",
+          "remove_subreddit_from_multireddit": "#/$defs/RedditRemoveSubredditFromMultiConfig",
+          "reply_to_message": "#/$defs/RedditReplyMessageConfig",
+          "report_post_or_comment": "#/$defs/RedditReportConfig",
+          "report_user": "#/$defs/RedditReportUserConfig",
+          "save_post_or_comment": "#/$defs/RedditSaveConfig",
+          "search_reddit": "#/$defs/RedditSearchConfig",
+          "search_subreddits": "#/$defs/RedditSearchSubredditsConfig",
+          "send_private_message": "#/$defs/RedditSendMessageConfig",
+          "set_post_contest_mode": "#/$defs/RedditSetContestModeConfig",
+          "set_post_link_flair": "#/$defs/RedditSetLinkFlairConfig",
+          "set_post_suggested_sort": "#/$defs/RedditSetSuggestedSortConfig",
+          "set_user_flair_in_subreddit": "#/$defs/RedditSetUserFlairConfig",
+          "sticky_or_unsticky_post": "#/$defs/RedditStickyPostConfig",
+          "submit_comment": "#/$defs/RedditSubmitCommentConfig",
+          "submit_link_post": "#/$defs/RedditSubmitLinkPostConfig",
+          "submit_text_post": "#/$defs/RedditSubmitTextPostConfig",
+          "subscribe_to_subreddit": "#/$defs/RedditSubscribeConfig",
+          "toggle_post_inbox_replies": "#/$defs/RedditSendRepliesConfig",
+          "unblock_user": "#/$defs/RedditUnblockUserConfig",
+          "update_multireddit": "#/$defs/RedditUpdateMultiredditConfig",
+          "vote_on_post_or_comment": "#/$defs/RedditVoteConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/RedditGetMeConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditGetUserConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditGetUserPostsConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditGetUserCommentsConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditGetUserSavedConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditGetTrophiesConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditBlockUserConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditGetFriendsConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditGetKarmaConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditGetPreferencesConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditCheckUsernameConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditReportUserConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditGetSubredditPostsConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditGetSubredditInfoConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditGetSubredditRulesConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditGetMySubredditsConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditSubscribeConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditSearchSubredditsConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditGetSubredditModeratorsConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditGetRandomSubredditConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditGetPopularSubredditsConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditGetNewSubredditsConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditGetSubredditCommentsConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditGetPostConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditGetPostCommentsConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditGetDuplicatesConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditSubmitTextPostConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditSubmitLinkPostConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditCrosspostConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditHideConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditReportConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditMarkNsfwConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditMarkSpoilerConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditGetRandomSubmissionConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditSubmitCommentConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditVoteConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditEditConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditDeleteConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditSaveConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditGetLinkFlairConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditSetLinkFlairConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditGetUserFlairConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditSetUserFlairConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditGetBestConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditGetGildedConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditGetMultiredditConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditGetMyMultiredditsConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditGetMultiredditPostsConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditCreateMultiredditConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditDeleteMultiredditConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditUpdateMultiredditConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditAddSubredditToMultiConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditRemoveSubredditFromMultiConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditSendMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditGetInboxConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditMarkMessagesReadConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditDeleteMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditReplyMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditMarkAllMessagesReadConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditUnreadMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditGetWikiPagesConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditGetWikiPageConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditGetWikiRevisionsConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditCreateLiveThreadConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditGetLiveThreadConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditGetLiveThreadUpdatesConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditUpdateLiveThreadConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditCloseLiveThreadConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditGiveAwardConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditGetInfoConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditGetMoreCommentsConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditLockConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditApproveConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditRemoveConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditDistinguishConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditStickyPostConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditSetContestModeConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditSetSuggestedSortConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditSendRepliesConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditGetDefaultSubredditsConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditGetBlockedUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditUnblockUserConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditGetSubredditTrafficConfig"
+        },
+        {
+          "$ref": "#/$defs/RedditIgnoreReportsConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/RedditOAuthCredential"
+        },
+        {
+          "$ref": "#/$defs/RedditScriptCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Reddit Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Submit a text post about Python tutorials to r/learnprogramming",
+    "Search Reddit for posts about climate change in r/science",
+    "Get top comments from a post about AI safety in the last week",
+    "Post a comment replying to a discussion about machine learning",
+    "Fetch public subreddit posts from r/python this month without Reddit credentials",
+    "Vote on posts and comments in r/technology"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

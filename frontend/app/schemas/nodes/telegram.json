@@ -1,0 +1,3195 @@
+{
+  "$defs": {
+    "TelegramAnswerCallbackQueryConfig": {
+      "description": "Answer a callback query from an inline keyboard button",
+      "properties": {
+        "operation": {
+          "const": "answer_inline_button_callback",
+          "default": "answer_inline_button_callback",
+          "title": "Answer Inline Button Callback",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Callback and Inline Query",
+          "x-display-name": "Answer Inline Button Callback",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "answer button press",
+            "respond to button tap",
+            "callback query reply",
+            "acknowledge inline button"
+          ]
+        },
+        "callback_query_id": {
+          "description": "ID received from the callback_query update",
+          "placeholder": "callback_query_id_here",
+          "title": "Callback Query ID",
+          "type": "string"
+        },
+        "text": {
+          "default": "",
+          "description": "Text to show in the notification (0\u2013200 chars)",
+          "placeholder": "Done!",
+          "title": "Notification Text",
+          "type": "string"
+        },
+        "show_alert": {
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes (alert popup)",
+            "No (toast notification)"
+          ],
+          "title": "Show as Alert",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "url": {
+          "default": "",
+          "description": "URL to open in the user's browser",
+          "title": "URL",
+          "type": "string"
+        },
+        "cache_time": {
+          "default": "",
+          "description": "Max seconds the result may be cached client-side",
+          "title": "Cache Time",
+          "type": "string"
+        }
+      },
+      "required": [
+        "callback_query_id"
+      ],
+      "title": "TelegramAnswerCallbackQueryConfig",
+      "type": "object"
+    },
+    "TelegramAnswerInlineQueryConfig": {
+      "description": "Answer an inline query with a list of results",
+      "properties": {
+        "operation": {
+          "const": "answer_inline_search_results",
+          "default": "answer_inline_search_results",
+          "title": "Answer Inline Search Results",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Callback and Inline Query",
+          "x-display-name": "Answer Inline Search Results",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "inline query results",
+            "respond to inline search",
+            "answer mention search",
+            "inline mode results"
+          ]
+        },
+        "inline_query_id": {
+          "placeholder": "inline_query_id_here",
+          "title": "Inline Query ID",
+          "type": "string"
+        },
+        "results": {
+          "description": "JSON array of InlineQueryResult objects (up to 50). See Telegram Bot API docs for InlineQueryResult types.",
+          "placeholder": "[{\"type\":\"article\",\"id\":\"1\",\"title\":\"Result\",\"input_message_content\":{\"message_text\":\"Hello\"}}]",
+          "title": "Results (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "cache_time": {
+          "default": "300",
+          "description": "How long results may be cached server-side",
+          "title": "Cache Time (seconds)",
+          "type": "string"
+        },
+        "is_personal": {
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes (user-specific)",
+            "No (shared cache)"
+          ],
+          "title": "Personal Results",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "next_offset": {
+          "default": "",
+          "description": "Offset for pagination of results",
+          "title": "Next Offset",
+          "type": "string"
+        }
+      },
+      "required": [
+        "inline_query_id",
+        "results"
+      ],
+      "title": "TelegramAnswerInlineQueryConfig",
+      "type": "object"
+    },
+    "TelegramAnswerPreCheckoutQueryConfig": {
+      "description": "Confirm or reject a payment pre-checkout query",
+      "properties": {
+        "operation": {
+          "const": "answer_payment_pre_checkout",
+          "default": "answer_payment_pre_checkout",
+          "title": "Answer Payment Pre Checkout",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Callback and Inline Query",
+          "x-display-name": "Answer Payment Pre Checkout",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "confirm checkout",
+            "approve payment query",
+            "pre checkout reply",
+            "accept or reject payment"
+          ]
+        },
+        "pre_checkout_query_id": {
+          "placeholder": "query_id_here",
+          "title": "Pre-Checkout Query ID",
+          "type": "string"
+        },
+        "ok": {
+          "default": "true",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes (approve)",
+            "No (reject)"
+          ],
+          "title": "Approve Payment",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "error_message": {
+          "default": "",
+          "description": "Required if 'ok' is false \u2014 reason for rejection",
+          "title": "Error Message",
+          "type": "string"
+        }
+      },
+      "required": [
+        "pre_checkout_query_id"
+      ],
+      "title": "TelegramAnswerPreCheckoutQueryConfig",
+      "type": "object"
+    },
+    "TelegramBanChatMemberConfig": {
+      "description": "Ban a user from a chat",
+      "properties": {
+        "operation": {
+          "const": "ban_user_from_chat",
+          "default": "ban_user_from_chat",
+          "title": "Ban User from Chat",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Chat Member",
+          "x-display-name": "Ban User from Chat",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "ban a member",
+            "kick and ban",
+            "block user",
+            "remove member permanently"
+          ]
+        },
+        "chatId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "placeholder": "-1001234567890",
+          "title": "Chat ID"
+        },
+        "user_id": {
+          "description": "ID of the user to ban",
+          "placeholder": "123456789",
+          "title": "User ID",
+          "type": "string"
+        },
+        "until_date": {
+          "default": "",
+          "description": "Unix timestamp when ban is lifted (0 or empty = permanent)",
+          "title": "Until Date",
+          "type": "string"
+        },
+        "revoke_messages": {
+          "default": "false",
+          "description": "Delete all messages from this user",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Delete Messages",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "chatId",
+        "user_id"
+      ],
+      "title": "TelegramBanChatMemberConfig",
+      "type": "object"
+    },
+    "TelegramBotTokenCredential": {
+      "description": "Telegram Bot API token credential structure",
+      "properties": {
+        "credential_type": {
+          "const": "telegram_bot_token",
+          "default": "telegram_bot_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "token": {
+          "description": "Bot token from @BotFather",
+          "minLength": 1,
+          "placeholder": "123456789:ABCdefGHIjklMNOpqrsTUVwxyz",
+          "title": "Bot Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "token"
+      ],
+      "title": "TelegramBotTokenCredential",
+      "type": "object"
+    },
+    "TelegramChannelConfig": {
+      "description": "Send message to a public channel or group",
+      "properties": {
+        "operation": {
+          "const": "send_message_to_channel",
+          "default": "send_message_to_channel",
+          "title": "Send Message to Channel",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Channel",
+          "x-display-name": "Send Message to Channel",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "post to channel",
+            "broadcast to group",
+            "announce in channel",
+            "message a group",
+            "publish to channel"
+          ]
+        },
+        "message": {
+          "description": "The message to send via Telegram",
+          "minLength": 1,
+          "title": "Message",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "username": {
+          "description": "Public channel/group username (bot must be admin).",
+          "pattern": "^@?[a-zA-Z0-9_]+$",
+          "placeholder": "@channel_name",
+          "title": "Channel Username",
+          "type": "string"
+        }
+      },
+      "required": [
+        "message",
+        "username"
+      ],
+      "title": "TelegramChannelConfig",
+      "type": "object"
+    },
+    "TelegramChatIdConfig": {
+      "description": "Send message directly to a chat ID",
+      "properties": {
+        "operation": {
+          "const": "send_message_to_chat",
+          "default": "send_message_to_chat",
+          "title": "Send Message to Chat",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Send Message to Chat",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "message a chat",
+            "text a chat",
+            "dm someone",
+            "message by chat id",
+            "ping a user"
+          ]
+        },
+        "message": {
+          "description": "The message to send via Telegram",
+          "minLength": 1,
+          "title": "Message",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "chatId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "description": "Numeric chat ID. For users: they must message the bot first.",
+          "placeholder": "123456789",
+          "title": "Chat ID"
+        }
+      },
+      "required": [
+        "message",
+        "chatId"
+      ],
+      "title": "TelegramChatIdConfig",
+      "type": "object"
+    },
+    "TelegramConnectChannelConfig": {
+      "description": "Connect a Telegram channel by entering its @username or numeric ID.\n\nThe bot must already be added as an admin to the channel before running.\nThis node validates the connection and returns the channel details.\nWorks correctly in setup flows \u2014 runs once and returns channel_id immediately.",
+      "properties": {
+        "operation": {
+          "const": "connect_telegram_channel",
+          "default": "connect_telegram_channel",
+          "title": "Connect Telegram Channel",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Channel",
+          "x-display-name": "Connect Telegram Channel",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "link channel by username",
+            "connect channel manually",
+            "add channel by id",
+            "validate channel connection"
+          ]
+        },
+        "channel_identifier": {
+          "default": "",
+          "description": "Enter your channel @username (e.g. @mychannel) or numeric ID (e.g. -1001234567890). Add your bot as admin to the channel first.",
+          "title": "Channel Username or ID",
+          "type": "string",
+          "ui:placeholder": "@mychannel or -1001234567890"
+        }
+      },
+      "title": "TelegramConnectChannelConfig",
+      "type": "object"
+    },
+    "TelegramCopyMessageConfig": {
+      "description": "Copy a message to another chat (without forward tag)",
+      "properties": {
+        "operation": {
+          "const": "copy_message_to_chat",
+          "default": "copy_message_to_chat",
+          "title": "Copy Message to Chat",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Copy Message to Chat",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "copy a message",
+            "resend without forward",
+            "duplicate message elsewhere",
+            "repost message clean"
+          ]
+        },
+        "chatId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "placeholder": "123456789",
+          "title": "Destination Chat ID"
+        },
+        "from_chat_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "placeholder": "-1001234567890",
+          "title": "Source Chat ID"
+        },
+        "message_id": {
+          "placeholder": "42",
+          "title": "Message ID",
+          "type": "string"
+        },
+        "caption": {
+          "default": "",
+          "description": "Optional new caption (overrides original)",
+          "title": "New Caption",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "chatId",
+        "from_chat_id",
+        "message_id"
+      ],
+      "title": "TelegramCopyMessageConfig",
+      "type": "object"
+    },
+    "TelegramCreateInviteLinkConfig": {
+      "description": "Create an additional invite link for a chat",
+      "properties": {
+        "operation": {
+          "const": "create_chat_invite_link",
+          "default": "create_chat_invite_link",
+          "title": "Create Chat Invite Link",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invite Link",
+          "x-display-name": "Create Chat Invite Link",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new invite link",
+            "generate invite",
+            "make join link",
+            "share invite url"
+          ]
+        },
+        "chatId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "placeholder": "-1001234567890",
+          "title": "Chat ID"
+        },
+        "name": {
+          "default": "",
+          "description": "Invite link name (0\u201332 chars)",
+          "title": "Link Name",
+          "type": "string"
+        },
+        "expire_date": {
+          "default": "",
+          "description": "Unix timestamp when link expires",
+          "title": "Expire Date",
+          "type": "string"
+        },
+        "member_limit": {
+          "default": "",
+          "description": "Max number of users that can join (1\u201399999)",
+          "title": "Member Limit",
+          "type": "string"
+        },
+        "creates_join_request": {
+          "default": "false",
+          "description": "Users joining via link must be approved by admin",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes (approval required)",
+            "No (join directly)"
+          ],
+          "title": "Requires Approval",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "chatId"
+      ],
+      "title": "TelegramCreateInviteLinkConfig",
+      "type": "object"
+    },
+    "TelegramDeleteMessageConfig": {
+      "description": "Delete a message",
+      "properties": {
+        "operation": {
+          "const": "delete_message",
+          "default": "delete_message",
+          "title": "Delete Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Delete Message",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove a message",
+            "delete one message",
+            "erase message",
+            "take down message"
+          ]
+        },
+        "chatId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "placeholder": "123456789",
+          "title": "Chat ID"
+        },
+        "message_id": {
+          "description": "ID of the message to delete",
+          "placeholder": "42",
+          "title": "Message ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chatId",
+        "message_id"
+      ],
+      "title": "TelegramDeleteMessageConfig",
+      "type": "object"
+    },
+    "TelegramDeleteMessagesConfig": {
+      "description": "Delete multiple messages at once",
+      "properties": {
+        "operation": {
+          "const": "delete_multiple_messages",
+          "default": "delete_multiple_messages",
+          "title": "Delete Multiple Messages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Delete Multiple Messages",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "bulk delete messages",
+            "delete many messages",
+            "clear several messages",
+            "remove messages batch",
+            "purge messages"
+          ]
+        },
+        "chatId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "placeholder": "123456789",
+          "title": "Chat ID"
+        },
+        "message_ids": {
+          "description": "Comma-separated message IDs (up to 100)",
+          "placeholder": "42,43,44",
+          "title": "Message IDs",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chatId",
+        "message_ids"
+      ],
+      "title": "TelegramDeleteMessagesConfig",
+      "type": "object"
+    },
+    "TelegramEditMessageCaptionConfig": {
+      "description": "Edit the caption of a media message",
+      "properties": {
+        "operation": {
+          "const": "edit_message_caption",
+          "default": "edit_message_caption",
+          "title": "Edit Message Caption",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Edit Message Caption",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "change caption",
+            "rewrite caption",
+            "update media caption",
+            "edit photo caption"
+          ]
+        },
+        "chatId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "placeholder": "123456789",
+          "title": "Chat ID"
+        },
+        "message_id": {
+          "placeholder": "42",
+          "title": "Message ID",
+          "type": "string"
+        },
+        "caption": {
+          "title": "New Caption",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "parse_mode": {
+          "default": "HTML",
+          "enum": [
+            "HTML",
+            "Markdown",
+            "MarkdownV2",
+            ""
+          ],
+          "title": "Parse Mode",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "chatId",
+        "message_id",
+        "caption"
+      ],
+      "title": "TelegramEditMessageCaptionConfig",
+      "type": "object"
+    },
+    "TelegramEditMessageTextConfig": {
+      "description": "Edit the text of a sent message",
+      "properties": {
+        "operation": {
+          "const": "edit_message_text",
+          "default": "edit_message_text",
+          "title": "Edit Message Text",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Edit Message Text",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "change message text",
+            "rewrite message",
+            "fix a message",
+            "update text",
+            "edit sent message"
+          ]
+        },
+        "chatId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "placeholder": "123456789",
+          "title": "Chat ID"
+        },
+        "message_id": {
+          "description": "ID of the message to edit",
+          "placeholder": "42",
+          "title": "Message ID",
+          "type": "string"
+        },
+        "text": {
+          "description": "New message text (HTML supported)",
+          "title": "New Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "parse_mode": {
+          "default": "HTML",
+          "enum": [
+            "HTML",
+            "Markdown",
+            "MarkdownV2",
+            ""
+          ],
+          "title": "Parse Mode",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "chatId",
+        "message_id",
+        "text"
+      ],
+      "title": "TelegramEditMessageTextConfig",
+      "type": "object"
+    },
+    "TelegramForwardMessageConfig": {
+      "description": "Forward a message to another chat",
+      "properties": {
+        "operation": {
+          "const": "forward_message_to_chat",
+          "default": "forward_message_to_chat",
+          "title": "Forward Message to Chat",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Forward Message to Chat",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "forward a message",
+            "relay message",
+            "pass along message",
+            "share with forward tag"
+          ]
+        },
+        "chatId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "placeholder": "123456789",
+          "title": "Destination Chat ID"
+        },
+        "from_chat_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "description": "Chat the message is being forwarded from",
+          "placeholder": "-1001234567890",
+          "title": "Source Chat ID"
+        },
+        "message_id": {
+          "description": "ID of the message to forward",
+          "placeholder": "42",
+          "title": "Message ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chatId",
+        "from_chat_id",
+        "message_id"
+      ],
+      "title": "TelegramForwardMessageConfig",
+      "type": "object"
+    },
+    "TelegramGetChatAdministratorsConfig": {
+      "description": "Get a list of administrators in a chat",
+      "properties": {
+        "operation": {
+          "const": "get_chat_admin_list",
+          "default": "get_chat_admin_list",
+          "title": "Get Chat Admin List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Chat Member",
+          "x-display-name": "Get Chat Admin List",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "list admins",
+            "who are admins",
+            "chat administrators",
+            "moderator list"
+          ]
+        },
+        "chatId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "placeholder": "-1001234567890",
+          "title": "Chat ID"
+        }
+      },
+      "required": [
+        "chatId"
+      ],
+      "title": "TelegramGetChatAdministratorsConfig",
+      "type": "object"
+    },
+    "TelegramGetChatConfig": {
+      "description": "Get full information about a chat",
+      "properties": {
+        "operation": {
+          "const": "get_chat_details",
+          "default": "get_chat_details",
+          "title": "Get Chat Details",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Chat",
+          "x-display-name": "Get Chat Details",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "chat info",
+            "group details",
+            "about this chat",
+            "fetch chat info",
+            "channel metadata"
+          ]
+        },
+        "chatId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "placeholder": "-1001234567890",
+          "title": "Chat ID"
+        }
+      },
+      "required": [
+        "chatId"
+      ],
+      "title": "TelegramGetChatConfig",
+      "type": "object"
+    },
+    "TelegramGetChatMemberConfig": {
+      "description": "Get information about a member of a chat",
+      "properties": {
+        "operation": {
+          "const": "get_chat_member_info",
+          "default": "get_chat_member_info",
+          "title": "Get Chat Member Info",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Chat Member",
+          "x-display-name": "Get Chat Member Info",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "member details",
+            "user status in chat",
+            "is user banned",
+            "member role",
+            "check membership"
+          ]
+        },
+        "chatId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "placeholder": "-1001234567890",
+          "title": "Chat ID"
+        },
+        "user_id": {
+          "description": "Telegram user ID",
+          "placeholder": "123456789",
+          "title": "User ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chatId",
+        "user_id"
+      ],
+      "title": "TelegramGetChatMemberConfig",
+      "type": "object"
+    },
+    "TelegramGetChatMemberCountConfig": {
+      "description": "Get the number of members in a chat",
+      "properties": {
+        "operation": {
+          "const": "get_chat_member_count",
+          "default": "get_chat_member_count",
+          "title": "Get Chat Member Count",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Chat Member",
+          "x-display-name": "Get Chat Member Count",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "how many members",
+            "member total",
+            "group size",
+            "subscriber count",
+            "headcount"
+          ]
+        },
+        "chatId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "placeholder": "-1001234567890",
+          "title": "Chat ID"
+        }
+      },
+      "required": [
+        "chatId"
+      ],
+      "title": "TelegramGetChatMemberCountConfig",
+      "type": "object"
+    },
+    "TelegramGetFileConfig": {
+      "description": "Get info about a file by its file_id (includes download URL)",
+      "properties": {
+        "operation": {
+          "const": "get_file_download_info",
+          "default": "get_file_download_info",
+          "title": "Get File Download Info",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Media",
+          "x-display-name": "Get File Download Info",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "download url for file",
+            "resolve file id",
+            "get file path",
+            "file download link"
+          ]
+        },
+        "file_id": {
+          "description": "file_id from any Telegram message",
+          "placeholder": "BQACAgIAAxkBAAI...",
+          "title": "File ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "file_id"
+      ],
+      "title": "TelegramGetFileConfig",
+      "type": "object"
+    },
+    "TelegramGetMeConfig": {
+      "description": "Get basic information about the bot",
+      "properties": {
+        "operation": {
+          "const": "get_bot_information",
+          "default": "get_bot_information",
+          "title": "Get Bot Information",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Bot",
+          "x-display-name": "Get Bot Information",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "bot details",
+            "who am i bot",
+            "my bot info",
+            "bot identity",
+            "bot profile"
+          ]
+        }
+      },
+      "title": "TelegramGetMeConfig",
+      "type": "object"
+    },
+    "TelegramPinMessageConfig": {
+      "description": "Pin a message in a chat",
+      "properties": {
+        "operation": {
+          "const": "pin_message_in_chat",
+          "default": "pin_message_in_chat",
+          "title": "Pin Message in Chat",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Pin Message in Chat",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "pin a message",
+            "stick message to top",
+            "highlight message"
+          ]
+        },
+        "chatId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "placeholder": "123456789",
+          "title": "Chat ID"
+        },
+        "message_id": {
+          "placeholder": "42",
+          "title": "Message ID",
+          "type": "string"
+        },
+        "disable_notification": {
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes (silent)",
+            "No (notify)"
+          ],
+          "title": "Silent Pin",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "chatId",
+        "message_id"
+      ],
+      "title": "TelegramPinMessageConfig",
+      "type": "object"
+    },
+    "TelegramPromoteChatMemberConfig": {
+      "description": "Promote a user to admin or update their admin rights",
+      "properties": {
+        "operation": {
+          "const": "promote_user_to_admin",
+          "default": "promote_user_to_admin",
+          "title": "Promote User to Admin",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Chat Member",
+          "x-display-name": "Promote User to Admin",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "make admin",
+            "grant admin rights",
+            "promote member",
+            "give moderator role",
+            "set admin powers"
+          ]
+        },
+        "chatId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "placeholder": "-1001234567890",
+          "title": "Chat ID"
+        },
+        "user_id": {
+          "placeholder": "123456789",
+          "title": "User ID",
+          "type": "string"
+        },
+        "can_post_messages": {
+          "default": "true",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "title": "Can Post Messages",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "can_edit_messages": {
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "title": "Can Edit Messages",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "can_delete_messages": {
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "title": "Can Delete Messages",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "can_manage_video_chats": {
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "title": "Can Manage Video Chats",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "can_restrict_members": {
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "title": "Can Restrict Members",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "can_promote_members": {
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "title": "Can Promote Members",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "can_change_info": {
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "title": "Can Change Info",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "can_invite_users": {
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "title": "Can Invite Users",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "can_pin_messages": {
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "title": "Can Pin Messages",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "chatId",
+        "user_id"
+      ],
+      "title": "TelegramPromoteChatMemberConfig",
+      "type": "object"
+    },
+    "TelegramReceiveConfig": {
+      "description": "Receive messages via webhook (trigger mode).",
+      "properties": {
+        "operation": {
+          "const": "receive_webhook_messages",
+          "default": "receive_webhook_messages",
+          "title": "Receive Webhook Messages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "Receive Webhook Messages",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "when new message",
+            "on incoming message",
+            "watch for messages",
+            "bot receives message",
+            "listen for updates"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "telegram_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Telegram Registered",
+          "ui:hidden": true
+        },
+        "telegram_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Telegram Error",
+          "ui:hidden": true
+        }
+      },
+      "title": "TelegramReceiveConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "TelegramRestrictChatMemberConfig": {
+      "description": "Restrict a user's permissions in a chat",
+      "properties": {
+        "operation": {
+          "const": "restrict_user_permissions",
+          "default": "restrict_user_permissions",
+          "title": "Restrict User Permissions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Chat Member",
+          "x-display-name": "Restrict User Permissions",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "mute a user",
+            "limit member",
+            "silence user",
+            "restrict posting",
+            "read only user"
+          ]
+        },
+        "chatId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "placeholder": "-1001234567890",
+          "title": "Chat ID"
+        },
+        "user_id": {
+          "placeholder": "123456789",
+          "title": "User ID",
+          "type": "string"
+        },
+        "permissions": {
+          "description": "ChatPermissions object. E.g. {\"can_send_messages\": true, \"can_send_polls\": false}",
+          "placeholder": "{\"can_send_messages\": true, \"can_send_polls\": false, \"can_send_other_messages\": false}",
+          "title": "Permissions (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "until_date": {
+          "default": "",
+          "description": "Unix timestamp when restriction is lifted (0 or empty = forever)",
+          "title": "Until Date",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chatId",
+        "user_id",
+        "permissions"
+      ],
+      "title": "TelegramRestrictChatMemberConfig",
+      "type": "object"
+    },
+    "TelegramRevokeInviteLinkConfig": {
+      "description": "Revoke an invite link to a chat",
+      "properties": {
+        "operation": {
+          "const": "revoke_chat_invite_link",
+          "default": "revoke_chat_invite_link",
+          "title": "Revoke Chat Invite Link",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invite Link",
+          "x-display-name": "Revoke Chat Invite Link",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "revoke invite",
+            "disable invite link",
+            "kill join link",
+            "expire invite"
+          ]
+        },
+        "chatId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "placeholder": "-1001234567890",
+          "title": "Chat ID"
+        },
+        "invite_link": {
+          "description": "The invite link to revoke",
+          "placeholder": "https://t.me/+abc123",
+          "title": "Invite Link",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chatId",
+        "invite_link"
+      ],
+      "title": "TelegramRevokeInviteLinkConfig",
+      "type": "object"
+    },
+    "TelegramSendAnimationConfig": {
+      "description": "Send a GIF or silent H.264/MPEG-4 AVC video",
+      "properties": {
+        "operation": {
+          "const": "send_animated_video",
+          "default": "send_animated_video",
+          "title": "Send Animated Video",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Media",
+          "x-display-name": "Send Animated Video",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "send gif",
+            "share gif",
+            "animated clip",
+            "silent video",
+            "looping video"
+          ]
+        },
+        "chatId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "placeholder": "123456789",
+          "title": "Chat ID"
+        },
+        "animation": {
+          "description": "file_id or URL of the GIF/animation",
+          "placeholder": "https://example.com/animation.gif",
+          "title": "Animation",
+          "type": "string"
+        },
+        "caption": {
+          "default": "",
+          "title": "Caption",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "parse_mode": {
+          "default": "HTML",
+          "enum": [
+            "HTML",
+            "Markdown",
+            "MarkdownV2",
+            ""
+          ],
+          "title": "Parse Mode",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "chatId",
+        "animation"
+      ],
+      "title": "TelegramSendAnimationConfig",
+      "type": "object"
+    },
+    "TelegramSendAudioConfig": {
+      "description": "Send an audio file to a chat",
+      "properties": {
+        "operation": {
+          "const": "send_audio_file",
+          "default": "send_audio_file",
+          "title": "Send Audio File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Media",
+          "x-display-name": "Send Audio File",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "share audio",
+            "send music",
+            "send mp3",
+            "send sound file"
+          ]
+        },
+        "chatId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "placeholder": "123456789",
+          "title": "Chat ID"
+        },
+        "audio": {
+          "description": "The audio file to send \u2014 upload a file, paste a URL, or reference an upstream file (e.g. {{http-1.response.url}}). A Telegram file_id also works.",
+          "placeholder": "https://example.com/audio.mp3",
+          "title": "Audio",
+          "type": "string",
+          "ui:accept": "audio/*",
+          "ui:widget": "media_upload"
+        },
+        "caption": {
+          "default": "",
+          "title": "Caption",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "performer": {
+          "default": "",
+          "description": "Performer / artist name",
+          "title": "Performer",
+          "type": "string"
+        },
+        "title": {
+          "default": "",
+          "description": "Track title",
+          "title": "Track Title",
+          "type": "string"
+        },
+        "duration": {
+          "default": "",
+          "title": "Duration (seconds)",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chatId",
+        "audio"
+      ],
+      "title": "TelegramSendAudioConfig",
+      "type": "object"
+    },
+    "TelegramSendChatActionConfig": {
+      "description": "Show a 'typing\u2026' or 'uploading\u2026' indicator in a chat",
+      "properties": {
+        "operation": {
+          "const": "send_chat_typing_indicator",
+          "default": "send_chat_typing_indicator",
+          "title": "Send Chat Typing Indicator",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Chat Action",
+          "x-display-name": "Send Chat Typing Indicator",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "typing indicator",
+            "show typing",
+            "typing dots",
+            "uploading status",
+            "bot is typing"
+          ]
+        },
+        "chatId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "placeholder": "123456789",
+          "title": "Chat ID"
+        },
+        "action": {
+          "enum": [
+            "typing",
+            "upload_photo",
+            "record_video",
+            "upload_video",
+            "record_voice",
+            "upload_voice",
+            "upload_document",
+            "choose_sticker",
+            "find_location",
+            "record_video_note",
+            "upload_video_note"
+          ],
+          "title": "Action",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "chatId",
+        "action"
+      ],
+      "title": "TelegramSendChatActionConfig",
+      "type": "object"
+    },
+    "TelegramSendContactConfig": {
+      "description": "Send a phone contact",
+      "properties": {
+        "operation": {
+          "const": "send_contact_information",
+          "default": "send_contact_information",
+          "title": "Send Contact Information",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Location and Contact",
+          "x-display-name": "Send Contact Information",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "share contact",
+            "send phone number",
+            "send vcard",
+            "share a person"
+          ]
+        },
+        "chatId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "placeholder": "123456789",
+          "title": "Chat ID"
+        },
+        "phone_number": {
+          "description": "Contact's phone number",
+          "placeholder": "+12025550100",
+          "title": "Phone Number",
+          "type": "string"
+        },
+        "first_name": {
+          "description": "Contact's first name",
+          "title": "First Name",
+          "type": "string"
+        },
+        "last_name": {
+          "default": "",
+          "description": "Contact's last name (optional)",
+          "title": "Last Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chatId",
+        "phone_number",
+        "first_name"
+      ],
+      "title": "TelegramSendContactConfig",
+      "type": "object"
+    },
+    "TelegramSendDiceConfig": {
+      "description": "Send an animated emoji that displays a random value",
+      "properties": {
+        "operation": {
+          "const": "send_dice_emoji",
+          "default": "send_dice_emoji",
+          "title": "Send Dice Emoji",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Dice",
+          "x-display-name": "Send Dice Emoji",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "roll dice",
+            "throw dice",
+            "random emoji",
+            "spin slot machine",
+            "lucky roll"
+          ]
+        },
+        "chatId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "placeholder": "123456789",
+          "title": "Chat ID"
+        },
+        "emoji": {
+          "default": "\ud83c\udfb2",
+          "enum": [
+            "\ud83c\udfb2",
+            "\ud83c\udfaf",
+            "\ud83c\udfc0",
+            "\u26bd",
+            "\ud83c\udfb3",
+            "\ud83c\udfb0"
+          ],
+          "title": "Emoji",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "chatId"
+      ],
+      "title": "TelegramSendDiceConfig",
+      "type": "object"
+    },
+    "TelegramSendDocumentConfig": {
+      "description": "Send a document/file to a chat ID",
+      "properties": {
+        "operation": {
+          "const": "send_document_file",
+          "default": "send_document_file",
+          "title": "Send Document File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Media",
+          "x-display-name": "Send Document File",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "attach a file",
+            "send pdf",
+            "share document",
+            "upload file to chat"
+          ]
+        },
+        "chatId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "placeholder": "123456789",
+          "title": "Chat ID"
+        },
+        "document_url": {
+          "description": "The document to send \u2014 upload a file, paste a URL, or reference an upstream file (e.g. {{http-1.response.url}}). A Telegram file_id also works.",
+          "minLength": 1,
+          "placeholder": "https://example.com/file.pdf",
+          "title": "Document",
+          "type": "string",
+          "ui:widget": "media_upload"
+        },
+        "caption": {
+          "default": "",
+          "description": "Optional caption for the document",
+          "title": "Caption",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "chatId",
+        "document_url"
+      ],
+      "title": "TelegramSendDocumentConfig",
+      "type": "object"
+    },
+    "TelegramSendInvoiceConfig": {
+      "description": "Send a payment invoice",
+      "properties": {
+        "operation": {
+          "const": "send_payment_invoice",
+          "default": "send_payment_invoice",
+          "title": "Send Payment Invoice",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Invoice",
+          "x-display-name": "Send Payment Invoice",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "bill the user",
+            "request payment",
+            "send invoice",
+            "charge for purchase",
+            "checkout invoice"
+          ]
+        },
+        "chatId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "placeholder": "123456789",
+          "title": "Chat ID"
+        },
+        "title": {
+          "description": "Product name (1\u201332 chars)",
+          "placeholder": "Premium Subscription",
+          "title": "Product Title",
+          "type": "string"
+        },
+        "description": {
+          "description": "Product description (1\u2013255 chars)",
+          "placeholder": "Monthly premium access",
+          "title": "Description",
+          "type": "string"
+        },
+        "payload": {
+          "description": "Bot-defined invoice payload (1\u2013128 bytes)",
+          "placeholder": "subscription_monthly_usd",
+          "title": "Payload",
+          "type": "string"
+        },
+        "currency": {
+          "default": "USD",
+          "description": "ISO 4217 currency code or 'XTR' for Telegram Stars",
+          "placeholder": "USD",
+          "title": "Currency",
+          "type": "string"
+        },
+        "prices": {
+          "description": "JSON array of LabeledPrice objects: [{\"label\": \"Subscription\", \"amount\": 999}] (amount in smallest currency unit)",
+          "placeholder": "[{\"label\": \"Subscription\", \"amount\": 999}]",
+          "title": "Prices (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "provider_token": {
+          "default": "",
+          "description": "Payment provider token (leave empty for Telegram Stars)",
+          "title": "Provider Token",
+          "type": "string"
+        },
+        "photo_url": {
+          "default": "",
+          "description": "Optional product photo URL",
+          "title": "Photo URL",
+          "type": "string"
+        },
+        "start_parameter": {
+          "default": "",
+          "description": "Deep-linking parameter for /start",
+          "title": "Start Parameter",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chatId",
+        "title",
+        "description",
+        "payload",
+        "prices"
+      ],
+      "title": "TelegramSendInvoiceConfig",
+      "type": "object"
+    },
+    "TelegramSendLocationConfig": {
+      "description": "Send a geographic location",
+      "properties": {
+        "operation": {
+          "const": "send_location_pin",
+          "default": "send_location_pin",
+          "title": "Send Location Pin",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Location and Contact",
+          "x-display-name": "Send Location Pin",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "drop a pin",
+            "share location",
+            "send coordinates",
+            "send gps",
+            "share my location"
+          ]
+        },
+        "chatId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "placeholder": "123456789",
+          "title": "Chat ID"
+        },
+        "latitude": {
+          "description": "Latitude of the location",
+          "placeholder": "37.7749",
+          "title": "Latitude",
+          "type": "string"
+        },
+        "longitude": {
+          "description": "Longitude of the location",
+          "placeholder": "-122.4194",
+          "title": "Longitude",
+          "type": "string"
+        },
+        "horizontal_accuracy": {
+          "default": "",
+          "description": "Radius of location uncertainty (0\u20131500)",
+          "title": "Accuracy (meters)",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chatId",
+        "latitude",
+        "longitude"
+      ],
+      "title": "TelegramSendLocationConfig",
+      "type": "object"
+    },
+    "TelegramSendMediaGroupConfig": {
+      "description": "Send a group of photos, videos, or documents as an album",
+      "properties": {
+        "operation": {
+          "const": "send_photo_video_album",
+          "default": "send_photo_video_album",
+          "title": "Send Photo Video Album",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Media",
+          "x-display-name": "Send Photo Video Album",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "media album",
+            "photo album",
+            "group of photos",
+            "media group",
+            "multiple images",
+            "gallery post"
+          ]
+        },
+        "chatId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "placeholder": "123456789",
+          "title": "Chat ID"
+        },
+        "media": {
+          "description": "JSON array of 2\u201310 InputMedia objects. Each: {\"type\": \"photo\", \"media\": \"url_or_file_id\", \"caption\": \"optional\"}",
+          "placeholder": "[{\"type\":\"photo\",\"media\":\"https://example.com/1.jpg\"},{\"type\":\"photo\",\"media\":\"https://example.com/2.jpg\"}]",
+          "title": "Media Array (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "chatId",
+        "media"
+      ],
+      "title": "TelegramSendMediaGroupConfig",
+      "type": "object"
+    },
+    "TelegramSendPhotoConfig": {
+      "description": "Send a photo to a chat",
+      "properties": {
+        "operation": {
+          "const": "send_photo_image",
+          "default": "send_photo_image",
+          "title": "Send Photo Image",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Media",
+          "x-display-name": "Send Photo Image",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "share a photo",
+            "send picture",
+            "attach image",
+            "post a photo"
+          ]
+        },
+        "chatId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "placeholder": "123456789",
+          "title": "Chat ID"
+        },
+        "photo": {
+          "description": "The photo to send \u2014 upload a file, paste a URL, or reference an upstream file (e.g. {{http-1.response.url}}). A Telegram file_id also works.",
+          "placeholder": "https://example.com/photo.jpg",
+          "title": "Photo",
+          "type": "string",
+          "ui:accept": "image/*",
+          "ui:widget": "media_upload"
+        },
+        "caption": {
+          "default": "",
+          "description": "Optional caption (HTML supported)",
+          "title": "Caption",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "parse_mode": {
+          "default": "HTML",
+          "enum": [
+            "HTML",
+            "Markdown",
+            "MarkdownV2",
+            ""
+          ],
+          "title": "Parse Mode",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "chatId",
+        "photo"
+      ],
+      "title": "TelegramSendPhotoConfig",
+      "type": "object"
+    },
+    "TelegramSendPollConfig": {
+      "description": "Create and send a poll or quiz",
+      "properties": {
+        "operation": {
+          "const": "send_poll_or_quiz",
+          "default": "send_poll_or_quiz",
+          "title": "Send Poll or Quiz",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Poll",
+          "x-display-name": "Send Poll or Quiz",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "make a poll",
+            "start a quiz",
+            "ask a vote",
+            "run survey",
+            "create poll"
+          ]
+        },
+        "chatId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "placeholder": "123456789",
+          "title": "Chat ID"
+        },
+        "question": {
+          "description": "Poll question (1\u2013300 chars)",
+          "placeholder": "What is your favorite color?",
+          "title": "Question",
+          "type": "string"
+        },
+        "options": {
+          "description": "JSON array of answer strings (2\u201310)",
+          "placeholder": "[\"Red\", \"Green\", \"Blue\"]",
+          "title": "Options (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "is_anonymous": {
+          "default": "true",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes (anonymous)",
+            "No (public)"
+          ],
+          "title": "Anonymous",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "poll_type": {
+          "default": "regular",
+          "enum": [
+            "regular",
+            "quiz"
+          ],
+          "title": "Poll Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "correct_option_id": {
+          "default": "",
+          "description": "0-based index of correct answer (quiz mode only)",
+          "title": "Correct Option Index",
+          "type": "string"
+        },
+        "explanation": {
+          "default": "",
+          "description": "Shown after quiz answer (quiz mode only)",
+          "title": "Explanation",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "allows_multiple_answers": {
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Multiple Answers",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "chatId",
+        "question",
+        "options"
+      ],
+      "title": "TelegramSendPollConfig",
+      "type": "object"
+    },
+    "TelegramSendStickerConfig": {
+      "description": "Send a sticker",
+      "properties": {
+        "operation": {
+          "const": "send_sticker",
+          "default": "send_sticker",
+          "title": "Send Sticker",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Media",
+          "x-display-name": "Send Sticker",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "share sticker",
+            "send emoji sticker",
+            "sticker pack"
+          ]
+        },
+        "chatId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "placeholder": "123456789",
+          "title": "Chat ID"
+        },
+        "sticker": {
+          "description": "file_id, URL, or .WEBP/.TGS/.WEBM file path",
+          "placeholder": "file_id_here",
+          "title": "Sticker",
+          "type": "string"
+        },
+        "emoji": {
+          "default": "",
+          "description": "Emoji associated with the sticker",
+          "title": "Emoji",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chatId",
+        "sticker"
+      ],
+      "title": "TelegramSendStickerConfig",
+      "type": "object"
+    },
+    "TelegramSendVenueConfig": {
+      "description": "Send a venue (location with title and address)",
+      "properties": {
+        "operation": {
+          "const": "send_venue_location",
+          "default": "send_venue_location",
+          "title": "Send Venue Location",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Location and Contact",
+          "x-display-name": "Send Venue Location",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "share venue",
+            "send place",
+            "location with address",
+            "send a spot",
+            "named location"
+          ]
+        },
+        "chatId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "placeholder": "123456789",
+          "title": "Chat ID"
+        },
+        "latitude": {
+          "placeholder": "37.7749",
+          "title": "Latitude",
+          "type": "string"
+        },
+        "longitude": {
+          "placeholder": "-122.4194",
+          "title": "Longitude",
+          "type": "string"
+        },
+        "title": {
+          "description": "Name of the venue",
+          "placeholder": "Googleplex",
+          "title": "Venue Title",
+          "type": "string"
+        },
+        "address": {
+          "description": "Address of the venue",
+          "placeholder": "1600 Amphitheatre Pkwy, Mountain View, CA",
+          "title": "Address",
+          "type": "string"
+        },
+        "foursquare_id": {
+          "default": "",
+          "description": "Optional Foursquare identifier",
+          "title": "Foursquare ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chatId",
+        "latitude",
+        "longitude",
+        "title",
+        "address"
+      ],
+      "title": "TelegramSendVenueConfig",
+      "type": "object"
+    },
+    "TelegramSendVideoConfig": {
+      "description": "Send a video to a chat",
+      "properties": {
+        "operation": {
+          "const": "send_video_file",
+          "default": "send_video_file",
+          "title": "Send Video File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Media",
+          "x-display-name": "Send Video File",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "share a video",
+            "send clip",
+            "attach video",
+            "post a video"
+          ]
+        },
+        "chatId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "placeholder": "123456789",
+          "title": "Chat ID"
+        },
+        "video": {
+          "description": "The video to send \u2014 upload a file, paste a URL, or reference an upstream file (e.g. {{http-1.response.url}}). A Telegram file_id also works.",
+          "placeholder": "https://example.com/video.mp4",
+          "title": "Video",
+          "type": "string",
+          "ui:accept": "video/*",
+          "ui:widget": "media_upload"
+        },
+        "caption": {
+          "default": "",
+          "title": "Caption",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "parse_mode": {
+          "default": "HTML",
+          "enum": [
+            "HTML",
+            "Markdown",
+            "MarkdownV2",
+            ""
+          ],
+          "title": "Parse Mode",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "duration": {
+          "default": "",
+          "description": "Optional video duration",
+          "title": "Duration (seconds)",
+          "type": "string"
+        },
+        "width": {
+          "default": "",
+          "description": "Optional video width in pixels",
+          "title": "Width",
+          "type": "string"
+        },
+        "height": {
+          "default": "",
+          "description": "Optional video height in pixels",
+          "title": "Height",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chatId",
+        "video"
+      ],
+      "title": "TelegramSendVideoConfig",
+      "type": "object"
+    },
+    "TelegramSendVideoNoteConfig": {
+      "description": "Send a circular video message",
+      "properties": {
+        "operation": {
+          "const": "send_circular_video",
+          "default": "send_circular_video",
+          "title": "Send Circular Video",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Media",
+          "x-display-name": "Send Circular Video",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "video note",
+            "round video",
+            "circle video",
+            "bubble video"
+          ]
+        },
+        "chatId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "placeholder": "123456789",
+          "title": "Chat ID"
+        },
+        "video_note": {
+          "description": "file_id of the circular video",
+          "placeholder": "file_id_here",
+          "title": "Video Note",
+          "type": "string"
+        },
+        "duration": {
+          "default": "",
+          "title": "Duration (seconds)",
+          "type": "string"
+        },
+        "length": {
+          "default": "",
+          "description": "Video width/height (must be equal)",
+          "title": "Video Size",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chatId",
+        "video_note"
+      ],
+      "title": "TelegramSendVideoNoteConfig",
+      "type": "object"
+    },
+    "TelegramSendVoiceConfig": {
+      "description": "Send a voice note (.ogg) to a chat",
+      "properties": {
+        "operation": {
+          "const": "send_voice_note",
+          "default": "send_voice_note",
+          "title": "Send Voice Note",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Media",
+          "x-display-name": "Send Voice Note",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "voice message",
+            "send ogg",
+            "audio memo",
+            "record voice"
+          ]
+        },
+        "chatId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "placeholder": "123456789",
+          "title": "Chat ID"
+        },
+        "voice": {
+          "description": "The voice note (.ogg) to send \u2014 upload a file, paste a URL, or reference an upstream file (e.g. {{http-1.response.url}}). A Telegram file_id also works.",
+          "placeholder": "https://example.com/voice.ogg",
+          "title": "Voice",
+          "type": "string",
+          "ui:accept": "audio/*",
+          "ui:widget": "media_upload"
+        },
+        "caption": {
+          "default": "",
+          "title": "Caption",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "duration": {
+          "default": "",
+          "title": "Duration (seconds)",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chatId",
+        "voice"
+      ],
+      "title": "TelegramSendVoiceConfig",
+      "type": "object"
+    },
+    "TelegramSetChatDescriptionConfig": {
+      "description": "Change the description of a chat",
+      "properties": {
+        "operation": {
+          "const": "set_chat_description",
+          "default": "set_chat_description",
+          "title": "Set Chat Description",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Chat",
+          "x-display-name": "Set Chat Description",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "change group description",
+            "edit chat bio",
+            "set group about",
+            "update description"
+          ]
+        },
+        "chatId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "placeholder": "-1001234567890",
+          "title": "Chat ID"
+        },
+        "description": {
+          "default": "",
+          "description": "New chat description (0\u2013255 chars)",
+          "title": "Description",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "chatId"
+      ],
+      "title": "TelegramSetChatDescriptionConfig",
+      "type": "object"
+    },
+    "TelegramSetChatTitleConfig": {
+      "description": "Change the title of a chat",
+      "properties": {
+        "operation": {
+          "const": "set_chat_title",
+          "default": "set_chat_title",
+          "title": "Set Chat Title",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Chat",
+          "x-display-name": "Set Chat Title",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "rename chat",
+            "change group name",
+            "set group title",
+            "edit chat name"
+          ]
+        },
+        "chatId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "placeholder": "-1001234567890",
+          "title": "Chat ID"
+        },
+        "title": {
+          "description": "New chat title (1\u2013255 chars)",
+          "placeholder": "My Awesome Channel",
+          "title": "New Title",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chatId",
+        "title"
+      ],
+      "title": "TelegramSetChatTitleConfig",
+      "type": "object"
+    },
+    "TelegramSetMessageReactionConfig": {
+      "description": "Set a reaction on a message",
+      "properties": {
+        "operation": {
+          "const": "set_message_emoji_reaction",
+          "default": "set_message_emoji_reaction",
+          "title": "Set Message Emoji Reaction",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Set Message Emoji Reaction",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "react to message",
+            "add emoji reaction",
+            "thumbs up message",
+            "set reaction"
+          ]
+        },
+        "chatId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "placeholder": "123456789",
+          "title": "Chat ID"
+        },
+        "message_id": {
+          "placeholder": "42",
+          "title": "Message ID",
+          "type": "string"
+        },
+        "reaction": {
+          "default": "",
+          "description": "Emoji to react with (e.g. \ud83d\udc4d). Leave empty to remove reaction.",
+          "placeholder": "\ud83d\udc4d",
+          "title": "Reaction Emoji",
+          "type": "string"
+        },
+        "is_big": {
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes (big animation)",
+            "No (normal)"
+          ],
+          "title": "Big Reaction",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "chatId",
+        "message_id"
+      ],
+      "title": "TelegramSetMessageReactionConfig",
+      "type": "object"
+    },
+    "TelegramSetupChannelConfig": {
+      "description": "Guided channel setup flow.\n\nRegisters a webhook with the bot, then generates a deep-link for the user.\nWhen the user adds the bot to their channel as admin, the channel ID is\nautomatically detected and stored \u2014 no manual copy-pasting needed.",
+      "properties": {
+        "operation": {
+          "const": "setup_telegram_channel_guided",
+          "default": "setup_telegram_channel_guided",
+          "title": "Setup Telegram Channel Guided",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Channel",
+          "x-display-name": "Setup Telegram Channel Guided",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "guided channel setup",
+            "auto detect channel",
+            "wizard add channel",
+            "connect channel deep link",
+            "onboard channel"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "telegram_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Telegram Registered",
+          "ui:hidden": true
+        },
+        "setup_link": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Click this link to start setup, then add your bot as admin to your channel",
+          "title": "Setup Link",
+          "ui:copyable": true,
+          "ui:widget": "readonly"
+        },
+        "channel_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Auto-populated once the bot is added as admin to a channel",
+          "title": "Detected Channel ID",
+          "ui:loadValue": true
+        },
+        "channel_title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Channel Title",
+          "ui:hidden": true
+        },
+        "setup_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Setup Token",
+          "ui:hidden": true
+        },
+        "setup_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Setup Status",
+          "ui:hidden": true
+        }
+      },
+      "title": "TelegramSetupChannelConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "TelegramStopPollConfig": {
+      "description": "Stop a running poll",
+      "properties": {
+        "operation": {
+          "const": "stop_active_poll",
+          "default": "stop_active_poll",
+          "title": "Stop Active Poll",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Stop Active Poll",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "close poll",
+            "end poll",
+            "finish vote",
+            "stop voting",
+            "close quiz"
+          ]
+        },
+        "chatId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "placeholder": "123456789",
+          "title": "Chat ID"
+        },
+        "message_id": {
+          "description": "ID of the poll message",
+          "placeholder": "42",
+          "title": "Message ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chatId",
+        "message_id"
+      ],
+      "title": "TelegramStopPollConfig",
+      "type": "object"
+    },
+    "TelegramUnbanChatMemberConfig": {
+      "description": "Unban a previously banned user",
+      "properties": {
+        "operation": {
+          "const": "unban_user_from_chat",
+          "default": "unban_user_from_chat",
+          "title": "Unban User from Chat",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Chat Member",
+          "x-display-name": "Unban User from Chat",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "unban member",
+            "remove ban",
+            "lift ban",
+            "allow back in"
+          ]
+        },
+        "chatId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "placeholder": "-1001234567890",
+          "title": "Chat ID"
+        },
+        "user_id": {
+          "placeholder": "123456789",
+          "title": "User ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chatId",
+        "user_id"
+      ],
+      "title": "TelegramUnbanChatMemberConfig",
+      "type": "object"
+    },
+    "TelegramUnpinMessageConfig": {
+      "description": "Unpin a message (or all messages) in a chat",
+      "properties": {
+        "operation": {
+          "const": "unpin_chat_message",
+          "default": "unpin_chat_message",
+          "title": "Unpin Chat Message",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Message",
+          "x-display-name": "Unpin Chat Message",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "unpin message",
+            "remove pinned message",
+            "unstick message",
+            "clear pinned"
+          ]
+        },
+        "chatId": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "integer"
+            }
+          ],
+          "placeholder": "123456789",
+          "title": "Chat ID"
+        },
+        "message_id": {
+          "default": "",
+          "description": "Leave empty to unpin all messages",
+          "placeholder": "42 (or leave empty to unpin all)",
+          "title": "Message ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "chatId"
+      ],
+      "title": "TelegramUnpinMessageConfig",
+      "type": "object"
+    },
+    "TelegramWebhookConfig": {
+      "description": "Deliver via webhook (no message required)",
+      "properties": {
+        "operation": {
+          "const": "send_webhook_delivery",
+          "default": "send_webhook_delivery",
+          "title": "Send Webhook Delivery",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhook",
+          "x-display-name": "Send Webhook Delivery",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "fire webhook",
+            "trigger webhook",
+            "ping webhook",
+            "webhook only",
+            "no message delivery"
+          ]
+        },
+        "webhookUrl": {
+          "description": "Alternative: Webhook URL for message delivery",
+          "format": "uri",
+          "maxLength": 2083,
+          "minLength": 1,
+          "title": "Webhook URL",
+          "type": "string"
+        }
+      },
+      "required": [
+        "webhookUrl"
+      ],
+      "title": "TelegramWebhookConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for Telegram node including credentials",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "answer_inline_button_callback": "#/$defs/TelegramAnswerCallbackQueryConfig",
+          "answer_inline_search_results": "#/$defs/TelegramAnswerInlineQueryConfig",
+          "answer_payment_pre_checkout": "#/$defs/TelegramAnswerPreCheckoutQueryConfig",
+          "ban_user_from_chat": "#/$defs/TelegramBanChatMemberConfig",
+          "connect_telegram_channel": "#/$defs/TelegramConnectChannelConfig",
+          "copy_message_to_chat": "#/$defs/TelegramCopyMessageConfig",
+          "create_chat_invite_link": "#/$defs/TelegramCreateInviteLinkConfig",
+          "delete_message": "#/$defs/TelegramDeleteMessageConfig",
+          "delete_multiple_messages": "#/$defs/TelegramDeleteMessagesConfig",
+          "edit_message_caption": "#/$defs/TelegramEditMessageCaptionConfig",
+          "edit_message_text": "#/$defs/TelegramEditMessageTextConfig",
+          "forward_message_to_chat": "#/$defs/TelegramForwardMessageConfig",
+          "get_bot_information": "#/$defs/TelegramGetMeConfig",
+          "get_chat_admin_list": "#/$defs/TelegramGetChatAdministratorsConfig",
+          "get_chat_details": "#/$defs/TelegramGetChatConfig",
+          "get_chat_member_count": "#/$defs/TelegramGetChatMemberCountConfig",
+          "get_chat_member_info": "#/$defs/TelegramGetChatMemberConfig",
+          "get_file_download_info": "#/$defs/TelegramGetFileConfig",
+          "pin_message_in_chat": "#/$defs/TelegramPinMessageConfig",
+          "promote_user_to_admin": "#/$defs/TelegramPromoteChatMemberConfig",
+          "receive_webhook_messages": "#/$defs/TelegramReceiveConfig",
+          "restrict_user_permissions": "#/$defs/TelegramRestrictChatMemberConfig",
+          "revoke_chat_invite_link": "#/$defs/TelegramRevokeInviteLinkConfig",
+          "send_animated_video": "#/$defs/TelegramSendAnimationConfig",
+          "send_audio_file": "#/$defs/TelegramSendAudioConfig",
+          "send_chat_typing_indicator": "#/$defs/TelegramSendChatActionConfig",
+          "send_circular_video": "#/$defs/TelegramSendVideoNoteConfig",
+          "send_contact_information": "#/$defs/TelegramSendContactConfig",
+          "send_dice_emoji": "#/$defs/TelegramSendDiceConfig",
+          "send_document_file": "#/$defs/TelegramSendDocumentConfig",
+          "send_location_pin": "#/$defs/TelegramSendLocationConfig",
+          "send_message_to_channel": "#/$defs/TelegramChannelConfig",
+          "send_message_to_chat": "#/$defs/TelegramChatIdConfig",
+          "send_payment_invoice": "#/$defs/TelegramSendInvoiceConfig",
+          "send_photo_image": "#/$defs/TelegramSendPhotoConfig",
+          "send_photo_video_album": "#/$defs/TelegramSendMediaGroupConfig",
+          "send_poll_or_quiz": "#/$defs/TelegramSendPollConfig",
+          "send_sticker": "#/$defs/TelegramSendStickerConfig",
+          "send_venue_location": "#/$defs/TelegramSendVenueConfig",
+          "send_video_file": "#/$defs/TelegramSendVideoConfig",
+          "send_voice_note": "#/$defs/TelegramSendVoiceConfig",
+          "send_webhook_delivery": "#/$defs/TelegramWebhookConfig",
+          "set_chat_description": "#/$defs/TelegramSetChatDescriptionConfig",
+          "set_chat_title": "#/$defs/TelegramSetChatTitleConfig",
+          "set_message_emoji_reaction": "#/$defs/TelegramSetMessageReactionConfig",
+          "setup_telegram_channel_guided": "#/$defs/TelegramSetupChannelConfig",
+          "stop_active_poll": "#/$defs/TelegramStopPollConfig",
+          "unban_user_from_chat": "#/$defs/TelegramUnbanChatMemberConfig",
+          "unpin_chat_message": "#/$defs/TelegramUnpinMessageConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/TelegramChatIdConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramReceiveConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramChannelConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramSendDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramSendPhotoConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramSendVideoConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramSendAudioConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramSendVoiceConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramSendAnimationConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramSendVideoNoteConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramSendStickerConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramSendMediaGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramSendContactConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramSendLocationConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramSendVenueConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramSendDiceConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramEditMessageTextConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramEditMessageCaptionConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramDeleteMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramDeleteMessagesConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramPinMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramUnpinMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramForwardMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramCopyMessageConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramSendChatActionConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramSendPollConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramStopPollConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramGetChatConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramGetChatMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramGetChatMemberCountConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramGetChatAdministratorsConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramBanChatMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramUnbanChatMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramRestrictChatMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramPromoteChatMemberConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramSetChatTitleConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramSetChatDescriptionConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramCreateInviteLinkConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramRevokeInviteLinkConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramAnswerCallbackQueryConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramAnswerInlineQueryConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramSetMessageReactionConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramGetMeConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramGetFileConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramSendInvoiceConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramAnswerPreCheckoutQueryConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramSetupChannelConfig"
+        },
+        {
+          "$ref": "#/$defs/TelegramConnectChannelConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/TelegramBotTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Telegram Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Send a text message to chat 123456789: \"Meeting in 5 minutes\"",
+    "Send a photo to the #alerts channel with a caption",
+    "Edit a previously sent message with updated status",
+    "Create a poll with voting options in the team chat",
+    "Ban a spammer from the group and send notification",
+    "Forward a message from #general to #archive with context",
+    "Set up a webhook to receive incoming messages from Telegram"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

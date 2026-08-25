@@ -1,0 +1,6277 @@
+{
+  "$defs": {
+    "PostHogActivityLogConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_activity_log",
+          "default": "list_activity_log",
+          "title": "List Activity Log",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Advanced",
+          "x-display-name": "List Activity Log",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page",
+          "title": "Limit"
+        }
+      },
+      "title": "PostHogActivityLogConfig",
+      "type": "object"
+    },
+    "PostHogAddPersonsToCohortConfig": {
+      "properties": {
+        "operation": {
+          "const": "add_persons_to_cohort",
+          "default": "add_persons_to_cohort",
+          "title": "Add Persons to Static Cohort",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Cohorts",
+          "x-display-name": "Add Persons to Static Cohort",
+          "x-is-trigger": false
+        },
+        "cohort_id": {
+          "title": "Cohort",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a cohort id",
+            "field_name": "cohort_id",
+            "placeholder": "Select a cohort\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "posthog_cohort"
+        },
+        "body_json": {
+          "description": "e.g. {\"person_ids\":[\"<person uuid>\", \u2026]}",
+          "title": "Persons (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "cohort_id",
+        "body_json"
+      ],
+      "title": "PostHogAddPersonsToCohortConfig",
+      "type": "object"
+    },
+    "PostHogBatchCaptureConfig": {
+      "description": "Capture a batch of events.",
+      "properties": {
+        "operation": {
+          "const": "batch_capture",
+          "default": "batch_capture",
+          "title": "Batch Capture",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Ingestion",
+          "x-display-name": "Batch Capture",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "bulk events",
+            "many events"
+          ]
+        },
+        "batch": {
+          "description": "JSON array of events, each {\"event\",\"distinct_id\",\"properties\",\"timestamp\"}",
+          "title": "Batch (JSON array)",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "historical_migration": {
+          "default": "false",
+          "enum": [
+            "false",
+            "true"
+          ],
+          "enumNames": [
+            "No",
+            "Yes"
+          ],
+          "title": "Historical Migration",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "batch"
+      ],
+      "title": "PostHogBatchCaptureConfig",
+      "type": "object"
+    },
+    "PostHogBulkDeletePersonsConfig": {
+      "properties": {
+        "operation": {
+          "const": "bulk_delete_persons",
+          "default": "bulk_delete_persons",
+          "title": "Bulk Delete Persons",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Persons",
+          "x-display-name": "Bulk Delete Persons",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "gdpr bulk delete"
+          ]
+        },
+        "ids_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Person UUIDs to delete, e.g. [\"018f\u2026\",\"018a\u2026\"]",
+          "title": "Person IDs (JSON array)",
+          "ui:widget": "textarea"
+        },
+        "distinct_ids_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Distinct ids to delete, e.g. [\"user_1\",\"user_2\"]",
+          "title": "Distinct IDs (JSON array)",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "PostHogBulkDeletePersonsConfig",
+      "type": "object"
+    },
+    "PostHogCaptureConfig": {
+      "description": "Capture a single event.",
+      "properties": {
+        "operation": {
+          "const": "capture_event",
+          "default": "capture_event",
+          "title": "Capture Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Ingestion",
+          "x-display-name": "Capture Event",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "track event",
+            "send event",
+            "log event"
+          ]
+        },
+        "event": {
+          "description": "Event name, e.g. 'user signed up'",
+          "title": "Event Name",
+          "type": "string"
+        },
+        "distinct_id": {
+          "description": "The user/entity identifier",
+          "title": "Distinct ID",
+          "type": "string"
+        },
+        "properties": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Properties (JSON)",
+          "description": "Event/person properties as a JSON object",
+          "ui:widget": "textarea"
+        },
+        "timestamp": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional event time (defaults to now)",
+          "title": "Timestamp",
+          "ui:widget": "datetime"
+        }
+      },
+      "required": [
+        "event",
+        "distinct_id"
+      ],
+      "title": "PostHogCaptureConfig",
+      "type": "object"
+    },
+    "PostHogCreateActionConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_action",
+          "default": "create_action",
+          "title": "Create Action",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-creates-resource": true,
+          "x-display-name": "Create Action",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "posthog_action"
+        },
+        "name": {
+          "description": "A descriptive name",
+          "title": "Name",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Action steps as JSON",
+          "title": "Steps (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "PostHogCreateActionConfig",
+      "type": "object"
+    },
+    "PostHogCreateAnnotationConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_annotation",
+          "default": "create_annotation",
+          "title": "Create Annotation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Annotations",
+          "x-creates-resource": true,
+          "x-display-name": "Create Annotation",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "mark deploy",
+            "add note"
+          ],
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "posthog_annotation"
+        },
+        "content": {
+          "description": "The annotation text, e.g. 'Deployed v2.1'",
+          "title": "Content",
+          "type": "string"
+        },
+        "date_marker": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The moment this annotation marks (defaults to now)",
+          "title": "Date",
+          "ui:widget": "datetime"
+        }
+      },
+      "required": [
+        "content"
+      ],
+      "title": "PostHogCreateAnnotationConfig",
+      "type": "object"
+    },
+    "PostHogCreateCohortConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_cohort",
+          "default": "create_cohort",
+          "title": "Create Cohort",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Cohorts",
+          "x-creates-resource": true,
+          "x-display-name": "Create Cohort",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "posthog_cohort"
+        },
+        "name": {
+          "description": "A descriptive name",
+          "title": "Name",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Cohort groups/filters as JSON",
+          "title": "Definition (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "PostHogCreateCohortConfig",
+      "type": "object"
+    },
+    "PostHogCreateDashboardConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_dashboard",
+          "default": "create_dashboard",
+          "title": "Create Dashboard",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Dashboards",
+          "x-creates-resource": true,
+          "x-display-name": "Create Dashboard",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "posthog_dashboard"
+        },
+        "name": {
+          "description": "A descriptive name",
+          "title": "Name",
+          "type": "string"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional description",
+          "title": "Description"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "PostHogCreateDashboardConfig",
+      "type": "object"
+    },
+    "PostHogCreateDestinationConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_destination",
+          "default": "create_destination",
+          "title": "Create Destination",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Destinations",
+          "x-creates-resource": true,
+          "x-display-name": "Create Destination",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new export",
+            "connect slack",
+            "send events to"
+          ],
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "posthog_destination"
+        },
+        "template_id": {
+          "description": "The destination kind (Slack, Webhook, HubSpot, \u2026)",
+          "title": "Template",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a template id",
+            "field_name": "template_id",
+            "placeholder": "Select a destination template\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "name": {
+          "description": "A descriptive name",
+          "title": "Name",
+          "type": "string"
+        },
+        "inputs_json": {
+          "description": "The template's inputs, e.g. {\"url\":\"https://\u2026\",\"method\":\"POST\"} \u2014 plain values are wrapped into PostHog's {\"value\": \u2026} shape automatically",
+          "title": "Inputs (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "filters_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional, e.g. {\"events\":[{\"id\":\"$pageview\",\"type\":\"events\"}]} \u2014 blank fires on all events",
+          "title": "Event Filters (JSON)",
+          "ui:widget": "textarea"
+        },
+        "enabled": {
+          "default": "true",
+          "description": "Start the destination immediately",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Enabled",
+            "Disabled"
+          ],
+          "title": "Enabled",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "template_id",
+        "name",
+        "inputs_json"
+      ],
+      "title": "PostHogCreateDestinationConfig",
+      "type": "object"
+    },
+    "PostHogCreateEarlyAccessConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_early_access_feature",
+          "default": "create_early_access_feature",
+          "title": "Create Early Access Feature",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Early Access",
+          "x-display-name": "Create Early Access Feature",
+          "x-is-trigger": false
+        },
+        "name": {
+          "description": "A descriptive name",
+          "title": "Name",
+          "type": "string"
+        },
+        "stage": {
+          "default": "concept",
+          "enum": [
+            "draft",
+            "concept",
+            "alpha",
+            "beta",
+            "general-availability"
+          ],
+          "title": "Stage",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional description",
+          "title": "Description"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Additional fields as JSON (optional)",
+          "title": "Extra Config (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "PostHogCreateEarlyAccessConfig",
+      "type": "object"
+    },
+    "PostHogCreateExperimentConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_experiment",
+          "default": "create_experiment",
+          "title": "Create Experiment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Experiments",
+          "x-creates-resource": true,
+          "x-display-name": "Create Experiment",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "ab test"
+          ],
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "posthog_experiment"
+        },
+        "name": {
+          "description": "A descriptive name",
+          "title": "Name",
+          "type": "string"
+        },
+        "feature_flag_key": {
+          "title": "Feature Flag Key",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a flag key",
+            "field_name": "feature_flag_key",
+            "placeholder": "Select a feature flag\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "posthog_feature_flag"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Extra experiment config as JSON",
+          "title": "Config (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "name",
+        "feature_flag_key"
+      ],
+      "title": "PostHogCreateExperimentConfig",
+      "type": "object"
+    },
+    "PostHogCreateFeatureFlagConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_feature_flag",
+          "default": "create_feature_flag",
+          "title": "Create Feature Flag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Feature Flags",
+          "x-creates-resource": true,
+          "x-display-name": "Create Feature Flag",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new flag"
+          ],
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "posthog_feature_flag"
+        },
+        "key": {
+          "description": "Flag key",
+          "title": "Key",
+          "type": "string"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Human-readable flag name",
+          "title": "Name"
+        },
+        "active": {
+          "default": "true",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Active",
+            "Inactive"
+          ],
+          "title": "Active",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "filters_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Release-condition filters as JSON",
+          "title": "Filters (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "key"
+      ],
+      "title": "PostHogCreateFeatureFlagConfig",
+      "type": "object"
+    },
+    "PostHogCreateInsightConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_insight",
+          "default": "create_insight",
+          "title": "Create Insight",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Insights",
+          "x-creates-resource": true,
+          "x-display-name": "Create Insight",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "posthog_insight"
+        },
+        "name": {
+          "description": "A descriptive name",
+          "title": "Name",
+          "type": "string"
+        },
+        "body_json": {
+          "description": "Insight query or filters as JSON",
+          "title": "Query/Filters (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "name",
+        "body_json"
+      ],
+      "title": "PostHogCreateInsightConfig",
+      "type": "object"
+    },
+    "PostHogCreateNotebookConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_notebook",
+          "default": "create_notebook",
+          "title": "Create Notebook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Notebooks",
+          "x-creates-resource": true,
+          "x-display-name": "Create Notebook",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.short_id",
+          "x-resource-type": "posthog_notebook"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Notebook title",
+          "title": "Title"
+        },
+        "content_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Notebook content as a ProseMirror JSON doc",
+          "title": "Content (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "PostHogCreateNotebookConfig",
+      "type": "object"
+    },
+    "PostHogCreateOrgInviteConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_org_invite",
+          "default": "create_org_invite",
+          "title": "Invite Org Member",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "Invite Org Member",
+          "x-is-trigger": false
+        },
+        "target_email": {
+          "description": "Email address to invite, e.g. teammate@company.com",
+          "title": "Email",
+          "type": "string"
+        },
+        "level": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Membership level (e.g. 1=member, 8=admin)",
+          "title": "Level"
+        }
+      },
+      "required": [
+        "target_email"
+      ],
+      "title": "PostHogCreateOrgInviteConfig",
+      "type": "object"
+    },
+    "PostHogCreateSurveyConfig": {
+      "properties": {
+        "operation": {
+          "const": "create_survey",
+          "default": "create_survey",
+          "title": "Create Survey",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Surveys",
+          "x-creates-resource": true,
+          "x-display-name": "Create Survey",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.id",
+          "x-resource-type": "posthog_survey"
+        },
+        "name": {
+          "description": "A descriptive name",
+          "title": "Name",
+          "type": "string"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Survey type/questions as JSON",
+          "title": "Config (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "PostHogCreateSurveyConfig",
+      "type": "object"
+    },
+    "PostHogDeleteAnnotationConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_annotation",
+          "default": "delete_annotation",
+          "title": "Delete Annotation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Annotations",
+          "x-display-name": "Delete Annotation",
+          "x-is-trigger": false
+        },
+        "annotation_id": {
+          "title": "Annotation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a annotation id",
+            "field_name": "annotation_id",
+            "placeholder": "Select a annotation\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "posthog_annotation"
+        }
+      },
+      "required": [
+        "annotation_id"
+      ],
+      "title": "PostHogDeleteAnnotationConfig",
+      "type": "object"
+    },
+    "PostHogDeleteCohortConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_cohort",
+          "default": "delete_cohort",
+          "title": "Delete Cohort",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Cohorts",
+          "x-display-name": "Delete Cohort",
+          "x-is-trigger": false
+        },
+        "cohort_id": {
+          "title": "Cohort",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a cohort id",
+            "field_name": "cohort_id",
+            "placeholder": "Select a cohort\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "posthog_cohort"
+        }
+      },
+      "required": [
+        "cohort_id"
+      ],
+      "title": "PostHogDeleteCohortConfig",
+      "type": "object"
+    },
+    "PostHogDeleteDashboardConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_dashboard",
+          "default": "delete_dashboard",
+          "title": "Delete Dashboard",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Dashboards",
+          "x-display-name": "Delete Dashboard",
+          "x-is-trigger": false
+        },
+        "dashboard_id": {
+          "title": "Dashboard",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a dashboard id",
+            "field_name": "dashboard_id",
+            "placeholder": "Select a dashboard\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "posthog_dashboard"
+        }
+      },
+      "required": [
+        "dashboard_id"
+      ],
+      "title": "PostHogDeleteDashboardConfig",
+      "type": "object"
+    },
+    "PostHogDeleteDestinationConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_destination",
+          "default": "delete_destination",
+          "title": "Delete Destination",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Destinations",
+          "x-display-name": "Delete Destination",
+          "x-is-trigger": false
+        },
+        "destination_id": {
+          "description": "The destination (hog function)",
+          "title": "Destination",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a destination id",
+            "field_name": "destination_id",
+            "placeholder": "Select a destination\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "posthog_destination"
+        }
+      },
+      "required": [
+        "destination_id"
+      ],
+      "title": "PostHogDeleteDestinationConfig",
+      "type": "object"
+    },
+    "PostHogDeleteFeatureFlagConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_feature_flag",
+          "default": "delete_feature_flag",
+          "title": "Delete Feature Flag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Feature Flags",
+          "x-display-name": "Delete Feature Flag",
+          "x-is-trigger": false
+        },
+        "flag_id": {
+          "title": "Feature Flag",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a feature flag id",
+            "field_name": "flag_id",
+            "placeholder": "Select a feature flag\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "posthog_feature_flag"
+        }
+      },
+      "required": [
+        "flag_id"
+      ],
+      "title": "PostHogDeleteFeatureFlagConfig",
+      "type": "object"
+    },
+    "PostHogDeleteInsightConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_insight",
+          "default": "delete_insight",
+          "title": "Delete Insight",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Insights",
+          "x-display-name": "Delete Insight",
+          "x-is-trigger": false
+        },
+        "insight_id": {
+          "title": "Insight",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a insight id",
+            "field_name": "insight_id",
+            "placeholder": "Select a insight\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "posthog_insight"
+        }
+      },
+      "required": [
+        "insight_id"
+      ],
+      "title": "PostHogDeleteInsightConfig",
+      "type": "object"
+    },
+    "PostHogDeletePersonConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_person",
+          "default": "delete_person",
+          "title": "Delete Person",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Persons",
+          "x-display-name": "Delete Person",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "gdpr delete user"
+          ]
+        },
+        "person_id": {
+          "title": "Person",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a person id",
+            "field_name": "person_id",
+            "placeholder": "Select a person\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "person_id"
+      ],
+      "title": "PostHogDeletePersonConfig",
+      "type": "object"
+    },
+    "PostHogDeleteRecordingConfig": {
+      "properties": {
+        "operation": {
+          "const": "delete_session_recording",
+          "default": "delete_session_recording",
+          "title": "Delete Session Recording",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Session Replay",
+          "x-display-name": "Delete Session Recording",
+          "x-is-trigger": false
+        },
+        "recording_id": {
+          "description": "The session recording id",
+          "title": "Recording ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "recording_id"
+      ],
+      "title": "PostHogDeleteRecordingConfig",
+      "type": "object"
+    },
+    "PostHogDestinationLogsConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_destination_logs",
+          "default": "get_destination_logs",
+          "title": "Get Destination Logs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Destinations",
+          "x-display-name": "Get Destination Logs",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "delivery logs",
+            "why failing"
+          ]
+        },
+        "destination_id": {
+          "description": "The destination whose delivery logs to read",
+          "title": "Destination",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a destination id",
+            "field_name": "destination_id",
+            "placeholder": "Select a destination\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "posthog_destination"
+        },
+        "level": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only entries at this level (optional)",
+          "enum": [
+            "",
+            "DEBUG",
+            "LOG",
+            "INFO",
+            "WARN",
+            "ERROR"
+          ],
+          "title": "Level",
+          "x-enum-searchable": true
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter log messages (optional)",
+          "title": "Search"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "destination_id"
+      ],
+      "title": "PostHogDestinationLogsConfig",
+      "type": "object"
+    },
+    "PostHogDestinationMetricsConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_destination_metrics",
+          "default": "get_destination_metrics",
+          "title": "Get Destination Metrics",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Destinations",
+          "x-display-name": "Get Destination Metrics",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "succeeded failed counts",
+            "delivery health"
+          ]
+        },
+        "destination_id": {
+          "description": "The destination whose delivery totals to read",
+          "title": "Destination",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a destination id",
+            "field_name": "destination_id",
+            "placeholder": "Select a destination\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "posthog_destination"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Window, e.g. -24h or -7d (default -7d)",
+          "title": "Since"
+        }
+      },
+      "required": [
+        "destination_id"
+      ],
+      "title": "PostHogDestinationMetricsConfig",
+      "type": "object"
+    },
+    "PostHogEvaluateFlagsConfig": {
+      "description": "Evaluate feature flags for a person.",
+      "properties": {
+        "operation": {
+          "const": "evaluate_flags",
+          "default": "evaluate_flags",
+          "title": "Evaluate Feature Flags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Ingestion",
+          "x-display-name": "Evaluate Feature Flags",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "decide",
+            "check flags"
+          ]
+        },
+        "distinct_id": {
+          "description": "The user/entity identifier",
+          "title": "Distinct ID",
+          "type": "string"
+        },
+        "groups": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "e.g. {\"company\":\"acme\"}",
+          "title": "Groups (JSON)",
+          "ui:widget": "textarea"
+        },
+        "person_properties": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Property overrides for flag evaluation, e.g. {\"plan\": \"pro\"}",
+          "title": "Person Properties (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "distinct_id"
+      ],
+      "title": "PostHogEvaluateFlagsConfig",
+      "type": "object"
+    },
+    "PostHogExperimentActionConfig": {
+      "properties": {
+        "operation": {
+          "const": "experiment_action",
+          "default": "experiment_action",
+          "title": "Experiment Action",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Experiments",
+          "x-display-name": "Experiment Action",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "launch",
+            "pause",
+            "resume",
+            "end",
+            "archive"
+          ]
+        },
+        "experiment_id": {
+          "title": "Experiment",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a experiment id",
+            "field_name": "experiment_id",
+            "placeholder": "Select a experiment\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "posthog_experiment"
+        },
+        "action": {
+          "default": "launch",
+          "enum": [
+            "launch",
+            "pause",
+            "resume",
+            "end",
+            "archive",
+            "reset",
+            "duplicate"
+          ],
+          "title": "Action",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "experiment_id"
+      ],
+      "title": "PostHogExperimentActionConfig",
+      "type": "object"
+    },
+    "PostHogFindGroupConfig": {
+      "properties": {
+        "operation": {
+          "const": "find_group",
+          "default": "find_group",
+          "title": "Find Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "Find Group",
+          "x-is-trigger": false
+        },
+        "group_type_index": {
+          "title": "Group Type",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a group type index",
+            "field_name": "group_type_index",
+            "placeholder": "Select a group type\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "group_key": {
+          "description": "The group's unique key, e.g. acme-inc",
+          "title": "Group Key",
+          "type": "string"
+        }
+      },
+      "required": [
+        "group_type_index",
+        "group_key"
+      ],
+      "title": "PostHogFindGroupConfig",
+      "type": "object"
+    },
+    "PostHogFlagLocalEvaluationConfig": {
+      "properties": {
+        "operation": {
+          "const": "feature_flag_local_evaluation",
+          "default": "feature_flag_local_evaluation",
+          "title": "Get Local Evaluation Payload",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Feature Flags",
+          "x-display-name": "Get Local Evaluation Payload",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "flag definitions"
+          ]
+        },
+        "project_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Required by this endpoint unless the credential is a phs_-prefixed key. Uses the credential's project key automatically when available.",
+          "title": "Project API Key (phc_)",
+          "ui:widget": "password"
+        }
+      },
+      "title": "PostHogFlagLocalEvaluationConfig",
+      "type": "object"
+    },
+    "PostHogGetActionConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_action",
+          "default": "get_action",
+          "title": "Get Action",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "Get Action",
+          "x-is-trigger": false
+        },
+        "action_id": {
+          "title": "Action",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a action id",
+            "field_name": "action_id",
+            "placeholder": "Select a action\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "posthog_action"
+        }
+      },
+      "required": [
+        "action_id"
+      ],
+      "title": "PostHogGetActionConfig",
+      "type": "object"
+    },
+    "PostHogGetBatchExportConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_batch_export",
+          "default": "get_batch_export",
+          "title": "Get Batch Export",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Batch Exports",
+          "x-display-name": "Get Batch Export",
+          "x-is-trigger": false
+        },
+        "batch_export_id": {
+          "title": "Batch Export",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a batch export id",
+            "field_name": "batch_export_id",
+            "placeholder": "Select a batch export\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "batch_export_id"
+      ],
+      "title": "PostHogGetBatchExportConfig",
+      "type": "object"
+    },
+    "PostHogGetCohortConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_cohort",
+          "default": "get_cohort",
+          "title": "Get Cohort",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Cohorts",
+          "x-display-name": "Get Cohort",
+          "x-is-trigger": false
+        },
+        "cohort_id": {
+          "title": "Cohort",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a cohort id",
+            "field_name": "cohort_id",
+            "placeholder": "Select a cohort\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "posthog_cohort"
+        }
+      },
+      "required": [
+        "cohort_id"
+      ],
+      "title": "PostHogGetCohortConfig",
+      "type": "object"
+    },
+    "PostHogGetDashboardConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_dashboard",
+          "default": "get_dashboard",
+          "title": "Get Dashboard",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Dashboards",
+          "x-display-name": "Get Dashboard",
+          "x-is-trigger": false
+        },
+        "dashboard_id": {
+          "title": "Dashboard",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a dashboard id",
+            "field_name": "dashboard_id",
+            "placeholder": "Select a dashboard\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "posthog_dashboard"
+        }
+      },
+      "required": [
+        "dashboard_id"
+      ],
+      "title": "PostHogGetDashboardConfig",
+      "type": "object"
+    },
+    "PostHogGetDestinationConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_destination",
+          "default": "get_destination",
+          "title": "Get Destination",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Destinations",
+          "x-display-name": "Get Destination",
+          "x-is-trigger": false
+        },
+        "destination_id": {
+          "description": "The destination (hog function)",
+          "title": "Destination",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a destination id",
+            "field_name": "destination_id",
+            "placeholder": "Select a destination\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "posthog_destination"
+        }
+      },
+      "required": [
+        "destination_id"
+      ],
+      "title": "PostHogGetDestinationConfig",
+      "type": "object"
+    },
+    "PostHogGetExperimentConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_experiment",
+          "default": "get_experiment",
+          "title": "Get Experiment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Experiments",
+          "x-display-name": "Get Experiment",
+          "x-is-trigger": false
+        },
+        "experiment_id": {
+          "title": "Experiment",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a experiment id",
+            "field_name": "experiment_id",
+            "placeholder": "Select a experiment\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "posthog_experiment"
+        }
+      },
+      "required": [
+        "experiment_id"
+      ],
+      "title": "PostHogGetExperimentConfig",
+      "type": "object"
+    },
+    "PostHogGetFeatureFlagConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_feature_flag",
+          "default": "get_feature_flag",
+          "title": "Get Feature Flag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Feature Flags",
+          "x-display-name": "Get Feature Flag",
+          "x-is-trigger": false
+        },
+        "flag_id": {
+          "title": "Feature Flag",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a feature flag id",
+            "field_name": "flag_id",
+            "placeholder": "Select a feature flag\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "posthog_feature_flag"
+        }
+      },
+      "required": [
+        "flag_id"
+      ],
+      "title": "PostHogGetFeatureFlagConfig",
+      "type": "object"
+    },
+    "PostHogGetInsightConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_insight",
+          "default": "get_insight",
+          "title": "Get Insight",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Insights",
+          "x-display-name": "Get Insight",
+          "x-is-trigger": false
+        },
+        "insight_id": {
+          "title": "Insight",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a insight id",
+            "field_name": "insight_id",
+            "placeholder": "Select a insight\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "posthog_insight"
+        }
+      },
+      "required": [
+        "insight_id"
+      ],
+      "title": "PostHogGetInsightConfig",
+      "type": "object"
+    },
+    "PostHogGetNotebookConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_notebook",
+          "default": "get_notebook",
+          "title": "Get Notebook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Notebooks",
+          "x-display-name": "Get Notebook",
+          "x-is-trigger": false
+        },
+        "notebook_id": {
+          "title": "Notebook",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a notebook id",
+            "field_name": "notebook_id",
+            "placeholder": "Select a notebook\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "posthog_notebook"
+        }
+      },
+      "required": [
+        "notebook_id"
+      ],
+      "title": "PostHogGetNotebookConfig",
+      "type": "object"
+    },
+    "PostHogGetPersonConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_person",
+          "default": "get_person",
+          "title": "Get Person",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Persons",
+          "x-display-name": "Get Person",
+          "x-is-trigger": false
+        },
+        "person_id": {
+          "title": "Person",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a person id",
+            "field_name": "person_id",
+            "placeholder": "Select a person\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        }
+      },
+      "required": [
+        "person_id"
+      ],
+      "title": "PostHogGetPersonConfig",
+      "type": "object"
+    },
+    "PostHogGetRecordingConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_session_recording",
+          "default": "get_session_recording",
+          "title": "Get Session Recording",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Session Replay",
+          "x-display-name": "Get Session Recording",
+          "x-is-trigger": false
+        },
+        "recording_id": {
+          "description": "The session recording id",
+          "title": "Recording ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "recording_id"
+      ],
+      "title": "PostHogGetRecordingConfig",
+      "type": "object"
+    },
+    "PostHogGetSurveyConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_survey",
+          "default": "get_survey",
+          "title": "Get Survey",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Surveys",
+          "x-display-name": "Get Survey",
+          "x-is-trigger": false
+        },
+        "survey_id": {
+          "title": "Survey",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a survey id",
+            "field_name": "survey_id",
+            "placeholder": "Select a survey\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "posthog_survey"
+        }
+      },
+      "required": [
+        "survey_id"
+      ],
+      "title": "PostHogGetSurveyConfig",
+      "type": "object"
+    },
+    "PostHogGroupIdentifyConfig": {
+      "description": "Set properties on a group ($groupidentify).",
+      "properties": {
+        "operation": {
+          "const": "group_identify",
+          "default": "group_identify",
+          "title": "Group Identify",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Ingestion",
+          "x-display-name": "Group Identify",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "set group properties"
+          ]
+        },
+        "group_type": {
+          "description": "e.g. company, organization",
+          "title": "Group Type",
+          "type": "string"
+        },
+        "group_key": {
+          "description": "The group's unique key",
+          "title": "Group Key",
+          "type": "string"
+        },
+        "properties": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Group Properties (JSON)",
+          "description": "Properties to set on the group, e.g. {\"name\": \"Acme\"}",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "group_type",
+        "group_key"
+      ],
+      "title": "PostHogGroupIdentifyConfig",
+      "type": "object"
+    },
+    "PostHogIdentifyConfig": {
+      "description": "Identify a person and set their properties ($identify).",
+      "properties": {
+        "operation": {
+          "const": "identify",
+          "default": "identify",
+          "title": "Identify Person",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Ingestion",
+          "x-display-name": "Identify Person",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "set user properties",
+            "identify user"
+          ]
+        },
+        "distinct_id": {
+          "description": "The user/entity identifier",
+          "title": "Distinct ID",
+          "type": "string"
+        },
+        "set_properties": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Person properties to set ($set)",
+          "title": "Set Properties (JSON)",
+          "ui:widget": "textarea"
+        },
+        "set_once_properties": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Person properties to set only if unset ($set_once)",
+          "title": "Set Once Properties (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "distinct_id"
+      ],
+      "title": "PostHogIdentifyConfig",
+      "type": "object"
+    },
+    "PostHogListActionsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_actions",
+          "default": "list_actions",
+          "title": "List Actions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Actions",
+          "x-display-name": "List Actions",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page",
+          "title": "Limit"
+        }
+      },
+      "title": "PostHogListActionsConfig",
+      "type": "object"
+    },
+    "PostHogListAnnotationsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_annotations",
+          "default": "list_annotations",
+          "title": "List Annotations",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Annotations",
+          "x-display-name": "List Annotations",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page",
+          "title": "Limit"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Offset for pagination",
+          "title": "Offset"
+        }
+      },
+      "title": "PostHogListAnnotationsConfig",
+      "type": "object"
+    },
+    "PostHogListBatchExportsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_batch_exports",
+          "default": "list_batch_exports",
+          "title": "List Batch Exports",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Batch Exports",
+          "x-display-name": "List Batch Exports",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page",
+          "title": "Limit"
+        }
+      },
+      "title": "PostHogListBatchExportsConfig",
+      "type": "object"
+    },
+    "PostHogListCohortPersonsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_cohort_persons",
+          "default": "list_cohort_persons",
+          "title": "List Cohort Persons",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Cohorts",
+          "x-display-name": "List Cohort Persons",
+          "x-is-trigger": false
+        },
+        "cohort_id": {
+          "title": "Cohort",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a cohort id",
+            "field_name": "cohort_id",
+            "placeholder": "Select a cohort\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "posthog_cohort"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "cohort_id"
+      ],
+      "title": "PostHogListCohortPersonsConfig",
+      "type": "object"
+    },
+    "PostHogListCohortsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_cohorts",
+          "default": "list_cohorts",
+          "title": "List Cohorts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Cohorts",
+          "x-display-name": "List Cohorts",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page",
+          "title": "Limit"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Offset for pagination",
+          "title": "Offset"
+        }
+      },
+      "title": "PostHogListCohortsConfig",
+      "type": "object"
+    },
+    "PostHogListDashboardsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_dashboards",
+          "default": "list_dashboards",
+          "title": "List Dashboards",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Dashboards",
+          "x-display-name": "List Dashboards",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page",
+          "title": "Limit"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Offset for pagination",
+          "title": "Offset"
+        }
+      },
+      "title": "PostHogListDashboardsConfig",
+      "type": "object"
+    },
+    "PostHogListDestinationTemplatesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_destination_templates",
+          "default": "list_destination_templates",
+          "title": "List Destination Templates",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Destinations",
+          "x-display-name": "List Destination Templates",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "catalog",
+            "available destinations"
+          ]
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter templates by name (optional)",
+          "title": "Search"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page",
+          "title": "Limit"
+        }
+      },
+      "title": "PostHogListDestinationTemplatesConfig",
+      "type": "object"
+    },
+    "PostHogListDestinationsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_destinations",
+          "default": "list_destinations",
+          "title": "List Destinations",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Destinations",
+          "x-display-name": "List Destinations",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "cdp",
+            "hog functions",
+            "exports"
+          ]
+        },
+        "hog_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by kind (blank = destinations)",
+          "enum": [
+            "",
+            "destination",
+            "transformation",
+            "site_destination"
+          ],
+          "title": "Type",
+          "x-enum-searchable": true
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by name (optional)",
+          "title": "Search"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page",
+          "title": "Limit"
+        }
+      },
+      "title": "PostHogListDestinationsConfig",
+      "type": "object"
+    },
+    "PostHogListEarlyAccessConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_early_access_features",
+          "default": "list_early_access_features",
+          "title": "List Early Access Features",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Early Access",
+          "x-display-name": "List Early Access Features",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page",
+          "title": "Limit"
+        }
+      },
+      "title": "PostHogListEarlyAccessConfig",
+      "type": "object"
+    },
+    "PostHogListEventDefinitionsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_event_definitions",
+          "default": "list_event_definitions",
+          "title": "List Event Definitions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Definitions",
+          "x-display-name": "List Event Definitions",
+          "x-is-trigger": false
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter event names by substring",
+          "title": "Search"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page",
+          "title": "Limit"
+        }
+      },
+      "title": "PostHogListEventDefinitionsConfig",
+      "type": "object"
+    },
+    "PostHogListEventsConfig": {
+      "description": "List recent events.",
+      "properties": {
+        "operation": {
+          "const": "list_events",
+          "default": "list_events",
+          "title": "List Events",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Events",
+          "x-display-name": "List Events",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "recent events",
+            "event stream"
+          ]
+        },
+        "event": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only this event, e.g. 'user signed up'",
+          "title": "Event Name Filter"
+        },
+        "distinct_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only events from this user/entity",
+          "title": "Distinct ID Filter"
+        },
+        "after": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only events at or after this time",
+          "title": "After",
+          "ui:widget": "datetime"
+        },
+        "before": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only events at or before this time",
+          "title": "Before",
+          "ui:widget": "datetime"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page",
+          "title": "Limit"
+        }
+      },
+      "title": "PostHogListEventsConfig",
+      "type": "object"
+    },
+    "PostHogListExperimentsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_experiments",
+          "default": "list_experiments",
+          "title": "List Experiments",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Experiments",
+          "x-display-name": "List Experiments",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "ab tests"
+          ]
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page",
+          "title": "Limit"
+        }
+      },
+      "title": "PostHogListExperimentsConfig",
+      "type": "object"
+    },
+    "PostHogListFeatureFlagsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_feature_flags",
+          "default": "list_feature_flags",
+          "title": "List Feature Flags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Feature Flags",
+          "x-display-name": "List Feature Flags",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "flags"
+          ]
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page",
+          "title": "Limit"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Offset for pagination",
+          "title": "Offset"
+        }
+      },
+      "title": "PostHogListFeatureFlagsConfig",
+      "type": "object"
+    },
+    "PostHogListGroupTypesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_group_types",
+          "default": "list_group_types",
+          "title": "List Group Types",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "List Group Types",
+          "x-is-trigger": false
+        }
+      },
+      "title": "PostHogListGroupTypesConfig",
+      "type": "object"
+    },
+    "PostHogListGroupsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_groups",
+          "default": "list_groups",
+          "title": "List Groups",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups",
+          "x-display-name": "List Groups",
+          "x-is-trigger": false
+        },
+        "group_type_index": {
+          "description": "0-based index of the group type",
+          "title": "Group Type",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a group type index",
+            "field_name": "group_type_index",
+            "placeholder": "Select a group type\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by group key",
+          "title": "Search"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page",
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "group_type_index"
+      ],
+      "title": "PostHogListGroupsConfig",
+      "type": "object"
+    },
+    "PostHogListInsightsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_insights",
+          "default": "list_insights",
+          "title": "List Insights",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Insights",
+          "x-display-name": "List Insights",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page",
+          "title": "Limit"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Offset for pagination",
+          "title": "Offset"
+        }
+      },
+      "title": "PostHogListInsightsConfig",
+      "type": "object"
+    },
+    "PostHogListNotebooksConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_notebooks",
+          "default": "list_notebooks",
+          "title": "List Notebooks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Notebooks",
+          "x-display-name": "List Notebooks",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page",
+          "title": "Limit"
+        }
+      },
+      "title": "PostHogListNotebooksConfig",
+      "type": "object"
+    },
+    "PostHogListOrgInvitesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_org_invites",
+          "default": "list_org_invites",
+          "title": "List Org Invites",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "List Org Invites",
+          "x-is-trigger": false
+        }
+      },
+      "title": "PostHogListOrgInvitesConfig",
+      "type": "object"
+    },
+    "PostHogListOrgMembersConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_org_members",
+          "default": "list_org_members",
+          "title": "List Org Members",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "List Org Members",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page",
+          "title": "Limit"
+        }
+      },
+      "title": "PostHogListOrgMembersConfig",
+      "type": "object"
+    },
+    "PostHogListPersonsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_persons",
+          "default": "list_persons",
+          "title": "List Persons",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Persons",
+          "x-display-name": "List Persons",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "users",
+            "people"
+          ]
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search by distinct id / email / name",
+          "title": "Search"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page",
+          "title": "Limit"
+        },
+        "offset": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Offset for pagination",
+          "title": "Offset"
+        }
+      },
+      "title": "PostHogListPersonsConfig",
+      "type": "object"
+    },
+    "PostHogListProjectsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_projects",
+          "default": "list_projects",
+          "title": "List Projects",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "List Projects",
+          "x-is-trigger": false
+        }
+      },
+      "title": "PostHogListProjectsConfig",
+      "type": "object"
+    },
+    "PostHogListPropertyDefinitionsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_property_definitions",
+          "default": "list_property_definitions",
+          "title": "List Property Definitions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Definitions",
+          "x-display-name": "List Property Definitions",
+          "x-is-trigger": false
+        },
+        "search": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter property names by substring",
+          "title": "Search"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page",
+          "title": "Limit"
+        }
+      },
+      "title": "PostHogListPropertyDefinitionsConfig",
+      "type": "object"
+    },
+    "PostHogListRecordingsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_session_recordings",
+          "default": "list_session_recordings",
+          "title": "List Session Recordings",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Session Replay",
+          "x-display-name": "List Session Recordings",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "replays",
+            "recordings"
+          ]
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page",
+          "title": "Limit"
+        }
+      },
+      "title": "PostHogListRecordingsConfig",
+      "type": "object"
+    },
+    "PostHogListRolesConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_roles",
+          "default": "list_roles",
+          "title": "List Roles",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Organization",
+          "x-display-name": "List Roles",
+          "x-is-trigger": false
+        }
+      },
+      "title": "PostHogListRolesConfig",
+      "type": "object"
+    },
+    "PostHogListSurveysConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_surveys",
+          "default": "list_surveys",
+          "title": "List Surveys",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Surveys",
+          "x-display-name": "List Surveys",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Max results per page",
+          "title": "Limit"
+        }
+      },
+      "title": "PostHogListSurveysConfig",
+      "type": "object"
+    },
+    "PostHogMyFlagsConfig": {
+      "properties": {
+        "operation": {
+          "const": "list_my_feature_flags",
+          "default": "list_my_feature_flags",
+          "title": "List My Feature Flags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Feature Flags",
+          "x-display-name": "List My Feature Flags",
+          "x-is-trigger": false
+        }
+      },
+      "title": "PostHogMyFlagsConfig",
+      "type": "object"
+    },
+    "PostHogOAuthCredential": {
+      "description": "OAuth 2.0 credential for PostHog (authorization_code + PKCE).\n\nTokens come from the consent flow, not entered manually. ``base_url`` is the\nregion's data-plane host (resolved from userinfo at connect); ``project_id`` is\nthe numeric project id. Access tokens (pha_) last ~10h and are auto-refreshed\nvia the rotating refresh token (phr_). OAuth covers the REST/query/management\nAPI; event capture still needs a project API key (use the API-key credential).",
+      "properties": {
+        "credential_type": {
+          "const": "posthog_oauth",
+          "default": "posthog_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "title": "Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refresh Token"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Expiry"
+        },
+        "base_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Region data-plane host, e.g. https://us.posthog.com",
+          "title": "Base URL"
+        },
+        "project_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Numeric project (team) ID. Required for REST ops.",
+          "title": "Project ID"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Email"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Name"
+        },
+        "scoped_teams": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "integer"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scoped Teams",
+          "ui:hidden": true
+        },
+        "scoped_organizations": {
+          "anyOf": [
+            {
+              "items": {
+                "type": "string"
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Scoped Organizations",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "PostHogOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://posthog.com/docs/api/oauth",
+      "x-oauth-provider": "posthog",
+      "x-oauth-scopes": [
+        "openid",
+        "email",
+        "project:read",
+        "organization:read",
+        "user:read",
+        "insight:read",
+        "insight:write",
+        "dashboard:read",
+        "dashboard:write",
+        "feature_flag:read",
+        "feature_flag:write",
+        "experiment:read",
+        "experiment:write",
+        "query:read",
+        "person:read",
+        "person:write",
+        "cohort:read",
+        "cohort:write",
+        "annotation:read",
+        "annotation:write",
+        "survey:read",
+        "survey:write",
+        "action:read",
+        "action:write",
+        "session_recording:read",
+        "session_recording:write",
+        "group:read",
+        "organization_member:read",
+        "organization_member:write",
+        "event_definition:read",
+        "property_definition:read",
+        "hog_function:read",
+        "hog_function:write",
+        "notebook:read",
+        "notebook:write",
+        "early_access_feature:read",
+        "early_access_feature:write",
+        "batch_export:read",
+        "activity_log:read"
+      ]
+    },
+    "PostHogOnAutocaptureConfig": {
+      "description": "Fires on any autocaptured interaction ($autocapture).",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_autocapture",
+          "default": "on_autocapture",
+          "title": "On Autocapture",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Autocapture",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "$autocapture",
+            "click",
+            "interaction"
+          ]
+        }
+      },
+      "title": "PostHogOnAutocaptureConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "PostHogOnCustomEventConfig": {
+      "description": "Fires on a custom event you name (or every event with '*').",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_custom_event",
+          "default": "on_custom_event",
+          "title": "On Custom Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Custom Event",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "when event",
+            "on track",
+            "custom event",
+            "event ingested"
+          ]
+        },
+        "event_name": {
+          "description": "The event to fire on. Pick one of your project's events, or type a new name (use '*' for all events).",
+          "title": "Event Name",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or type an event name / *",
+            "field_name": "event_name",
+            "placeholder": "Select an event\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "registered_event_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Registered Event Name",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "event_name"
+      ],
+      "title": "PostHogOnCustomEventConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "PostHogOnExceptionConfig": {
+      "description": "Fires when an exception/error is captured ($exception).",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_exception",
+          "default": "on_exception",
+          "title": "On Exception",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Exception",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "$exception",
+            "error tracking",
+            "crash"
+          ]
+        }
+      },
+      "title": "PostHogOnExceptionConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "PostHogOnFeatureFlagCalledConfig": {
+      "description": "Fires when a feature flag is evaluated ($feature_flag_called).",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_feature_flag_called",
+          "default": "on_feature_flag_called",
+          "title": "On Feature Flag Called",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Feature Flag Called",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "$feature_flag_called",
+            "flag evaluated"
+          ]
+        }
+      },
+      "title": "PostHogOnFeatureFlagCalledConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "PostHogOnGroupIdentifyConfig": {
+      "description": "Fires when a group is identified ($groupidentify).",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_group_identify",
+          "default": "on_group_identify",
+          "title": "On Group Identify",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Group Identify",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "$groupidentify",
+            "group updated"
+          ]
+        }
+      },
+      "title": "PostHogOnGroupIdentifyConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "PostHogOnIdentifyConfig": {
+      "description": "Fires when a person is identified ($identify).",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_identify",
+          "default": "on_identify",
+          "title": "On Identify",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Identify",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "$identify",
+            "user identified",
+            "new user"
+          ]
+        }
+      },
+      "title": "PostHogOnIdentifyConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "PostHogOnPageleaveConfig": {
+      "description": "Fires when a user leaves a page ($pageleave).",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_pageleave",
+          "default": "on_pageleave",
+          "title": "On Page Leave",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Page Leave",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "$pageleave",
+            "page exit"
+          ]
+        }
+      },
+      "title": "PostHogOnPageleaveConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "PostHogOnPageviewConfig": {
+      "description": "Fires on every pageview ($pageview).",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_pageview",
+          "default": "on_pageview",
+          "title": "On Pageview",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Pageview",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "$pageview",
+            "page view",
+            "page visit"
+          ]
+        }
+      },
+      "title": "PostHogOnPageviewConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "PostHogOnRageclickConfig": {
+      "description": "Fires when PostHog detects a rageclick ($rageclick).",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_rageclick",
+          "default": "on_rageclick",
+          "title": "On Rageclick",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Rageclick",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "$rageclick",
+            "frustration"
+          ]
+        }
+      },
+      "title": "PostHogOnRageclickConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "PostHogOnScreenConfig": {
+      "description": "Fires on a mobile screen view ($screen).",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_screen",
+          "default": "on_screen",
+          "title": "On Screen View (Mobile)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Screen View (Mobile)",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "$screen",
+            "mobile screen"
+          ]
+        }
+      },
+      "title": "PostHogOnScreenConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "PostHogOnSetPersonPropsConfig": {
+      "description": "Fires when person properties are set ($set).",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_set_person_properties",
+          "default": "on_set_person_properties",
+          "title": "On Set Person Properties",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Set Person Properties",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "$set",
+            "person property changed"
+          ]
+        }
+      },
+      "title": "PostHogOnSetPersonPropsConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "PostHogOnSurveyDismissedConfig": {
+      "description": "Fires when a survey is dismissed (survey dismissed).",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_survey_dismissed",
+          "default": "on_survey_dismissed",
+          "title": "On Survey Dismissed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Survey Dismissed",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "survey dismissed",
+            "survey closed"
+          ]
+        }
+      },
+      "title": "PostHogOnSurveyDismissedConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "PostHogOnSurveySentConfig": {
+      "description": "Fires when a survey response is submitted (survey sent).",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_survey_sent",
+          "default": "on_survey_sent",
+          "title": "On Survey Response",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Survey Response",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "survey sent",
+            "survey submitted",
+            "survey response"
+          ]
+        }
+      },
+      "title": "PostHogOnSurveySentConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "PostHogOnSurveyShownConfig": {
+      "description": "Fires when a survey is shown to a user (survey shown).",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_survey_shown",
+          "default": "on_survey_shown",
+          "title": "On Survey Shown",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Survey Shown",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "survey shown",
+            "survey displayed"
+          ]
+        }
+      },
+      "title": "PostHogOnSurveyShownConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "PostHogOnWebVitalsConfig": {
+      "description": "Fires on a web-vitals measurement ($web_vitals).",
+      "properties": {
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "operation": {
+          "const": "on_web_vitals",
+          "default": "on_web_vitals",
+          "title": "On Web Vitals",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Triggers",
+          "x-display-name": "On Web Vitals",
+          "x-is-trigger": true,
+          "x-keywords": [
+            "$web_vitals",
+            "performance",
+            "core web vitals"
+          ]
+        }
+      },
+      "title": "PostHogOnWebVitalsConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "PostHogPersonalApiKeyCredential": {
+      "description": "PostHog Personal API Key \u2014 for the REST / query / management API.\n\nThe personal key (``phx_...``, a Bearer token) authenticates every management\nand analytics operation, and the numeric Project ID scopes the API paths\n(``/api/projects/{id}/...``). This is the credential for everything except raw\nevent capture (which uses a Project API Key credential instead).",
+      "properties": {
+        "credential_type": {
+          "const": "posthog_personal_api_key",
+          "default": "posthog_personal_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "region": {
+          "default": "us",
+          "description": "PostHog Cloud region, or 'custom' for a self-hosted instance",
+          "enum": [
+            "us",
+            "eu",
+            "custom"
+          ],
+          "enumNames": [
+            "US Cloud",
+            "EU Cloud",
+            "Self-hosted / Custom"
+          ],
+          "title": "Region",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "personal_api_key": {
+          "description": "Personal API key (phx_...). PostHog \u2192 Settings \u2192 Personal API keys.",
+          "title": "Personal API Key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "project_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Numeric project (team) ID. Leave blank to use your default project \u2014 it's auto-detected from the API key. Set it only to target a specific project when the key can access several.",
+          "title": "Project ID (optional)"
+        },
+        "host": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Self-hosted base URL (e.g. https://posthog.mycompany.com) \u2014 required when Region is 'custom'",
+          "title": "Custom Host"
+        }
+      },
+      "required": [
+        "personal_api_key"
+      ],
+      "title": "PostHogPersonalApiKeyCredential",
+      "type": "object",
+      "x-credential-url": "https://app.posthog.com/settings/user-api-keys",
+      "x-help-text": "Create a Personal API key at Settings \u2192 Personal API keys. The Project ID auto-detects from your default project \u2014 only set it to target a specific one."
+    },
+    "PostHogProjectApiKeyCredential": {
+      "description": "PostHog Project API Key \u2014 for event ingestion (capture) only.\n\nThe project key (``phc_...``) is the PUBLIC, write-only key used to capture\nevents, identify people, and evaluate flags via the ingestion API. It cannot\nread or manage data \u2014 use a Personal API Key credential for that.",
+      "properties": {
+        "credential_type": {
+          "const": "posthog_project_api_key",
+          "default": "posthog_project_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "region": {
+          "default": "us",
+          "description": "PostHog Cloud region, or 'custom' for a self-hosted instance",
+          "enum": [
+            "us",
+            "eu",
+            "custom"
+          ],
+          "enumNames": [
+            "US Cloud",
+            "EU Cloud",
+            "Self-hosted / Custom"
+          ],
+          "title": "Region",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "project_api_key": {
+          "description": "Public project API key (phc_...). PostHog \u2192 Project Settings \u2192 Project API Key.",
+          "title": "Project API Key",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "host": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Self-hosted base URL (e.g. https://posthog.mycompany.com) \u2014 required when Region is 'custom'",
+          "title": "Custom Host"
+        }
+      },
+      "required": [
+        "project_api_key"
+      ],
+      "title": "PostHogProjectApiKeyCredential",
+      "type": "object",
+      "x-credential-url": "https://app.posthog.com/settings/project",
+      "x-help-text": "Find the Project API Key (phc_...) in Project Settings \u2014 it's the write-only key used for event capture."
+    },
+    "PostHogRawRequestConfig": {
+      "description": "Call any authenticated PostHog REST endpoint (covers the huge long tail).",
+      "properties": {
+        "operation": {
+          "const": "raw_request",
+          "default": "raw_request",
+          "title": "Custom Request",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Advanced",
+          "x-display-name": "Custom Request",
+          "x-is-trigger": false
+        },
+        "method": {
+          "default": "GET",
+          "enum": [
+            "GET",
+            "POST",
+            "PATCH",
+            "PUT",
+            "DELETE"
+          ],
+          "title": "Method",
+          "type": "string"
+        },
+        "path": {
+          "description": "Path after the host, e.g. /api/projects/{id}/hog_functions/. {project_id} is substituted.",
+          "title": "Path",
+          "type": "string"
+        },
+        "query_params": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "e.g. limit=100&offset=0",
+          "title": "Query Parameters"
+        },
+        "body_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Request body as JSON",
+          "title": "Body (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "path"
+      ],
+      "title": "PostHogRawRequestConfig",
+      "type": "object"
+    },
+    "PostHogRunQueryConfig": {
+      "description": "Run a HogQL / structured query via the Query API (the universal read primitive).",
+      "properties": {
+        "operation": {
+          "const": "run_query",
+          "default": "run_query",
+          "title": "Run Query (HogQL)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Query",
+          "x-display-name": "Run Query (HogQL)",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "sql",
+            "hogql",
+            "analytics query",
+            "trends",
+            "funnel"
+          ]
+        },
+        "hogql": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Raw HogQL, e.g. SELECT event, count() FROM events GROUP BY event",
+          "title": "HogQL",
+          "ui:widget": "textarea"
+        },
+        "query_json": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Full structured query node (overrides HogQL), e.g. a TrendsQuery",
+          "title": "Query JSON",
+          "ui:widget": "textarea"
+        }
+      },
+      "title": "PostHogRunQueryConfig",
+      "type": "object"
+    },
+    "PostHogSetDestinationEnabledConfig": {
+      "properties": {
+        "operation": {
+          "const": "set_destination_enabled",
+          "default": "set_destination_enabled",
+          "title": "Enable/Disable Destination",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Destinations",
+          "x-display-name": "Enable/Disable Destination",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "pause destination",
+            "resume destination"
+          ]
+        },
+        "destination_id": {
+          "description": "The destination (hog function)",
+          "title": "Destination",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a destination id",
+            "field_name": "destination_id",
+            "placeholder": "Select a destination\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "posthog_destination"
+        },
+        "enabled": {
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Enabled",
+            "Disabled"
+          ],
+          "title": "State",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "destination_id",
+        "enabled"
+      ],
+      "title": "PostHogSetDestinationEnabledConfig",
+      "type": "object"
+    },
+    "PostHogSplitPersonConfig": {
+      "properties": {
+        "operation": {
+          "const": "split_person",
+          "default": "split_person",
+          "title": "Split Person",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Persons",
+          "x-display-name": "Split Person",
+          "x-is-trigger": false
+        },
+        "person_id": {
+          "title": "Person",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a person id",
+            "field_name": "person_id",
+            "placeholder": "Select a person\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "main_distinct_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Distinct id to keep as the primary person",
+          "title": "Main Distinct ID"
+        }
+      },
+      "required": [
+        "person_id"
+      ],
+      "title": "PostHogSplitPersonConfig",
+      "type": "object"
+    },
+    "PostHogSurveyActionConfig": {
+      "properties": {
+        "operation": {
+          "const": "survey_action",
+          "default": "survey_action",
+          "title": "Survey Action",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Surveys",
+          "x-display-name": "Survey Action",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "launch",
+            "stop"
+          ]
+        },
+        "survey_id": {
+          "title": "Survey",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a survey id",
+            "field_name": "survey_id",
+            "placeholder": "Select a survey\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "posthog_survey"
+        },
+        "action": {
+          "default": "launch",
+          "enum": [
+            "launch",
+            "stop"
+          ],
+          "title": "Action",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "survey_id"
+      ],
+      "title": "PostHogSurveyActionConfig",
+      "type": "object"
+    },
+    "PostHogSurveyResponsesConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_survey_responses",
+          "default": "get_survey_responses",
+          "title": "Get Survey Responses",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Surveys",
+          "x-display-name": "Get Survey Responses",
+          "x-is-trigger": false
+        },
+        "survey_id": {
+          "title": "Survey",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a survey id",
+            "field_name": "survey_id",
+            "placeholder": "Select a survey\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "posthog_survey"
+        }
+      },
+      "required": [
+        "survey_id"
+      ],
+      "title": "PostHogSurveyResponsesConfig",
+      "type": "object"
+    },
+    "PostHogSurveyStatsConfig": {
+      "properties": {
+        "operation": {
+          "const": "get_survey_stats",
+          "default": "get_survey_stats",
+          "title": "Get Survey Stats",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Surveys",
+          "x-display-name": "Get Survey Stats",
+          "x-is-trigger": false
+        },
+        "survey_id": {
+          "title": "Survey",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a survey id",
+            "field_name": "survey_id",
+            "placeholder": "Select a survey\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "posthog_survey"
+        }
+      },
+      "required": [
+        "survey_id"
+      ],
+      "title": "PostHogSurveyStatsConfig",
+      "type": "object"
+    },
+    "PostHogUpdateAnnotationConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_annotation",
+          "default": "update_annotation",
+          "title": "Update Annotation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Annotations",
+          "x-display-name": "Update Annotation",
+          "x-is-trigger": false
+        },
+        "annotation_id": {
+          "title": "Annotation",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a annotation id",
+            "field_name": "annotation_id",
+            "placeholder": "Select a annotation\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "posthog_annotation"
+        },
+        "body_json": {
+          "description": "Fields to change, e.g. {\"name\": \"New name\"}",
+          "title": "Fields (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "annotation_id",
+        "body_json"
+      ],
+      "title": "PostHogUpdateAnnotationConfig",
+      "type": "object"
+    },
+    "PostHogUpdateCohortConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_cohort",
+          "default": "update_cohort",
+          "title": "Update Cohort",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Cohorts",
+          "x-display-name": "Update Cohort",
+          "x-is-trigger": false
+        },
+        "cohort_id": {
+          "title": "Cohort",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a cohort id",
+            "field_name": "cohort_id",
+            "placeholder": "Select a cohort\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "posthog_cohort"
+        },
+        "body_json": {
+          "description": "Fields to change, e.g. {\"name\": \"New name\"}",
+          "title": "Fields (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "cohort_id",
+        "body_json"
+      ],
+      "title": "PostHogUpdateCohortConfig",
+      "type": "object"
+    },
+    "PostHogUpdateDashboardConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_dashboard",
+          "default": "update_dashboard",
+          "title": "Update Dashboard",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Dashboards",
+          "x-display-name": "Update Dashboard",
+          "x-is-trigger": false
+        },
+        "dashboard_id": {
+          "title": "Dashboard",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a dashboard id",
+            "field_name": "dashboard_id",
+            "placeholder": "Select a dashboard\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "posthog_dashboard"
+        },
+        "body_json": {
+          "description": "Fields to change, e.g. {\"name\": \"New name\"}",
+          "title": "Fields (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "dashboard_id",
+        "body_json"
+      ],
+      "title": "PostHogUpdateDashboardConfig",
+      "type": "object"
+    },
+    "PostHogUpdateDestinationConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_destination",
+          "default": "update_destination",
+          "title": "Update Destination",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Destinations",
+          "x-display-name": "Update Destination",
+          "x-is-trigger": false
+        },
+        "destination_id": {
+          "description": "The destination (hog function)",
+          "title": "Destination",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a destination id",
+            "field_name": "destination_id",
+            "placeholder": "Select a destination\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "posthog_destination"
+        },
+        "body_json": {
+          "description": "Fields to change, e.g. {\"name\":\"New\",\"inputs\":{\u2026},\"filters\":{\u2026}}",
+          "title": "Fields (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "destination_id",
+        "body_json"
+      ],
+      "title": "PostHogUpdateDestinationConfig",
+      "type": "object"
+    },
+    "PostHogUpdateExperimentConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_experiment",
+          "default": "update_experiment",
+          "title": "Update Experiment",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Experiments",
+          "x-display-name": "Update Experiment",
+          "x-is-trigger": false
+        },
+        "experiment_id": {
+          "title": "Experiment",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a experiment id",
+            "field_name": "experiment_id",
+            "placeholder": "Select a experiment\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "posthog_experiment"
+        },
+        "body_json": {
+          "description": "Fields to change, e.g. {\"name\": \"New name\"}",
+          "title": "Fields (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "experiment_id",
+        "body_json"
+      ],
+      "title": "PostHogUpdateExperimentConfig",
+      "type": "object"
+    },
+    "PostHogUpdateFeatureFlagConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_feature_flag",
+          "default": "update_feature_flag",
+          "title": "Update Feature Flag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Feature Flags",
+          "x-display-name": "Update Feature Flag",
+          "x-is-trigger": false
+        },
+        "flag_id": {
+          "title": "Feature Flag",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a feature flag id",
+            "field_name": "flag_id",
+            "placeholder": "Select a feature flag\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "posthog_feature_flag"
+        },
+        "body_json": {
+          "description": "Fields to update as JSON, e.g. {\"active\": false}",
+          "title": "Fields (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "flag_id",
+        "body_json"
+      ],
+      "title": "PostHogUpdateFeatureFlagConfig",
+      "type": "object"
+    },
+    "PostHogUpdateInsightConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_insight",
+          "default": "update_insight",
+          "title": "Update Insight",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Insights",
+          "x-display-name": "Update Insight",
+          "x-is-trigger": false
+        },
+        "insight_id": {
+          "title": "Insight",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a insight id",
+            "field_name": "insight_id",
+            "placeholder": "Select a insight\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "posthog_insight"
+        },
+        "body_json": {
+          "description": "Fields to change, e.g. {\"name\": \"New name\"}",
+          "title": "Fields (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "insight_id",
+        "body_json"
+      ],
+      "title": "PostHogUpdateInsightConfig",
+      "type": "object"
+    },
+    "PostHogUpdatePersonConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_person",
+          "default": "update_person",
+          "title": "Update Person",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Persons",
+          "x-display-name": "Update Person",
+          "x-is-trigger": false
+        },
+        "person_id": {
+          "title": "Person",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a person id",
+            "field_name": "person_id",
+            "placeholder": "Select a person\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "properties": {
+          "type": "string",
+          "title": "Properties (JSON)",
+          "description": "Properties to set",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "person_id",
+        "properties"
+      ],
+      "title": "PostHogUpdatePersonConfig",
+      "type": "object"
+    },
+    "PostHogUpdateSurveyConfig": {
+      "properties": {
+        "operation": {
+          "const": "update_survey",
+          "default": "update_survey",
+          "title": "Update Survey",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Surveys",
+          "x-display-name": "Update Survey",
+          "x-is-trigger": false
+        },
+        "survey_id": {
+          "title": "Survey",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a survey id",
+            "field_name": "survey_id",
+            "placeholder": "Select a survey\u2026",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "posthog_survey"
+        },
+        "body_json": {
+          "description": "Fields to change, e.g. {\"name\": \"New name\"}",
+          "title": "Fields (JSON)",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "survey_id",
+        "body_json"
+      ],
+      "title": "PostHogUpdateSurveyConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the PostHog node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_persons_to_cohort": "#/$defs/PostHogAddPersonsToCohortConfig",
+          "batch_capture": "#/$defs/PostHogBatchCaptureConfig",
+          "bulk_delete_persons": "#/$defs/PostHogBulkDeletePersonsConfig",
+          "capture_event": "#/$defs/PostHogCaptureConfig",
+          "create_action": "#/$defs/PostHogCreateActionConfig",
+          "create_annotation": "#/$defs/PostHogCreateAnnotationConfig",
+          "create_cohort": "#/$defs/PostHogCreateCohortConfig",
+          "create_dashboard": "#/$defs/PostHogCreateDashboardConfig",
+          "create_destination": "#/$defs/PostHogCreateDestinationConfig",
+          "create_early_access_feature": "#/$defs/PostHogCreateEarlyAccessConfig",
+          "create_experiment": "#/$defs/PostHogCreateExperimentConfig",
+          "create_feature_flag": "#/$defs/PostHogCreateFeatureFlagConfig",
+          "create_insight": "#/$defs/PostHogCreateInsightConfig",
+          "create_notebook": "#/$defs/PostHogCreateNotebookConfig",
+          "create_org_invite": "#/$defs/PostHogCreateOrgInviteConfig",
+          "create_survey": "#/$defs/PostHogCreateSurveyConfig",
+          "delete_annotation": "#/$defs/PostHogDeleteAnnotationConfig",
+          "delete_cohort": "#/$defs/PostHogDeleteCohortConfig",
+          "delete_dashboard": "#/$defs/PostHogDeleteDashboardConfig",
+          "delete_destination": "#/$defs/PostHogDeleteDestinationConfig",
+          "delete_feature_flag": "#/$defs/PostHogDeleteFeatureFlagConfig",
+          "delete_insight": "#/$defs/PostHogDeleteInsightConfig",
+          "delete_person": "#/$defs/PostHogDeletePersonConfig",
+          "delete_session_recording": "#/$defs/PostHogDeleteRecordingConfig",
+          "evaluate_flags": "#/$defs/PostHogEvaluateFlagsConfig",
+          "experiment_action": "#/$defs/PostHogExperimentActionConfig",
+          "feature_flag_local_evaluation": "#/$defs/PostHogFlagLocalEvaluationConfig",
+          "find_group": "#/$defs/PostHogFindGroupConfig",
+          "get_action": "#/$defs/PostHogGetActionConfig",
+          "get_batch_export": "#/$defs/PostHogGetBatchExportConfig",
+          "get_cohort": "#/$defs/PostHogGetCohortConfig",
+          "get_dashboard": "#/$defs/PostHogGetDashboardConfig",
+          "get_destination": "#/$defs/PostHogGetDestinationConfig",
+          "get_destination_logs": "#/$defs/PostHogDestinationLogsConfig",
+          "get_destination_metrics": "#/$defs/PostHogDestinationMetricsConfig",
+          "get_experiment": "#/$defs/PostHogGetExperimentConfig",
+          "get_feature_flag": "#/$defs/PostHogGetFeatureFlagConfig",
+          "get_insight": "#/$defs/PostHogGetInsightConfig",
+          "get_notebook": "#/$defs/PostHogGetNotebookConfig",
+          "get_person": "#/$defs/PostHogGetPersonConfig",
+          "get_session_recording": "#/$defs/PostHogGetRecordingConfig",
+          "get_survey": "#/$defs/PostHogGetSurveyConfig",
+          "get_survey_responses": "#/$defs/PostHogSurveyResponsesConfig",
+          "get_survey_stats": "#/$defs/PostHogSurveyStatsConfig",
+          "group_identify": "#/$defs/PostHogGroupIdentifyConfig",
+          "identify": "#/$defs/PostHogIdentifyConfig",
+          "list_actions": "#/$defs/PostHogListActionsConfig",
+          "list_activity_log": "#/$defs/PostHogActivityLogConfig",
+          "list_annotations": "#/$defs/PostHogListAnnotationsConfig",
+          "list_batch_exports": "#/$defs/PostHogListBatchExportsConfig",
+          "list_cohort_persons": "#/$defs/PostHogListCohortPersonsConfig",
+          "list_cohorts": "#/$defs/PostHogListCohortsConfig",
+          "list_dashboards": "#/$defs/PostHogListDashboardsConfig",
+          "list_destination_templates": "#/$defs/PostHogListDestinationTemplatesConfig",
+          "list_destinations": "#/$defs/PostHogListDestinationsConfig",
+          "list_early_access_features": "#/$defs/PostHogListEarlyAccessConfig",
+          "list_event_definitions": "#/$defs/PostHogListEventDefinitionsConfig",
+          "list_events": "#/$defs/PostHogListEventsConfig",
+          "list_experiments": "#/$defs/PostHogListExperimentsConfig",
+          "list_feature_flags": "#/$defs/PostHogListFeatureFlagsConfig",
+          "list_group_types": "#/$defs/PostHogListGroupTypesConfig",
+          "list_groups": "#/$defs/PostHogListGroupsConfig",
+          "list_insights": "#/$defs/PostHogListInsightsConfig",
+          "list_my_feature_flags": "#/$defs/PostHogMyFlagsConfig",
+          "list_notebooks": "#/$defs/PostHogListNotebooksConfig",
+          "list_org_invites": "#/$defs/PostHogListOrgInvitesConfig",
+          "list_org_members": "#/$defs/PostHogListOrgMembersConfig",
+          "list_persons": "#/$defs/PostHogListPersonsConfig",
+          "list_projects": "#/$defs/PostHogListProjectsConfig",
+          "list_property_definitions": "#/$defs/PostHogListPropertyDefinitionsConfig",
+          "list_roles": "#/$defs/PostHogListRolesConfig",
+          "list_session_recordings": "#/$defs/PostHogListRecordingsConfig",
+          "list_surveys": "#/$defs/PostHogListSurveysConfig",
+          "on_autocapture": "#/$defs/PostHogOnAutocaptureConfig",
+          "on_custom_event": "#/$defs/PostHogOnCustomEventConfig",
+          "on_exception": "#/$defs/PostHogOnExceptionConfig",
+          "on_feature_flag_called": "#/$defs/PostHogOnFeatureFlagCalledConfig",
+          "on_group_identify": "#/$defs/PostHogOnGroupIdentifyConfig",
+          "on_identify": "#/$defs/PostHogOnIdentifyConfig",
+          "on_pageleave": "#/$defs/PostHogOnPageleaveConfig",
+          "on_pageview": "#/$defs/PostHogOnPageviewConfig",
+          "on_rageclick": "#/$defs/PostHogOnRageclickConfig",
+          "on_screen": "#/$defs/PostHogOnScreenConfig",
+          "on_set_person_properties": "#/$defs/PostHogOnSetPersonPropsConfig",
+          "on_survey_dismissed": "#/$defs/PostHogOnSurveyDismissedConfig",
+          "on_survey_sent": "#/$defs/PostHogOnSurveySentConfig",
+          "on_survey_shown": "#/$defs/PostHogOnSurveyShownConfig",
+          "on_web_vitals": "#/$defs/PostHogOnWebVitalsConfig",
+          "raw_request": "#/$defs/PostHogRawRequestConfig",
+          "run_query": "#/$defs/PostHogRunQueryConfig",
+          "set_destination_enabled": "#/$defs/PostHogSetDestinationEnabledConfig",
+          "split_person": "#/$defs/PostHogSplitPersonConfig",
+          "survey_action": "#/$defs/PostHogSurveyActionConfig",
+          "update_annotation": "#/$defs/PostHogUpdateAnnotationConfig",
+          "update_cohort": "#/$defs/PostHogUpdateCohortConfig",
+          "update_dashboard": "#/$defs/PostHogUpdateDashboardConfig",
+          "update_destination": "#/$defs/PostHogUpdateDestinationConfig",
+          "update_experiment": "#/$defs/PostHogUpdateExperimentConfig",
+          "update_feature_flag": "#/$defs/PostHogUpdateFeatureFlagConfig",
+          "update_insight": "#/$defs/PostHogUpdateInsightConfig",
+          "update_person": "#/$defs/PostHogUpdatePersonConfig",
+          "update_survey": "#/$defs/PostHogUpdateSurveyConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/PostHogCaptureConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogBatchCaptureConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogIdentifyConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogGroupIdentifyConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogEvaluateFlagsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogRunQueryConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogListEventsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogListFeatureFlagsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogGetFeatureFlagConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogCreateFeatureFlagConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogUpdateFeatureFlagConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogDeleteFeatureFlagConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogListPersonsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogGetPersonConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogUpdatePersonConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogDeletePersonConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogListCohortsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogGetCohortConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogCreateCohortConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogUpdateCohortConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogDeleteCohortConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogListCohortPersonsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogListAnnotationsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogCreateAnnotationConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogUpdateAnnotationConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogDeleteAnnotationConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogListInsightsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogGetInsightConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogCreateInsightConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogDeleteInsightConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogListDashboardsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogGetDashboardConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogCreateDashboardConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogDeleteDashboardConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogListActionsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogGetActionConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogCreateActionConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogListSurveysConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogGetSurveyConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogListRecordingsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogGetRecordingConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogDeleteRecordingConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogListExperimentsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogGetExperimentConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogListEventDefinitionsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogListPropertyDefinitionsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogUpdateInsightConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogUpdateDashboardConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogFlagLocalEvaluationConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogMyFlagsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogSplitPersonConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogBulkDeletePersonsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogCreateExperimentConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogUpdateExperimentConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogExperimentActionConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogCreateSurveyConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogUpdateSurveyConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogSurveyActionConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogSurveyResponsesConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogSurveyStatsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogListGroupTypesConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogListGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogFindGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogAddPersonsToCohortConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogListNotebooksConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogGetNotebookConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogCreateNotebookConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogListEarlyAccessConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogCreateEarlyAccessConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogListBatchExportsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogGetBatchExportConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogListDestinationsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogGetDestinationConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogCreateDestinationConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogUpdateDestinationConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogSetDestinationEnabledConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogDeleteDestinationConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogListDestinationTemplatesConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogDestinationLogsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogDestinationMetricsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogActivityLogConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogListOrgMembersConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogListOrgInvitesConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogCreateOrgInviteConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogListProjectsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogListRolesConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogRawRequestConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogOnPageviewConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogOnPageleaveConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogOnAutocaptureConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogOnRageclickConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogOnIdentifyConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogOnGroupIdentifyConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogOnSetPersonPropsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogOnFeatureFlagCalledConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogOnSurveyShownConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogOnSurveySentConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogOnSurveyDismissedConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogOnExceptionConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogOnWebVitalsConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogOnScreenConfig"
+        },
+        {
+          "$ref": "#/$defs/PostHogOnCustomEventConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/PostHogPersonalApiKeyCredential"
+        },
+        {
+          "$ref": "#/$defs/PostHogProjectApiKeyCredential"
+        },
+        {
+          "$ref": "#/$defs/PostHogOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Posthog Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Capture a 'signup' event for a user",
+    "Run a HogQL query for daily active users",
+    "Create a feature flag and roll it out to 50%",
+    "Add an annotation marking a deploy",
+    "When a 'purchase' event fires, notify the team"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

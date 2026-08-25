@@ -1,0 +1,323 @@
+{
+  "$defs": {
+    "GoogleAnalyticsGetMetadataConfig": {
+      "description": "Get available dimensions and metrics for a GA4 property.",
+      "properties": {
+        "operation": {
+          "const": "fetch_ga4_dimensions_and_metrics",
+          "default": "fetch_ga4_dimensions_and_metrics",
+          "description": "List available dimensions and metrics",
+          "title": "Fetch Ga4 Dimensions and Metrics",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Metadata",
+          "x-display-name": "Fetch Ga4 Dimensions and Metrics",
+          "x-is-trigger": false
+        },
+        "property_id": {
+          "description": "GA4 property ID (numeric, e.g. 123456789)",
+          "title": "Property ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter property ID",
+            "field_name": "property_id",
+            "placeholder": "Select a GA4 property...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_analytics_property"
+        }
+      },
+      "required": [
+        "property_id"
+      ],
+      "title": "GoogleAnalyticsGetMetadataConfig",
+      "type": "object"
+    },
+    "GoogleAnalyticsOAuthCredential": {
+      "description": "OAuth credential for Google Analytics 4 access.",
+      "properties": {
+        "credential_type": {
+          "const": "google_analytics_oauth",
+          "default": "google_analytics_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "OAuth 2.0 access token from Google",
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "description": "OAuth 2.0 refresh token for automatic renewal",
+          "title": "Refresh Token",
+          "type": "string"
+        },
+        "expires_at": {
+          "description": "ISO 8601 timestamp when access token expires",
+          "title": "Token Expiry",
+          "type": "string"
+        },
+        "email": {
+          "description": "Email address of the connected Google account",
+          "title": "Google Account",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "email"
+      ],
+      "title": "GoogleAnalyticsOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-oauth-provider": "google",
+      "x-oauth-scopes": [
+        "https://www.googleapis.com/auth/analytics.readonly"
+      ]
+    },
+    "GoogleAnalyticsRealtimeReportConfig": {
+      "description": "Run a realtime GA4 report showing current activity.",
+      "properties": {
+        "operation": {
+          "const": "run_ga4_realtime_report",
+          "default": "run_ga4_realtime_report",
+          "description": "Run a GA4 realtime report",
+          "title": "Run Ga4 Realtime Report",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Report",
+          "x-display-name": "Run Ga4 Realtime Report",
+          "x-is-trigger": false
+        },
+        "property_id": {
+          "description": "GA4 property ID (numeric, e.g. 123456789)",
+          "title": "Property ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter property ID",
+            "field_name": "property_id",
+            "placeholder": "Select a GA4 property...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_analytics_property"
+        },
+        "dimensions": {
+          "default": "unifiedScreenName",
+          "description": "Comma-separated realtime dimension names (e.g. unifiedScreenName, country, city)",
+          "placeholder": "unifiedScreenName, country",
+          "title": "Dimensions",
+          "type": "string"
+        },
+        "metrics": {
+          "default": "activeUsers",
+          "description": "Comma-separated realtime metric names (e.g. activeUsers, screenPageViews)",
+          "placeholder": "activeUsers, screenPageViews",
+          "title": "Metrics",
+          "type": "string"
+        },
+        "limit": {
+          "default": "100",
+          "description": "Maximum number of rows to return",
+          "placeholder": "100",
+          "title": "Row Limit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "property_id"
+      ],
+      "title": "GoogleAnalyticsRealtimeReportConfig",
+      "type": "object"
+    },
+    "GoogleAnalyticsRunReportConfig": {
+      "description": "Run a standard GA4 report with dimensions, metrics, date range, and optional filters.",
+      "properties": {
+        "operation": {
+          "const": "run_ga4_standard_report",
+          "default": "run_ga4_standard_report",
+          "description": "Run a GA4 report",
+          "title": "Run Ga4 Standard Report",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Report",
+          "x-display-name": "Run Ga4 Standard Report",
+          "x-is-trigger": false
+        },
+        "property_id": {
+          "description": "GA4 property ID (numeric, e.g. 123456789)",
+          "title": "Property ID",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or enter property ID",
+            "field_name": "property_id",
+            "placeholder": "Select a GA4 property...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_analytics_property"
+        },
+        "start_date": {
+          "default": "30daysAgo",
+          "description": "Start date (YYYY-MM-DD or relative: today, yesterday, NdaysAgo)",
+          "placeholder": "30daysAgo",
+          "title": "Start Date",
+          "type": "string"
+        },
+        "end_date": {
+          "default": "today",
+          "description": "End date (YYYY-MM-DD or relative: today, yesterday, NdaysAgo)",
+          "placeholder": "today",
+          "title": "End Date",
+          "type": "string"
+        },
+        "compare_start_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional comparison period start date (for month-over-month, year-over-year)",
+          "placeholder": "60daysAgo (optional)",
+          "title": "Comparison Start Date",
+          "ui:category": "Comparison"
+        },
+        "compare_end_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional comparison period end date",
+          "placeholder": "31daysAgo (optional)",
+          "title": "Comparison End Date",
+          "ui:category": "Comparison"
+        },
+        "dimensions": {
+          "default": "date",
+          "description": "Comma-separated dimension names (e.g. date, city, pagePath, sessionSource, sessionMedium)",
+          "placeholder": "date, sessionSource, sessionMedium",
+          "title": "Dimensions",
+          "type": "string"
+        },
+        "metrics": {
+          "default": "sessions,totalUsers,screenPageViews,conversions,engagementRate",
+          "description": "Comma-separated metric names (e.g. sessions, totalUsers, screenPageViews, conversions, engagementRate, bounceRate)",
+          "placeholder": "sessions, totalUsers, screenPageViews, conversions",
+          "title": "Metrics",
+          "type": "string"
+        },
+        "dimension_filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter dimensions as JSON (e.g. {\"fieldName\": \"country\", \"stringFilter\": {\"value\": \"US\"}})",
+          "placeholder": "Optional JSON filter",
+          "title": "Dimension Filter",
+          "ui:category": "Filters"
+        },
+        "metric_filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter metrics as JSON (e.g. {\"fieldName\": \"sessions\", \"numericFilter\": {\"operation\": \"GREATER_THAN\", \"value\": {\"int64Value\": \"100\"}}})",
+          "placeholder": "Optional JSON filter",
+          "title": "Metric Filter",
+          "ui:category": "Filters"
+        },
+        "limit": {
+          "default": "10000",
+          "description": "Maximum number of rows to return",
+          "placeholder": "10000",
+          "title": "Row Limit",
+          "type": "string"
+        }
+      },
+      "required": [
+        "property_id"
+      ],
+      "title": "GoogleAnalyticsRunReportConfig",
+      "type": "object"
+    }
+  },
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "fetch_ga4_dimensions_and_metrics": "#/$defs/GoogleAnalyticsGetMetadataConfig",
+          "run_ga4_realtime_report": "#/$defs/GoogleAnalyticsRealtimeReportConfig",
+          "run_ga4_standard_report": "#/$defs/GoogleAnalyticsRunReportConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GoogleAnalyticsRunReportConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleAnalyticsRealtimeReportConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleAnalyticsGetMetadataConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GoogleAnalyticsOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Google-analytics Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Get traffic by source for last 30 days and identify top channels",
+    "Run realtime report to see current active users on website now",
+    "Get conversion metrics for mobile vs desktop and compare rates",
+    "List available metrics and dimensions for creating custom reports",
+    "Get traffic to landing pages and filter for sessions over 2 minutes",
+    "Get conversion funnel data for Q2 and compare with Q1 performance",
+    "Run report with geographic data and identify highest value regions"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

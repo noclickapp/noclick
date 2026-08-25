@@ -1,0 +1,465 @@
+{
+  "$defs": {
+    "GoogleDocsAppendTextConfig": {
+      "description": "Configuration for appending text to a document",
+      "properties": {
+        "operation": {
+          "const": "append_text_to_document",
+          "default": "append_text_to_document",
+          "description": "Append text to document",
+          "title": "Append Text to Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document",
+          "x-display-name": "Append Text to Document",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "append text",
+            "add to end",
+            "write at bottom",
+            "add paragraph",
+            "concatenate text"
+          ]
+        },
+        "document_id": {
+          "description": "Select a Google Doc",
+          "title": "Document",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste document ID",
+            "field_name": "document_id",
+            "placeholder": "Select a document...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_doc"
+        },
+        "text": {
+          "description": "Text to append to the document",
+          "placeholder": "Text to append...",
+          "title": "Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "add_newline": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "Add a newline before the text",
+          "title": "Add Newline"
+        }
+      },
+      "required": [
+        "document_id",
+        "text"
+      ],
+      "title": "GoogleDocsAppendTextConfig",
+      "type": "object"
+    },
+    "GoogleDocsCreateDocumentConfig": {
+      "description": "Configuration for creating a new document",
+      "properties": {
+        "operation": {
+          "const": "create_new_document",
+          "default": "create_new_document",
+          "description": "Create a new document",
+          "title": "Create New Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document",
+          "x-creates-resource": true,
+          "x-display-name": "Create New Document",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "new doc",
+            "start document",
+            "blank document",
+            "make google doc"
+          ],
+          "x-resource-id-path": "document.documentId",
+          "x-resource-type": "google_doc"
+        },
+        "title": {
+          "description": "Title for the new document",
+          "placeholder": "My Document",
+          "title": "Title",
+          "type": "string"
+        },
+        "initial_content": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Initial text content for the document",
+          "placeholder": "Enter initial content... (optional)",
+          "title": "Initial Content",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "title"
+      ],
+      "title": "GoogleDocsCreateDocumentConfig",
+      "type": "object"
+    },
+    "GoogleDocsGetDocumentConfig": {
+      "description": "Configuration for getting a document",
+      "properties": {
+        "operation": {
+          "const": "fetch_document_content",
+          "default": "fetch_document_content",
+          "description": "Get a document",
+          "title": "Fetch Document Content",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document",
+          "x-display-name": "Fetch Document Content",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "read doc",
+            "get doc text",
+            "document contents",
+            "open document",
+            "pull doc body"
+          ]
+        },
+        "document_id": {
+          "description": "Select a Google Doc",
+          "title": "Document",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste document ID",
+            "field_name": "document_id",
+            "placeholder": "Select a document...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_doc"
+        },
+        "include_content": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "Whether to include the document's full content",
+          "title": "Include Content"
+        }
+      },
+      "required": [
+        "document_id"
+      ],
+      "title": "GoogleDocsGetDocumentConfig",
+      "type": "object"
+    },
+    "GoogleDocsInsertTextConfig": {
+      "description": "Configuration for inserting text at a specific location",
+      "properties": {
+        "operation": {
+          "const": "insert_text_in_document",
+          "default": "insert_text_in_document",
+          "description": "Insert text at position",
+          "title": "Insert Text in Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document",
+          "x-display-name": "Insert Text in Document",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "insert at index",
+            "place text",
+            "add text at position",
+            "inject text",
+            "write at offset"
+          ]
+        },
+        "document_id": {
+          "description": "Select a Google Doc",
+          "title": "Document",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste document ID",
+            "field_name": "document_id",
+            "placeholder": "Select a document...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_doc"
+        },
+        "text": {
+          "description": "Text to insert",
+          "placeholder": "Text to insert...",
+          "title": "Text",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "index": {
+          "default": 1,
+          "description": "Character position to insert at (1 = beginning of document)",
+          "minimum": 1,
+          "title": "Index",
+          "type": "integer"
+        }
+      },
+      "required": [
+        "document_id",
+        "text"
+      ],
+      "title": "GoogleDocsInsertTextConfig",
+      "type": "object"
+    },
+    "GoogleDocsListDocumentsConfig": {
+      "description": "Configuration for listing documents from Google Drive",
+      "properties": {
+        "operation": {
+          "const": "list_google_drive_documents",
+          "default": "list_google_drive_documents",
+          "description": "List Google Docs documents",
+          "title": "List Google Drive Documents",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document",
+          "x-display-name": "List Google Drive Documents",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "list docs",
+            "browse drive",
+            "my documents",
+            "all google docs",
+            "find files"
+          ]
+        },
+        "page_size": {
+          "anyOf": [
+            {
+              "maximum": 100,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "description": "Maximum number of documents to return (1-100)",
+          "title": "Page Size"
+        },
+        "search_query": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Search term to filter documents by name",
+          "placeholder": "Document name (optional)",
+          "title": "Search Query"
+        }
+      },
+      "title": "GoogleDocsListDocumentsConfig",
+      "type": "object"
+    },
+    "GoogleDocsOAuthCredential": {
+      "description": "OAuth credential for Google Docs access.\nTokens are obtained via OAuth flow, not entered manually.",
+      "properties": {
+        "credential_type": {
+          "const": "google_docs_oauth",
+          "default": "google_docs_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "OAuth 2.0 access token from Google",
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "description": "OAuth 2.0 refresh token for automatic renewal",
+          "title": "Refresh Token",
+          "type": "string"
+        },
+        "expires_at": {
+          "description": "ISO 8601 timestamp when access token expires",
+          "title": "Token Expiry",
+          "type": "string"
+        },
+        "email": {
+          "description": "Email address of the connected Google account",
+          "title": "Google Account",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "email"
+      ],
+      "title": "GoogleDocsOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-oauth-provider": "google",
+      "x-oauth-scopes": [
+        "https://www.googleapis.com/auth/documents",
+        "https://www.googleapis.com/auth/drive"
+      ]
+    },
+    "GoogleDocsReplaceTextConfig": {
+      "description": "Configuration for replacing text in a document",
+      "properties": {
+        "operation": {
+          "const": "replace_document_text",
+          "default": "replace_document_text",
+          "description": "Replace text in document",
+          "title": "Replace Document Text",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Document",
+          "x-display-name": "Replace Document Text",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "find and replace",
+            "swap text",
+            "substitute words",
+            "replace all",
+            "overwrite text"
+          ]
+        },
+        "document_id": {
+          "description": "Select a Google Doc",
+          "title": "Document",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste document ID",
+            "field_name": "document_id",
+            "placeholder": "Select a document...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "google_doc"
+        },
+        "find_text": {
+          "description": "Text to find and replace",
+          "placeholder": "Text to find",
+          "title": "Find Text",
+          "type": "string"
+        },
+        "replace_with": {
+          "description": "Replacement text",
+          "placeholder": "Replacement text",
+          "title": "Replace With",
+          "type": "string"
+        },
+        "match_case": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "description": "Whether the search is case-sensitive",
+          "title": "Match Case"
+        }
+      },
+      "required": [
+        "document_id",
+        "find_text",
+        "replace_with"
+      ],
+      "title": "GoogleDocsReplaceTextConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for Google Docs node including credentials",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "append_text_to_document": "#/$defs/GoogleDocsAppendTextConfig",
+          "create_new_document": "#/$defs/GoogleDocsCreateDocumentConfig",
+          "fetch_document_content": "#/$defs/GoogleDocsGetDocumentConfig",
+          "insert_text_in_document": "#/$defs/GoogleDocsInsertTextConfig",
+          "list_google_drive_documents": "#/$defs/GoogleDocsListDocumentsConfig",
+          "replace_document_text": "#/$defs/GoogleDocsReplaceTextConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/GoogleDocsListDocumentsConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDocsGetDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDocsCreateDocumentConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDocsAppendTextConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDocsInsertTextConfig"
+        },
+        {
+          "$ref": "#/$defs/GoogleDocsReplaceTextConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/GoogleDocsOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Google-docs Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Create a new meeting notes document and append today's discussion",
+    "Replace all instances of \"2024\" with \"2025\" in the handbook",
+    "Get the content from the template and insert at position for new section",
+    "List all shared documents and find which ones haven't been updated",
+    "Append the monthly report data to the tracking document",
+    "Get the design proposal document and extract specific paragraphs",
+    "Create project documentation from template and customize for client"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

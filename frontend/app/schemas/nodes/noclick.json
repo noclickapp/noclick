@@ -1,0 +1,67 @@
+{
+  "$defs": {
+    "NoClickConfig": {
+      "description": "Configuration for the NoClick MCP tool provider node.",
+      "properties": {
+        "scope": {
+          "default": "all_workflows",
+          "description": "Which workflows the agent can access",
+          "enum": [
+            "all_workflows",
+            "this_workflow",
+            "specific_workflows"
+          ],
+          "enumNames": [
+            "All workflows",
+            "This workflow only",
+            "Specific workflows"
+          ],
+          "title": "Scope",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "allowed_workflow_ids": {
+          "default": "",
+          "description": "Select workflows the agent can access",
+          "title": "Allowed Workflows",
+          "type": "string",
+          "ui:show-if": {
+            "contains": "specific_workflows",
+            "field": "scope"
+          },
+          "ui:widget": "workflow_picker"
+        }
+      },
+      "title": "NoClickConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for NoClick node (no credentials needed).",
+  "properties": {
+    "config": {
+      "$ref": "#/$defs/NoClickConfig",
+      "description": "Node-specific configuration"
+    },
+    "credentials": {
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials",
+      "type": "null"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Noclick Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Restrict agent to this workflow only",
+    "Grant access to specific workflows",
+    "Allow agent to access all workflows",
+    "Limit tools to this workflow scope",
+    "Switch to global scope with all tools",
+    "Configure multi-workflow access",
+    "Change from specific to all workflows"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema"
+}

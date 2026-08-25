@@ -1,0 +1,4447 @@
+{
+  "$defs": {
+    "SemrushAPIKeyCredential": {
+      "description": "API Key authentication for Semrush API v3.\n\nGet your API key at: https://www.semrush.com/kb/92-api-key\nNavigate to: Account Menu \u2192 Subscription Info \u2192 API Units tab",
+      "properties": {
+        "credential_type": {
+          "const": "semrush_api_key",
+          "default": "semrush_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Your Semrush API key for API v3 access",
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "SemrushAPIKeyCredential",
+      "type": "object",
+      "x-credential-url": "https://www.semrush.com/kb/92-api-key"
+    },
+    "SemrushAudienceInsightsConfig": {
+      "description": "Get audience demographics and interests (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_audience_demographics",
+          "default": "get_audience_demographics",
+          "title": "Get Audience Demographics",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Audience",
+          "x-display-name": "Get Audience Demographics",
+          "x-is-trigger": false
+        },
+        "target": {
+          "title": "Domain",
+          "type": "string"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "us",
+          "title": "Country Code"
+        }
+      },
+      "required": [
+        "target"
+      ],
+      "title": "SemrushAudienceInsightsConfig",
+      "type": "object"
+    },
+    "SemrushBacklinksAnchorsConfig": {
+      "description": "Get anchor text distribution (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_backlink_anchor_distribution",
+          "default": "get_backlink_anchor_distribution",
+          "title": "Get Backlink Anchor Distribution",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Backlink",
+          "x-display-name": "Get Backlink Anchor Distribution",
+          "x-is-trigger": false
+        },
+        "target": {
+          "title": "Target",
+          "type": "string"
+        },
+        "target_type": {
+          "default": "root_domain",
+          "title": "Target Type",
+          "type": "string"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "target"
+      ],
+      "title": "SemrushBacklinksAnchorsConfig",
+      "type": "object"
+    },
+    "SemrushBacklinksAscoreProfileConfig": {
+      "description": "Get authority score distribution (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_authority_score_distribution",
+          "default": "get_authority_score_distribution",
+          "title": "Get Authority Score Distribution",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Backlink",
+          "x-display-name": "Get Authority Score Distribution",
+          "x-is-trigger": false
+        },
+        "target": {
+          "title": "Target",
+          "type": "string"
+        },
+        "target_type": {
+          "default": "root_domain",
+          "title": "Target Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "target"
+      ],
+      "title": "SemrushBacklinksAscoreProfileConfig",
+      "type": "object"
+    },
+    "SemrushBacklinksCategoriesConfig": {
+      "description": "Get target domain categories (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_target_domain_categories",
+          "default": "get_target_domain_categories",
+          "title": "Get Target Domain Categories",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Backlink",
+          "x-display-name": "Get Target Domain Categories",
+          "x-is-trigger": false
+        },
+        "target": {
+          "title": "Target",
+          "type": "string"
+        },
+        "target_type": {
+          "default": "root_domain",
+          "title": "Target Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "target"
+      ],
+      "title": "SemrushBacklinksCategoriesConfig",
+      "type": "object"
+    },
+    "SemrushBacklinksCategoriesProfileConfig": {
+      "description": "Get referring domain categories profile (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_referring_domain_categories",
+          "default": "get_referring_domain_categories",
+          "title": "Get Referring Domain Categories",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Backlink",
+          "x-display-name": "Get Referring Domain Categories",
+          "x-is-trigger": false
+        },
+        "target": {
+          "title": "Target",
+          "type": "string"
+        },
+        "target_type": {
+          "default": "root_domain",
+          "title": "Target Type",
+          "type": "string"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "target"
+      ],
+      "title": "SemrushBacklinksCategoriesProfileConfig",
+      "type": "object"
+    },
+    "SemrushBacklinksComparisonConfig": {
+      "description": "Batch compare backlink profiles (API v3)",
+      "properties": {
+        "operation": {
+          "const": "compare_backlink_profiles_batch",
+          "default": "compare_backlink_profiles_batch",
+          "title": "Compare Backlink Profiles Batch",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Backlink",
+          "x-display-name": "Compare Backlink Profiles Batch",
+          "x-is-trigger": false
+        },
+        "targets": {
+          "description": "Comma-separated list (max 200)",
+          "title": "Targets",
+          "type": "string"
+        },
+        "target_type": {
+          "default": "root_domain",
+          "title": "Target Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "targets"
+      ],
+      "title": "SemrushBacklinksComparisonConfig",
+      "type": "object"
+    },
+    "SemrushBacklinksCompetitorsConfig": {
+      "description": "Get backlink competitors (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_backlink_competitors",
+          "default": "get_backlink_competitors",
+          "title": "Get Backlink Competitors",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Backlink",
+          "x-display-name": "Get Backlink Competitors",
+          "x-is-trigger": false
+        },
+        "target": {
+          "title": "Target",
+          "type": "string"
+        },
+        "target_type": {
+          "default": "root_domain",
+          "title": "Target Type",
+          "type": "string"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "target"
+      ],
+      "title": "SemrushBacklinksCompetitorsConfig",
+      "type": "object"
+    },
+    "SemrushBacklinksConfig": {
+      "description": "Get backlinks list for a domain (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_backlinks_list",
+          "default": "get_backlinks_list",
+          "title": "Get Backlinks List",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Backlink",
+          "x-display-name": "Get Backlinks List",
+          "x-is-trigger": false
+        },
+        "target": {
+          "title": "Target",
+          "type": "string"
+        },
+        "target_type": {
+          "default": "root_domain",
+          "title": "Target Type",
+          "type": "string"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        },
+        "export_columns": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "source_url,target_url,anchor,external_links,internal_links,source_title,last_seen,first_seen",
+          "title": "Columns"
+        }
+      },
+      "required": [
+        "target"
+      ],
+      "title": "SemrushBacklinksConfig",
+      "type": "object"
+    },
+    "SemrushBacklinksGeoConfig": {
+      "description": "Get backlinks by country (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_backlinks_by_country",
+          "default": "get_backlinks_by_country",
+          "title": "Get Backlinks by Country",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Backlink",
+          "x-display-name": "Get Backlinks by Country",
+          "x-is-trigger": false
+        },
+        "target": {
+          "title": "Target",
+          "type": "string"
+        },
+        "target_type": {
+          "default": "root_domain",
+          "title": "Target Type",
+          "type": "string"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "target"
+      ],
+      "title": "SemrushBacklinksGeoConfig",
+      "type": "object"
+    },
+    "SemrushBacklinksHistoricalConfig": {
+      "description": "Get backlinks historical data (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_backlinks_historical_data",
+          "default": "get_backlinks_historical_data",
+          "title": "Get Backlinks Historical Data",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Backlink",
+          "x-display-name": "Get Backlinks Historical Data",
+          "x-is-trigger": false
+        },
+        "target": {
+          "title": "Target",
+          "type": "string"
+        },
+        "target_type": {
+          "default": "root_domain",
+          "title": "Target Type",
+          "type": "string"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "target"
+      ],
+      "title": "SemrushBacklinksHistoricalConfig",
+      "type": "object"
+    },
+    "SemrushBacklinksMatrixConfig": {
+      "description": "Compare backlinks between domains (API v3)",
+      "properties": {
+        "operation": {
+          "const": "compare_backlinks_between_domains",
+          "default": "compare_backlinks_between_domains",
+          "title": "Compare Backlinks Between Domains",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Backlink",
+          "x-display-name": "Compare Backlinks Between Domains",
+          "x-is-trigger": false
+        },
+        "targets": {
+          "description": "Comma-separated list of domains to compare",
+          "placeholder": "example.com,competitor1.com",
+          "title": "Targets",
+          "type": "string"
+        },
+        "target_type": {
+          "default": "root_domain",
+          "title": "Target Type",
+          "type": "string"
+        }
+      },
+      "required": [
+        "targets"
+      ],
+      "title": "SemrushBacklinksMatrixConfig",
+      "type": "object"
+    },
+    "SemrushBacklinksOverviewConfig": {
+      "description": "Get backlinks overview for a domain (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_backlinks_overview",
+          "default": "get_backlinks_overview",
+          "title": "Get Backlinks Overview",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Backlink",
+          "x-display-name": "Get Backlinks Overview",
+          "x-is-trigger": false
+        },
+        "target": {
+          "description": "Domain or URL to analyze",
+          "title": "Target",
+          "type": "string"
+        },
+        "target_type": {
+          "default": "root_domain",
+          "description": "Type of target: root_domain, domain, subdomain, or url",
+          "title": "Target Type",
+          "type": "string"
+        },
+        "export_columns": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "ascore,total,domains,urls,ips,follows,nofollows,forms,texts,images",
+          "title": "Columns"
+        }
+      },
+      "required": [
+        "target"
+      ],
+      "title": "SemrushBacklinksOverviewConfig",
+      "type": "object"
+    },
+    "SemrushBacklinksPagesConfig": {
+      "description": "Get indexed pages with backlinks (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_pages_with_backlinks",
+          "default": "get_pages_with_backlinks",
+          "title": "Get Pages with Backlinks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Backlink",
+          "x-display-name": "Get Pages with Backlinks",
+          "x-is-trigger": false
+        },
+        "target": {
+          "title": "Target",
+          "type": "string"
+        },
+        "target_type": {
+          "default": "root_domain",
+          "title": "Target Type",
+          "type": "string"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "target"
+      ],
+      "title": "SemrushBacklinksPagesConfig",
+      "type": "object"
+    },
+    "SemrushBacklinksRefdomainsConfig": {
+      "description": "Get referring domains (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_referring_domains",
+          "default": "get_referring_domains",
+          "title": "Get Referring Domains",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Backlink",
+          "x-display-name": "Get Referring Domains",
+          "x-is-trigger": false
+        },
+        "target": {
+          "title": "Target",
+          "type": "string"
+        },
+        "target_type": {
+          "default": "root_domain",
+          "title": "Target Type",
+          "type": "string"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "target"
+      ],
+      "title": "SemrushBacklinksRefdomainsConfig",
+      "type": "object"
+    },
+    "SemrushBacklinksRefipsConfig": {
+      "description": "Get referring IPs (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_referring_ip_addresses",
+          "default": "get_referring_ip_addresses",
+          "title": "Get Referring Ip Addresses",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Backlink",
+          "x-display-name": "Get Referring Ip Addresses",
+          "x-is-trigger": false
+        },
+        "target": {
+          "title": "Target",
+          "type": "string"
+        },
+        "target_type": {
+          "default": "root_domain",
+          "title": "Target Type",
+          "type": "string"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "target"
+      ],
+      "title": "SemrushBacklinksRefipsConfig",
+      "type": "object"
+    },
+    "SemrushBacklinksTldConfig": {
+      "description": "Get backlinks by TLD distribution (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_backlinks_by_tld",
+          "default": "get_backlinks_by_tld",
+          "title": "Get Backlinks by Tld",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Backlink",
+          "x-display-name": "Get Backlinks by Tld",
+          "x-is-trigger": false
+        },
+        "target": {
+          "title": "Target",
+          "type": "string"
+        },
+        "target_type": {
+          "default": "root_domain",
+          "title": "Target Type",
+          "type": "string"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "target"
+      ],
+      "title": "SemrushBacklinksTldConfig",
+      "type": "object"
+    },
+    "SemrushDomainAdwordsAdwordsConfig": {
+      "description": "Get paid search competitors for a domain (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_domain_paid_competitors",
+          "default": "get_domain_paid_competitors",
+          "title": "Get Domain Paid Competitors",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Domain",
+          "x-display-name": "Get Domain Paid Competitors",
+          "x-is-trigger": false
+        },
+        "domain": {
+          "title": "Domain",
+          "type": "string"
+        },
+        "database": {
+          "default": "us",
+          "title": "Database",
+          "type": "string"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "SemrushDomainAdwordsAdwordsConfig",
+      "type": "object"
+    },
+    "SemrushDomainAdwordsConfig": {
+      "description": "Get paid search keywords for a domain (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_domain_paid_keywords",
+          "default": "get_domain_paid_keywords",
+          "title": "Get Domain Paid Keywords",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Domain",
+          "x-display-name": "Get Domain Paid Keywords",
+          "x-is-trigger": false
+        },
+        "domain": {
+          "description": "Target domain (e.g., example.com)",
+          "title": "Domain",
+          "type": "string"
+        },
+        "database": {
+          "default": "us",
+          "description": "Regional database code",
+          "title": "Database",
+          "type": "string"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "description": "Number of results to return",
+          "title": "Limit"
+        },
+        "export_columns": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "Ph,Po,Nq,Cp,Ur,Tr,Tc,Co,Nr,Td",
+          "description": "Comma-separated column codes",
+          "title": "Columns"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "SemrushDomainAdwordsConfig",
+      "type": "object"
+    },
+    "SemrushDomainAdwordsHistoricalConfig": {
+      "description": "Get historical paid keywords for a domain (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_domain_paid_keywords_historical",
+          "default": "get_domain_paid_keywords_historical",
+          "title": "Get Domain Paid Keywords Historical",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Domain",
+          "x-display-name": "Get Domain Paid Keywords Historical",
+          "x-is-trigger": false
+        },
+        "domain": {
+          "title": "Domain",
+          "type": "string"
+        },
+        "database": {
+          "default": "us",
+          "title": "Database",
+          "type": "string"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "SemrushDomainAdwordsHistoricalConfig",
+      "type": "object"
+    },
+    "SemrushDomainAdwordsUniqueConfig": {
+      "description": "Get unique ad copies for a domain (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_domain_unique_ad_copies",
+          "default": "get_domain_unique_ad_copies",
+          "title": "Get Domain Unique Ad Copies",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Domain",
+          "x-display-name": "Get Domain Unique Ad Copies",
+          "x-is-trigger": false
+        },
+        "domain": {
+          "title": "Domain",
+          "type": "string"
+        },
+        "database": {
+          "default": "us",
+          "title": "Database",
+          "type": "string"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "SemrushDomainAdwordsUniqueConfig",
+      "type": "object"
+    },
+    "SemrushDomainDomainsConfig": {
+      "description": "Compare multiple domains (API v3)",
+      "properties": {
+        "operation": {
+          "const": "compare_domains_batch",
+          "default": "compare_domains_batch",
+          "title": "Compare Domains Batch",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Domain",
+          "x-display-name": "Compare Domains Batch",
+          "x-is-trigger": false
+        },
+        "domains": {
+          "description": "Comma-separated list of domains to compare (max 5)",
+          "placeholder": "example.com,competitor1.com,competitor2.com",
+          "title": "Domains",
+          "type": "string"
+        },
+        "database": {
+          "default": "us",
+          "title": "Database",
+          "type": "string"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "domains"
+      ],
+      "title": "SemrushDomainDomainsConfig",
+      "type": "object"
+    },
+    "SemrushDomainOrganicConfig": {
+      "description": "Get organic keywords for a domain (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_domain_organic_keywords",
+          "default": "get_domain_organic_keywords",
+          "title": "Get Domain Organic Keywords",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Domain",
+          "x-display-name": "Get Domain Organic Keywords",
+          "x-is-trigger": false
+        },
+        "domain": {
+          "description": "Target domain (e.g., example.com)",
+          "placeholder": "example.com",
+          "title": "Domain",
+          "type": "string"
+        },
+        "database": {
+          "default": "us",
+          "description": "Regional database code (us, uk, fr, de, etc.)",
+          "placeholder": "us",
+          "title": "Database",
+          "type": "string"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "description": "Number of results to return (max 10,000)",
+          "title": "Limit"
+        },
+        "export_columns": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "Ph,Po,Nq,Cp,Ur,Tr,Tc,Co,Nr,Td",
+          "description": "Comma-separated column codes (Ph=Keyword, Po=Position, Nq=Volume, etc.)",
+          "title": "Columns",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "SemrushDomainOrganicConfig",
+      "type": "object"
+    },
+    "SemrushDomainOrganicOrganicConfig": {
+      "description": "Get organic search competitors for a domain (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_domain_organic_competitors",
+          "default": "get_domain_organic_competitors",
+          "title": "Get Domain Organic Competitors",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Domain",
+          "x-display-name": "Get Domain Organic Competitors",
+          "x-is-trigger": false
+        },
+        "domain": {
+          "title": "Domain",
+          "type": "string"
+        },
+        "database": {
+          "default": "us",
+          "title": "Database",
+          "type": "string"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        },
+        "export_columns": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "Dn,Cr,Np,Or,Ot,Oc,Ad",
+          "title": "Columns"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "SemrushDomainOrganicOrganicConfig",
+      "type": "object"
+    },
+    "SemrushDomainOrganicSubdomainsConfig": {
+      "description": "Get subdomains ranking in organic search (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_domain_subdomains_organic_ranking",
+          "default": "get_domain_subdomains_organic_ranking",
+          "title": "Get Domain Subdomains Organic Ranking",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Domain",
+          "x-display-name": "Get Domain Subdomains Organic Ranking",
+          "x-is-trigger": false
+        },
+        "domain": {
+          "title": "Domain",
+          "type": "string"
+        },
+        "database": {
+          "default": "us",
+          "title": "Database",
+          "type": "string"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "SemrushDomainOrganicSubdomainsConfig",
+      "type": "object"
+    },
+    "SemrushDomainOrganicUniqueConfig": {
+      "description": "Get top organic pages for a domain (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_domain_top_organic_pages",
+          "default": "get_domain_top_organic_pages",
+          "title": "Get Domain Top Organic Pages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Domain",
+          "x-display-name": "Get Domain Top Organic Pages",
+          "x-is-trigger": false
+        },
+        "domain": {
+          "title": "Domain",
+          "type": "string"
+        },
+        "database": {
+          "default": "us",
+          "title": "Database",
+          "type": "string"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "SemrushDomainOrganicUniqueConfig",
+      "type": "object"
+    },
+    "SemrushDomainRankConfig": {
+      "description": "Get domain overview for one database (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_domain_overview_single_database",
+          "default": "get_domain_overview_single_database",
+          "title": "Get Domain Overview Single Database",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Domain",
+          "x-display-name": "Get Domain Overview Single Database",
+          "x-is-trigger": false
+        },
+        "domain": {
+          "title": "Domain",
+          "type": "string"
+        },
+        "database": {
+          "default": "us",
+          "title": "Database",
+          "type": "string"
+        },
+        "export_columns": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "Rk,Or,Ot,Oc,Ad,At,Ac",
+          "title": "Columns"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "SemrushDomainRankConfig",
+      "type": "object"
+    },
+    "SemrushDomainRankHistoryConfig": {
+      "description": "Get domain rank history (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_domain_rank_history",
+          "default": "get_domain_rank_history",
+          "title": "Get Domain Rank History",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Domain",
+          "x-display-name": "Get Domain Rank History",
+          "x-is-trigger": false
+        },
+        "domain": {
+          "title": "Domain",
+          "type": "string"
+        },
+        "database": {
+          "default": "us",
+          "title": "Database",
+          "type": "string"
+        },
+        "display_daily": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "description": "Show daily rankings for last 31 days (True) or monthly historical data (False)",
+          "title": "Display Daily"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "SemrushDomainRankHistoryConfig",
+      "type": "object"
+    },
+    "SemrushDomainRanksConfig": {
+      "description": "Get domain overview across all databases (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_domain_overview_all_databases",
+          "default": "get_domain_overview_all_databases",
+          "title": "Get Domain Overview All Databases",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Domain",
+          "x-display-name": "Get Domain Overview All Databases",
+          "x-is-trigger": false
+        },
+        "domain": {
+          "description": "Target domain",
+          "title": "Domain",
+          "type": "string"
+        },
+        "export_columns": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "Rk,Or,Ot,Oc,Ad,At,Ac",
+          "title": "Columns"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "SemrushDomainRanksConfig",
+      "type": "object"
+    },
+    "SemrushDomainShoppingConfig": {
+      "description": "Get product listing ad keywords for a domain (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_domain_product_listing_keywords",
+          "default": "get_domain_product_listing_keywords",
+          "title": "Get Domain Product Listing Keywords",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Domain",
+          "x-display-name": "Get Domain Product Listing Keywords",
+          "x-is-trigger": false
+        },
+        "domain": {
+          "title": "Domain",
+          "type": "string"
+        },
+        "database": {
+          "default": "us",
+          "title": "Database",
+          "type": "string"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "SemrushDomainShoppingConfig",
+      "type": "object"
+    },
+    "SemrushDomainShoppingShoppingConfig": {
+      "description": "Get product listing ad competitors for a domain (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_domain_product_listing_competitors",
+          "default": "get_domain_product_listing_competitors",
+          "title": "Get Domain Product Listing Competitors",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Domain",
+          "x-display-name": "Get Domain Product Listing Competitors",
+          "x-is-trigger": false
+        },
+        "domain": {
+          "title": "Domain",
+          "type": "string"
+        },
+        "database": {
+          "default": "us",
+          "title": "Database",
+          "type": "string"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "SemrushDomainShoppingShoppingConfig",
+      "type": "object"
+    },
+    "SemrushDomainShoppingUniqueConfig": {
+      "description": "Get unique product listing ads for a domain (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_domain_unique_product_listing_ads",
+          "default": "get_domain_unique_product_listing_ads",
+          "title": "Get Domain Unique Product Listing Ads",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Domain",
+          "x-display-name": "Get Domain Unique Product Listing Ads",
+          "x-is-trigger": false
+        },
+        "domain": {
+          "title": "Domain",
+          "type": "string"
+        },
+        "database": {
+          "default": "us",
+          "title": "Database",
+          "type": "string"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "SemrushDomainShoppingUniqueConfig",
+      "type": "object"
+    },
+    "SemrushGeoDistributionConfig": {
+      "description": "Get geographic traffic distribution (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_geographic_traffic_distribution",
+          "default": "get_geographic_traffic_distribution",
+          "title": "Get Geographic Traffic Distribution",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Traffic",
+          "x-display-name": "Get Geographic Traffic Distribution",
+          "x-is-trigger": false
+        },
+        "target": {
+          "title": "Domain",
+          "type": "string"
+        },
+        "device_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Device Type"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "target"
+      ],
+      "title": "SemrushGeoDistributionConfig",
+      "type": "object"
+    },
+    "SemrushIndustryCategoriesConfig": {
+      "description": "Get domains by industry category (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_domains_by_industry_category",
+          "default": "get_domains_by_industry_category",
+          "title": "Get Domains by Industry Category",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Industry",
+          "x-display-name": "Get Domains by Industry Category",
+          "x-is-trigger": false
+        },
+        "category": {
+          "description": "Industry category name",
+          "title": "Category",
+          "type": "string"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "us",
+          "title": "Country Code"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "category"
+      ],
+      "title": "SemrushIndustryCategoriesConfig",
+      "type": "object"
+    },
+    "SemrushPTAddCompetitorsConfig": {
+      "description": "Add competitors to campaign (API v3)",
+      "properties": {
+        "operation": {
+          "const": "add_competitors_to_tracking_campaign",
+          "default": "add_competitors_to_tracking_campaign",
+          "title": "Add Competitors to Tracking Campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Position Tracking",
+          "x-display-name": "Add Competitors to Tracking Campaign",
+          "x-is-trigger": false
+        },
+        "campaign_id": {
+          "title": "Campaign ID",
+          "type": "string"
+        },
+        "competitors": {
+          "description": "Comma-separated list (max 20 total)",
+          "title": "Competitor Domains",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id",
+        "competitors"
+      ],
+      "title": "SemrushPTAddCompetitorsConfig",
+      "type": "object"
+    },
+    "SemrushPTAddKeywordsConfig": {
+      "description": "Add keywords to campaign (API v3)",
+      "properties": {
+        "operation": {
+          "const": "add_keywords_to_tracking_campaign",
+          "default": "add_keywords_to_tracking_campaign",
+          "title": "Add Keywords to Tracking Campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Position Tracking",
+          "x-display-name": "Add Keywords to Tracking Campaign",
+          "x-is-trigger": false
+        },
+        "campaign_id": {
+          "title": "Campaign ID",
+          "type": "string"
+        },
+        "keywords": {
+          "description": "Comma-separated list",
+          "title": "Keywords",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "campaign_id",
+        "keywords"
+      ],
+      "title": "SemrushPTAddKeywordsConfig",
+      "type": "object"
+    },
+    "SemrushPTAddTagsConfig": {
+      "description": "Add tags to keywords (API v3)",
+      "properties": {
+        "operation": {
+          "const": "add_tags_to_tracked_keywords",
+          "default": "add_tags_to_tracked_keywords",
+          "title": "Add Tags to Tracked Keywords",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Position Tracking",
+          "x-display-name": "Add Tags to Tracked Keywords",
+          "x-is-trigger": false
+        },
+        "campaign_id": {
+          "title": "Campaign ID",
+          "type": "string"
+        },
+        "keyword_ids": {
+          "title": "Keyword IDs (comma-separated)",
+          "type": "string"
+        },
+        "tags": {
+          "title": "Tags (comma-separated)",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id",
+        "keyword_ids",
+        "tags"
+      ],
+      "title": "SemrushPTAddTagsConfig",
+      "type": "object"
+    },
+    "SemrushPTAdwordsOverviewConfig": {
+      "description": "Get paid search overview report (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_paid_search_tracking_overview",
+          "default": "get_paid_search_tracking_overview",
+          "title": "Get Paid Search Tracking Overview",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Position Tracking",
+          "x-display-name": "Get Paid Search Tracking Overview",
+          "x-is-trigger": false
+        },
+        "campaign_id": {
+          "title": "Campaign ID",
+          "type": "string"
+        },
+        "display_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date (YYYYMMDD)"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "SemrushPTAdwordsOverviewConfig",
+      "type": "object"
+    },
+    "SemrushPTAdwordsPositionsConfig": {
+      "description": "Get paid search keyword positions (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_paid_search_keyword_positions",
+          "default": "get_paid_search_keyword_positions",
+          "title": "Get Paid Search Keyword Positions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Position Tracking",
+          "x-display-name": "Get Paid Search Keyword Positions",
+          "x-is-trigger": false
+        },
+        "campaign_id": {
+          "title": "Campaign ID",
+          "type": "string"
+        },
+        "display_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date (YYYYMMDD)"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "SemrushPTAdwordsPositionsConfig",
+      "type": "object"
+    },
+    "SemrushPTCampaignDatesConfig": {
+      "description": "Get campaign harvest dates (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_tracking_campaign_harvest_dates",
+          "default": "get_tracking_campaign_harvest_dates",
+          "title": "Get Tracking Campaign Harvest Dates",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Position Tracking",
+          "x-display-name": "Get Tracking Campaign Harvest Dates",
+          "x-is-trigger": false
+        },
+        "campaign_id": {
+          "title": "Campaign ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "SemrushPTCampaignDatesConfig",
+      "type": "object"
+    },
+    "SemrushPTCampaignListConfig": {
+      "description": "List all position tracking campaigns (API v3)",
+      "properties": {
+        "operation": {
+          "const": "list_position_tracking_campaigns",
+          "default": "list_position_tracking_campaigns",
+          "title": "List Position Tracking Campaigns",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Position Tracking",
+          "x-display-name": "List Position Tracking Campaigns",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "description": "Semrush project ID",
+          "title": "Project ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "SemrushPTCampaignListConfig",
+      "type": "object"
+    },
+    "SemrushPTCreateCampaignConfig": {
+      "description": "Create position tracking campaign (API v3)",
+      "properties": {
+        "operation": {
+          "const": "create_position_tracking_campaign",
+          "default": "create_position_tracking_campaign",
+          "title": "Create Position Tracking Campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Position Tracking",
+          "x-display-name": "Create Position Tracking Campaign",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "title": "Project ID",
+          "type": "string"
+        },
+        "domain": {
+          "title": "Domain to Track",
+          "type": "string"
+        },
+        "location_id": {
+          "title": "Location ID",
+          "type": "string"
+        },
+        "device": {
+          "default": "desktop",
+          "description": "desktop or mobile",
+          "title": "Device",
+          "type": "string"
+        },
+        "keywords": {
+          "description": "Comma-separated list of keywords to track",
+          "title": "Keywords",
+          "type": "string",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "project_id",
+        "domain",
+        "location_id",
+        "keywords"
+      ],
+      "title": "SemrushPTCreateCampaignConfig",
+      "type": "object"
+    },
+    "SemrushPTDisableNotificationsConfig": {
+      "description": "Disable email notifications for campaign (API v3)",
+      "properties": {
+        "operation": {
+          "const": "disable_campaign_email_notifications",
+          "default": "disable_campaign_email_notifications",
+          "title": "Disable Campaign Email Notifications",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Position Tracking",
+          "x-display-name": "Disable Campaign Email Notifications",
+          "x-is-trigger": false
+        },
+        "campaign_id": {
+          "title": "Campaign ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "SemrushPTDisableNotificationsConfig",
+      "type": "object"
+    },
+    "SemrushPTEnableNotificationsConfig": {
+      "description": "Enable email notifications for campaign (API v3)",
+      "properties": {
+        "operation": {
+          "const": "enable_campaign_email_notifications",
+          "default": "enable_campaign_email_notifications",
+          "title": "Enable Campaign Email Notifications",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Position Tracking",
+          "x-display-name": "Enable Campaign Email Notifications",
+          "x-is-trigger": false
+        },
+        "campaign_id": {
+          "title": "Campaign ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "SemrushPTEnableNotificationsConfig",
+      "type": "object"
+    },
+    "SemrushPTLocationSearchConfig": {
+      "description": "Search for tracking locations (API v3)",
+      "properties": {
+        "operation": {
+          "const": "search_tracking_locations",
+          "default": "search_tracking_locations",
+          "title": "Search Tracking Locations",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Position Tracking",
+          "x-display-name": "Search Tracking Locations",
+          "x-is-trigger": false
+        },
+        "query": {
+          "description": "Search for city/region name",
+          "title": "Search Query",
+          "type": "string"
+        }
+      },
+      "required": [
+        "query"
+      ],
+      "title": "SemrushPTLocationSearchConfig",
+      "type": "object"
+    },
+    "SemrushPTOrganicOverviewConfig": {
+      "description": "Get organic overview report (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_organic_tracking_overview",
+          "default": "get_organic_tracking_overview",
+          "title": "Get Organic Tracking Overview",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Position Tracking",
+          "x-display-name": "Get Organic Tracking Overview",
+          "x-is-trigger": false
+        },
+        "campaign_id": {
+          "title": "Campaign ID",
+          "type": "string"
+        },
+        "display_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Date in YYYYMMDD format",
+          "title": "Date"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "SemrushPTOrganicOverviewConfig",
+      "type": "object"
+    },
+    "SemrushPTOrganicPositionsConfig": {
+      "description": "Get organic keyword positions (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_organic_keyword_positions",
+          "default": "get_organic_keyword_positions",
+          "title": "Get Organic Keyword Positions",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Position Tracking",
+          "x-display-name": "Get Organic Keyword Positions",
+          "x-is-trigger": false
+        },
+        "campaign_id": {
+          "title": "Campaign ID",
+          "type": "string"
+        },
+        "display_date": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Date (YYYYMMDD)"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "campaign_id"
+      ],
+      "title": "SemrushPTOrganicPositionsConfig",
+      "type": "object"
+    },
+    "SemrushPTRemoveCompetitorsConfig": {
+      "description": "Remove competitors from campaign (API v3)",
+      "properties": {
+        "operation": {
+          "const": "remove_competitors_from_tracking_campaign",
+          "default": "remove_competitors_from_tracking_campaign",
+          "title": "Remove Competitors from Tracking Campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Position Tracking",
+          "x-display-name": "Remove Competitors from Tracking Campaign",
+          "x-is-trigger": false
+        },
+        "campaign_id": {
+          "title": "Campaign ID",
+          "type": "string"
+        },
+        "competitors": {
+          "title": "Competitor Domains",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id",
+        "competitors"
+      ],
+      "title": "SemrushPTRemoveCompetitorsConfig",
+      "type": "object"
+    },
+    "SemrushPTRemoveKeywordsConfig": {
+      "description": "Remove keywords from campaign (API v3)",
+      "properties": {
+        "operation": {
+          "const": "remove_keywords_from_tracking_campaign",
+          "default": "remove_keywords_from_tracking_campaign",
+          "title": "Remove Keywords from Tracking Campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Position Tracking",
+          "x-display-name": "Remove Keywords from Tracking Campaign",
+          "x-is-trigger": false
+        },
+        "campaign_id": {
+          "title": "Campaign ID",
+          "type": "string"
+        },
+        "keyword_ids": {
+          "description": "Comma-separated list of keyword IDs to remove",
+          "title": "Keyword IDs",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id",
+        "keyword_ids"
+      ],
+      "title": "SemrushPTRemoveKeywordsConfig",
+      "type": "object"
+    },
+    "SemrushPTRemoveTagsConfig": {
+      "description": "Remove tags from keywords (API v3)",
+      "properties": {
+        "operation": {
+          "const": "remove_tags_from_tracked_keywords",
+          "default": "remove_tags_from_tracked_keywords",
+          "title": "Remove Tags from Tracked Keywords",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Position Tracking",
+          "x-display-name": "Remove Tags from Tracked Keywords",
+          "x-is-trigger": false
+        },
+        "campaign_id": {
+          "title": "Campaign ID",
+          "type": "string"
+        },
+        "keyword_ids": {
+          "title": "Keyword IDs",
+          "type": "string"
+        },
+        "tags": {
+          "title": "Tags",
+          "type": "string"
+        }
+      },
+      "required": [
+        "campaign_id",
+        "keyword_ids",
+        "tags"
+      ],
+      "title": "SemrushPTRemoveTagsConfig",
+      "type": "object"
+    },
+    "SemrushPhraseAdwordsConfig": {
+      "description": "Get paid search results for a keyword (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_keyword_paid_search_results",
+          "default": "get_keyword_paid_search_results",
+          "title": "Get Keyword Paid Search Results",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Keyword",
+          "x-display-name": "Get Keyword Paid Search Results",
+          "x-is-trigger": false
+        },
+        "phrase": {
+          "title": "Keyword",
+          "type": "string"
+        },
+        "database": {
+          "default": "us",
+          "title": "Database",
+          "type": "string"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "phrase"
+      ],
+      "title": "SemrushPhraseAdwordsConfig",
+      "type": "object"
+    },
+    "SemrushPhraseAdwordsHistoricalConfig": {
+      "description": "Get keyword ads history (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_keyword_ads_historical_data",
+          "default": "get_keyword_ads_historical_data",
+          "title": "Get Keyword Ads Historical Data",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Keyword",
+          "x-display-name": "Get Keyword Ads Historical Data",
+          "x-is-trigger": false
+        },
+        "phrase": {
+          "title": "Keyword",
+          "type": "string"
+        },
+        "database": {
+          "default": "us",
+          "title": "Database",
+          "type": "string"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "phrase"
+      ],
+      "title": "SemrushPhraseAdwordsHistoricalConfig",
+      "type": "object"
+    },
+    "SemrushPhraseAllConfig": {
+      "description": "Get keyword overview across all databases (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_keyword_overview_all_databases",
+          "default": "get_keyword_overview_all_databases",
+          "title": "Get Keyword Overview All Databases",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Keyword",
+          "x-display-name": "Get Keyword Overview All Databases",
+          "x-is-trigger": false
+        },
+        "phrase": {
+          "description": "Keyword to analyze",
+          "title": "Keyword",
+          "type": "string"
+        },
+        "export_columns": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "Ph,Nq,Cp,Co,Nr,Td",
+          "title": "Columns"
+        }
+      },
+      "required": [
+        "phrase"
+      ],
+      "title": "SemrushPhraseAllConfig",
+      "type": "object"
+    },
+    "SemrushPhraseFullsearchConfig": {
+      "description": "Get broad match keywords (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_broad_match_keywords",
+          "default": "get_broad_match_keywords",
+          "title": "Get Broad Match Keywords",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Keyword",
+          "x-display-name": "Get Broad Match Keywords",
+          "x-is-trigger": false
+        },
+        "phrase": {
+          "title": "Keyword",
+          "type": "string"
+        },
+        "database": {
+          "default": "us",
+          "title": "Database",
+          "type": "string"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "phrase"
+      ],
+      "title": "SemrushPhraseFullsearchConfig",
+      "type": "object"
+    },
+    "SemrushPhraseKdiConfig": {
+      "description": "Get keyword difficulty (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_keyword_difficulty",
+          "default": "get_keyword_difficulty",
+          "title": "Get Keyword Difficulty",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Keyword",
+          "x-display-name": "Get Keyword Difficulty",
+          "x-is-trigger": false
+        },
+        "phrase": {
+          "title": "Keyword",
+          "type": "string"
+        },
+        "database": {
+          "default": "us",
+          "title": "Database",
+          "type": "string"
+        },
+        "export_columns": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "Ph,Kd",
+          "title": "Columns"
+        }
+      },
+      "required": [
+        "phrase"
+      ],
+      "title": "SemrushPhraseKdiConfig",
+      "type": "object"
+    },
+    "SemrushPhraseOrganicConfig": {
+      "description": "Get organic search results for a keyword (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_keyword_organic_search_results",
+          "default": "get_keyword_organic_search_results",
+          "title": "Get Keyword Organic Search Results",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Keyword",
+          "x-display-name": "Get Keyword Organic Search Results",
+          "x-is-trigger": false
+        },
+        "phrase": {
+          "title": "Keyword",
+          "type": "string"
+        },
+        "database": {
+          "default": "us",
+          "title": "Database",
+          "type": "string"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "phrase"
+      ],
+      "title": "SemrushPhraseOrganicConfig",
+      "type": "object"
+    },
+    "SemrushPhraseQuestionsConfig": {
+      "description": "Get question keywords (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_question_keywords",
+          "default": "get_question_keywords",
+          "title": "Get Question Keywords",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Keyword",
+          "x-display-name": "Get Question Keywords",
+          "x-is-trigger": false
+        },
+        "phrase": {
+          "title": "Keyword",
+          "type": "string"
+        },
+        "database": {
+          "default": "us",
+          "title": "Database",
+          "type": "string"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "phrase"
+      ],
+      "title": "SemrushPhraseQuestionsConfig",
+      "type": "object"
+    },
+    "SemrushPhraseRelatedConfig": {
+      "description": "Get related keywords (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_related_keywords",
+          "default": "get_related_keywords",
+          "title": "Get Related Keywords",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Keyword",
+          "x-display-name": "Get Related Keywords",
+          "x-is-trigger": false
+        },
+        "phrase": {
+          "title": "Keyword",
+          "type": "string"
+        },
+        "database": {
+          "default": "us",
+          "title": "Database",
+          "type": "string"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "phrase"
+      ],
+      "title": "SemrushPhraseRelatedConfig",
+      "type": "object"
+    },
+    "SemrushPhraseTheseConfig": {
+      "description": "Get batch keyword overview (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_batch_keyword_overview",
+          "default": "get_batch_keyword_overview",
+          "title": "Get Batch Keyword Overview",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Keyword",
+          "x-display-name": "Get Batch Keyword Overview",
+          "x-is-trigger": false
+        },
+        "phrases": {
+          "description": "Comma-separated list of keywords (max 100)",
+          "title": "Keywords",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "database": {
+          "default": "us",
+          "title": "Database",
+          "type": "string"
+        }
+      },
+      "required": [
+        "phrases"
+      ],
+      "title": "SemrushPhraseTheseConfig",
+      "type": "object"
+    },
+    "SemrushPhraseThisConfig": {
+      "description": "Get keyword overview for one database (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_keyword_overview_single_database",
+          "default": "get_keyword_overview_single_database",
+          "title": "Get Keyword Overview Single Database",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Keyword",
+          "x-display-name": "Get Keyword Overview Single Database",
+          "x-is-trigger": false
+        },
+        "phrase": {
+          "title": "Keyword",
+          "type": "string"
+        },
+        "database": {
+          "default": "us",
+          "title": "Database",
+          "type": "string"
+        },
+        "export_columns": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "Ph,Nq,Cp,Co,Nr,Td",
+          "title": "Columns"
+        }
+      },
+      "required": [
+        "phrase"
+      ],
+      "title": "SemrushPhraseThisConfig",
+      "type": "object"
+    },
+    "SemrushPurchaseConversionConfig": {
+      "description": "Get purchase conversion rates (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_purchase_conversion_rates",
+          "default": "get_purchase_conversion_rates",
+          "title": "Get Purchase Conversion Rates",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Conversion",
+          "x-display-name": "Get Purchase Conversion Rates",
+          "x-is-trigger": false
+        },
+        "target": {
+          "title": "Domain",
+          "type": "string"
+        }
+      },
+      "required": [
+        "target"
+      ],
+      "title": "SemrushPurchaseConversionConfig",
+      "type": "object"
+    },
+    "SemrushRankConfig": {
+      "description": "Get Semrush Rank report (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_semrush_rank_report",
+          "default": "get_semrush_rank_report",
+          "title": "Get Semrush Rank Report",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Rank Report",
+          "x-display-name": "Get Semrush Rank Report",
+          "x-is-trigger": false
+        },
+        "database": {
+          "default": "us",
+          "title": "Database",
+          "type": "string"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        }
+      },
+      "title": "SemrushRankConfig",
+      "type": "object"
+    },
+    "SemrushRankDifferenceConfig": {
+      "description": "Get winners and losers report (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_winners_and_losers_report",
+          "default": "get_winners_and_losers_report",
+          "title": "Get Winners and Losers Report",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Rank Report",
+          "x-display-name": "Get Winners and Losers Report",
+          "x-is-trigger": false
+        },
+        "database": {
+          "default": "us",
+          "title": "Database",
+          "type": "string"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        },
+        "display_filter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by '+' (gainers) or '-' (losers)",
+          "title": "Filter"
+        }
+      },
+      "title": "SemrushRankDifferenceConfig",
+      "type": "object"
+    },
+    "SemrushSAEditCampaignConfig": {
+      "description": "Edit Site Audit campaign settings (API v3)",
+      "properties": {
+        "operation": {
+          "const": "update_site_audit_campaign",
+          "default": "update_site_audit_campaign",
+          "title": "Update Site Audit Campaign",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Site Audit",
+          "x-display-name": "Update Site Audit Campaign",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "title": "Project ID",
+          "type": "string"
+        },
+        "max_pages": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Max Pages"
+        },
+        "crawl_subdomains": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Crawl Subdomains"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "SemrushSAEditCampaignConfig",
+      "type": "object"
+    },
+    "SemrushSAEnableConfig": {
+      "description": "Enable Site Audit for a project (API v3)",
+      "properties": {
+        "operation": {
+          "const": "enable_site_audit_for_project",
+          "default": "enable_site_audit_for_project",
+          "title": "Enable Site Audit for Project",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Site Audit",
+          "x-display-name": "Enable Site Audit for Project",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "title": "Project ID",
+          "type": "string"
+        },
+        "domain": {
+          "title": "Domain to Audit",
+          "type": "string"
+        },
+        "crawl_subdomains": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "title": "Crawl Subdomains"
+        },
+        "max_pages": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 100,
+          "title": "Max Pages to Crawl"
+        }
+      },
+      "required": [
+        "project_id",
+        "domain"
+      ],
+      "title": "SemrushSAEnableConfig",
+      "type": "object"
+    },
+    "SemrushSAGetCampaignInfoConfig": {
+      "description": "Get campaign info (latest audit results summary) (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_site_audit_campaign_info",
+          "default": "get_site_audit_campaign_info",
+          "title": "Get Site Audit Campaign Info",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Site Audit",
+          "x-display-name": "Get Site Audit Campaign Info",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "title": "Project ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "SemrushSAGetCampaignInfoConfig",
+      "type": "object"
+    },
+    "SemrushSAGetHistoryConfig": {
+      "description": "Get audit history across snapshots (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_site_audit_history",
+          "default": "get_site_audit_history",
+          "title": "Get Site Audit History",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Site Audit",
+          "x-display-name": "Get Site Audit History",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "title": "Project ID",
+          "type": "string"
+        },
+        "start_date": {
+          "title": "Start Date (YYYY-MM-DD)",
+          "type": "string"
+        },
+        "end_date": {
+          "title": "End Date (YYYY-MM-DD)",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "start_date",
+        "end_date"
+      ],
+      "title": "SemrushSAGetHistoryConfig",
+      "type": "object"
+    },
+    "SemrushSAGetIssueDetailsConfig": {
+      "description": "Get pages affected by a specific issue (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_pages_affected_by_issue",
+          "default": "get_pages_affected_by_issue",
+          "title": "Get Pages Affected by Issue",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Site Audit",
+          "x-display-name": "Get Pages Affected by Issue",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "title": "Project ID",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "title": "Snapshot ID",
+          "type": "string"
+        },
+        "issue_id": {
+          "title": "Issue ID",
+          "type": "string"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "project_id",
+        "snapshot_id",
+        "issue_id"
+      ],
+      "title": "SemrushSAGetIssueDetailsConfig",
+      "type": "object"
+    },
+    "SemrushSAGetIssueMetadataConfig": {
+      "description": "Get explanation of an issue type (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_issue_type_explanation",
+          "default": "get_issue_type_explanation",
+          "title": "Get Issue Type Explanation",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Site Audit",
+          "x-display-name": "Get Issue Type Explanation",
+          "x-is-trigger": false
+        },
+        "issue_id": {
+          "title": "Issue ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "issue_id"
+      ],
+      "title": "SemrushSAGetIssueMetadataConfig",
+      "type": "object"
+    },
+    "SemrushSAGetPageInfoConfig": {
+      "description": "Get page details and issues (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_audited_page_details",
+          "default": "get_audited_page_details",
+          "title": "Get Audited Page Details",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Site Audit",
+          "x-display-name": "Get Audited Page Details",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "title": "Project ID",
+          "type": "string"
+        },
+        "page_id": {
+          "title": "Page ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "page_id"
+      ],
+      "title": "SemrushSAGetPageInfoConfig",
+      "type": "object"
+    },
+    "SemrushSAGetSnapshotDetailsConfig": {
+      "description": "Get detailed snapshot overview (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_audit_snapshot_details",
+          "default": "get_audit_snapshot_details",
+          "title": "Get Audit Snapshot Details",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Site Audit",
+          "x-display-name": "Get Audit Snapshot Details",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "title": "Project ID",
+          "type": "string"
+        },
+        "snapshot_id": {
+          "title": "Snapshot ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "snapshot_id"
+      ],
+      "title": "SemrushSAGetSnapshotDetailsConfig",
+      "type": "object"
+    },
+    "SemrushSAGetSnapshotsConfig": {
+      "description": "Get list of audit snapshots (API v3)",
+      "properties": {
+        "operation": {
+          "const": "list_audit_snapshots",
+          "default": "list_audit_snapshots",
+          "title": "List Audit Snapshots",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Site Audit",
+          "x-display-name": "List Audit Snapshots",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "title": "Project ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "SemrushSAGetSnapshotsConfig",
+      "type": "object"
+    },
+    "SemrushSALaunchAuditConfig": {
+      "description": "Launch a new site audit (API v3)",
+      "properties": {
+        "operation": {
+          "const": "launch_site_audit",
+          "default": "launch_site_audit",
+          "title": "Launch Site Audit",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Site Audit",
+          "x-display-name": "Launch Site Audit",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "title": "Project ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id"
+      ],
+      "title": "SemrushSALaunchAuditConfig",
+      "type": "object"
+    },
+    "SemrushSASearchPageConfig": {
+      "description": "Search for a page by URL (API v3)",
+      "properties": {
+        "operation": {
+          "const": "search_audit_page_by_url",
+          "default": "search_audit_page_by_url",
+          "title": "Search Audit Page by Url",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Site Audit",
+          "x-display-name": "Search Audit Page by Url",
+          "x-is-trigger": false
+        },
+        "project_id": {
+          "title": "Project ID",
+          "type": "string"
+        },
+        "url": {
+          "title": "Page URL",
+          "type": "string"
+        }
+      },
+      "required": [
+        "project_id",
+        "url"
+      ],
+      "title": "SemrushSASearchPageConfig",
+      "type": "object"
+    },
+    "SemrushSubdomainAdwordsConfig": {
+      "description": "Get subdomain paid keywords (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_subdomain_paid_keywords",
+          "default": "get_subdomain_paid_keywords",
+          "title": "Get Subdomain Paid Keywords",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subdomain",
+          "x-display-name": "Get Subdomain Paid Keywords",
+          "x-is-trigger": false
+        },
+        "domain": {
+          "title": "Subdomain",
+          "type": "string"
+        },
+        "database": {
+          "default": "us",
+          "title": "Database",
+          "type": "string"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "SemrushSubdomainAdwordsConfig",
+      "type": "object"
+    },
+    "SemrushSubdomainAdwordsUniqueConfig": {
+      "description": "Get subdomain ad copies (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_subdomain_unique_ad_copies",
+          "default": "get_subdomain_unique_ad_copies",
+          "title": "Get Subdomain Unique Ad Copies",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subdomain",
+          "x-display-name": "Get Subdomain Unique Ad Copies",
+          "x-is-trigger": false
+        },
+        "domain": {
+          "title": "Subdomain",
+          "type": "string"
+        },
+        "database": {
+          "default": "us",
+          "title": "Database",
+          "type": "string"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "SemrushSubdomainAdwordsUniqueConfig",
+      "type": "object"
+    },
+    "SemrushSubdomainOrganicConfig": {
+      "description": "Get subdomain organic keywords (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_subdomain_organic_keywords",
+          "default": "get_subdomain_organic_keywords",
+          "title": "Get Subdomain Organic Keywords",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subdomain",
+          "x-display-name": "Get Subdomain Organic Keywords",
+          "x-is-trigger": false
+        },
+        "domain": {
+          "title": "Subdomain",
+          "type": "string"
+        },
+        "database": {
+          "default": "us",
+          "title": "Database",
+          "type": "string"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "SemrushSubdomainOrganicConfig",
+      "type": "object"
+    },
+    "SemrushSubdomainOrganicUniqueConfig": {
+      "description": "Get subdomain organic pages (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_subdomain_top_organic_pages",
+          "default": "get_subdomain_top_organic_pages",
+          "title": "Get Subdomain Top Organic Pages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subdomain",
+          "x-display-name": "Get Subdomain Top Organic Pages",
+          "x-is-trigger": false
+        },
+        "domain": {
+          "title": "Subdomain",
+          "type": "string"
+        },
+        "database": {
+          "default": "us",
+          "title": "Database",
+          "type": "string"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "SemrushSubdomainOrganicUniqueConfig",
+      "type": "object"
+    },
+    "SemrushSubdomainRankConfig": {
+      "description": "Get subdomain overview for one database (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_subdomain_overview_single_database",
+          "default": "get_subdomain_overview_single_database",
+          "title": "Get Subdomain Overview Single Database",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subdomain",
+          "x-display-name": "Get Subdomain Overview Single Database",
+          "x-is-trigger": false
+        },
+        "domain": {
+          "description": "Full subdomain (e.g., blog.example.com)",
+          "title": "Subdomain",
+          "type": "string"
+        },
+        "database": {
+          "default": "us",
+          "title": "Database",
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "SemrushSubdomainRankConfig",
+      "type": "object"
+    },
+    "SemrushSubdomainRankHistoryConfig": {
+      "description": "Get subdomain rank history (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_subdomain_rank_history",
+          "default": "get_subdomain_rank_history",
+          "title": "Get Subdomain Rank History",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subdomain",
+          "x-display-name": "Get Subdomain Rank History",
+          "x-is-trigger": false
+        },
+        "domain": {
+          "title": "Subdomain",
+          "type": "string"
+        },
+        "database": {
+          "default": "us",
+          "title": "Database",
+          "type": "string"
+        },
+        "display_daily": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "title": "Display Daily"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "SemrushSubdomainRankHistoryConfig",
+      "type": "object"
+    },
+    "SemrushSubdomainRanksConfig": {
+      "description": "Get subdomain overview across all databases (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_subdomain_overview_all_databases",
+          "default": "get_subdomain_overview_all_databases",
+          "title": "Get Subdomain Overview All Databases",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subdomain",
+          "x-display-name": "Get Subdomain Overview All Databases",
+          "x-is-trigger": false
+        },
+        "domain": {
+          "title": "Subdomain",
+          "type": "string"
+        }
+      },
+      "required": [
+        "domain"
+      ],
+      "title": "SemrushSubdomainRanksConfig",
+      "type": "object"
+    },
+    "SemrushSubdomainsTrafficConfig": {
+      "description": "Get traffic to subdomains (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_subdomain_traffic",
+          "default": "get_subdomain_traffic",
+          "title": "Get Subdomain Traffic",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subdomain",
+          "x-display-name": "Get Subdomain Traffic",
+          "x-is-trigger": false
+        },
+        "target": {
+          "title": "Domain",
+          "type": "string"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country Code"
+        },
+        "device_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Device Type"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "target"
+      ],
+      "title": "SemrushSubdomainsTrafficConfig",
+      "type": "object"
+    },
+    "SemrushSubfolderAdwordsConfig": {
+      "description": "Get subfolder paid keywords (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_subfolder_paid_keywords",
+          "default": "get_subfolder_paid_keywords",
+          "title": "Get Subfolder Paid Keywords",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subfolder",
+          "x-display-name": "Get Subfolder Paid Keywords",
+          "x-is-trigger": false
+        },
+        "url": {
+          "title": "Subfolder URL",
+          "type": "string"
+        },
+        "database": {
+          "default": "us",
+          "title": "Database",
+          "type": "string"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "SemrushSubfolderAdwordsConfig",
+      "type": "object"
+    },
+    "SemrushSubfolderAdwordsUniqueConfig": {
+      "description": "Get subfolder ad copies (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_subfolder_unique_ad_copies",
+          "default": "get_subfolder_unique_ad_copies",
+          "title": "Get Subfolder Unique Ad Copies",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subfolder",
+          "x-display-name": "Get Subfolder Unique Ad Copies",
+          "x-is-trigger": false
+        },
+        "url": {
+          "title": "Subfolder URL",
+          "type": "string"
+        },
+        "database": {
+          "default": "us",
+          "title": "Database",
+          "type": "string"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "SemrushSubfolderAdwordsUniqueConfig",
+      "type": "object"
+    },
+    "SemrushSubfolderOrganicConfig": {
+      "description": "Get subfolder organic keywords (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_subfolder_organic_keywords",
+          "default": "get_subfolder_organic_keywords",
+          "title": "Get Subfolder Organic Keywords",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subfolder",
+          "x-display-name": "Get Subfolder Organic Keywords",
+          "x-is-trigger": false
+        },
+        "url": {
+          "title": "Subfolder URL",
+          "type": "string"
+        },
+        "database": {
+          "default": "us",
+          "title": "Database",
+          "type": "string"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "SemrushSubfolderOrganicConfig",
+      "type": "object"
+    },
+    "SemrushSubfolderOrganicUniqueConfig": {
+      "description": "Get subfolder organic pages (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_subfolder_top_organic_pages",
+          "default": "get_subfolder_top_organic_pages",
+          "title": "Get Subfolder Top Organic Pages",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subfolder",
+          "x-display-name": "Get Subfolder Top Organic Pages",
+          "x-is-trigger": false
+        },
+        "url": {
+          "title": "Subfolder URL",
+          "type": "string"
+        },
+        "database": {
+          "default": "us",
+          "title": "Database",
+          "type": "string"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "SemrushSubfolderOrganicUniqueConfig",
+      "type": "object"
+    },
+    "SemrushSubfolderRankConfig": {
+      "description": "Get subfolder overview for one database (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_subfolder_overview_single_database",
+          "default": "get_subfolder_overview_single_database",
+          "title": "Get Subfolder Overview Single Database",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subfolder",
+          "x-display-name": "Get Subfolder Overview Single Database",
+          "x-is-trigger": false
+        },
+        "url": {
+          "description": "Full subfolder URL (e.g., example.com/blog/)",
+          "title": "Subfolder URL",
+          "type": "string"
+        },
+        "database": {
+          "default": "us",
+          "title": "Database",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "SemrushSubfolderRankConfig",
+      "type": "object"
+    },
+    "SemrushSubfolderRankHistoryConfig": {
+      "description": "Get subfolder rank history (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_subfolder_rank_history",
+          "default": "get_subfolder_rank_history",
+          "title": "Get Subfolder Rank History",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subfolder",
+          "x-display-name": "Get Subfolder Rank History",
+          "x-is-trigger": false
+        },
+        "url": {
+          "title": "Subfolder URL",
+          "type": "string"
+        },
+        "database": {
+          "default": "us",
+          "title": "Database",
+          "type": "string"
+        },
+        "display_daily": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "title": "Display Daily"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "SemrushSubfolderRankHistoryConfig",
+      "type": "object"
+    },
+    "SemrushSubfolderRanksConfig": {
+      "description": "Get subfolder overview across all databases (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_subfolder_overview_all_databases",
+          "default": "get_subfolder_overview_all_databases",
+          "title": "Get Subfolder Overview All Databases",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subfolder",
+          "x-display-name": "Get Subfolder Overview All Databases",
+          "x-is-trigger": false
+        },
+        "url": {
+          "title": "Subfolder URL",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "SemrushSubfolderRanksConfig",
+      "type": "object"
+    },
+    "SemrushSubfoldersTrafficConfig": {
+      "description": "Get traffic to subfolders (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_subfolder_traffic",
+          "default": "get_subfolder_traffic",
+          "title": "Get Subfolder Traffic",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Subfolder",
+          "x-display-name": "Get Subfolder Traffic",
+          "x-is-trigger": false
+        },
+        "target": {
+          "title": "Domain",
+          "type": "string"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country Code"
+        },
+        "device_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Device Type"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "target"
+      ],
+      "title": "SemrushSubfoldersTrafficConfig",
+      "type": "object"
+    },
+    "SemrushTopPagesConfig": {
+      "description": "Get top pages by traffic (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_top_pages_by_traffic",
+          "default": "get_top_pages_by_traffic",
+          "title": "Get Top Pages by Traffic",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Traffic",
+          "x-display-name": "Get Top Pages by Traffic",
+          "x-is-trigger": false
+        },
+        "target": {
+          "title": "Domain",
+          "type": "string"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country Code"
+        },
+        "device_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Device Type"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "target"
+      ],
+      "title": "SemrushTopPagesConfig",
+      "type": "object"
+    },
+    "SemrushTrafficDailyConfig": {
+      "description": "Get daily traffic breakdown (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_daily_traffic_breakdown",
+          "default": "get_daily_traffic_breakdown",
+          "title": "Get Daily Traffic Breakdown",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Traffic",
+          "x-display-name": "Get Daily Traffic Breakdown",
+          "x-is-trigger": false
+        },
+        "target": {
+          "title": "Domain",
+          "type": "string"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country Code"
+        },
+        "device_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Device Type"
+        }
+      },
+      "required": [
+        "target"
+      ],
+      "title": "SemrushTrafficDailyConfig",
+      "type": "object"
+    },
+    "SemrushTrafficDestinationsConfig": {
+      "description": "Get traffic destinations (where users go next) (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_traffic_destinations",
+          "default": "get_traffic_destinations",
+          "title": "Get Traffic Destinations",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Traffic",
+          "x-display-name": "Get Traffic Destinations",
+          "x-is-trigger": false
+        },
+        "target": {
+          "title": "Domain",
+          "type": "string"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country Code"
+        },
+        "device_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Device Type"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "target"
+      ],
+      "title": "SemrushTrafficDestinationsConfig",
+      "type": "object"
+    },
+    "SemrushTrafficRankConfig": {
+      "description": "Get traffic rank for domains (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_traffic_rank_for_domains",
+          "default": "get_traffic_rank_for_domains",
+          "title": "Get Traffic Rank for Domains",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Traffic",
+          "x-display-name": "Get Traffic Rank for Domains",
+          "x-is-trigger": false
+        },
+        "targets": {
+          "description": "Comma-separated list (max 200)",
+          "title": "Domains",
+          "type": "string"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country Code"
+        },
+        "device_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Device Type"
+        }
+      },
+      "required": [
+        "targets"
+      ],
+      "title": "SemrushTrafficRankConfig",
+      "type": "object"
+    },
+    "SemrushTrafficSourcesConfig": {
+      "description": "Get traffic sources breakdown (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_traffic_sources_breakdown",
+          "default": "get_traffic_sources_breakdown",
+          "title": "Get Traffic Sources Breakdown",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Traffic",
+          "x-display-name": "Get Traffic Sources Breakdown",
+          "x-is-trigger": false
+        },
+        "target": {
+          "title": "Domain",
+          "type": "string"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country Code"
+        },
+        "device_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Device Type"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "target"
+      ],
+      "title": "SemrushTrafficSourcesConfig",
+      "type": "object"
+    },
+    "SemrushTrafficSummaryConfig": {
+      "description": "Get traffic summary for domains (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_traffic_summary_for_domains",
+          "default": "get_traffic_summary_for_domains",
+          "title": "Get Traffic Summary for Domains",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Traffic",
+          "x-display-name": "Get Traffic Summary for Domains",
+          "x-is-trigger": false
+        },
+        "targets": {
+          "description": "Comma-separated list of domains (max 200)",
+          "placeholder": "example.com,competitor.com",
+          "title": "Domains",
+          "type": "string"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "2-letter country code (e.g., us, uk)",
+          "title": "Country Code"
+        },
+        "device_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by device: desktop, mobile, or both",
+          "title": "Device Type"
+        }
+      },
+      "required": [
+        "targets"
+      ],
+      "title": "SemrushTrafficSummaryConfig",
+      "type": "object"
+    },
+    "SemrushTrafficWeeklyConfig": {
+      "description": "Get weekly traffic breakdown (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_weekly_traffic_breakdown",
+          "default": "get_weekly_traffic_breakdown",
+          "title": "Get Weekly Traffic Breakdown",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Traffic",
+          "x-display-name": "Get Weekly Traffic Breakdown",
+          "x-is-trigger": false
+        },
+        "target": {
+          "title": "Domain",
+          "type": "string"
+        },
+        "country": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Country Code"
+        },
+        "device_type": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Device Type"
+        }
+      },
+      "required": [
+        "target"
+      ],
+      "title": "SemrushTrafficWeeklyConfig",
+      "type": "object"
+    },
+    "SemrushUrlAdwordsConfig": {
+      "description": "Get URL paid keywords (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_url_paid_keywords",
+          "default": "get_url_paid_keywords",
+          "title": "Get Url Paid Keywords",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "URL",
+          "x-display-name": "Get Url Paid Keywords",
+          "x-is-trigger": false
+        },
+        "url": {
+          "title": "URL",
+          "type": "string"
+        },
+        "database": {
+          "default": "us",
+          "title": "Database",
+          "type": "string"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "SemrushUrlAdwordsConfig",
+      "type": "object"
+    },
+    "SemrushUrlOrganicConfig": {
+      "description": "Get URL organic keywords (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_url_organic_keywords",
+          "default": "get_url_organic_keywords",
+          "title": "Get Url Organic Keywords",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "URL",
+          "x-display-name": "Get Url Organic Keywords",
+          "x-is-trigger": false
+        },
+        "url": {
+          "title": "URL",
+          "type": "string"
+        },
+        "database": {
+          "default": "us",
+          "title": "Database",
+          "type": "string"
+        },
+        "display_limit": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 10,
+          "title": "Limit"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "SemrushUrlOrganicConfig",
+      "type": "object"
+    },
+    "SemrushUrlRankConfig": {
+      "description": "Get URL overview for one database (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_url_overview_single_database",
+          "default": "get_url_overview_single_database",
+          "title": "Get Url Overview Single Database",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "URL",
+          "x-display-name": "Get Url Overview Single Database",
+          "x-is-trigger": false
+        },
+        "url": {
+          "description": "Full URL to analyze",
+          "title": "URL",
+          "type": "string"
+        },
+        "database": {
+          "default": "us",
+          "title": "Database",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "SemrushUrlRankConfig",
+      "type": "object"
+    },
+    "SemrushUrlRankHistoryConfig": {
+      "description": "Get URL rank history (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_url_rank_history",
+          "default": "get_url_rank_history",
+          "title": "Get Url Rank History",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "URL",
+          "x-display-name": "Get Url Rank History",
+          "x-is-trigger": false
+        },
+        "url": {
+          "title": "URL",
+          "type": "string"
+        },
+        "database": {
+          "default": "us",
+          "title": "Database",
+          "type": "string"
+        },
+        "display_daily": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": false,
+          "title": "Display Daily"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "SemrushUrlRankHistoryConfig",
+      "type": "object"
+    },
+    "SemrushUrlRanksConfig": {
+      "description": "Get URL overview across all databases (API v3)",
+      "properties": {
+        "operation": {
+          "const": "get_url_overview_all_databases",
+          "default": "get_url_overview_all_databases",
+          "title": "Get Url Overview All Databases",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "URL",
+          "x-display-name": "Get Url Overview All Databases",
+          "x-is-trigger": false
+        },
+        "url": {
+          "title": "URL",
+          "type": "string"
+        }
+      },
+      "required": [
+        "url"
+      ],
+      "title": "SemrushUrlRanksConfig",
+      "type": "object"
+    }
+  },
+  "description": "Complete Semrush node configuration with 92 operations across v3 and v4 APIs",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_competitors_to_tracking_campaign": "#/$defs/SemrushPTAddCompetitorsConfig",
+          "add_keywords_to_tracking_campaign": "#/$defs/SemrushPTAddKeywordsConfig",
+          "add_tags_to_tracked_keywords": "#/$defs/SemrushPTAddTagsConfig",
+          "compare_backlink_profiles_batch": "#/$defs/SemrushBacklinksComparisonConfig",
+          "compare_backlinks_between_domains": "#/$defs/SemrushBacklinksMatrixConfig",
+          "compare_domains_batch": "#/$defs/SemrushDomainDomainsConfig",
+          "create_position_tracking_campaign": "#/$defs/SemrushPTCreateCampaignConfig",
+          "disable_campaign_email_notifications": "#/$defs/SemrushPTDisableNotificationsConfig",
+          "enable_campaign_email_notifications": "#/$defs/SemrushPTEnableNotificationsConfig",
+          "enable_site_audit_for_project": "#/$defs/SemrushSAEnableConfig",
+          "get_audience_demographics": "#/$defs/SemrushAudienceInsightsConfig",
+          "get_audit_snapshot_details": "#/$defs/SemrushSAGetSnapshotDetailsConfig",
+          "get_audited_page_details": "#/$defs/SemrushSAGetPageInfoConfig",
+          "get_authority_score_distribution": "#/$defs/SemrushBacklinksAscoreProfileConfig",
+          "get_backlink_anchor_distribution": "#/$defs/SemrushBacklinksAnchorsConfig",
+          "get_backlink_competitors": "#/$defs/SemrushBacklinksCompetitorsConfig",
+          "get_backlinks_by_country": "#/$defs/SemrushBacklinksGeoConfig",
+          "get_backlinks_by_tld": "#/$defs/SemrushBacklinksTldConfig",
+          "get_backlinks_historical_data": "#/$defs/SemrushBacklinksHistoricalConfig",
+          "get_backlinks_list": "#/$defs/SemrushBacklinksConfig",
+          "get_backlinks_overview": "#/$defs/SemrushBacklinksOverviewConfig",
+          "get_batch_keyword_overview": "#/$defs/SemrushPhraseTheseConfig",
+          "get_broad_match_keywords": "#/$defs/SemrushPhraseFullsearchConfig",
+          "get_daily_traffic_breakdown": "#/$defs/SemrushTrafficDailyConfig",
+          "get_domain_organic_competitors": "#/$defs/SemrushDomainOrganicOrganicConfig",
+          "get_domain_organic_keywords": "#/$defs/SemrushDomainOrganicConfig",
+          "get_domain_overview_all_databases": "#/$defs/SemrushDomainRanksConfig",
+          "get_domain_overview_single_database": "#/$defs/SemrushDomainRankConfig",
+          "get_domain_paid_competitors": "#/$defs/SemrushDomainAdwordsAdwordsConfig",
+          "get_domain_paid_keywords": "#/$defs/SemrushDomainAdwordsConfig",
+          "get_domain_paid_keywords_historical": "#/$defs/SemrushDomainAdwordsHistoricalConfig",
+          "get_domain_product_listing_competitors": "#/$defs/SemrushDomainShoppingShoppingConfig",
+          "get_domain_product_listing_keywords": "#/$defs/SemrushDomainShoppingConfig",
+          "get_domain_rank_history": "#/$defs/SemrushDomainRankHistoryConfig",
+          "get_domain_subdomains_organic_ranking": "#/$defs/SemrushDomainOrganicSubdomainsConfig",
+          "get_domain_top_organic_pages": "#/$defs/SemrushDomainOrganicUniqueConfig",
+          "get_domain_unique_ad_copies": "#/$defs/SemrushDomainAdwordsUniqueConfig",
+          "get_domain_unique_product_listing_ads": "#/$defs/SemrushDomainShoppingUniqueConfig",
+          "get_domains_by_industry_category": "#/$defs/SemrushIndustryCategoriesConfig",
+          "get_geographic_traffic_distribution": "#/$defs/SemrushGeoDistributionConfig",
+          "get_issue_type_explanation": "#/$defs/SemrushSAGetIssueMetadataConfig",
+          "get_keyword_ads_historical_data": "#/$defs/SemrushPhraseAdwordsHistoricalConfig",
+          "get_keyword_difficulty": "#/$defs/SemrushPhraseKdiConfig",
+          "get_keyword_organic_search_results": "#/$defs/SemrushPhraseOrganicConfig",
+          "get_keyword_overview_all_databases": "#/$defs/SemrushPhraseAllConfig",
+          "get_keyword_overview_single_database": "#/$defs/SemrushPhraseThisConfig",
+          "get_keyword_paid_search_results": "#/$defs/SemrushPhraseAdwordsConfig",
+          "get_organic_keyword_positions": "#/$defs/SemrushPTOrganicPositionsConfig",
+          "get_organic_tracking_overview": "#/$defs/SemrushPTOrganicOverviewConfig",
+          "get_pages_affected_by_issue": "#/$defs/SemrushSAGetIssueDetailsConfig",
+          "get_pages_with_backlinks": "#/$defs/SemrushBacklinksPagesConfig",
+          "get_paid_search_keyword_positions": "#/$defs/SemrushPTAdwordsPositionsConfig",
+          "get_paid_search_tracking_overview": "#/$defs/SemrushPTAdwordsOverviewConfig",
+          "get_purchase_conversion_rates": "#/$defs/SemrushPurchaseConversionConfig",
+          "get_question_keywords": "#/$defs/SemrushPhraseQuestionsConfig",
+          "get_referring_domain_categories": "#/$defs/SemrushBacklinksCategoriesProfileConfig",
+          "get_referring_domains": "#/$defs/SemrushBacklinksRefdomainsConfig",
+          "get_referring_ip_addresses": "#/$defs/SemrushBacklinksRefipsConfig",
+          "get_related_keywords": "#/$defs/SemrushPhraseRelatedConfig",
+          "get_semrush_rank_report": "#/$defs/SemrushRankConfig",
+          "get_site_audit_campaign_info": "#/$defs/SemrushSAGetCampaignInfoConfig",
+          "get_site_audit_history": "#/$defs/SemrushSAGetHistoryConfig",
+          "get_subdomain_organic_keywords": "#/$defs/SemrushSubdomainOrganicConfig",
+          "get_subdomain_overview_all_databases": "#/$defs/SemrushSubdomainRanksConfig",
+          "get_subdomain_overview_single_database": "#/$defs/SemrushSubdomainRankConfig",
+          "get_subdomain_paid_keywords": "#/$defs/SemrushSubdomainAdwordsConfig",
+          "get_subdomain_rank_history": "#/$defs/SemrushSubdomainRankHistoryConfig",
+          "get_subdomain_top_organic_pages": "#/$defs/SemrushSubdomainOrganicUniqueConfig",
+          "get_subdomain_traffic": "#/$defs/SemrushSubdomainsTrafficConfig",
+          "get_subdomain_unique_ad_copies": "#/$defs/SemrushSubdomainAdwordsUniqueConfig",
+          "get_subfolder_organic_keywords": "#/$defs/SemrushSubfolderOrganicConfig",
+          "get_subfolder_overview_all_databases": "#/$defs/SemrushSubfolderRanksConfig",
+          "get_subfolder_overview_single_database": "#/$defs/SemrushSubfolderRankConfig",
+          "get_subfolder_paid_keywords": "#/$defs/SemrushSubfolderAdwordsConfig",
+          "get_subfolder_rank_history": "#/$defs/SemrushSubfolderRankHistoryConfig",
+          "get_subfolder_top_organic_pages": "#/$defs/SemrushSubfolderOrganicUniqueConfig",
+          "get_subfolder_traffic": "#/$defs/SemrushSubfoldersTrafficConfig",
+          "get_subfolder_unique_ad_copies": "#/$defs/SemrushSubfolderAdwordsUniqueConfig",
+          "get_target_domain_categories": "#/$defs/SemrushBacklinksCategoriesConfig",
+          "get_top_pages_by_traffic": "#/$defs/SemrushTopPagesConfig",
+          "get_tracking_campaign_harvest_dates": "#/$defs/SemrushPTCampaignDatesConfig",
+          "get_traffic_destinations": "#/$defs/SemrushTrafficDestinationsConfig",
+          "get_traffic_rank_for_domains": "#/$defs/SemrushTrafficRankConfig",
+          "get_traffic_sources_breakdown": "#/$defs/SemrushTrafficSourcesConfig",
+          "get_traffic_summary_for_domains": "#/$defs/SemrushTrafficSummaryConfig",
+          "get_url_organic_keywords": "#/$defs/SemrushUrlOrganicConfig",
+          "get_url_overview_all_databases": "#/$defs/SemrushUrlRanksConfig",
+          "get_url_overview_single_database": "#/$defs/SemrushUrlRankConfig",
+          "get_url_paid_keywords": "#/$defs/SemrushUrlAdwordsConfig",
+          "get_url_rank_history": "#/$defs/SemrushUrlRankHistoryConfig",
+          "get_weekly_traffic_breakdown": "#/$defs/SemrushTrafficWeeklyConfig",
+          "get_winners_and_losers_report": "#/$defs/SemrushRankDifferenceConfig",
+          "launch_site_audit": "#/$defs/SemrushSALaunchAuditConfig",
+          "list_audit_snapshots": "#/$defs/SemrushSAGetSnapshotsConfig",
+          "list_position_tracking_campaigns": "#/$defs/SemrushPTCampaignListConfig",
+          "remove_competitors_from_tracking_campaign": "#/$defs/SemrushPTRemoveCompetitorsConfig",
+          "remove_keywords_from_tracking_campaign": "#/$defs/SemrushPTRemoveKeywordsConfig",
+          "remove_tags_from_tracked_keywords": "#/$defs/SemrushPTRemoveTagsConfig",
+          "search_audit_page_by_url": "#/$defs/SemrushSASearchPageConfig",
+          "search_tracking_locations": "#/$defs/SemrushPTLocationSearchConfig",
+          "update_site_audit_campaign": "#/$defs/SemrushSAEditCampaignConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/SemrushDomainOrganicConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushDomainAdwordsConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushDomainAdwordsUniqueConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushDomainOrganicOrganicConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushDomainAdwordsAdwordsConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushDomainAdwordsHistoricalConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushDomainDomainsConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushDomainShoppingConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushDomainShoppingUniqueConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushDomainShoppingShoppingConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushDomainOrganicUniqueConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushDomainOrganicSubdomainsConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushDomainRanksConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushDomainRankConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushDomainRankHistoryConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushRankDifferenceConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushRankConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushSubdomainRankConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushSubdomainRanksConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushSubdomainRankHistoryConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushSubdomainOrganicConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushSubdomainAdwordsConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushSubdomainOrganicUniqueConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushSubdomainAdwordsUniqueConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushSubfolderRankConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushSubfolderRanksConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushSubfolderRankHistoryConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushSubfolderOrganicConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushSubfolderAdwordsConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushSubfolderOrganicUniqueConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushSubfolderAdwordsUniqueConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushUrlRankConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushUrlRanksConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushUrlRankHistoryConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushUrlOrganicConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushUrlAdwordsConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushPhraseAllConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushPhraseThisConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushPhraseTheseConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushPhraseOrganicConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushPhraseAdwordsConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushPhraseRelatedConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushPhraseAdwordsHistoricalConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushPhraseFullsearchConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushPhraseQuestionsConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushPhraseKdiConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushBacklinksOverviewConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushBacklinksConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushBacklinksRefdomainsConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushBacklinksRefipsConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushBacklinksTldConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushBacklinksGeoConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushBacklinksAnchorsConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushBacklinksPagesConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushBacklinksCompetitorsConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushBacklinksMatrixConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushBacklinksComparisonConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushBacklinksAscoreProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushBacklinksCategoriesProfileConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushBacklinksCategoriesConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushBacklinksHistoricalConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushTrafficSummaryConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushTrafficDailyConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushTrafficWeeklyConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushPurchaseConversionConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushIndustryCategoriesConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushTrafficSourcesConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushTrafficDestinationsConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushGeoDistributionConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushSubdomainsTrafficConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushTopPagesConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushTrafficRankConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushAudienceInsightsConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushSubfoldersTrafficConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushPTCampaignListConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushPTCreateCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushPTAddKeywordsConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushPTRemoveKeywordsConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushPTAddTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushPTRemoveTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushPTAddCompetitorsConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushPTRemoveCompetitorsConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushPTLocationSearchConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushPTCampaignDatesConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushPTOrganicOverviewConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushPTAdwordsOverviewConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushPTOrganicPositionsConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushPTAdwordsPositionsConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushPTEnableNotificationsConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushPTDisableNotificationsConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushSAEnableConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushSAEditCampaignConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushSAGetSnapshotsConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushSALaunchAuditConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushSAGetCampaignInfoConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushSAGetSnapshotDetailsConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushSAGetIssueDetailsConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushSAGetIssueMetadataConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushSASearchPageConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushSAGetPageInfoConfig"
+        },
+        {
+          "$ref": "#/$defs/SemrushSAGetHistoryConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/SemrushAPIKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Semrush Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Find organic keywords for competitor site techcrunch.com in US",
+    "Get paid search keywords and ad copies for amazon.com",
+    "Compare SEO metrics across 3 e-commerce competitors",
+    "Research backlinks for domain and top referral domains",
+    "Find keyword opportunities with low competition high volume",
+    "Get traffic trends for example.com over last 6 months",
+    "Analyze market share vs top 5 competitors in tech vertical"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

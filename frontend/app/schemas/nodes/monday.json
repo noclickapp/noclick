@@ -1,0 +1,3611 @@
+{
+  "$defs": {
+    "MondayAddTeamsToBoardConfig": {
+      "description": "Add teams as subscribers to a board.",
+      "properties": {
+        "operation": {
+          "const": "add_teams_to_board",
+          "default": "add_teams_to_board",
+          "title": "Add Teams to Board",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards"
+        },
+        "board_id": {
+          "description": "The board to add teams to",
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "monday_board"
+        },
+        "team_ids": {
+          "title": "Team IDs (comma-separated)",
+          "type": "string",
+          "ui:placeholder": "e.g. 123, 456"
+        },
+        "kind": {
+          "default": "subscriber",
+          "enum": [
+            "subscriber",
+            "owner"
+          ],
+          "title": "Role",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "board_id",
+        "team_ids"
+      ],
+      "title": "MondayAddTeamsToBoardConfig",
+      "type": "object"
+    },
+    "MondayAddUsersToBoardConfig": {
+      "description": "Subscribe users to a board as subscribers or owners.",
+      "properties": {
+        "operation": {
+          "const": "add_users_to_board",
+          "default": "add_users_to_board",
+          "title": "Add Users to Board",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards"
+        },
+        "board_id": {
+          "description": "The board to add users to",
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "monday_board"
+        },
+        "user_ids": {
+          "title": "User IDs (comma-separated)",
+          "type": "string",
+          "ui:placeholder": "e.g. 123, 456"
+        },
+        "kind": {
+          "default": "subscriber",
+          "enum": [
+            "subscriber",
+            "owner"
+          ],
+          "title": "Role",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "board_id",
+        "user_ids"
+      ],
+      "title": "MondayAddUsersToBoardConfig",
+      "type": "object"
+    },
+    "MondayAddUsersToTeamConfig": {
+      "description": "Add users to a team.",
+      "properties": {
+        "operation": {
+          "const": "add_users_to_team",
+          "default": "add_users_to_team",
+          "title": "Add Users To Team",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Teams",
+          "x-display-name": "Add Users To Team",
+          "x-is-trigger": false
+        },
+        "team_id": {
+          "description": "The team to add users to",
+          "title": "Team ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 123456"
+        },
+        "user_ids": {
+          "description": "Comma-separated user IDs to add to the team",
+          "title": "User IDs",
+          "type": "string",
+          "ui:placeholder": "e.g. 123, 456"
+        }
+      },
+      "required": [
+        "team_id",
+        "user_ids"
+      ],
+      "title": "MondayAddUsersToTeamConfig",
+      "type": "object"
+    },
+    "MondayApiTokenCredential": {
+      "description": "Personal API token (V2) authentication for monday.com.\n\nGet your token at: profile picture -> Developers -> My Access Tokens\n(or, for admins, Administration -> Connections -> Personal API token).\nThe token is sent as the *bare* Authorization header value (no Bearer prefix).",
+      "properties": {
+        "credential_type": {
+          "const": "monday_api_token",
+          "default": "monday_api_token",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_token": {
+          "description": "Your monday.com personal V2 API token from Developers -> My Access Tokens",
+          "title": "API Token",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_token"
+      ],
+      "title": "MondayApiTokenCredential",
+      "type": "object",
+      "x-credential-url": "https://monday.com/developers/v2/try-it-yourself"
+    },
+    "MondayArchiveBoardConfig": {
+      "description": "Archive a board.",
+      "properties": {
+        "operation": {
+          "const": "archive_board",
+          "default": "archive_board",
+          "title": "Archive Board",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards",
+          "x-display-name": "Archive Board",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "description": "The board to archive",
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "monday_board"
+        }
+      },
+      "required": [
+        "board_id"
+      ],
+      "title": "MondayArchiveBoardConfig",
+      "type": "object"
+    },
+    "MondayArchiveGroupConfig": {
+      "description": "Archive a group and all its items.",
+      "properties": {
+        "operation": {
+          "const": "archive_group",
+          "default": "archive_group",
+          "title": "Archive Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups & Columns",
+          "x-display-name": "Archive Group",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "description": "The board the group belongs to",
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "monday_board"
+        },
+        "group_id": {
+          "description": "The group to archive",
+          "title": "Group ID",
+          "type": "string",
+          "ui:placeholder": "e.g. topics"
+        }
+      },
+      "required": [
+        "board_id",
+        "group_id"
+      ],
+      "title": "MondayArchiveGroupConfig",
+      "type": "object"
+    },
+    "MondayArchiveItemConfig": {
+      "description": "Archive an item.",
+      "properties": {
+        "operation": {
+          "const": "archive_item",
+          "default": "archive_item",
+          "title": "Archive Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Items",
+          "x-display-name": "Archive Item",
+          "x-is-trigger": false
+        },
+        "item_id": {
+          "description": "The item to archive",
+          "title": "Item ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 1234567890"
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "MondayArchiveItemConfig",
+      "type": "object"
+    },
+    "MondayBoardEventTriggerConfig": {
+      "description": "Fire the workflow when a board event occurs (new item, column change, etc.).",
+      "properties": {
+        "operation": {
+          "const": "on_board_event",
+          "default": "on_board_event",
+          "title": "On Board Event",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Board Event",
+          "x-is-trigger": true
+        },
+        "board_id": {
+          "description": "The board to watch for events",
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "monday_board"
+        },
+        "event": {
+          "default": "create_item",
+          "description": "The board event to trigger on",
+          "enum": [
+            "create_item",
+            "change_column_value",
+            "change_status_column_value",
+            "change_specific_column_value",
+            "change_name",
+            "create_update",
+            "edit_update",
+            "delete_update",
+            "item_archived",
+            "item_deleted",
+            "item_moved_to_group",
+            "item_moved_to_any_group",
+            "item_moved_to_specific_group",
+            "item_restored",
+            "create_subitem",
+            "change_subitem_column_value",
+            "change_subitem_name",
+            "move_subitem",
+            "subitem_archived",
+            "subitem_deleted",
+            "create_subitem_update",
+            "create_column"
+          ],
+          "title": "Event",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "monday.com posts board events here. Registered automatically when you connect credentials.",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "external_webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "External Webhook Id",
+          "ui:hidden": true
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Signing Secret",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        }
+      },
+      "required": [
+        "board_id"
+      ],
+      "title": "MondayBoardEventTriggerConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "MondayChangeColumnValueConfig": {
+      "description": "Change one column's value on an item (typed JSON value).",
+      "properties": {
+        "operation": {
+          "const": "change_column_value",
+          "default": "change_column_value",
+          "title": "Update Item Column Value",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Items",
+          "x-display-name": "Update Item Column Value",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "description": "The board the item belongs to",
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "monday_board"
+        },
+        "item_id": {
+          "description": "The item to update",
+          "title": "Item ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 1234567890"
+        },
+        "column_id": {
+          "description": "The column to change",
+          "title": "Column ID",
+          "type": "string",
+          "ui:placeholder": "e.g. status"
+        },
+        "value": {
+          "description": "Typed JSON value for the column, e.g. {\"label\":\"Done\"}",
+          "title": "Value (JSON)",
+          "type": "string",
+          "ui:placeholder": "e.g. {\"status\": {\"label\": \"Done\"}}",
+          "ui:widget": "textarea"
+        },
+        "create_labels_if_missing": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "false",
+          "description": "Create status/dropdown labels that don't yet exist",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Create Labels If Missing",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id",
+        "column_id",
+        "value"
+      ],
+      "title": "MondayChangeColumnValueConfig",
+      "type": "object"
+    },
+    "MondayChangeMultipleColumnValuesConfig": {
+      "description": "Change several columns at once via a JSON map.",
+      "properties": {
+        "operation": {
+          "const": "change_multiple_column_values",
+          "default": "change_multiple_column_values",
+          "title": "Update Multiple Column Values",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Items",
+          "x-display-name": "Update Multiple Column Values",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "description": "The board the item belongs to",
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "monday_board"
+        },
+        "item_id": {
+          "description": "The item to update",
+          "title": "Item ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 1234567890"
+        },
+        "column_values": {
+          "description": "JSON map of column_id -> value, e.g. {\"status\":{\"label\":\"Done\"}}",
+          "title": "Column Values (JSON)",
+          "type": "string",
+          "ui:placeholder": "e.g. {\"status\": {\"label\": \"Done\"}}",
+          "ui:widget": "textarea"
+        },
+        "create_labels_if_missing": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "false",
+          "description": "Create status/dropdown labels that don't yet exist",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Create Labels If Missing",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id",
+        "column_values"
+      ],
+      "title": "MondayChangeMultipleColumnValuesConfig",
+      "type": "object"
+    },
+    "MondayChangeSimpleColumnValueConfig": {
+      "description": "Change a column using a plain string value (simple types).",
+      "properties": {
+        "operation": {
+          "const": "change_simple_column_value",
+          "default": "change_simple_column_value",
+          "title": "Update Simple Column Value",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Items",
+          "x-display-name": "Update Simple Column Value",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "description": "The board the item belongs to",
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "monday_board"
+        },
+        "item_id": {
+          "description": "The item to update",
+          "title": "Item ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 1234567890"
+        },
+        "column_id": {
+          "description": "The column to change",
+          "title": "Column ID",
+          "type": "string",
+          "ui:placeholder": "e.g. status"
+        },
+        "value": {
+          "description": "Plain string value for the column",
+          "title": "Value",
+          "type": "string",
+          "ui:placeholder": "e.g. Done"
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id",
+        "column_id",
+        "value"
+      ],
+      "title": "MondayChangeSimpleColumnValueConfig",
+      "type": "object"
+    },
+    "MondayClearItemUpdatesConfig": {
+      "description": "Clear all updates/comments from an item.",
+      "properties": {
+        "operation": {
+          "const": "clear_item_updates",
+          "default": "clear_item_updates",
+          "title": "Clear Item Updates",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Items",
+          "x-display-name": "Clear Item Updates",
+          "x-is-trigger": false
+        },
+        "item_id": {
+          "description": "The item whose updates to clear",
+          "title": "Item ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 1234567890"
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "MondayClearItemUpdatesConfig",
+      "type": "object"
+    },
+    "MondayCreateBoardConfig": {
+      "description": "Create a new board.",
+      "properties": {
+        "operation": {
+          "const": "create_board",
+          "default": "create_board",
+          "title": "Create Board",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards",
+          "x-creates-resource": true,
+          "x-display-name": "Create Board",
+          "x-is-trigger": false,
+          "x-resource-id-path": "data.create_board.id",
+          "x-resource-type": "monday_board"
+        },
+        "board_name": {
+          "description": "Name of the new board",
+          "title": "Board Name",
+          "type": "string",
+          "ui:placeholder": "e.g. My Board"
+        },
+        "board_kind": {
+          "default": "public",
+          "description": "Visibility of the board",
+          "enum": [
+            "public",
+            "private",
+            "share"
+          ],
+          "enumNames": [
+            "Public",
+            "Private",
+            "Shareable"
+          ],
+          "title": "Board Kind",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "workspace_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Workspace to create the board in (optional)",
+          "title": "Workspace ID",
+          "ui:placeholder": "e.g. 1234567"
+        },
+        "template_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Board template to base it on (optional)",
+          "title": "Template ID",
+          "ui:placeholder": "e.g. 1234567"
+        }
+      },
+      "required": [
+        "board_name"
+      ],
+      "title": "MondayCreateBoardConfig",
+      "type": "object"
+    },
+    "MondayCreateColumnConfig": {
+      "description": "Add a column to a board.",
+      "properties": {
+        "operation": {
+          "const": "create_column",
+          "default": "create_column",
+          "title": "Create Column",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups & Columns",
+          "x-display-name": "Create Column",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "description": "The board to add the column to",
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "monday_board"
+        },
+        "title": {
+          "description": "Title of the new column",
+          "title": "Column Title",
+          "type": "string",
+          "ui:placeholder": "e.g. My Column"
+        },
+        "column_type": {
+          "default": "text",
+          "description": "Type of column to create",
+          "enum": [
+            "text",
+            "long_text",
+            "numbers",
+            "status",
+            "dropdown",
+            "date",
+            "people",
+            "checkbox",
+            "email",
+            "phone",
+            "link",
+            "timeline",
+            "rating",
+            "tags"
+          ],
+          "title": "Column Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "defaults": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON defaults for the column (e.g. status labels), optional",
+          "title": "Defaults (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "board_id",
+        "title"
+      ],
+      "title": "MondayCreateColumnConfig",
+      "type": "object"
+    },
+    "MondayCreateDocBlockConfig": {
+      "description": "Add a content block to a monday.com Doc.",
+      "properties": {
+        "operation": {
+          "const": "create_doc_block",
+          "default": "create_doc_block",
+          "title": "Create Doc Block",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Docs"
+        },
+        "doc_id": {
+          "description": "The doc to add the block to",
+          "title": "Doc ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 1234567890"
+        },
+        "block_type": {
+          "default": "normal_text",
+          "enum": [
+            "normal_text",
+            "large_title",
+            "medium_title",
+            "small_title",
+            "bulleted_list",
+            "numbered_list",
+            "check_list",
+            "quote",
+            "code",
+            "divider",
+            "notice_box",
+            "image",
+            "video"
+          ],
+          "title": "Block Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "content": {
+          "description": "Block content as JSON, e.g. {\"deltaFormat\": [{\"insert\": \"Hello\"}]}",
+          "title": "Content (JSON)",
+          "type": "string",
+          "ui:placeholder": "Enter content..."
+        },
+        "after_block_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Insert after this block ID (default: end of doc)",
+          "title": "After Block ID",
+          "ui:placeholder": "e.g. block_id"
+        }
+      },
+      "required": [
+        "doc_id",
+        "content"
+      ],
+      "title": "MondayCreateDocBlockConfig",
+      "type": "object"
+    },
+    "MondayCreateDocConfig": {
+      "description": "Create a new monday.com Doc in a workspace.",
+      "properties": {
+        "operation": {
+          "const": "create_doc",
+          "default": "create_doc",
+          "title": "Create Doc",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Docs"
+        },
+        "workspace_id": {
+          "description": "Create the doc in this workspace",
+          "title": "Workspace ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 1234567"
+        },
+        "doc_name": {
+          "default": "Untitled Doc",
+          "description": "Name of the new doc",
+          "title": "Doc Name",
+          "type": "string",
+          "ui:placeholder": "e.g. My Title"
+        },
+        "doc_kind": {
+          "default": "public",
+          "enum": [
+            "public",
+            "private"
+          ],
+          "title": "Kind",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "workspace_id"
+      ],
+      "title": "MondayCreateDocConfig",
+      "type": "object"
+    },
+    "MondayCreateFolderConfig": {
+      "description": "Create a folder in a workspace to organize boards.",
+      "properties": {
+        "operation": {
+          "const": "create_folder",
+          "default": "create_folder",
+          "title": "Create Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Folders"
+        },
+        "name": {
+          "title": "Folder Name",
+          "type": "string",
+          "ui:placeholder": "e.g. My Board"
+        },
+        "workspace_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Workspace ID",
+          "ui:placeholder": "e.g. 1234567"
+        },
+        "parent_folder_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Nest inside this folder",
+          "title": "Parent Folder ID",
+          "ui:placeholder": "e.g. 1234567"
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "MondayCreateFolderConfig",
+      "type": "object"
+    },
+    "MondayCreateGroupConfig": {
+      "description": "Create a new group (section) on a board.",
+      "properties": {
+        "operation": {
+          "const": "create_group",
+          "default": "create_group",
+          "title": "Create Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups & Columns",
+          "x-display-name": "Create Group",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "description": "The board to add the group to",
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "monday_board"
+        },
+        "group_name": {
+          "description": "Name of the new group",
+          "title": "Group Name",
+          "type": "string",
+          "ui:placeholder": "e.g. New Group"
+        }
+      },
+      "required": [
+        "board_id",
+        "group_name"
+      ],
+      "title": "MondayCreateGroupConfig",
+      "type": "object"
+    },
+    "MondayCreateItemConfig": {
+      "description": "Create an item on a board.",
+      "properties": {
+        "operation": {
+          "const": "create_item",
+          "default": "create_item",
+          "title": "Create Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Items",
+          "x-display-name": "Create Item",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "description": "The board to add the item to",
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "monday_board"
+        },
+        "item_name": {
+          "description": "Name of the new item",
+          "title": "Item Name",
+          "type": "string",
+          "ui:placeholder": "e.g. New Task"
+        },
+        "group_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Group (section) to place the item in (optional)",
+          "title": "Group ID",
+          "ui:placeholder": "e.g. topics"
+        },
+        "column_values": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON map of column_id -> value, e.g. {\"status\":{\"label\":\"Done\"}}",
+          "title": "Column Values (JSON)",
+          "ui:widget": "textarea"
+        },
+        "create_labels_if_missing": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "false",
+          "description": "Create status/dropdown labels that don't yet exist",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Create Labels If Missing",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "board_id",
+        "item_name"
+      ],
+      "title": "MondayCreateItemConfig",
+      "type": "object"
+    },
+    "MondayCreateNotificationConfig": {
+      "description": "Send an in-app notification to a user.",
+      "properties": {
+        "operation": {
+          "const": "create_notification",
+          "default": "create_notification",
+          "title": "Create Notification",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Updates & Notifications",
+          "x-display-name": "Create Notification",
+          "x-is-trigger": false
+        },
+        "user_id": {
+          "description": "Recipient user ID",
+          "title": "User ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 12345678"
+        },
+        "target_id": {
+          "description": "ID of the target entity (item/board)",
+          "title": "Target ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 1234567890"
+        },
+        "target_type": {
+          "default": "Project",
+          "description": "Type of the target entity",
+          "enum": [
+            "Project",
+            "Post"
+          ],
+          "enumNames": [
+            "Item/Board (Project)",
+            "Update (Post)"
+          ],
+          "title": "Target Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "text": {
+          "description": "Notification text",
+          "title": "Text",
+          "type": "string",
+          "ui:placeholder": "Enter text..."
+        }
+      },
+      "required": [
+        "user_id",
+        "target_id",
+        "text"
+      ],
+      "title": "MondayCreateNotificationConfig",
+      "type": "object"
+    },
+    "MondayCreateSubitemConfig": {
+      "description": "Create a subitem under a parent item.",
+      "properties": {
+        "operation": {
+          "const": "create_subitem",
+          "default": "create_subitem",
+          "title": "Create Subitem",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Items",
+          "x-display-name": "Create Subitem",
+          "x-is-trigger": false
+        },
+        "parent_item_id": {
+          "description": "The item to create the subitem under",
+          "title": "Parent Item ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 1234567890"
+        },
+        "item_name": {
+          "description": "Name of the new subitem",
+          "title": "Subitem Name",
+          "type": "string",
+          "ui:placeholder": "e.g. New Task"
+        },
+        "column_values": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON map of column_id -> value for the subitem (optional)",
+          "title": "Column Values (JSON)",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "parent_item_id",
+        "item_name"
+      ],
+      "title": "MondayCreateSubitemConfig",
+      "type": "object"
+    },
+    "MondayCreateTagConfig": {
+      "description": "Create or get an existing account-level tag.",
+      "properties": {
+        "operation": {
+          "const": "create_or_get_tag",
+          "default": "create_or_get_tag",
+          "title": "Create or Get Tag",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "Create or Get Tag",
+          "x-is-trigger": false
+        },
+        "tag_name": {
+          "description": "Name of the tag to create or retrieve",
+          "title": "Tag Name",
+          "type": "string",
+          "ui:placeholder": "e.g. My Tag"
+        },
+        "board_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The board to associate the tag with",
+          "title": "Board",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true
+          },
+          "x-resource-type": "monday_board"
+        }
+      },
+      "required": [
+        "tag_name"
+      ],
+      "title": "MondayCreateTagConfig",
+      "type": "object"
+    },
+    "MondayCreateTeamConfig": {
+      "description": "Create a new team in the account.",
+      "properties": {
+        "operation": {
+          "const": "create_team",
+          "default": "create_team",
+          "title": "Create Team",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Teams"
+        },
+        "name": {
+          "title": "Team Name",
+          "type": "string",
+          "ui:placeholder": "e.g. My Board"
+        },
+        "subscriber_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Initial team members",
+          "title": "Member User IDs (comma-separated)",
+          "ui:placeholder": "e.g. 123, 456"
+        },
+        "is_guest_team": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "false",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "title": "Guest Team",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "MondayCreateTeamConfig",
+      "type": "object"
+    },
+    "MondayCreateUpdateConfig": {
+      "description": "Post an update/comment on an item.",
+      "properties": {
+        "operation": {
+          "const": "create_update",
+          "default": "create_update",
+          "title": "Create Update (Comment)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Updates & Notifications",
+          "x-display-name": "Create Update (Comment)",
+          "x-is-trigger": false
+        },
+        "item_id": {
+          "description": "The item to comment on",
+          "title": "Item ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 1234567890"
+        },
+        "body": {
+          "description": "Update/comment text (supports HTML)",
+          "title": "Body",
+          "type": "string",
+          "ui:placeholder": "Enter text...",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "item_id",
+        "body"
+      ],
+      "title": "MondayCreateUpdateConfig",
+      "type": "object"
+    },
+    "MondayCreateWebhookConfig": {
+      "description": "Register a webhook on a board for an event type.",
+      "properties": {
+        "operation": {
+          "const": "create_webhook",
+          "default": "create_webhook",
+          "title": "Create Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Create Webhook",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "description": "The board to attach the webhook to",
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "monday_board"
+        },
+        "url": {
+          "description": "The subscriber URL to receive events",
+          "title": "URL",
+          "type": "string",
+          "ui:placeholder": "https://..."
+        },
+        "event": {
+          "default": "create_item",
+          "description": "The board event to subscribe to",
+          "enum": [
+            "create_item",
+            "change_column_value",
+            "change_status_column_value",
+            "change_specific_column_value",
+            "change_name",
+            "create_update",
+            "edit_update",
+            "delete_update",
+            "item_archived",
+            "item_deleted",
+            "item_moved_to_group",
+            "item_moved_to_any_group",
+            "item_moved_to_specific_group",
+            "item_restored",
+            "create_subitem",
+            "change_subitem_column_value",
+            "change_subitem_name",
+            "move_subitem",
+            "subitem_archived",
+            "subitem_deleted",
+            "create_subitem_update",
+            "create_column"
+          ],
+          "title": "Event",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "board_id",
+        "url"
+      ],
+      "title": "MondayCreateWebhookConfig",
+      "type": "object"
+    },
+    "MondayCreateWorkspaceConfig": {
+      "description": "Create a new monday.com workspace.",
+      "properties": {
+        "operation": {
+          "const": "create_workspace",
+          "default": "create_workspace",
+          "title": "Create Workspace",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspaces"
+        },
+        "name": {
+          "description": "Workspace name",
+          "title": "Name",
+          "type": "string",
+          "ui:placeholder": "e.g. My Board"
+        },
+        "kind": {
+          "default": "open",
+          "enum": [
+            "open",
+            "closed"
+          ],
+          "title": "Kind",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Description",
+          "ui:placeholder": "e.g. This board tracks..."
+        }
+      },
+      "required": [
+        "name"
+      ],
+      "title": "MondayCreateWorkspaceConfig",
+      "type": "object"
+    },
+    "MondayDeleteBoardConfig": {
+      "description": "Permanently delete a board.",
+      "properties": {
+        "operation": {
+          "const": "delete_board",
+          "default": "delete_board",
+          "title": "Delete Board",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards",
+          "x-display-name": "Delete Board",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "description": "The board to delete",
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "monday_board"
+        }
+      },
+      "required": [
+        "board_id"
+      ],
+      "title": "MondayDeleteBoardConfig",
+      "type": "object"
+    },
+    "MondayDeleteColumnConfig": {
+      "description": "Permanently delete a column from a board.",
+      "properties": {
+        "operation": {
+          "const": "delete_column",
+          "default": "delete_column",
+          "title": "Delete Column",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups & Columns",
+          "x-display-name": "Delete Column",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "description": "The board the column belongs to",
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "monday_board"
+        },
+        "column_id": {
+          "description": "The column to delete",
+          "title": "Column ID",
+          "type": "string",
+          "ui:placeholder": "e.g. status"
+        }
+      },
+      "required": [
+        "board_id",
+        "column_id"
+      ],
+      "title": "MondayDeleteColumnConfig",
+      "type": "object"
+    },
+    "MondayDeleteDocBlockConfig": {
+      "description": "Delete a block from a monday.com Doc.",
+      "properties": {
+        "operation": {
+          "const": "delete_doc_block",
+          "default": "delete_doc_block",
+          "title": "Delete Doc Block",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Docs"
+        },
+        "block_id": {
+          "description": "The block to delete",
+          "title": "Block ID",
+          "type": "string",
+          "ui:placeholder": "e.g. block_id"
+        }
+      },
+      "required": [
+        "block_id"
+      ],
+      "title": "MondayDeleteDocBlockConfig",
+      "type": "object"
+    },
+    "MondayDeleteFolderConfig": {
+      "description": "Delete a folder.",
+      "properties": {
+        "operation": {
+          "const": "delete_folder",
+          "default": "delete_folder",
+          "title": "Delete Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Folders"
+        },
+        "folder_id": {
+          "title": "Folder ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 1234567"
+        }
+      },
+      "required": [
+        "folder_id"
+      ],
+      "title": "MondayDeleteFolderConfig",
+      "type": "object"
+    },
+    "MondayDeleteGroupConfig": {
+      "description": "Delete a group from a board.",
+      "properties": {
+        "operation": {
+          "const": "delete_group",
+          "default": "delete_group",
+          "title": "Delete Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups & Columns",
+          "x-display-name": "Delete Group",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "description": "The board the group belongs to",
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "monday_board"
+        },
+        "group_id": {
+          "description": "The group to delete",
+          "title": "Group ID",
+          "type": "string",
+          "ui:placeholder": "e.g. topics"
+        }
+      },
+      "required": [
+        "board_id",
+        "group_id"
+      ],
+      "title": "MondayDeleteGroupConfig",
+      "type": "object"
+    },
+    "MondayDeleteItemConfig": {
+      "description": "Permanently delete an item.",
+      "properties": {
+        "operation": {
+          "const": "delete_item",
+          "default": "delete_item",
+          "title": "Delete Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Items",
+          "x-display-name": "Delete Item",
+          "x-is-trigger": false
+        },
+        "item_id": {
+          "description": "The item to delete",
+          "title": "Item ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 1234567890"
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "MondayDeleteItemConfig",
+      "type": "object"
+    },
+    "MondayDeleteTeamConfig": {
+      "description": "Delete a team from the account.",
+      "properties": {
+        "operation": {
+          "const": "delete_team",
+          "default": "delete_team",
+          "title": "Delete Team",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Teams"
+        },
+        "team_id": {
+          "title": "Team ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 123456"
+        }
+      },
+      "required": [
+        "team_id"
+      ],
+      "title": "MondayDeleteTeamConfig",
+      "type": "object"
+    },
+    "MondayDeleteUpdateConfig": {
+      "description": "Delete an update/comment.",
+      "properties": {
+        "operation": {
+          "const": "delete_update",
+          "default": "delete_update",
+          "title": "Delete Update",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Updates & Notifications",
+          "x-display-name": "Delete Update",
+          "x-is-trigger": false
+        },
+        "update_id": {
+          "description": "The update to delete",
+          "title": "Update ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 1234567890"
+        }
+      },
+      "required": [
+        "update_id"
+      ],
+      "title": "MondayDeleteUpdateConfig",
+      "type": "object"
+    },
+    "MondayDeleteWebhookConfig": {
+      "description": "Remove a webhook by ID.",
+      "properties": {
+        "operation": {
+          "const": "delete_webhook",
+          "default": "delete_webhook",
+          "title": "Delete Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Delete Webhook",
+          "x-is-trigger": false
+        },
+        "webhook_id": {
+          "description": "The webhook to delete",
+          "title": "Webhook ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 1234567890"
+        }
+      },
+      "required": [
+        "webhook_id"
+      ],
+      "title": "MondayDeleteWebhookConfig",
+      "type": "object"
+    },
+    "MondayDeleteWorkspaceConfig": {
+      "description": "Permanently delete a monday.com workspace.",
+      "properties": {
+        "operation": {
+          "const": "delete_workspace",
+          "default": "delete_workspace",
+          "title": "Delete Workspace",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspaces"
+        },
+        "workspace_id": {
+          "title": "Workspace ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 1234567"
+        }
+      },
+      "required": [
+        "workspace_id"
+      ],
+      "title": "MondayDeleteWorkspaceConfig",
+      "type": "object"
+    },
+    "MondayDuplicateBoardConfig": {
+      "description": "Duplicate a board (structure only, with items, or with items and updates).",
+      "properties": {
+        "operation": {
+          "const": "duplicate_board",
+          "default": "duplicate_board",
+          "title": "Duplicate Board",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards",
+          "x-display-name": "Duplicate Board",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "description": "The board to duplicate",
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "monday_board"
+        },
+        "duplicate_type": {
+          "default": "duplicate_board_with_structure",
+          "description": "What to include in the duplicate",
+          "enum": [
+            "duplicate_board_with_structure",
+            "duplicate_board_with_pulses",
+            "duplicate_board_with_pulses_and_updates"
+          ],
+          "enumNames": [
+            "Structure only (groups & columns)",
+            "With items",
+            "With items and updates"
+          ],
+          "title": "Duplicate Type",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "board_name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Name of the duplicated board (optional)",
+          "title": "New Board Name",
+          "ui:placeholder": "e.g. My Board"
+        },
+        "workspace_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Destination workspace (optional)",
+          "title": "Workspace ID",
+          "ui:placeholder": "e.g. 1234567"
+        }
+      },
+      "required": [
+        "board_id"
+      ],
+      "title": "MondayDuplicateBoardConfig",
+      "type": "object"
+    },
+    "MondayDuplicateGroupConfig": {
+      "description": "Duplicate a group and all its items.",
+      "properties": {
+        "operation": {
+          "const": "duplicate_group",
+          "default": "duplicate_group",
+          "title": "Duplicate Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups & Columns",
+          "x-display-name": "Duplicate Group",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "description": "The board the group belongs to",
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "monday_board"
+        },
+        "group_id": {
+          "description": "The group to duplicate",
+          "title": "Group ID",
+          "type": "string",
+          "ui:placeholder": "e.g. topics"
+        },
+        "group_title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Title for the duplicated group (optional)",
+          "title": "New Group Title",
+          "ui:placeholder": "e.g. New Group"
+        },
+        "add_to_top": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "false",
+          "description": "Place the duplicate at the top of the board",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Add To Top",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "board_id",
+        "group_id"
+      ],
+      "title": "MondayDuplicateGroupConfig",
+      "type": "object"
+    },
+    "MondayDuplicateItemConfig": {
+      "description": "Duplicate an existing item.",
+      "properties": {
+        "operation": {
+          "const": "duplicate_item",
+          "default": "duplicate_item",
+          "title": "Duplicate Item",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Items",
+          "x-display-name": "Duplicate Item",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "description": "The board the item belongs to",
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "monday_board"
+        },
+        "item_id": {
+          "description": "The item to duplicate",
+          "title": "Item ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 1234567890"
+        },
+        "with_updates": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "false",
+          "description": "Copy the item's updates/comments too",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Include Updates",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "board_id",
+        "item_id"
+      ],
+      "title": "MondayDuplicateItemConfig",
+      "type": "object"
+    },
+    "MondayEditUpdateConfig": {
+      "description": "Edit an existing update/comment.",
+      "properties": {
+        "operation": {
+          "const": "edit_update",
+          "default": "edit_update",
+          "title": "Edit Update",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Updates & Notifications",
+          "x-display-name": "Edit Update",
+          "x-is-trigger": false
+        },
+        "update_id": {
+          "description": "The update to edit",
+          "title": "Update ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 1234567890"
+        },
+        "body": {
+          "description": "New content for the update (supports HTML)",
+          "title": "Body",
+          "type": "string",
+          "ui:placeholder": "Enter text...",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "update_id",
+        "body"
+      ],
+      "title": "MondayEditUpdateConfig",
+      "type": "object"
+    },
+    "MondayGetAssetsConfig": {
+      "description": "Get file assets (attachments) by their IDs.",
+      "properties": {
+        "operation": {
+          "const": "get_assets",
+          "default": "get_assets",
+          "title": "Get Assets",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Files"
+        },
+        "asset_ids": {
+          "description": "IDs of assets to fetch",
+          "title": "Asset IDs (comma-separated)",
+          "type": "string",
+          "ui:placeholder": "e.g. 123, 456"
+        }
+      },
+      "required": [
+        "asset_ids"
+      ],
+      "title": "MondayGetAssetsConfig",
+      "type": "object"
+    },
+    "MondayGetBoardConfig": {
+      "description": "Fetch a single board's metadata, columns, and groups by ID.",
+      "properties": {
+        "operation": {
+          "const": "get_board",
+          "default": "get_board",
+          "title": "Get Board",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards",
+          "x-display-name": "Get Board",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "description": "The board to fetch",
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "monday_board"
+        }
+      },
+      "required": [
+        "board_id"
+      ],
+      "title": "MondayGetBoardConfig",
+      "type": "object"
+    },
+    "MondayGetDocsConfig": {
+      "description": "List monday.com Docs, optionally filtered by workspace or specific doc IDs.",
+      "properties": {
+        "operation": {
+          "const": "get_docs",
+          "default": "get_docs",
+          "title": "Get Docs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Docs"
+        },
+        "workspace_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter docs by workspace IDs",
+          "title": "Workspace IDs (comma-separated)",
+          "ui:placeholder": "e.g. 1234567"
+        },
+        "doc_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Fetch specific docs by ID",
+          "title": "Doc IDs (comma-separated)",
+          "ui:placeholder": "e.g. 1234567890"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Maximum results",
+          "title": "Limit",
+          "ui:placeholder": "e.g. 25"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "1",
+          "description": "Page number for pagination",
+          "title": "Page",
+          "ui:placeholder": "e.g. 1"
+        }
+      },
+      "title": "MondayGetDocsConfig",
+      "type": "object"
+    },
+    "MondayGetItemsConfig": {
+      "description": "Fetch specific items by ID with their column values.",
+      "properties": {
+        "operation": {
+          "const": "get_items",
+          "default": "get_items",
+          "title": "Get Items By ID",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Items",
+          "x-display-name": "Get Items By ID",
+          "x-is-trigger": false
+        },
+        "item_ids": {
+          "description": "One or more item IDs, comma-separated",
+          "title": "Item IDs",
+          "type": "string",
+          "ui:placeholder": "e.g. 123, 456, 789"
+        }
+      },
+      "required": [
+        "item_ids"
+      ],
+      "title": "MondayGetItemsConfig",
+      "type": "object"
+    },
+    "MondayGetMeConfig": {
+      "description": "Get the authenticated user's profile and account info.",
+      "properties": {
+        "operation": {
+          "const": "get_me",
+          "default": "get_me",
+          "title": "Get Current User",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get Current User",
+          "x-is-trigger": false
+        }
+      },
+      "title": "MondayGetMeConfig",
+      "type": "object"
+    },
+    "MondayGetSubitemsConfig": {
+      "description": "Get all subitems of a parent item.",
+      "properties": {
+        "operation": {
+          "const": "get_subitems",
+          "default": "get_subitems",
+          "title": "Get Subitems",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Items",
+          "x-display-name": "Get Subitems",
+          "x-is-trigger": false
+        },
+        "item_id": {
+          "description": "The parent item whose subitems to fetch",
+          "title": "Item ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 1234567890"
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "MondayGetSubitemsConfig",
+      "type": "object"
+    },
+    "MondayGetTagsConfig": {
+      "description": "Get account-level tags.",
+      "properties": {
+        "operation": {
+          "const": "get_tags",
+          "default": "get_tags",
+          "title": "Get Tags",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tags",
+          "x-display-name": "Get Tags",
+          "x-is-trigger": false
+        },
+        "tag_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated tag IDs to filter (optional \u2014 omit to list all)",
+          "title": "Tag IDs",
+          "ui:placeholder": "e.g. 123, 456"
+        }
+      },
+      "title": "MondayGetTagsConfig",
+      "type": "object"
+    },
+    "MondayGetTeamsConfig": {
+      "description": "List teams in the account.",
+      "properties": {
+        "operation": {
+          "const": "get_teams",
+          "default": "get_teams",
+          "title": "Get Teams",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Teams",
+          "x-display-name": "Get Teams",
+          "x-is-trigger": false
+        },
+        "team_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated team IDs to filter (optional \u2014 omit to list all)",
+          "title": "Team IDs",
+          "ui:placeholder": "e.g. 123, 456"
+        }
+      },
+      "title": "MondayGetTeamsConfig",
+      "type": "object"
+    },
+    "MondayGetUpdatesConfig": {
+      "description": "Get updates/comments on an item.",
+      "properties": {
+        "operation": {
+          "const": "get_updates",
+          "default": "get_updates",
+          "title": "Get Item Updates",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Updates & Notifications",
+          "x-display-name": "Get Item Updates",
+          "x-is-trigger": false
+        },
+        "item_id": {
+          "description": "The item whose updates to fetch",
+          "title": "Item ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 1234567890"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max number of updates to return (max 100)",
+          "title": "Limit",
+          "ui:placeholder": "e.g. 25"
+        }
+      },
+      "required": [
+        "item_id"
+      ],
+      "title": "MondayGetUpdatesConfig",
+      "type": "object"
+    },
+    "MondayLikeUpdateConfig": {
+      "description": "Like an update/comment.",
+      "properties": {
+        "operation": {
+          "const": "like_update",
+          "default": "like_update",
+          "title": "Like Update",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Updates & Notifications",
+          "x-display-name": "Like Update",
+          "x-is-trigger": false
+        },
+        "update_id": {
+          "description": "The update to like",
+          "title": "Update ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 1234567890"
+        }
+      },
+      "required": [
+        "update_id"
+      ],
+      "title": "MondayLikeUpdateConfig",
+      "type": "object"
+    },
+    "MondayListBoardsConfig": {
+      "description": "List boards in the account (name, columns, groups).",
+      "properties": {
+        "operation": {
+          "const": "list_boards",
+          "default": "list_boards",
+          "title": "List Boards",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards",
+          "x-display-name": "List Boards",
+          "x-is-trigger": false
+        },
+        "workspace_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter to a specific workspace (optional)",
+          "title": "Workspace ID",
+          "ui:placeholder": "e.g. 1234567"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max number of boards to return (1-100)",
+          "title": "Limit",
+          "ui:placeholder": "e.g. 25"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "1",
+          "description": "Page number for offset pagination (1-based)",
+          "title": "Page",
+          "ui:placeholder": "e.g. 1"
+        }
+      },
+      "title": "MondayListBoardsConfig",
+      "type": "object"
+    },
+    "MondayListFoldersConfig": {
+      "description": "List folders in a workspace.",
+      "properties": {
+        "operation": {
+          "const": "list_folders",
+          "default": "list_folders",
+          "title": "List Folders",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Folders"
+        },
+        "workspace_ids": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by workspace",
+          "title": "Workspace IDs (comma-separated)",
+          "ui:placeholder": "e.g. 1234567"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "title": "Limit",
+          "ui:placeholder": "e.g. 25"
+        },
+        "page": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "1",
+          "title": "Page",
+          "ui:placeholder": "e.g. 1"
+        }
+      },
+      "title": "MondayListFoldersConfig",
+      "type": "object"
+    },
+    "MondayListGroupsConfig": {
+      "description": "List all groups on a board.",
+      "properties": {
+        "operation": {
+          "const": "list_groups",
+          "default": "list_groups",
+          "title": "List Groups",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups & Columns",
+          "x-display-name": "List Groups",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "description": "The board whose groups to list",
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "monday_board"
+        }
+      },
+      "required": [
+        "board_id"
+      ],
+      "title": "MondayListGroupsConfig",
+      "type": "object"
+    },
+    "MondayListItemsConfig": {
+      "description": "List items on a board (cursor-paginated, with column values).",
+      "properties": {
+        "operation": {
+          "const": "list_items",
+          "default": "list_items",
+          "title": "List Items",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Items",
+          "x-display-name": "List Items",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "description": "The board whose items to list",
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "monday_board"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Items per page (max 500)",
+          "title": "Limit",
+          "ui:placeholder": "e.g. 25"
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from a previous page (optional)",
+          "title": "Cursor",
+          "ui:placeholder": "Paste cursor from previous response"
+        }
+      },
+      "required": [
+        "board_id"
+      ],
+      "title": "MondayListItemsConfig",
+      "type": "object"
+    },
+    "MondayListUsersConfig": {
+      "description": "List account users.",
+      "properties": {
+        "operation": {
+          "const": "list_users",
+          "default": "list_users",
+          "title": "List Users",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "List Users",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max number of users to return",
+          "title": "Limit",
+          "ui:placeholder": "e.g. 25"
+        },
+        "emails": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter to specific emails, comma-separated (optional)",
+          "title": "Emails",
+          "ui:placeholder": "e.g. user@example.com"
+        }
+      },
+      "title": "MondayListUsersConfig",
+      "type": "object"
+    },
+    "MondayListWebhooksConfig": {
+      "description": "List all webhooks registered on a board.",
+      "properties": {
+        "operation": {
+          "const": "list_webhooks",
+          "default": "list_webhooks",
+          "title": "List Webhooks",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "List Webhooks",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "description": "The board whose webhooks to list",
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "monday_board"
+        }
+      },
+      "required": [
+        "board_id"
+      ],
+      "title": "MondayListWebhooksConfig",
+      "type": "object"
+    },
+    "MondayListWorkspacesConfig": {
+      "description": "List workspaces in the account.",
+      "properties": {
+        "operation": {
+          "const": "list_workspaces",
+          "default": "list_workspaces",
+          "title": "List Workspaces",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "List Workspaces",
+          "x-is-trigger": false
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Max number of workspaces to return",
+          "title": "Limit",
+          "ui:placeholder": "e.g. 25"
+        }
+      },
+      "title": "MondayListWorkspacesConfig",
+      "type": "object"
+    },
+    "MondayMoveItemToBoardConfig": {
+      "description": "Move an item to another board and group.",
+      "properties": {
+        "operation": {
+          "const": "move_item_to_board",
+          "default": "move_item_to_board",
+          "title": "Move Item To Board",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Items",
+          "x-display-name": "Move Item To Board",
+          "x-is-trigger": false
+        },
+        "item_id": {
+          "description": "The item to move",
+          "title": "Item ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 1234567890"
+        },
+        "board_id": {
+          "description": "The board to move the item to",
+          "title": "Destination Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "monday_board"
+        },
+        "group_id": {
+          "description": "Group on the target board",
+          "title": "Destination Group ID",
+          "type": "string",
+          "ui:placeholder": "e.g. topics"
+        }
+      },
+      "required": [
+        "item_id",
+        "board_id",
+        "group_id"
+      ],
+      "title": "MondayMoveItemToBoardConfig",
+      "type": "object"
+    },
+    "MondayMoveItemToGroupConfig": {
+      "description": "Move an item to a different group within the same board.",
+      "properties": {
+        "operation": {
+          "const": "move_item_to_group",
+          "default": "move_item_to_group",
+          "title": "Move Item To Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Items",
+          "x-display-name": "Move Item To Group",
+          "x-is-trigger": false
+        },
+        "item_id": {
+          "description": "The item to move",
+          "title": "Item ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 1234567890"
+        },
+        "group_id": {
+          "description": "Destination group",
+          "title": "Group ID",
+          "type": "string",
+          "ui:placeholder": "e.g. topics"
+        }
+      },
+      "required": [
+        "item_id",
+        "group_id"
+      ],
+      "title": "MondayMoveItemToGroupConfig",
+      "type": "object"
+    },
+    "MondayOAuthCredential": {
+      "description": "OAuth 2.0 credential for monday.com.\n\nTokens are obtained via the monday OAuth flow (authorization_code), not\nentered manually. monday OAuth tokens do not expire (valid until the user\nuninstalls the app). The access token is sent as the *bare* Authorization\nheader value \u2014 monday does NOT use a Bearer prefix.\n\nRegister an app at: monday.com Developer Center -> create app ->\nBasic Information (client_id / client_secret) + OAuth tab (scopes / redirect).",
+      "properties": {
+        "credential_type": {
+          "const": "monday_oauth",
+          "default": "monday_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "monday.com OAuth access token (sent as bare Authorization).",
+          "title": "Access Token",
+          "type": "string",
+          "ui:widget": "password"
+        },
+        "refresh_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refresh Token"
+        },
+        "expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Token Expiry"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "User Name"
+        },
+        "email": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Account Email"
+        }
+      },
+      "required": [
+        "access_token"
+      ],
+      "title": "MondayOAuthCredential",
+      "type": "object",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://monday.com/developers/apps",
+      "x-oauth-custom-client-help": "Optionally bring your own monday.com OAuth app. Register one in the monday Developer Center, set its redirect URI to NoClick's monday callback, and paste its client ID and secret here. Leave blank to use NoClick's shared monday app.",
+      "x-oauth-provider": "monday",
+      "x-oauth-scopes": [
+        "account:read",
+        "boards:read",
+        "boards:write",
+        "docs:read",
+        "docs:write",
+        "workspaces:read",
+        "workspaces:write",
+        "users:read",
+        "users:write",
+        "teams:read",
+        "teams:write",
+        "updates:read",
+        "updates:write",
+        "notifications:write",
+        "webhooks:read",
+        "webhooks:write",
+        "assets:read",
+        "tags:read",
+        "me:read"
+      ],
+      "x-oauth-supports-custom-client": true
+    },
+    "MondayQueryItemsByColumnConfig": {
+      "description": "Search/filter items on a board by a column value.",
+      "properties": {
+        "operation": {
+          "const": "query_items_by_column",
+          "default": "query_items_by_column",
+          "title": "Query Items By Column Value",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Items",
+          "x-display-name": "Query Items By Column Value",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "description": "The board to search within",
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "monday_board"
+        },
+        "column_id": {
+          "description": "The column to filter on",
+          "title": "Column ID",
+          "type": "string",
+          "ui:placeholder": "e.g. status"
+        },
+        "column_values": {
+          "description": "Value(s) to match, comma-separated",
+          "title": "Column Values",
+          "type": "string",
+          "ui:placeholder": "e.g. {\"status\": {\"label\": \"Done\"}}"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "25",
+          "description": "Items per page (max 500)",
+          "title": "Limit",
+          "ui:placeholder": "e.g. 25"
+        }
+      },
+      "required": [
+        "board_id",
+        "column_id",
+        "column_values"
+      ],
+      "title": "MondayQueryItemsByColumnConfig",
+      "type": "object"
+    },
+    "MondayRemoveUsersFromBoardConfig": {
+      "description": "Remove subscribers from a board.",
+      "properties": {
+        "operation": {
+          "const": "remove_users_from_board",
+          "default": "remove_users_from_board",
+          "title": "Remove Users from Board",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards"
+        },
+        "board_id": {
+          "description": "The board to remove users from",
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "monday_board"
+        },
+        "user_ids": {
+          "title": "User IDs (comma-separated)",
+          "type": "string",
+          "ui:placeholder": "e.g. 123, 456"
+        }
+      },
+      "required": [
+        "board_id",
+        "user_ids"
+      ],
+      "title": "MondayRemoveUsersFromBoardConfig",
+      "type": "object"
+    },
+    "MondayRemoveUsersFromTeamConfig": {
+      "description": "Remove users from a team.",
+      "properties": {
+        "operation": {
+          "const": "remove_users_from_team",
+          "default": "remove_users_from_team",
+          "title": "Remove Users From Team",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Teams",
+          "x-display-name": "Remove Users From Team",
+          "x-is-trigger": false
+        },
+        "team_id": {
+          "description": "The team to remove users from",
+          "title": "Team ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 123456"
+        },
+        "user_ids": {
+          "description": "Comma-separated user IDs to remove from the team",
+          "title": "User IDs",
+          "type": "string",
+          "ui:placeholder": "e.g. 123, 456"
+        }
+      },
+      "required": [
+        "team_id",
+        "user_ids"
+      ],
+      "title": "MondayRemoveUsersFromTeamConfig",
+      "type": "object"
+    },
+    "MondayRenameColumnConfig": {
+      "description": "Rename a column on a board.",
+      "properties": {
+        "operation": {
+          "const": "rename_column",
+          "default": "rename_column",
+          "title": "Rename Column",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups & Columns",
+          "x-display-name": "Rename Column",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "description": "The board the column belongs to",
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "monday_board"
+        },
+        "column_id": {
+          "description": "The column to rename",
+          "title": "Column ID",
+          "type": "string",
+          "ui:placeholder": "e.g. status"
+        },
+        "title": {
+          "description": "New title for the column",
+          "title": "New Title",
+          "type": "string",
+          "ui:placeholder": "e.g. My Column"
+        }
+      },
+      "required": [
+        "board_id",
+        "column_id",
+        "title"
+      ],
+      "title": "MondayRenameColumnConfig",
+      "type": "object"
+    },
+    "MondayUnlikeUpdateConfig": {
+      "description": "Remove a like from an update (comment).",
+      "properties": {
+        "operation": {
+          "const": "unlike_update",
+          "default": "unlike_update",
+          "title": "Unlike Update",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Updates"
+        },
+        "update_id": {
+          "description": "The update to unlike",
+          "title": "Update ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 1234567890"
+        }
+      },
+      "required": [
+        "update_id"
+      ],
+      "title": "MondayUnlikeUpdateConfig",
+      "type": "object"
+    },
+    "MondayUpdateBoardConfig": {
+      "description": "Update a board's name, description, or communication settings.",
+      "properties": {
+        "operation": {
+          "const": "update_board",
+          "default": "update_board",
+          "title": "Update Board",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Boards",
+          "x-display-name": "Update Board",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "description": "The board to update",
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "monday_board"
+        },
+        "board_attribute": {
+          "default": "name",
+          "description": "Which board attribute to update",
+          "enum": [
+            "name",
+            "description",
+            "communication"
+          ],
+          "enumNames": [
+            "Name",
+            "Description",
+            "Communication (JSON)"
+          ],
+          "title": "Attribute",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "new_value": {
+          "description": "The new value for the attribute",
+          "title": "New Value",
+          "type": "string",
+          "ui:placeholder": "e.g. New Name"
+        }
+      },
+      "required": [
+        "board_id",
+        "new_value"
+      ],
+      "title": "MondayUpdateBoardConfig",
+      "type": "object"
+    },
+    "MondayUpdateDocBlockConfig": {
+      "description": "Update the content of an existing monday.com Doc block.",
+      "properties": {
+        "operation": {
+          "const": "update_doc_block",
+          "default": "update_doc_block",
+          "title": "Update Doc Block",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Docs"
+        },
+        "block_id": {
+          "description": "The block to update",
+          "title": "Block ID",
+          "type": "string",
+          "ui:placeholder": "e.g. block_id"
+        },
+        "content": {
+          "description": "New block content as JSON, e.g. {\"deltaFormat\": [{\"insert\": \"Updated\"}]}",
+          "title": "Content (JSON)",
+          "type": "string",
+          "ui:placeholder": "Enter content..."
+        }
+      },
+      "required": [
+        "block_id",
+        "content"
+      ],
+      "title": "MondayUpdateDocBlockConfig",
+      "type": "object"
+    },
+    "MondayUpdateFolderConfig": {
+      "description": "Rename or move a folder.",
+      "properties": {
+        "operation": {
+          "const": "update_folder",
+          "default": "update_folder",
+          "title": "Update Folder",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Folders"
+        },
+        "folder_id": {
+          "title": "Folder ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 1234567"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "New Name",
+          "ui:placeholder": "e.g. New Name"
+        },
+        "parent_folder_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "New Parent Folder ID",
+          "ui:placeholder": "e.g. 1234567"
+        }
+      },
+      "required": [
+        "folder_id"
+      ],
+      "title": "MondayUpdateFolderConfig",
+      "type": "object"
+    },
+    "MondayUpdateGroupConfig": {
+      "description": "Rename or recolor a group.",
+      "properties": {
+        "operation": {
+          "const": "update_group",
+          "default": "update_group",
+          "title": "Update Group",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Groups & Columns",
+          "x-display-name": "Update Group",
+          "x-is-trigger": false
+        },
+        "board_id": {
+          "description": "The board the group belongs to",
+          "title": "Board",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste a board ID",
+            "field_name": "board_id",
+            "placeholder": "Select a board...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          },
+          "x-resource-type": "monday_board"
+        },
+        "group_id": {
+          "description": "The group to update",
+          "title": "Group ID",
+          "type": "string",
+          "ui:placeholder": "e.g. topics"
+        },
+        "group_attribute": {
+          "default": "title",
+          "description": "Which group attribute to update",
+          "enum": [
+            "title",
+            "color"
+          ],
+          "enumNames": [
+            "Title",
+            "Color (hex)"
+          ],
+          "title": "Attribute",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "new_value": {
+          "description": "New value for the attribute (e.g. \"My Group\" or \"#FF5733\" for color)",
+          "title": "New Value",
+          "type": "string",
+          "ui:placeholder": "e.g. New Name"
+        }
+      },
+      "required": [
+        "board_id",
+        "group_id",
+        "new_value"
+      ],
+      "title": "MondayUpdateGroupConfig",
+      "type": "object"
+    },
+    "MondayUpdateWorkspaceConfig": {
+      "description": "Update a monday.com workspace's name, kind, or description.",
+      "properties": {
+        "operation": {
+          "const": "update_workspace",
+          "default": "update_workspace",
+          "title": "Update Workspace",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Workspaces"
+        },
+        "workspace_id": {
+          "title": "Workspace ID",
+          "type": "string",
+          "ui:placeholder": "e.g. 1234567"
+        },
+        "name": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "New Name",
+          "ui:placeholder": "e.g. New Name"
+        },
+        "description": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "New Description",
+          "ui:placeholder": "e.g. This board tracks..."
+        },
+        "kind": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "enum": [
+            "",
+            "open",
+            "closed"
+          ],
+          "title": "Kind",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "workspace_id"
+      ],
+      "title": "MondayUpdateWorkspaceConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the monday.com node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "add_teams_to_board": "#/$defs/MondayAddTeamsToBoardConfig",
+          "add_users_to_board": "#/$defs/MondayAddUsersToBoardConfig",
+          "add_users_to_team": "#/$defs/MondayAddUsersToTeamConfig",
+          "archive_board": "#/$defs/MondayArchiveBoardConfig",
+          "archive_group": "#/$defs/MondayArchiveGroupConfig",
+          "archive_item": "#/$defs/MondayArchiveItemConfig",
+          "change_column_value": "#/$defs/MondayChangeColumnValueConfig",
+          "change_multiple_column_values": "#/$defs/MondayChangeMultipleColumnValuesConfig",
+          "change_simple_column_value": "#/$defs/MondayChangeSimpleColumnValueConfig",
+          "clear_item_updates": "#/$defs/MondayClearItemUpdatesConfig",
+          "create_board": "#/$defs/MondayCreateBoardConfig",
+          "create_column": "#/$defs/MondayCreateColumnConfig",
+          "create_doc": "#/$defs/MondayCreateDocConfig",
+          "create_doc_block": "#/$defs/MondayCreateDocBlockConfig",
+          "create_folder": "#/$defs/MondayCreateFolderConfig",
+          "create_group": "#/$defs/MondayCreateGroupConfig",
+          "create_item": "#/$defs/MondayCreateItemConfig",
+          "create_notification": "#/$defs/MondayCreateNotificationConfig",
+          "create_or_get_tag": "#/$defs/MondayCreateTagConfig",
+          "create_subitem": "#/$defs/MondayCreateSubitemConfig",
+          "create_team": "#/$defs/MondayCreateTeamConfig",
+          "create_update": "#/$defs/MondayCreateUpdateConfig",
+          "create_webhook": "#/$defs/MondayCreateWebhookConfig",
+          "create_workspace": "#/$defs/MondayCreateWorkspaceConfig",
+          "delete_board": "#/$defs/MondayDeleteBoardConfig",
+          "delete_column": "#/$defs/MondayDeleteColumnConfig",
+          "delete_doc_block": "#/$defs/MondayDeleteDocBlockConfig",
+          "delete_folder": "#/$defs/MondayDeleteFolderConfig",
+          "delete_group": "#/$defs/MondayDeleteGroupConfig",
+          "delete_item": "#/$defs/MondayDeleteItemConfig",
+          "delete_team": "#/$defs/MondayDeleteTeamConfig",
+          "delete_update": "#/$defs/MondayDeleteUpdateConfig",
+          "delete_webhook": "#/$defs/MondayDeleteWebhookConfig",
+          "delete_workspace": "#/$defs/MondayDeleteWorkspaceConfig",
+          "duplicate_board": "#/$defs/MondayDuplicateBoardConfig",
+          "duplicate_group": "#/$defs/MondayDuplicateGroupConfig",
+          "duplicate_item": "#/$defs/MondayDuplicateItemConfig",
+          "edit_update": "#/$defs/MondayEditUpdateConfig",
+          "get_assets": "#/$defs/MondayGetAssetsConfig",
+          "get_board": "#/$defs/MondayGetBoardConfig",
+          "get_docs": "#/$defs/MondayGetDocsConfig",
+          "get_items": "#/$defs/MondayGetItemsConfig",
+          "get_me": "#/$defs/MondayGetMeConfig",
+          "get_subitems": "#/$defs/MondayGetSubitemsConfig",
+          "get_tags": "#/$defs/MondayGetTagsConfig",
+          "get_teams": "#/$defs/MondayGetTeamsConfig",
+          "get_updates": "#/$defs/MondayGetUpdatesConfig",
+          "like_update": "#/$defs/MondayLikeUpdateConfig",
+          "list_boards": "#/$defs/MondayListBoardsConfig",
+          "list_folders": "#/$defs/MondayListFoldersConfig",
+          "list_groups": "#/$defs/MondayListGroupsConfig",
+          "list_items": "#/$defs/MondayListItemsConfig",
+          "list_users": "#/$defs/MondayListUsersConfig",
+          "list_webhooks": "#/$defs/MondayListWebhooksConfig",
+          "list_workspaces": "#/$defs/MondayListWorkspacesConfig",
+          "move_item_to_board": "#/$defs/MondayMoveItemToBoardConfig",
+          "move_item_to_group": "#/$defs/MondayMoveItemToGroupConfig",
+          "on_board_event": "#/$defs/MondayBoardEventTriggerConfig",
+          "query_items_by_column": "#/$defs/MondayQueryItemsByColumnConfig",
+          "remove_users_from_board": "#/$defs/MondayRemoveUsersFromBoardConfig",
+          "remove_users_from_team": "#/$defs/MondayRemoveUsersFromTeamConfig",
+          "rename_column": "#/$defs/MondayRenameColumnConfig",
+          "unlike_update": "#/$defs/MondayUnlikeUpdateConfig",
+          "update_board": "#/$defs/MondayUpdateBoardConfig",
+          "update_doc_block": "#/$defs/MondayUpdateDocBlockConfig",
+          "update_folder": "#/$defs/MondayUpdateFolderConfig",
+          "update_group": "#/$defs/MondayUpdateGroupConfig",
+          "update_workspace": "#/$defs/MondayUpdateWorkspaceConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/MondayListBoardsConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayGetBoardConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayCreateBoardConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayUpdateBoardConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayDeleteBoardConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayArchiveBoardConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayDuplicateBoardConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayListItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayGetItemsConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayQueryItemsByColumnConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayCreateItemConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayCreateSubitemConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayChangeColumnValueConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayChangeMultipleColumnValuesConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayChangeSimpleColumnValueConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayMoveItemToGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayMoveItemToBoardConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayArchiveItemConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayDeleteItemConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayDuplicateItemConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayGetSubitemsConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayClearItemUpdatesConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayCreateGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayDeleteGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayListGroupsConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayArchiveGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayDuplicateGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayUpdateGroupConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayCreateColumnConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayDeleteColumnConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayRenameColumnConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayCreateUpdateConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayCreateNotificationConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayGetUpdatesConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayDeleteUpdateConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayEditUpdateConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayLikeUpdateConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayGetTagsConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayCreateTagConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayGetTeamsConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayAddUsersToTeamConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayRemoveUsersFromTeamConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayCreateTeamConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayDeleteTeamConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayListUsersConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayGetMeConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayListWorkspacesConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayCreateWorkspaceConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayUpdateWorkspaceConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayDeleteWorkspaceConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayAddUsersToBoardConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayRemoveUsersFromBoardConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayAddTeamsToBoardConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayListFoldersConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayCreateFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayUpdateFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayDeleteFolderConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayGetDocsConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayCreateDocConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayCreateDocBlockConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayUpdateDocBlockConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayDeleteDocBlockConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayGetAssetsConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayUnlikeUpdateConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayCreateWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayDeleteWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayListWebhooksConfig"
+        },
+        {
+          "$ref": "#/$defs/MondayBoardEventTriggerConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/MondayOAuthCredential"
+        },
+        {
+          "$ref": "#/$defs/MondayApiTokenCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)",
+      "title": "Credentials"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Monday Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "List all boards in my account",
+    "Create an item on the Tasks board with a status of Working on it",
+    "Update the status column of an item when a deal closes",
+    "Post a comment on an item when a workflow finishes",
+    "Trigger a workflow whenever a new item is created on a board"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

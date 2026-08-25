@@ -1,0 +1,1202 @@
+{
+  "$defs": {
+    "ReductoApiKeyCredential": {
+      "description": "API Key credential for Reducto.",
+      "properties": {
+        "credential_type": {
+          "const": "reducto_api_key",
+          "default": "reducto_api_key",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "api_key": {
+          "description": "Your Reducto API key from Reducto Studio (studio.reducto.ai -> API Keys -> Create new API key)",
+          "title": "API Key",
+          "type": "string",
+          "ui:widget": "password"
+        }
+      },
+      "required": [
+        "api_key"
+      ],
+      "title": "ReductoApiKeyCredential",
+      "type": "object",
+      "x-credential-url": "https://studio.reducto.ai"
+    },
+    "ReductoCancelJobConfig": {
+      "description": "Cancel a running or queued async job.",
+      "properties": {
+        "operation": {
+          "const": "cancel_job",
+          "default": "cancel_job",
+          "title": "Cancel Job",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Jobs",
+          "x-display-name": "Cancel Job",
+          "x-is-trigger": false
+        },
+        "job_id": {
+          "description": "The job_id of the job to cancel",
+          "title": "Job ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "ReductoCancelJobConfig",
+      "type": "object"
+    },
+    "ReductoClassifyConfig": {
+      "description": "Categorize a document into one of a provided set of document types/labels.",
+      "properties": {
+        "operation": {
+          "const": "classify",
+          "default": "classify",
+          "title": "Classify Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Classify",
+          "x-display-name": "Classify Document",
+          "x-is-trigger": false
+        },
+        "document_url": {
+          "description": "Public URL, a reducto:// id from Upload, a jobid://<id> reference, or upload a local file via the Upload button.",
+          "title": "Document URL",
+          "type": "string",
+          "ui:accept": ".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.csv,.txt,image/jpeg,image/png,image/webp,image/tiff",
+          "ui:widget": "media_upload"
+        },
+        "categories": {
+          "description": "JSON array of categories with criteria, e.g. [{\"category\": \"invoice\", \"criteria\": [\"contains line items\", \"has total amount\"]}]",
+          "title": "Classification Schema",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "page_range": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pages to examine for classification (1-indexed, default: first 5 pages, max 25). JSON e.g. {\"start\": 1, \"end\": 3}",
+          "title": "Page Range",
+          "ui:placeholder": "{\"start\": 1, \"end\": 5}"
+        },
+        "document_metadata": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional context about the document to improve classification accuracy",
+          "title": "Document Metadata"
+        }
+      },
+      "required": [
+        "document_url",
+        "categories"
+      ],
+      "title": "ReductoClassifyConfig",
+      "type": "object"
+    },
+    "ReductoConfigureWebhookConfig": {
+      "description": "Get the Svix portal URL where webhook delivery endpoints are managed.",
+      "properties": {
+        "operation": {
+          "const": "configure_webhook",
+          "default": "configure_webhook",
+          "title": "Configure Webhook",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Webhooks",
+          "x-display-name": "Configure Webhook",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ReductoConfigureWebhookConfig",
+      "type": "object"
+    },
+    "ReductoEditAsyncConfig": {
+      "description": "Asynchronous document editing / form write-back; returns a job_id.",
+      "properties": {
+        "operation": {
+          "const": "edit_async",
+          "default": "edit_async",
+          "title": "Edit Document (Async)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Edit",
+          "x-display-name": "Edit Document (Async)",
+          "x-is-trigger": false
+        },
+        "document_url": {
+          "description": "Public URL, a reducto:// id from Upload, a jobid://<id> reference, or upload a local file via the Upload button.",
+          "title": "Document URL",
+          "type": "string",
+          "ui:accept": ".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.csv,.txt,image/jpeg,image/png,image/webp,image/tiff",
+          "ui:widget": "media_upload"
+        },
+        "edit_instructions": {
+          "description": "Natural language instructions describing the edits to apply, e.g. 'Fill the Name field with John Doe and check the Agree checkbox'",
+          "title": "Edit Instructions",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "form_schema": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array of EditWidget objects for precise PDF form filling, e.g. [{\"type\": \"text\", \"description\": \"Name field\", \"value\": \"John Doe\"}]",
+          "title": "Form Schema",
+          "ui:widget": "textarea"
+        },
+        "edit_options": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object of edit options, e.g. {\"color\": \"#FF0000\", \"font_size\": 12, \"flatten\": true}",
+          "title": "Edit Options",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "document_url",
+        "edit_instructions"
+      ],
+      "title": "ReductoEditAsyncConfig",
+      "type": "object"
+    },
+    "ReductoEditConfig": {
+      "description": "Programmatically modify a PDF/DOCX - fill forms, write field values, redact (synchronous).",
+      "properties": {
+        "operation": {
+          "const": "edit",
+          "default": "edit",
+          "title": "Edit Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Edit",
+          "x-display-name": "Edit Document",
+          "x-is-trigger": false
+        },
+        "document_url": {
+          "description": "Public URL, a reducto:// id from Upload, a jobid://<id> reference, or upload a local file via the Upload button.",
+          "title": "Document URL",
+          "type": "string",
+          "ui:accept": ".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.csv,.txt,image/jpeg,image/png,image/webp,image/tiff",
+          "ui:widget": "media_upload"
+        },
+        "edit_instructions": {
+          "description": "Natural language instructions describing the edits to apply, e.g. 'Fill the Name field with John Doe and check the Agree checkbox'",
+          "title": "Edit Instructions",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "form_schema": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON array of EditWidget objects for precise PDF form filling, e.g. [{\"type\": \"text\", \"description\": \"Name field\", \"value\": \"John Doe\"}]",
+          "title": "Form Schema",
+          "ui:widget": "textarea"
+        },
+        "edit_options": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "JSON object of edit options, e.g. {\"color\": \"#FF0000\", \"font_size\": 12, \"flatten\": true}",
+          "title": "Edit Options",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "document_url",
+        "edit_instructions"
+      ],
+      "title": "ReductoEditConfig",
+      "type": "object"
+    },
+    "ReductoExtractAsyncConfig": {
+      "description": "Asynchronous schema-based field extraction; returns a job_id.",
+      "properties": {
+        "operation": {
+          "const": "extract_async",
+          "default": "extract_async",
+          "title": "Extract Fields (Async)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Extract",
+          "x-display-name": "Extract Fields (Async)",
+          "x-is-trigger": false
+        },
+        "document_url": {
+          "description": "Public URL, a reducto:// id from Upload, a jobid://<id> reference, or upload a local file via the Upload button.",
+          "title": "Document URL",
+          "type": "string",
+          "ui:accept": ".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.csv,.txt,image/jpeg,image/png,image/webp,image/tiff",
+          "ui:widget": "media_upload"
+        },
+        "output_schema": {
+          "description": "JSON Schema describing the fields to extract",
+          "title": "JSON Schema",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "system_prompt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom instructions to guide the extraction model (optional)",
+          "title": "System Prompt",
+          "ui:widget": "textarea"
+        },
+        "page_range": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pages to process as JSON, e.g. {\"start\": 1, \"end\": 5}. Leave empty for all pages.",
+          "title": "Page Range",
+          "ui:placeholder": "{\"start\": 1, \"end\": 5}"
+        },
+        "queue_priority": {
+          "anyOf": [
+            {
+              "enum": [
+                "auto",
+                "standard",
+                "batch"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Job queue priority (default: auto). Use 'batch' for large non-urgent jobs.",
+          "title": "Queue Priority",
+          "enum": [
+            "auto",
+            "standard",
+            "batch"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "document_url",
+        "output_schema"
+      ],
+      "title": "ReductoExtractAsyncConfig",
+      "type": "object"
+    },
+    "ReductoExtractConfig": {
+      "description": "Pull specific structured fields from a document using a JSON schema (synchronous).",
+      "properties": {
+        "operation": {
+          "const": "extract",
+          "default": "extract",
+          "title": "Extract Fields",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Extract",
+          "x-display-name": "Extract Fields",
+          "x-is-trigger": false
+        },
+        "document_url": {
+          "description": "Public URL, a reducto:// id from Upload, a jobid://<id> reference, or upload a local file via the Upload button.",
+          "title": "Document URL",
+          "type": "string",
+          "ui:accept": ".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.csv,.txt,image/jpeg,image/png,image/webp,image/tiff",
+          "ui:widget": "media_upload"
+        },
+        "output_schema": {
+          "description": "JSON Schema describing the fields to extract",
+          "title": "JSON Schema",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "system_prompt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom instructions to guide the extraction model (optional)",
+          "title": "System Prompt",
+          "ui:widget": "textarea"
+        },
+        "page_range": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pages to process as JSON, e.g. {\"start\": 1, \"end\": 5}. Leave empty for all pages.",
+          "title": "Page Range",
+          "ui:placeholder": "{\"start\": 1, \"end\": 5}"
+        }
+      },
+      "required": [
+        "document_url",
+        "output_schema"
+      ],
+      "title": "ReductoExtractConfig",
+      "type": "object"
+    },
+    "ReductoGetJobConfig": {
+      "description": "Retrieve status and results of an async job.",
+      "properties": {
+        "operation": {
+          "const": "get_job",
+          "default": "get_job",
+          "title": "Get Job",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Jobs",
+          "x-display-name": "Get Job",
+          "x-is-trigger": false
+        },
+        "job_id": {
+          "description": "The job_id returned by an async operation",
+          "title": "Job ID",
+          "type": "string"
+        },
+        "timeout": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "On-premise deployments only: wait up to N seconds for the job to complete before returning. Leave empty to return immediately (cloud API ignores this parameter).",
+          "title": "Long-Poll Timeout (seconds)"
+        }
+      },
+      "required": [
+        "job_id"
+      ],
+      "title": "ReductoGetJobConfig",
+      "type": "object"
+    },
+    "ReductoGetVersionConfig": {
+      "description": "Return the running Reducto API version string.",
+      "properties": {
+        "operation": {
+          "const": "get_version",
+          "default": "get_version",
+          "title": "Get API Version",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Account",
+          "x-display-name": "Get API Version",
+          "x-is-trigger": false
+        }
+      },
+      "title": "ReductoGetVersionConfig",
+      "type": "object"
+    },
+    "ReductoJobCompletedTriggerConfig": {
+      "description": "Fire the workflow when an async job completes (Svix-signed delivery).",
+      "properties": {
+        "operation": {
+          "const": "on_job_completed",
+          "default": "on_job_completed",
+          "title": "On Job Completed",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On Job Completed",
+          "x-is-trigger": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Add this URL as a Svix endpoint via Configure Webhook, then async jobs deliver completion events here",
+          "title": "Webhook URL",
+          "ui:copyable": true,
+          "ui:loadValue": true,
+          "ui:widget": "webhook"
+        },
+        "signing_secret": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "The Svix signing secret (whsec_...) from your endpoint, used to verify inbound events",
+          "title": "Signing Secret",
+          "ui:widget": "password"
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        }
+      },
+      "title": "ReductoJobCompletedTriggerConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "ReductoListJobsConfig": {
+      "description": "List async jobs for the account with cursor-based pagination.",
+      "properties": {
+        "operation": {
+          "const": "list_jobs",
+          "default": "list_jobs",
+          "title": "List Jobs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Jobs",
+          "x-display-name": "List Jobs",
+          "x-is-trigger": false
+        },
+        "cursor": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pagination cursor from the previous response's next_cursor field",
+          "title": "Cursor"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Number of jobs per page",
+          "title": "Limit"
+        },
+        "api_key_prefix": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter jobs by API key prefix (optional)",
+          "title": "API Key Prefix"
+        }
+      },
+      "title": "ReductoListJobsConfig",
+      "type": "object"
+    },
+    "ReductoParseAsyncConfig": {
+      "description": "Enqueue a parse job and return a job_id immediately (asynchronous).",
+      "properties": {
+        "operation": {
+          "const": "parse_async",
+          "default": "parse_async",
+          "title": "Parse Document (Async)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Parse",
+          "x-display-name": "Parse Document (Async)",
+          "x-is-trigger": false
+        },
+        "document_url": {
+          "description": "Public URL, a reducto:// id from Upload, a jobid://<id> reference, or upload a local file via the Upload button.",
+          "title": "Document URL",
+          "type": "string",
+          "ui:accept": ".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.csv,.txt,image/jpeg,image/png,image/webp,image/tiff",
+          "ui:widget": "media_upload"
+        },
+        "page_range": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pages to process as JSON, e.g. {\"start\": 1, \"end\": 5}. Leave empty for all pages.",
+          "title": "Page Range",
+          "ui:placeholder": "{\"start\": 1, \"end\": 5}"
+        },
+        "table_output_format": {
+          "anyOf": [
+            {
+              "enum": [
+                "html",
+                "json",
+                "md",
+                "jsonbbox",
+                "dynamic",
+                "csv"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Controls how tables appear in output (default: dynamic)",
+          "title": "Table Output Format",
+          "enum": [
+            "html",
+            "json",
+            "md",
+            "jsonbbox",
+            "dynamic",
+            "csv"
+          ],
+          "x-enum-searchable": true
+        },
+        "chunk_mode": {
+          "anyOf": [
+            {
+              "enum": [
+                "variable",
+                "section",
+                "page",
+                "disabled",
+                "block",
+                "page_sections"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Chunk the output for RAG pipelines (default: disabled). Use 'variable' for most RAG use cases.",
+          "title": "Chunking Mode",
+          "enum": [
+            "variable",
+            "section",
+            "page",
+            "disabled",
+            "block",
+            "page_sections"
+          ],
+          "x-enum-searchable": true
+        },
+        "queue_priority": {
+          "anyOf": [
+            {
+              "enum": [
+                "auto",
+                "standard",
+                "batch"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Job queue priority (default: auto). Use 'batch' for large non-urgent jobs.",
+          "title": "Queue Priority",
+          "enum": [
+            "auto",
+            "standard",
+            "batch"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "document_url"
+      ],
+      "title": "ReductoParseAsyncConfig",
+      "type": "object"
+    },
+    "ReductoParseConfig": {
+      "description": "Convert a document into layout-aware structured JSON/markdown (synchronous).",
+      "properties": {
+        "operation": {
+          "const": "parse",
+          "default": "parse",
+          "title": "Parse Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Parse",
+          "x-display-name": "Parse Document",
+          "x-is-trigger": false
+        },
+        "document_url": {
+          "description": "Public URL, a reducto:// id from Upload, a jobid://<id> reference, or upload a local file via the Upload button.",
+          "title": "Document URL",
+          "type": "string",
+          "ui:accept": ".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.csv,.txt,image/jpeg,image/png,image/webp,image/tiff",
+          "ui:widget": "media_upload"
+        },
+        "page_range": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Pages to process as JSON, e.g. {\"start\": 1, \"end\": 5}. Leave empty for all pages.",
+          "title": "Page Range",
+          "ui:placeholder": "{\"start\": 1, \"end\": 5}"
+        },
+        "table_output_format": {
+          "anyOf": [
+            {
+              "enum": [
+                "html",
+                "json",
+                "md",
+                "jsonbbox",
+                "dynamic",
+                "csv"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Controls how tables appear in output (default: dynamic)",
+          "title": "Table Output Format",
+          "enum": [
+            "html",
+            "json",
+            "md",
+            "jsonbbox",
+            "dynamic",
+            "csv"
+          ],
+          "x-enum-searchable": true
+        },
+        "chunk_mode": {
+          "anyOf": [
+            {
+              "enum": [
+                "variable",
+                "section",
+                "page",
+                "disabled",
+                "block",
+                "page_sections"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Chunk the output for RAG pipelines (default: disabled). Use 'variable' for most RAG use cases.",
+          "title": "Chunking Mode",
+          "enum": [
+            "variable",
+            "section",
+            "page",
+            "disabled",
+            "block",
+            "page_sections"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "document_url"
+      ],
+      "title": "ReductoParseConfig",
+      "type": "object"
+    },
+    "ReductoPipelineAsyncConfig": {
+      "description": "Asynchronous pipeline execution; returns a job_id.",
+      "properties": {
+        "operation": {
+          "const": "pipeline_async",
+          "default": "pipeline_async",
+          "title": "Run Pipeline (Async)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pipeline",
+          "x-display-name": "Run Pipeline (Async)",
+          "x-is-trigger": false
+        },
+        "document_url": {
+          "description": "Public URL, a reducto:// id from Upload, a jobid://<id> reference, or upload a local file via the Upload button.",
+          "title": "Document URL",
+          "type": "string",
+          "ui:accept": ".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.csv,.txt,image/jpeg,image/png,image/webp,image/tiff",
+          "ui:widget": "media_upload"
+        },
+        "pipeline_id": {
+          "description": "The ID of the pipeline to run",
+          "title": "Pipeline ID",
+          "type": "string"
+        },
+        "queue_priority": {
+          "anyOf": [
+            {
+              "enum": [
+                "auto",
+                "standard",
+                "batch"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Job queue priority (default: auto). Use 'batch' for large non-urgent jobs.",
+          "title": "Queue Priority",
+          "enum": [
+            "auto",
+            "standard",
+            "batch"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "document_url",
+        "pipeline_id"
+      ],
+      "title": "ReductoPipelineAsyncConfig",
+      "type": "object"
+    },
+    "ReductoPipelineConfig": {
+      "description": "Run a composed multi-step pipeline (split -> parse -> extract) in one call (synchronous).",
+      "properties": {
+        "operation": {
+          "const": "pipeline",
+          "default": "pipeline",
+          "title": "Run Pipeline",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Pipeline",
+          "x-display-name": "Run Pipeline",
+          "x-is-trigger": false
+        },
+        "document_url": {
+          "description": "Public URL, a reducto:// id from Upload, a jobid://<id> reference, or upload a local file via the Upload button.",
+          "title": "Document URL",
+          "type": "string",
+          "ui:accept": ".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.csv,.txt,image/jpeg,image/png,image/webp,image/tiff",
+          "ui:widget": "media_upload"
+        },
+        "pipeline_id": {
+          "description": "The ID of the pipeline to run",
+          "title": "Pipeline ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "document_url",
+        "pipeline_id"
+      ],
+      "title": "ReductoPipelineConfig",
+      "type": "object"
+    },
+    "ReductoSplitAsyncConfig": {
+      "description": "Asynchronous document splitting; returns a job_id.",
+      "properties": {
+        "operation": {
+          "const": "split_async",
+          "default": "split_async",
+          "title": "Split Document (Async)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Split",
+          "x-display-name": "Split Document (Async)",
+          "x-is-trigger": false
+        },
+        "document_url": {
+          "description": "Public URL, a reducto:// id from Upload, a jobid://<id> reference, or upload a local file via the Upload button.",
+          "title": "Document URL",
+          "type": "string",
+          "ui:accept": ".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.csv,.txt,image/jpeg,image/png,image/webp,image/tiff",
+          "ui:widget": "media_upload"
+        },
+        "split_description": {
+          "description": "JSON array of categories, e.g. [{\"name\": \"invoice\", \"description\": \"invoice section\"}]",
+          "title": "Split Categories",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "split_rules": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom prompt/rules to guide the splitting logic (optional)",
+          "title": "Split Rules",
+          "ui:widget": "textarea"
+        },
+        "queue_priority": {
+          "anyOf": [
+            {
+              "enum": [
+                "auto",
+                "standard",
+                "batch"
+              ],
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Job queue priority (default: auto). Use 'batch' for large non-urgent jobs.",
+          "title": "Queue Priority",
+          "enum": [
+            "auto",
+            "standard",
+            "batch"
+          ],
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "document_url",
+        "split_description"
+      ],
+      "title": "ReductoSplitAsyncConfig",
+      "type": "object"
+    },
+    "ReductoSplitConfig": {
+      "description": "Divide a multi-document file into labeled sections (synchronous).",
+      "properties": {
+        "operation": {
+          "const": "split",
+          "default": "split",
+          "title": "Split Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Split",
+          "x-display-name": "Split Document",
+          "x-is-trigger": false
+        },
+        "document_url": {
+          "description": "Public URL, a reducto:// id from Upload, a jobid://<id> reference, or upload a local file via the Upload button.",
+          "title": "Document URL",
+          "type": "string",
+          "ui:accept": ".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.csv,.txt,image/jpeg,image/png,image/webp,image/tiff",
+          "ui:widget": "media_upload"
+        },
+        "split_description": {
+          "description": "JSON array of categories, e.g. [{\"name\": \"invoice\", \"description\": \"invoice section\"}]",
+          "title": "Split Categories",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "split_rules": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Custom prompt/rules to guide the splitting logic (optional)",
+          "title": "Split Rules",
+          "ui:widget": "textarea"
+        }
+      },
+      "required": [
+        "document_url",
+        "split_description"
+      ],
+      "title": "ReductoSplitConfig",
+      "type": "object"
+    },
+    "ReductoUploadConfig": {
+      "description": "Upload a file by URL to Reducto storage; returns a reducto:// id reusable as document URL.",
+      "properties": {
+        "operation": {
+          "const": "upload",
+          "default": "upload",
+          "title": "Upload Document",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Documents",
+          "x-display-name": "Upload Document",
+          "x-is-trigger": false
+        },
+        "file_url": {
+          "description": "Public URL or local file upload to store in Reducto. Use the Upload button to pick a file from your computer.",
+          "title": "File URL",
+          "type": "string",
+          "ui:accept": ".pdf,.doc,.docx,.xls,.xlsx,.ppt,.pptx,.csv,.txt,image/jpeg,image/png,image/webp,image/tiff",
+          "ui:widget": "media_upload"
+        }
+      },
+      "required": [
+        "file_url"
+      ],
+      "title": "ReductoUploadConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the Reducto node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "cancel_job": "#/$defs/ReductoCancelJobConfig",
+          "classify": "#/$defs/ReductoClassifyConfig",
+          "configure_webhook": "#/$defs/ReductoConfigureWebhookConfig",
+          "edit": "#/$defs/ReductoEditConfig",
+          "edit_async": "#/$defs/ReductoEditAsyncConfig",
+          "extract": "#/$defs/ReductoExtractConfig",
+          "extract_async": "#/$defs/ReductoExtractAsyncConfig",
+          "get_job": "#/$defs/ReductoGetJobConfig",
+          "get_version": "#/$defs/ReductoGetVersionConfig",
+          "list_jobs": "#/$defs/ReductoListJobsConfig",
+          "on_job_completed": "#/$defs/ReductoJobCompletedTriggerConfig",
+          "parse": "#/$defs/ReductoParseConfig",
+          "parse_async": "#/$defs/ReductoParseAsyncConfig",
+          "pipeline": "#/$defs/ReductoPipelineConfig",
+          "pipeline_async": "#/$defs/ReductoPipelineAsyncConfig",
+          "split": "#/$defs/ReductoSplitConfig",
+          "split_async": "#/$defs/ReductoSplitAsyncConfig",
+          "upload": "#/$defs/ReductoUploadConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/ReductoUploadConfig"
+        },
+        {
+          "$ref": "#/$defs/ReductoParseConfig"
+        },
+        {
+          "$ref": "#/$defs/ReductoParseAsyncConfig"
+        },
+        {
+          "$ref": "#/$defs/ReductoExtractConfig"
+        },
+        {
+          "$ref": "#/$defs/ReductoExtractAsyncConfig"
+        },
+        {
+          "$ref": "#/$defs/ReductoSplitConfig"
+        },
+        {
+          "$ref": "#/$defs/ReductoSplitAsyncConfig"
+        },
+        {
+          "$ref": "#/$defs/ReductoClassifyConfig"
+        },
+        {
+          "$ref": "#/$defs/ReductoEditConfig"
+        },
+        {
+          "$ref": "#/$defs/ReductoEditAsyncConfig"
+        },
+        {
+          "$ref": "#/$defs/ReductoPipelineConfig"
+        },
+        {
+          "$ref": "#/$defs/ReductoPipelineAsyncConfig"
+        },
+        {
+          "$ref": "#/$defs/ReductoGetJobConfig"
+        },
+        {
+          "$ref": "#/$defs/ReductoListJobsConfig"
+        },
+        {
+          "$ref": "#/$defs/ReductoCancelJobConfig"
+        },
+        {
+          "$ref": "#/$defs/ReductoConfigureWebhookConfig"
+        },
+        {
+          "$ref": "#/$defs/ReductoGetVersionConfig"
+        },
+        {
+          "$ref": "#/$defs/ReductoJobCompletedTriggerConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/ReductoApiKeyCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Reducto Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "Parse a PDF into structured markdown with tables and figures",
+    "Extract invoice number, date, and total from a document using a JSON schema",
+    "Split a multi-document scan into labeled sections",
+    "Classify an uploaded document into a set of document types",
+    "Trigger a workflow when an async parse job completes"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}

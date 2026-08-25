@@ -1,0 +1,2014 @@
+{
+  "$defs": {
+    "OneLakeAppendFileConfig": {
+      "description": "Upload bytes into a created file at a given offset.",
+      "properties": {
+        "operation": {
+          "const": "append_file",
+          "default": "append_file",
+          "title": "Append to File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Filesystem",
+          "x-display-name": "Append to File",
+          "x-is-trigger": false
+        },
+        "workspace": {
+          "description": "Workspace name or GUID",
+          "title": "Workspace",
+          "type": "string"
+        },
+        "item": {
+          "description": "Item name with extension or GUID",
+          "title": "Item",
+          "type": "string"
+        },
+        "path": {
+          "description": "File path under the item's Files folder",
+          "title": "File Path",
+          "type": "string"
+        },
+        "content": {
+          "description": "Data to append (UTF-8 text)",
+          "title": "Content",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "position": {
+          "default": "0",
+          "description": "Byte offset to append at (0 for a new file)",
+          "title": "Position",
+          "type": "number"
+        }
+      },
+      "required": [
+        "workspace",
+        "item",
+        "path",
+        "content"
+      ],
+      "title": "OneLakeAppendFileConfig",
+      "type": "object"
+    },
+    "OneLakeCheckAccessConfig": {
+      "description": "Check whether the caller has r/w/x access to a path (no data read).",
+      "properties": {
+        "operation": {
+          "const": "check_access",
+          "default": "check_access",
+          "title": "Check Access",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Filesystem",
+          "x-display-name": "Check Access",
+          "x-is-trigger": false
+        },
+        "workspace": {
+          "description": "Workspace name or GUID",
+          "title": "Workspace",
+          "type": "string"
+        },
+        "item": {
+          "description": "Item name with extension or GUID",
+          "title": "Item",
+          "type": "string"
+        },
+        "path": {
+          "description": "File or directory path under the item",
+          "title": "Path",
+          "type": "string"
+        },
+        "fs_action": {
+          "default": "rwx",
+          "description": "POSIX access bits to test",
+          "enum": [
+            "r--",
+            "-w-",
+            "--x",
+            "rw-",
+            "r-x",
+            "rwx"
+          ],
+          "enumNames": [
+            "Read",
+            "Write",
+            "Execute",
+            "Read/Write",
+            "Read/Execute",
+            "Read/Write/Execute"
+          ],
+          "title": "Access to Check",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "workspace",
+        "item",
+        "path"
+      ],
+      "title": "OneLakeCheckAccessConfig",
+      "type": "object"
+    },
+    "OneLakeCreateDirectoryConfig": {
+      "description": "Create a folder inside a managed item (e.g. a lakehouse Files folder).",
+      "properties": {
+        "operation": {
+          "const": "create_directory",
+          "default": "create_directory",
+          "title": "Create Directory",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Filesystem",
+          "x-display-name": "Create Directory",
+          "x-is-trigger": false
+        },
+        "workspace": {
+          "description": "Workspace name or GUID",
+          "title": "Workspace",
+          "type": "string"
+        },
+        "item": {
+          "description": "Item name with extension (e.g. MyLakehouse.lakehouse) or GUID",
+          "title": "Item",
+          "type": "string"
+        },
+        "path": {
+          "description": "Directory path under the item's Files folder (e.g. reports/2026)",
+          "title": "Directory Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace",
+        "item",
+        "path"
+      ],
+      "title": "OneLakeCreateDirectoryConfig",
+      "type": "object"
+    },
+    "OneLakeCreateFileConfig": {
+      "description": "Create a new (empty) file resource to append to.",
+      "properties": {
+        "operation": {
+          "const": "create_file",
+          "default": "create_file",
+          "title": "Create File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Filesystem",
+          "x-display-name": "Create File",
+          "x-is-trigger": false
+        },
+        "workspace": {
+          "description": "Workspace name or GUID",
+          "title": "Workspace",
+          "type": "string"
+        },
+        "item": {
+          "description": "Item name with extension or GUID",
+          "title": "Item",
+          "type": "string"
+        },
+        "path": {
+          "description": "File path under the item's Files folder (e.g. data/input.csv)",
+          "title": "File Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace",
+        "item",
+        "path"
+      ],
+      "title": "OneLakeCreateFileConfig",
+      "type": "object"
+    },
+    "OneLakeCreateOrUpdateDataAccessRoleConfig": {
+      "description": "Create or update a single OneLake data access role (the only API to set OneLake perms).",
+      "properties": {
+        "operation": {
+          "const": "create_or_update_data_access_role",
+          "default": "create_or_update_data_access_role",
+          "title": "Create/Update Data Access Role",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Data Access",
+          "x-display-name": "Create/Update Data Access Role",
+          "x-is-trigger": false
+        },
+        "workspace_id": {
+          "description": "Fabric workspace GUID",
+          "title": "Workspace ID",
+          "type": "string"
+        },
+        "item_id": {
+          "description": "Fabric item GUID",
+          "title": "Item ID",
+          "type": "string"
+        },
+        "role_name": {
+          "description": "Data access role name",
+          "title": "Role Name",
+          "type": "string"
+        },
+        "definition": {
+          "description": "JSON role object (decisionRules + members)",
+          "title": "Role Definition",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "etag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Concurrency ETag from a prior list/get; sent as If-Match",
+          "title": "ETag (If-Match)"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "item_id",
+        "role_name",
+        "definition"
+      ],
+      "title": "OneLakeCreateOrUpdateDataAccessRoleConfig",
+      "type": "object"
+    },
+    "OneLakeCreateShortcutConfig": {
+      "description": "Create a shortcut to OneLake, ADLS Gen2, S3, GCS, Blob, Dataverse, etc.",
+      "properties": {
+        "operation": {
+          "const": "create_shortcut",
+          "default": "create_shortcut",
+          "title": "Create Shortcut",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Shortcuts",
+          "x-display-name": "Create Shortcut",
+          "x-is-trigger": false
+        },
+        "workspace_id": {
+          "description": "Fabric workspace GUID",
+          "title": "Workspace ID",
+          "type": "string"
+        },
+        "item_id": {
+          "description": "Fabric item GUID",
+          "title": "Item ID",
+          "type": "string"
+        },
+        "name": {
+          "description": "Name of the new shortcut",
+          "title": "Shortcut Name",
+          "type": "string"
+        },
+        "path": {
+          "description": "Path inside the item where the shortcut is created (e.g. Tables or Files)",
+          "title": "Path",
+          "type": "string"
+        },
+        "target": {
+          "description": "JSON object describing the shortcut target (e.g. OneLake / AdlsGen2 target definition)",
+          "title": "Target",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "conflict_policy": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "How to handle a name conflict",
+          "enum": [
+            "",
+            "Abort",
+            "GenerateUniqueName"
+          ],
+          "enumNames": [
+            "Default",
+            "Abort",
+            "Generate Unique Name"
+          ],
+          "title": "Conflict Policy",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "workspace_id",
+        "item_id",
+        "name",
+        "path",
+        "target"
+      ],
+      "title": "OneLakeCreateShortcutConfig",
+      "type": "object"
+    },
+    "OneLakeCreateShortcutsBulkConfig": {
+      "description": "Create many shortcuts in one call (Fabric Core bulk shortcut API).",
+      "properties": {
+        "operation": {
+          "const": "create_shortcuts_bulk",
+          "default": "create_shortcuts_bulk",
+          "title": "Create Shortcuts (Bulk)",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Shortcuts",
+          "x-display-name": "Create Shortcuts (Bulk)",
+          "x-is-trigger": false
+        },
+        "workspace_id": {
+          "description": "Fabric workspace GUID",
+          "title": "Workspace ID",
+          "type": "string"
+        },
+        "item_id": {
+          "description": "Fabric item GUID",
+          "title": "Item ID",
+          "type": "string"
+        },
+        "shortcuts": {
+          "description": "JSON array of shortcut definitions ({name, path, target}, ...)",
+          "title": "Shortcuts",
+          "type": "string",
+          "ui:widget": "textarea"
+        },
+        "conflict_policy": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "How to handle name conflicts across the batch",
+          "enum": [
+            "",
+            "Abort",
+            "GenerateUniqueName",
+            "CreateOrOverwrite",
+            "OverwriteOnly"
+          ],
+          "enumNames": [
+            "Default",
+            "Abort",
+            "Generate Unique Name",
+            "Create or Overwrite",
+            "Overwrite Only"
+          ],
+          "title": "Conflict Policy",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "workspace_id",
+        "item_id",
+        "shortcuts"
+      ],
+      "title": "OneLakeCreateShortcutsBulkConfig",
+      "type": "object"
+    },
+    "OneLakeDeleteDataAccessRoleConfig": {
+      "description": "Delete a OneLake data access role.",
+      "properties": {
+        "operation": {
+          "const": "delete_data_access_role",
+          "default": "delete_data_access_role",
+          "title": "Delete Data Access Role",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Data Access",
+          "x-display-name": "Delete Data Access Role",
+          "x-is-trigger": false
+        },
+        "workspace_id": {
+          "description": "Fabric workspace GUID",
+          "title": "Workspace ID",
+          "type": "string"
+        },
+        "item_id": {
+          "description": "Fabric item GUID",
+          "title": "Item ID",
+          "type": "string"
+        },
+        "role_name": {
+          "description": "Data access role name",
+          "title": "Role Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "item_id",
+        "role_name"
+      ],
+      "title": "OneLakeDeleteDataAccessRoleConfig",
+      "type": "object"
+    },
+    "OneLakeDeletePathConfig": {
+      "description": "Delete a user-created file or folder.",
+      "properties": {
+        "operation": {
+          "const": "delete_path",
+          "default": "delete_path",
+          "title": "Delete Path",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Filesystem",
+          "x-display-name": "Delete Path",
+          "x-is-trigger": false
+        },
+        "workspace": {
+          "description": "Workspace name or GUID",
+          "title": "Workspace",
+          "type": "string"
+        },
+        "item": {
+          "description": "Item name with extension or GUID",
+          "title": "Item",
+          "type": "string"
+        },
+        "path": {
+          "description": "File or directory path under the item",
+          "title": "Path",
+          "type": "string"
+        },
+        "recursive": {
+          "default": "true",
+          "description": "Delete directory contents recursively",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Recursive",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "workspace",
+        "item",
+        "path"
+      ],
+      "title": "OneLakeDeletePathConfig",
+      "type": "object"
+    },
+    "OneLakeDeleteShortcutConfig": {
+      "description": "Delete a shortcut (does not delete the target data).",
+      "properties": {
+        "operation": {
+          "const": "delete_shortcut",
+          "default": "delete_shortcut",
+          "title": "Delete Shortcut",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Shortcuts",
+          "x-display-name": "Delete Shortcut",
+          "x-is-trigger": false
+        },
+        "workspace_id": {
+          "description": "Fabric workspace GUID",
+          "title": "Workspace ID",
+          "type": "string"
+        },
+        "item_id": {
+          "description": "Fabric item GUID",
+          "title": "Item ID",
+          "type": "string"
+        },
+        "shortcut_path": {
+          "description": "Path of the shortcut within the item",
+          "title": "Shortcut Path",
+          "type": "string"
+        },
+        "shortcut_name": {
+          "description": "Name of the shortcut",
+          "title": "Shortcut Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "item_id",
+        "shortcut_path",
+        "shortcut_name"
+      ],
+      "title": "OneLakeDeleteShortcutConfig",
+      "type": "object"
+    },
+    "OneLakeFlushFileConfig": {
+      "description": "Commit appended bytes, finalizing the upload.",
+      "properties": {
+        "operation": {
+          "const": "flush_file",
+          "default": "flush_file",
+          "title": "Flush File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Filesystem",
+          "x-display-name": "Flush File",
+          "x-is-trigger": false
+        },
+        "workspace": {
+          "description": "Workspace name or GUID",
+          "title": "Workspace",
+          "type": "string"
+        },
+        "item": {
+          "description": "Item name with extension or GUID",
+          "title": "Item",
+          "type": "string"
+        },
+        "path": {
+          "description": "File path under the item's Files folder",
+          "title": "File Path",
+          "type": "string"
+        },
+        "length": {
+          "description": "Total byte length to commit (the file size after all appends)",
+          "title": "Length",
+          "type": "number"
+        }
+      },
+      "required": [
+        "workspace",
+        "item",
+        "path",
+        "length"
+      ],
+      "title": "OneLakeFlushFileConfig",
+      "type": "object"
+    },
+    "OneLakeGetAccessControlConfig": {
+      "description": "Read the Fabric permissions mapped to a POSIX x-ms-acl for a path.",
+      "properties": {
+        "operation": {
+          "const": "get_access_control",
+          "default": "get_access_control",
+          "title": "Get Access Control",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Filesystem",
+          "x-display-name": "Get Access Control",
+          "x-is-trigger": false
+        },
+        "workspace": {
+          "description": "Workspace name or GUID",
+          "title": "Workspace",
+          "type": "string"
+        },
+        "item": {
+          "description": "Item name with extension or GUID",
+          "title": "Item",
+          "type": "string"
+        },
+        "path": {
+          "description": "File or directory path under the item",
+          "title": "Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace",
+        "item",
+        "path"
+      ],
+      "title": "OneLakeGetAccessControlConfig",
+      "type": "object"
+    },
+    "OneLakeGetDataAccessRoleConfig": {
+      "description": "Get a single OneLake data access role's rules and members.",
+      "properties": {
+        "operation": {
+          "const": "get_data_access_role",
+          "default": "get_data_access_role",
+          "title": "Get Data Access Role",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Data Access",
+          "x-display-name": "Get Data Access Role",
+          "x-is-trigger": false
+        },
+        "workspace_id": {
+          "description": "Fabric workspace GUID",
+          "title": "Workspace ID",
+          "type": "string"
+        },
+        "item_id": {
+          "description": "Fabric item GUID",
+          "title": "Item ID",
+          "type": "string"
+        },
+        "role_name": {
+          "description": "Data access role name",
+          "title": "Role Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "item_id",
+        "role_name"
+      ],
+      "title": "OneLakeGetDataAccessRoleConfig",
+      "type": "object"
+    },
+    "OneLakeGetDeltaTableConfig": {
+      "description": "Get Delta table metadata details (Unity Catalog API).",
+      "properties": {
+        "operation": {
+          "const": "get_delta_table",
+          "default": "get_delta_table",
+          "title": "Get Delta Table",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tables",
+          "x-display-name": "Get Delta Table",
+          "x-is-trigger": false
+        },
+        "workspace": {
+          "description": "Workspace name or GUID",
+          "title": "Workspace",
+          "type": "string"
+        },
+        "item": {
+          "description": "Item name with extension or GUID",
+          "title": "Item",
+          "type": "string"
+        },
+        "full_name": {
+          "description": "Three-part Delta table name (catalog.schema.table)",
+          "title": "Table Full Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace",
+        "item",
+        "full_name"
+      ],
+      "title": "OneLakeGetDeltaTableConfig",
+      "type": "object"
+    },
+    "OneLakeGetIcebergConfigConfig": {
+      "description": "Get the Iceberg REST Catalog config for an item (returns the prefix).",
+      "properties": {
+        "operation": {
+          "const": "get_iceberg_config",
+          "default": "get_iceberg_config",
+          "title": "Get Iceberg Config",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tables",
+          "x-display-name": "Get Iceberg Config",
+          "x-is-trigger": false
+        },
+        "workspace": {
+          "description": "Workspace name or GUID",
+          "title": "Workspace",
+          "type": "string"
+        },
+        "item": {
+          "description": "Item name with extension or GUID",
+          "title": "Item",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace",
+        "item"
+      ],
+      "title": "OneLakeGetIcebergConfigConfig",
+      "type": "object"
+    },
+    "OneLakeGetIcebergNamespaceConfig": {
+      "description": "Load metadata (location, properties) for an Iceberg namespace.",
+      "properties": {
+        "operation": {
+          "const": "get_iceberg_namespace",
+          "default": "get_iceberg_namespace",
+          "title": "Get Iceberg Namespace",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tables",
+          "x-display-name": "Get Iceberg Namespace",
+          "x-is-trigger": false
+        },
+        "prefix": {
+          "description": "Iceberg catalog prefix",
+          "title": "Prefix",
+          "type": "string"
+        },
+        "schema_name": {
+          "description": "Namespace / schema (e.g. dbo)",
+          "title": "Namespace",
+          "type": "string"
+        }
+      },
+      "required": [
+        "prefix",
+        "schema_name"
+      ],
+      "title": "OneLakeGetIcebergNamespaceConfig",
+      "type": "object"
+    },
+    "OneLakeGetIcebergTableConfig": {
+      "description": "Load Iceberg table metadata.",
+      "properties": {
+        "operation": {
+          "const": "get_iceberg_table",
+          "default": "get_iceberg_table",
+          "title": "Get Iceberg Table",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tables",
+          "x-display-name": "Get Iceberg Table",
+          "x-is-trigger": false
+        },
+        "prefix": {
+          "description": "Iceberg catalog prefix",
+          "title": "Prefix",
+          "type": "string"
+        },
+        "schema_name": {
+          "description": "Namespace / schema",
+          "title": "Schema",
+          "type": "string"
+        },
+        "table": {
+          "description": "Table name",
+          "title": "Table",
+          "type": "string"
+        }
+      },
+      "required": [
+        "prefix",
+        "schema_name",
+        "table"
+      ],
+      "title": "OneLakeGetIcebergTableConfig",
+      "type": "object"
+    },
+    "OneLakeGetPropertiesConfig": {
+      "description": "Return metadata (size, ETag, last-modified) for a file or directory.",
+      "properties": {
+        "operation": {
+          "const": "get_properties",
+          "default": "get_properties",
+          "title": "Get Properties",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Filesystem",
+          "x-display-name": "Get Properties",
+          "x-is-trigger": false
+        },
+        "workspace": {
+          "description": "Workspace name or GUID",
+          "title": "Workspace",
+          "type": "string"
+        },
+        "item": {
+          "description": "Item name with extension or GUID",
+          "title": "Item",
+          "type": "string"
+        },
+        "path": {
+          "description": "File or directory path under the item",
+          "title": "Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace",
+        "item",
+        "path"
+      ],
+      "title": "OneLakeGetPropertiesConfig",
+      "type": "object"
+    },
+    "OneLakeGetSettingsConfig": {
+      "description": "Read workspace-level OneLake settings (Fabric Core).",
+      "properties": {
+        "operation": {
+          "const": "get_settings",
+          "default": "get_settings",
+          "title": "Get OneLake Settings",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Settings",
+          "x-display-name": "Get OneLake Settings",
+          "x-is-trigger": false
+        },
+        "workspace_id": {
+          "description": "Fabric workspace GUID",
+          "title": "Workspace ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace_id"
+      ],
+      "title": "OneLakeGetSettingsConfig",
+      "type": "object"
+    },
+    "OneLakeGetShortcutConfig": {
+      "description": "Retrieve a single shortcut definition.",
+      "properties": {
+        "operation": {
+          "const": "get_shortcut",
+          "default": "get_shortcut",
+          "title": "Get Shortcut",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Shortcuts",
+          "x-display-name": "Get Shortcut",
+          "x-is-trigger": false
+        },
+        "workspace_id": {
+          "description": "Fabric workspace GUID",
+          "title": "Workspace ID",
+          "type": "string"
+        },
+        "item_id": {
+          "description": "Fabric item GUID",
+          "title": "Item ID",
+          "type": "string"
+        },
+        "shortcut_path": {
+          "description": "Path of the shortcut within the item",
+          "title": "Shortcut Path",
+          "type": "string"
+        },
+        "shortcut_name": {
+          "description": "Name of the shortcut",
+          "title": "Shortcut Name",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "item_id",
+        "shortcut_path",
+        "shortcut_name"
+      ],
+      "title": "OneLakeGetShortcutConfig",
+      "type": "object"
+    },
+    "OneLakeLeasePathConfig": {
+      "description": "Acquire, renew, change, release, or break a lease on a file (concurrency).",
+      "properties": {
+        "operation": {
+          "const": "lease_path",
+          "default": "lease_path",
+          "title": "Lease Path",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Filesystem",
+          "x-display-name": "Lease Path",
+          "x-is-trigger": false
+        },
+        "workspace": {
+          "description": "Workspace name or GUID",
+          "title": "Workspace",
+          "type": "string"
+        },
+        "item": {
+          "description": "Item name with extension or GUID",
+          "title": "Item",
+          "type": "string"
+        },
+        "path": {
+          "description": "File path under the item",
+          "title": "Path",
+          "type": "string"
+        },
+        "lease_action": {
+          "description": "The lease operation to perform",
+          "enum": [
+            "acquire",
+            "renew",
+            "change",
+            "release",
+            "break"
+          ],
+          "enumNames": [
+            "Acquire",
+            "Renew",
+            "Change",
+            "Release",
+            "Break"
+          ],
+          "title": "Lease Action",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "lease_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Existing lease GUID (renew/change/release/break)",
+          "title": "Lease ID"
+        },
+        "proposed_lease_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New lease GUID (acquire/change)",
+          "title": "Proposed Lease ID"
+        },
+        "duration": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": -1,
+          "description": "Lease duration for acquire: 15-60, or -1 for infinite",
+          "title": "Duration (s)"
+        }
+      },
+      "required": [
+        "workspace",
+        "item",
+        "path",
+        "lease_action"
+      ],
+      "title": "OneLakeLeasePathConfig",
+      "type": "object"
+    },
+    "OneLakeListBlobsConfig": {
+      "description": "List blobs under a workspace container via the Blob endpoint (flat/prefix).",
+      "properties": {
+        "operation": {
+          "const": "list_blobs",
+          "default": "list_blobs",
+          "title": "List Blobs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Filesystem",
+          "x-display-name": "List Blobs",
+          "x-is-trigger": false
+        },
+        "workspace": {
+          "description": "Workspace name or GUID (the OneLake container)",
+          "title": "Workspace",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workspace name / GUID",
+            "field_name": "workspace",
+            "placeholder": "Select a workspace...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "prefix": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Only list blobs whose name starts with this prefix",
+          "title": "Prefix"
+        },
+        "delimiter": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": "/",
+          "description": "Group blobs by delimiter (blank = flat listing)",
+          "title": "Delimiter"
+        },
+        "marker": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Continuation marker for the next page",
+          "title": "Marker"
+        }
+      },
+      "required": [
+        "workspace"
+      ],
+      "title": "OneLakeListBlobsConfig",
+      "type": "object"
+    },
+    "OneLakeListDataAccessRolesConfig": {
+      "description": "List OneLake data access (RBAC) roles for an item \u2014 the only API to read them.",
+      "properties": {
+        "operation": {
+          "const": "list_data_access_roles",
+          "default": "list_data_access_roles",
+          "title": "List Data Access Roles",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Data Access",
+          "x-display-name": "List Data Access Roles",
+          "x-is-trigger": false
+        },
+        "workspace_id": {
+          "description": "Fabric workspace GUID",
+          "title": "Workspace ID",
+          "type": "string"
+        },
+        "item_id": {
+          "description": "Fabric item GUID",
+          "title": "Item ID",
+          "type": "string"
+        },
+        "continuation_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token for the next page of results",
+          "title": "Continuation Token"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "item_id"
+      ],
+      "title": "OneLakeListDataAccessRolesConfig",
+      "type": "object"
+    },
+    "OneLakeListDeltaSchemasConfig": {
+      "description": "List schemas via the Unity Catalog-compatible Delta API.",
+      "properties": {
+        "operation": {
+          "const": "list_delta_schemas",
+          "default": "list_delta_schemas",
+          "title": "List Delta Schemas",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tables",
+          "x-display-name": "List Delta Schemas",
+          "x-is-trigger": false
+        },
+        "workspace": {
+          "description": "Workspace name or GUID",
+          "title": "Workspace",
+          "type": "string"
+        },
+        "item": {
+          "description": "Item name with extension or GUID",
+          "title": "Item",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace",
+        "item"
+      ],
+      "title": "OneLakeListDeltaSchemasConfig",
+      "type": "object"
+    },
+    "OneLakeListDeltaTablesConfig": {
+      "description": "List Delta tables in a schema (Unity Catalog API).",
+      "properties": {
+        "operation": {
+          "const": "list_delta_tables",
+          "default": "list_delta_tables",
+          "title": "List Delta Tables",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tables",
+          "x-display-name": "List Delta Tables",
+          "x-is-trigger": false
+        },
+        "workspace": {
+          "description": "Workspace name or GUID",
+          "title": "Workspace",
+          "type": "string"
+        },
+        "item": {
+          "description": "Item name with extension or GUID",
+          "title": "Item",
+          "type": "string"
+        },
+        "schema_name": {
+          "description": "Schema name",
+          "title": "Schema",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace",
+        "item",
+        "schema_name"
+      ],
+      "title": "OneLakeListDeltaTablesConfig",
+      "type": "object"
+    },
+    "OneLakeListIcebergNamespacesConfig": {
+      "description": "List schemas (namespaces) in an item via the Iceberg REST Catalog.",
+      "properties": {
+        "operation": {
+          "const": "list_iceberg_namespaces",
+          "default": "list_iceberg_namespaces",
+          "title": "List Iceberg Namespaces",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tables",
+          "x-display-name": "List Iceberg Namespaces",
+          "x-is-trigger": false
+        },
+        "prefix": {
+          "description": "The Iceberg catalog prefix returned by Get Iceberg Config",
+          "title": "Prefix",
+          "type": "string"
+        }
+      },
+      "required": [
+        "prefix"
+      ],
+      "title": "OneLakeListIcebergNamespacesConfig",
+      "type": "object"
+    },
+    "OneLakeListIcebergTablesConfig": {
+      "description": "List tables within a schema via the Iceberg REST Catalog.",
+      "properties": {
+        "operation": {
+          "const": "list_iceberg_tables",
+          "default": "list_iceberg_tables",
+          "title": "List Iceberg Tables",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Tables",
+          "x-display-name": "List Iceberg Tables",
+          "x-is-trigger": false
+        },
+        "prefix": {
+          "description": "Iceberg catalog prefix",
+          "title": "Prefix",
+          "type": "string"
+        },
+        "schema_name": {
+          "description": "Namespace / schema (e.g. dbo)",
+          "title": "Schema",
+          "type": "string"
+        }
+      },
+      "required": [
+        "prefix",
+        "schema_name"
+      ],
+      "title": "OneLakeListIcebergTablesConfig",
+      "type": "object"
+    },
+    "OneLakeListPathsConfig": {
+      "description": "List files and folders under a workspace or item path (DFS filesystem).",
+      "properties": {
+        "operation": {
+          "const": "list_paths",
+          "default": "list_paths",
+          "title": "List Paths",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Filesystem",
+          "x-display-name": "List Paths",
+          "x-is-trigger": false
+        },
+        "workspace": {
+          "description": "Workspace name or GUID (the OneLake container)",
+          "title": "Workspace",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workspace name / GUID",
+            "field_name": "workspace",
+            "placeholder": "Select a workspace...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "directory": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional directory path to list under (e.g. MyLakehouse.lakehouse/Files)",
+          "title": "Directory"
+        },
+        "recursive": {
+          "default": "false",
+          "description": "List nested paths recursively",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Recursive",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "workspace"
+      ],
+      "title": "OneLakeListPathsConfig",
+      "type": "object"
+    },
+    "OneLakeListShortcutsConfig": {
+      "description": "List all shortcuts in an item.",
+      "properties": {
+        "operation": {
+          "const": "list_shortcuts",
+          "default": "list_shortcuts",
+          "title": "List Shortcuts",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Shortcuts",
+          "x-display-name": "List Shortcuts",
+          "x-is-trigger": false
+        },
+        "workspace_id": {
+          "description": "Fabric workspace GUID",
+          "title": "Workspace ID",
+          "type": "string"
+        },
+        "item_id": {
+          "description": "Fabric item GUID",
+          "title": "Item ID",
+          "type": "string"
+        },
+        "continuation_token": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Token for the next page of results",
+          "title": "Continuation Token"
+        }
+      },
+      "required": [
+        "workspace_id",
+        "item_id"
+      ],
+      "title": "OneLakeListShortcutsConfig",
+      "type": "object"
+    },
+    "OneLakeOAuthCredential": {
+      "description": "Microsoft Entra ID (Azure AD) OAuth credential for OneLake.\n\nOneLake has no API-key path: every surface is bearer-token only. Two\ndistinct audiences are needed depending on the operation, so both scopes\nare requested up front:\n- Storage audience (`https://storage.azure.com/user_impersonation`) for the\n  DFS filesystem and table APIs.\n- Fabric audience (`https://api.fabric.microsoft.com/OneLake.ReadWrite.All`)\n  for shortcut + settings management.",
+      "properties": {
+        "credential_type": {
+          "const": "microsoft_onelake_oauth",
+          "default": "microsoft_onelake_oauth",
+          "title": "Credential Type",
+          "type": "string",
+          "ui:hidden": true
+        },
+        "access_token": {
+          "description": "OAuth access token",
+          "title": "Access Token",
+          "type": "string"
+        },
+        "refresh_token": {
+          "description": "OAuth refresh token for token renewal",
+          "title": "Refresh Token",
+          "type": "string"
+        },
+        "expires_at": {
+          "description": "Token expiry timestamp (ISO 8601)",
+          "title": "Expires At",
+          "type": "string"
+        },
+        "email": {
+          "description": "Microsoft account email address",
+          "title": "Email",
+          "type": "string"
+        }
+      },
+      "required": [
+        "access_token",
+        "refresh_token",
+        "expires_at",
+        "email"
+      ],
+      "title": "OneLakeOAuthCredential",
+      "type": "object",
+      "x-credential-instructions": "Connect your Microsoft account with access to a Fabric workspace. OneLake uses Microsoft Entra ID (Azure AD) OAuth 2.0; no API key is available.",
+      "x-credential-type": "oauth",
+      "x-credential-url": "https://portal.azure.com/#blade/Microsoft_AAD_RegisteredApps/ApplicationsListBlade",
+      "x-oauth-provider": "microsoft",
+      "x-oauth-scopes": [
+        "https://storage.azure.com/user_impersonation",
+        "https://api.fabric.microsoft.com/OneLake.ReadWrite.All",
+        "offline_access"
+      ]
+    },
+    "OneLakeOnNewFileConfig": {
+      "description": "Poll a OneLake path for newly-created files on a schedule.\n\nOneLake has no native webhook/event-subscription API (see node docstring),\nso this trigger polls the DFS list-paths endpoint and emits only files it\nhas not seen before. The schedule/webhook plumbing and the seen-set dedup\n(persisted in node state, not config) come from ``PollTriggerConfigBase`` +\n``ScheduledPollTriggerMixin``; only the OneLake-specific target fields live\nhere.",
+      "properties": {
+        "schedule": {
+          "anyOf": [
+            {
+              "$ref": "#/$defs/ScheduleConfig"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "title": "Schedule",
+          "ui:widget": "schedule",
+          "x-exclude-frequencies": [
+            "seconds"
+          ]
+        },
+        "webhook_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Id",
+          "ui:hidden": true
+        },
+        "webhook_url": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Webhook Url",
+          "ui:hidden": true,
+          "ui:loadValue": true
+        },
+        "schedule_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Schedule Id",
+          "ui:hidden": true
+        },
+        "next_run": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Next Run",
+          "ui:widget": "nextRun"
+        },
+        "interval_ms": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Interval Ms",
+          "ui:hidden": true
+        },
+        "is_active": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": true,
+          "title": "Is Active",
+          "ui:hidden": true
+        },
+        "relay_connected": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Relay Connected",
+          "ui:hidden": true
+        },
+        "is_production": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Is Production",
+          "ui:hidden": true
+        },
+        "trigger_registered": {
+          "anyOf": [
+            {
+              "type": "boolean"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Registered",
+          "ui:hidden": true
+        },
+        "trigger_error": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Trigger Error",
+          "ui:hidden": true
+        },
+        "operation": {
+          "const": "on_new_file",
+          "default": "on_new_file",
+          "description": "Trigger when a new file appears under a OneLake path",
+          "title": "On New File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": null,
+          "x-display-name": "On New File",
+          "x-is-trigger": true
+        },
+        "workspace": {
+          "description": "Workspace name or GUID (the OneLake container) to watch",
+          "title": "Workspace",
+          "type": "string",
+          "x-dynamic-options": {
+            "allow_custom": true,
+            "custom_placeholder": "Or paste workspace name / GUID",
+            "field_name": "workspace",
+            "placeholder": "Select a workspace...",
+            "searchable": true,
+            "auto_select_sole_option": true
+          }
+        },
+        "directory": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Directory path to watch for new files (e.g. MyLakehouse.lakehouse/Files)",
+          "title": "Directory"
+        },
+        "recursive": {
+          "default": "false",
+          "description": "Watch nested paths recursively",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Yes",
+            "No"
+          ],
+          "title": "Recursive",
+          "type": "string",
+          "x-enum-searchable": true
+        }
+      },
+      "required": [
+        "workspace"
+      ],
+      "title": "OneLakeOnNewFileConfig",
+      "type": "object",
+      "x-requires-webhook": true
+    },
+    "OneLakeReadFileConfig": {
+      "description": "Download file content.",
+      "properties": {
+        "operation": {
+          "const": "read_file",
+          "default": "read_file",
+          "title": "Read File",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Filesystem",
+          "x-display-name": "Read File",
+          "x-is-trigger": false
+        },
+        "workspace": {
+          "description": "Workspace name or GUID",
+          "title": "Workspace",
+          "type": "string"
+        },
+        "item": {
+          "description": "Item name with extension or GUID",
+          "title": "Item",
+          "type": "string"
+        },
+        "path": {
+          "description": "File path under the item's Files folder",
+          "title": "File Path",
+          "type": "string"
+        },
+        "byte_range": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Optional HTTP Range for a partial read (e.g. bytes=0-1023)",
+          "title": "Range"
+        }
+      },
+      "required": [
+        "workspace",
+        "item",
+        "path"
+      ],
+      "title": "OneLakeReadFileConfig",
+      "type": "object"
+    },
+    "OneLakeRenamePathConfig": {
+      "description": "Move or rename a user-created file or folder within allowed paths.",
+      "properties": {
+        "operation": {
+          "const": "rename_path",
+          "default": "rename_path",
+          "title": "Rename / Move Path",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Filesystem",
+          "x-display-name": "Rename / Move Path",
+          "x-is-trigger": false
+        },
+        "workspace": {
+          "description": "Workspace name or GUID",
+          "title": "Workspace",
+          "type": "string"
+        },
+        "item": {
+          "description": "Item name with extension or GUID",
+          "title": "Item",
+          "type": "string"
+        },
+        "source_path": {
+          "description": "Existing path under the item to move/rename",
+          "title": "Source Path",
+          "type": "string"
+        },
+        "destination_path": {
+          "description": "New path under the item",
+          "title": "Destination Path",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace",
+        "item",
+        "source_path",
+        "destination_path"
+      ],
+      "title": "OneLakeRenamePathConfig",
+      "type": "object"
+    },
+    "OneLakeResetShortcutCacheConfig": {
+      "description": "Clear cached files for shortcuts in the workspace.",
+      "properties": {
+        "operation": {
+          "const": "reset_shortcut_cache",
+          "default": "reset_shortcut_cache",
+          "title": "Reset Shortcut Cache",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Shortcuts",
+          "x-display-name": "Reset Shortcut Cache",
+          "x-is-trigger": false
+        },
+        "workspace_id": {
+          "description": "Fabric workspace GUID",
+          "title": "Workspace ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "workspace_id"
+      ],
+      "title": "OneLakeResetShortcutCacheConfig",
+      "type": "object"
+    },
+    "OneLakeSetPropertiesConfig": {
+      "description": "Update user-defined x-ms-properties metadata on a path.",
+      "properties": {
+        "operation": {
+          "const": "set_properties",
+          "default": "set_properties",
+          "title": "Set Properties",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Filesystem",
+          "x-display-name": "Set Properties",
+          "x-is-trigger": false
+        },
+        "workspace": {
+          "description": "Workspace name or GUID",
+          "title": "Workspace",
+          "type": "string"
+        },
+        "item": {
+          "description": "Item name with extension or GUID",
+          "title": "Item",
+          "type": "string"
+        },
+        "path": {
+          "description": "File or directory path under the item",
+          "title": "Path",
+          "type": "string"
+        },
+        "properties": {
+          "type": "string",
+          "title": "Properties",
+          "description": "Comma-separated base64-encoded name=value pairs (the x-ms-properties value)"
+        }
+      },
+      "required": [
+        "workspace",
+        "item",
+        "path",
+        "properties"
+      ],
+      "title": "OneLakeSetPropertiesConfig",
+      "type": "object"
+    },
+    "ScheduleConfig": {
+      "additionalProperties": false,
+      "description": "Schedule configuration from the frontend widget.\nFields accept Union[int, str] to support drag-and-drop references like\n{{nodeId.values.field}} which get resolved at configuration time.",
+      "properties": {
+        "frequency": {
+          "default": "hours",
+          "enum": [
+            "seconds",
+            "minutes",
+            "hours",
+            "day",
+            "week",
+            "weeks",
+            "month"
+          ],
+          "title": "Frequency",
+          "type": "string"
+        },
+        "interval": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Repeat interval (for seconds/minutes/hours/weeks)",
+          "title": "Interval"
+        },
+        "hour": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 9,
+          "description": "Hour of day (0-23)",
+          "title": "Hour"
+        },
+        "minute": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 0,
+          "description": "Minute (0-59)",
+          "title": "Minute"
+        },
+        "dayOfWeek": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of week (0=Sunday, 6=Saturday)",
+          "title": "Dayofweek"
+        },
+        "dayOfMonth": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 1,
+          "description": "Day of month (1-31)",
+          "title": "Dayofmonth"
+        }
+      },
+      "title": "ScheduleConfig",
+      "type": "object"
+    }
+  },
+  "description": "Full configuration for the OneLake node including credentials.",
+  "properties": {
+    "config": {
+      "description": "Node-specific configuration",
+      "discriminator": {
+        "mapping": {
+          "append_file": "#/$defs/OneLakeAppendFileConfig",
+          "check_access": "#/$defs/OneLakeCheckAccessConfig",
+          "create_directory": "#/$defs/OneLakeCreateDirectoryConfig",
+          "create_file": "#/$defs/OneLakeCreateFileConfig",
+          "create_or_update_data_access_role": "#/$defs/OneLakeCreateOrUpdateDataAccessRoleConfig",
+          "create_shortcut": "#/$defs/OneLakeCreateShortcutConfig",
+          "create_shortcuts_bulk": "#/$defs/OneLakeCreateShortcutsBulkConfig",
+          "delete_data_access_role": "#/$defs/OneLakeDeleteDataAccessRoleConfig",
+          "delete_path": "#/$defs/OneLakeDeletePathConfig",
+          "delete_shortcut": "#/$defs/OneLakeDeleteShortcutConfig",
+          "flush_file": "#/$defs/OneLakeFlushFileConfig",
+          "get_access_control": "#/$defs/OneLakeGetAccessControlConfig",
+          "get_data_access_role": "#/$defs/OneLakeGetDataAccessRoleConfig",
+          "get_delta_table": "#/$defs/OneLakeGetDeltaTableConfig",
+          "get_iceberg_config": "#/$defs/OneLakeGetIcebergConfigConfig",
+          "get_iceberg_namespace": "#/$defs/OneLakeGetIcebergNamespaceConfig",
+          "get_iceberg_table": "#/$defs/OneLakeGetIcebergTableConfig",
+          "get_properties": "#/$defs/OneLakeGetPropertiesConfig",
+          "get_settings": "#/$defs/OneLakeGetSettingsConfig",
+          "get_shortcut": "#/$defs/OneLakeGetShortcutConfig",
+          "lease_path": "#/$defs/OneLakeLeasePathConfig",
+          "list_blobs": "#/$defs/OneLakeListBlobsConfig",
+          "list_data_access_roles": "#/$defs/OneLakeListDataAccessRolesConfig",
+          "list_delta_schemas": "#/$defs/OneLakeListDeltaSchemasConfig",
+          "list_delta_tables": "#/$defs/OneLakeListDeltaTablesConfig",
+          "list_iceberg_namespaces": "#/$defs/OneLakeListIcebergNamespacesConfig",
+          "list_iceberg_tables": "#/$defs/OneLakeListIcebergTablesConfig",
+          "list_paths": "#/$defs/OneLakeListPathsConfig",
+          "list_shortcuts": "#/$defs/OneLakeListShortcutsConfig",
+          "on_new_file": "#/$defs/OneLakeOnNewFileConfig",
+          "read_file": "#/$defs/OneLakeReadFileConfig",
+          "rename_path": "#/$defs/OneLakeRenamePathConfig",
+          "reset_shortcut_cache": "#/$defs/OneLakeResetShortcutCacheConfig",
+          "set_properties": "#/$defs/OneLakeSetPropertiesConfig"
+        },
+        "propertyName": "operation"
+      },
+      "oneOf": [
+        {
+          "$ref": "#/$defs/OneLakeListPathsConfig"
+        },
+        {
+          "$ref": "#/$defs/OneLakeCreateDirectoryConfig"
+        },
+        {
+          "$ref": "#/$defs/OneLakeCreateFileConfig"
+        },
+        {
+          "$ref": "#/$defs/OneLakeAppendFileConfig"
+        },
+        {
+          "$ref": "#/$defs/OneLakeFlushFileConfig"
+        },
+        {
+          "$ref": "#/$defs/OneLakeReadFileConfig"
+        },
+        {
+          "$ref": "#/$defs/OneLakeGetPropertiesConfig"
+        },
+        {
+          "$ref": "#/$defs/OneLakeGetAccessControlConfig"
+        },
+        {
+          "$ref": "#/$defs/OneLakeCheckAccessConfig"
+        },
+        {
+          "$ref": "#/$defs/OneLakeLeasePathConfig"
+        },
+        {
+          "$ref": "#/$defs/OneLakeSetPropertiesConfig"
+        },
+        {
+          "$ref": "#/$defs/OneLakeRenamePathConfig"
+        },
+        {
+          "$ref": "#/$defs/OneLakeDeletePathConfig"
+        },
+        {
+          "$ref": "#/$defs/OneLakeListBlobsConfig"
+        },
+        {
+          "$ref": "#/$defs/OneLakeOnNewFileConfig"
+        },
+        {
+          "$ref": "#/$defs/OneLakeGetIcebergConfigConfig"
+        },
+        {
+          "$ref": "#/$defs/OneLakeListIcebergNamespacesConfig"
+        },
+        {
+          "$ref": "#/$defs/OneLakeGetIcebergNamespaceConfig"
+        },
+        {
+          "$ref": "#/$defs/OneLakeListIcebergTablesConfig"
+        },
+        {
+          "$ref": "#/$defs/OneLakeGetIcebergTableConfig"
+        },
+        {
+          "$ref": "#/$defs/OneLakeListDeltaSchemasConfig"
+        },
+        {
+          "$ref": "#/$defs/OneLakeListDeltaTablesConfig"
+        },
+        {
+          "$ref": "#/$defs/OneLakeGetDeltaTableConfig"
+        },
+        {
+          "$ref": "#/$defs/OneLakeCreateShortcutConfig"
+        },
+        {
+          "$ref": "#/$defs/OneLakeCreateShortcutsBulkConfig"
+        },
+        {
+          "$ref": "#/$defs/OneLakeGetShortcutConfig"
+        },
+        {
+          "$ref": "#/$defs/OneLakeListShortcutsConfig"
+        },
+        {
+          "$ref": "#/$defs/OneLakeDeleteShortcutConfig"
+        },
+        {
+          "$ref": "#/$defs/OneLakeResetShortcutCacheConfig"
+        },
+        {
+          "$ref": "#/$defs/OneLakeGetSettingsConfig"
+        },
+        {
+          "$ref": "#/$defs/OneLakeListDataAccessRolesConfig"
+        },
+        {
+          "$ref": "#/$defs/OneLakeGetDataAccessRoleConfig"
+        },
+        {
+          "$ref": "#/$defs/OneLakeCreateOrUpdateDataAccessRoleConfig"
+        },
+        {
+          "$ref": "#/$defs/OneLakeDeleteDataAccessRoleConfig"
+        }
+      ],
+      "title": "Config"
+    },
+    "credentials": {
+      "anyOf": [
+        {
+          "$ref": "#/$defs/OneLakeOAuthCredential"
+        },
+        {
+          "type": "null"
+        }
+      ],
+      "default": null,
+      "description": "Credentials for this node (optional if using environment variables)"
+    }
+  },
+  "required": [
+    "config"
+  ],
+  "title": "Onelake Node Configuration",
+  "type": "object",
+  "x-edit-examples": [
+    "List all files under a lakehouse's Files folder",
+    "Create a directory and upload a CSV into a OneLake lakehouse",
+    "List the Delta tables in a Fabric warehouse",
+    "Create a shortcut from a lakehouse to an external S3 bucket",
+    "Read the Iceberg metadata for a OneLake table"
+  ],
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "x-agent-tool-provider": true
+}
