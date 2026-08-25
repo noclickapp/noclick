@@ -29,18 +29,8 @@ logger = logging.getLogger(__name__)
 
 ScheduleFrequency = Literal["seconds", "minutes", "hours", "day", "week", "weeks", "month"]
 
-
-class ScheduleConfig(BaseModel):
-    """Schedule configuration from the frontend widget.
-    Fields accept Union[int, str] to support drag-and-drop references like
-    {{nodeId.values.field}} which get resolved at configuration time."""
-    model_config = ConfigDict(extra='forbid')
-    frequency: ScheduleFrequency = "hours"
-    interval: Optional[Union[int, str]] = Field(None, description="Repeat interval (for seconds/minutes/hours/weeks)")
-    hour: Optional[Union[int, str]] = Field(9, description="Hour of day (0-23)")
-    minute: Optional[Union[int, str]] = Field(0, description="Minute (0-59)")
-    dayOfWeek: Optional[Union[int, str]] = Field(1, description="Day of week (0=Sunday, 6=Saturday)")
-    dayOfMonth: Optional[Union[int, str]] = Field(1, description="Day of month (1-31)")
+_REFERENCE_PATTERN = re.compile(r'^\{\{([^}]+)\}\}$')
+_TIME_OF_DAY_RE = re.compile(r'^(\d{1,2}):(\d{2})$')
 
 
 def _to_int(value: Any, default: int) -> int:
@@ -53,77 +43,249 @@ def _to_int(value: Any, default: int) -> int:
         return default
 
 
-def _convert_time_to_utc(
-    hour: int, minute: int,
-    day_of_week: Optional[int] = None,
-    day_of_month: Optional[int] = None,
-    timezone: str = "UTC",
-) -> Dict[str, int]:
-    """Convert a local hour/minute (+ optional day fields) to UTC equivalents.
+def _is_reference(value: Any) -> bool:
+    return isinstance(value, str) and bool(_REFERENCE_PATTERN.match(value.strip()))
 
-    Uses the current UTC offset for the timezone. For fixed-offset zones (e.g.
-    Asia/Kolkata) this is always correct. For DST zones (e.g. US/Eastern) the
-    offset is based on the current date — a known trade-off vs deploying
-    timezone support in the external scheduler.
+def _parse_hhmm(value: Any, field_name: str) -> tuple:
+    m = _TIME_OF_DAY_RE.match(str(value).strip())
+    if m:
+        hour, minute = int(m.group(1)), int(m.group(2))
+        if hour <= 23 and minute <= 59:
+            return hour, minute
+    raise ValueError(f'{field_name} must be a 24-hour "HH:MM" time, got {value!r}')
+
+
+# Which frequencies each narrowing constraint applies to. Mirrored by the
+# schedule widget's clause menu (ScheduleWidget CLAUSE_APPLICABILITY) — the UI
+# only offers what registration can honor, and vice versa.
+_WINDOW_FREQUENCIES = ("seconds", "minute", "minutes", "hour", "hours")
+_DOW_FREQUENCIES = _WINDOW_FREQUENCIES + ("day",)
+_MONTHDAY_FREQUENCIES = _DOW_FREQUENCIES
+# `weeks` is excluded: its /Nw week-stepping counts elapsed weeks since the
+# last run, which turns month-gapped years into arbitrary phases.
+_MONTH_FREQUENCIES = _DOW_FREQUENCIES + ("week", "month")
+
+
+class ScheduleConfig(BaseModel):
+    """Schedule configuration from the frontend widget.
+    Fields accept Union[int, str] to support drag-and-drop references like
+    {{nodeId.values.field}} which get resolved at configuration time."""
+    model_config = ConfigDict(extra='forbid')
+    frequency: ScheduleFrequency = "hours"
+    interval: Optional[Union[int, str]] = Field(None, description="Repeat interval (for seconds/minutes/hours/weeks)")
+    hour: Optional[Union[int, str]] = Field(9, description="Hour of day (0-23)")
+    minute: Optional[Union[int, str]] = Field(0, description="Minute (0-59)")
+    dayOfWeek: Optional[Union[int, str]] = Field(1, description="Day of week (0=Sunday, 6=Saturday)")
+    dayOfMonth: Optional[Union[int, str]] = Field(1, description="Day of month (1-31)")
+    daysOfWeek: Optional[List[Union[int, str]]] = Field(
+        None,
+        description="Days of week to run on (0=Sunday … 6=Saturday); empty = every day. "
+                    "Supported for seconds/minutes/hours intervals and daily schedules.",
+    )
+    windowStart: Optional[str] = Field(
+        None,
+        description='Part-of-day start as 24-hour "HH:MM" in the schedule timezone '
+                    '(e.g. "09:00"). Set together with windowEnd; interval frequencies only.',
+    )
+    windowEnd: Optional[str] = Field(
+        None,
+        description='Part-of-day end as 24-hour "HH:MM", inclusive — a run landing '
+                    'exactly on it fires (e.g. "18:00" runs the 6:00 PM tick).',
+    )
+    monthDayStart: Optional[Union[int, str]] = Field(
+        None,
+        description="Part-of-month start day (1-31), inclusive. Set together with "
+                    "monthDayEnd; a start after the end wraps around month end "
+                    "(25→5 = the 25th through the 5th).",
+    )
+    monthDayEnd: Optional[Union[int, str]] = Field(
+        None,
+        description="Part-of-month end day (1-31), inclusive.",
+    )
+    monthStart: Optional[Union[int, str]] = Field(
+        None,
+        description="Part-of-year start month (1=January … 12=December), inclusive. "
+                    "Set together with monthEnd; a start after the end wraps around "
+                    "the new year (11→2 = November through February).",
+    )
+    monthEnd: Optional[Union[int, str]] = Field(
+        None,
+        description="Part-of-year end month (1-12), inclusive.",
+    )
+
+    @model_validator(mode="after")
+    def _validate_constraints(self) -> 'ScheduleConfig':
+        """Constraint coherence for literal values; {{ref}} values resolve at
+        registration and are judged there (schedule_to_cron_expressions)."""
+        for name in ("windowStart", "windowEnd", "monthDayStart", "monthDayEnd",
+                     "monthStart", "monthEnd"):
+            v = getattr(self, name)
+            if isinstance(v, str) and not v.strip():
+                setattr(self, name, None)  # ""/whitespace = unset marker
+
+        def pair(a_name: str, b_name: str) -> tuple:
+            a, b = getattr(self, a_name), getattr(self, b_name)
+            if _is_reference(a) or _is_reference(b):
+                return None, None  # judged at registration once resolved
+            if (a is None) != (b is None):
+                raise ValueError(f"{a_name} and {b_name} must be set together")
+            return a, b
+
+        ws, we = pair("windowStart", "windowEnd")
+        if ws is not None:
+            if self.frequency not in _WINDOW_FREQUENCIES:
+                raise ValueError("A part-of-day window is only supported for interval (seconds/minutes/hours) frequencies")
+            s_h, s_m = _parse_hhmm(ws, "windowStart")
+            e_h, e_m = _parse_hhmm(we, "windowEnd")
+            if s_h == e_h and s_m > e_m:
+                raise ValueError("windowEnd must not be earlier than windowStart within the same hour")
+
+        if self.daysOfWeek:
+            if self.frequency not in _DOW_FREQUENCIES:
+                raise ValueError("daysOfWeek is only supported for interval and daily schedules")
+            for d in self.daysOfWeek:
+                if not _is_reference(d) and not (0 <= _to_int(d, -1) <= 6):
+                    raise ValueError("daysOfWeek entries must be 0 (Sunday) through 6 (Saturday)")
+
+        md_s, md_e = pair("monthDayStart", "monthDayEnd")
+        if md_s is not None:
+            if self.frequency not in _MONTHDAY_FREQUENCIES:
+                raise ValueError("A part-of-month range is only supported for interval and daily schedules")
+            for name, v in (("monthDayStart", md_s), ("monthDayEnd", md_e)):
+                if not (1 <= _to_int(v, -1) <= 31):
+                    raise ValueError(f"{name} must be a day of month (1-31)")
+
+        mo_s, mo_e = pair("monthStart", "monthEnd")
+        if mo_s is not None:
+            if self.frequency not in _MONTH_FREQUENCIES:
+                raise ValueError(f"A part-of-year range is not supported for '{self.frequency}' schedules")
+            for name, v in (("monthStart", mo_s), ("monthEnd", mo_e)):
+                if not (1 <= _to_int(v, -1) <= 12):
+                    raise ValueError(f"{name} must be a month (1=January … 12=December)")
+        return self
+
+
+def _merge_ranges(values: List[int]) -> str:
+    """Cron field from an ordered value list, collapsing consecutive runs,
+    e.g. [1,2,3,4,5] -> "1-5", [22,23,0,1] -> "22-23,0-1"."""
+    ranges: List[List[int]] = []
+    for v in values:
+        if ranges and ranges[-1][1] == v - 1:
+            ranges[-1][1] = v
+        else:
+            ranges.append([v, v])
+    return ",".join(f"{a}-{b}" if a != b else str(a) for a, b in ranges)
+
+
+def _dow_field(days: List[Any]) -> str:
+    """Cron day-of-week field from a daysOfWeek list (0=Sunday … 6=Saturday)."""
+    values = sorted({_to_int(d, -1) for d in days})
+    if any(v < 0 or v > 6 for v in values):
+        raise ValueError(f"daysOfWeek entries must be 0 (Sunday) through 6 (Saturday), got {days!r}")
+    if len(values) == 7:
+        return "*"
+    return _merge_ranges(values)
+
+
+def _hour_ranges(start: int, count: int) -> str:
+    """Cron hour field covering ``count`` consecutive hours from ``start``
+    (mod 24), e.g. (22, 4) -> "22-23,0-1"."""
+    return _merge_ranges([(start + i) % 24 for i in range(count)])
+
+
+def _minute_field(lo: int, hi: int, n: int) -> str:
+    if lo == hi:
+        return str(lo)
+    if lo == 0 and hi == 59:
+        return "*" if n == 1 else f"*/{n}"
+    return f"{lo}-{hi}/{n}" if n > 1 else f"{lo}-{hi}"
+
+
+def _wrapping_range_field(start: int, end: int, lo: int, hi: int) -> str:
+    """Cron field for an inclusive start→end range over the domain [lo, hi],
+    wrapping past the domain end (25→5 over days = "25-31,1-5"). The full
+    domain collapses to "*"."""
+    if start <= end:
+        values = list(range(start, end + 1))
+    else:
+        values = list(range(start, hi + 1)) + list(range(lo, end + 1))
+    if len(values) >= hi - lo + 1:
+        return "*"
+    return _merge_ranges(values)
+
+
+def _windowed_minute_expressions(n: int, s_h: int, s_m: int, e_h: int, e_m: int, dom: str, mon: str, dow: str) -> List[str]:
+    """Expressions for "every n minutes between start and end (inclusive)".
+
+    Cron minute patterns repeat hourly, so the window is expressed per hour:
+    the first hour fires from the start minute, later hours continue the phase
+    (exact whenever n divides 60), and the final hour is capped at the end
+    minute. Windows wrapping midnight use split hour ranges; the day filters
+    apply to the calendar day of each fire (standard cron semantics).
     """
-    from zoneinfo import ZoneInfo
-    from datetime import datetime
-
-    result: Dict[str, int] = {"hour": hour, "minute": minute}
-    if day_of_week is not None:
-        result["day_of_week"] = day_of_week
-    if day_of_month is not None:
-        result["day_of_month"] = day_of_month
-
-    if timezone == "UTC":
-        return result
-
-    try:
-        tz = ZoneInfo(timezone)
-    except KeyError:
-        logger.warning(f"[CronTriggerNode] Unknown timezone {timezone}, using UTC")
-        return result
-
-    offset = datetime.now(tz).utcoffset()
-    if offset is None:
-        return result
-
-    offset_minutes = int(offset.total_seconds() / 60)
-    local_total = hour * 60 + minute
-    utc_total = local_total - offset_minutes
-
-    day_delta = 0
-    if utc_total < 0:
-        utc_total += 24 * 60
-        day_delta = -1
-    elif utc_total >= 24 * 60:
-        utc_total -= 24 * 60
-        day_delta = 1
-
-    result["hour"] = utc_total // 60
-    result["minute"] = utc_total % 60
-
-    if day_of_week is not None and day_delta != 0:
-        result["day_of_week"] = (day_of_week + day_delta) % 7
-    if day_of_month is not None and day_delta != 0:
-        result["day_of_month"] = max(1, min(28, day_of_month + day_delta))
-
-    return result
+    span = (e_h - s_h) % 24
+    phase = s_m % n
+    tail = f"{dom} {mon} {dow}"
+    if span == 0:  # window within a single hour (s_m <= e_m validated upstream)
+        return [f"{_minute_field(s_m, e_m, n)} {s_h} {tail}"]
+    exprs: List[str] = []
+    if phase == s_m:
+        exprs.append(f"{_minute_field(s_m, 59, n)} {_hour_ranges(s_h, span)} {tail}")
+    else:
+        exprs.append(f"{_minute_field(s_m, 59, n)} {s_h} {tail}")
+        if span > 1:
+            exprs.append(f"{_minute_field(phase, 59, n)} {_hour_ranges((s_h + 1) % 24, span - 1)} {tail}")
+    if e_m >= phase:
+        exprs.append(f"{_minute_field(phase, e_m, n)} {e_h} {tail}")
+    return exprs
 
 
-def schedule_to_cron(schedule: Dict[str, Any], timezone: str = "UTC") -> str:
+def _windowed_hour_expression(n: int, s_h: int, s_m: int, e_h: int, e_m: int, dom: str, mon: str, dow: str) -> str:
+    """"Every n hours between start and end": hours step from the window start
+    (anchored there, not at midnight), each firing at the start minute."""
+    span = (e_h - s_h) % 24
+    hours: List[int] = []
+    for k in range(span // n + 1):
+        h = (s_h + k * n) % 24
+        if h == e_h and s_m > e_m:
+            continue  # the final-hour fire would land past the window's end minute
+        hours.append(h)
+    if not hours:
+        raise ValueError("The time window is narrower than the hour interval")
+    return f"{s_m} {','.join(str(h) for h in sorted(set(hours)))} {dom} {mon} {dow}"
+
+
+def schedule_to_cron_expressions(schedule: Dict[str, Any]) -> List[str]:
     """
-    Convert a schedule config object to a cron expression (in UTC).
+    Convert a schedule config object into cron expressions written in the
+    schedule's own timezone. The registration carries that timezone to the
+    scheduler, so wall-clock schedules stay correct across DST without offset
+    pre-conversion here.
 
-    For absolute-time schedules (day, week, month), the hour/minute are
-    converted from the given timezone to UTC so the scheduled callback fires at the
-    correct wall-clock time.
+    Interval schedules can be NARROWED by stacked, unit-adaptive from→to
+    constraints (all bounds inclusive): a part-of-day window
+    (windowStart/windowEnd "HH:MM"), days of the week (daysOfWeek), a
+    part-of-month range (monthDayStart/monthDayEnd), and a part-of-year range
+    (monthStart/monthEnd) — day filters also apply to daily schedules, the
+    year range to weekly/monthly ones (see the _*_FREQUENCIES maps). These
+    compile to 1–3 standard cron expressions registered as separate slots.
+    Raises ValueError for combinations that cannot run — never silently drops
+    a configured constraint.
 
-    Supports:
+    Two semantics are deliberately supported by both remote and local
+    schedulers beyond stock cron:
+    - day-of-month AND day-of-week: when both fields are restricted the run
+      must match BOTH (vixie cron ORs them, which would break "Mon–Fri, the
+      1st–15th").
+    - constrained seconds: "*/Ns M H DOM MON DOW" fires every N seconds while
+      the current minute matches the 5-field tail, else sleeps to the tail's
+      next match (legacy unconstrained form stays "*/Ns * * * *").
+
+    Base forms:
     - Every minute: "* * * * *"
     - Every X minutes: "*/X * * * *"
     - Every hour: "0 * * * *"
-    - Every X hours: "0 */X * * *"
+    - Every X hours: "0 */X * * *" (or "0 0 * * * /Xh" when X doesn't divide 24)
     - Every day at H:M: "M H * * *"
     - Every week on D at H:M: "M H * * D"
     - Every month on D at H:M: "M H D * *"
@@ -135,54 +297,110 @@ def schedule_to_cron(schedule: Dict[str, Any], timezone: str = "UTC") -> str:
     day_of_week = _to_int(schedule.get("dayOfWeek"), 1)
     day_of_month = _to_int(schedule.get("dayOfMonth"), 1)
 
+    days = [d for d in (schedule.get("daysOfWeek") or []) if d not in (None, "")]
+    window_start = schedule.get("windowStart") or None
+    window_end = schedule.get("windowEnd") or None
+
+    def range_pair(start_key: str, end_key: str, lo: int, hi: int, what: str) -> Optional[tuple]:
+        start, end = schedule.get(start_key), schedule.get(end_key)
+        start = None if start in (None, "") else start
+        end = None if end in (None, "") else end
+        if (start is None) != (end is None):
+            raise ValueError(f"{start_key} and {end_key} must be set together")
+        if start is None:
+            return None
+        s, e = _to_int(start, -1), _to_int(end, -1)
+        if not (lo <= s <= hi and lo <= e <= hi):
+            raise ValueError(f"{start_key}/{end_key} must be {what} ({lo}-{hi})")
+        return s, e
+
+    if bool(window_start) != bool(window_end):
+        raise ValueError("windowStart and windowEnd must be set together")
+    has_window = window_start is not None
+    month_day = range_pair("monthDayStart", "monthDayEnd", 1, 31, "days of month")
+    months = range_pair("monthStart", "monthEnd", 1, 12, "months")
+
+    if has_window and freq not in _WINDOW_FREQUENCIES:
+        raise ValueError(f"A part-of-day window is not supported for '{freq}' schedules")
+    if days and freq not in _DOW_FREQUENCIES:
+        raise ValueError(f"daysOfWeek is not supported for '{freq}' schedules")
+    if month_day and freq not in _MONTHDAY_FREQUENCIES:
+        raise ValueError(f"A part-of-month range is not supported for '{freq}' schedules")
+    if months and freq not in _MONTH_FREQUENCIES:
+        raise ValueError(f"A part-of-year range is not supported for '{freq}' schedules")
+
+    dow = _dow_field(days) if days else "*"
+    dom = _wrapping_range_field(month_day[0], month_day[1], 1, 31) if month_day else "*"
+    mon = _wrapping_range_field(months[0], months[1], 1, 12) if months else "*"
+    constrained = has_window or dow != "*" or dom != "*" or mon != "*"
+
+    def parse_window() -> tuple:
+        s_h, s_m = _parse_hhmm(window_start, "windowStart")
+        e_h, e_m = _parse_hhmm(window_end, "windowEnd")
+        if s_h == e_h and s_m > e_m:
+            raise ValueError("windowEnd must not be earlier than windowStart within the same hour")
+        return s_h, s_m, e_h, e_m
+
     if freq == "seconds":
-        # Cron doesn't support seconds natively, but the external scheduler does
-        # We'll pass this as a special case - the scheduler will handle sub-minute intervals
-        interval = max(1, min(59, interval))
-        return f"*/{interval}s * * * *"  # Custom format: scheduler interprets 's' suffix
-
-    elif freq == "minute":
-        return "* * * * *"
-
-    elif freq == "minutes":
-        interval = max(1, min(59, interval))
-        return f"*/{interval} * * * *"
-
-    elif freq == "hour":
-        return "0 * * * *"
-
-    elif freq == "hours":
-        interval = max(1, min(23, interval))
-        # For intervals that divide evenly into 24, use standard cron (predictable times)
-        # For intervals that don't (e.g., 5, 7, 11, 13, etc.), use custom interval format
-        # so users get true "every X hours from now" behavior
-        if 24 % interval == 0:
-            return f"0 */{interval} * * *"
+        # Cron doesn't support seconds natively, but our schedulers do via the
+        # "s" token. Constraints ride a full 5-field tail the scheduler gates
+        # each candidate fire against.
+        n = max(1, min(59, interval))
+        if not constrained:
+            return [f"*/{n}s * * * *"]  # legacy unconstrained form, byte-stable
+        if has_window:
+            # Same per-hour window split as minutes, at full minute coverage.
+            tails = _windowed_minute_expressions(1, *parse_window(), dom, mon, dow)
         else:
-            # Custom format: external scheduler interprets /Xh as hour interval
-            return f"0 0 * * * /{interval}h"
+            tails = [f"* * {dom} {mon} {dow}"]
+        return [f"*/{n}s {tail}" for tail in tails]
 
-    elif freq == "day":
-        utc = _convert_time_to_utc(hour, minute, timezone=timezone)
-        return f"{utc['minute']} {utc['hour']} * * *"
+    if freq in ("minute", "minutes"):
+        n = 1 if freq == "minute" else max(1, min(59, interval))
+        if has_window:
+            return _windowed_minute_expressions(n, *parse_window(), dom, mon, dow)
+        base = "*" if freq == "minute" else f"*/{n}"
+        return [f"{base} * {dom} {mon} {dow}"]
 
-    elif freq == "week":
-        utc = _convert_time_to_utc(hour, minute, day_of_week=day_of_week, timezone=timezone)
-        return f"{utc['minute']} {utc['hour']} * * {utc['day_of_week']}"
+    if freq in ("hour", "hours"):
+        n = 1 if freq == "hour" else max(1, min(23, interval))
+        if has_window:
+            return [_windowed_hour_expression(n, *parse_window(), dom, mon, dow)]
+        if freq == "hour":
+            return [f"0 * {dom} {mon} {dow}"]
+        if 24 % n == 0:
+            return [f"0 */{n} {dom} {mon} {dow}"]
+        if not constrained:
+            # True "every X hours from now" via the scheduler's custom /Xh
+            # duration format for intervals that don't divide 24.
+            return [f"0 0 * * * /{n}h"]
+        # Constraints need real cron fields, so anchor at midnight.
+        return [f"0 {','.join(str(h) for h in range(0, 24, n))} {dom} {mon} {dow}"]
 
-    elif freq == "weeks":
-        # Every N weeks on a specific day - custom format for external scheduler
+    if freq == "day":
+        return [f"{minute} {hour} {dom} {mon} {dow}"]
+
+    if freq == "week":
+        return [f"{minute} {hour} * {mon} {day_of_week}"]
+
+    if freq == "weeks":
+        # Every N weeks on a specific day using the scheduler's custom format.
         # Format: "M H * * D /Nw" where /Nw indicates week interval
         interval = max(1, min(52, interval))
-        utc = _convert_time_to_utc(hour, minute, day_of_week=day_of_week, timezone=timezone)
-        return f"{utc['minute']} {utc['hour']} * * {utc['day_of_week']} /{interval}w"
+        return [f"{minute} {hour} * * {day_of_week} /{interval}w"]
 
-    elif freq == "month":
-        utc = _convert_time_to_utc(hour, minute, day_of_month=day_of_month, timezone=timezone)
-        return f"{utc['minute']} {utc['hour']} {utc['day_of_month']} * *"
+    if freq == "month":
+        return [f"{minute} {hour} {day_of_month} {mon} *"]
 
     # Default to hourly
-    return "0 * * * *"
+    return ["0 * * * *"]
+
+
+def schedule_to_cron(schedule: Dict[str, Any]) -> str:
+    """Single-expression wrapper for the bespoke pre-family poller paths.
+    Family registration goes through schedule_to_cron_expressions — a windowed
+    schedule compiles to multiple expressions and would be truncated here."""
+    return schedule_to_cron_expressions(schedule)[0]
 
 
 def schedule_to_interval_ms(schedule: Dict[str, Any]) -> Optional[int]:
@@ -210,8 +428,6 @@ def schedule_to_interval_ms(schedule: Dict[str, Any]) -> Optional[int]:
 # ============================================================================
 # Reference Resolution for Schedule Fields
 # ============================================================================
-
-_REFERENCE_PATTERN = re.compile(r'^\{\{([^}]+)\}\}$')
 
 
 async def _get_node_config_from_workflow(workflow_id: uuid_module.UUID, node_id: str, pool) -> Optional[Dict[str, Any]]:
@@ -463,6 +679,7 @@ class CronTriggerNode(CronScheduleTriggerMixin, WorkflowNode):
     edit_examples = [
         "Run this workflow every Monday at 9am EST",
         "Trigger this every 30 minutes throughout the day",
+        "Run every 30 minutes between 9:00 AM and 6:00 PM New York time, Monday to Friday",
         "Schedule daily execution at 6pm in my timezone",
         "Add a cron schedule to run every week on Friday",
         "Set up multiple schedules with different frequencies",
@@ -517,27 +734,36 @@ class CronTriggerNode(CronScheduleTriggerMixin, WorkflowNode):
 
         timezone = ctx.get("timezone", "UTC") or "UTC"
         cron_exprs: List[str] = []
-        for sched_raw in schedules_raw:
-            if isinstance(sched_raw, str):
-                resolved_value = await _resolve_whole_schedule_reference(
-                    sched_raw, workflow_id, pool
-                )
-                if resolved_value is None:
-                    logger.warning(
-                        f"[CronTriggerNode] Could not resolve whole-schedule reference: {sched_raw}"
+        try:
+            for sched_raw in schedules_raw:
+                if isinstance(sched_raw, str):
+                    resolved_value = await _resolve_whole_schedule_reference(
+                        sched_raw, workflow_id, pool
                     )
-                    continue
-                entries = resolved_value if isinstance(resolved_value, list) else [resolved_value]
-                for entry in entries:
-                    if not isinstance(entry, dict):
+                    if resolved_value is None:
                         logger.warning(
-                            f"[CronTriggerNode] Resolved reference entry is not a dict: {type(entry)}"
+                            f"[CronTriggerNode] Could not resolve whole-schedule reference: {sched_raw}"
                         )
                         continue
-                    cron_exprs.append(schedule_to_cron(entry, timezone=timezone))
-            else:
-                resolved = await _resolve_schedule_references(sched_raw, workflow_id, pool)
-                cron_exprs.append(schedule_to_cron(resolved, timezone=timezone))
+                    entries = resolved_value if isinstance(resolved_value, list) else [resolved_value]
+                    for entry in entries:
+                        if not isinstance(entry, dict):
+                            logger.warning(
+                                f"[CronTriggerNode] Resolved reference entry is not a dict: {type(entry)}"
+                            )
+                            continue
+                        cron_exprs.extend(schedule_to_cron_expressions(entry))
+                else:
+                    resolved = await _resolve_schedule_references(sched_raw, workflow_id, pool)
+                    cron_exprs.extend(schedule_to_cron_expressions(resolved))
+        except ValueError as e:
+            # An unrunnable entry (bad window, bad days) disables the whole
+            # node's registration with a visible reason — never a partial
+            # registration that silently drops the misconfigured entry.
+            return CronScheduleSpec(
+                expressions=[], timezone=timezone, source="cron_trigger",
+                config_error=str(e),
+            )
 
         return CronScheduleSpec(
             expressions=cron_exprs, timezone=timezone, source="cron_trigger"

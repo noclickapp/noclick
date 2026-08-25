@@ -342,6 +342,90 @@ async def test_bespoke_poller_registers_via_family(  ):
     assert world.registered[0]["cron_expressions"] == ["*/5 * * * *"]
 
 
+# ─── time windows + timezone-aware registration ──────────────────────────────
+
+
+WINDOWED_CRON_CONFIG = {
+    "schedules": [{
+        "frequency": "minutes", "interval": 30,
+        "windowStart": "09:00", "windowEnd": "18:00",
+        "daysOfWeek": [1, 2, 3, 4, 5],
+    }],
+    "timezone": "America/New_York",
+}
+
+
+async def test_windowed_schedule_registers_local_expressions_with_tz():
+    """The customer ask: every 30 min, 9:00 AM–6:00 PM New York, Mon–Fri.
+    Compiles to LOCAL-time expressions (the endpoint as its own slot) that the
+    scheduler evaluates in the registration's timezone."""
+    result, world = await _reconcile("trigger-cron", WINDOWED_CRON_CONFIG)
+    assert result["state"] == "registered"
+    assert world.registered[0]["cron_expressions"] == [
+        "*/30 9-17 * * 1-5", "0 18 * * 1-5",
+    ]
+    assert world.registered[0]["timezone"] == "America/New_York"
+
+
+async def test_window_edit_rotates_fingerprint_and_reregisters():
+    first, _ = await _reconcile("trigger-cron", WINDOWED_CRON_CONFIG)
+    edited = {
+        **WINDOWED_CRON_CONFIG,
+        "schedules": [{**WINDOWED_CRON_CONFIG["schedules"][0], "windowEnd": "17:00"}],
+    }
+    result, world = await _reconcile(
+        "trigger-cron", edited,
+        row=_row(fingerprint=first["fingerprint"], registered_operation="__schedule__"),
+    )
+    assert result["state"] == "registered"
+    assert result["fingerprint"] != first["fingerprint"]
+    assert world.registered[0]["cron_expressions"] == [
+        "*/30 9-16 * * 1-5", "0 17 * * 1-5",
+    ]
+
+
+async def test_unrunnable_window_converges_to_no_schedules_with_reason():
+    """A window on a daily schedule can't run — the node converges to NO
+    schedules with the reason mirrored, never a partial registration."""
+    config = {
+        "schedules": [{"frequency": "day", "hour": 9, "minute": 0,
+                       "windowStart": "09:00", "windowEnd": "18:00"}],
+        "timezone": "UTC",
+        "schedule_id": "stale",
+    }
+    result, world = await _reconcile("trigger-cron", config)
+    assert result["state"] == "deregistered"
+    assert world.registered == []
+    assert "part-of-day window" in result["values"]["trigger_error"]
+
+
+async def test_day_schedule_emits_local_time_for_tz_evaluation():
+    """Absolute-time schedules are no longer offset-converted here: the
+    expression stays local wall-clock and the timezone rides the registration
+    — which is what keeps 9:30 New York correct across DST."""
+    config = {
+        "schedules": [{"frequency": "day", "hour": 9, "minute": 30}],
+        "timezone": "America/New_York",
+    }
+    result, world = await _reconcile("trigger-cron", config)
+    assert result["state"] == "registered"
+    assert world.registered[0]["cron_expressions"] == ["30 9 * * *"]
+    assert world.registered[0]["timezone"] == "America/New_York"
+
+
+async def test_poll_family_spec_passes_config_timezone():
+    """The family default spec forwards a node's timezone config so poll
+    windows can be zone-correct too (UTC when the node has no such field)."""
+    config = {"operation": "poll_for_new_emails",
+              "schedule": {"frequency": "minutes", "interval": 5,
+                           "windowStart": "09:00", "windowEnd": "17:00"},
+              "timezone": "Asia/Kolkata"}
+    result, world = await _reconcile("automation-gmail", config)
+    assert result["state"] == "registered"
+    assert world.registered[0]["cron_expressions"] == ["*/5 9-16 * * *", "0 17 * * *"]
+    assert world.registered[0]["timezone"] == "Asia/Kolkata"
+
+
 # ─── lifecycle surface routing ───────────────────────────────────────────────
 
 

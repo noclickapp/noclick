@@ -1461,6 +1461,119 @@
           "default": 1,
           "description": "Day of month (1-31)",
           "title": "Dayofmonth"
+        },
+        "daysOfWeek": {
+          "anyOf": [
+            {
+              "items": {
+                "anyOf": [
+                  {
+                    "type": "integer"
+                  },
+                  {
+                    "type": "string"
+                  }
+                ]
+              },
+              "type": "array"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Days of week to run on (0=Sunday \u2026 6=Saturday); empty = every day. Supported for seconds/minutes/hours intervals and daily schedules.",
+          "title": "Daysofweek"
+        },
+        "windowStart": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day start as 24-hour \"HH:MM\" in the schedule timezone (e.g. \"09:00\"). Set together with windowEnd; interval frequencies only.",
+          "title": "Windowstart"
+        },
+        "windowEnd": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-day end as 24-hour \"HH:MM\", inclusive \u2014 a run landing exactly on it fires (e.g. \"18:00\" runs the 6:00 PM tick).",
+          "title": "Windowend"
+        },
+        "monthDayStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month start day (1-31), inclusive. Set together with monthDayEnd; a start after the end wraps around month end (25\u21925 = the 25th through the 5th).",
+          "title": "Monthdaystart"
+        },
+        "monthDayEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-month end day (1-31), inclusive.",
+          "title": "Monthdayend"
+        },
+        "monthStart": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year start month (1=January \u2026 12=December), inclusive. Set together with monthEnd; a start after the end wraps around the new year (11\u21922 = November through February).",
+          "title": "Monthstart"
+        },
+        "monthEnd": {
+          "anyOf": [
+            {
+              "type": "integer"
+            },
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Part-of-year end month (1-12), inclusive.",
+          "title": "Monthend"
         }
       },
       "title": "ScheduleConfig",

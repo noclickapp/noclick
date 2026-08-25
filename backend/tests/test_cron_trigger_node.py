@@ -13,7 +13,9 @@ from nodes.cron_trigger_node import (
     CronTriggerNode,
     CronTriggerConfig,
     CronTriggerNodeConfig,
+    ScheduleConfig,
     schedule_to_cron,
+    schedule_to_cron_expressions,
     _resolve_whole_schedule_reference,
 )
 
@@ -97,6 +99,294 @@ class TestScheduleToCron:
         """Empty or invalid schedule should default to hourly."""
         assert schedule_to_cron({}) == "0 * * * *"
         assert schedule_to_cron({"frequency": "invalid"}) == "0 * * * *"
+
+
+class TestScheduleWindowExpressions:
+    """Time-window + daysOfWeek compilation (schedule_to_cron_expressions).
+
+    Expressions are LOCAL wall-clock time — the scheduler evaluates them in
+    the registration's timezone — and the window is inclusive on both ends.
+    """
+
+    def test_customer_ask_weekday_business_hours(self):
+        """Every 30 min, 9:00 AM–6:00 PM, Mon–Fri: the range body plus the
+        6:00 PM endpoint as its own expression."""
+        assert schedule_to_cron_expressions({
+            "frequency": "minutes", "interval": 30,
+            "windowStart": "09:00", "windowEnd": "18:00",
+            "daysOfWeek": [1, 2, 3, 4, 5],
+        }) == ["*/30 9-17 * * 1-5", "0 18 * * 1-5"]
+
+    def test_window_fire_sequence_ground_truth(self):
+        """croniter enumeration of the compiled expressions: first fire at the
+        window start, last at the inclusive end, exact 30-min cadence."""
+        from croniter import croniter
+        from datetime import datetime
+        from zoneinfo import ZoneInfo
+
+        exprs = schedule_to_cron_expressions({
+            "frequency": "minutes", "interval": 30,
+            "windowStart": "09:00", "windowEnd": "18:00",
+            "daysOfWeek": [1, 2, 3, 4, 5],
+        })
+        base = datetime(2026, 8, 24, 0, 0, tzinfo=ZoneInfo("America/New_York"))  # a Monday
+        fires = []
+        for expr in exprs:
+            it = croniter(expr, base)
+            while True:
+                t = it.get_next(datetime)
+                if t.day != 24:
+                    break
+                fires.append(t.strftime("%H:%M"))
+        assert sorted(fires) == [
+            f"{h:02d}:{m}" for h in range(9, 18) for m in ("00", "30")
+        ] + ["18:00"]
+        # Saturday produces no fires at all.
+        sat = datetime(2026, 8, 22, 0, 0, tzinfo=ZoneInfo("America/New_York"))
+        for expr in exprs:
+            assert croniter(expr, sat).get_next(datetime).day != 22
+
+    def test_offset_window_start_keeps_phase(self):
+        assert schedule_to_cron_expressions({
+            "frequency": "minutes", "interval": 30,
+            "windowStart": "09:15", "windowEnd": "18:15",
+        }) == ["15-59/30 9-17 * * *", "15 18 * * *"]
+
+    def test_every_minute_window_covers_partial_hours_fully(self):
+        """n=1 must fire EVERY minute inside the window, so the hours after
+        the first are not phase-restricted."""
+        assert schedule_to_cron_expressions({
+            "frequency": "minutes", "interval": 1,
+            "windowStart": "09:15", "windowEnd": "10:10",
+        }) == ["15-59 9 * * *", "0-10 10 * * *"]
+
+    def test_window_wrapping_midnight_splits_hour_ranges(self):
+        assert schedule_to_cron_expressions({
+            "frequency": "minutes", "interval": 30,
+            "windowStart": "22:00", "windowEnd": "02:00",
+        }) == ["*/30 22-23,0-1 * * *", "0 2 * * *"]
+
+    def test_window_within_single_hour(self):
+        assert schedule_to_cron_expressions({
+            "frequency": "minutes", "interval": 10,
+            "windowStart": "09:15", "windowEnd": "09:45",
+        }) == ["15-45/10 9 * * *"]
+
+    def test_hourly_interval_window_anchors_at_window_start(self):
+        assert schedule_to_cron_expressions({
+            "frequency": "hours", "interval": 2,
+            "windowStart": "09:00", "windowEnd": "18:00",
+            "daysOfWeek": [1, 2, 3, 4, 5],
+        }) == ["0 9,11,13,15,17 * * 1-5"]
+
+    def test_days_without_window(self):
+        assert schedule_to_cron_expressions({
+            "frequency": "minutes", "interval": 30,
+            "daysOfWeek": [1, 2, 3, 4, 5],
+        }) == ["*/30 * * * 1-5"]
+
+    def test_daily_schedule_with_day_filter(self):
+        assert schedule_to_cron_expressions({
+            "frequency": "day", "hour": 9, "minute": 30,
+            "daysOfWeek": [1, 3, 5],
+        }) == ["30 9 * * 1,3,5"]
+
+    def test_all_seven_days_collapse_to_star(self):
+        assert schedule_to_cron_expressions({
+            "frequency": "minutes", "interval": 30,
+            "daysOfWeek": [0, 1, 2, 3, 4, 5, 6],
+        }) == ["*/30 * * * *"]
+
+    def test_nondividing_hour_interval_with_days_anchors_midnight(self):
+        """/Nh duration format can't carry a day filter, so it falls back to
+        explicit midnight-anchored cron hours."""
+        assert schedule_to_cron_expressions({
+            "frequency": "hours", "interval": 5,
+            "daysOfWeek": [1, 2, 3, 4, 5],
+        }) == ["0 0,5,10,15,20 * * 1-5"]
+
+    def test_unrunnable_combinations_raise(self):
+        """A configured constraint that cannot run must raise — never be
+        silently dropped (a window silently ignored fires 24/7)."""
+        for bad in [
+            {"frequency": "day", "hour": 9, "windowStart": "09:00", "windowEnd": "18:00"},
+            {"frequency": "minutes", "interval": 30, "windowStart": "09:00"},
+            {"frequency": "minutes", "interval": 30, "windowStart": "9am", "windowEnd": "6pm"},
+            {"frequency": "minutes", "interval": 30, "windowStart": "25:00", "windowEnd": "26:00"},
+            {"frequency": "minutes", "interval": 30, "daysOfWeek": [7]},
+            {"frequency": "week", "dayOfWeek": 1, "daysOfWeek": [1, 2]},
+            {"frequency": "minutes", "interval": 30, "windowStart": "09:45", "windowEnd": "09:15"},
+            {"frequency": "minutes", "interval": 30, "monthDayStart": 1},
+            {"frequency": "minutes", "interval": 30, "monthDayStart": 0, "monthDayEnd": 15},
+            {"frequency": "minutes", "interval": 30, "monthStart": 0, "monthEnd": 13},
+            {"frequency": "week", "dayOfWeek": 1, "monthDayStart": 1, "monthDayEnd": 15},
+            {"frequency": "weeks", "interval": 2, "dayOfWeek": 1, "monthStart": 3, "monthEnd": 10},
+        ]:
+            with pytest.raises(ValueError):
+                schedule_to_cron_expressions(bad)
+
+    def test_legacy_wrapper_returns_first_expression(self):
+        assert schedule_to_cron({"frequency": "minutes", "interval": 30}) == "*/30 * * * *"
+
+
+class TestAdaptiveRangeConstraints:
+    """Part-of-month + part-of-year ranges and constrained seconds — the
+    coarser rungs of the unit-adaptive from→to constraint ladder."""
+
+    def test_part_of_month_range(self):
+        assert schedule_to_cron_expressions({
+            "frequency": "minutes", "interval": 30,
+            "monthDayStart": 1, "monthDayEnd": 15,
+        }) == ["*/30 * 1-15 * *"]
+
+    def test_part_of_year_range(self):
+        assert schedule_to_cron_expressions({
+            "frequency": "minutes", "interval": 30,
+            "monthStart": 3, "monthEnd": 10,
+        }) == ["*/30 * * 3-10 *"]
+
+    def test_all_constraints_stacked(self):
+        """Every 30 min, 9–6, Mon–Fri, the 1st–15th, March–October."""
+        assert schedule_to_cron_expressions({
+            "frequency": "minutes", "interval": 30,
+            "windowStart": "09:00", "windowEnd": "18:00",
+            "daysOfWeek": [1, 2, 3, 4, 5],
+            "monthDayStart": 1, "monthDayEnd": 15,
+            "monthStart": 3, "monthEnd": 10,
+        }) == ["*/30 9-17 1-15 3-10 1-5", "0 18 1-15 3-10 1-5"]
+
+    def test_wrapping_ranges(self):
+        assert schedule_to_cron_expressions({
+            "frequency": "minutes", "interval": 30,
+            "monthDayStart": 25, "monthDayEnd": 5,
+        }) == ["*/30 * 25-31,1-5 * *"]
+        assert schedule_to_cron_expressions({
+            "frequency": "day", "hour": 9, "minute": 0,
+            "monthStart": 11, "monthEnd": 2,
+        }) == ["0 9 * 11-12,1-2 *"]
+
+    def test_full_ranges_collapse_to_star(self):
+        assert schedule_to_cron_expressions({
+            "frequency": "minutes", "interval": 30,
+            "monthDayStart": 1, "monthDayEnd": 31,
+            "monthStart": 1, "monthEnd": 12,
+        }) == ["*/30 * * * *"]
+
+    def test_weekly_and_monthly_take_a_year_range(self):
+        assert schedule_to_cron_expressions({
+            "frequency": "week", "hour": 17, "minute": 0, "dayOfWeek": 5,
+            "monthStart": 3, "monthEnd": 10,
+        }) == ["0 17 * 3-10 5"]
+        assert schedule_to_cron_expressions({
+            "frequency": "month", "hour": 9, "minute": 0, "dayOfMonth": 1,
+            "monthStart": 3, "monthEnd": 10,
+        }) == ["0 9 1 3-10 *"]
+
+    def test_constrained_seconds_format(self):
+        """Seconds gain a 5-field tail the scheduler gates each candidate
+        against; the unconstrained legacy form stays byte-identical."""
+        assert schedule_to_cron_expressions({"frequency": "seconds", "interval": 10}) \
+            == ["*/10s * * * *"]
+        assert schedule_to_cron_expressions({
+            "frequency": "seconds", "interval": 10, "daysOfWeek": [1, 2, 3, 4, 5],
+        }) == ["*/10s * * * * 1-5"]
+        assert schedule_to_cron_expressions({
+            "frequency": "seconds", "interval": 10,
+            "windowStart": "09:00", "windowEnd": "18:00",
+        }) == ["*/10s * 9-17 * * *", "*/10s 0 18 * * *"]
+
+    def test_dom_and_dow_are_intersected_not_ored(self):
+        """Vixie cron ORs restricted day-of-month with day-of-week; our
+        evaluators deliberately intersect. croniter(day_or=False) is the local
+        evaluator's exact configuration — pin the semantics through it."""
+        from croniter import croniter
+        from datetime import datetime, timezone as tz
+
+        [expr] = schedule_to_cron_expressions({
+            "frequency": "day", "hour": 9, "minute": 0,
+            "daysOfWeek": [1, 2, 3, 4, 5],
+            "monthDayStart": 1, "monthDayEnd": 15,
+        })
+        assert expr == "0 9 1-15 * 1-5"
+        # From Aug 31 2026 (a Monday, but the 31st — outside the 1-15 range):
+        # OR semantics would fire Aug 31 09:00; AND must wait for Sep 1 (a
+        # Tuesday, in range).
+        base = datetime(2026, 8, 31, 0, 0, tzinfo=tz.utc)
+        nxt = croniter(expr, base, day_or=False).get_next(datetime)
+        assert nxt == datetime(2026, 9, 1, 9, 0, tzinfo=tz.utc)
+        # And Sep 5-6 2026 (Sat/Sun, in dom range) must be skipped for Mon 7th.
+        base2 = datetime(2026, 9, 4, 10, 0, tzinfo=tz.utc)
+        nxt2 = croniter(expr, base2, day_or=False).get_next(datetime)
+        assert nxt2 == datetime(2026, 9, 7, 9, 0, tzinfo=tz.utc)
+
+    def test_stacked_fire_sequence_ground_truth(self):
+        """croniter enumeration of the stacked expressions across boundaries:
+        fires only inside window ∧ weekdays ∧ 1st–15th ∧ Mar–Oct."""
+        from croniter import croniter
+        from datetime import datetime, timezone as tz
+
+        exprs = schedule_to_cron_expressions({
+            "frequency": "hours", "interval": 2,
+            "windowStart": "09:00", "windowEnd": "17:00",
+            "daysOfWeek": [1, 2, 3, 4, 5],
+            "monthDayStart": 1, "monthDayEnd": 5,
+            "monthStart": 3, "monthEnd": 4,
+        })
+        fires = []
+        for expr in exprs:
+            it = croniter(expr, datetime(2026, 2, 25, tzinfo=tz.utc), day_or=False)
+            for _ in range(60):
+                t = it.get_next(datetime)
+                if t.year != 2026 or t.month > 5:
+                    break
+                fires.append(t)
+        fires.sort()
+        # 2026: Mar 2-5 = Mon-Thu (Mar 1 is a Sunday); Apr 1-3 = Wed-Fri
+        # (Apr 4-5 = weekend). Five 2h ticks per qualifying day, 9:00-17:00.
+        days = sorted({(t.month, t.day) for t in fires})
+        assert days == [(3, 2), (3, 3), (3, 4), (3, 5), (4, 1), (4, 2), (4, 3)]
+        assert all(t.hour in (9, 11, 13, 15, 17) and t.minute == 0 for t in fires)
+        assert len(fires) == 7 * 5
+
+
+class TestScheduleConfigWindowValidation:
+    """Pydantic-level validation of the new window/days fields."""
+
+    def test_valid_window_config(self):
+        cfg = ScheduleConfig(
+            frequency="minutes", interval=30,
+            windowStart="09:00", windowEnd="18:00", daysOfWeek=[1, 2, 3, 4, 5],
+        )
+        assert cfg.windowStart == "09:00"
+
+    def test_empty_string_is_unset_marker(self):
+        cfg = ScheduleConfig(frequency="minutes", interval=30, windowStart="", windowEnd="")
+        assert cfg.windowStart is None and cfg.windowEnd is None
+
+    def test_half_window_rejected(self):
+        with pytest.raises(ValueError):
+            ScheduleConfig(frequency="minutes", interval=30, windowStart="09:00")
+
+    def test_window_on_daily_schedule_rejected(self):
+        with pytest.raises(ValueError):
+            ScheduleConfig(frequency="day", windowStart="09:00", windowEnd="18:00")
+
+    def test_bad_time_format_rejected(self):
+        with pytest.raises(ValueError):
+            ScheduleConfig(frequency="minutes", interval=30, windowStart="9am", windowEnd="6pm")
+
+    def test_bad_day_rejected(self):
+        with pytest.raises(ValueError):
+            ScheduleConfig(frequency="minutes", interval=30, daysOfWeek=[9])
+
+    def test_reference_values_pass_through(self):
+        """{{ref}} values resolve at registration time — the model must not
+        reject them."""
+        cfg = ScheduleConfig(
+            frequency="minutes", interval=30,
+            windowStart="{{form.values.start}}", windowEnd="{{form.values.end}}",
+        )
+        assert cfg.windowStart == "{{form.values.start}}"
 
 
 class TestCronTriggerConfig:
