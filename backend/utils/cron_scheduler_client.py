@@ -398,12 +398,14 @@ async def create_schedule(
         user_id: The user ID
         workflow_id: The workflow ID
         node_id: The node ID
-        cron_expression: Cron expression (e.g., "0 * * * *" for hourly)
+        cron_expression: Cron expression (e.g., "0 * * * *" for hourly),
+            written in `timezone`-local wall-clock time
         webhook_url: URL to call when cron fires
         payload: Optional payload to send with webhook
         max_attempts: Number of retry attempts on failure
         timeout: Request timeout in seconds
-        timezone: IANA timezone for the cron schedule (e.g., "US/Eastern")
+        timezone: IANA timezone the expression is evaluated in (e.g.,
+            "America/New_York"); sent on the wire as `tz`
         schedule_id: Optional caller-supplied stable id. When set, the worker
             upserts this id instead of minting a new row, so repeated/concurrent
             creates of the same logical schedule converge to one row (idempotent).
@@ -425,7 +427,12 @@ async def create_schedule(
                 "webhook_url": webhook_url,
                 "payload": payload,
                 "max_attempts": max_attempts,
-                "timezone": timezone,
+                # Deliberately `tz`, not `timezone`: the scheduler evaluates the
+                # expression in this zone. Pre-tz-aware backends sent a (then
+                # ignored) `timezone` field alongside UTC-pre-converted
+                # expressions — the new name keeps the worker from ever
+                # double-shifting those legacy payloads.
+                "tz": timezone,
             }
             if schedule_id:
                 body["id"] = schedule_id

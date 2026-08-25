@@ -124,7 +124,10 @@ class CronScheduleTriggerMixin:
         pool=None,
     ) -> Optional[CronScheduleSpec]:
         """None = not a schedule-trigger op (nothing to register)."""
-        from nodes.cron_trigger_node import schedule_to_cron, schedule_to_interval_ms
+        from nodes.cron_trigger_node import (
+            schedule_to_cron_expressions,
+            schedule_to_interval_ms,
+        )
         from nodes.core.poll_trigger import registration_config_error
 
         if not cls._is_schedule_operation(operation):
@@ -138,8 +141,13 @@ class CronScheduleTriggerMixin:
             return CronScheduleSpec(expressions=[], config_error=config_error)
 
         schedule = ctx.get("schedule") or {"frequency": "minutes", "interval": 5}
+        try:
+            expressions = schedule_to_cron_expressions(schedule)
+        except ValueError as e:
+            return CronScheduleSpec(expressions=[], config_error=str(e))
         return CronScheduleSpec(
-            expressions=[schedule_to_cron(schedule)],
+            expressions=expressions,
+            timezone=ctx.get("timezone") or "UTC",
             source=cls.schedule_source,
             extra_values={"interval_ms": schedule_to_interval_ms(schedule)},
         )

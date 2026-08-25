@@ -129,6 +129,7 @@ function DroppableScheduleEntry({
                     <ScheduleWidget
                         value={entry}
                         onChange={(v) => onUpdate(index, v)}
+                        showWindow
                     />
                 )}
             </div>

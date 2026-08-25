@@ -395,9 +395,7 @@ async def restore_nodes_resources(
     Returns:
         Dict with restoration results
     """
-    from utils.cron_scheduler_client import create_schedule
     from utils.webhook_manager import WebhookManager
-    from nodes.cron_trigger_node import schedule_to_cron
 
     results = {'restored': [], 'errors': []}
 
@@ -425,35 +423,33 @@ async def restore_nodes_resources(
             )
             logger.info(f"[WorkflowResourceManager] Restored webhook for node {node_id}")
 
-            # For cron nodes, also restore the cron schedule
+            # For cron nodes, restore the schedules through THE reconciler:
+            # multi-schedule + timezone + window aware, deterministic ids
+            # (the old hand-rolled single create here minted a random-id row
+            # the deterministic-id prune never matched, and read the legacy
+            # singular `schedule` key — truncating multi-schedule configs).
             if node_type == 'trigger-cron':
-                # Stored workflow nodes hold config fields flat on node["config"]
-                # (no "data" key — that's the live ReactFlow shape).
-                node_config = node.get('config', {})
-                schedule = node_config.get('schedule', {
-                    'frequency': 'hours', 'interval': 1
-                })
-                cron_expression = schedule_to_cron(schedule)
-                webhook_url = webhook_data.get('webhook_url')
-
-                if webhook_url:
-                    cron_result = await create_schedule(
-                        user_id=user_id,
-                        workflow_id=workflow_id,
-                        node_id=node_id,
-                        cron_expression=cron_expression,
-                        webhook_url=webhook_url,
-                        payload={'source': 'cron_trigger', 'node_id': node_id}
+                # nodes_override: desired state comes from the restored node
+                # itself, independent of whether the graph save landed yet.
+                reconcile = await WebhookManager.reconcile_node(
+                    pool, str(workflow_id), node_id, user_id=user_id,
+                    nodes_override=[{
+                        'id': node_id,
+                        'type': node_type,
+                        'config': node.get('config', {}),
+                    }],
+                )
+                if reconcile.get('state') == 'failed':
+                    logger.warning(
+                        f"[WorkflowResourceManager] Failed to restore cron schedule: {reconcile.get('error')}"
                     )
-                    if 'id' in cron_result:
-                        logger.info(f"[WorkflowResourceManager] Restored cron schedule for node {node_id}")
-                    else:
-                        logger.warning(f"[WorkflowResourceManager] Failed to restore cron schedule: {cron_result.get('error')}")
-                        results['errors'].append({
-                            'node_id': node_id,
-                            'resource': 'cron',
-                            'error': cron_result.get('error')
-                        })
+                    results['errors'].append({
+                        'node_id': node_id,
+                        'resource': 'cron',
+                        'error': reconcile.get('error'),
+                    })
+                else:
+                    logger.info(f"[WorkflowResourceManager] Restored cron schedule for node {node_id}")
 
             results['restored'].append({
                 'node_id': node_id,
