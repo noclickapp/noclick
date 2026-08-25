@@ -309,7 +309,10 @@ jobs:
 
           health="$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 http://localhost:8080/health || true)"
           root="$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 http://localhost:8080/ || true)"
-          share="$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 http://localhost:8080/share/release-smoke || true)"
+          # The public share route parses its identifier as a UUID before the
+          # lookup. Probe a valid, deliberately absent UUID so this verifies
+          # the not-found path instead of testing malformed-input handling.
+          share="$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 http://localhost:8080/share/00000000-0000-0000-0000-000000000000 || true)"
           invite="$(curl -s -o /dev/null -w '%{http_code}' --max-time 30 http://localhost:8080/i/release-smoke || true)"
           cron="$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 http://localhost:8080/local-cron/schedules || true)"
           echo "/health=$health  /=$root  /share=$share  /i=$invite  /local-cron=$cron"
