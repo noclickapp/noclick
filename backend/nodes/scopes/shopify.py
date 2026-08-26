@@ -211,6 +211,21 @@ _REQUIREMENTS: dict[str, ScopeRequirement] = {
     # object documents a required scope, and no `read_shop` scope exists.
     "get_shop_information": _s(note="Shopify documents no scope for the Shop resource."),
     "get_shop_with_graphql": _s(note="Shopify documents no scope for the shop query."),
+    # -------------------------------------------------------------------- blog
+    # Blog + Article ride the Online Store `content` scope family (the REST
+    # Article/Blog pages both state "Requires `content` access scope").
+    **_reads(
+        "list_blogs",
+        "list_blog_articles",
+        "get_blog_article_by_id",
+        scope="read_content",
+    ),
+    **_reads(
+        "create_blog_article",
+        "update_blog_article",
+        "delete_blog_article",
+        scope="write_content",
+    ),
     # ---------------------------------------------------------------- webhooks
     # Webhook management itself needs no scope (there is no read_/write_webhooks
     # scope); only the subscribed TOPIC carries one.

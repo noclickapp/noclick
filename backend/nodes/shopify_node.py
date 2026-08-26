@@ -150,6 +150,8 @@ class ShopifyOAuthCredential(BaseModel):
                 "write_assigned_fulfillment_orders",
                 "read_third_party_fulfillment_orders",
                 "write_third_party_fulfillment_orders",
+                "read_content",
+                "write_content",
             ],
         }
     )
@@ -159,8 +161,9 @@ class ShopifyAccessTokenCredential(BaseModel):
     """
     Access Token credential for Shopify Admin API.
 
-    Get your access token by creating a custom app in Shopify admin:
-    https://admin.shopify.com/store/{your-store}/settings/apps/development
+    Only for custom apps created in the store admin before January 2026 —
+    Shopify no longer issues permanent Admin API tokens for new apps. New
+    stores should use the OAuth method (optionally with their own app).
     """
 
     credential_type: Literal["shopify_access_token"] = Field(
@@ -3813,6 +3816,198 @@ class ShopifyOnCustomerCreatedConfig(_ShopifyEventTriggerBase):
 # Discriminated Union
 # ============================================================================
 
+class ShopifyListBlogsConfig(BaseModel):
+    """List the store's blogs"""
+
+    operation: Literal["list_blogs"] = Field(
+        "list_blogs",
+        json_schema_extra={
+            "const": "list_blogs",
+            "ui:hidden": True,
+            "x-category": "Blog",
+            "x-is-trigger": False,
+            "x-display-name": "List Blogs",
+            "x-keywords": ["store blogs", "blog list", "content blogs"],
+        },
+        title="List Blogs",
+    )
+    limit: Optional[int] = Field(
+        50, title="Limit", description="Number of blogs to return (max 250)", ge=1, le=250
+    )
+    since_id: Optional[str] = Field(
+        None, title="Since ID", description="Return blogs after this ID"
+    )
+
+
+class ShopifyListBlogArticlesConfig(BaseModel):
+    """List articles in a blog"""
+
+    operation: Literal["list_blog_articles"] = Field(
+        "list_blog_articles",
+        json_schema_extra={
+            "const": "list_blog_articles",
+            "ui:hidden": True,
+            "x-category": "Blog",
+            "x-is-trigger": False,
+            "x-display-name": "List Blog Articles",
+            "x-keywords": ["blog posts", "articles", "published posts", "blog content"],
+        },
+        title="List Blog Articles",
+    )
+    blog_id: str = Field(
+        ..., title="Blog ID", description="ID of the blog (use List Blogs to find it)"
+    )
+    limit: Optional[int] = Field(
+        50, title="Limit", description="Number of articles to return (max 250)", ge=1, le=250
+    )
+    since_id: Optional[str] = Field(
+        None, title="Since ID", description="Return articles after this ID"
+    )
+    tag: Optional[str] = Field(None, title="Tag", description="Filter by tag")
+    published_status: Optional[str] = Field(
+        None,
+        title="Published Status",
+        description="Filter by publication state",
+        json_schema_extra={"enum": ["published", "unpublished", "any"]},
+    )
+
+
+class ShopifyGetBlogArticleConfig(BaseModel):
+    """Get a single blog article"""
+
+    operation: Literal["get_blog_article_by_id"] = Field(
+        "get_blog_article_by_id",
+        json_schema_extra={
+            "const": "get_blog_article_by_id",
+            "ui:hidden": True,
+            "x-category": "Blog",
+            "x-is-trigger": False,
+            "x-display-name": "Get Blog Article by Id",
+            "x-keywords": ["single article", "blog post details", "read article"],
+        },
+        title="Get Blog Article by Id",
+    )
+    blog_id: str = Field(..., title="Blog ID", description="ID of the blog")
+    article_id: str = Field(..., title="Article ID", description="ID of the article")
+
+
+class ShopifyCreateBlogArticleConfig(BaseModel):
+    """Create a blog article"""
+
+    operation: Literal["create_blog_article"] = Field(
+        "create_blog_article",
+        json_schema_extra={
+            "const": "create_blog_article",
+            "ui:hidden": True,
+            "x-category": "Blog",
+            "x-is-trigger": False,
+            "x-display-name": "Create Blog Article",
+            "x-keywords": [
+                "publish blog post",
+                "write article",
+                "post to blog",
+                "new blog post",
+            ],
+        },
+        title="Create Blog Article",
+    )
+    blog_id: str = Field(
+        ..., title="Blog ID", description="ID of the blog (use List Blogs to find it)"
+    )
+    title: str = Field(..., title="Title", description="Article title")
+    body_html: str = Field(
+        ..., title="Body HTML", description="Full article body as HTML"
+    )
+    author: Optional[str] = Field(None, title="Author", description="Author name")
+    tags: Optional[str] = Field(
+        None, title="Tags", description="Comma-separated list of tags"
+    )
+    summary_html: Optional[str] = Field(
+        None, title="Summary HTML", description="Excerpt shown on the blog index page"
+    )
+    published: str = Field(
+        "true",
+        title="Published",
+        description="Publish immediately, or save as hidden draft",
+        json_schema_extra={
+            "enum": ["true", "false"],
+            "enumNames": ["Published", "Hidden"],
+            "x-enum-searchable": True,
+        },
+    )
+    image_src: Optional[str] = Field(
+        None, title="Image URL", description="Featured image URL"
+    )
+    image_alt: Optional[str] = Field(
+        None, title="Image Alt Text", description="Featured image alt text"
+    )
+
+
+class ShopifyUpdateBlogArticleConfig(BaseModel):
+    """Update a blog article"""
+
+    operation: Literal["update_blog_article"] = Field(
+        "update_blog_article",
+        json_schema_extra={
+            "const": "update_blog_article",
+            "ui:hidden": True,
+            "x-category": "Blog",
+            "x-is-trigger": False,
+            "x-display-name": "Update Blog Article",
+            "x-keywords": ["edit article", "revise blog post", "unpublish article"],
+        },
+        title="Update Blog Article",
+    )
+    blog_id: str = Field(..., title="Blog ID", description="ID of the blog")
+    article_id: str = Field(..., title="Article ID", description="ID of the article")
+    title: Optional[str] = Field(None, title="Title", description="New article title")
+    body_html: Optional[str] = Field(
+        None, title="Body HTML", description="New article body as HTML"
+    )
+    author: Optional[str] = Field(None, title="Author", description="Author name")
+    tags: Optional[str] = Field(
+        None, title="Tags", description="Comma-separated list of tags"
+    )
+    summary_html: Optional[str] = Field(
+        None, title="Summary HTML", description="Excerpt shown on the blog index page"
+    )
+    published: Optional[str] = Field(
+        None,
+        title="Published",
+        description="Change publication state (leave empty to keep current)",
+        json_schema_extra={
+            "enum": ["true", "false"],
+            "enumNames": ["Published", "Hidden"],
+            "x-enum-searchable": True,
+        },
+    )
+    image_src: Optional[str] = Field(
+        None, title="Image URL", description="Featured image URL"
+    )
+    image_alt: Optional[str] = Field(
+        None, title="Image Alt Text", description="Featured image alt text"
+    )
+
+
+class ShopifyDeleteBlogArticleConfig(BaseModel):
+    """Delete a blog article"""
+
+    operation: Literal["delete_blog_article"] = Field(
+        "delete_blog_article",
+        json_schema_extra={
+            "const": "delete_blog_article",
+            "ui:hidden": True,
+            "x-category": "Blog",
+            "x-is-trigger": False,
+            "x-display-name": "Delete Blog Article",
+            "x-keywords": ["remove article", "delete blog post"],
+        },
+        title="Delete Blog Article",
+    )
+    blog_id: str = Field(..., title="Blog ID", description="ID of the blog")
+    article_id: str = Field(..., title="Article ID", description="ID of the article")
+
+
 ShopifyConfig = Annotated[
     Union[
         # Trigger operations
@@ -3930,6 +4125,13 @@ ShopifyConfig = Annotated[
         ShopifyCreateGiftCardConfig,
         ShopifyUpdateGiftCardConfig,
         ShopifyDisableGiftCardConfig,
+        # Blog operations (6)
+        ShopifyListBlogsConfig,
+        ShopifyListBlogArticlesConfig,
+        ShopifyGetBlogArticleConfig,
+        ShopifyCreateBlogArticleConfig,
+        ShopifyUpdateBlogArticleConfig,
+        ShopifyDeleteBlogArticleConfig,
         # GraphQL operations (13)
         ShopifyGraphQLQueryConfig,
         ShopifyGraphQLMutationConfig,
@@ -4219,6 +4421,13 @@ class ShopifyNode(ExternalWebhookTriggerMixin, WorkflowNode):
             "update_collection": self._handle_update_collection,
             "delete_collection": self._handle_delete_collection,
             "add_product_to_collection": self._handle_add_product_to_collection,
+            # Blog operations
+            "list_blogs": self._handle_list_blogs,
+            "list_blog_articles": self._handle_list_blog_articles,
+            "get_blog_article_by_id": self._handle_get_blog_article,
+            "create_blog_article": self._handle_create_blog_article,
+            "update_blog_article": self._handle_update_blog_article,
+            "delete_blog_article": self._handle_delete_blog_article,
             # Location operations
             "list_all_locations": self._handle_list_locations,
             "get_location_by_id": self._handle_get_location,
@@ -5085,6 +5294,100 @@ class ShopifyNode(ExternalWebhookTriggerMixin, WorkflowNode):
             endpoint=f"/custom_collections/{config.collection_id}.json",
             credentials=credentials,
             action_name="get_collection_by_id",
+        )
+
+    async def _handle_list_blogs(
+        self, config: ShopifyListBlogsConfig, credentials: ShopifyCredential
+    ) -> Dict[str, Any]:
+        """List the store's blogs."""
+        return await self._make_request(
+            method="GET",
+            endpoint="/blogs.json",
+            credentials=credentials,
+            params={"limit": config.limit, "since_id": config.since_id},
+            action_name="list_blogs",
+        )
+
+    async def _handle_list_blog_articles(
+        self, config: ShopifyListBlogArticlesConfig, credentials: ShopifyCredential
+    ) -> Dict[str, Any]:
+        """List articles in a blog."""
+        return await self._make_request(
+            method="GET",
+            endpoint=f"/blogs/{config.blog_id}/articles.json",
+            credentials=credentials,
+            params={
+                "limit": config.limit,
+                "since_id": config.since_id,
+                "tag": config.tag,
+                "published_status": config.published_status,
+            },
+            action_name="list_blog_articles",
+        )
+
+    async def _handle_get_blog_article(
+        self, config: ShopifyGetBlogArticleConfig, credentials: ShopifyCredential
+    ) -> Dict[str, Any]:
+        """Get a single blog article."""
+        return await self._make_request(
+            method="GET",
+            endpoint=f"/blogs/{config.blog_id}/articles/{config.article_id}.json",
+            credentials=credentials,
+            action_name="get_blog_article_by_id",
+        )
+
+    @staticmethod
+    def _article_body(config) -> Dict[str, Any]:
+        """Article payload from a create/update config; None fields are omitted."""
+        article: Dict[str, Any] = {}
+        for key in ("title", "body_html", "author", "tags", "summary_html"):
+            value = getattr(config, key)
+            if value is not None:
+                article[key] = value
+        if config.published is not None:
+            article["published"] = config.published == "true"
+        if config.image_src:
+            image: Dict[str, Any] = {"src": config.image_src}
+            if config.image_alt:
+                image["alt"] = config.image_alt
+            article["image"] = image
+        return article
+
+    async def _handle_create_blog_article(
+        self, config: ShopifyCreateBlogArticleConfig, credentials: ShopifyCredential
+    ) -> Dict[str, Any]:
+        """Create a blog article."""
+        return await self._make_request(
+            method="POST",
+            endpoint=f"/blogs/{config.blog_id}/articles.json",
+            credentials=credentials,
+            json_body={"article": self._article_body(config)},
+            action_name="create_blog_article",
+        )
+
+    async def _handle_update_blog_article(
+        self, config: ShopifyUpdateBlogArticleConfig, credentials: ShopifyCredential
+    ) -> Dict[str, Any]:
+        """Update a blog article."""
+        article = self._article_body(config)
+        article["id"] = config.article_id
+        return await self._make_request(
+            method="PUT",
+            endpoint=f"/blogs/{config.blog_id}/articles/{config.article_id}.json",
+            credentials=credentials,
+            json_body={"article": article},
+            action_name="update_blog_article",
+        )
+
+    async def _handle_delete_blog_article(
+        self, config: ShopifyDeleteBlogArticleConfig, credentials: ShopifyCredential
+    ) -> Dict[str, Any]:
+        """Delete a blog article."""
+        return await self._make_request(
+            method="DELETE",
+            endpoint=f"/blogs/{config.blog_id}/articles/{config.article_id}.json",
+            credentials=credentials,
+            action_name="delete_blog_article",
         )
 
     async def _handle_create_collection(

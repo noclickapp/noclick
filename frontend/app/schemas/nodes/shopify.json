@@ -1,7 +1,7 @@
 {
   "$defs": {
     "ShopifyAccessTokenCredential": {
-      "description": "Access Token credential for Shopify Admin API.\n\nGet your access token by creating a custom app in Shopify admin:\nhttps://admin.shopify.com/store/{your-store}/settings/apps/development",
+      "description": "Access Token credential for Shopify Admin API.\n\nOnly for custom apps created in the store admin before January 2026 \u2014\nShopify no longer issues permanent Admin API tokens for new apps. New\nstores should use the OAuth method (optionally with their own app).",
       "properties": {
         "credential_type": {
           "const": "shopify_access_token",
@@ -642,6 +642,129 @@
         "order_id"
       ],
       "title": "ShopifyCountTransactionsConfig",
+      "type": "object"
+    },
+    "ShopifyCreateBlogArticleConfig": {
+      "description": "Create a blog article",
+      "properties": {
+        "operation": {
+          "const": "create_blog_article",
+          "default": "create_blog_article",
+          "title": "Create Blog Article",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Blog",
+          "x-display-name": "Create Blog Article",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "publish blog post",
+            "write article",
+            "post to blog",
+            "new blog post"
+          ]
+        },
+        "blog_id": {
+          "description": "ID of the blog (use List Blogs to find it)",
+          "title": "Blog ID",
+          "type": "string"
+        },
+        "title": {
+          "description": "Article title",
+          "title": "Title",
+          "type": "string"
+        },
+        "body_html": {
+          "description": "Full article body as HTML",
+          "title": "Body HTML",
+          "type": "string"
+        },
+        "author": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Author name",
+          "title": "Author"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of tags",
+          "title": "Tags"
+        },
+        "summary_html": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Excerpt shown on the blog index page",
+          "title": "Summary HTML"
+        },
+        "published": {
+          "default": "true",
+          "description": "Publish immediately, or save as hidden draft",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Published",
+            "Hidden"
+          ],
+          "title": "Published",
+          "type": "string",
+          "x-enum-searchable": true
+        },
+        "image_src": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Featured image URL",
+          "title": "Image URL"
+        },
+        "image_alt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Featured image alt text",
+          "title": "Image Alt Text"
+        }
+      },
+      "required": [
+        "blog_id",
+        "title",
+        "body_html"
+      ],
+      "title": "ShopifyCreateBlogArticleConfig",
       "type": "object"
     },
     "ShopifyCreateCollectionConfig": {
@@ -2269,6 +2392,41 @@
       "title": "ShopifyCreateWebhookConfig",
       "type": "object"
     },
+    "ShopifyDeleteBlogArticleConfig": {
+      "description": "Delete a blog article",
+      "properties": {
+        "operation": {
+          "const": "delete_blog_article",
+          "default": "delete_blog_article",
+          "title": "Delete Blog Article",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Blog",
+          "x-display-name": "Delete Blog Article",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "remove article",
+            "delete blog post"
+          ]
+        },
+        "blog_id": {
+          "description": "ID of the blog",
+          "title": "Blog ID",
+          "type": "string"
+        },
+        "article_id": {
+          "description": "ID of the article",
+          "title": "Article ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "blog_id",
+        "article_id"
+      ],
+      "title": "ShopifyDeleteBlogArticleConfig",
+      "type": "object"
+    },
     "ShopifyDeleteCollectionConfig": {
       "description": "Delete a collection",
       "properties": {
@@ -2687,6 +2845,42 @@
         "gift_card_id"
       ],
       "title": "ShopifyDisableGiftCardConfig",
+      "type": "object"
+    },
+    "ShopifyGetBlogArticleConfig": {
+      "description": "Get a single blog article",
+      "properties": {
+        "operation": {
+          "const": "get_blog_article_by_id",
+          "default": "get_blog_article_by_id",
+          "title": "Get Blog Article by Id",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Blog",
+          "x-display-name": "Get Blog Article by Id",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "single article",
+            "blog post details",
+            "read article"
+          ]
+        },
+        "blog_id": {
+          "description": "ID of the blog",
+          "title": "Blog ID",
+          "type": "string"
+        },
+        "article_id": {
+          "description": "ID of the article",
+          "title": "Article ID",
+          "type": "string"
+        }
+      },
+      "required": [
+        "blog_id",
+        "article_id"
+      ],
+      "title": "ShopifyGetBlogArticleConfig",
       "type": "object"
     },
     "ShopifyGetCollectionConfig": {
@@ -4232,6 +4426,146 @@
       "title": "ShopifyGraphQLShopQueryConfig",
       "type": "object"
     },
+    "ShopifyListBlogArticlesConfig": {
+      "description": "List articles in a blog",
+      "properties": {
+        "operation": {
+          "const": "list_blog_articles",
+          "default": "list_blog_articles",
+          "title": "List Blog Articles",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Blog",
+          "x-display-name": "List Blog Articles",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "blog posts",
+            "articles",
+            "published posts",
+            "blog content"
+          ]
+        },
+        "blog_id": {
+          "description": "ID of the blog (use List Blogs to find it)",
+          "title": "Blog ID",
+          "type": "string"
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 250,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "description": "Number of articles to return (max 250)",
+          "title": "Limit"
+        },
+        "since_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return articles after this ID",
+          "title": "Since ID"
+        },
+        "tag": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by tag",
+          "title": "Tag"
+        },
+        "published_status": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Filter by publication state",
+          "enum": [
+            "published",
+            "unpublished",
+            "any"
+          ],
+          "title": "Published Status"
+        }
+      },
+      "required": [
+        "blog_id"
+      ],
+      "title": "ShopifyListBlogArticlesConfig",
+      "type": "object"
+    },
+    "ShopifyListBlogsConfig": {
+      "description": "List the store's blogs",
+      "properties": {
+        "operation": {
+          "const": "list_blogs",
+          "default": "list_blogs",
+          "title": "List Blogs",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Blog",
+          "x-display-name": "List Blogs",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "store blogs",
+            "blog list",
+            "content blogs"
+          ]
+        },
+        "limit": {
+          "anyOf": [
+            {
+              "maximum": 250,
+              "minimum": 1,
+              "type": "integer"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": 50,
+          "description": "Number of blogs to return (max 250)",
+          "title": "Limit"
+        },
+        "since_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Return blogs after this ID",
+          "title": "Since ID"
+        }
+      },
+      "title": "ShopifyListBlogsConfig",
+      "type": "object"
+    },
     "ShopifyListCollectionsConfig": {
       "description": "List collections (custom collections)",
       "properties": {
@@ -5362,7 +5696,9 @@
         "read_assigned_fulfillment_orders",
         "write_assigned_fulfillment_orders",
         "read_third_party_fulfillment_orders",
-        "write_third_party_fulfillment_orders"
+        "write_third_party_fulfillment_orders",
+        "read_content",
+        "write_content"
       ],
       "x-oauth-supports-custom-client": true
     },
@@ -6460,6 +6796,155 @@
       "title": "ShopifySetInventoryLevelConfig",
       "type": "object"
     },
+    "ShopifyUpdateBlogArticleConfig": {
+      "description": "Update a blog article",
+      "properties": {
+        "operation": {
+          "const": "update_blog_article",
+          "default": "update_blog_article",
+          "title": "Update Blog Article",
+          "type": "string",
+          "ui:hidden": true,
+          "x-category": "Blog",
+          "x-display-name": "Update Blog Article",
+          "x-is-trigger": false,
+          "x-keywords": [
+            "edit article",
+            "revise blog post",
+            "unpublish article"
+          ]
+        },
+        "blog_id": {
+          "description": "ID of the blog",
+          "title": "Blog ID",
+          "type": "string"
+        },
+        "article_id": {
+          "description": "ID of the article",
+          "title": "Article ID",
+          "type": "string"
+        },
+        "title": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New article title",
+          "title": "Title"
+        },
+        "body_html": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "New article body as HTML",
+          "title": "Body HTML"
+        },
+        "author": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Author name",
+          "title": "Author"
+        },
+        "tags": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Comma-separated list of tags",
+          "title": "Tags"
+        },
+        "summary_html": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Excerpt shown on the blog index page",
+          "title": "Summary HTML"
+        },
+        "published": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Change publication state (leave empty to keep current)",
+          "enum": [
+            "true",
+            "false"
+          ],
+          "enumNames": [
+            "Published",
+            "Hidden"
+          ],
+          "title": "Published",
+          "x-enum-searchable": true
+        },
+        "image_src": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Featured image URL",
+          "title": "Image URL"
+        },
+        "image_alt": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "description": "Featured image alt text",
+          "title": "Image Alt Text"
+        }
+      },
+      "required": [
+        "blog_id",
+        "article_id"
+      ],
+      "title": "ShopifyUpdateBlogArticleConfig",
+      "type": "object"
+    },
     "ShopifyUpdateCollectionConfig": {
       "description": "Update a collection",
       "properties": {
@@ -7493,6 +7978,7 @@
           "count_orders": "#/$defs/ShopifyCountOrdersConfig",
           "count_product_variants": "#/$defs/ShopifyCountProductVariantsConfig",
           "count_products": "#/$defs/ShopifyCountProductsConfig",
+          "create_blog_article": "#/$defs/ShopifyCreateBlogArticleConfig",
           "create_collection": "#/$defs/ShopifyCreateCollectionConfig",
           "create_customer": "#/$defs/ShopifyCreateCustomerConfig",
           "create_customer_address": "#/$defs/ShopifyCreateCustomerAddressConfig",
@@ -7511,6 +7997,7 @@
           "create_product_variant": "#/$defs/ShopifyCreateProductVariantConfig",
           "create_product_with_graphql": "#/$defs/ShopifyGraphQLProductCreateConfig",
           "create_webhook": "#/$defs/ShopifyCreateWebhookConfig",
+          "delete_blog_article": "#/$defs/ShopifyDeleteBlogArticleConfig",
           "delete_collection": "#/$defs/ShopifyDeleteCollectionConfig",
           "delete_customer": "#/$defs/ShopifyDeleteCustomerConfig",
           "delete_customer_address": "#/$defs/ShopifyDeleteCustomerAddressConfig",
@@ -7526,6 +8013,7 @@
           "disable_gift_card": "#/$defs/ShopifyDisableGiftCardConfig",
           "execute_custom_graphql_mutation": "#/$defs/ShopifyGraphQLMutationConfig",
           "execute_custom_graphql_query": "#/$defs/ShopifyGraphQLQueryConfig",
+          "get_blog_article_by_id": "#/$defs/ShopifyGetBlogArticleConfig",
           "get_collection_by_id": "#/$defs/ShopifyGetCollectionConfig",
           "get_customer_address_by_id": "#/$defs/ShopifyGetCustomerAddressConfig",
           "get_customer_by_id": "#/$defs/ShopifyGetCustomerConfig",
@@ -7545,6 +8033,8 @@
           "get_shop_with_graphql": "#/$defs/ShopifyGraphQLShopQueryConfig",
           "get_webhook_by_id": "#/$defs/ShopifyGetWebhookConfig",
           "list_all_locations": "#/$defs/ShopifyListLocationsConfig",
+          "list_blog_articles": "#/$defs/ShopifyListBlogArticlesConfig",
+          "list_blogs": "#/$defs/ShopifyListBlogsConfig",
           "list_collections": "#/$defs/ShopifyListCollectionsConfig",
           "list_customer_addresses": "#/$defs/ShopifyListCustomerAddressesConfig",
           "list_customers": "#/$defs/ShopifyListCustomersConfig",
@@ -7578,6 +8068,7 @@
           "search_customers": "#/$defs/ShopifySearchCustomersConfig",
           "set_default_customer_address": "#/$defs/ShopifySetDefaultCustomerAddressConfig",
           "set_inventory_level_at_location": "#/$defs/ShopifySetInventoryLevelConfig",
+          "update_blog_article": "#/$defs/ShopifyUpdateBlogArticleConfig",
           "update_collection": "#/$defs/ShopifyUpdateCollectionConfig",
           "update_customer": "#/$defs/ShopifyUpdateCustomerConfig",
           "update_customer_address": "#/$defs/ShopifyUpdateCustomerAddressConfig",
@@ -7884,6 +8375,24 @@
         },
         {
           "$ref": "#/$defs/ShopifyDisableGiftCardConfig"
+        },
+        {
+          "$ref": "#/$defs/ShopifyListBlogsConfig"
+        },
+        {
+          "$ref": "#/$defs/ShopifyListBlogArticlesConfig"
+        },
+        {
+          "$ref": "#/$defs/ShopifyGetBlogArticleConfig"
+        },
+        {
+          "$ref": "#/$defs/ShopifyCreateBlogArticleConfig"
+        },
+        {
+          "$ref": "#/$defs/ShopifyUpdateBlogArticleConfig"
+        },
+        {
+          "$ref": "#/$defs/ShopifyDeleteBlogArticleConfig"
         },
         {
           "$ref": "#/$defs/ShopifyGraphQLQueryConfig"
