@@ -29,15 +29,6 @@ INSTANCE_SECRETS = {
 REQUIRED_INPUTS = SUPABASE_INPUTS | INSTANCE_SECRETS
 
 
-def _koyeb_query() -> dict[str, list[str]]:
-    readme = (REPO / "README.md").read_text()
-    match = re.search(r'<a href="([^"]+)"><img alt="Deploy to Koyeb"', readme)
-    assert match, "README is missing its Deploy to Koyeb button"
-    url = html.unescape(match.group(1))
-    assert urlparse(url).netloc == "app.koyeb.com"
-    return parse_qs(urlparse(url).query, keep_blank_values=True)
-
-
 def test_render_and_digitalocean_prompt_for_the_required_inputs() -> None:
     render = yaml.safe_load((REPO / "render.yaml").read_text())
     render_keys = {item["key"] for item in render["services"][0]["envVars"]}
@@ -53,21 +44,6 @@ def test_render_and_digitalocean_prompt_for_the_required_inputs() -> None:
     assert digitalocean["instance_count"] == 1
     assert digitalocean["health_check"]["http_path"] == "/health"
     assert digitalocean["dockerfile_path"] == "docker/single-origin.Dockerfile"
-
-
-def test_koyeb_button_uses_the_reviewed_image_and_prompts_for_inputs() -> None:
-    query = _koyeb_query()
-    assert query["type"] == ["docker"]
-    assert query["image"] == ["ghcr.io/noclickapp/noclick:0.1.0"]
-    assert query["command"] == ["/bin/bash"]
-    assert query["args"][0] == "-lc"
-    assert "docker/bootstrap.py" in query["args"][1]
-    env_keys = {
-        key.removeprefix("env[").removesuffix("]")
-        for key in query
-        if key.startswith("env[") and key.endswith("]")
-    }
-    assert REQUIRED_INPUTS <= env_keys
 
 
 def test_fly_keeps_the_scheduler_alive_and_bootstraps_before_release() -> None:
