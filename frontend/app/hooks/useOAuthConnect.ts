@@ -298,7 +298,7 @@ export function useOAuthConnect(options: UseOAuthConnectOptions = {}) {
         pendingSelectionResolverRef.current = null;
 
         if (provider === 'shopify' && shopName) {
-            hook.connect(name, shopName, scopes || []);
+            hook.connect(name, shopName, scopes || [], customClientCredentials?.client_id, customClientCredentials?.client_secret);
         } else if (provider === 'zendesk' && shopName) {
             hook.connect(name, shopName, scopes || []);
         } else if (provider === 'zendesk') {
