@@ -19,13 +19,57 @@ const shopifyOAuthStateCookie = createCookie('shopify_oauth_state', {
     maxAge: 600, // 10 minutes
 });
 
-function normalizeShopInput(shopRaw: string): string {
-    return shopRaw
-        .trim()
-        .toLowerCase()
+export function normalizeShopInput(shopRaw: string): string {
+    const trimmed = shopRaw.trim().toLowerCase();
+    // Pasting the admin URL is a natural move — pull the handle straight out.
+    const adminMatch = trimmed.match(
+        /admin\.shopify\.com\/store\/([a-z0-9][a-z0-9-]*)/
+    );
+    if (adminMatch) return adminMatch[1];
+    return trimmed
         .replace(/^https?:\/\//, '')
         .replace(/\/.*$/, '')
         .replace(/\.myshopify\.com$/, '');
+}
+
+// Store owners think in their custom domain ("ohamillinc.com"), not the
+// myshopify handle behind it. A Shopify storefront names its canonical
+// *.myshopify.com domain throughout its HTML, so a domain-shaped input is
+// resolved by reading it from the live storefront; null means the caller
+// surfaces the explicit format error, never a guess.
+export async function resolveShopFromDomain(
+    domain: string
+): Promise<string | null> {
+    if (
+        !/^[a-z0-9]([a-z0-9-]*[a-z0-9])?(\.[a-z0-9]([a-z0-9-]*[a-z0-9])?)+$/.test(
+            domain
+        )
+    ) {
+        return null;
+    }
+    let html: string;
+    try {
+        const res = await fetch(`https://${domain}/`, {
+            redirect: 'follow',
+            signal: AbortSignal.timeout(6000),
+            headers: { accept: 'text/html' },
+        });
+        if (!res.ok) return null;
+        html = (await res.text()).slice(0, 1_000_000);
+    } catch {
+        return null;
+    }
+    // Most-frequent handle wins: a storefront references its own domain many
+    // times (Shopify.shop, preconnects), a stray link to another store once.
+    const counts = new Map<string, number>();
+    for (const match of html.matchAll(/([a-z0-9][a-z0-9-]*)\.myshopify\.com/g)) {
+        counts.set(match[1], (counts.get(match[1]) ?? 0) + 1);
+    }
+    let best: string | null = null;
+    for (const [handle, count] of counts) {
+        if (best === null || count > (counts.get(best) ?? 0)) best = handle;
+    }
+    return best;
 }
 
 function popupErrorHtml(message: string): string {
@@ -129,12 +173,15 @@ async function startShopifyOAuth(
         );
     }
 
-    const shop = normalizeShopInput(shopRaw);
+    let shop = normalizeShopInput(shopRaw);
+    if (shop.includes('.')) {
+        shop = (await resolveShopFromDomain(shop)) ?? shop;
+    }
     if (!/^[a-z0-9][a-z0-9-]*$/.test(shop)) {
         console.error('[shopify.authorize] Invalid shop format:', shopRaw);
         return new Response(
             popupErrorHtml(
-                'Invalid Shopify store. Enter only the subdomain (for example: my-store).'
+                'Could not find a Shopify store for that name. Enter your store handle — the "xxxx" in xxxx.myshopify.com, shown in your Shopify admin URL as admin.shopify.com/store/xxxx.'
             ),
             {
                 status: 400,
