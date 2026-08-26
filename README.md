@@ -25,11 +25,10 @@
 </p>
 
 <p align="center">
-  <a href="https://railway.com/new/template/noclick?utm_medium=integration&amp;utm_source=button&amp;utm_campaign=noclick"><img alt="Deploy on Railway" src="https://railway.com/button.svg" /></a>
-  <a href="https://render.com/deploy?repo=https://github.com/noclickapp/noclick"><img alt="Deploy to Render" src="https://render.com/images/deploy-to-render-button.svg" /></a>
-  <a href="https://cloud.digitalocean.com/apps/new?repo=https://github.com/noclickapp/noclick/tree/main"><img alt="Deploy to DigitalOcean" src="https://www.deploytodo.com/do-btn-blue.svg" /></a>
-  <a href="https://app.koyeb.com/deploy?type=docker&amp;image=ghcr.io%2Fnoclickapp%2Fnoclick%3A0.1.0&amp;name=noclick&amp;instance_type=medium&amp;ports=8080%3Bhttp%3B%2F&amp;command=%2Fbin%2Fbash&amp;args=-lc&amp;args=python%20%2Fapp%2Fdocker%2Fbootstrap.py%20%26%26%20exec%20%2Fusr%2Flocal%2Fbin%2Fnoclick-entrypoint&amp;env%5BVITE_PUBLIC_URL%5D=https%3A%2F%2F%7B%7B%20KOYEB_PUBLIC_DOMAIN%20%7D%7D&amp;env%5BVITE_DISABLE_CAPTCHA%5D=true&amp;env%5BPOSTGRES_URL%5D=&amp;env%5BPOSTGRES_POOLER_URL%5D=&amp;env%5BSUPABASE_URL%5D=&amp;env%5BSUPABASE_ANON_KEY%5D=&amp;env%5BSUPABASE_SECRET_KEY%5D=&amp;env%5BSUPABASE_JWK_URL%5D=&amp;env%5BCREDENTIALS_ENCRYPTION_KEY%5D=&amp;env%5BWORKFLOW_JWT_SECRET%5D=&amp;env%5BCRON_SCHEDULER_SECRET%5D=&amp;env%5BSESSION_SECRET%5D="><img alt="Deploy to Koyeb" src="https://www.koyeb.com/static/images/deploy/button.svg" /></a>
-  <a href="./docs/self-hosting.md#flyio"><img alt="Deploy with Fly.io" src="https://img.shields.io/badge/Deploy%20with-Fly.io-7B3FF2?logo=flydotio&amp;logoColor=white" /></a>
+  <a href="https://railway.com/new/template/noclick?utm_medium=integration&amp;utm_source=button&amp;utm_campaign=noclick"><img alt="Deploy on Railway" height="30" src="https://railway.com/button.svg" /></a>
+  <a href="https://render.com/deploy?repo=https://github.com/noclickapp/noclick"><img alt="Deploy to Render" height="30" src="https://render.com/images/deploy-to-render-button.svg" /></a>
+  <a href="https://cloud.digitalocean.com/apps/new?repo=https://github.com/noclickapp/noclick/tree/main"><img alt="Deploy to DigitalOcean" height="30" src="https://www.deploytodo.com/do-btn-blue.svg" /></a>
+  <a href="./docs/self-hosting.md#flyio"><img alt="Fly.io deployment guide" height="30" src="https://img.shields.io/badge/Fly.io-Deployment_Guide-7B3FF2?style=for-the-badge&amp;logo=flydotio&amp;logoColor=white" /></a>
 </p>
 
 <p align="center">
@@ -129,8 +128,8 @@ environment variables each side needs — read the
 
 The hosted deploy buttons provision the same included single-origin service.
 Have a Supabase project ready: each provider asks for its database and API
-credentials before creating the service. Railway and Koyeb use the reviewed
-release image; Render uses [`render.yaml`](./render.yaml), DigitalOcean uses
+credentials before creating the service. Railway uses the reviewed release
+image; Render uses [`render.yaml`](./render.yaml), DigitalOcean uses
 [`.do/deploy.template.yaml`](./.do/deploy.template.yaml), and Fly uses
 [`fly.toml`](./fly.toml). See the **[hosted deployment guide](./docs/self-hosting.md#hosted-deployments)**
 for the provider-specific details and required values.
