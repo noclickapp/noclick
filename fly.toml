@@ -1,0 +1,36 @@
+# Fly has retired its browser launcher. This reusable config keeps the launch
+# path short: replace the placeholder app name, set the required secrets, then
+# run `fly deploy`. See docs/self-hosting.md#flyio.
+app = "noclick-change-me"
+primary_region = "iad"
+
+[build]
+  dockerfile = "docker/single-origin.Dockerfile"
+
+[deploy]
+  release_command = "python /app/docker/bootstrap.py"
+  release_command_timeout = "10m"
+
+[env]
+  PORT = "8080"
+  VITE_DISABLE_CAPTCHA = "true"
+
+[http_service]
+  internal_port = 8080
+  force_https = true
+  # The scheduler is in-process, so the sole Machine must remain running even
+  # when there is no incoming web traffic.
+  auto_stop_machines = "off"
+  auto_start_machines = false
+
+  [[http_service.checks]]
+    grace_period = "30s"
+    interval = "30s"
+    method = "GET"
+    timeout = "5s"
+    path = "/health"
+
+[[vm]]
+  memory = "2gb"
+  cpu_kind = "shared"
+  cpus = 2

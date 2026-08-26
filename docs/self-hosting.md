@@ -65,6 +65,67 @@ would be wrong for everyone who pulled it. The single-origin image avoids the
 question entirely — it bakes no URL and asks the origin it was served from,
 which is why that one can be published and why the one-click deploys use it.
 
+## Hosted deployments
+
+The hosted paths all run the same single-origin image: one backend, one
+frontend, and nginx in one container on port 8080. They intentionally create
+exactly one application instance because the community scheduler and realtime
+room state are process-local. Each path runs the idempotent database bootstrap
+before serving traffic.
+
+Have a Supabase project ready. Every provider asks for the database URL,
+pooler URL, project URL, anon key, secret key, and JWKS URL described under
+[Required configuration](#required-configuration). Generate the remaining
+instance secrets before opening a deploy form:
+
+```bash
+# Keep this Fernet key backed up; it encrypts every saved integration credential.
+python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
+
+# Generate three separate values for WORKFLOW_JWT_SECRET,
+# CRON_SCHEDULER_SECRET, and SESSION_SECRET.
+openssl rand -hex 32
+```
+
+### Browser-based deploys
+
+| Provider | Deploy | Configuration |
+| --- | --- | --- |
+| Render | [Deploy](https://render.com/deploy?repo=https://github.com/noclickapp/noclick) | [`render.yaml`](../render.yaml) |
+| Railway | [Deploy](https://railway.com/new/template/noclick?utm_medium=integration&utm_source=button&utm_campaign=noclick) | Published template using the reviewed release image |
+| DigitalOcean | [Deploy](https://cloud.digitalocean.com/apps/new?repo=https://github.com/noclickapp/noclick/tree/main) | [`.do/deploy.template.yaml`](../.do/deploy.template.yaml) |
+| Koyeb | Use the button in the repository README | Button parameters select the released single-origin image and required variables |
+
+These forms do not provision Supabase itself. Review the generated plan before
+accepting it: NoClick needs enough memory to build the frontend, and scheduled
+workflows require the single application instance to remain running rather
+than scale to zero.
+
+### Fly.io
+
+Fly.io has retired its browser-based application launcher, so its supported
+path uses `flyctl` and the checked-in [`fly.toml`](../fly.toml). Change the
+placeholder `app` value to a globally unique name, then run:
+
+```bash
+fly secrets set \
+  POSTGRES_URL='...' \
+  POSTGRES_POOLER_URL='...' \
+  SUPABASE_URL='...' \
+  SUPABASE_ANON_KEY='...' \
+  SUPABASE_SECRET_KEY='...' \
+  SUPABASE_JWK_URL='...' \
+  CREDENTIALS_ENCRYPTION_KEY='...' \
+  WORKFLOW_JWT_SECRET='...' \
+  CRON_SCHEDULER_SECRET='...' \
+  SESSION_SECRET='...'
+fly deploy
+```
+
+The Fly release command applies migrations before replacing the running
+Machine. Autostop is disabled because an idle HTTP service can still have cron
+work to execute.
+
 ## The shape of a deployment
 
 NoClick is two processes plus a Postgres database:

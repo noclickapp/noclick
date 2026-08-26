@@ -25,6 +25,7 @@ export VITE_API_URL="${VITE_API_URL:-http://127.0.0.1:8000}"
 : "${VITE_PUBLIC_URL:=${RENDER_EXTERNAL_URL:-}}"
 : "${VITE_PUBLIC_URL:=${RAILWAY_PUBLIC_DOMAIN:+https://$RAILWAY_PUBLIC_DOMAIN}}"
 : "${VITE_PUBLIC_URL:=${FLY_APP_NAME:+https://$FLY_APP_NAME.fly.dev}}"
+: "${VITE_PUBLIC_URL:=${KOYEB_PUBLIC_DOMAIN:+https://$KOYEB_PUBLIC_DOMAIN}}"
 : "${VITE_PUBLIC_URL:=http://localhost:$PORT}"
 export VITE_PUBLIC_URL
 
@@ -36,6 +37,13 @@ export VITE_PUBLIC_URL
 : "${CRON_SCHEDULER_URL:=http://127.0.0.1:8000/local-cron}"
 export PUBLIC_API_URL FRONTEND_URL PUBLIC_WEBHOOK_URL APP_WEBHOOK_BASE_URL \
        MCP_BASE_URL CRON_SCHEDULER_URL
+
+# Platforms with a release/pre-deploy phase run bootstrap there so a failed
+# migration never replaces the healthy release. Simpler container platforms
+# can opt into the same idempotent preparation immediately before startup.
+if [ "${NOCLICK_BOOTSTRAP_ON_START:-}" = "1" ]; then
+    python /app/docker/bootstrap.py
+fi
 
 # The relay. The app server resolves this when its modules load, and the browser
 # bundle deliberately carries no build-time URL, so nothing else would supply
