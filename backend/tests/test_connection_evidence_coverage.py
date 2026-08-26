@@ -60,7 +60,6 @@ _NO_EVIDENCE_YET: frozenset[str] = frozenset(
         "automation-bluesky",
         "automation-brandfetch",
         "automation-fellow",
-        "automation-firecrawl",
         "automation-gohighlevel",
         "automation-google-maps",
         "automation-pagespeed",

@@ -32,6 +32,7 @@ from pydantic import BaseModel, Field, ConfigDict, Discriminator
 import httpx
 
 from nodes.core.base import WorkflowNode, NodeConfig
+from nodes.core.connection_evidence import ConnectionEvidence
 from utils.ssrf import guarded_async_client
 from utils.webhook_signatures import verify_hmac_sha256_hex
 
@@ -1875,6 +1876,15 @@ async def _firecrawl_request(
 
 class FirecrawlNode(WorkflowNode):
     """Firecrawl web scraping & crawling automation node."""
+
+    # Firecrawl has no identity endpoint, so the account's own monitors are the
+    # recognisable data; a rejected key still surfaces definitively (a wrong key
+    # sat green for 15 days returning 401 on every call — Aug 2026).
+    connection_evidence = ConnectionEvidence(
+        operation="list_monitors",
+        noun="monitors",
+        label_keys=("name", "url", "id"),
+    )
 
     edit_examples = [
         "Scrape a product page and return it as markdown",
