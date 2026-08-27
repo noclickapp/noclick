@@ -5653,6 +5653,19 @@
           "title": "Custom OAuth Client ID",
           "ui:hidden": true
         },
+        "installation_source": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Installation Source",
+          "ui:hidden": true
+        },
         "shop_owner": {
           "anyOf": [
             {

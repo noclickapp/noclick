@@ -20,11 +20,27 @@ from nodes.core.oauth_refresh import require_rotated_refresh_token
 from utils.ssrf import normalize_provider_subdomain
 
 logger = logging.getLogger(__name__)
-SHOPIFY_API_VERSION = os.environ.get("SHOPIFY_API_VERSION", "2025-01")
+SHOPIFY_API_VERSION = os.environ.get("SHOPIFY_API_VERSION", "2026-04")
+
+SHOP_IDENTITY_QUERY = """
+query NoClickShopIdentity {
+  shop {
+    id
+    name
+    email
+    shopOwnerName
+    myshopifyDomain
+    primaryDomain {
+      host
+    }
+  }
+}
+"""
 
 
 class ShopifyTokens(BaseModel):
     """Structured token response from Shopify OAuth"""
+
     access_token: str
     scope: str = ""
     expires_in: Optional[int] = None
@@ -37,6 +53,7 @@ class ShopifyTokens(BaseModel):
 
 class ShopifyShopInfo(BaseModel):
     """Shop info from Shopify"""
+
     id: int
     name: str
     email: Optional[str] = None
@@ -53,8 +70,7 @@ def calculate_expires_at(expires_in: Optional[int]) -> Optional[str]:
 
 
 def get_shopify_client_config(
-    custom_client_id: Optional[str] = None,
-    custom_client_secret: Optional[str] = None
+    custom_client_id: Optional[str] = None, custom_client_secret: Optional[str] = None
 ) -> Tuple[str, str]:
     """
     Get Shopify OAuth client configuration.
@@ -78,13 +94,17 @@ def get_shopify_client_config(
         return custom_client_id, custom_client_secret
 
     # Fall back to default NoClick OAuth app from environment
-    client_id = os.environ.get('SHOPIFY_CLIENT_ID')
-    client_secret = os.environ.get('SHOPIFY_CLIENT_SECRET')
+    client_id = os.environ.get("SHOPIFY_CLIENT_ID")
+    client_secret = os.environ.get("SHOPIFY_CLIENT_SECRET")
 
     if not client_id:
-        raise ValueError("SHOPIFY_CLIENT_ID environment variable is required (or provide custom_client_id)")
+        raise ValueError(
+            "SHOPIFY_CLIENT_ID environment variable is required (or provide custom_client_id)"
+        )
     if not client_secret:
-        raise ValueError("SHOPIFY_CLIENT_SECRET environment variable is required (or provide custom_client_secret)")
+        raise ValueError(
+            "SHOPIFY_CLIENT_SECRET environment variable is required (or provide custom_client_secret)"
+        )
 
     logger.info("[ShopifyOAuth] Using default NoClick OAuth app")
     return client_id, client_secret
@@ -113,23 +133,27 @@ async def exchange_code_for_tokens(
     Raises:
         ValueError: If token exchange fails
     """
-    client_id, client_secret = get_shopify_client_config(custom_client_id, custom_client_secret)
+    client_id, client_secret = get_shopify_client_config(
+        custom_client_id, custom_client_secret
+    )
     shop = normalize_provider_subdomain(
         shop, "myshopify.com", field_name="Shopify store name"
     )
 
     # Construct token URL for the specific shop
     token_url = f"https://{shop}.myshopify.com/admin/oauth/access_token"
-    shop_url = f"https://{shop}.myshopify.com/admin/api/{SHOPIFY_API_VERSION}/shop.json"
+    graphql_url = (
+        f"https://{shop}.myshopify.com/admin/api/" f"{SHOPIFY_API_VERSION}/graphql.json"
+    )
 
     data = {
-        'client_id': client_id,
-        'client_secret': client_secret,
-        'code': code,
+        "client_id": client_id,
+        "client_secret": client_secret,
+        "code": code,
         # New public apps must use one-hour offline access tokens with a
         # rotating refresh token. Shopify's authorization-code grant defaults
         # to the legacy non-expiring token unless this flag is explicit.
-        'expiring': '1',
+        "expiring": "1",
     }
 
     async with httpx.AsyncClient() as client:
@@ -146,22 +170,24 @@ async def exchange_code_for_tokens(
         token_data = token_response.json()
 
         # Check for error in response
-        if 'error' in token_data:
-            error_msg = token_data.get('error_description', token_data.get('error', 'Unknown error'))
+        if "error" in token_data:
+            error_msg = token_data.get(
+                "error_description", token_data.get("error", "Unknown error")
+            )
             logger.error(f"[ShopifyOAuth] Token exchange failed: {error_msg}")
             raise ValueError(f"Token exchange failed: {error_msg}")
 
-        expires_in = token_data.get('expires_in')
-        refresh_token_expires_in = token_data.get('refresh_token_expires_in')
+        expires_in = token_data.get("expires_in")
+        refresh_token_expires_in = token_data.get("refresh_token_expires_in")
         tokens = ShopifyTokens(
-            access_token=token_data['access_token'],
-            scope=token_data.get('scope', ''),
+            access_token=token_data["access_token"],
+            scope=token_data.get("scope", ""),
             expires_in=expires_in,
             expires_at=calculate_expires_at(expires_in),
-            refresh_token=token_data.get('refresh_token'),
+            refresh_token=token_data.get("refresh_token"),
             refresh_token_expires_in=refresh_token_expires_in,
             refresh_expires_at=calculate_expires_at(refresh_token_expires_in),
-            token_type='Bearer',
+            token_type="Bearer",
         )
 
         if not tokens.refresh_token or not tokens.expires_at:
@@ -169,12 +195,17 @@ async def exchange_code_for_tokens(
                 "Shopify did not return an expiring offline token; reconnect the store"
             )
 
-        # Get shop info
-        shopinfo_response = await client.get(
-            shop_url,
+        # New public apps must use the GraphQL Admin API exclusively. Fetch the
+        # identity needed for NoClick's credential metadata through GraphQL too;
+        # using the legacy REST /shop.json endpoint during every install would
+        # make an otherwise GraphQL-only public app fail Shopify review.
+        shopinfo_response = await client.post(
+            graphql_url,
             headers={
-                'X-Shopify-Access-Token': tokens.access_token,
+                "X-Shopify-Access-Token": tokens.access_token,
+                "Content-Type": "application/json",
             },
+            json={"query": SHOP_IDENTITY_QUERY},
         )
 
         if shopinfo_response.status_code != 200:
@@ -185,16 +216,34 @@ async def exchange_code_for_tokens(
                 domain=f"{shop}.myshopify.com"
             )
         else:
-            shopinfo_data = shopinfo_response.json().get('shop', {})
+            payload = shopinfo_response.json()
+            errors = payload.get("errors") or []
+            shopinfo_data = (payload.get("data") or {}).get("shop") or {}
+            if errors or not shopinfo_data:
+                logger.warning(
+                    "[ShopifyOAuth] GraphQL shop identity query failed: %s",
+                    errors or payload,
+                )
+                shopinfo_data = {}
+
+            shop_gid = str(shopinfo_data.get("id") or "")
+            legacy_id = shop_gid.rsplit("/", 1)[-1]
+            primary_domain = shopinfo_data.get("primaryDomain") or {}
             shop_info = ShopifyShopInfo(
-                id=shopinfo_data.get('id', 0),
-                name=shopinfo_data.get('name', shop),
-                email=shopinfo_data.get('email'),
-                shop_owner=shopinfo_data.get('shop_owner'),
-                domain=shopinfo_data.get('domain', f"{shop}.myshopify.com"),
+                id=int(legacy_id) if legacy_id.isdigit() else 0,
+                name=shopinfo_data.get("name", shop),
+                email=shopinfo_data.get("email"),
+                shop_owner=shopinfo_data.get("shopOwnerName"),
+                domain=(
+                    primary_domain.get("host")
+                    or shopinfo_data.get("myshopifyDomain")
+                    or f"{shop}.myshopify.com"
+                ),
             )
 
-        logger.info(f"[ShopifyOAuth] Successfully exchanged code for tokens for shop {shop_info.name}")
+        logger.info(
+            f"[ShopifyOAuth] Successfully exchanged code for tokens for shop {shop_info.name}"
+        )
         return tokens, shop_info
 
 
@@ -247,25 +296,23 @@ async def refresh_access_token(
         )
 
     token_data = response.json()
-    if 'error' in token_data:
+    if "error" in token_data:
         error_msg = token_data.get(
-            'error_description', token_data.get('error', 'Unknown error')
+            "error_description", token_data.get("error", "Unknown error")
         )
         raise ValueError(f"Token refresh failed: {error_msg}")
 
-    expires_in = token_data.get('expires_in')
-    refresh_token_expires_in = token_data.get('refresh_token_expires_in')
+    expires_in = token_data.get("expires_in")
+    refresh_token_expires_in = token_data.get("refresh_token_expires_in")
     return ShopifyTokens(
-        access_token=token_data['access_token'],
-        scope=token_data.get('scope', ''),
+        access_token=token_data["access_token"],
+        scope=token_data.get("scope", ""),
         expires_in=expires_in,
         expires_at=calculate_expires_at(expires_in),
-        refresh_token=require_rotated_refresh_token(
-            token_data, provider="shopify"
-        ),
+        refresh_token=require_rotated_refresh_token(token_data, provider="shopify"),
         refresh_token_expires_in=refresh_token_expires_in,
         refresh_expires_at=calculate_expires_at(refresh_token_expires_in),
-        token_type=token_data.get('token_type', 'Bearer'),
+        token_type=token_data.get("token_type", "Bearer"),
     )
 
 
@@ -291,14 +338,14 @@ def is_token_expired(expires_at: Optional[str], buffer_minutes: int = 5) -> bool
 
 # Standard scopes for Shopify workflow operations
 SHOPIFY_WORKFLOW_SCOPES = [
-    "read_products",           # Read products
-    "write_products",          # Modify products
-    "read_orders",             # Read orders
-    "write_orders",            # Modify orders
-    "read_customers",          # Read customers
-    "write_customers",         # Modify customers
-    "read_inventory",          # Read inventory
-    "write_inventory",         # Modify inventory
+    "read_products",  # Read products
+    "write_products",  # Modify products
+    "read_orders",  # Read orders
+    "write_orders",  # Modify orders
+    "read_customers",  # Read customers
+    "write_customers",  # Modify customers
+    "read_inventory",  # Read inventory
+    "write_inventory",  # Modify inventory
 ]
 
 # Minimal scopes for read-only access

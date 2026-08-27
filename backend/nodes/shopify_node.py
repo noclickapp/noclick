@@ -1,5 +1,5 @@
 """
-Shopify Admin REST API automation node.
+Shopify Admin API automation node.
 
 Provides workflow integration with Shopify for e-commerce operations including:
 - Product Operations: list, get, create, update, delete, count products
@@ -15,10 +15,8 @@ Provides workflow integration with Shopify for e-commerce operations including:
 - Price Rule/Discount Operations: manage price rules and discount codes
 - Gift Card Operations: list, get, create, update, disable gift cards
 
-Authentication: Access Token (from custom app in Shopify admin)
-API Base URL: https://{store}.myshopify.com/admin/api/2024-01
-Documentation: https://shopify.dev/docs/api/admin-rest
-Rate Limit: 40 requests per minute (2/sec replenishment), 10x for Plus stores
+NoClick's public App Store grant is GraphQL-only. Legacy REST handlers are kept
+only for existing merchant-supplied OAuth apps and old admin access tokens.
 """
 
 import logging
@@ -41,7 +39,33 @@ logger = logging.getLogger(__name__)
 # Constants
 # ============================================================================
 
-SHOPIFY_API_VERSION = os.environ.get("SHOPIFY_API_VERSION", "2025-01")
+SHOPIFY_API_VERSION = os.environ.get("SHOPIFY_API_VERSION", "2026-04")
+
+SHOPIFY_WEBHOOK_TOPICS = {
+    "orders/create": "ORDERS_CREATE",
+    "orders/paid": "ORDERS_PAID",
+    "orders/fulfilled": "ORDERS_FULFILLED",
+    "orders/cancelled": "ORDERS_CANCELLED",
+    "products/create": "PRODUCTS_CREATE",
+    "products/update": "PRODUCTS_UPDATE",
+    "customers/create": "CUSTOMERS_CREATE",
+}
+
+PUBLIC_APP_GRAPHQL_OPERATIONS = {
+    "execute_custom_graphql_query",
+    "execute_custom_graphql_mutation",
+    "query_products_with_graphql",
+    "create_product_with_graphql",
+    "update_product_with_graphql",
+    "query_orders_with_graphql",
+    "create_draft_order_with_graphql",
+    "query_customers_with_graphql",
+    "create_customer_with_graphql",
+    "query_inventory_with_graphql",
+    "query_collections_with_graphql",
+    "query_fulfillment_orders_with_graphql",
+    "get_shop_with_graphql",
+}
 
 
 # ============================================================================
@@ -89,6 +113,104 @@ async def unregister_shopify_webhook(
             response.raise_for_status()
 
 
+def _graphql_response_data(payload: Dict[str, Any], mutation: str) -> Dict[str, Any]:
+    """Return a successful Shopify GraphQL mutation payload or raise a clear error."""
+    if payload.get("errors"):
+        raise ValueError(f"Shopify GraphQL errors: {payload['errors']}")
+    data = (payload.get("data") or {}).get(mutation) or {}
+    user_errors = data.get("userErrors") or []
+    if user_errors:
+        messages = "; ".join(
+            str(error.get("message") or error) for error in user_errors
+        )
+        raise ValueError(f"Shopify {mutation} failed: {messages}")
+    return data
+
+
+async def register_shopify_webhook_graphql(
+    store_name: str, access_token: str, topic: str, webhook_url: str
+) -> str:
+    """Create a webhook through GraphQL for the public App Store connection."""
+    graphql_topic = SHOPIFY_WEBHOOK_TOPICS.get(topic)
+    if not graphql_topic:
+        raise ValueError(f"Unsupported Shopify webhook topic: {topic}")
+    query = """
+    mutation NoClickWebhookCreate(
+      $topic: WebhookSubscriptionTopic!,
+      $subscription: WebhookSubscriptionInput!
+    ) {
+      webhookSubscriptionCreate(
+        topic: $topic,
+        webhookSubscription: $subscription
+      ) {
+        webhookSubscription { id }
+        userErrors { field message }
+      }
+    }
+    """
+    async with httpx.AsyncClient(timeout=30.0) as client:
+        response = await client.post(
+            f"{_shopify_api_base(store_name)}/graphql.json",
+            headers={
+                "X-Shopify-Access-Token": access_token,
+                "Content-Type": "application/json",
+            },
+            json={
+                "query": query,
+                "variables": {
+                    "topic": graphql_topic,
+                    "subscription": {
+                        "uri": webhook_url,
+                        "format": "JSON",
+                    },
+                },
+            },
+        )
+        response.raise_for_status()
+        data = _graphql_response_data(response.json(), "webhookSubscriptionCreate")
+        subscription = data.get("webhookSubscription") or {}
+        webhook_id = subscription.get("id")
+        if not webhook_id:
+            raise ValueError("Shopify did not return a webhook subscription ID")
+        return str(webhook_id)
+
+
+async def unregister_shopify_webhook_graphql(
+    store_name: str, access_token: str, webhook_id: str
+) -> None:
+    """Delete a public-app webhook through the GraphQL Admin API."""
+    query = """
+    mutation NoClickWebhookDelete($id: ID!) {
+      webhookSubscriptionDelete(id: $id) {
+        deletedWebhookSubscriptionId
+        userErrors { field message }
+      }
+    }
+    """
+    async with httpx.AsyncClient(timeout=30.0) as client:
+        response = await client.post(
+            f"{_shopify_api_base(store_name)}/graphql.json",
+            headers={
+                "X-Shopify-Access-Token": access_token,
+                "Content-Type": "application/json",
+            },
+            json={"query": query, "variables": {"id": str(webhook_id)}},
+        )
+        response.raise_for_status()
+        _graphql_response_data(response.json(), "webhookSubscriptionDelete")
+
+
+def uses_public_shopify_app(credential: Any) -> bool:
+    """True for OAuth grants issued by NoClick's public Shopify app."""
+    if isinstance(credential, dict):
+        credential_type = credential.get("credential_type")
+        custom_client_id = credential.get("custom_client_id")
+    else:
+        credential_type = getattr(credential, "credential_type", None)
+        custom_client_id = getattr(credential, "custom_client_id", None)
+    return credential_type == "shopify_oauth" and not custom_client_id
+
+
 # ============================================================================
 # Credential Schema
 # ============================================================================
@@ -111,13 +233,16 @@ class ShopifyOAuthCredential(BaseModel):
     )
     access_token: str = Field(..., title="Access Token")
     refresh_token: Optional[str] = Field(None, title="Refresh Token")
-    expires_at: Optional[str] = Field(
-        None, title="Token Expiry"
-    )
+    expires_at: Optional[str] = Field(None, title="Token Expiry")
     refresh_expires_at: Optional[str] = Field(None, title="Refresh Token Expiry")
     custom_client_id: Optional[str] = Field(
         None,
         title="Custom OAuth Client ID",
+        json_schema_extra={"ui:hidden": True},
+    )
+    installation_source: Optional[str] = Field(
+        None,
+        title="Installation Source",
         json_schema_extra={"ui:hidden": True},
     )
     shop_owner: Optional[str] = Field(None, title="Shop Owner")
@@ -3822,6 +3947,7 @@ class ShopifyOnCustomerCreatedConfig(_ShopifyEventTriggerBase):
 # Discriminated Union
 # ============================================================================
 
+
 class ShopifyListBlogsConfig(BaseModel):
     """List the store's blogs"""
 
@@ -3838,7 +3964,11 @@ class ShopifyListBlogsConfig(BaseModel):
         title="List Blogs",
     )
     limit: Optional[int] = Field(
-        50, title="Limit", description="Number of blogs to return (max 250)", ge=1, le=250
+        50,
+        title="Limit",
+        description="Number of blogs to return (max 250)",
+        ge=1,
+        le=250,
     )
     since_id: Optional[str] = Field(
         None, title="Since ID", description="Return blogs after this ID"
@@ -3864,7 +3994,11 @@ class ShopifyListBlogArticlesConfig(BaseModel):
         ..., title="Blog ID", description="ID of the blog (use List Blogs to find it)"
     )
     limit: Optional[int] = Field(
-        50, title="Limit", description="Number of articles to return (max 250)", ge=1, le=250
+        50,
+        title="Limit",
+        description="Number of articles to return (max 250)",
+        ge=1,
+        le=250,
     )
     since_id: Optional[str] = Field(
         None, title="Since ID", description="Return articles after this ID"
@@ -4175,19 +4309,19 @@ class ShopifyNodeConfig(NodeConfig[ShopifyConfig, ShopifyCredential]):
 
 class ShopifyNode(ExternalWebhookTriggerMixin, WorkflowNode):
     """
-    Shopify Admin API automation node with REST and GraphQL support.
+    Shopify Admin API automation node with GraphQL-first support.
 
     Executes Shopify API operations for e-commerce workflow automation.
 
     **Total: 93 operations**
-    - REST API (80 operations): Products, variants, images, orders, refunds, transactions, customers,
-      addresses, inventory, fulfillments, collections, locations, shop, metafields, webhooks,
-      price rules, discounts, gift cards
+    - Legacy REST API (80 operations, custom credentials only): Products, variants, images,
+      orders, refunds, transactions, customers, addresses, inventory, fulfillments,
+      collections, locations, shop, metafields, webhooks, price rules, discounts, gift cards
     - GraphQL API (13 operations): Generic query/mutation executors (100% API coverage) + pre-built
       operations for products, orders, customers, inventory, collections, and fulfillment orders
 
     **Authentication:** OAuth 2.0 or Admin API Access Token (supports custom OAuth apps)
-    **API Versions:** REST (2024-01), GraphQL (2025-01)
+    **API Version:** ``SHOPIFY_API_VERSION`` (defaults to 2026-04)
     """
 
     edit_examples = [
@@ -4271,11 +4405,21 @@ class ShopifyNode(ExternalWebhookTriggerMixin, WorkflowNode):
         existing = (config or {}).get("external_webhook_id")
         if existing:
             try:
-                await unregister_shopify_webhook(store, token, existing)
+                if uses_public_shopify_app(credential):
+                    await unregister_shopify_webhook_graphql(store, token, existing)
+                else:
+                    await unregister_shopify_webhook(store, token, existing)
             except Exception as e:
                 logger.warning(f"[ShopifyNode] Could not remove stale webhook: {e}")
 
-        webhook_id = await register_shopify_webhook(store, token, topic, webhook_url)
+        if uses_public_shopify_app(credential):
+            webhook_id = await register_shopify_webhook_graphql(
+                store, token, topic, webhook_url
+            )
+        else:
+            webhook_id = await register_shopify_webhook(
+                store, token, topic, webhook_url
+            )
         return {"signing_secret": api_secret, "external_webhook_id": webhook_id}
 
     @classmethod
@@ -4286,7 +4430,10 @@ class ShopifyNode(ExternalWebhookTriggerMixin, WorkflowNode):
         webhook_id = (config or {}).get("external_webhook_id")
         if not (token and store and webhook_id):
             return
-        await unregister_shopify_webhook(store, token, webhook_id)
+        if uses_public_shopify_app(credential):
+            await unregister_shopify_webhook_graphql(store, token, webhook_id)
+        else:
+            await unregister_shopify_webhook(store, token, webhook_id)
 
     @classmethod
     def verify_webhook_signature(
@@ -4359,6 +4506,21 @@ class ShopifyNode(ExternalWebhookTriggerMixin, WorkflowNode):
 
         # Get the specific operation config
         op_config = config.config
+
+        # Shopify requires all new public apps to use the GraphQL Admin API
+        # exclusively. Legacy REST handlers remain available only to merchants
+        # using their own custom OAuth app or an old admin access token; a grant
+        # issued by NoClick's App Store client can never invoke one of them.
+        if (
+            uses_public_shopify_app(credentials)
+            and op_config.operation not in PUBLIC_APP_GRAPHQL_OPERATIONS
+            and op_config.operation not in self._trigger_event_map
+        ):
+            raise ValueError(
+                "Shopify App Store connections support GraphQL Admin API "
+                "operations only. Select a GraphQL operation or connect your "
+                "own legacy Shopify app for an existing REST workflow."
+            )
 
         # Route to appropriate handler based on action
         handlers = {
@@ -4547,7 +4709,9 @@ class ShopifyNode(ExternalWebhookTriggerMixin, WorkflowNode):
             operation=action,
             arguments=None,
             result_status=("error" if result.get("status") == "error" else "success"),
-            error=("Shopify operation failed" if result.get("status") == "error" else None),
+            error=(
+                "Shopify operation failed" if result.get("status") == "error" else None
+            ),
             result_preview=None,
         )
 
@@ -6384,8 +6548,10 @@ class ShopifyNode(ExternalWebhookTriggerMixin, WorkflowNode):
             "myshopify.com",
             field_name="Shopify store name",
         )
-        # Use latest GraphQL API version (2025-01)
-        return f"https://{store}.myshopify.com/admin/api/2025-01/graphql.json"
+        return (
+            f"https://{store}.myshopify.com/admin/api/"
+            f"{SHOPIFY_API_VERSION}/graphql.json"
+        )
 
     async def _make_graphql_request(
         self,

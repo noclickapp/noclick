@@ -156,7 +156,20 @@ export async function loader({ request }: LoaderFunctionArgs) {
                             : 'Could not finish the Shopify installation.',
                 };
             }
-            return redirect('/dashboard?shopify=installed', { headers });
+            const clientId = process.env.SHOPIFY_CLIENT_ID;
+            if (!clientId) {
+                return {
+                    success: false,
+                    error: 'Shopify app client ID is not configured.',
+                };
+            }
+            // Return through Shopify Admin so the embedded app home loads with
+            // a fresh signed launch query and App Bridge context. Redirecting
+            // directly to /dashboard would strand the merchant off-platform.
+            return redirect(
+                `https://admin.shopify.com/store/${callbackShop}/apps/${clientId}`,
+                { headers }
+            );
         }
 
         return {

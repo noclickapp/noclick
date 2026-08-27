@@ -40,12 +40,15 @@ async def test_authorization_code_exchange_requests_expiring_offline_token(
         return httpx.Response(
             200,
             json={
-                "shop": {
-                    "id": 42,
-                    "name": "Review Store",
-                    "email": "owner@example.com",
-                    "shop_owner": "Owner",
-                    "domain": "review-store.myshopify.com",
+                "data": {
+                    "shop": {
+                        "id": "gid://shopify/Shop/42",
+                        "name": "Review Store",
+                        "email": "owner@example.com",
+                        "shopOwnerName": "Owner",
+                        "myshopifyDomain": "review-store.myshopify.com",
+                        "primaryDomain": {"host": "review-store.example.com"},
+                    }
                 }
             },
         )
@@ -62,10 +65,15 @@ async def test_authorization_code_exchange_requests_expiring_offline_token(
 
     token_form = parse_qs(requests[0].content.decode())
     assert token_form["expiring"] == ["1"]
+    assert requests[1].method == "POST"
+    assert requests[1].url.path.endswith("/graphql.json")
+    assert b"NoClickShopIdentity" in requests[1].content
     assert tokens.refresh_token == "shprt_refresh"
     assert tokens.expires_at is not None
     assert tokens.refresh_expires_at is not None
     assert shop.name == "Review Store"
+    assert shop.id == 42
+    assert shop.domain == "review-store.example.com"
 
 
 @pytest.mark.asyncio

@@ -109,6 +109,7 @@ async def test_public_install_upserts_canonical_shop_credential(monkeypatch):
     assert captured["update"]["new_data"]["store_name"] == "acme"
     assert captured["update"]["new_data"]["refresh_token"] == "shprt_secret"
     assert captured["update"]["new_data"]["expires_at"] == "2026-08-27T20:00:00Z"
+    assert captured["update"]["new_data"]["installation_source"] == "shopify_app_store"
     assert captured["lookup"][1] == "acme.myshopify.com"
     assert captured["update"]["credential_name"] == "Acme"
     metadata = captured["update"]["metadata_updates"]

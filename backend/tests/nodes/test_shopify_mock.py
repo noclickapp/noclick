@@ -159,10 +159,11 @@ def mock_httpx():
 
 
 def get_oauth_credentials():
-    """Get OAuth credentials for testing."""
+    """Get a merchant-supplied OAuth credential for legacy REST tests."""
     return ShopifyOAuthCredential(
         store_name=TEST_STORE,
-        access_token=TEST_TOKEN
+        access_token=TEST_TOKEN,
+        custom_client_id="legacy-test-client",
     )
 
 
