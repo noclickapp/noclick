@@ -163,6 +163,7 @@ async def update_credential_data_detailed(
     metadata_updates: Optional[Dict[str, Any]] = None,
     pool=None,
     expected_token_version: Optional[int] = None,
+    credential_name: Optional[str] = None,
 ) -> tuple[int, Optional[str]]:
     """Persist a credential update and return ``(rows_affected, error_class)``.
 
@@ -179,6 +180,8 @@ async def update_credential_data_detailed(
     - ``user_id`` is logged only.
     - Merges ``new_data`` into the existing encrypted blob; metadata is
       merged as JSONB ``||``.
+    - ``credential_name`` optionally refreshes the display name alongside a
+      new authoritative OAuth grant.
     - ``expected_token_version`` makes the write a compare-and-swap: it only
       lands if the row's ``token_version`` still matches the value read with
       the snapshot ``new_data`` was derived from (a DB trigger bumps the
@@ -201,37 +204,48 @@ async def update_credential_data_detailed(
         encryption = get_encryption()
         encrypted_data = encryption.encrypt_credential(strip_non_blob_keys(new_data))
 
-        version_guard = "" if expected_token_version is None else "AND token_version = $4"
         async with pool.acquire() as conn:
             # Clearing revoked_at on every successful write is intentional: a
             # successful refresh OR a fresh re-authorization means the credential
             # is good again, so the auto-revoke flag set by oauth_refresh.py
             # should clear automatically.
             if metadata_updates:
-                args = [encrypted_data, metadata_updates, credential_id]
+                version_guard = (
+                    "" if expected_token_version is None else "AND token_version = $5"
+                )
+                args = [
+                    encrypted_data,
+                    metadata_updates,
+                    credential_name,
+                    credential_id,
+                ]
                 if expected_token_version is not None:
                     args.append(expected_token_version)
                 result = await conn.execute(f"""
                     UPDATE credentials
                     SET credential = $1,
                         metadata = metadata || $2::jsonb,
+                        name = COALESCE($3, name),
                         updated_at = NOW(),
                         revoked_at = NULL,
                         revoked_reason = NULL
-                    WHERE id = $3 {version_guard}
+                    WHERE id = $4 {version_guard}
                 """, *args)
             else:
-                version_guard = "" if expected_token_version is None else "AND token_version = $3"
-                args = [encrypted_data, credential_id]
+                version_guard = (
+                    "" if expected_token_version is None else "AND token_version = $4"
+                )
+                args = [encrypted_data, credential_name, credential_id]
                 if expected_token_version is not None:
                     args.append(expected_token_version)
                 result = await conn.execute(f"""
                     UPDATE credentials
                     SET credential = $1,
+                        name = COALESCE($2, name),
                         updated_at = NOW(),
                         revoked_at = NULL,
                         revoked_reason = NULL
-                    WHERE id = $2 {version_guard}
+                    WHERE id = $3 {version_guard}
                 """, *args)
 
             # asyncpg returns 'UPDATE N' on success — parse the count.
@@ -259,6 +273,7 @@ async def update_credential_data(
     new_data: Dict[str, Any],
     metadata_updates: Optional[Dict[str, Any]] = None,
     pool=None,
+    credential_name: Optional[str] = None,
 ) -> bool:
     """Backwards-compatible bool wrapper around ``update_credential_data_detailed``.
 
@@ -272,6 +287,7 @@ async def update_credential_data(
         new_data=new_data,
         metadata_updates=metadata_updates,
         pool=pool,
+        credential_name=credential_name,
     )
     return rows_affected > 0
 

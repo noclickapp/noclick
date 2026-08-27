@@ -99,6 +99,10 @@ class ShopifyOAuthHandler(DatabasePoolMixin, SocketIOHandler):
                 'shop_owner': shop_info.shop_owner,
                 'email': shop_info.email,
                 'expires_at': None,
+                # Custom Shopify apps need their own secret for webhook HMAC.
+                # The default public app resolves its secret from the server
+                # environment and does not duplicate it per credential.
+                'api_secret_key': request.custom_client_secret or None,
             }
 
             # Encrypt and store credential
@@ -136,6 +140,10 @@ class ShopifyOAuthHandler(DatabasePoolMixin, SocketIOHandler):
                     conn, user_id, user_tier, 'shopify_oauth',
                     credential_name, encrypted_data, {
                         'provider': 'shopify',
+                        # Canonical key used by Shopify compliance webhooks.
+                        # shop_info.domain can be the merchant's custom domain;
+                        # the OAuth `shop` parameter is always *.myshopify.com.
+                        'myshopify_domain': f"{request.shop}.myshopify.com",
                         'shop_name': shop_info.name,
                         'shop_domain': shop_info.domain,
                         'shop_owner': shop_info.shop_owner,

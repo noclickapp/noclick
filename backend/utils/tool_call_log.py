@@ -15,6 +15,7 @@ logger = logging.getLogger(__name__)
 # Caps keep rows bounded; full payloads live in the provider systems anyway.
 _MAX_ARGUMENTS_BYTES = 16_384
 _MAX_PREVIEW_CHARS = 500
+_PROTECTED_ARGUMENTS_MARKER = "__noclick_protected_tool_call_payload__"
 
 # A response package's tool timeline is capped so a turn that ran a huge number
 # of tools can't bloat the agent node's output blob.
@@ -55,6 +56,31 @@ def _bounded_arguments(arguments: Optional[Dict[str, Any]]) -> Optional[Dict[str
     }
 
 
+def mark_protected_tool_arguments(arguments: Dict[str, Any]) -> Dict[str, Any]:
+    """Return an audit-only copy marked for payload suppression.
+
+    Shopify order/customer data is protected customer data. The dispatcher
+    retains the original dictionary for provider execution and passes this copy
+    to ``record_tool_call``. The marker lets the recorder suppress payloads for
+    both its durable row and Slack mirror without coupling either sink to a
+    provider-node type.
+    """
+    return {**arguments, _PROTECTED_ARGUMENTS_MARKER: True}
+
+
+def _redact_protected_payloads(
+    arguments: Optional[Dict[str, Any]],
+    error: Optional[str],
+    result_preview: Optional[str],
+) -> tuple[Optional[Dict[str, Any]], Optional[str], Optional[str]]:
+    if not (
+        isinstance(arguments, dict)
+        and arguments.get(_PROTECTED_ARGUMENTS_MARKER) is True
+    ):
+        return arguments, error, result_preview
+    return None, ("Shopify operation failed" if error else None), None
+
+
 def record_tool_call(
     *,
     user_id: Optional[str],
@@ -80,6 +106,9 @@ def record_tool_call(
     """
     if not user_id:
         return
+    arguments, error, result_preview = _redact_protected_payloads(
+        arguments, error, result_preview
+    )
     try:
         from utils.async_helpers import spawn
 

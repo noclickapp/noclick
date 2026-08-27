@@ -16,10 +16,16 @@ from utils.async_helpers import spawn
 from utils.database_pool import get_native_pool
 from utils.encryption import get_encryption
 from utils.email import send_credential_fulfilled_email
+from utils.shopify_routes import install_router as shopify_install_router
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/api/credential-request", tags=["credential-request"])
+
+# Public-app OAuth exchanges create a credential, so they share this existing
+# authenticated API front door instead of adding another root-level backend
+# prefix that self-hosted gateways would have to discover independently.
+router.include_router(shopify_install_router)
 
 MAX_PROVISION_ATTEMPTS = 5
 

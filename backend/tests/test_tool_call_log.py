@@ -13,8 +13,10 @@ from nodes.agent.tool_execution import execute_tool
 from utils.tool_call_log import (
     _bounded_arguments,
     _insert,
+    _redact_protected_payloads,
     _to_uuid,
     fetch_tool_calls_since,
+    mark_protected_tool_arguments,
 )
 
 
@@ -94,6 +96,55 @@ async def test_execute_tool_records_soft_failure_as_error():
     kw = record.call_args.kwargs
     assert kw["result_status"] == "error"
     assert "node_type/operation" in kw["error"]
+
+
+async def test_shopify_tool_audit_omits_protected_payloads():
+    tool_configs = {
+        "shopify__get_customer": {
+            "node_id": "shopify-1",
+            "tool_type": "node_op",
+            "node_type": "automation-shopify",
+            "operation": "get_customer_by_id",
+            "credential_id": "44444444-4444-4444-4444-444444444444",
+        }
+    }
+    protected_result = {
+        "status": "success",
+        "data": {"customer": {"email": "buyer@example.com"}},
+    }
+    provider = AsyncMock(return_value=protected_result)
+    with patch(
+        "nodes.core.run_op.run_node_operation",
+        new=provider,
+    ), patch("utils.tool_call_log.record_tool_call") as record:
+        result = await execute_tool(
+            _agent_node(),
+            "shopify__get_customer",
+            {"customer_id": "123"},
+            tool_configs,
+        )
+
+    assert result == protected_result
+    assert provider.await_args.kwargs["arguments"] == {"customer_id": "123"}
+    kw = record.call_args.kwargs
+    arguments, error, preview = _redact_protected_payloads(
+        kw["arguments"], kw["error"], kw["result_preview"]
+    )
+    assert arguments is None
+    assert preview is None
+    assert error is None
+
+
+def test_protected_tool_audit_replaces_provider_error_bodies():
+    arguments, error, preview = _redact_protected_payloads(
+        mark_protected_tool_arguments({"customer_id": "123"}),
+        "Shopify returned buyer@example.com in an error body",
+        "customer payload",
+    )
+
+    assert arguments is None
+    assert error == "Shopify operation failed"
+    assert preview is None
 
 
 async def test_insert_passes_typed_values_through_pool():

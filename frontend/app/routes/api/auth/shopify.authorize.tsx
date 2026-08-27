@@ -10,6 +10,7 @@ import { oauthNotConfiguredResponse } from '~/lib/oauthSetupPage.server';
 import { applyInstanceOAuthEnv } from '~/lib/instanceOAuth.server';
 import { oauthFormString, oauthPostFormData } from '~/lib/oauthPost.server';
 import { serializeForInlineScript } from '~/lib/inlineScript.server';
+import { getCookieSecret } from '~/lib/serverSecrets';
 
 const shopifyOAuthStateCookie = createCookie('shopify_oauth_state', {
     httpOnly: true,
@@ -17,6 +18,7 @@ const shopifyOAuthStateCookie = createCookie('shopify_oauth_state', {
     sameSite: 'lax',
     path: '/api/auth/shopify',
     maxAge: 600, // 10 minutes
+    secrets: [getCookieSecret('shopify-oauth-state')],
 });
 
 export function normalizeShopInput(shopRaw: string): string {
@@ -62,7 +64,9 @@ export async function resolveShopFromDomain(
     // Most-frequent handle wins: a storefront references its own domain many
     // times (Shopify.shop, preconnects), a stray link to another store once.
     const counts = new Map<string, number>();
-    for (const match of html.matchAll(/([a-z0-9][a-z0-9-]*)\.myshopify\.com/g)) {
+    for (const match of html.matchAll(
+        /([a-z0-9][a-z0-9-]*)\.myshopify\.com/g
+    )) {
         counts.set(match[1], (counts.get(match[1]) ?? 0) + 1);
     }
     let best: string | null = null;
@@ -112,6 +116,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
             url.searchParams.get('scopes') || 'read_products,write_products',
         customClientId: null,
         customClientSecret: null,
+        mode: url.searchParams.get('mode') === 'install' ? 'install' : 'popup',
     });
 }
 
@@ -126,6 +131,7 @@ export async function action({ request }: ActionFunctionArgs) {
             'read_products,write_products',
         customClientId: oauthFormString(formData, 'customClientId'),
         customClientSecret: oauthFormString(formData, 'customClientSecret'),
+        mode: 'popup',
     });
 }
 
@@ -135,6 +141,7 @@ interface ShopifyAuthorizeInput {
     scopesParam: string;
     customClientId: string | null;
     customClientSecret: string | null;
+    mode: 'popup' | 'install';
 }
 
 async function startShopifyOAuth(
@@ -145,6 +152,7 @@ async function startShopifyOAuth(
         scopesParam,
         customClientId,
         customClientSecret,
+        mode,
     }: ShopifyAuthorizeInput
 ) {
     if (
@@ -215,6 +223,7 @@ async function startShopifyOAuth(
         scopes: scopesParam.split(','),
         customClientId: customClientId || null,
         customClientSecret: customClientSecret || null,
+        mode,
         timestamp: Date.now(),
     };
     const cookieHeader = await shopifyOAuthStateCookie.serialize(

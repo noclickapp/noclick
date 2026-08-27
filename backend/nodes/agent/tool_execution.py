@@ -63,8 +63,21 @@ async def execute_tool(
 
     tool_info = tool_configs[tool_name]
     tool_type = tool_info.get("tool_type", "workflow")
+    dispatch_arguments = arguments
+    if tool_info.get("node_type") == "automation-shopify":
+        from utils.tool_call_log import mark_protected_tool_arguments
+
+        # Rebind only the audit copy; every execution path keeps the untouched
+        # provider arguments with no internal bookkeeping key.
+        arguments = mark_protected_tool_arguments(arguments)
+    logged_arguments = (
+        "[protected Shopify payload]"
+        if dispatch_arguments is not arguments
+        else arguments
+    )
     logger.info(
-        f"[ToolExec] Executing {tool_type} tool '{tool_name}' with args: {arguments}"
+        f"[ToolExec] Executing {tool_type} tool '{tool_name}' with args: "
+        f"{logged_arguments}"
     )
 
     # Observability: this is the ONE choke point every tool call passes
@@ -101,46 +114,60 @@ async def execute_tool(
             ):
                 span.set_attribute("tool.rehearsed", True)
                 result = await _rehearse_tool(
-                    rehearsal_conversation, tool_name, tool_type, arguments, tool_info
+                    rehearsal_conversation,
+                    tool_name,
+                    tool_type,
+                    dispatch_arguments,
+                    tool_info,
                 )
             elif tool_type == "mcp":
-                result = await _execute_mcp_tool(node, tool_name, arguments, tool_info)
+                result = await _execute_mcp_tool(
+                    node, tool_name, dispatch_arguments, tool_info
+                )
             elif tool_type == "alarm":
-                result = await _execute_alarm_tool(node, tool_name, arguments, tool_info)
+                result = await _execute_alarm_tool(
+                    node, tool_name, dispatch_arguments, tool_info
+                )
             elif tool_type == "filesystem":
-                result = await _execute_filesystem_tool(node, tool_name, arguments, tool_info)
+                result = await _execute_filesystem_tool(
+                    node, tool_name, dispatch_arguments, tool_info
+                )
             elif tool_type == "node_op":
                 result = await _execute_node_op_tool(
-                    node, tool_name, arguments, tool_info, tool_configs,
+                    node, tool_name, dispatch_arguments, tool_info, tool_configs,
                 )
             elif tool_type == "node_op_lookup":
-                result = await _execute_node_op_lookup(node, tool_name, arguments, tool_info)
+                result = await _execute_node_op_lookup(
+                    node, tool_name, dispatch_arguments, tool_info
+                )
             elif tool_type == "email_reply":
                 from nodes.agent.email_reply import execute_email_reply
 
-                result = await execute_email_reply(node, arguments, tool_info)
+                result = await execute_email_reply(node, dispatch_arguments, tool_info)
             elif tool_type == "submit_feedback":
                 from nodes.agent.platform_tools import execute_submit_feedback
 
-                result = await execute_submit_feedback(node, arguments)
+                result = await execute_submit_feedback(node, dispatch_arguments)
             elif tool_type == "prompt_builder":
                 from nodes.agent.platform_tools import execute_prompt_builder
 
-                result = await execute_prompt_builder(node, arguments)
+                result = await execute_prompt_builder(node, dispatch_arguments)
             elif tool_type == "builder_respond":
                 from nodes.agent.platform_tools import execute_builder_respond
 
-                result = await execute_builder_respond(node, arguments)
+                result = await execute_builder_respond(node, dispatch_arguments)
             elif tool_type == "describe_workflow":
                 from nodes.agent.platform_tools import execute_describe_workflow
 
-                result = await execute_describe_workflow(node, arguments)
+                result = await execute_describe_workflow(node, dispatch_arguments)
             elif tool_type == "email_user":
                 from nodes.agent.platform_tools import execute_email_user
 
-                result = await execute_email_user(node, arguments)
+                result = await execute_email_user(node, dispatch_arguments)
             else:
-                result = await _execute_workflow_tool(node, tool_name, arguments, tool_info)
+                result = await _execute_workflow_tool(
+                    node, tool_name, dispatch_arguments, tool_info
+                )
         except Exception as e:
             logger.error(f"[ToolExec] Error executing tool {tool_name}: {e}", exc_info=True)
             error = str(e)

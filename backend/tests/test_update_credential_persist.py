@@ -76,3 +76,24 @@ async def test_persist_returns_false_on_missing_row():
             pool=pool,
         )
     assert ok is False  # genuinely-missing row -> caller (ensure_fresh_oauth_token) raises
+
+
+async def test_persist_can_refresh_the_credential_display_name():
+    conn = _FakeConn()
+    pool = _FakePool(conn)
+    with patch("utils.credentials.get_encryption") as enc:
+        enc.return_value.encrypt_credential.return_value = b"ENC"
+        ok = await update_credential_data(
+            credential_id="cid-123",
+            user_id="owner",
+            new_data={"access_token": "fresh"},
+            metadata_updates={"provider": "shopify"},
+            credential_name="Acme Store",
+            pool=pool,
+        )
+
+    assert ok is True
+    query, args = conn.executed[0]
+    assert "name = COALESCE($3, name)" in query
+    assert args[2] == "Acme Store"
+    assert args[3] == "cid-123"

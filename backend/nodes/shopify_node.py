@@ -4249,7 +4249,11 @@ class ShopifyNode(ExternalWebhookTriggerMixin, WorkflowNode):
             raise ValueError(
                 "Shopify credential is missing a store name or access token"
             )
-        api_secret = credential.get("api_secret_key")
+        # Public-app OAuth credentials share the server-side app secret; custom
+        # OAuth credentials retain their own encrypted secret on the credential.
+        api_secret = credential.get("api_secret_key") or os.environ.get(
+            "SHOPIFY_CLIENT_SECRET"
+        )
         if not api_secret:
             raise ValueError(
                 "Add the Shopify API secret key to your credential to verify "
@@ -4482,8 +4486,50 @@ class ShopifyNode(ExternalWebhookTriggerMixin, WorkflowNode):
         if not handler:
             raise ValueError(f"Unknown action: {action}")
 
-        # Execute the handler
-        result = await handler(op_config, credentials)
+        # Execute the handler.  Every Shopify call gets a payload-free durable
+        # access record, including calls made by ordinary workflows (agent tool
+        # calls have a second, agent-scoped record at their dispatcher).  This
+        # provides auditable access without copying protected customer data into
+        # observability storage.
+        from utils.tool_call_log import record_tool_call
+
+        try:
+            result = await handler(op_config, credentials)
+        except Exception:
+            record_tool_call(
+                user_id=self.user_id,
+                workflow_id=str(self.workflow_id) if self.workflow_id else None,
+                execution_id=self.execution_id,
+                conversation_id=self.conversation_id,
+                agent_node_id=None,
+                provider_node_id=self.node_id,
+                credential_id=self.node_data.get("credential_id"),
+                tool_name=f"shopify.{action}",
+                tool_type="integration_node",
+                operation=action,
+                arguments=None,
+                result_status="error",
+                error="Shopify operation failed",
+                result_preview=None,
+            )
+            raise
+
+        record_tool_call(
+            user_id=self.user_id,
+            workflow_id=str(self.workflow_id) if self.workflow_id else None,
+            execution_id=self.execution_id,
+            conversation_id=self.conversation_id,
+            agent_node_id=None,
+            provider_node_id=self.node_id,
+            credential_id=self.node_data.get("credential_id"),
+            tool_name=f"shopify.{action}",
+            tool_type="integration_node",
+            operation=action,
+            arguments=None,
+            result_status=("error" if result.get("status") == "error" else "success"),
+            error=("Shopify operation failed" if result.get("status") == "error" else None),
+            result_preview=None,
+        )
 
         # Add timing information
         total_time = (time.time() - start_time) * 1000

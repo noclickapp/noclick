@@ -3,10 +3,17 @@
 // Passes the authorization code back to the opener window via postMessage.
 
 import { oauthCallbackUrl } from '~/lib/oauthFlow.server';
-import { type LoaderFunctionArgs } from 'react-router';
-import { createCookie } from 'react-router';
-import { useLoaderData } from 'react-router';
+import {
+    createCookie,
+    redirect,
+    type LoaderFunctionArgs,
+    useLoaderData,
+} from 'react-router';
 import { useEffect, useState } from 'react';
+import { requireAuth } from '~/lib/supabase';
+import { apiBaseUrl } from '~/lib/hostedDefaults';
+import { verifyShopifyQueryHmac } from '~/lib/shopifyHmac.server';
+import { getCookieSecret } from '~/lib/serverSecrets';
 
 const shopifyOAuthStateCookie = createCookie('shopify_oauth_state', {
     httpOnly: true,
@@ -14,6 +21,7 @@ const shopifyOAuthStateCookie = createCookie('shopify_oauth_state', {
     sameSite: 'lax',
     path: '/api/auth/shopify',
     maxAge: 600,
+    secrets: [getCookieSecret('shopify-oauth-state')],
 });
 
 interface LoaderData {
@@ -28,9 +36,7 @@ interface LoaderData {
     error?: string;
 }
 
-export async function loader({
-    request,
-}: LoaderFunctionArgs): Promise<LoaderData> {
+export async function loader({ request }: LoaderFunctionArgs) {
     const url = await oauthCallbackUrl(request);
     const code = url.searchParams.get('code');
     const shop = url.searchParams.get('shop');
@@ -73,6 +79,7 @@ export async function loader({
                   scopes?: string[];
                   customClientId?: string | null;
                   customClientSecret?: string | null;
+                  mode?: 'popup' | 'install';
               })
             : null;
 
@@ -88,6 +95,66 @@ export async function loader({
             };
         }
 
+        const shopifySecret =
+            cookieState.customClientSecret ||
+            process.env.SHOPIFY_CLIENT_SECRET ||
+            '';
+        if (!verifyShopifyQueryHmac(url, shopifySecret)) {
+            return {
+                success: false,
+                error: 'Invalid Shopify request signature.',
+            };
+        }
+
+        const callbackShop = shop
+            .trim()
+            .toLowerCase()
+            .replace(/\.myshopify\.com$/, '');
+        if (callbackShop !== cookieState.shop) {
+            return {
+                success: false,
+                error: 'Shopify store did not match the OAuth request.',
+            };
+        }
+
+        if (cookieState.mode === 'install') {
+            const { session, headers } = await requireAuth(request);
+            const redirectUri = process.env.SHOPIFY_REDIRECT_URI;
+            if (!redirectUri) {
+                return {
+                    success: false,
+                    error: 'Shopify redirect URI is not configured.',
+                };
+            }
+            const response = await fetch(
+                `${apiBaseUrl()}/api/credential-request/shopify/install/exchange`,
+                {
+                    method: 'POST',
+                    headers: {
+                        authorization: `Bearer ${session.access_token}`,
+                        'content-type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        code,
+                        shop: cookieState.shop,
+                        redirect_uri: redirectUri,
+                        scopes: cookieState.scopes?.join(',') || '',
+                    }),
+                }
+            );
+            if (!response.ok) {
+                const detail = await response.json().catch(() => ({}));
+                return {
+                    success: false,
+                    error:
+                        typeof detail?.detail === 'string'
+                            ? detail.detail
+                            : 'Could not finish the Shopify installation.',
+                };
+            }
+            return redirect('/dashboard?shopify=installed', { headers });
+        }
+
         return {
             success: true,
             code,
@@ -99,10 +166,14 @@ export async function loader({
             customClientSecret: cookieState.customClientSecret || undefined,
         };
     } catch (e) {
-        console.error('[shopify.callback] Failed to decode state:', e);
+        // requireAuth communicates login redirects by throwing a Response.
+        // Preserve that redirect instead of turning an expired NoClick session
+        // into a misleading OAuth-state failure.
+        if (e instanceof Response) throw e;
+        console.error('[shopify.callback] Failed to process callback:', e);
         return {
             success: false,
-            error: 'Invalid state parameter',
+            error: 'Could not finish the Shopify connection.',
         };
     }
 }

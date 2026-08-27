@@ -29,12 +29,18 @@ from pydantic import BaseModel
 from utils.async_helpers import spawn
 from utils.webhook_tunnel import get_webhook_base_url
 from utils.database_pool import get_native_pool
+from utils.shopify_routes import compliance_router as shopify_compliance_router
 from wss.receiver.client_events import WorkflowExecuteRequest
 from wss.handlers.workflow_execution_handler import WorkflowExecutionResult
 
 logger = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/webhook", tags=["webhooks"])
+
+# Shopify's mandatory privacy callbacks share the webhook worker and its
+# single-origin front door. Keeping the provider route under this router also
+# ensures local development mounts the exact same endpoint on the main app.
+router.include_router(shopify_compliance_router)
 
 
 class WebhookResponse(BaseModel):
