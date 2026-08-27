@@ -6547,7 +6547,7 @@ class ShopifyNode(ExternalWebhookTriggerMixin, WorkflowNode):
 
         variables = {
             "first": config.first,
-            "query": config.query,
+            "query": config.query_filter,
         }
 
         return await self._make_graphql_request(
@@ -6667,7 +6667,7 @@ class ShopifyNode(ExternalWebhookTriggerMixin, WorkflowNode):
 
         variables = {
             "first": config.first,
-            "query": config.query,
+            "query": config.query_filter,
         }
 
         return await self._make_graphql_request(
@@ -6752,7 +6752,7 @@ class ShopifyNode(ExternalWebhookTriggerMixin, WorkflowNode):
 
         variables = {
             "first": config.first,
-            "query": config.query,
+            "query": config.query_filter,
         }
 
         return await self._make_graphql_request(
@@ -6822,7 +6822,7 @@ class ShopifyNode(ExternalWebhookTriggerMixin, WorkflowNode):
 
         variables = {
             "first": config.first,
-            "query": config.query,
+            "query": None,
         }
 
         return await self._make_graphql_request(
@@ -6864,7 +6864,7 @@ class ShopifyNode(ExternalWebhookTriggerMixin, WorkflowNode):
 
         variables = {
             "first": config.first,
-            "query": config.query,
+            "query": config.query_filter,
         }
 
         return await self._make_graphql_request(
@@ -6915,7 +6915,7 @@ class ShopifyNode(ExternalWebhookTriggerMixin, WorkflowNode):
 
         variables = {
             "first": config.first,
-            "query": config.query,
+            "query": None,
         }
 
         return await self._make_graphql_request(
