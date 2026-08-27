@@ -70,7 +70,9 @@ async def exchange_public_install(
         "store_name": shop,
         "shop_owner": shop_info.shop_owner,
         "email": shop_info.email,
-        "expires_at": None,
+        "refresh_token": getattr(tokens, "refresh_token", None),
+        "expires_at": getattr(tokens, "expires_at", None),
+        "refresh_expires_at": getattr(tokens, "refresh_expires_at", None),
     }
     metadata = {
         "provider": "shopify",

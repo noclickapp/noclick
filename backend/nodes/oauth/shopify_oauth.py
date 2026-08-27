@@ -5,18 +5,18 @@ Manages OAuth 2.0 flow for Shopify Admin API access.
 Shopify OAuth uses:
 - Authorization URL: https://{shop}.myshopify.com/admin/oauth/authorize
 - Token URL: https://{shop}.myshopify.com/admin/oauth/access_token
-- Shopify access tokens do not expire by default
-- No refresh tokens are provided (tokens are permanent until revoked)
+- Public apps request expiring offline tokens and rotate their refresh tokens
 
 Documentation: https://shopify.dev/docs/apps/build/authentication-authorization/access-tokens/authorization-code-grant
 """
 
 import os
 import logging
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from typing import Tuple, Optional
 import httpx
 from pydantic import BaseModel
+from nodes.core.oauth_refresh import require_rotated_refresh_token
 from utils.ssrf import normalize_provider_subdomain
 
 logger = logging.getLogger(__name__)
@@ -26,8 +26,12 @@ SHOPIFY_API_VERSION = os.environ.get("SHOPIFY_API_VERSION", "2025-01")
 class ShopifyTokens(BaseModel):
     """Structured token response from Shopify OAuth"""
     access_token: str
-    scope: str
-    expires_at: Optional[str] = None  # Always None for Shopify (tokens don't expire)
+    scope: str = ""
+    expires_in: Optional[int] = None
+    expires_at: Optional[str] = None
+    refresh_token: Optional[str] = None
+    refresh_token_expires_in: Optional[int] = None
+    refresh_expires_at: Optional[str] = None
     token_type: str = "Bearer"
 
 
@@ -38,6 +42,14 @@ class ShopifyShopInfo(BaseModel):
     email: Optional[str] = None
     shop_owner: Optional[str] = None
     domain: str
+
+
+def calculate_expires_at(expires_in: Optional[int]) -> Optional[str]:
+    """Convert Shopify's relative token lifetime to an ISO-8601 timestamp."""
+    if expires_in is None:
+        return None
+    expires_at = datetime.now(timezone.utc) + timedelta(seconds=expires_in)
+    return expires_at.isoformat().replace("+00:00", "Z")
 
 
 def get_shopify_client_config(
@@ -114,6 +126,10 @@ async def exchange_code_for_tokens(
         'client_id': client_id,
         'client_secret': client_secret,
         'code': code,
+        # New public apps must use one-hour offline access tokens with a
+        # rotating refresh token. Shopify's authorization-code grant defaults
+        # to the legacy non-expiring token unless this flag is explicit.
+        'expiring': '1',
     }
 
     async with httpx.AsyncClient() as client:
@@ -135,13 +151,23 @@ async def exchange_code_for_tokens(
             logger.error(f"[ShopifyOAuth] Token exchange failed: {error_msg}")
             raise ValueError(f"Token exchange failed: {error_msg}")
 
-        # Shopify tokens don't expire
+        expires_in = token_data.get('expires_in')
+        refresh_token_expires_in = token_data.get('refresh_token_expires_in')
         tokens = ShopifyTokens(
             access_token=token_data['access_token'],
             scope=token_data.get('scope', ''),
-            expires_at=None,  # Shopify tokens don't expire
+            expires_in=expires_in,
+            expires_at=calculate_expires_at(expires_in),
+            refresh_token=token_data.get('refresh_token'),
+            refresh_token_expires_in=refresh_token_expires_in,
+            refresh_expires_at=calculate_expires_at(refresh_token_expires_in),
             token_type='Bearer',
         )
+
+        if not tokens.refresh_token or not tokens.expires_at:
+            raise ValueError(
+                "Shopify did not return an expiring offline token; reconnect the store"
+            )
 
         # Get shop info
         shopinfo_response = await client.get(
@@ -172,37 +198,95 @@ async def exchange_code_for_tokens(
         return tokens, shop_info
 
 
-async def refresh_access_token(refresh_token: str) -> ShopifyTokens:
+async def refresh_access_token(
+    refresh_token: str,
+    shop: str,
+    custom_client_id: Optional[str] = None,
+    custom_client_secret: Optional[str] = None,
+) -> ShopifyTokens:
     """
-    Refresh an expired access token.
-    Note: Shopify tokens don't expire, so this function is not used.
+    Refresh an expiring offline access token for a shop.
 
     Args:
-        refresh_token: Not used for Shopify
+        refresh_token: The current single-use Shopify refresh token
+        shop: Shop name (the part before .myshopify.com)
 
     Returns:
-        Raises ValueError as Shopify doesn't support token refresh
+        A new access token and rotated refresh token
 
     Raises:
-        ValueError: Always - Shopify tokens don't expire
+        ValueError: If the refresh request fails
     """
-    raise ValueError("Shopify tokens don't expire and don't support refresh")
+    client_id, client_secret = get_shopify_client_config(
+        custom_client_id, custom_client_secret
+    )
+    shop = normalize_provider_subdomain(
+        shop, "myshopify.com", field_name="Shopify store name"
+    )
+    token_url = f"https://{shop}.myshopify.com/admin/oauth/access_token"
+    data = {
+        "grant_type": "refresh_token",
+        "client_id": client_id,
+        "client_secret": client_secret,
+        "refresh_token": refresh_token,
+    }
+
+    async with httpx.AsyncClient() as client:
+        response = await client.post(token_url, data=data)
+
+    if response.status_code != 200:
+        logger.error(
+            "[ShopifyOAuth] Token refresh failed with HTTP %s",
+            response.status_code,
+        )
+        reconnect = (
+            " Reconnect the Shopify store." if response.status_code == 401 else ""
+        )
+        raise ValueError(
+            f"Token refresh failed (HTTP {response.status_code}).{reconnect}"
+        )
+
+    token_data = response.json()
+    if 'error' in token_data:
+        error_msg = token_data.get(
+            'error_description', token_data.get('error', 'Unknown error')
+        )
+        raise ValueError(f"Token refresh failed: {error_msg}")
+
+    expires_in = token_data.get('expires_in')
+    refresh_token_expires_in = token_data.get('refresh_token_expires_in')
+    return ShopifyTokens(
+        access_token=token_data['access_token'],
+        scope=token_data.get('scope', ''),
+        expires_in=expires_in,
+        expires_at=calculate_expires_at(expires_in),
+        refresh_token=require_rotated_refresh_token(
+            token_data, provider="shopify"
+        ),
+        refresh_token_expires_in=refresh_token_expires_in,
+        refresh_expires_at=calculate_expires_at(refresh_token_expires_in),
+        token_type=token_data.get('token_type', 'Bearer'),
+    )
 
 
 def is_token_expired(expires_at: Optional[str], buffer_minutes: int = 5) -> bool:
     """
-    Check if a token is expired or will expire soon.
-    Note: Shopify tokens don't expire. Always returns False.
+    Check if an access token is expired or will expire soon.
 
     Args:
-        expires_at: Not used for Shopify (always None)
-        buffer_minutes: Not used for Shopify
+        expires_at: ISO-8601 expiry timestamp
+        buffer_minutes: Refresh this many minutes before expiry
 
     Returns:
-        Always False - Shopify tokens don't expire
+        True when the token is expired, near expiry, or malformed
     """
-    # Shopify tokens never expire
-    return False
+    if not expires_at:
+        return False
+    try:
+        expiry = datetime.fromisoformat(expires_at.replace("Z", "+00:00"))
+    except (ValueError, AttributeError):
+        return True
+    return datetime.now(timezone.utc) >= expiry - timedelta(minutes=buffer_minutes)
 
 
 # Standard scopes for Shopify workflow operations

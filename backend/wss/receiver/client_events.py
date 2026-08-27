@@ -1124,7 +1124,7 @@ class ShopifyOAuthExchangeRequest(ClientEventBase):
 
 
 class ShopifyOAuthRefreshRequest(ClientEventBase):
-    """Refresh an expired Shopify OAuth token (not used - Shopify tokens don't expire)"""
+    """Refresh an expiring Shopify offline access token"""
     event_name: ClassVar[str] = "shopify:oauth:refresh"
 
     credential_id: str = Field(..., description="UUID of the credential to refresh")

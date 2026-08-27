@@ -113,7 +113,13 @@ class ShopifyOAuthCredential(BaseModel):
     refresh_token: Optional[str] = Field(None, title="Refresh Token")
     expires_at: Optional[str] = Field(
         None, title="Token Expiry"
-    )  # ISO 8601 (if using expiring tokens)
+    )
+    refresh_expires_at: Optional[str] = Field(None, title="Refresh Token Expiry")
+    custom_client_id: Optional[str] = Field(
+        None,
+        title="Custom OAuth Client ID",
+        json_schema_extra={"ui:hidden": True},
+    )
     shop_owner: Optional[str] = Field(None, title="Shop Owner")
     email: Optional[str] = Field(None, title="Account Email")
     api_secret_key: Optional[str] = Field(
@@ -4298,18 +4304,32 @@ class ShopifyNode(ExternalWebhookTriggerMixin, WorkflowNode):
     async def freshen_credential(
         cls, credential_data, *, pool=None, user_id=None, credential_id=None
     ):
-        """Refresh an expiring OAuth token at credential load (dropdowns,
-        trigger registration). No-op for non-rotating credentials (API keys /
-        offline / non-expiring tokens)."""
+        """Refresh an expiring offline token at credential load."""
         from nodes.core.oauth_refresh import freshen_oauth_credential
         from nodes.oauth.shopify_oauth import refresh_access_token
+
+        if not credential_data:
+            return credential_data
+
+        async def refresh(refresh_token: str):
+            return await refresh_access_token(
+                refresh_token,
+                shop=credential_data.get("store_name", ""),
+                custom_client_id=credential_data.get("custom_client_id"),
+                custom_client_secret=(
+                    credential_data.get("api_secret_key")
+                    if credential_data.get("custom_client_id")
+                    else None
+                ),
+            )
 
         return await freshen_oauth_credential(
             credential_data,
             pool=pool,
             user_id=user_id,
             credential_id=credential_id,
-            refresh=refresh_access_token,
+            refresh=refresh,
+            additional_token_fields=("refresh_expires_at",),
             provider="shopify",
         )
 

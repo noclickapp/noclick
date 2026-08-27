@@ -11,6 +11,7 @@ from utils.encryption import get_encryption
 from nodes.oauth.shopify_oauth import (
     exchange_code_for_tokens,
     is_token_expired,
+    refresh_access_token,
 )
 from wss.schema import SocketIOHandler
 from wss.sender import send_event, ResponseEvent
@@ -98,7 +99,10 @@ class ShopifyOAuthHandler(DatabasePoolMixin, SocketIOHandler):
                 'store_name': request.shop,
                 'shop_owner': shop_info.shop_owner,
                 'email': shop_info.email,
-                'expires_at': None,
+                'refresh_token': getattr(tokens, 'refresh_token', None),
+                'expires_at': getattr(tokens, 'expires_at', None),
+                'refresh_expires_at': getattr(tokens, 'refresh_expires_at', None),
+                'custom_client_id': request.custom_client_id or None,
                 # Custom Shopify apps need their own secret for webhook HMAC.
                 # The default public app resolves its secret from the server
                 # environment and does not duplicate it per credential.
@@ -183,10 +187,7 @@ class ShopifyOAuthHandler(DatabasePoolMixin, SocketIOHandler):
             ))
 
     async def refresh_oauth_token(self, sid: str, request: ShopifyOAuthRefreshRequest) -> None:
-        """
-        Refresh an expired OAuth token.
-        Note: Shopify tokens don't expire, so this always returns an error.
-        """
+        """Refresh an expiring offline token through the shared refresh path."""
         try:
             # Get user session
             session = await self.sio.get_session(sid)
@@ -202,12 +203,61 @@ class ShopifyOAuthHandler(DatabasePoolMixin, SocketIOHandler):
                 ))
                 return
 
-            # Shopify tokens don't expire
+            pool = await self.get_pool()
+            if not pool:
+                await send_event(self.sio, sid, ResponseEvent(
+                    request_id=request.request_id,
+                    data=ShopifyOAuthRefreshResponse(
+                        success=False,
+                        message="Database connection not available"
+                    ).model_dump()
+                ))
+                return
+
+            from wss.handlers.oauth.manual_refresh import manual_refresh_credential
+
+            def make_shopify_refresh(credential):
+                async def refresh(refresh_token: str):
+                    tokens = await refresh_access_token(
+                        refresh_token,
+                        shop=credential.get('store_name', ''),
+                        custom_client_id=credential.get('custom_client_id'),
+                        custom_client_secret=(
+                            credential.get('api_secret_key')
+                            if credential.get('custom_client_id')
+                            else None
+                        ),
+                    )
+                    if tokens.refresh_expires_at:
+                        credential['refresh_expires_at'] = tokens.refresh_expires_at
+                    return tokens
+                return refresh
+
+            try:
+                credential_data = await manual_refresh_credential(
+                    pool,
+                    user_id=user_id,
+                    credential_id=request.credential_id,
+                    provider="shopify",
+                    make_refresh=make_shopify_refresh,
+                    is_expired=is_token_expired,
+                )
+            except ValueError as e:
+                await send_event(self.sio, sid, ResponseEvent(
+                    request_id=request.request_id,
+                    data=ShopifyOAuthRefreshResponse(
+                        success=False,
+                        message=str(e)
+                    ).model_dump()
+                ))
+                return
+
             await send_event(self.sio, sid, ResponseEvent(
                 request_id=request.request_id,
                 data=ShopifyOAuthRefreshResponse(
-                    success=False,
-                    message="Shopify tokens don't expire and don't support refresh"
+                    success=True,
+                    expires_at=credential_data.get('expires_at'),
+                    message="Token refreshed successfully"
                 ).model_dump()
             ))
 
@@ -222,10 +272,7 @@ class ShopifyOAuthHandler(DatabasePoolMixin, SocketIOHandler):
             ))
 
     async def validate_oauth_token(self, sid: str, request: ShopifyOAuthValidateRequest) -> None:
-        """
-        Validate if a stored OAuth credential is still valid.
-        Note: Shopify tokens don't expire, so they're always valid unless revoked.
-        """
+        """Validate the stored expiring-token metadata."""
         try:
             # Get user session
             session = await self.sio.get_session(sid)
@@ -287,13 +334,18 @@ class ShopifyOAuthHandler(DatabasePoolMixin, SocketIOHandler):
                 shop_name = credential_data.get('shop_name') or row['metadata'].get('shop_name')
                 email = credential_data.get('email') or row['metadata'].get('email')
 
-                # Shopify tokens don't expire - always valid
+                expires_at = credential_data.get('expires_at')
+                expired_or_soon = is_token_expired(expires_at)
                 response = ShopifyOAuthValidateResponse(
-                    valid=True,
-                    expires_soon=False,
+                    valid=not expired_or_soon,
+                    expires_soon=expired_or_soon,
                     shop_name=shop_name,
                     email=email,
-                    message="Token is valid (non-expiring)"
+                    message=(
+                        "Token is expired or expires soon"
+                        if expired_or_soon
+                        else "Token is valid"
+                    )
                 )
                 await send_event(self.sio, sid, ResponseEvent(
                     request_id=request.request_id,

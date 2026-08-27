@@ -5628,6 +5628,31 @@
           "default": null,
           "title": "Token Expiry"
         },
+        "refresh_expires_at": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Refresh Token Expiry"
+        },
+        "custom_client_id": {
+          "anyOf": [
+            {
+              "type": "string"
+            },
+            {
+              "type": "null"
+            }
+          ],
+          "default": null,
+          "title": "Custom OAuth Client ID",
+          "ui:hidden": true
+        },
         "shop_owner": {
           "anyOf": [
             {

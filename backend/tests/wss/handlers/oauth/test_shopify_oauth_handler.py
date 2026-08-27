@@ -50,7 +50,13 @@ async def test_exchange_oauth_code_stores_store_name_and_credential_type(monkeyp
         captured_events.append(response_event)
 
     async def _fake_exchange_code_for_tokens(**_kwargs):
-        tokens = SimpleNamespace(access_token="tok-123", scope="read_products")
+        tokens = SimpleNamespace(
+            access_token="tok-123",
+            scope="read_products",
+            refresh_token="refresh-123",
+            expires_at="2026-08-27T20:00:00Z",
+            refresh_expires_at="2026-11-25T19:00:00Z",
+        )
         shop_info = SimpleNamespace(
             id=123,
             name="My Store",
@@ -94,6 +100,8 @@ async def test_exchange_oauth_code_stores_store_name_and_credential_type(monkeyp
 
     assert captured_credential_payload["credential_type"] == "shopify_oauth"
     assert captured_credential_payload["store_name"] == "my-store"
+    assert captured_credential_payload["refresh_token"] == "refresh-123"
+    assert captured_credential_payload["expires_at"] == "2026-08-27T20:00:00Z"
     assert "shop_name" not in captured_credential_payload
     assert "shop_domain" not in captured_credential_payload
 

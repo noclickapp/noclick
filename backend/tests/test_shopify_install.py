@@ -56,7 +56,13 @@ async def test_public_install_upserts_canonical_shop_credential(monkeypatch):
     async def exchange(**kwargs):
         captured["exchange"] = kwargs
         return (
-            SimpleNamespace(access_token="shpat_secret", scope="read_orders"),
+            SimpleNamespace(
+                access_token="shpat_secret",
+                scope="read_orders",
+                refresh_token="shprt_secret",
+                expires_at="2026-08-27T20:00:00Z",
+                refresh_expires_at="2026-11-25T19:00:00Z",
+            ),
             SimpleNamespace(
                 id=12,
                 name="Acme",
@@ -101,6 +107,8 @@ async def test_public_install_upserts_canonical_shop_credential(monkeypatch):
     assert result["shop"] == "acme.myshopify.com"
     assert result["credential_id"] == str(credential_id)
     assert captured["update"]["new_data"]["store_name"] == "acme"
+    assert captured["update"]["new_data"]["refresh_token"] == "shprt_secret"
+    assert captured["update"]["new_data"]["expires_at"] == "2026-08-27T20:00:00Z"
     assert captured["lookup"][1] == "acme.myshopify.com"
     assert captured["update"]["credential_name"] == "Acme"
     metadata = captured["update"]["metadata_updates"]
