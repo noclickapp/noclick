@@ -37,6 +37,10 @@ interface LoaderData {
 }
 
 export async function loader({ request }: LoaderFunctionArgs) {
+    // Shopify signs the exact callback query string it sends. oauthCallbackUrl
+    // decrypts our state parameter for the application below, so retain the
+    // original URL for HMAC verification before that transformation.
+    const signedUrl = new URL(request.url);
     const url = await oauthCallbackUrl(request);
     const code = url.searchParams.get('code');
     const shop = url.searchParams.get('shop');
@@ -99,7 +103,7 @@ export async function loader({ request }: LoaderFunctionArgs) {
             cookieState.customClientSecret ||
             process.env.SHOPIFY_CLIENT_SECRET ||
             '';
-        if (!verifyShopifyQueryHmac(url, shopifySecret)) {
+        if (!verifyShopifyQueryHmac(signedUrl, shopifySecret)) {
             return {
                 success: false,
                 error: 'Invalid Shopify request signature.',
