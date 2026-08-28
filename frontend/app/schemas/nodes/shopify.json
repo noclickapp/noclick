@@ -1163,42 +1163,6 @@
       "title": "ShopifyCreateCustomerConfig",
       "type": "object"
     },
-    "ShopifyCreateDiscountCodeConfig": {
-      "description": "Create a discount code for a price rule",
-      "properties": {
-        "operation": {
-          "const": "create_discount_code",
-          "default": "create_discount_code",
-          "title": "Create Discount Code",
-          "type": "string",
-          "ui:hidden": true,
-          "x-category": "Discount Code",
-          "x-display-name": "Create Discount Code",
-          "x-is-trigger": false,
-          "x-keywords": [
-            "new discount code",
-            "add coupon",
-            "create promo code"
-          ]
-        },
-        "price_rule_id": {
-          "description": "The ID of the price rule",
-          "title": "Price Rule ID",
-          "type": "string"
-        },
-        "code": {
-          "description": "The discount code",
-          "title": "Code",
-          "type": "string"
-        }
-      },
-      "required": [
-        "price_rule_id",
-        "code"
-      ],
-      "title": "ShopifyCreateDiscountCodeConfig",
-      "type": "object"
-    },
     "ShopifyCreateFulfillmentConfig": {
       "description": "Create a fulfillment for an order",
       "properties": {
@@ -1301,63 +1265,6 @@
         "order_id"
       ],
       "title": "ShopifyCreateFulfillmentConfig",
-      "type": "object"
-    },
-    "ShopifyCreateGiftCardConfig": {
-      "description": "Create a gift card",
-      "properties": {
-        "operation": {
-          "const": "create_gift_card",
-          "default": "create_gift_card",
-          "title": "Create Gift Card",
-          "type": "string",
-          "ui:hidden": true,
-          "x-category": "Gift Card",
-          "x-display-name": "Create Gift Card",
-          "x-is-trigger": false,
-          "x-keywords": [
-            "new gift card",
-            "issue gift card",
-            "add store credit"
-          ]
-        },
-        "initial_value": {
-          "description": "Initial balance (e.g., 25.00)",
-          "title": "Initial Value",
-          "type": "string"
-        },
-        "code": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "Gift card code (auto-generated if not provided)",
-          "title": "Code"
-        },
-        "note": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "Note about the gift card",
-          "title": "Note",
-          "ui:widget": "textarea"
-        }
-      },
-      "required": [
-        "initial_value"
-      ],
-      "title": "ShopifyCreateGiftCardConfig",
       "type": "object"
     },
     "ShopifyCreateMetafieldConfig": {
@@ -1589,118 +1496,6 @@
         "line_items"
       ],
       "title": "ShopifyCreateOrderConfig",
-      "type": "object"
-    },
-    "ShopifyCreatePriceRuleConfig": {
-      "description": "Create a price rule",
-      "properties": {
-        "operation": {
-          "const": "create_price_rule",
-          "default": "create_price_rule",
-          "title": "Create Price Rule",
-          "type": "string",
-          "ui:hidden": true,
-          "x-category": "Price Rule",
-          "x-display-name": "Create Price Rule",
-          "x-is-trigger": false,
-          "x-keywords": [
-            "new price rule",
-            "add discount rule",
-            "create promotion"
-          ]
-        },
-        "title": {
-          "description": "Price rule title",
-          "title": "Title",
-          "type": "string"
-        },
-        "target_type": {
-          "description": "What the discount applies to",
-          "enum": [
-            "line_item",
-            "shipping_line"
-          ],
-          "title": "Target Type",
-          "type": "string"
-        },
-        "target_selection": {
-          "description": "Which items are discounted",
-          "enum": [
-            "all",
-            "entitled"
-          ],
-          "title": "Target Selection",
-          "type": "string"
-        },
-        "allocation_method": {
-          "description": "How discount is distributed",
-          "enum": [
-            "across",
-            "each"
-          ],
-          "title": "Allocation Method",
-          "type": "string"
-        },
-        "value_type": {
-          "description": "Type of discount",
-          "enum": [
-            "fixed_amount",
-            "percentage"
-          ],
-          "title": "Value Type",
-          "type": "string"
-        },
-        "value": {
-          "description": "Discount value (e.g., -10.0 for $10 off or -15.0 for 15% off)",
-          "title": "Value",
-          "type": "string"
-        },
-        "customer_selection": {
-          "description": "Which customers can use this",
-          "enum": [
-            "all",
-            "prerequisite"
-          ],
-          "title": "Customer Selection",
-          "type": "string"
-        },
-        "starts_at": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "When the price rule becomes active (ISO 8601)",
-          "title": "Starts At"
-        },
-        "ends_at": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "When the price rule expires (ISO 8601)",
-          "title": "Ends At"
-        }
-      },
-      "required": [
-        "title",
-        "target_type",
-        "target_selection",
-        "allocation_method",
-        "value_type",
-        "value",
-        "customer_selection"
-      ],
-      "title": "ShopifyCreatePriceRuleConfig",
       "type": "object"
     },
     "ShopifyCreateProductConfig": {
@@ -2523,42 +2318,6 @@
       "title": "ShopifyDeleteCustomerConfig",
       "type": "object"
     },
-    "ShopifyDeleteDiscountCodeConfig": {
-      "description": "Delete a discount code",
-      "properties": {
-        "operation": {
-          "const": "delete_discount_code",
-          "default": "delete_discount_code",
-          "title": "Delete Discount Code",
-          "type": "string",
-          "ui:hidden": true,
-          "x-category": "Discount Code",
-          "x-display-name": "Delete Discount Code",
-          "x-is-trigger": false,
-          "x-keywords": [
-            "remove discount code",
-            "delete coupon",
-            "remove promo code"
-          ]
-        },
-        "price_rule_id": {
-          "description": "The ID of the price rule",
-          "title": "Price Rule ID",
-          "type": "string"
-        },
-        "discount_code_id": {
-          "description": "The ID of the discount code to delete",
-          "title": "Discount Code ID",
-          "type": "string"
-        }
-      },
-      "required": [
-        "price_rule_id",
-        "discount_code_id"
-      ],
-      "title": "ShopifyDeleteDiscountCodeConfig",
-      "type": "object"
-    },
     "ShopifyDeleteInventoryLevelConfig": {
       "description": "Delete an inventory level (disconnect item from location)",
       "properties": {
@@ -2653,35 +2412,6 @@
         "order_id"
       ],
       "title": "ShopifyDeleteOrderConfig",
-      "type": "object"
-    },
-    "ShopifyDeletePriceRuleConfig": {
-      "description": "Delete a price rule",
-      "properties": {
-        "operation": {
-          "const": "delete_price_rule",
-          "default": "delete_price_rule",
-          "title": "Delete Price Rule",
-          "type": "string",
-          "ui:hidden": true,
-          "x-category": "Price Rule",
-          "x-display-name": "Delete Price Rule",
-          "x-is-trigger": false,
-          "x-keywords": [
-            "remove price rule",
-            "delete discount rule"
-          ]
-        },
-        "price_rule_id": {
-          "description": "The ID of the price rule to delete",
-          "title": "Price Rule ID",
-          "type": "string"
-        }
-      },
-      "required": [
-        "price_rule_id"
-      ],
-      "title": "ShopifyDeletePriceRuleConfig",
       "type": "object"
     },
     "ShopifyDeleteProductConfig": {
@@ -2815,36 +2545,6 @@
         "webhook_id"
       ],
       "title": "ShopifyDeleteWebhookConfig",
-      "type": "object"
-    },
-    "ShopifyDisableGiftCardConfig": {
-      "description": "Disable a gift card",
-      "properties": {
-        "operation": {
-          "const": "disable_gift_card",
-          "default": "disable_gift_card",
-          "title": "Disable Gift Card",
-          "type": "string",
-          "ui:hidden": true,
-          "x-category": "Gift Card",
-          "x-display-name": "Disable Gift Card",
-          "x-is-trigger": false,
-          "x-keywords": [
-            "deactivate gift card",
-            "cancel gift card",
-            "void gift card"
-          ]
-        },
-        "gift_card_id": {
-          "description": "The ID of the gift card to disable",
-          "title": "Gift Card ID",
-          "type": "string"
-        }
-      },
-      "required": [
-        "gift_card_id"
-      ],
-      "title": "ShopifyDisableGiftCardConfig",
       "type": "object"
     },
     "ShopifyGetBlogArticleConfig": {
@@ -3079,35 +2779,6 @@
       "title": "ShopifyGetFulfillmentConfig",
       "type": "object"
     },
-    "ShopifyGetGiftCardConfig": {
-      "description": "Get a single gift card",
-      "properties": {
-        "operation": {
-          "const": "get_gift_card_by_id",
-          "default": "get_gift_card_by_id",
-          "title": "Get Gift Card by Id",
-          "type": "string",
-          "ui:hidden": true,
-          "x-category": "Gift Card",
-          "x-display-name": "Get Gift Card by Id",
-          "x-is-trigger": false,
-          "x-keywords": [
-            "gift card details",
-            "single gift card"
-          ]
-        },
-        "gift_card_id": {
-          "description": "The ID of the gift card",
-          "title": "Gift Card ID",
-          "type": "string"
-        }
-      },
-      "required": [
-        "gift_card_id"
-      ],
-      "title": "ShopifyGetGiftCardConfig",
-      "type": "object"
-    },
     "ShopifyGetLocationConfig": {
       "description": "Get a single location",
       "properties": {
@@ -3209,35 +2880,6 @@
         "order_id"
       ],
       "title": "ShopifyGetOrderConfig",
-      "type": "object"
-    },
-    "ShopifyGetPriceRuleConfig": {
-      "description": "Get a single price rule",
-      "properties": {
-        "operation": {
-          "const": "get_price_rule_by_id",
-          "default": "get_price_rule_by_id",
-          "title": "Get Price Rule by Id",
-          "type": "string",
-          "ui:hidden": true,
-          "x-category": "Price Rule",
-          "x-display-name": "Get Price Rule by Id",
-          "x-is-trigger": false,
-          "x-keywords": [
-            "price rule details",
-            "single discount rule"
-          ]
-        },
-        "price_rule_id": {
-          "description": "The ID of the price rule",
-          "title": "Price Rule ID",
-          "type": "string"
-        }
-      },
-      "required": [
-        "price_rule_id"
-      ],
-      "title": "ShopifyGetPriceRuleConfig",
       "type": "object"
     },
     "ShopifyGetProductConfig": {
@@ -3758,93 +3400,6 @@
         }
       },
       "title": "ShopifyGraphQLCustomersQueryConfig",
-      "type": "object"
-    },
-    "ShopifyGraphQLDraftOrderCreateConfig": {
-      "description": "Create a draft order using GraphQL",
-      "properties": {
-        "operation": {
-          "const": "create_draft_order_with_graphql",
-          "default": "create_draft_order_with_graphql",
-          "title": "Create Draft Order with Graphql",
-          "type": "string",
-          "ui:hidden": true,
-          "x-category": "GraphQL",
-          "x-display-name": "Create Draft Order with Graphql",
-          "x-is-trigger": false,
-          "x-keywords": [
-            "draft order",
-            "graphql draft order",
-            "new draft order"
-          ]
-        },
-        "line_items": {
-          "description": "Array of line items [{variantId, quantity}]",
-          "items": {
-            "additionalProperties": true,
-            "type": "object"
-          },
-          "title": "Line Items",
-          "type": "array"
-        },
-        "customer_id": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "GraphQL global ID of the customer",
-          "title": "Customer ID"
-        },
-        "email": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "Customer email address",
-          "title": "Customer Email"
-        },
-        "shipping_address": {
-          "anyOf": [
-            {
-              "additionalProperties": true,
-              "type": "object"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "Shipping address object",
-          "title": "Shipping Address"
-        },
-        "note": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "Note for the draft order",
-          "title": "Note"
-        }
-      },
-      "required": [
-        "line_items"
-      ],
-      "title": "ShopifyGraphQLDraftOrderCreateConfig",
       "type": "object"
     },
     "ShopifyGraphQLFulfillmentOrdersQueryConfig": {
@@ -4776,36 +4331,6 @@
       "title": "ShopifyListCustomersConfig",
       "type": "object"
     },
-    "ShopifyListDiscountCodesConfig": {
-      "description": "List discount codes for a price rule",
-      "properties": {
-        "operation": {
-          "const": "list_discount_codes",
-          "default": "list_discount_codes",
-          "title": "List Discount Codes",
-          "type": "string",
-          "ui:hidden": true,
-          "x-category": "Discount Code",
-          "x-display-name": "List Discount Codes",
-          "x-is-trigger": false,
-          "x-keywords": [
-            "coupon codes",
-            "promo codes",
-            "list discount codes"
-          ]
-        },
-        "price_rule_id": {
-          "description": "The ID of the price rule",
-          "title": "Price Rule ID",
-          "type": "string"
-        }
-      },
-      "required": [
-        "price_rule_id"
-      ],
-      "title": "ShopifyListDiscountCodesConfig",
-      "type": "object"
-    },
     "ShopifyListFulfillmentsConfig": {
       "description": "List fulfillments for an order",
       "properties": {
@@ -4834,60 +4359,6 @@
         "order_id"
       ],
       "title": "ShopifyListFulfillmentsConfig",
-      "type": "object"
-    },
-    "ShopifyListGiftCardsConfig": {
-      "description": "List gift cards",
-      "properties": {
-        "operation": {
-          "const": "list_gift_cards",
-          "default": "list_gift_cards",
-          "title": "List Gift Cards",
-          "type": "string",
-          "ui:hidden": true,
-          "x-category": "Gift Card",
-          "x-display-name": "List Gift Cards",
-          "x-is-trigger": false,
-          "x-keywords": [
-            "gift card list",
-            "store credit",
-            "list gift cards"
-          ]
-        },
-        "limit": {
-          "anyOf": [
-            {
-              "maximum": 250,
-              "minimum": 1,
-              "type": "integer"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": 50,
-          "description": "Number of gift cards to return (max 250)",
-          "title": "Limit"
-        },
-        "status": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "Filter by status",
-          "enum": [
-            "enabled",
-            "disabled"
-          ],
-          "title": "Status"
-        }
-      },
-      "title": "ShopifyListGiftCardsConfig",
       "type": "object"
     },
     "ShopifyListInventoryLevelsConfig": {
@@ -5171,43 +4642,6 @@
         }
       },
       "title": "ShopifyListOrdersConfig",
-      "type": "object"
-    },
-    "ShopifyListPriceRulesConfig": {
-      "description": "List price rules",
-      "properties": {
-        "operation": {
-          "const": "list_price_rules",
-          "default": "list_price_rules",
-          "title": "List Price Rules",
-          "type": "string",
-          "ui:hidden": true,
-          "x-category": "Price Rule",
-          "x-display-name": "List Price Rules",
-          "x-is-trigger": false,
-          "x-keywords": [
-            "discount rules",
-            "promotions list",
-            "list price rules"
-          ]
-        },
-        "limit": {
-          "anyOf": [
-            {
-              "maximum": 250,
-              "minimum": 1,
-              "type": "integer"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": 50,
-          "description": "Number of price rules to return (max 250)",
-          "title": "Limit"
-        }
-      },
-      "title": "ShopifyListPriceRulesConfig",
       "type": "object"
     },
     "ShopifyListProductImagesConfig": {
@@ -7420,62 +6854,6 @@
       "title": "ShopifyUpdateFulfillmentConfig",
       "type": "object"
     },
-    "ShopifyUpdateGiftCardConfig": {
-      "description": "Update a gift card",
-      "properties": {
-        "operation": {
-          "const": "update_gift_card",
-          "default": "update_gift_card",
-          "title": "Update Gift Card",
-          "type": "string",
-          "ui:hidden": true,
-          "x-category": "Gift Card",
-          "x-display-name": "Update Gift Card",
-          "x-is-trigger": false,
-          "x-keywords": [
-            "edit gift card",
-            "change gift card"
-          ]
-        },
-        "gift_card_id": {
-          "description": "The ID of the gift card",
-          "title": "Gift Card ID",
-          "type": "string"
-        },
-        "note": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "Note about the gift card",
-          "title": "Note",
-          "ui:widget": "textarea"
-        },
-        "expires_on": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "Expiry date (ISO 8601)",
-          "title": "Expires On"
-        }
-      },
-      "required": [
-        "gift_card_id"
-      ],
-      "title": "ShopifyUpdateGiftCardConfig",
-      "type": "object"
-    },
     "ShopifyUpdateMetafieldConfig": {
       "description": "Update a metafield",
       "properties": {
@@ -7608,87 +6986,6 @@
         "order_id"
       ],
       "title": "ShopifyUpdateOrderConfig",
-      "type": "object"
-    },
-    "ShopifyUpdatePriceRuleConfig": {
-      "description": "Update a price rule",
-      "properties": {
-        "operation": {
-          "const": "update_price_rule",
-          "default": "update_price_rule",
-          "title": "Update Price Rule",
-          "type": "string",
-          "ui:hidden": true,
-          "x-category": "Price Rule",
-          "x-display-name": "Update Price Rule",
-          "x-is-trigger": false,
-          "x-keywords": [
-            "edit price rule",
-            "change discount rule"
-          ]
-        },
-        "price_rule_id": {
-          "description": "The ID of the price rule",
-          "title": "Price Rule ID",
-          "type": "string"
-        },
-        "title": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "Price rule title",
-          "title": "Title"
-        },
-        "value": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "Discount value",
-          "title": "Value"
-        },
-        "starts_at": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "When the price rule becomes active (ISO 8601)",
-          "title": "Starts At"
-        },
-        "ends_at": {
-          "anyOf": [
-            {
-              "type": "string"
-            },
-            {
-              "type": "null"
-            }
-          ],
-          "default": null,
-          "description": "When the price rule expires (ISO 8601)",
-          "title": "Ends At"
-        }
-      },
-      "required": [
-        "price_rule_id"
-      ],
-      "title": "ShopifyUpdatePriceRuleConfig",
       "type": "object"
     },
     "ShopifyUpdateProductConfig": {
@@ -8021,15 +7318,11 @@
           "create_customer": "#/$defs/ShopifyCreateCustomerConfig",
           "create_customer_address": "#/$defs/ShopifyCreateCustomerAddressConfig",
           "create_customer_with_graphql": "#/$defs/ShopifyGraphQLCustomerCreateConfig",
-          "create_discount_code": "#/$defs/ShopifyCreateDiscountCodeConfig",
-          "create_draft_order_with_graphql": "#/$defs/ShopifyGraphQLDraftOrderCreateConfig",
-          "create_gift_card": "#/$defs/ShopifyCreateGiftCardConfig",
           "create_metafield": "#/$defs/ShopifyCreateMetafieldConfig",
           "create_order": "#/$defs/ShopifyCreateOrderConfig",
           "create_order_fulfillment": "#/$defs/ShopifyCreateFulfillmentConfig",
           "create_order_refund": "#/$defs/ShopifyCreateRefundConfig",
           "create_order_transaction": "#/$defs/ShopifyCreateTransactionConfig",
-          "create_price_rule": "#/$defs/ShopifyCreatePriceRuleConfig",
           "create_product": "#/$defs/ShopifyCreateProductConfig",
           "create_product_image": "#/$defs/ShopifyCreateProductImageConfig",
           "create_product_variant": "#/$defs/ShopifyCreateProductVariantConfig",
@@ -8039,16 +7332,13 @@
           "delete_collection": "#/$defs/ShopifyDeleteCollectionConfig",
           "delete_customer": "#/$defs/ShopifyDeleteCustomerConfig",
           "delete_customer_address": "#/$defs/ShopifyDeleteCustomerAddressConfig",
-          "delete_discount_code": "#/$defs/ShopifyDeleteDiscountCodeConfig",
           "delete_inventory_level": "#/$defs/ShopifyDeleteInventoryLevelConfig",
           "delete_metafield": "#/$defs/ShopifyDeleteMetafieldConfig",
           "delete_order": "#/$defs/ShopifyDeleteOrderConfig",
-          "delete_price_rule": "#/$defs/ShopifyDeletePriceRuleConfig",
           "delete_product": "#/$defs/ShopifyDeleteProductConfig",
           "delete_product_image": "#/$defs/ShopifyDeleteProductImageConfig",
           "delete_product_variant": "#/$defs/ShopifyDeleteProductVariantConfig",
           "delete_webhook": "#/$defs/ShopifyDeleteWebhookConfig",
-          "disable_gift_card": "#/$defs/ShopifyDisableGiftCardConfig",
           "execute_custom_graphql_mutation": "#/$defs/ShopifyGraphQLMutationConfig",
           "execute_custom_graphql_query": "#/$defs/ShopifyGraphQLQueryConfig",
           "get_blog_article_by_id": "#/$defs/ShopifyGetBlogArticleConfig",
@@ -8056,14 +7346,12 @@
           "get_customer_address_by_id": "#/$defs/ShopifyGetCustomerAddressConfig",
           "get_customer_by_id": "#/$defs/ShopifyGetCustomerConfig",
           "get_customer_orders": "#/$defs/ShopifyGetCustomerOrdersConfig",
-          "get_gift_card_by_id": "#/$defs/ShopifyGetGiftCardConfig",
           "get_location_by_id": "#/$defs/ShopifyGetLocationConfig",
           "get_metafield_by_id": "#/$defs/ShopifyGetMetafieldConfig",
           "get_order_by_id": "#/$defs/ShopifyGetOrderConfig",
           "get_order_fulfillment": "#/$defs/ShopifyGetFulfillmentConfig",
           "get_order_refund_by_id": "#/$defs/ShopifyGetRefundConfig",
           "get_order_transaction_by_id": "#/$defs/ShopifyGetTransactionConfig",
-          "get_price_rule_by_id": "#/$defs/ShopifyGetPriceRuleConfig",
           "get_product_by_id": "#/$defs/ShopifyGetProductConfig",
           "get_product_image_by_id": "#/$defs/ShopifyGetProductImageConfig",
           "get_product_variant_by_id": "#/$defs/ShopifyGetProductVariantConfig",
@@ -8076,15 +7364,12 @@
           "list_collections": "#/$defs/ShopifyListCollectionsConfig",
           "list_customer_addresses": "#/$defs/ShopifyListCustomerAddressesConfig",
           "list_customers": "#/$defs/ShopifyListCustomersConfig",
-          "list_discount_codes": "#/$defs/ShopifyListDiscountCodesConfig",
-          "list_gift_cards": "#/$defs/ShopifyListGiftCardsConfig",
           "list_inventory_levels": "#/$defs/ShopifyListInventoryLevelsConfig",
           "list_metafields": "#/$defs/ShopifyListMetafieldsConfig",
           "list_order_fulfillments": "#/$defs/ShopifyListFulfillmentsConfig",
           "list_order_refunds": "#/$defs/ShopifyListRefundsConfig",
           "list_order_transactions": "#/$defs/ShopifyListTransactionsConfig",
           "list_orders": "#/$defs/ShopifyListOrdersConfig",
-          "list_price_rules": "#/$defs/ShopifyListPriceRulesConfig",
           "list_product_images": "#/$defs/ShopifyListProductImagesConfig",
           "list_product_variants": "#/$defs/ShopifyListProductVariantsConfig",
           "list_products": "#/$defs/ShopifyListProductsConfig",
@@ -8110,11 +7395,9 @@
           "update_collection": "#/$defs/ShopifyUpdateCollectionConfig",
           "update_customer": "#/$defs/ShopifyUpdateCustomerConfig",
           "update_customer_address": "#/$defs/ShopifyUpdateCustomerAddressConfig",
-          "update_gift_card": "#/$defs/ShopifyUpdateGiftCardConfig",
           "update_metafield": "#/$defs/ShopifyUpdateMetafieldConfig",
           "update_order": "#/$defs/ShopifyUpdateOrderConfig",
           "update_order_fulfillment": "#/$defs/ShopifyUpdateFulfillmentConfig",
-          "update_price_rule": "#/$defs/ShopifyUpdatePriceRuleConfig",
           "update_product": "#/$defs/ShopifyUpdateProductConfig",
           "update_product_variant": "#/$defs/ShopifyUpdateProductVariantConfig",
           "update_product_with_graphql": "#/$defs/ShopifyGraphQLProductUpdateConfig",
@@ -8376,45 +7659,6 @@
           "$ref": "#/$defs/ShopifyDeleteWebhookConfig"
         },
         {
-          "$ref": "#/$defs/ShopifyListPriceRulesConfig"
-        },
-        {
-          "$ref": "#/$defs/ShopifyGetPriceRuleConfig"
-        },
-        {
-          "$ref": "#/$defs/ShopifyCreatePriceRuleConfig"
-        },
-        {
-          "$ref": "#/$defs/ShopifyUpdatePriceRuleConfig"
-        },
-        {
-          "$ref": "#/$defs/ShopifyDeletePriceRuleConfig"
-        },
-        {
-          "$ref": "#/$defs/ShopifyListDiscountCodesConfig"
-        },
-        {
-          "$ref": "#/$defs/ShopifyCreateDiscountCodeConfig"
-        },
-        {
-          "$ref": "#/$defs/ShopifyDeleteDiscountCodeConfig"
-        },
-        {
-          "$ref": "#/$defs/ShopifyListGiftCardsConfig"
-        },
-        {
-          "$ref": "#/$defs/ShopifyGetGiftCardConfig"
-        },
-        {
-          "$ref": "#/$defs/ShopifyCreateGiftCardConfig"
-        },
-        {
-          "$ref": "#/$defs/ShopifyUpdateGiftCardConfig"
-        },
-        {
-          "$ref": "#/$defs/ShopifyDisableGiftCardConfig"
-        },
-        {
           "$ref": "#/$defs/ShopifyListBlogsConfig"
         },
         {
@@ -8449,9 +7693,6 @@
         },
         {
           "$ref": "#/$defs/ShopifyGraphQLOrdersQueryConfig"
-        },
-        {
-          "$ref": "#/$defs/ShopifyGraphQLDraftOrderCreateConfig"
         },
         {
           "$ref": "#/$defs/ShopifyGraphQLCustomersQueryConfig"

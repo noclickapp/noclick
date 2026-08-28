@@ -5,6 +5,7 @@ from unittest.mock import AsyncMock
 import pytest
 
 from nodes.shopify_node import (
+    ShopifyCreateBlogArticleConfig,
     ShopifyGraphQLShopQueryConfig,
     ShopifyListProductsConfig,
     ShopifyNode,
@@ -51,6 +52,25 @@ async def test_public_app_allows_graphql_operation():
 
     assert result["status"] == "success"
     node._handle_graphql_shop.assert_awaited_once()
+
+
+@pytest.mark.asyncio
+async def test_public_app_allows_graphql_blog_operation():
+    node = _node(
+        ShopifyCreateBlogArticleConfig(
+            blog_id="123",
+            title="GraphQL migration",
+            body_html="<p>Published through GraphQL.</p>",
+        )
+    )
+    node._handle_create_blog_article = AsyncMock(
+        return_value={"status": "success", "action": "create_blog_article"}
+    )
+
+    result = await node.execute({})
+
+    assert result["status"] == "success"
+    node._handle_create_blog_article.assert_awaited_once()
 
 
 @pytest.mark.asyncio

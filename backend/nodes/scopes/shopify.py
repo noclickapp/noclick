@@ -23,10 +23,9 @@ Three quirks matter for reading this table:
   AND, so the alternatives are recorded in ``note`` and the entry names the
   scope this node's flow actually uses.
 
-Three resource families this node operates on are **not requested at connect
-time** — price rules, gift cards and draft orders. Those operations sit in
-``unmapped`` with a ``MISSING SCOPE`` comment rather than being fixed here,
-because adding a scope forces every existing user to re-authorize.
+Operations whose resource scope is selected dynamically remain in ``unmapped``.
+Operations that require scopes outside NoClick's public app grant are omitted
+from the node schema entirely so users cannot build workflows that always fail.
 """
 
 from __future__ import annotations
@@ -209,7 +208,9 @@ _REQUIREMENTS: dict[str, ScopeRequirement] = {
     # -------------------------------------------------------------------- shop
     # Neither the REST Shop resource, the GraphQL `shop` query nor the `Shop`
     # object documents a required scope, and no `read_shop` scope exists.
-    "get_shop_information": _s(note="Shopify documents no scope for the Shop resource."),
+    "get_shop_information": _s(
+        note="Shopify documents no scope for the Shop resource."
+    ),
     "get_shop_with_graphql": _s(note="Shopify documents no scope for the shop query."),
     # -------------------------------------------------------------------- blog
     # Blog + Article ride the Online Store `content` scope family (the REST
@@ -239,32 +240,6 @@ SHOPIFY_SCOPES = ScopeRegistry(
     provider="shopify",
     requirements=_REQUIREMENTS,
     unmapped=(
-        # MISSING SCOPE: read_price_rules. The PriceRule and DiscountCode REST
-        # resources both state "Requires `price_rules` access scope"; the node
-        # requests neither half, so all eight operations 403 on first call.
-        "list_price_rules",
-        "get_price_rule_by_id",
-        "list_discount_codes",
-        # MISSING SCOPE: write_price_rules. Same resource, mutating verbs.
-        "create_price_rule",
-        "update_price_rule",
-        "delete_price_rule",
-        "create_discount_code",
-        "delete_discount_code",
-        # MISSING SCOPE: read_gift_cards. "Requires `gift_cards` access scope"
-        # — and Shopify additionally requires contacting Shopify Support to be
-        # granted read_gift_cards/write_gift_cards at all, so this one is not a
-        # simple addition to the connect request.
-        "list_gift_cards",
-        "get_gift_card_by_id",
-        # MISSING SCOPE: write_gift_cards. Same resource, mutating verbs.
-        "create_gift_card",
-        "update_gift_card",
-        "disable_gift_card",
-        # MISSING SCOPE: write_draft_orders. draftOrderCreate: "Requires
-        # `write_draft_orders` access scope or `write_quick_sale` access
-        # scope." Neither is requested.
-        "create_draft_order_with_graphql",
         # Scope is the OWNER resource's scope, chosen at runtime: the node's
         # `resource` field targets product/order/customer metafields or the
         # shop-level collection. Shopify documents no metafield scope at any

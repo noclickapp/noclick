@@ -12,8 +12,7 @@ Provides workflow integration with Shopify for e-commerce operations including:
 - Shop Operations: get shop information
 - Metafield Operations: list, get, create, update, delete metafields
 - Webhook Operations: list, get, create, update, delete webhooks
-- Price Rule/Discount Operations: manage price rules and discount codes
-- Gift Card Operations: list, get, create, update, disable gift cards
+- Blog Operations: list blogs and create, read, update, or delete articles
 
 NoClick's public App Store grant is GraphQL-only. Legacy REST handlers are kept
 only for existing merchant-supplied OAuth apps and old admin access tokens.
@@ -52,13 +51,18 @@ SHOPIFY_WEBHOOK_TOPICS = {
 }
 
 PUBLIC_APP_GRAPHQL_OPERATIONS = {
+    "list_blogs",
+    "list_blog_articles",
+    "get_blog_article_by_id",
+    "create_blog_article",
+    "update_blog_article",
+    "delete_blog_article",
     "execute_custom_graphql_query",
     "execute_custom_graphql_mutation",
     "query_products_with_graphql",
     "create_product_with_graphql",
     "update_product_with_graphql",
     "query_orders_with_graphql",
-    "create_draft_order_with_graphql",
     "query_customers_with_graphql",
     "create_customer_with_graphql",
     "query_inventory_with_graphql",
@@ -79,6 +83,19 @@ def _shopify_api_base(store_name: str) -> str:
         store_name, "myshopify.com", field_name="Shopify store name"
     )
     return f"https://{store}.myshopify.com/admin/api/{SHOPIFY_API_VERSION}"
+
+
+def _shopify_gid(resource: str, value: str) -> str:
+    """Accept either a numeric legacy ID or an Admin GraphQL global ID."""
+    value = str(value).strip()
+    if value.startswith("gid://shopify/"):
+        return value
+    return f"gid://shopify/{resource}/{value}"
+
+
+def _shopify_legacy_id(value: str) -> str:
+    """Extract the numeric/searchable portion from a Shopify global ID."""
+    return str(value).strip().rsplit("/", 1)[-1]
 
 
 async def register_shopify_webhook(
@@ -2956,375 +2973,6 @@ class ShopifyDeleteWebhookConfig(BaseModel):
 
 
 # ============================================================================
-# Price Rule / Discount Operation Configs
-# ============================================================================
-
-
-class ShopifyListPriceRulesConfig(BaseModel):
-    """List price rules"""
-
-    operation: Literal["list_price_rules"] = Field(
-        "list_price_rules",
-        json_schema_extra={
-            "const": "list_price_rules",
-            "ui:hidden": True,
-            "x-category": "Price Rule",
-            "x-is-trigger": False,
-            "x-display-name": "List Price Rules",
-            "x-keywords": ["discount rules", "promotions list", "list price rules"],
-        },
-        title="List Price Rules",
-    )
-    limit: Optional[int] = Field(
-        50,
-        title="Limit",
-        description="Number of price rules to return (max 250)",
-        ge=1,
-        le=250,
-    )
-
-
-class ShopifyGetPriceRuleConfig(BaseModel):
-    """Get a single price rule"""
-
-    operation: Literal["get_price_rule_by_id"] = Field(
-        "get_price_rule_by_id",
-        json_schema_extra={
-            "const": "get_price_rule_by_id",
-            "ui:hidden": True,
-            "x-category": "Price Rule",
-            "x-is-trigger": False,
-            "x-display-name": "Get Price Rule by Id",
-            "x-keywords": ["price rule details", "single discount rule"],
-        },
-        title="Get Price Rule by Id",
-    )
-    price_rule_id: str = Field(
-        ..., title="Price Rule ID", description="The ID of the price rule"
-    )
-
-
-class ShopifyCreatePriceRuleConfig(BaseModel):
-    """Create a price rule"""
-
-    operation: Literal["create_price_rule"] = Field(
-        "create_price_rule",
-        json_schema_extra={
-            "const": "create_price_rule",
-            "ui:hidden": True,
-            "x-category": "Price Rule",
-            "x-is-trigger": False,
-            "x-display-name": "Create Price Rule",
-            "x-keywords": ["new price rule", "add discount rule", "create promotion"],
-        },
-        title="Create Price Rule",
-    )
-    title: str = Field(..., title="Title", description="Price rule title")
-    target_type: str = Field(
-        ...,
-        title="Target Type",
-        description="What the discount applies to",
-        json_schema_extra={"enum": ["line_item", "shipping_line"]},
-    )
-    target_selection: str = Field(
-        ...,
-        title="Target Selection",
-        description="Which items are discounted",
-        json_schema_extra={"enum": ["all", "entitled"]},
-    )
-    allocation_method: str = Field(
-        ...,
-        title="Allocation Method",
-        description="How discount is distributed",
-        json_schema_extra={"enum": ["across", "each"]},
-    )
-    value_type: str = Field(
-        ...,
-        title="Value Type",
-        description="Type of discount",
-        json_schema_extra={"enum": ["fixed_amount", "percentage"]},
-    )
-    value: str = Field(
-        ...,
-        title="Value",
-        description="Discount value (e.g., -10.0 for $10 off or -15.0 for 15% off)",
-    )
-    customer_selection: str = Field(
-        ...,
-        title="Customer Selection",
-        description="Which customers can use this",
-        json_schema_extra={"enum": ["all", "prerequisite"]},
-    )
-    starts_at: Optional[str] = Field(
-        None,
-        title="Starts At",
-        description="When the price rule becomes active (ISO 8601)",
-    )
-    ends_at: Optional[str] = Field(
-        None, title="Ends At", description="When the price rule expires (ISO 8601)"
-    )
-
-
-class ShopifyUpdatePriceRuleConfig(BaseModel):
-    """Update a price rule"""
-
-    operation: Literal["update_price_rule"] = Field(
-        "update_price_rule",
-        json_schema_extra={
-            "const": "update_price_rule",
-            "ui:hidden": True,
-            "x-category": "Price Rule",
-            "x-is-trigger": False,
-            "x-display-name": "Update Price Rule",
-            "x-keywords": ["edit price rule", "change discount rule"],
-        },
-        title="Update Price Rule",
-    )
-    price_rule_id: str = Field(
-        ..., title="Price Rule ID", description="The ID of the price rule"
-    )
-    title: Optional[str] = Field(None, title="Title", description="Price rule title")
-    value: Optional[str] = Field(None, title="Value", description="Discount value")
-    starts_at: Optional[str] = Field(
-        None,
-        title="Starts At",
-        description="When the price rule becomes active (ISO 8601)",
-    )
-    ends_at: Optional[str] = Field(
-        None, title="Ends At", description="When the price rule expires (ISO 8601)"
-    )
-
-
-class ShopifyDeletePriceRuleConfig(BaseModel):
-    """Delete a price rule"""
-
-    operation: Literal["delete_price_rule"] = Field(
-        "delete_price_rule",
-        json_schema_extra={
-            "const": "delete_price_rule",
-            "ui:hidden": True,
-            "x-category": "Price Rule",
-            "x-is-trigger": False,
-            "x-display-name": "Delete Price Rule",
-            "x-keywords": ["remove price rule", "delete discount rule"],
-        },
-        title="Delete Price Rule",
-    )
-    price_rule_id: str = Field(
-        ..., title="Price Rule ID", description="The ID of the price rule to delete"
-    )
-
-
-class ShopifyListDiscountCodesConfig(BaseModel):
-    """List discount codes for a price rule"""
-
-    operation: Literal["list_discount_codes"] = Field(
-        "list_discount_codes",
-        json_schema_extra={
-            "const": "list_discount_codes",
-            "ui:hidden": True,
-            "x-category": "Discount Code",
-            "x-is-trigger": False,
-            "x-display-name": "List Discount Codes",
-            "x-keywords": ["coupon codes", "promo codes", "list discount codes"],
-        },
-        title="List Discount Codes",
-    )
-    price_rule_id: str = Field(
-        ..., title="Price Rule ID", description="The ID of the price rule"
-    )
-
-
-class ShopifyCreateDiscountCodeConfig(BaseModel):
-    """Create a discount code for a price rule"""
-
-    operation: Literal["create_discount_code"] = Field(
-        "create_discount_code",
-        json_schema_extra={
-            "const": "create_discount_code",
-            "ui:hidden": True,
-            "x-category": "Discount Code",
-            "x-is-trigger": False,
-            "x-display-name": "Create Discount Code",
-            "x-keywords": ["new discount code", "add coupon", "create promo code"],
-        },
-        title="Create Discount Code",
-    )
-    price_rule_id: str = Field(
-        ..., title="Price Rule ID", description="The ID of the price rule"
-    )
-    code: str = Field(..., title="Code", description="The discount code")
-
-
-class ShopifyDeleteDiscountCodeConfig(BaseModel):
-    """Delete a discount code"""
-
-    operation: Literal["delete_discount_code"] = Field(
-        "delete_discount_code",
-        json_schema_extra={
-            "const": "delete_discount_code",
-            "ui:hidden": True,
-            "x-category": "Discount Code",
-            "x-is-trigger": False,
-            "x-display-name": "Delete Discount Code",
-            "x-keywords": [
-                "remove discount code",
-                "delete coupon",
-                "remove promo code",
-            ],
-        },
-        title="Delete Discount Code",
-    )
-    price_rule_id: str = Field(
-        ..., title="Price Rule ID", description="The ID of the price rule"
-    )
-    discount_code_id: str = Field(
-        ...,
-        title="Discount Code ID",
-        description="The ID of the discount code to delete",
-    )
-
-
-# ============================================================================
-# Gift Card Operation Configs
-# ============================================================================
-
-
-class ShopifyListGiftCardsConfig(BaseModel):
-    """List gift cards"""
-
-    operation: Literal["list_gift_cards"] = Field(
-        "list_gift_cards",
-        json_schema_extra={
-            "const": "list_gift_cards",
-            "ui:hidden": True,
-            "x-category": "Gift Card",
-            "x-is-trigger": False,
-            "x-display-name": "List Gift Cards",
-            "x-keywords": ["gift card list", "store credit", "list gift cards"],
-        },
-        title="List Gift Cards",
-    )
-    limit: Optional[int] = Field(
-        50,
-        title="Limit",
-        description="Number of gift cards to return (max 250)",
-        ge=1,
-        le=250,
-    )
-    status: Optional[str] = Field(
-        None,
-        title="Status",
-        description="Filter by status",
-        json_schema_extra={"enum": ["enabled", "disabled"]},
-    )
-
-
-class ShopifyGetGiftCardConfig(BaseModel):
-    """Get a single gift card"""
-
-    operation: Literal["get_gift_card_by_id"] = Field(
-        "get_gift_card_by_id",
-        json_schema_extra={
-            "const": "get_gift_card_by_id",
-            "ui:hidden": True,
-            "x-category": "Gift Card",
-            "x-is-trigger": False,
-            "x-display-name": "Get Gift Card by Id",
-            "x-keywords": ["gift card details", "single gift card"],
-        },
-        title="Get Gift Card by Id",
-    )
-    gift_card_id: str = Field(
-        ..., title="Gift Card ID", description="The ID of the gift card"
-    )
-
-
-class ShopifyCreateGiftCardConfig(BaseModel):
-    """Create a gift card"""
-
-    operation: Literal["create_gift_card"] = Field(
-        "create_gift_card",
-        json_schema_extra={
-            "const": "create_gift_card",
-            "ui:hidden": True,
-            "x-category": "Gift Card",
-            "x-is-trigger": False,
-            "x-display-name": "Create Gift Card",
-            "x-keywords": ["new gift card", "issue gift card", "add store credit"],
-        },
-        title="Create Gift Card",
-    )
-    initial_value: str = Field(
-        ..., title="Initial Value", description="Initial balance (e.g., 25.00)"
-    )
-    code: Optional[str] = Field(
-        None,
-        title="Code",
-        description="Gift card code (auto-generated if not provided)",
-    )
-    note: Optional[str] = Field(
-        None,
-        title="Note",
-        description="Note about the gift card",
-        json_schema_extra={"ui:widget": "textarea"},
-    )
-
-
-class ShopifyUpdateGiftCardConfig(BaseModel):
-    """Update a gift card"""
-
-    operation: Literal["update_gift_card"] = Field(
-        "update_gift_card",
-        json_schema_extra={
-            "const": "update_gift_card",
-            "ui:hidden": True,
-            "x-category": "Gift Card",
-            "x-is-trigger": False,
-            "x-display-name": "Update Gift Card",
-            "x-keywords": ["edit gift card", "change gift card"],
-        },
-        title="Update Gift Card",
-    )
-    gift_card_id: str = Field(
-        ..., title="Gift Card ID", description="The ID of the gift card"
-    )
-    note: Optional[str] = Field(
-        None,
-        title="Note",
-        description="Note about the gift card",
-        json_schema_extra={"ui:widget": "textarea"},
-    )
-    expires_on: Optional[str] = Field(
-        None, title="Expires On", description="Expiry date (ISO 8601)"
-    )
-
-
-class ShopifyDisableGiftCardConfig(BaseModel):
-    """Disable a gift card"""
-
-    operation: Literal["disable_gift_card"] = Field(
-        "disable_gift_card",
-        json_schema_extra={
-            "const": "disable_gift_card",
-            "ui:hidden": True,
-            "x-category": "Gift Card",
-            "x-is-trigger": False,
-            "x-display-name": "Disable Gift Card",
-            "x-keywords": [
-                "deactivate gift card",
-                "cancel gift card",
-                "void gift card",
-            ],
-        },
-        title="Disable Gift Card",
-    )
-    gift_card_id: str = Field(
-        ..., title="Gift Card ID", description="The ID of the gift card to disable"
-    )
-
-
-# ============================================================================
 # GraphQL Operation Configs
 # ============================================================================
 
@@ -3536,40 +3184,6 @@ class ShopifyGraphQLOrdersQueryConfig(BaseModel):
     )
     after: Optional[str] = Field(
         None, title="After Cursor", description="Pagination cursor for next page"
-    )
-
-
-class ShopifyGraphQLDraftOrderCreateConfig(BaseModel):
-    """Create a draft order using GraphQL"""
-
-    operation: Literal["create_draft_order_with_graphql"] = Field(
-        "create_draft_order_with_graphql",
-        json_schema_extra={
-            "const": "create_draft_order_with_graphql",
-            "ui:hidden": True,
-            "x-category": "GraphQL",
-            "x-is-trigger": False,
-            "x-display-name": "Create Draft Order with Graphql",
-            "x-keywords": ["draft order", "graphql draft order", "new draft order"],
-        },
-        title="Create Draft Order with Graphql",
-    )
-    line_items: List[Dict[str, Any]] = Field(
-        ...,
-        title="Line Items",
-        description="Array of line items [{variantId, quantity}]",
-    )
-    customer_id: Optional[str] = Field(
-        None, title="Customer ID", description="GraphQL global ID of the customer"
-    )
-    email: Optional[str] = Field(
-        None, title="Customer Email", description="Customer email address"
-    )
-    shipping_address: Optional[Dict[str, Any]] = Field(
-        None, title="Shipping Address", description="Shipping address object"
-    )
-    note: Optional[str] = Field(
-        None, title="Note", description="Note for the draft order"
     )
 
 
@@ -4250,21 +3864,6 @@ ShopifyConfig = Annotated[
         ShopifyCreateWebhookConfig,
         ShopifyUpdateWebhookConfig,
         ShopifyDeleteWebhookConfig,
-        # Price Rule / Discount operations (8)
-        ShopifyListPriceRulesConfig,
-        ShopifyGetPriceRuleConfig,
-        ShopifyCreatePriceRuleConfig,
-        ShopifyUpdatePriceRuleConfig,
-        ShopifyDeletePriceRuleConfig,
-        ShopifyListDiscountCodesConfig,
-        ShopifyCreateDiscountCodeConfig,
-        ShopifyDeleteDiscountCodeConfig,
-        # Gift Card operations (5)
-        ShopifyListGiftCardsConfig,
-        ShopifyGetGiftCardConfig,
-        ShopifyCreateGiftCardConfig,
-        ShopifyUpdateGiftCardConfig,
-        ShopifyDisableGiftCardConfig,
         # Blog operations (6)
         ShopifyListBlogsConfig,
         ShopifyListBlogArticlesConfig,
@@ -4272,14 +3871,13 @@ ShopifyConfig = Annotated[
         ShopifyCreateBlogArticleConfig,
         ShopifyUpdateBlogArticleConfig,
         ShopifyDeleteBlogArticleConfig,
-        # GraphQL operations (13)
+        # GraphQL operations (12)
         ShopifyGraphQLQueryConfig,
         ShopifyGraphQLMutationConfig,
         ShopifyGraphQLProductsQueryConfig,
         ShopifyGraphQLProductCreateConfig,
         ShopifyGraphQLProductUpdateConfig,
         ShopifyGraphQLOrdersQueryConfig,
-        ShopifyGraphQLDraftOrderCreateConfig,
         ShopifyGraphQLCustomersQueryConfig,
         ShopifyGraphQLCustomerCreateConfig,
         ShopifyGraphQLInventoryQueryConfig,
@@ -4313,12 +3911,14 @@ class ShopifyNode(ExternalWebhookTriggerMixin, WorkflowNode):
 
     Executes Shopify API operations for e-commerce workflow automation.
 
-    **Total: 93 operations**
-    - Legacy REST API (80 operations, custom credentials only): Products, variants, images,
+    **Total: 102 operations**
+    - Event triggers (7): registered through GraphQL for the public app
+    - Legacy REST API (77 operations, custom credentials only): Products, variants, images,
       orders, refunds, transactions, customers, addresses, inventory, fulfillments,
-      collections, locations, shop, metafields, webhooks, price rules, discounts, gift cards
-    - GraphQL API (13 operations): Generic query/mutation executors (100% API coverage) + pre-built
-      operations for products, orders, customers, inventory, collections, and fulfillment orders
+      collections, locations, shop, metafields, and webhooks
+    - GraphQL API (18 operations): Blog/article management, generic query/mutation
+      executors, and pre-built operations for products, orders, customers, inventory,
+      collections, and fulfillment orders
 
     **Authentication:** OAuth 2.0 or Admin API Access Token (supports custom OAuth apps)
     **API Version:** ``SHOPIFY_API_VERSION`` (defaults to 2026-04)
@@ -4631,21 +4231,6 @@ class ShopifyNode(ExternalWebhookTriggerMixin, WorkflowNode):
             "create_webhook": self._handle_create_webhook,
             "update_webhook": self._handle_update_webhook,
             "delete_webhook": self._handle_delete_webhook,
-            # Price Rule / Discount operations
-            "list_price_rules": self._handle_list_price_rules,
-            "get_price_rule_by_id": self._handle_get_price_rule,
-            "create_price_rule": self._handle_create_price_rule,
-            "update_price_rule": self._handle_update_price_rule,
-            "delete_price_rule": self._handle_delete_price_rule,
-            "list_discount_codes": self._handle_list_discount_codes,
-            "create_discount_code": self._handle_create_discount_code,
-            "delete_discount_code": self._handle_delete_discount_code,
-            # Gift Card operations
-            "list_gift_cards": self._handle_list_gift_cards,
-            "get_gift_card_by_id": self._handle_get_gift_card,
-            "create_gift_card": self._handle_create_gift_card,
-            "update_gift_card": self._handle_update_gift_card,
-            "disable_gift_card": self._handle_disable_gift_card,
             # GraphQL operations
             "execute_custom_graphql_query": self._handle_graphql_query,
             "execute_custom_graphql_mutation": self._handle_graphql_mutation,
@@ -4653,7 +4238,6 @@ class ShopifyNode(ExternalWebhookTriggerMixin, WorkflowNode):
             "create_product_with_graphql": self._handle_graphql_product_create,
             "update_product_with_graphql": self._handle_graphql_product_update,
             "query_orders_with_graphql": self._handle_graphql_orders,
-            "create_draft_order_with_graphql": self._handle_graphql_draft_order_create,
             "query_customers_with_graphql": self._handle_graphql_customers,
             "create_customer_with_graphql": self._handle_graphql_customer_create,
             "query_inventory_with_graphql": self._handle_graphql_inventory,
@@ -5529,28 +5113,78 @@ class ShopifyNode(ExternalWebhookTriggerMixin, WorkflowNode):
     async def _handle_list_blogs(
         self, config: ShopifyListBlogsConfig, credentials: ShopifyCredential
     ) -> Dict[str, Any]:
-        """List the store's blogs."""
-        return await self._make_request(
-            method="GET",
-            endpoint="/blogs.json",
+        """List the store's blogs through the GraphQL Admin API."""
+        query = """
+        query ListBlogs($first: Int, $query: String) {
+            blogs(first: $first, query: $query) {
+                nodes {
+                    id
+                    title
+                    handle
+                    commentPolicy
+                    createdAt
+                    updatedAt
+                }
+                pageInfo {
+                    hasNextPage
+                    endCursor
+                }
+            }
+        }
+        """
+        search_query = None
+        if config.since_id:
+            search_query = f"id:>{_shopify_legacy_id(config.since_id)}"
+        return await self._make_graphql_request(
+            query=query,
             credentials=credentials,
-            params={"limit": config.limit, "since_id": config.since_id},
+            variables={"first": config.limit, "query": search_query},
             action_name="list_blogs",
         )
 
     async def _handle_list_blog_articles(
         self, config: ShopifyListBlogArticlesConfig, credentials: ShopifyCredential
     ) -> Dict[str, Any]:
-        """List articles in a blog."""
-        return await self._make_request(
-            method="GET",
-            endpoint=f"/blogs/{config.blog_id}/articles.json",
+        """List articles in a blog through the GraphQL Admin API."""
+        query = """
+        query ListBlogArticles($first: Int, $query: String) {
+            articles(first: $first, query: $query) {
+                nodes {
+                    id
+                    title
+                    handle
+                    body
+                    summary
+                    tags
+                    isPublished
+                    publishedAt
+                    createdAt
+                    updatedAt
+                    author { name }
+                    image { url altText }
+                    blog { id title handle }
+                }
+                pageInfo {
+                    hasNextPage
+                    endCursor
+                }
+            }
+        }
+        """
+        filters = [f"blog_id:{_shopify_legacy_id(config.blog_id)}"]
+        if config.since_id:
+            filters.append(f"id:>{_shopify_legacy_id(config.since_id)}")
+        if config.tag:
+            escaped_tag = config.tag.replace("\\", "\\\\").replace('"', '\\"')
+            filters.append(f'tag:"{escaped_tag}"')
+        if config.published_status and config.published_status != "any":
+            filters.append(f"published_status:{config.published_status}")
+        return await self._make_graphql_request(
+            query=query,
             credentials=credentials,
-            params={
-                "limit": config.limit,
-                "since_id": config.since_id,
-                "tag": config.tag,
-                "published_status": config.published_status,
+            variables={
+                "first": config.limit,
+                "query": " AND ".join(filters),
             },
             action_name="list_blog_articles",
         )
@@ -5558,67 +5192,169 @@ class ShopifyNode(ExternalWebhookTriggerMixin, WorkflowNode):
     async def _handle_get_blog_article(
         self, config: ShopifyGetBlogArticleConfig, credentials: ShopifyCredential
     ) -> Dict[str, Any]:
-        """Get a single blog article."""
-        return await self._make_request(
-            method="GET",
-            endpoint=f"/blogs/{config.blog_id}/articles/{config.article_id}.json",
+        """Get a single blog article through the GraphQL Admin API."""
+        query = """
+        query GetBlogArticle($id: ID!) {
+            article(id: $id) {
+                id
+                title
+                handle
+                body
+                summary
+                tags
+                isPublished
+                publishedAt
+                createdAt
+                updatedAt
+                author { name }
+                image { url altText }
+                blog { id title handle }
+            }
+        }
+        """
+        return await self._make_graphql_request(
+            query=query,
             credentials=credentials,
+            variables={"id": _shopify_gid("Article", config.article_id)},
             action_name="get_blog_article_by_id",
         )
 
     @staticmethod
-    def _article_body(config) -> Dict[str, Any]:
-        """Article payload from a create/update config; None fields are omitted."""
+    def _article_graphql_input(config, *, create: bool) -> Dict[str, Any]:
+        """Build an ArticleCreateInput or ArticleUpdateInput."""
         article: Dict[str, Any] = {}
-        for key in ("title", "body_html", "author", "tags", "summary_html"):
-            value = getattr(config, key)
-            if value is not None:
-                article[key] = value
+        if create or getattr(config, "blog_id", None):
+            article["blogId"] = _shopify_gid("Blog", config.blog_id)
+        if config.title is not None:
+            article["title"] = config.title
+        if config.body_html is not None:
+            article["body"] = config.body_html
+        if config.author is not None or create:
+            article["author"] = {"name": config.author or "NoClick"}
+        if config.tags is not None:
+            article["tags"] = [
+                tag.strip() for tag in config.tags.split(",") if tag.strip()
+            ]
+        if config.summary_html is not None:
+            article["summary"] = config.summary_html
         if config.published is not None:
-            article["published"] = config.published == "true"
+            article["isPublished"] = config.published == "true"
         if config.image_src:
-            image: Dict[str, Any] = {"src": config.image_src}
+            image: Dict[str, Any] = {"url": config.image_src}
             if config.image_alt:
-                image["alt"] = config.image_alt
+                image["altText"] = config.image_alt
             article["image"] = image
         return article
+
+    @staticmethod
+    def _with_graphql_user_errors(
+        result: Dict[str, Any], payload_key: str
+    ) -> Dict[str, Any]:
+        """Promote Shopify mutation user errors to the node's error contract."""
+        if result.get("status") != "success":
+            return result
+        payload = result.get("data", {}).get(payload_key) or {}
+        user_errors = payload.get("userErrors") or []
+        if not user_errors:
+            return result
+        messages = [error.get("message", str(error)) for error in user_errors]
+        return {
+            **result,
+            "status": "error",
+            "error": "; ".join(messages),
+            "graphql_user_errors": user_errors,
+        }
 
     async def _handle_create_blog_article(
         self, config: ShopifyCreateBlogArticleConfig, credentials: ShopifyCredential
     ) -> Dict[str, Any]:
-        """Create a blog article."""
-        return await self._make_request(
-            method="POST",
-            endpoint=f"/blogs/{config.blog_id}/articles.json",
+        """Create a blog article through the GraphQL Admin API."""
+        mutation = """
+        mutation CreateBlogArticle($article: ArticleCreateInput!) {
+            articleCreate(article: $article) {
+                article {
+                    id
+                    title
+                    handle
+                    body
+                    summary
+                    tags
+                    isPublished
+                    publishedAt
+                    createdAt
+                    updatedAt
+                    author { name }
+                    image { url altText }
+                    blog { id title handle }
+                }
+                userErrors { code field message }
+            }
+        }
+        """
+        result = await self._make_graphql_request(
+            query=mutation,
             credentials=credentials,
-            json_body={"article": self._article_body(config)},
+            variables={"article": self._article_graphql_input(config, create=True)},
             action_name="create_blog_article",
         )
+        return self._with_graphql_user_errors(result, "articleCreate")
 
     async def _handle_update_blog_article(
         self, config: ShopifyUpdateBlogArticleConfig, credentials: ShopifyCredential
     ) -> Dict[str, Any]:
-        """Update a blog article."""
-        article = self._article_body(config)
-        article["id"] = config.article_id
-        return await self._make_request(
-            method="PUT",
-            endpoint=f"/blogs/{config.blog_id}/articles/{config.article_id}.json",
+        """Update a blog article through the GraphQL Admin API."""
+        mutation = """
+        mutation UpdateBlogArticle($id: ID!, $article: ArticleUpdateInput!) {
+            articleUpdate(id: $id, article: $article) {
+                article {
+                    id
+                    title
+                    handle
+                    body
+                    summary
+                    tags
+                    isPublished
+                    publishedAt
+                    createdAt
+                    updatedAt
+                    author { name }
+                    image { url altText }
+                    blog { id title handle }
+                }
+                userErrors { code field message }
+            }
+        }
+        """
+        result = await self._make_graphql_request(
+            query=mutation,
             credentials=credentials,
-            json_body={"article": article},
+            variables={
+                "id": _shopify_gid("Article", config.article_id),
+                "article": self._article_graphql_input(config, create=False),
+            },
             action_name="update_blog_article",
         )
+        return self._with_graphql_user_errors(result, "articleUpdate")
 
     async def _handle_delete_blog_article(
         self, config: ShopifyDeleteBlogArticleConfig, credentials: ShopifyCredential
     ) -> Dict[str, Any]:
-        """Delete a blog article."""
-        return await self._make_request(
-            method="DELETE",
-            endpoint=f"/blogs/{config.blog_id}/articles/{config.article_id}.json",
+        """Delete a blog article through the GraphQL Admin API."""
+        mutation = """
+        mutation DeleteBlogArticle($id: ID!) {
+            articleDelete(id: $id) {
+                deletedArticleId
+                userErrors { code field message }
+            }
+        }
+        """
+        result = await self._make_graphql_request(
+            query=mutation,
             credentials=credentials,
+            variables={"id": _shopify_gid("Article", config.article_id)},
             action_name="delete_blog_article",
         )
+        return self._with_graphql_user_errors(result, "articleDelete")
 
     async def _handle_create_collection(
         self, config: ShopifyCreateCollectionConfig, credentials: ShopifyCredential
@@ -5888,213 +5624,6 @@ class ShopifyNode(ExternalWebhookTriggerMixin, WorkflowNode):
             endpoint=f"/webhooks/{config.webhook_id}.json",
             credentials=credentials,
             action_name="delete_webhook",
-        )
-
-    # =========================================================================
-    # Price Rule / Discount Operation Handlers
-    # =========================================================================
-
-    async def _handle_list_price_rules(
-        self, config: ShopifyListPriceRulesConfig, credentials: ShopifyCredential
-    ) -> Dict[str, Any]:
-        """List price rules."""
-        params = {"limit": config.limit}
-
-        return await self._make_request(
-            method="GET",
-            endpoint="/price_rules.json",
-            credentials=credentials,
-            params=params,
-            action_name="list_price_rules",
-        )
-
-    async def _handle_get_price_rule(
-        self, config: ShopifyGetPriceRuleConfig, credentials: ShopifyCredential
-    ) -> Dict[str, Any]:
-        """Get a single price rule."""
-        return await self._make_request(
-            method="GET",
-            endpoint=f"/price_rules/{config.price_rule_id}.json",
-            credentials=credentials,
-            action_name="get_price_rule_by_id",
-        )
-
-    async def _handle_create_price_rule(
-        self, config: ShopifyCreatePriceRuleConfig, credentials: ShopifyCredential
-    ) -> Dict[str, Any]:
-        """Create a price rule."""
-        price_rule: Dict[str, Any] = {
-            "title": config.title,
-            "target_type": config.target_type,
-            "target_selection": config.target_selection,
-            "allocation_method": config.allocation_method,
-            "value_type": config.value_type,
-            "value": config.value,
-            "customer_selection": config.customer_selection,
-        }
-
-        if config.starts_at:
-            price_rule["starts_at"] = config.starts_at
-        if config.ends_at:
-            price_rule["ends_at"] = config.ends_at
-
-        return await self._make_request(
-            method="POST",
-            endpoint="/price_rules.json",
-            credentials=credentials,
-            json_body={"price_rule": price_rule},
-            action_name="create_price_rule",
-        )
-
-    async def _handle_update_price_rule(
-        self, config: ShopifyUpdatePriceRuleConfig, credentials: ShopifyCredential
-    ) -> Dict[str, Any]:
-        """Update a price rule."""
-        price_rule: Dict[str, Any] = {}
-
-        if config.title is not None:
-            price_rule["title"] = config.title
-        if config.value is not None:
-            price_rule["value"] = config.value
-        if config.starts_at is not None:
-            price_rule["starts_at"] = config.starts_at
-        if config.ends_at is not None:
-            price_rule["ends_at"] = config.ends_at
-
-        return await self._make_request(
-            method="PUT",
-            endpoint=f"/price_rules/{config.price_rule_id}.json",
-            credentials=credentials,
-            json_body={"price_rule": price_rule},
-            action_name="update_price_rule",
-        )
-
-    async def _handle_delete_price_rule(
-        self, config: ShopifyDeletePriceRuleConfig, credentials: ShopifyCredential
-    ) -> Dict[str, Any]:
-        """Delete a price rule."""
-        return await self._make_request(
-            method="DELETE",
-            endpoint=f"/price_rules/{config.price_rule_id}.json",
-            credentials=credentials,
-            action_name="delete_price_rule",
-        )
-
-    async def _handle_list_discount_codes(
-        self, config: ShopifyListDiscountCodesConfig, credentials: ShopifyCredential
-    ) -> Dict[str, Any]:
-        """List discount codes for a price rule."""
-        return await self._make_request(
-            method="GET",
-            endpoint=f"/price_rules/{config.price_rule_id}/discount_codes.json",
-            credentials=credentials,
-            action_name="list_discount_codes",
-        )
-
-    async def _handle_create_discount_code(
-        self, config: ShopifyCreateDiscountCodeConfig, credentials: ShopifyCredential
-    ) -> Dict[str, Any]:
-        """Create a discount code for a price rule."""
-        discount_code = {"code": config.code}
-
-        return await self._make_request(
-            method="POST",
-            endpoint=f"/price_rules/{config.price_rule_id}/discount_codes.json",
-            credentials=credentials,
-            json_body={"discount_code": discount_code},
-            action_name="create_discount_code",
-        )
-
-    async def _handle_delete_discount_code(
-        self, config: ShopifyDeleteDiscountCodeConfig, credentials: ShopifyCredential
-    ) -> Dict[str, Any]:
-        """Delete a discount code."""
-        return await self._make_request(
-            method="DELETE",
-            endpoint=f"/price_rules/{config.price_rule_id}/discount_codes/{config.discount_code_id}.json",
-            credentials=credentials,
-            action_name="delete_discount_code",
-        )
-
-    # =========================================================================
-    # Gift Card Operation Handlers
-    # =========================================================================
-
-    async def _handle_list_gift_cards(
-        self, config: ShopifyListGiftCardsConfig, credentials: ShopifyCredential
-    ) -> Dict[str, Any]:
-        """List gift cards."""
-        params = {
-            "limit": config.limit,
-            "status": config.status,
-        }
-
-        return await self._make_request(
-            method="GET",
-            endpoint="/gift_cards.json",
-            credentials=credentials,
-            params=params,
-            action_name="list_gift_cards",
-        )
-
-    async def _handle_get_gift_card(
-        self, config: ShopifyGetGiftCardConfig, credentials: ShopifyCredential
-    ) -> Dict[str, Any]:
-        """Get a single gift card."""
-        return await self._make_request(
-            method="GET",
-            endpoint=f"/gift_cards/{config.gift_card_id}.json",
-            credentials=credentials,
-            action_name="get_gift_card_by_id",
-        )
-
-    async def _handle_create_gift_card(
-        self, config: ShopifyCreateGiftCardConfig, credentials: ShopifyCredential
-    ) -> Dict[str, Any]:
-        """Create a gift card."""
-        gift_card: Dict[str, Any] = {"initial_value": config.initial_value}
-
-        if config.code:
-            gift_card["code"] = config.code
-        if config.note:
-            gift_card["note"] = config.note
-
-        return await self._make_request(
-            method="POST",
-            endpoint="/gift_cards.json",
-            credentials=credentials,
-            json_body={"gift_card": gift_card},
-            action_name="create_gift_card",
-        )
-
-    async def _handle_update_gift_card(
-        self, config: ShopifyUpdateGiftCardConfig, credentials: ShopifyCredential
-    ) -> Dict[str, Any]:
-        """Update a gift card."""
-        gift_card: Dict[str, Any] = {}
-
-        if config.note is not None:
-            gift_card["note"] = config.note
-        if config.expires_on is not None:
-            gift_card["expires_on"] = config.expires_on
-
-        return await self._make_request(
-            method="PUT",
-            endpoint=f"/gift_cards/{config.gift_card_id}.json",
-            credentials=credentials,
-            json_body={"gift_card": gift_card},
-            action_name="update_gift_card",
-        )
-
-    async def _handle_disable_gift_card(
-        self, config: ShopifyDisableGiftCardConfig, credentials: ShopifyCredential
-    ) -> Dict[str, Any]:
-        """Disable a gift card."""
-        return await self._make_request(
-            method="POST",
-            endpoint=f"/gift_cards/{config.gift_card_id}/disable.json",
-            credentials=credentials,
-            action_name="disable_gift_card",
         )
 
     # =========================================================================
@@ -6861,36 +6390,6 @@ class ShopifyNode(ExternalWebhookTriggerMixin, WorkflowNode):
             credentials=credentials,
             variables=variables,
             action_name="query_orders_with_graphql",
-        )
-
-    async def _handle_graphql_draft_order_create(
-        self,
-        config: ShopifyGraphQLDraftOrderCreateConfig,
-        credentials: ShopifyCredential,
-    ) -> Dict[str, Any]:
-        """Create a draft order using GraphQL."""
-        mutation = """
-        mutation draftOrderCreate($input: DraftOrderInput!) {
-            draftOrderCreate(input: $input) {
-                draftOrder {
-                    id
-                    name
-                    createdAt
-                    totalPrice
-                }
-                userErrors {
-                    field
-                    message
-                }
-            }
-        }
-        """
-
-        return await self._make_graphql_request(
-            query=mutation,
-            credentials=credentials,
-            variables={"input": config.input},
-            action_name="create_draft_order_with_graphql",
         )
 
     async def _handle_graphql_customers(

@@ -1,10 +1,10 @@
 """
 Mock tests for Shopify Admin REST API and GraphQL API node.
 
-Tests the complete Shopify API node functionality including all 103 operations
+Tests the Shopify API node functionality
 organized by category: products, product variants, product images, orders, refunds,
 transactions, customers, customer addresses, inventory, fulfillments, collections,
-locations, shop, metafields, webhooks, price rules/discounts, gift cards, and GraphQL.
+locations, shop, metafields, webhooks, and GraphQL.
 
 Uses unittest.mock to mock all HTTP requests. Tests both OAuth and Access Token credentials.
 Tests success cases, error handling, and edge cases without hitting the actual Shopify API.
@@ -14,7 +14,7 @@ import pytest
 import time
 from unittest.mock import AsyncMock, patch, MagicMock
 
-# Import the node and config classes - ALL 103 operations
+# Import the node and config classes
 from nodes.shopify_node import (
     ShopifyNode,
     ShopifyNodeConfig,
@@ -95,21 +95,6 @@ from nodes.shopify_node import (
     ShopifyCreateWebhookConfig,
     ShopifyUpdateWebhookConfig,
     ShopifyDeleteWebhookConfig,
-    # Price Rule / Discount operations (8)
-    ShopifyListPriceRulesConfig,
-    ShopifyGetPriceRuleConfig,
-    ShopifyCreatePriceRuleConfig,
-    ShopifyUpdatePriceRuleConfig,
-    ShopifyDeletePriceRuleConfig,
-    ShopifyListDiscountCodesConfig,
-    ShopifyCreateDiscountCodeConfig,
-    ShopifyDeleteDiscountCodeConfig,
-    # Gift Card operations (5)
-    ShopifyListGiftCardsConfig,
-    ShopifyGetGiftCardConfig,
-    ShopifyCreateGiftCardConfig,
-    ShopifyUpdateGiftCardConfig,
-    ShopifyDisableGiftCardConfig,
 )
 
 # Test constants
@@ -1229,254 +1214,6 @@ class TestWebhookOperations:
 
         assert result["status"] == "success"
         assert result["action"] == "delete_webhook"
-
-
-# ============================================================================
-# Price Rule / Discount Operations Tests (8 operations)
-# ============================================================================
-
-class TestPriceRuleDiscountOperations:
-    """Test price rule and discount-related Shopify API operations (8 total)."""
-
-    @pytest.mark.asyncio
-    async def test_list_price_rules(self, mock_httpx):
-        """Test listing price rules."""
-        mock_client, create_response = mock_httpx
-        mock_client._response_queue.append(
-            create_response(200, {"price_rules": [{"id": 123, "title": "Summer Sale"}]})
-        )
-
-        config = ShopifyListPriceRulesConfig(limit=10)
-        node = create_node(config, get_oauth_credentials())
-
-        result = await node.execute({})
-
-        assert result["status"] == "success"
-        assert result["action"] == "list_price_rules"
-
-    @pytest.mark.asyncio
-    async def test_get_price_rule(self, mock_httpx):
-        """Test getting a specific price rule."""
-        mock_client, create_response = mock_httpx
-        mock_client._response_queue.append(
-            create_response(200, {"price_rule": {"id": 123, "title": "Summer Sale"}})
-        )
-
-        config = ShopifyGetPriceRuleConfig(price_rule_id="123")
-        node = create_node(config, get_oauth_credentials())
-
-        result = await node.execute({})
-
-        assert result["status"] == "success"
-        assert result["action"] == "get_price_rule_by_id"
-
-    @pytest.mark.asyncio
-    async def test_create_price_rule(self, mock_httpx):
-        """Test creating a price rule."""
-        mock_client, create_response = mock_httpx
-        mock_client._response_queue.append(
-            create_response(200, {"price_rule": {"id": 456, "title": "New Sale"}})
-        )
-
-        config = ShopifyCreatePriceRuleConfig(
-            title="New Sale",
-            target_type="line_item",
-            target_selection="all",
-            allocation_method="across",
-            value_type="percentage",
-            value="-10.0",
-            customer_selection="all",
-            starts_at="2024-01-01T00:00:00Z"
-        )
-        node = create_node(config, get_oauth_credentials())
-
-        result = await node.execute({})
-
-        assert result["status"] == "success"
-        assert result["action"] == "create_price_rule"
-
-    @pytest.mark.asyncio
-    async def test_update_price_rule(self, mock_httpx):
-        """Test updating a price rule."""
-        mock_client, create_response = mock_httpx
-        mock_client._response_queue.append(
-            create_response(200, {"price_rule": {"id": 123, "title": "Updated Sale"}})
-        )
-
-        config = ShopifyUpdatePriceRuleConfig(
-            price_rule_id="123",
-            title="Updated Sale"
-        )
-        node = create_node(config, get_oauth_credentials())
-
-        result = await node.execute({})
-
-        assert result["status"] == "success"
-        assert result["action"] == "update_price_rule"
-
-    @pytest.mark.asyncio
-    async def test_delete_price_rule(self, mock_httpx):
-        """Test deleting a price rule."""
-        mock_client, create_response = mock_httpx
-        mock_client._response_queue.append(
-            create_response(200, {})
-        )
-
-        config = ShopifyDeletePriceRuleConfig(price_rule_id="123")
-        node = create_node(config, get_oauth_credentials())
-
-        result = await node.execute({})
-
-        assert result["status"] == "success"
-        assert result["action"] == "delete_price_rule"
-
-    @pytest.mark.asyncio
-    async def test_list_discount_codes(self, mock_httpx):
-        """Test listing discount codes for a price rule."""
-        mock_client, create_response = mock_httpx
-        mock_client._response_queue.append(
-            create_response(200, {"discount_codes": [{"id": 456, "code": "SUMMER10"}]})
-        )
-
-        config = ShopifyListDiscountCodesConfig(price_rule_id="123")
-        node = create_node(config, get_oauth_credentials())
-
-        result = await node.execute({})
-
-        assert result["status"] == "success"
-        assert result["action"] == "list_discount_codes"
-
-    @pytest.mark.asyncio
-    async def test_create_discount_code(self, mock_httpx):
-        """Test creating a discount code."""
-        mock_client, create_response = mock_httpx
-        mock_client._response_queue.append(
-            create_response(200, {"discount_code": {"id": 789, "code": "WINTER20"}})
-        )
-
-        config = ShopifyCreateDiscountCodeConfig(
-            price_rule_id="123",
-            code="WINTER20"
-        )
-        node = create_node(config, get_oauth_credentials())
-
-        result = await node.execute({})
-
-        assert result["status"] == "success"
-        assert result["action"] == "create_discount_code"
-
-    @pytest.mark.asyncio
-    async def test_delete_discount_code(self, mock_httpx):
-        """Test deleting a discount code."""
-        mock_client, create_response = mock_httpx
-        mock_client._response_queue.append(
-            create_response(200, {})
-        )
-
-        config = ShopifyDeleteDiscountCodeConfig(
-            price_rule_id="123",
-            discount_code_id="456"
-        )
-        node = create_node(config, get_oauth_credentials())
-
-        result = await node.execute({})
-
-        assert result["status"] == "success"
-        assert result["action"] == "delete_discount_code"
-
-
-# ============================================================================
-# Gift Card Operations Tests (5 operations)
-# ============================================================================
-
-class TestGiftCardOperations:
-    """Test gift card-related Shopify API operations (5 total)."""
-
-    @pytest.mark.asyncio
-    async def test_list_gift_cards(self, mock_httpx):
-        """Test listing gift cards."""
-        mock_client, create_response = mock_httpx
-        mock_client._response_queue.append(
-            create_response(200, {"gift_cards": [{"id": 123, "balance": "50.00"}]})
-        )
-
-        config = ShopifyListGiftCardsConfig(limit=10, status="enabled")
-        node = create_node(config, get_oauth_credentials())
-
-        result = await node.execute({})
-
-        assert result["status"] == "success"
-        assert result["action"] == "list_gift_cards"
-
-    @pytest.mark.asyncio
-    async def test_get_gift_card(self, mock_httpx):
-        """Test getting a specific gift card."""
-        mock_client, create_response = mock_httpx
-        mock_client._response_queue.append(
-            create_response(200, {"gift_card": {"id": 123, "balance": "50.00"}})
-        )
-
-        config = ShopifyGetGiftCardConfig(gift_card_id="123")
-        node = create_node(config, get_oauth_credentials())
-
-        result = await node.execute({})
-
-        assert result["status"] == "success"
-        assert result["action"] == "get_gift_card_by_id"
-
-    @pytest.mark.asyncio
-    async def test_create_gift_card(self, mock_httpx):
-        """Test creating a gift card."""
-        mock_client, create_response = mock_httpx
-        mock_client._response_queue.append(
-            create_response(200, {"gift_card": {"id": 456, "initial_value": "100.00"}})
-        )
-
-        config = ShopifyCreateGiftCardConfig(
-            initial_value="100.00",
-            code="GIFT123"
-        )
-        node = create_node(config, get_oauth_credentials())
-
-        result = await node.execute({})
-
-        assert result["status"] == "success"
-        assert result["action"] == "create_gift_card"
-
-    @pytest.mark.asyncio
-    async def test_update_gift_card(self, mock_httpx):
-        """Test updating a gift card."""
-        mock_client, create_response = mock_httpx
-        mock_client._response_queue.append(
-            create_response(200, {"gift_card": {"id": 123, "note": "Updated note"}})
-        )
-
-        config = ShopifyUpdateGiftCardConfig(
-            gift_card_id="123",
-            note="Updated note"
-        )
-        node = create_node(config, get_oauth_credentials())
-
-        result = await node.execute({})
-
-        assert result["status"] == "success"
-        assert result["action"] == "update_gift_card"
-
-    @pytest.mark.asyncio
-    async def test_disable_gift_card(self, mock_httpx):
-        """Test disabling a gift card."""
-        mock_client, create_response = mock_httpx
-        mock_client._response_queue.append(
-            create_response(200, {"gift_card": {"id": 123, "disabled_at": "2024-01-01T00:00:00Z"}})
-        )
-
-        config = ShopifyDisableGiftCardConfig(gift_card_id="123")
-        node = create_node(config, get_oauth_credentials())
-
-        result = await node.execute({})
-
-        assert result["status"] == "success"
-        assert result["action"] == "disable_gift_card"
 
 
 # ============================================================================

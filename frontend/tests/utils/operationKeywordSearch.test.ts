@@ -255,7 +255,7 @@ describe('authored x-keywords across integrations (intent → right action)', ()
         ['automation-github-rest', 'squash merge', 'merge_pull_request'],
         ['automation-slack', 'post to channel', 'send_message_to_channel'],
         ['automation-slack', 'edit a message', 'update_existing_message'],
-        ['automation-shopify', 'new gift card', 'create_gift_card'],
+        ['automation-shopify', 'publish blog post', 'create_blog_article'],
         ['automation-twitter', 'quote tweets', 'get_tweets_quoting_tweet'],
         ['automation-hubspot', 'new contact', 'create_contact'],
     ];
