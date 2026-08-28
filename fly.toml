@@ -1,19 +1,17 @@
 # Fly has retired its browser launcher. This reusable config keeps the launch
-# path short: replace the placeholder app name, set the required secrets, then
-# run `fly deploy`. See docs/self-hosting.md#flyio.
+# path short: replace the placeholder app name, attach a Postgres, then run
+# `fly deploy`. See docs/self-hosting.md#flyio.
 app = "noclick-change-me"
 primary_region = "iad"
 
 [build]
   dockerfile = "docker/single-origin.Dockerfile"
 
-[deploy]
-  release_command = "python /app/docker/bootstrap.py"
-  release_command_timeout = "10m"
+# No release command: the instance prepares its own database when it starts,
+# because the auth server that has to migrate first runs inside this image.
 
 [env]
   PORT = "8080"
-  VITE_DISABLE_CAPTCHA = "true"
 
 [http_service]
   internal_port = 8080

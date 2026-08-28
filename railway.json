@@ -7,7 +7,6 @@
   "deploy": {
     "healthcheckPath": "/health",
     "healthcheckTimeout": 300,
-    "preDeployCommand": "python /app/docker/bootstrap.py",
     "restartPolicyType": "ALWAYS"
   }
 }

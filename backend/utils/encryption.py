@@ -5,13 +5,34 @@ Uses Fernet (symmetric encryption) from the cryptography library to encrypt/decr
 credential data at the application level before storing in the database.
 """
 
+import base64
+import binascii
 import os
 import logging
+import re
 from typing import Dict, Any
 import json
 from cryptography.fernet import Fernet
 
 logger = logging.getLogger(__name__)
+
+
+_HEX_KEY = re.compile(rb'\A[0-9a-fA-F]{64}\Z')
+
+
+def _as_fernet_key(key: bytes) -> bytes:
+    """Accept the same 32-byte key written either way.
+
+    Fernet wants URL-safe base64. Hosting platforms that generate a secret for
+    you emit hex, and one that cannot express base64 would otherwise leave the
+    operator generating a key by hand — the single question a one-click deploy
+    exists to avoid. This is a re-encoding of identical bytes, not a derivation:
+    anything that is not exactly 64 hex characters is passed through untouched,
+    so an existing key keeps meaning precisely what it meant before.
+    """
+    if _HEX_KEY.match(key):
+        return base64.urlsafe_b64encode(binascii.unhexlify(key))
+    return key
 
 
 class CredentialEncryption:
@@ -38,7 +59,7 @@ class CredentialEncryption:
         except Exception as e:
             raise ValueError(f"Invalid CREDENTIALS_ENCRYPTION_KEY format: {e}")
 
-        self.fernet = Fernet(key)
+        self.fernet = Fernet(_as_fernet_key(key))
 
     def encrypt_credential(self, credential_data: Dict[str, Any]) -> str:
         """

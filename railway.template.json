@@ -1,0 +1,136 @@
+{
+  "$comment": [
+    "The published Railway template (railway.com/new/template/noclick), kept",
+    "here so what the button deploys is reviewable and reproducible. Railway",
+    "stores templates in its own dashboard, and this is the serialized config",
+    "it holds — readable back with the template query on its public API.",
+    "",
+    "Every variable carries a default — a reference to the database service or",
+    "a generated secret — so deploying asks for nothing. Keep it that way: an",
+    "empty box on the deploy form is a step someone has to research first."
+  ],
+  "services": {
+    "0f5f5d16-2d13-4f2f-9a2f-6f8bd4b1c001": {
+      "name": "Postgres",
+      "icon": "https://devicons.railway.app/i/postgresql.svg",
+      "source": { "image": "ghcr.io/railwayapp-templates/postgres-ssl:16" },
+      "deploy": {
+        "requiredMountPath": "/var/lib/postgresql/data",
+        "restartPolicyType": "ALWAYS"
+      },
+      "variables": {
+        "PGDATA": {
+          "isOptional": false,
+          "description": "Location where the database will be initialized",
+          "defaultValue": "/var/lib/postgresql/data/pgdata"
+        },
+        "PGHOST": {
+          "isOptional": false,
+          "description": "Railway private domain name",
+          "defaultValue": "${{RAILWAY_PRIVATE_DOMAIN}}"
+        },
+        "PGPORT": {
+          "isOptional": false,
+          "description": "Port to connect to Postgres",
+          "defaultValue": "5432"
+        },
+        "PGUSER": {
+          "isOptional": false,
+          "description": "Required variable for the data panel",
+          "defaultValue": "${{POSTGRES_USER}}"
+        },
+        "PGDATABASE": {
+          "isOptional": false,
+          "description": "Required variable for the data panel",
+          "defaultValue": "${{POSTGRES_DB}}"
+        },
+        "PGPASSWORD": {
+          "isOptional": false,
+          "description": "Required variable for the data panel",
+          "defaultValue": "${{POSTGRES_PASSWORD}}"
+        },
+        "POSTGRES_DB": {
+          "isOptional": false,
+          "description": "Default database created when the image starts",
+          "defaultValue": "railway"
+        },
+        "POSTGRES_USER": {
+          "isOptional": false,
+          "description": "User to connect to the database",
+          "defaultValue": "postgres"
+        },
+        "POSTGRES_PASSWORD": {
+          "isOptional": false,
+          "description": "Password to connect to the database",
+          "defaultValue": "${{ secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\") }}"
+        },
+        "DATABASE_URL": {
+          "isOptional": false,
+          "description": "Connection string for the database",
+          "defaultValue": "postgresql://${{PGUSER}}:${{POSTGRES_PASSWORD}}@${{RAILWAY_PRIVATE_DOMAIN}}:5432/${{PGDATABASE}}"
+        },
+        "RAILWAY_DEPLOYMENT_DRAINING_SECONDS": {
+          "isOptional": false,
+          "description": "Allow Postgres to cleanly shut down",
+          "defaultValue": "60"
+        }
+      },
+      "volumeMounts": {
+        "0f5f5d16-2d13-4f2f-9a2f-6f8bd4b1c101": {
+          "mountPath": "/var/lib/postgresql/data"
+        }
+      },
+      "networking": {}
+    },
+    "0f5f5d16-2d13-4f2f-9a2f-6f8bd4b1c002": {
+      "name": "noclick",
+      "source": { "image": "ghcr.io/noclickapp/noclick:0.1.0" },
+      "deploy": {
+        "healthcheckPath": "/health",
+        "healthcheckTimeout": 300,
+        "restartPolicyType": "ON_FAILURE",
+        "restartPolicyMaxRetries": 10
+      },
+      "variables": {
+        "POSTGRES_URL": {
+          "isOptional": false,
+          "description": "The database. Everything else is derived from it: the auth server, the API layer and the schema are all set up on first boot.",
+          "defaultValue": "${{Postgres.DATABASE_URL}}"
+        },
+        "CREDENTIALS_ENCRYPTION_KEY": {
+          "isOptional": false,
+          "description": "Encrypts every stored integration credential. Copy it somewhere safe — credentials cannot be read without it. 32 random bytes, as 64 hex characters.",
+          "defaultValue": "${{ secret(64, \"abcdef0123456789\") }}"
+        },
+        "JWT_SECRET": {
+          "isOptional": false,
+          "description": "Signs the sessions the auth server issues, and the anon and service keys derived from it",
+          "defaultValue": "${{ secret(64, \"abcdef0123456789\") }}"
+        },
+        "WORKFLOW_JWT_SECRET": {
+          "isOptional": false,
+          "description": "Signs the short-lived tokens a browser uses to join a workflow's realtime room",
+          "defaultValue": "${{ secret(64, \"abcdef0123456789\") }}"
+        },
+        "CRON_SCHEDULER_SECRET": {
+          "isOptional": false,
+          "description": "Authenticates the in-process scheduler when it fires a schedule",
+          "defaultValue": "${{ secret(64, \"abcdef0123456789\") }}"
+        },
+        "SESSION_SECRET": {
+          "isOptional": false,
+          "description": "Signs the application's own session cookie",
+          "defaultValue": "${{ secret(64, \"abcdef0123456789\") }}"
+        }
+      },
+      "volumeMounts": {
+        "0f5f5d16-2d13-4f2f-9a2f-6f8bd4b1c102": {
+          "mountPath": "/var/lib/noclick"
+        }
+      },
+      "networking": {
+        "serviceDomains": { "<hasDomain>:8080": { "port": 8080 } }
+      }
+    }
+  }
+}

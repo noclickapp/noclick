@@ -40,6 +40,12 @@ server {
     client_header_buffer_size 8k;
     large_client_header_buffers 8 32k;
 
+    # ── The auth stack ──────────────────────────────────────────────────────
+    # Populated by the entrypoint only when this instance runs GoTrue and
+    # PostgREST itself. A wildcard include matching nothing is not an error, so
+    # pointing at an external Supabase project needs no second template.
+    include /etc/nginx/supabase/*.conf;
+
     # ── The app ─────────────────────────────────────────────────────────────
     location / {
         proxy_pass http://127.0.0.1:3000;

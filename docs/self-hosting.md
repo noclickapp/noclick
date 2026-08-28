@@ -31,15 +31,23 @@ container run needs a runtime env file containing the required backend and
 frontend values documented below:
 
 ```bash
-# The whole application on one port
-docker run --env-file /path/to/noclick-runtime.env -p 8080:8080 \
-  ghcr.io/noclickapp/noclick:0.1.0
+# The whole application on one port, against a database you already have
+docker run -e POSTGRES_URL='postgres://…' -e VITE_PUBLIC_URL='https://noclick.example.com' \
+  -p 8080:8080 ghcr.io/noclickapp/noclick:0.1.0
 ```
 
-That image does not create its external database or authentication service.
-The Compose quick start and one-click deployment run `docker/bootstrap.py` for
-you; a direct image deployment must apply the migrations and provide the
-Supabase-compatible auth service described below before starting the app.
+A database URL is all that image needs. It runs the auth layer itself — GoTrue
+and PostgREST, served on its own origin under `/auth/v1` and `/rest/v1` — so on
+first boot it prepares the database (roles, schemas, extensions, then both sets
+of migrations) and mints this instance's own secrets, keeping them in a
+`noclick_instance` schema so a redeploy reuses them.
+
+Set any of those secrets in the environment and yours is used instead, which is
+the stronger arrangement where your platform has a secret store: an operator
+holding `CREDENTIALS_ENCRYPTION_KEY` outside the database keeps stored
+credentials unreadable to anyone who only has a copy of it. Set `SUPABASE_URL`
+and the embedded stack does not run at all — the instance uses that project,
+which is the arrangement described under [Required configuration](#required-configuration).
 
 The compose stack pulls the released backend rather than building it. Pin it:
 
@@ -73,33 +81,33 @@ exactly one application instance because the community scheduler and realtime
 room state are process-local. Each path runs the idempotent database bootstrap
 before serving traffic.
 
-Have a Supabase project ready. Every provider asks for the database URL,
-pooler URL, project URL, anon key, secret key, and JWKS URL described under
-[Required configuration](#required-configuration). Generate the remaining
-instance secrets before opening a deploy form:
-
-```bash
-# Keep this Fernet key backed up; it encrypts every saved integration credential.
-python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
-
-# Generate three separate values for WORKFLOW_JWT_SECRET,
-# CRON_SCHEDULER_SECRET, and SESSION_SECRET.
-openssl rand -hex 32
-```
+There is nothing to fill in and no account to create first. Each provider
+creates a Postgres database alongside the application, and the application does
+the rest on first boot.
 
 ### Browser-based deploys
 
 | Provider | Deploy | Configuration |
 | --- | --- | --- |
-| Render | [Deploy](https://render.com/deploy?repo=https://github.com/noclickapp/noclick) | [`render.yaml`](../render.yaml) |
-| Railway | [Deploy](https://railway.com/new/template/noclick?utm_medium=integration&utm_source=button&utm_campaign=noclick) | Published template using the reviewed release image |
-| DigitalOcean | [Deploy](https://cloud.digitalocean.com/apps/new?repo=https://github.com/noclickapp/noclick/tree/main) | [`.do/deploy.template.yaml`](../.do/deploy.template.yaml) |
-| Koyeb | Use the button in the repository README | Button parameters select the released single-origin image and required variables |
+| Render | [Deploy](https://render.com/deploy?repo=https://github.com/noclickapp/noclick) | [`render.yaml`](../render.yaml) — database, disk, and generated secrets |
+| Railway | [Deploy](https://railway.com/new/template/noclick?utm_medium=integration&utm_source=button&utm_campaign=noclick) | [`railway.template.json`](../railway.template.json) — database, volume, and generated secrets |
+| DigitalOcean | [Deploy](https://cloud.digitalocean.com/apps/new?repo=https://github.com/noclickapp/noclick/tree/main) | [`.do/deploy.template.yaml`](../.do/deploy.template.yaml) — database only |
 
-These forms do not provision Supabase itself. Review the generated plan before
-accepting it: NoClick needs enough memory to build the frontend, and scheduled
-workflows require the single application instance to remain running rather
-than scale to zero.
+Review the generated plan before accepting it: scheduled workflows require the
+single application instance to keep running rather than scale to zero, and the
+database is what everything else is derived from — back it up.
+
+**Where this instance's keys live** differs by provider, because their
+capabilities do. Render and Railway generate every secret and hold it in the
+service's own environment. App Platform can generate nothing, so a
+DigitalOcean instance mints its own on first boot and keeps them in its
+database — the only place they survive a redeploy there. To hold the
+credential-encryption key outside the database instead, set
+`CREDENTIALS_ENCRYPTION_KEY` on the service before the first deploy.
+
+Object storage is not created by any of them, so file and media features stay
+off until `OBJECT_STORAGE_ENDPOINT`, `OBJECT_STORAGE_ACCESS_KEY_ID` and
+`OBJECT_STORAGE_SECRET_ACCESS_KEY` are set. Any S3-compatible provider works.
 
 ### Fly.io
 
@@ -108,23 +116,20 @@ path uses `flyctl` and the checked-in [`fly.toml`](../fly.toml). Change the
 placeholder `app` value to a globally unique name, then run:
 
 ```bash
-fly secrets set \
-  POSTGRES_URL='...' \
-  POSTGRES_POOLER_URL='...' \
-  SUPABASE_URL='...' \
-  SUPABASE_ANON_KEY='...' \
-  SUPABASE_SECRET_KEY='...' \
-  SUPABASE_JWK_URL='...' \
-  CREDENTIALS_ENCRYPTION_KEY='...' \
-  WORKFLOW_JWT_SECRET='...' \
-  CRON_SCHEDULER_SECRET='...' \
-  SESSION_SECRET='...'
+fly postgres create --name noclick-db     # or bring your own database URL
+fly postgres attach noclick-db            # sets DATABASE_URL on the app
+fly secrets set POSTGRES_URL="$(fly ssh console -C 'printenv DATABASE_URL')"
 fly deploy
 ```
 
-The Fly release command applies migrations before replacing the running
-Machine. Autostop is disabled because an idle HTTP service can still have cron
-work to execute.
+Everything else the instance mints for itself on first boot. Keep a copy of the
+credential-encryption key it generates — `fly ssh console -C 'printenv
+CREDENTIALS_ENCRYPTION_KEY'` — or set your own before the first deploy.
+
+There is no release command: the auth server that has to migrate first runs
+inside the image, so the instance prepares its own database as it starts.
+Autostop is disabled because an idle HTTP service can still have cron work to
+execute.
 
 ## The shape of a deployment
 
@@ -156,6 +161,12 @@ prefixed `VITE_`.
 ## Required configuration
 
 These are the only variables you _must_ set. Everything else adds capability.
+
+This is the from-source shape: two processes you run yourself, against a
+Supabase project you created. The single-origin image needs far less of it — a
+database URL, and it derives or generates the rest (see
+[Hosted deployments](#hosted-deployments)). The `SUPABASE_*` rows below are how
+you point _either_ shape at an external project instead.
 
 ### Backend (`backend/.env`)
 

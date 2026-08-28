@@ -38,10 +38,87 @@ export VITE_PUBLIC_URL
 export PUBLIC_API_URL FRONTEND_URL PUBLIC_WEBHOOK_URL APP_WEBHOOK_BASE_URL \
        MCP_BASE_URL CRON_SCHEDULER_URL
 
-# Platforms with a release/pre-deploy phase run bootstrap there so a failed
-# migration never replaces the healthy release. Simpler container platforms
-# can opt into the same idempotent preparation immediately before startup.
-if [ "${NOCLICK_BOOTSTRAP_ON_START:-}" = "1" ]; then
+# This image is the self-hosted edition and has no Turnstile configuration, so
+# the sign-in form would ask a captcha nobody can answer. The browser bundle
+# already knows (its widget compiles away without a site key); this is the
+# server half of the same fact.
+: "${VITE_DISABLE_CAPTCHA:=true}"
+export VITE_DISABLE_CAPTCHA
+
+embedded_auth=0
+
+# ── Auth ─────────────────────────────────────────────────────────────────────
+# A SUPABASE_URL means an external project, and nothing below runs. Without one,
+# this container is the whole instance: GoTrue and PostgREST run here against
+# the database, served on this origin under the paths supabase-js addresses. A
+# host that can hand out a Postgres URL can then deploy NoClick with no other
+# input at all — which is the difference between a one-click deploy and a form.
+if [ -z "${SUPABASE_URL:-}" ]; then
+    if [ -z "${POSTGRES_URL:-}" ]; then
+        echo "Set POSTGRES_URL (or a SUPABASE_URL for an external project)." >&2
+        exit 1
+    fi
+    : "${POSTGRES_POOLER_URL:=$POSTGRES_URL}"
+    export POSTGRES_POOLER_URL
+
+    # The instance's secrets, and the two role DSNs derived from them. A failure
+    # here aborts under `set -e` rather than eval'ing an empty string.
+    instance_env="$(python /app/docker/bootstrap.py secrets)"
+    eval "$instance_env"
+    unset instance_env
+
+    # The browser reaches the auth API on the instance's public origin; this
+    # process reaches it through its own front door, because the public
+    # hostname resolves to the platform's edge and not back into this container.
+    export SUPABASE_URL="$VITE_PUBLIC_URL"
+    export SUPABASE_INTERNAL_URL="http://127.0.0.1:$PORT"
+
+    export GOTRUE_DB_DRIVER=postgres
+    export GOTRUE_API_HOST=127.0.0.1
+    export GOTRUE_API_PORT=9999
+    # GoTrue builds emailed links from this, and the path it is reachable on is
+    # /auth/v1 — the prefix nginx strips below. It reads the unprefixed name too.
+    export API_EXTERNAL_URL="$VITE_PUBLIC_URL/auth/v1"
+    export GOTRUE_API_EXTERNAL_URL="$API_EXTERNAL_URL"
+    export GOTRUE_SITE_URL="$VITE_PUBLIC_URL"
+    export GOTRUE_URI_ALLOW_LIST="$VITE_PUBLIC_URL/**"
+    export GOTRUE_JWT_SECRET="$JWT_SECRET"
+    export GOTRUE_JWT_EXP=3600
+    export GOTRUE_JWT_AUD=authenticated
+    export GOTRUE_JWT_DEFAULT_GROUP_NAME=authenticated
+    export GOTRUE_JWT_ADMIN_ROLES=service_role
+    export GOTRUE_DISABLE_SIGNUP="${NOCLICK_DISABLE_SIGNUP:-false}"
+    export GOTRUE_EXTERNAL_EMAIL_ENABLED=true
+    # No mail server is configured by default, and an instance whose first
+    # account can never be confirmed is an instance nobody can sign in to.
+    export GOTRUE_MAILER_AUTOCONFIRM="${NOCLICK_AUTOCONFIRM_EMAIL:-true}"
+    export GOTRUE_SMTP_HOST="${SMTP_HOST:-}"
+    export GOTRUE_SMTP_PORT="${SMTP_PORT:-587}"
+    export GOTRUE_SMTP_USER="${SMTP_USERNAME:-}"
+    export GOTRUE_SMTP_PASS="${SMTP_PASSWORD:-}"
+    export GOTRUE_SMTP_ADMIN_EMAIL="${FROM_EMAIL:-}"
+    export GOTRUE_HOOK_CUSTOM_ACCESS_TOKEN_ENABLED=true
+    export GOTRUE_HOOK_CUSTOM_ACCESS_TOKEN_URI=pg-functions://postgres/public/custom_access_token_hook
+
+    export PGRST_SERVER_HOST=127.0.0.1
+    export PGRST_SERVER_PORT=3001
+    export PGRST_DB_SCHEMAS=public
+    export PGRST_DB_ANON_ROLE=anon
+    export PGRST_JWT_SECRET="$JWT_SECRET"
+    export PGRST_DB_USE_LEGACY_GUCS=false
+    export PGRST_APP_SETTINGS_JWT_SECRET="$JWT_SECRET"
+    export PGRST_APP_SETTINGS_JWT_EXP=3600
+
+    # Ordered, not raced: the roles and schemas GoTrue needs, then its own
+    # migrations, then ours — which carry foreign keys onto auth.users.
+    python /app/docker/bootstrap.py prepare
+    gotrue migrate
+    python /app/docker/bootstrap.py
+
+    cp /etc/nginx/supabase-upstreams.conf /etc/nginx/supabase/upstreams.conf
+    embedded_auth=1
+elif [ "${NOCLICK_BOOTSTRAP_ON_START:-}" = "1" ]; then
+    # An external project, on a platform with no release phase to run it in.
     python /app/docker/bootstrap.py
 fi
 
@@ -61,6 +138,13 @@ stop() {
     for pid in $pids; do kill -TERM "$pid" 2>/dev/null || true; done
 }
 trap stop TERM INT
+
+if [ "$embedded_auth" = 1 ]; then
+    gotrue serve &
+    pids="$pids $!"
+    postgrest &
+    pids="$pids $!"
+fi
 
 python -m uvicorn server:web_app --host 127.0.0.1 --port 8000 --workers 1 \
     --app-dir /app/backend &

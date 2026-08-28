@@ -13,12 +13,31 @@ the table to appear.
 Applied migrations are recorded in `supabase_migrations.schema_migrations`, the
 same table the Supabase CLI uses, so an operator can move between `make local`
 and Docker without reapplying anything.
+
+Three commands, because a one-click deploy has only a database to start from:
+
+    prepare   the roles, schemas and extensions Supabase's API layer expects,
+              on any stock Postgres — what compose gets from an initdb script
+              and a managed database cannot run at all
+    secrets   this instance's own secrets, as `export` lines. Environment wins;
+              anything absent is generated once and kept in the database, which
+              on a host that can neither generate a value nor mount a disk is
+              the only place a key can survive a redeploy
+    (default) the claim accessors, the schema migrations and the buckets
 """
 
 import asyncio
+import base64
+import hashlib
+import hmac
+import json
 import os
 import pathlib
+import secrets as secretslib
+import shlex
 import sys
+import time
+import urllib.parse
 
 import asyncpg
 
@@ -62,6 +81,135 @@ MIGRATIONS = pathlib.Path(
     os.environ.get("NOCLICK_MIGRATIONS_DIR", "/app/infra/supabase/migrations")
 )
 DEADLINE_SECONDS = float(os.environ.get("NOCLICK_BOOTSTRAP_TIMEOUT", "300"))
+
+# The roles, schemas and extensions Supabase's API layer expects to find. On
+# compose this is an initdb script (docker/db/01-supabase-compat.sh); a managed
+# database has no initdb hook, so the same shapes are made here — idempotently,
+# because this runs on every boot rather than once on an empty data directory.
+COMPAT_SQL = """
+DO $do$
+BEGIN
+    -- PostgREST logs in as `authenticator` and assumes whichever of the other
+    -- three the request's JWT names, so it must not inherit their rights by
+    -- default — NOINHERIT is the boundary, not a style choice.
+    IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'anon') THEN
+        CREATE ROLE anon NOLOGIN NOINHERIT;
+    END IF;
+    IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'authenticated') THEN
+        CREATE ROLE authenticated NOLOGIN NOINHERIT;
+    END IF;
+    IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'service_role') THEN
+        CREATE ROLE service_role NOLOGIN NOINHERIT;
+    END IF;
+    IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'authenticator') THEN
+        CREATE ROLE authenticator LOGIN NOINHERIT;
+    END IF;
+    IF NOT EXISTS (SELECT FROM pg_roles WHERE rolname = 'supabase_auth_admin') THEN
+        CREATE ROLE supabase_auth_admin LOGIN NOINHERIT CREATEROLE;
+    END IF;
+END
+$do$;
+
+-- A role password cannot be a query parameter, so it arrives as a session
+-- setting and is quoted by the server rather than by string formatting here.
+DO $do$
+BEGIN
+    EXECUTE format(
+        'ALTER ROLE authenticator WITH PASSWORD %L',
+        current_setting('noclick.role_password')
+    );
+    EXECUTE format(
+        'ALTER ROLE supabase_auth_admin WITH PASSWORD %L',
+        current_setting('noclick.role_password')
+    );
+END
+$do$;
+
+GRANT anon, authenticated, service_role TO authenticator;
+
+-- GoTrue owns its schema and migrates it itself.
+CREATE SCHEMA IF NOT EXISTS auth AUTHORIZATION supabase_auth_admin;
+ALTER ROLE supabase_auth_admin SET search_path TO auth;
+GRANT USAGE ON SCHEMA auth TO anon, authenticated, service_role;
+
+-- Supabase keeps extensions out of `public`; the schema's
+-- `extensions.gen_random_bytes` calls are written that way.
+CREATE SCHEMA IF NOT EXISTS extensions;
+CREATE EXTENSION IF NOT EXISTS pgcrypto WITH SCHEMA extensions;
+CREATE EXTENSION IF NOT EXISTS "uuid-ossp" WITH SCHEMA extensions;
+GRANT USAGE ON SCHEMA extensions TO anon, authenticated, service_role;
+
+GRANT USAGE ON SCHEMA public TO anon, authenticated, service_role;
+"""
+
+# Kept out of `public`, whose table list is a reviewed allowlist the release
+# pins, and readable by nobody the API layer can reach: the schema is never
+# exposed through PostgREST, and no role but the migration user is granted it.
+SECRETS_SCHEMA = """
+CREATE SCHEMA IF NOT EXISTS noclick_instance;
+REVOKE ALL ON SCHEMA noclick_instance FROM PUBLIC;
+CREATE TABLE IF NOT EXISTS noclick_instance.secrets (
+    name text PRIMARY KEY,
+    value text NOT NULL,
+    created_at timestamptz NOT NULL DEFAULT now()
+);
+"""
+
+# Every secret the instance needs and can mint for itself. The credential key is
+# a Fernet key because that is what encrypts stored credentials; the rest are
+# opaque random strings.
+SECRET_GENERATORS = {
+    "JWT_SECRET": lambda: secretslib.token_hex(32),
+    "CREDENTIALS_ENCRYPTION_KEY": lambda: base64.urlsafe_b64encode(
+        secretslib.token_bytes(32)
+    ).decode(),
+    "WORKFLOW_JWT_SECRET": lambda: secretslib.token_hex(32),
+    "CRON_SCHEDULER_SECRET": lambda: secretslib.token_hex(32),
+    "SESSION_SECRET": lambda: secretslib.token_hex(32),
+    "EMAIL_RELAY_SECRET": lambda: secretslib.token_hex(32),
+    # Not an application secret: the login password for the two roles GoTrue
+    # and PostgREST connect as, which nothing outside this container ever sees.
+    "SUPABASE_DB_ROLE_PASSWORD": lambda: secretslib.token_hex(24),
+}
+
+
+def _role_dsn(dsn: str, user: str, password: str) -> str:
+    """The same database, reached as a different role. Query parameters carry
+    `sslmode` on every managed provider, so they are preserved verbatim."""
+    parts = urllib.parse.urlsplit(dsn)
+    netloc = (
+        f"{urllib.parse.quote(user, safe='')}:{urllib.parse.quote(password, safe='')}"
+        f"@{parts.hostname or ''}"
+    )
+    if parts.port:
+        netloc += f":{parts.port}"
+    return urllib.parse.urlunsplit(
+        (parts.scheme, netloc, parts.path, parts.query, parts.fragment)
+    )
+
+
+def _sign_supabase_key(role: str, jwt_secret: str) -> str:
+    """An anon or service-role key: an HS256 JWT naming the Postgres role, which
+    is all those keys have ever been. Derived from the instance's JWT secret on
+    every boot rather than stored, so there is one secret to keep, not three."""
+
+    def segment(payload: dict) -> bytes:
+        raw = json.dumps(payload, separators=(",", ":"), sort_keys=True).encode()
+        return base64.urlsafe_b64encode(raw).rstrip(b"=")
+
+    issued = int(time.time())
+    signing_input = segment({"alg": "HS256", "typ": "JWT"}) + b"." + segment(
+        {
+            "role": role,
+            "iss": "supabase",
+            "iat": issued,
+            "exp": issued + 10 * 365 * 24 * 3600,
+        }
+    )
+    signature = base64.urlsafe_b64encode(
+        hmac.new(jwt_secret.encode(), signing_input, hashlib.sha256).digest()
+    ).rstrip(b"=")
+    return (signing_input + b"." + signature).decode()
 
 
 def log(message: str) -> None:
@@ -192,12 +340,100 @@ def _ensure_buckets() -> None:
                 time.sleep(1.0)
 
 
-async def main() -> None:
+async def _provision_secrets(conn: asyncpg.Connection) -> dict:
+    """This instance's secrets: the environment's where it has them, and
+    generated-once-and-kept where it does not.
+
+    Keeping a generated key beside the data it protects is weaker than holding
+    it in the platform's own secret store, and where a platform can generate one
+    its deploy config does — this is what makes an instance possible at all on a
+    host that can neither generate a value nor mount a disk to keep one on.
+    """
+    await conn.execute(SECRETS_SCHEMA)
+    resolved: dict[str, str] = {}
+    for name, generate in SECRET_GENERATORS.items():
+        supplied = os.environ.get(name)
+        if supplied:
+            resolved[name] = supplied
+            continue
+        # Insert-then-read rather than read-then-insert: two containers booting
+        # at once must agree on one value, and the primary key decides which.
+        await conn.execute(
+            "INSERT INTO noclick_instance.secrets (name, value) VALUES ($1, $2) "
+            "ON CONFLICT (name) DO NOTHING",
+            name,
+            generate(),
+        )
+        resolved[name] = await conn.fetchval(
+            "SELECT value FROM noclick_instance.secrets WHERE name = $1", name
+        )
+    return resolved
+
+
+async def prepare(conn: asyncpg.Connection, role_password: str) -> None:
+    await conn.execute(
+        "SELECT set_config('noclick.role_password', $1, false)", role_password
+    )
+    await conn.execute(COMPAT_SQL)
+    log("supabase-compatible roles, schemas and extensions ready")
+
+    # Reading the service key is how the application reaches rows RLS scopes to
+    # a user. Only a superuser can grant the exemption, which a managed database
+    # does not hand out — so this is reported, never assumed.
+    if await conn.fetchval("SELECT usesuper FROM pg_user WHERE usename = current_user"):
+        await conn.execute("ALTER ROLE service_role WITH BYPASSRLS")
+    elif not await conn.fetchval(
+        "SELECT rolbypassrls FROM pg_roles WHERE rolname = 'service_role'"
+    ):
+        log(
+            "WARNING: this database user cannot grant BYPASSRLS, so service-role "
+            "reads stay subject to row-level security. Sign-in and every workflow "
+            "are unaffected; a few admin-level reads through PostgREST will "
+            "return nothing."
+        )
+
+
+async def command_secrets() -> None:
+    """Print `export` lines for everything the entrypoint needs to start the
+    embedded auth stack. Values are shell-quoted; nothing is echoed to a log."""
+    dsn = _require_dsn()
+    conn = await _connect(dsn)
+    try:
+        secrets = await _provision_secrets(conn)
+    finally:
+        await conn.close()
+
+    role_password = secrets["SUPABASE_DB_ROLE_PASSWORD"]
+    jwt_secret = secrets["JWT_SECRET"]
+    emit = dict(secrets)
+    emit["SUPABASE_JWT_SECRET"] = jwt_secret
+    emit["SUPABASE_ANON_KEY"] = _sign_supabase_key("anon", jwt_secret)
+    emit["SUPABASE_SECRET_KEY"] = _sign_supabase_key("service_role", jwt_secret)
+    emit["GOTRUE_DB_DATABASE_URL"] = _role_dsn(dsn, "supabase_auth_admin", role_password)
+    emit["PGRST_DB_URI"] = _role_dsn(dsn, "authenticator", role_password)
+
+    for name, value in emit.items():
+        print(f"export {name}={shlex.quote(value)}")
+
+
+def _require_dsn() -> str:
     dsn = os.environ.get("POSTGRES_URL") or os.environ.get("POSTGRES_POOLER_URL")
     if not dsn:
         raise SystemExit("POSTGRES_URL is required")
+    return dsn
 
-    conn = await _connect(dsn)
+
+async def command_prepare() -> None:
+    conn = await _connect(_require_dsn())
+    try:
+        secrets = await _provision_secrets(conn)
+        await prepare(conn, secrets["SUPABASE_DB_ROLE_PASSWORD"])
+    finally:
+        await conn.close()
+
+
+async def main() -> None:
+    conn = await _connect(_require_dsn())
     try:
         await _wait_for_auth_users(conn)
         await conn.execute(CLAIM_ACCESSORS)
@@ -210,9 +446,14 @@ async def main() -> None:
     log("ready")
 
 
+COMMANDS = {"prepare": command_prepare, "secrets": command_secrets}
+
 if __name__ == "__main__":
+    argument = sys.argv[1] if len(sys.argv) > 1 else None
+    if argument is not None and argument not in COMMANDS:
+        raise SystemExit(f"unknown command {argument!r}: expected one of {sorted(COMMANDS)}")
     try:
-        asyncio.run(main())
+        asyncio.run(COMMANDS[argument]() if argument else main())
     except SystemExit as exc:
         print(f"[bootstrap] {exc}", file=sys.stderr, flush=True)
         raise

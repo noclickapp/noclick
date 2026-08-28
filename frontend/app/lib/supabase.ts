@@ -5,6 +5,19 @@ import { requestIsHttps } from './requestScheme';
 import { json } from './routerResponse';
 
 /**
+ * Where *this process* reaches the auth API.
+ *
+ * A self-hosted instance serves it on its own public origin, which the
+ * container itself often cannot dial — the hostname resolves to the platform's
+ * edge, not to the container. SUPABASE_INTERNAL_URL is the same API one hop
+ * closer. The browser is never given this value: it always gets SUPABASE_URL,
+ * because that is the origin the session cookie belongs to.
+ */
+export function serverSupabaseUrl(): string {
+    return process.env.SUPABASE_INTERNAL_URL || process.env.SUPABASE_URL!;
+}
+
+/**
  * Creates a Supabase client for server-side operations with cookie setting
  * Used in actions where we need to modify cookies (sign in/out)
  */
@@ -13,7 +26,7 @@ export function createServerSupabaseClient(
     headers?: Headers
 ) {
     return createServerClient(
-        process.env.SUPABASE_URL!,
+        serverSupabaseUrl(),
         process.env.SUPABASE_ANON_KEY!, // Use anon key for frontend server operations
         {
             // Namespace the auth cookie per worktree in local dev (see devAuthCookieName).
@@ -208,7 +221,7 @@ export async function authedJsonRoute(request: Request) {
  */
 export function createServiceRoleClient() {
     return createClient(
-        process.env.SUPABASE_URL!,
+        serverSupabaseUrl(),
         process.env.SUPABASE_SECRET_KEY!,
         {
             auth: {

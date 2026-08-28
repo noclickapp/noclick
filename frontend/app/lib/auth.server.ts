@@ -4,7 +4,10 @@
 import { createServerSupabaseClient } from '~/lib/supabase';
 
 const PUBLIC_URL = process.env.VITE_PUBLIC_URL || 'http://localhost:5173';
-const SUPABASE_URL = process.env.SUPABASE_URL;
+// The captcha's verification function lives on the Supabase project this
+// process talks to, so it follows the server-side URL (see serverSupabaseUrl).
+const SUPABASE_URL =
+  process.env.SUPABASE_INTERNAL_URL || process.env.SUPABASE_URL;
 const SUPABASE_ANON_KEY = process.env.SUPABASE_ANON_KEY;
 
 // Verify Cloudflare Turnstile CAPTCHA token

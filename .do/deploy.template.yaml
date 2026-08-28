@@ -1,68 +1,47 @@
+# One-click deploy to DigitalOcean App Platform: the application and a database.
+#
+# Nothing to fill in. The whole application runs in one container — backend,
+# app, front door, and Supabase's auth layer on one port — so the development
+# database below is the only thing it needs.
+#
+# App Platform can neither generate a secret nor mount a disk, so this instance
+# mints its own keys on first boot and keeps them in its database. To hold the
+# credential-encryption key somewhere stronger instead, set
+# CREDENTIALS_ENCRYPTION_KEY on the service before the first deploy and it will
+# be used as-is — see docs/self-hosting.md.
 spec:
   name: noclick
   region: nyc
+  databases:
+    - name: db
+      engine: PG
+      version: "16"
+      # A development database, created with the app and billed with it. Set
+      # `production: true` and name a cluster for a managed database with
+      # backups and failover.
+      production: false
   services:
     - name: noclick
-      git:
-        branch: main
-        repo_clone_url: https://github.com/noclickapp/noclick.git
-      dockerfile_path: docker/single-origin.Dockerfile
-      source_dir: /
+      # The reviewed release image, not a build of the current default branch —
+      # the same artifact the other one-click deploys run.
+      image:
+        registry_type: GHCR
+        registry: noclickapp
+        repository: noclick
+        tag: "0.1.0"
       http_port: 8080
+      # The scheduler and the realtime relay run inside this process, so one
+      # instance is by design — see docs/self-hosting.md.
       instance_count: 1
       instance_size_slug: apps-s-2vcpu-4gb
       health_check:
         http_path: /health
-        initial_delay_seconds: 30
+        initial_delay_seconds: 60
         period_seconds: 30
         timeout_seconds: 5
         success_threshold: 1
         failure_threshold: 5
       envs:
-        - key: VITE_PUBLIC_URL
-          value: ${APP_URL}
-          scope: RUN_TIME
-        - key: VITE_DISABLE_CAPTCHA
-          value: "true"
-          scope: RUN_AND_BUILD_TIME
-        - key: NOCLICK_BOOTSTRAP_ON_START
-          value: "1"
-          scope: RUN_TIME
         - key: POSTGRES_URL
-          value: REPLACE_WITH_SUPABASE_DIRECT_DATABASE_URL
+          value: ${db.DATABASE_URL}
           scope: RUN_TIME
-          type: SECRET
-        - key: POSTGRES_POOLER_URL
-          value: REPLACE_WITH_SUPABASE_POOLER_DATABASE_URL
-          scope: RUN_TIME
-          type: SECRET
-        - key: SUPABASE_URL
-          value: REPLACE_WITH_SUPABASE_PROJECT_URL
-          scope: RUN_TIME
-        - key: SUPABASE_ANON_KEY
-          value: REPLACE_WITH_SUPABASE_ANON_KEY
-          scope: RUN_TIME
-          type: SECRET
-        - key: SUPABASE_SECRET_KEY
-          value: REPLACE_WITH_SUPABASE_SECRET_KEY
-          scope: RUN_TIME
-          type: SECRET
-        - key: SUPABASE_JWK_URL
-          value: REPLACE_WITH_SUPABASE_JWKS_URL
-          scope: RUN_TIME
-        - key: CREDENTIALS_ENCRYPTION_KEY
-          value: REPLACE_WITH_A_FERNET_KEY
-          scope: RUN_TIME
-          type: SECRET
-        - key: WORKFLOW_JWT_SECRET
-          value: REPLACE_WITH_A_LONG_RANDOM_SECRET
-          scope: RUN_TIME
-          type: SECRET
-        - key: CRON_SCHEDULER_SECRET
-          value: REPLACE_WITH_A_LONG_RANDOM_SECRET
-          scope: RUN_TIME
-          type: SECRET
-        - key: SESSION_SECRET
-          value: REPLACE_WITH_A_LONG_RANDOM_SECRET
-          scope: RUN_TIME
-          type: SECRET

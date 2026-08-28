@@ -50,10 +50,15 @@ class SupabaseAdminClient:
         Initialize the Supabase Admin client.
 
         Args:
-            base_url: Supabase project URL (defaults to SUPABASE_URL env var)
+            base_url: Supabase project URL (defaults to SUPABASE_INTERNAL_URL,
+                then SUPABASE_URL). A self-hosted instance serves the auth API on
+                its own public origin, which the process itself cannot always
+                dial — the internal URL is that same API one hop closer.
             secret_key: Supabase secret key (defaults to SUPABASE_SECRET_KEY env var)
         """
-        self.base_url = base_url or os.getenv('SUPABASE_URL')
+        self.base_url = (
+            base_url or os.getenv('SUPABASE_INTERNAL_URL') or os.getenv('SUPABASE_URL')
+        )
         self.secret_key = secret_key or os.getenv('SUPABASE_SECRET_KEY')
 
         if not self.base_url:

@@ -10,9 +10,11 @@
 # backend process — the scheduler ticks inside it, the realtime relay lives in
 # it — so there was never anything here to scale out independently.
 #
-# It needs a Postgres with Supabase's auth alongside; a free Supabase project is
-# the usual answer, and `docker/db/01-supabase-compat.sh` is the ~40 lines that
-# make a plain Postgres one.
+# All it needs is a Postgres URL. Supabase's auth layer — GoTrue and PostgREST —
+# runs inside this image against that database, served on the same origin under
+# the paths supabase-js addresses, so there is no project to create and nothing
+# to paste: the entrypoint prepares the database and mints the instance's own
+# secrets. Point SUPABASE_URL at a real Supabase project to use one instead.
 
 # ── The app's browser bundle and server build ────────────────────────────────
 FROM node:22-bookworm-slim AS frontend
@@ -90,7 +92,15 @@ COPY --from=frontend /src/frontend/package.json ./frontend/package.json
 
 COPY docker/gateway/single-origin.conf.template /etc/nginx/single-origin.conf.template
 COPY docker/gateway/noclick-proxy.conf /etc/nginx/noclick-proxy.conf
+COPY docker/gateway/supabase-upstreams.conf /etc/nginx/supabase-upstreams.conf
 COPY docker/single-origin-entrypoint.sh /usr/local/bin/noclick-entrypoint
+
+# Supabase's API layer, so an instance needs a database and nothing else. Both
+# are statically linked, so they are two files rather than two base images —
+# and both are the same builds their own published images run. GoTrue carries
+# its migrations inside the binary; `gotrue migrate` is what creates auth.users.
+COPY --from=supabase/gotrue:v2.196.0 /usr/local/bin/auth /usr/local/bin/gotrue
+COPY --from=postgrest/postgrest:v16.1 /bin/postgrest /usr/local/bin/postgrest
 
 # Runs unprivileged: this process executes user-authored workflow code. nginx
 # ships expecting root — its pid file and its `user` directive both assume it —
@@ -98,11 +108,11 @@ COPY docker/single-origin-entrypoint.sh /usr/local/bin/noclick-entrypoint
 # port above 1024 below.
 RUN sed -i 's|^pid .*|pid /tmp/nginx.pid;|; s|^user .*||' /etc/nginx/nginx.conf \
     && useradd --create-home --uid 10001 noclick \
-    && mkdir -p /var/lib/noclick /app/logs /var/log/nginx \
+    && mkdir -p /var/lib/noclick /app/logs /var/log/nginx /etc/nginx/supabase \
                 /var/lib/nginx/body /var/lib/nginx/proxy /var/lib/nginx/fastcgi \
                 /var/lib/nginx/uwsgi /var/lib/nginx/scgi \
     && chown -R noclick:noclick /var/lib/noclick /app/logs /var/lib/nginx /var/log/nginx \
-                                /etc/nginx/conf.d \
+                                /etc/nginx/conf.d /etc/nginx/supabase \
     && ln -sf /dev/stdout /var/log/nginx/access.log \
     && ln -sf /dev/stderr /var/log/nginx/error.log
 ENV NOCLICK_HOME=/var/lib/noclick

@@ -125,13 +125,15 @@ object storage, OAuth apps for integrations, model providers, and the
 environment variables each side needs — read the
 **[self-hosting guide](./docs/self-hosting.md)**.
 
-The hosted deploy buttons provision the same included single-origin service.
-Have a Supabase project ready: each provider asks for its database and API
-credentials before creating the service. Railway and Koyeb use the reviewed
-release image; Render uses [`render.yaml`](./render.yaml), DigitalOcean uses
-[`.do/deploy.template.yaml`](./.do/deploy.template.yaml), and Fly uses
-[`fly.toml`](./fly.toml). See the **[hosted deployment guide](./docs/self-hosting.md#hosted-deployments)**
-for the provider-specific details and required values.
+The deploy buttons above ask for nothing: each provider creates a Postgres
+database next to the reviewed release image, and the instance does the rest on
+first boot — it runs its own auth layer, prepares the database, and generates
+its own keys. Railway uses [`railway.template.json`](./railway.template.json),
+Render [`render.yaml`](./render.yaml), DigitalOcean
+[`.do/deploy.template.yaml`](./.do/deploy.template.yaml), and Fly
+[`fly.toml`](./fly.toml). See the
+**[hosted deployment guide](./docs/self-hosting.md#hosted-deployments)** for
+what each one provisions and where its secrets live.
 
 Releases are what you run: `main` moves with every upstream merge, tags are
 deliberate cuts, and each tag publishes images to GHCR so the compose stack

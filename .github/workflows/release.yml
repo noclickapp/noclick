@@ -333,6 +333,48 @@ jobs:
           }
           echo "verified local images: OCI labels, curated schema, and public routes"
 
+          # The one-click path: a bare database and nothing else. The instance
+          # has to prepare it, run its own auth stack, mint its own keys and
+          # register an account — which is what every deploy button now does.
+          docker run -d --name nc-db-bare --network nc-verify \
+            -e POSTGRES_PASSWORD=bare postgres:15-alpine
+          for _ in $(seq 1 30); do
+            docker exec nc-db-bare pg_isready -U postgres >/dev/null 2>&1 && break
+            sleep 2
+          done
+          docker run -d --name nc-bare --network nc-verify -p 8081:8080 \
+            -e POSTGRES_URL="postgres://postgres:bare@nc-db-bare:5432/postgres" \
+            -e VITE_PUBLIC_URL="http://localhost:8081" \
+            "$IMAGE"
+          for _ in $(seq 1 60); do
+            [ "$(curl -s -o /dev/null -w '%{http_code}' --max-time 5 http://localhost:8081/health)" = "200" ] && break
+            sleep 5
+          done
+
+          bare_health="$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 http://localhost:8081/health || true)"
+          bare_auth="$(curl -s -o /dev/null -w '%{http_code}' --max-time 20 http://localhost:8081/auth/v1/health || true)"
+          [ "$bare_health" = "200" ] || {
+            docker logs nc-bare 2>&1 | tail -40
+            echo "::error::a database-only deploy did not become healthy ($bare_health)"; exit 1;
+          }
+          [ "$bare_auth" = "200" ] || {
+            docker logs nc-bare 2>&1 | tail -40
+            echo "::error::the embedded auth server is not serving /auth/v1 ($bare_auth)"; exit 1;
+          }
+          # An account is the actual deliverable: a deploy nobody can sign in to
+          # is a deploy that failed, however healthy its endpoints look.
+          anon="$(docker exec nc-bare sh -c 'for p in /proc/[0-9]*/environ; do tr "\0" "\n" < $p 2>/dev/null | grep -m1 "^SUPABASE_ANON_KEY="; done | head -1' | cut -d= -f2-)"
+          signup="$(curl -s -X POST http://localhost:8081/auth/v1/signup \
+            -H "apikey: $anon" -H 'Content-Type: application/json' \
+            -d '{"email":"release-smoke@example.com","password":"release-smoke-password-123"}')"
+          case "$signup" in
+            *access_token*) ;;
+            *) echo "$signup" | head -c 400; docker logs nc-bare 2>&1 | tail -40
+               echo "::error::sign-up failed on a database-only deploy"; exit 1 ;;
+          esac
+          docker rm -f nc-bare nc-db-bare >/dev/null 2>&1 || true
+          echo "verified the database-only deploy: prepared, served auth, and registered an account"
+
       # Registry credentials and pullable names appear only after verification.
       - uses: docker/login-action@c94ce9fb468520275223c153574b00df6fe4bcc9 # v3
         with:
