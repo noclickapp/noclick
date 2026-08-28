@@ -25,9 +25,9 @@
 </p>
 
 <p align="center">
-  <a href="https://railway.com/new/template/noclick?utm_medium=integration&amp;utm_source=button&amp;utm_campaign=noclick"><img alt="Deploy on Railway" src="https://railway.com/button.svg" height="30" /></a>
-  <a href="https://render.com/deploy?repo=https://github.com/noclickapp/noclick"><img alt="Deploy to Render" src="https://render.com/images/deploy-to-render-button.svg" height="30" /></a>
-  <a href="https://cloud.digitalocean.com/apps/new?repo=https://github.com/noclickapp/noclick/tree/main"><img alt="Deploy to DigitalOcean" src="https://www.deploytodo.com/do-btn-blue.svg" height="30" /></a>
+  <a href="https://railway.com/new/template/noclick?utm_medium=integration&amp;utm_source=button&amp;utm_campaign=noclick"><img alt="Deploy on Railway" src="https://railway.com/button.svg" height="40" /></a>
+  <a href="https://render.com/deploy?repo=https://github.com/noclickapp/noclick"><img alt="Deploy to Render" src="https://render.com/images/deploy-to-render-button.svg" height="40" /></a>
+  <a href="https://cloud.digitalocean.com/apps/new?repo=https://github.com/noclickapp/noclick/tree/main"><img alt="Deploy to DigitalOcean" src="https://www.deploytodo.com/do-btn-blue.svg" height="40" /></a>
 </p>
 
 <p align="center">
