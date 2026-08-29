@@ -21,6 +21,7 @@ from typing import Any, Dict, List, Optional
 from zoneinfo import ZoneInfo
 
 import httpx
+from urllib.parse import urlsplit, urlunsplit
 from fastapi import APIRouter, Header, HTTPException, Request
 
 logger = logging.getLogger(__name__)
@@ -377,6 +378,23 @@ async def bulk_delete_nodes(request: Request, authorization: Optional[str] = Hea
 # ── Ticker ───────────────────────────────────────────────────────────────
 
 
+def _delivery_url(webhook_url: str) -> str:
+    """The URL a tick is posted to.
+
+    Webhook URLs are minted on the instance's public origin, which from inside
+    the instance may not route back to it at all (a laptop's localhost:PORT is
+    the container's own loopback; a platform edge may refuse hairpin traffic).
+    LOCAL_CRON_DELIVERY_ORIGIN names the origin this process can actually
+    reach — the single-origin image points it at its own nginx — and only the
+    origin is swapped, so the webhook path is delivered exactly as minted.
+    """
+    origin = os.environ.get("LOCAL_CRON_DELIVERY_ORIGIN", "").strip()
+    if not origin:
+        return webhook_url
+    o = urlsplit(origin); parts = urlsplit(webhook_url)
+    return urlunsplit((o.scheme, o.netloc, parts.path, parts.query, parts.fragment))
+
+
 async def _deliver(schedule: Dict[str, Any], triggered_at: datetime) -> None:
     """Worker-parity delivery: same body/headers, 4xx = no retry."""
     payload = schedule["payload"]
@@ -395,7 +413,7 @@ async def _deliver(schedule: Dict[str, Any], triggered_at: datetime) -> None:
         for attempt in range(1, max_attempts + 1):
             try:
                 response = await client.post(
-                    schedule["webhook_url"],
+                    _delivery_url(schedule["webhook_url"]),
                     json=body,
                     headers={
                         "X-Cron-Schedule-Id": schedule["id"],

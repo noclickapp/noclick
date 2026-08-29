@@ -35,8 +35,11 @@ export VITE_PUBLIC_URL
 : "${APP_WEBHOOK_BASE_URL:=${PUBLIC_API_URL:-}}"
 : "${MCP_BASE_URL:=${PUBLIC_API_URL:-}}"
 : "${CRON_SCHEDULER_URL:=http://127.0.0.1:8000/local-cron}"
+# Schedule ticks are posted back through this container's own front door: the
+# public origin the webhook URL carries need not route back into it.
+: "${LOCAL_CRON_DELIVERY_ORIGIN:=http://127.0.0.1:$PORT}"
 export PUBLIC_API_URL FRONTEND_URL PUBLIC_WEBHOOK_URL APP_WEBHOOK_BASE_URL \
-       MCP_BASE_URL CRON_SCHEDULER_URL
+       MCP_BASE_URL CRON_SCHEDULER_URL LOCAL_CRON_DELIVERY_ORIGIN
 
 # This image is the self-hosted edition and has no Turnstile configuration, so
 # the sign-in form would ask a captcha nobody can answer. The browser bundle

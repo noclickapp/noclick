@@ -3,9 +3,9 @@
 The hosted service reaches a workflow's webhook through a wildcard-subdomain
 relay, so a delivery lands on `{webhook_id}.<relay domain>` wherever the backend
 happens to be running. A self-hosted backend is reachable directly, at one
-address its operator already configured, and its own `/{webhook_id}` route
-serves deliveries — so the URL is that address plus the id, and the relay's
-connection management has nothing to manage.
+address its operator already configured, and its own `/webhook/{webhook_id}`
+route serves deliveries — so the URL is that origin plus the route, and the
+relay's connection management has nothing to manage.
 
 The relay client's functions stay here as no-ops rather than disappearing: they
 are called from shared code (server startup, webhook registration, the
@@ -37,7 +37,15 @@ def get_webhook_url(webhook_id: str) -> str:
             "PUBLIC_WEBHOOK_URL is not configured; set it to the externally "
             "reachable API URL used for webhook deliveries"
         )
-    return f"{base}/{webhook_id}"
+    # The base is the backend's origin, as for every other webhook route
+    # (Discord app events append /webhook/app/discord to the same value). The
+    # delivery route lives under /webhook, and a front door that only proxies
+    # that prefix answers a bare /{id} with the app's 404 page — a schedule
+    # that reached zero, said "Running", and never ran. A base that already
+    # names the prefix is honoured rather than doubled.
+    if base.endswith("/webhook"):
+        base = base[: -len("/webhook")]
+    return f"{base}/webhook/{webhook_id}"
 
 
 def get_session_id() -> Optional[str]:
