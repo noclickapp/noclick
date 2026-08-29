@@ -84,7 +84,7 @@
     },
     "0f5f5d16-2d13-4f2f-9a2f-6f8bd4b1c002": {
       "name": "noclick",
-      "source": { "image": "ghcr.io/noclickapp/noclick:0.1.0" },
+      "source": { "image": "ghcr.io/noclickapp/noclick:0.2.0" },
       "deploy": {
         "healthcheckPath": "/health",
         "healthcheckTimeout": 300,
