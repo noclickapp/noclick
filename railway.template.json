@@ -7,76 +7,56 @@
     "",
     "Every variable carries a default — a reference to the database service or",
     "a generated secret — so deploying asks for nothing. Keep it that way: an",
-    "empty box on the deploy form is a step someone has to research first."
+    "empty box on the deploy form is a step someone has to research first.",
+    "",
+    "Only EXPRESSIONS survive publication: a template is regenerated from a",
+    "deployed project, and Railway keeps ${{...}} references and secret()",
+    "calls but turns a plain literal into a field the deployer must fill in.",
+    "So the database service carries no literal at all — the image's own",
+    "defaults name the user and database, and PGDATA is derived from the",
+    "volume mount. Descriptions are kept here for the reader; publication",
+    "drops them."
   ],
   "services": {
     "0f5f5d16-2d13-4f2f-9a2f-6f8bd4b1c001": {
       "name": "Postgres",
       "icon": "https://devicons.railway.app/i/postgresql.svg",
-      "source": { "image": "ghcr.io/railwayapp-templates/postgres-ssl:16" },
+      "source": {
+        "image": "ghcr.io/railwayapp-templates/postgres-ssl:16"
+      },
       "deploy": {
         "requiredMountPath": "/var/lib/postgresql/data",
         "restartPolicyType": "ALWAYS"
       },
       "variables": {
+        "POSTGRES_PASSWORD": {
+          "isOptional": false,
+          "description": "Password for the database's postgres user",
+          "defaultValue": "${{ secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\") }}"
+        },
         "PGDATA": {
           "isOptional": false,
-          "description": "Location where the database will be initialized",
-          "defaultValue": "/var/lib/postgresql/data/pgdata"
+          "description": "Where the cluster is initialised: a subdirectory of the volume, because the mount root is never empty",
+          "defaultValue": "${{RAILWAY_VOLUME_MOUNT_PATH}}/pgdata"
         },
         "PGHOST": {
           "isOptional": false,
           "description": "Railway private domain name",
           "defaultValue": "${{RAILWAY_PRIVATE_DOMAIN}}"
         },
-        "PGPORT": {
-          "isOptional": false,
-          "description": "Port to connect to Postgres",
-          "defaultValue": "5432"
-        },
-        "PGUSER": {
-          "isOptional": false,
-          "description": "Required variable for the data panel",
-          "defaultValue": "${{POSTGRES_USER}}"
-        },
-        "PGDATABASE": {
-          "isOptional": false,
-          "description": "Required variable for the data panel",
-          "defaultValue": "${{POSTGRES_DB}}"
-        },
         "PGPASSWORD": {
           "isOptional": false,
           "description": "Required variable for the data panel",
           "defaultValue": "${{POSTGRES_PASSWORD}}"
         },
-        "POSTGRES_DB": {
-          "isOptional": false,
-          "description": "Default database created when the image starts",
-          "defaultValue": "railway"
-        },
-        "POSTGRES_USER": {
-          "isOptional": false,
-          "description": "User to connect to the database",
-          "defaultValue": "postgres"
-        },
-        "POSTGRES_PASSWORD": {
-          "isOptional": false,
-          "description": "Password to connect to the database",
-          "defaultValue": "${{ secret(32, \"abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789\") }}"
-        },
         "DATABASE_URL": {
           "isOptional": false,
-          "description": "Connection string for the database",
-          "defaultValue": "postgresql://${{PGUSER}}:${{POSTGRES_PASSWORD}}@${{RAILWAY_PRIVATE_DOMAIN}}:5432/${{PGDATABASE}}"
-        },
-        "RAILWAY_DEPLOYMENT_DRAINING_SECONDS": {
-          "isOptional": false,
-          "description": "Allow Postgres to cleanly shut down",
-          "defaultValue": "60"
+          "description": "Connection string for the database; the image's default user and database are both `postgres`",
+          "defaultValue": "postgresql://postgres:${{POSTGRES_PASSWORD}}@${{RAILWAY_PRIVATE_DOMAIN}}:5432/postgres"
         }
       },
       "volumeMounts": {
-        "0f5f5d16-2d13-4f2f-9a2f-6f8bd4b1c101": {
+        "0f5f5d16-2d13-4f2f-9a2f-6f8bd4b1c001": {
           "mountPath": "/var/lib/postgresql/data"
         }
       },
@@ -84,7 +64,9 @@
     },
     "0f5f5d16-2d13-4f2f-9a2f-6f8bd4b1c002": {
       "name": "noclick",
-      "source": { "image": "ghcr.io/noclickapp/noclick:0.2.0" },
+      "source": {
+        "image": "ghcr.io/noclickapp/noclick:0.2.0"
+      },
       "deploy": {
         "healthcheckPath": "/health",
         "healthcheckTimeout": 300,
@@ -124,12 +106,16 @@
         }
       },
       "volumeMounts": {
-        "0f5f5d16-2d13-4f2f-9a2f-6f8bd4b1c102": {
+        "0f5f5d16-2d13-4f2f-9a2f-6f8bd4b1c002": {
           "mountPath": "/var/lib/noclick"
         }
       },
       "networking": {
-        "serviceDomains": { "<hasDomain>:8080": { "port": 8080 } }
+        "serviceDomains": {
+          "<hasDomain>:8080": {
+            "port": 8080
+          }
+        }
       }
     }
   }
