@@ -1,6 +1,6 @@
 // Auto-generated from backend Pydantic models
 // DO NOT EDIT MANUALLY - run 'npm run generate:types' instead
-// Generated at: Tue Aug 25 16:31:25  2026
+// Generated at: Sun Aug 30 01:33:00  2026
 // Target: all
 
 import { AgenticStep, ContentItem, ImageUrl } from './socket-schema.generated';
@@ -129,6 +129,16 @@ export interface ActiveGenTerminalEvent {
    * Error message when outcome=failed
    */
   error?: string | null;
+  /**
+   * Machine-readable failure class when outcome=failed, e.g. provider_key_missing
+   */
+  error_code?: string | null;
+  /**
+   * Details for error_code — provider_key_missing carries env_var, provider, model
+   */
+  error_meta?: {
+    [k: string]: unknown;
+  } | null;
   /**
    * Echoes the originating client request's request_id for FE latency correlation
    */
@@ -1235,9 +1245,8 @@ export interface AgentShareSetActiveRequest {
   [k: string]: unknown;
 }
 /**
- * Delete one file from an agent conversation's workspace volume. Same
- * workflow-access gate as the listing (which also grants upload) — a mutation
- * symmetric to upload, so listing access implies delete access.
+ * Delete one file from an agent conversation's workspace volume.
+ * Requires edit or owner access to the workflow.
  */
 export interface AgentWorkspaceDeleteRequest {
   /**
@@ -3022,6 +3031,48 @@ export interface InstagramLoginOAuthValidateRequest {
    * UUID of the credential to validate
    */
   credential_id: string;
+  [k: string]: unknown;
+}
+/**
+ * Forget one server-side provider key
+ */
+export interface InstanceKeysDeleteRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  /**
+   * Environment variable name
+   */
+  env_var: string;
+  [k: string]: unknown;
+}
+/**
+ * List the model-provider keys this instance has stored server-side
+ */
+export interface InstanceKeysListRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  [k: string]: unknown;
+}
+/**
+ * Store one server-side provider key (e.g. OPENROUTER_API_KEY)
+ */
+export interface InstanceKeysSetRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  /**
+   * Environment variable name the key is read from
+   */
+  env_var: string;
+  /**
+   * The key
+   */
+  value: string;
   [k: string]: unknown;
 }
 /**
@@ -4868,7 +4919,7 @@ export interface ShopifyOAuthExchangeRequest {
   [k: string]: unknown;
 }
 /**
- * Refresh an expired Shopify OAuth token (not used - Shopify tokens don't expire)
+ * Refresh an expiring Shopify offline access token
  */
 export interface ShopifyOAuthRefreshRequest {
   /**
@@ -13358,6 +13409,9 @@ export interface ClientToServerEvents {
   'instagram_login:oauth:exchange': (data: InstagramLoginOAuthExchangeRequest) => void;
   'instagram_login:oauth:refresh': (data: InstagramLoginOAuthRefreshRequest) => void;
   'instagram_login:oauth:validate': (data: InstagramLoginOAuthValidateRequest) => void;
+  'instance_keys:delete': (data: InstanceKeysDeleteRequest) => void;
+  'instance_keys:list': (data: InstanceKeysListRequest) => void;
+  'instance_keys:set': (data: InstanceKeysSetRequest) => void;
   'instance_oauth:delete': (data: InstanceOAuthDeleteRequest) => void;
   'instance_oauth:list': (data: InstanceOAuthListRequest) => void;
   'instance_oauth:set': (data: InstanceOAuthSetRequest) => void;
@@ -13680,6 +13734,9 @@ export const ClientEventNames = {
   InstagramLoginOAuthExchangeRequest: 'instagram_login:oauth:exchange',
   InstagramLoginOAuthRefreshRequest: 'instagram_login:oauth:refresh',
   InstagramLoginOAuthValidateRequest: 'instagram_login:oauth:validate',
+  InstanceKeysDeleteRequest: 'instance_keys:delete',
+  InstanceKeysListRequest: 'instance_keys:list',
+  InstanceKeysSetRequest: 'instance_keys:set',
   InstanceOAuthDeleteRequest: 'instance_oauth:delete',
   InstanceOAuthListRequest: 'instance_oauth:list',
   InstanceOAuthSetRequest: 'instance_oauth:set',
@@ -14003,6 +14060,9 @@ interface ClientEventMap {
   InstagramLoginOAuthExchangeRequest: InstagramLoginOAuthExchangeRequest
   InstagramLoginOAuthRefreshRequest: InstagramLoginOAuthRefreshRequest
   InstagramLoginOAuthValidateRequest: InstagramLoginOAuthValidateRequest
+  InstanceKeysDeleteRequest: InstanceKeysDeleteRequest
+  InstanceKeysListRequest: InstanceKeysListRequest
+  InstanceKeysSetRequest: InstanceKeysSetRequest
   InstanceOAuthDeleteRequest: InstanceOAuthDeleteRequest
   InstanceOAuthListRequest: InstanceOAuthListRequest
   InstanceOAuthSetRequest: InstanceOAuthSetRequest
@@ -14887,6 +14947,18 @@ export const InstagramLoginOAuthRefreshRequest = {
 export const InstagramLoginOAuthValidateRequest = {
   event_name: 'instagram_login:oauth:validate' as const,
   create: (data: InstagramLoginOAuthValidateRequest) => ({ event_name: 'instagram_login:oauth:validate' as const, ...data })
+};
+export const InstanceKeysDeleteRequest = {
+  event_name: 'instance_keys:delete' as const,
+  create: (data: InstanceKeysDeleteRequest) => ({ event_name: 'instance_keys:delete' as const, ...data })
+};
+export const InstanceKeysListRequest = {
+  event_name: 'instance_keys:list' as const,
+  create: (data: InstanceKeysListRequest) => ({ event_name: 'instance_keys:list' as const, ...data })
+};
+export const InstanceKeysSetRequest = {
+  event_name: 'instance_keys:set' as const,
+  create: (data: InstanceKeysSetRequest) => ({ event_name: 'instance_keys:set' as const, ...data })
 };
 export const InstanceOAuthDeleteRequest = {
   event_name: 'instance_oauth:delete' as const,
@@ -15804,6 +15876,9 @@ export const EventRouting = {
   'hubspot:oauth:exchange': 'API',
   'hubspot:oauth:refresh': 'API',
   'hubspot:oauth:validate': 'API',
+  'instance_keys:delete': 'API',
+  'instance_keys:list': 'API',
+  'instance_keys:set': 'API',
   'instance_oauth:delete': 'API',
   'instance_oauth:list': 'API',
   'instance_oauth:set': 'API',

@@ -77,6 +77,7 @@ class Handler(Enum):
     ONBOARDING = "onboarding_handler"
     NOTIFICATION_PREFS = "notification_prefs_handler"
     INSTANCE_OAUTH = "instance_oauth_handler"
+    INSTANCE_KEYS = "instance_keys_handler"
     WORKFLOW_BUILDER = "workflow_builder_handler"
     FOLDER = "folder_handler"
     RESOURCE = "resource_handler"
@@ -119,6 +120,9 @@ EVENT_ROUTING: Dict[str, Dict[str, Handler]] = {
         "instance_oauth:list": Handler.INSTANCE_OAUTH,
         "instance_oauth:set": Handler.INSTANCE_OAUTH,
         "instance_oauth:delete": Handler.INSTANCE_OAUTH,
+        "instance_keys:list": Handler.INSTANCE_KEYS,
+        "instance_keys:set": Handler.INSTANCE_KEYS,
+        "instance_keys:delete": Handler.INSTANCE_KEYS,
 
         # In-app feedback / bug report
         "feedback:submit": Handler.FEEDBACK,

@@ -589,6 +589,7 @@ class SocketIOProxy:
         from wss.handlers.onboarding_handler import OnboardingHandler
         from wss.handlers.notification_prefs_handler import NotificationPrefsHandler
         from wss.handlers.instance_oauth_handler import InstanceOAuthHandler
+        from wss.handlers.instance_keys_handler import InstanceKeysHandler
         from wss.handlers.feedback_handler import FeedbackHandler
         try:
             from wss.handlers.workflow_builder_handler import WorkflowBuilderHandler
@@ -731,6 +732,7 @@ class SocketIOProxy:
         # Initialize notification prefs handler (API only - system alert email opt-outs)
         notification_prefs_handler = NotificationPrefsHandler(self.sio) if self.SOCKET_PROXY_ENV == "API" else None
         instance_oauth_handler = InstanceOAuthHandler(self.sio) if self.SOCKET_PROXY_ENV == "API" else None
+        instance_keys_handler = InstanceKeysHandler(self.sio) if self.SOCKET_PROXY_ENV == "API" else None
         # Initialize feedback handler (API only - in-app feedback / bug reports)
         feedback_handler = FeedbackHandler(self.sio) if self.SOCKET_PROXY_ENV == "API" else None
         # Initialize workflow builder handler (API only - for AI-powered workflow generation)
@@ -830,6 +832,7 @@ class SocketIOProxy:
             Handler.ONBOARDING: onboarding_handler,
             Handler.NOTIFICATION_PREFS: notification_prefs_handler,
             Handler.INSTANCE_OAUTH: instance_oauth_handler,
+            Handler.INSTANCE_KEYS: instance_keys_handler,
             Handler.FEEDBACK: feedback_handler,
             Handler.WORKFLOW_BUILDER: workflow_builder_handler,
             Handler.FOLDER: folder_handler,

@@ -89,6 +89,9 @@ export interface Message {
     // of vanishing or showing a success summary.
     failed?: boolean;
     error?: string;
+    /** Machine-readable failure class from the terminal frame (e.g. provider_key_missing). */
+    errorCode?: string;
+    errorMeta?: Record<string, string>;
     // Set on the trailing assistant of a conversation paused on <ask/>. The
     // BuilderInputBridge reads this on restore and shows the ask drawer
     // without needing a separate hydrate step.

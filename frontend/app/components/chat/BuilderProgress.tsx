@@ -22,6 +22,7 @@ import { ThinkingOrb, orbStateForStatus } from '~/components/shared/ThinkingOrb'
 import { navigateToNode } from '~/utils/workflowNavigation';
 import type { WorkflowEditEvent } from './types';
 import { deriveBuilderNodes, type BuilderProgressNode } from './builderProgress/model';
+import { ProviderKeyPrompt } from '~/components/chat/ProviderKeyPrompt';
 
 const MAX_ROWS = 6;
 const STACK_MAX = 4;
@@ -74,6 +75,8 @@ export function BuilderProgress({
     separated = true,
     failed = false,
     error,
+    errorCode,
+    errorMeta,
 }: {
     events: WorkflowEditEvent[];
     status?: string;
@@ -85,6 +88,8 @@ export function BuilderProgress({
     separated?: boolean;
     failed?: boolean;
     error?: string;
+    errorCode?: string;
+    errorMeta?: Record<string, string>;
 }) {
     const nodes = useMemo(() => deriveBuilderNodes(events).filter((n) => n.state !== 'removed'), [events]);
     const snap = useSnapshot(activeGenStore);
@@ -109,6 +114,8 @@ export function BuilderProgress({
     const rootClass = separated ? 'mt-2 border-t border-foreground/[0.06] pt-2' : '';
 
     const gen = genId ? snap.gens[genId] : undefined;
+    // The one failure the chat can fix in place: a missing server-side key.
+    const keyMissing = failed && errorCode === 'provider_key_missing' && !!errorMeta?.env_var;
     const onRetry = () => {
         if (gen?.conversation_id) {
             document.dispatchEvent(new CustomEvent('noclick:builder:retry', {
@@ -160,9 +167,12 @@ export function BuilderProgress({
     return (
         <div className={rootClass}>
             {failed ? (
+                <>
                 <div className={cn('flex items-center gap-2', headerSize)}>
                     <AlertCircle className="h-3.5 w-3.5 shrink-0 text-red-600/80 dark:text-red-400/80" strokeWidth={2} />
-                    <span className="truncate text-muted-foreground" title={error || undefined}>Generation failed</span>
+                    <span className="truncate text-muted-foreground" title={error || undefined}>
+                        {keyMissing ? 'The builder needs an API key' : 'Generation failed'}
+                    </span>
                     <button
                         type="button"
                         onClick={onRetry}
@@ -172,6 +182,8 @@ export function BuilderProgress({
                         Retry
                     </button>
                 </div>
+                {keyMissing && <ProviderKeyPrompt envVar={errorMeta!.env_var} onSaved={onRetry} />}
+                </>
             ) : (
                 (() => {
                     const collapsible = isComplete && hasNodes;

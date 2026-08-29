@@ -319,6 +319,8 @@ class ActiveGenTerminalEvent(BaseModel):
     committed_conversation_id: Optional[str] = Field(None, description="Conversation that received the committed turn")
     committed_messages: List[Dict[str, Any]] = Field(default_factory=list, description="Full conversations.events array post-commit")
     error: Optional[str] = Field(None, description="Error message when outcome=failed")
+    error_code: Optional[str] = Field(None, description="Machine-readable failure class when outcome=failed, e.g. provider_key_missing")
+    error_meta: Optional[Dict[str, Any]] = Field(None, description="Details for error_code — provider_key_missing carries env_var, provider, model")
     request_id: Optional[str] = Field(None, description="Echoes the originating client request's request_id for FE latency correlation")
 
 

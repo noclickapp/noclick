@@ -33,6 +33,7 @@ from utils.cancellation import (
 )
 from coder.workflow import resume_checkpoint
 from coder.workflow.builder_events import BuilderStreamEvent
+from coder.workflow.builder_config import missing_brain_key, resolve_brain_model
 from coder.workflow.agentic.builder import NODE_METADATA_KEYS, USER_INPUT_MARKER
 from coder.workflow.agentic.state import PendingAsk
 from coder.workflow.graph_state import GraphState
@@ -1145,7 +1146,7 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
         conversation_history = await self._load_conversation_history(conversation_id, user_id)
 
         start_time = time.time()
-        agentic_config = AgenticBuilderConfig()
+        agentic_config = AgenticBuilderConfig(brain_model=resolve_brain_model())
         model_used = agentic_config.brain_model
         # generation_id was resolved at the top of this method (before the cap
         # check) so the limit-error response can address it. The FE keys live
@@ -1754,6 +1755,8 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
         user_id: Optional[str],
         error: Optional[str] = None,
         request_id: Optional[str] = None,
+        error_code: Optional[str] = None,
+        error_meta: Optional[Dict[str, Any]] = None,
     ) -> None:
         """Tell the FE store to drop this gen and patch persistedMessages.
 
@@ -1783,6 +1786,8 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
                     committed_conversation_id=committed_conversation_id,
                     committed_messages=committed_messages,
                     error=error,
+                    error_code=error_code,
+                    error_meta=error_meta,
                     request_id=effective_request_id,
                 ),
                 user_id=user_id,
@@ -2888,6 +2893,8 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
         model_used: str,
         current_graph_summary: Dict[str, Any],
         generation_id: str,
+        error_code: Optional[str] = None,
+        error_meta: Optional[Dict[str, Any]] = None,
     ) -> None:
         """Emit error response, mark generation as failed, record a failed build request."""
         await send_event(self.sio, sid, ResponseEvent(
@@ -2906,6 +2913,8 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
             user_id=user_id,
             error=error_msg,
             request_id=request.request_id,
+            error_code=error_code,
+            error_meta=error_meta,
         )
         if user_id:
             duration_ms = int((time.time() - start_time) * 1000)
@@ -3185,7 +3194,7 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
         # even for users who are blocked by the daily limit (needed to size the
         # gated cohort vs. the completion funnel).
         existing_node_count = len(request.current_graph.get('nodes') or []) if request.current_graph else 0
-        agentic_config = AgenticBuilderConfig()
+        agentic_config = AgenticBuilderConfig(brain_model=resolve_brain_model())
         model_used = agentic_config.brain_model
         log_activity_background(Events.BUILDER_PROMPT_SUBMITTED, user_id, {
             "generation_id": generation_id,
@@ -3228,6 +3237,29 @@ class WorkflowBuilderHandler(DatabasePoolMixin, SocketIOHandler):
         # Create summary of current graph for analytics
         current_graph_summary = self._summarize_graph(request.current_graph)
 
+        # A brain with no key could only fail after the run started. Say so
+        # now, naming the key, so the chat can ask for it inline.
+        missing = missing_brain_key(agentic_config.brain_model)
+        if missing:
+            env_var, provider = missing
+            await self._finalize_run_failed(
+                sid, None,
+                request=request,
+                error_msg=(
+                    f"The workflow builder needs {env_var} to run "
+                    f"{agentic_config.brain_model}. Add the key to continue."
+                ),
+                user_id=user_id,
+                start_time=start_time,
+                model_used=model_used,
+                current_graph_summary=current_graph_summary,
+                generation_id=generation_id,
+                error_code='provider_key_missing',
+                error_meta={'env_var': env_var, 'provider': provider, 'model': agentic_config.brain_model},
+            )
+            if conv_id_for_pause:
+                unregister_builder_scope(conv_id_for_pause, cancel_scope)
+            return
 
         # Use AgenticBuilder for multi-turn conversational editing
         logger.info(f"[WorkflowBuilder] Starting agentic edit {generation_id} with brain model {model_used}")

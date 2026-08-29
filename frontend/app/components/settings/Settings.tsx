@@ -21,6 +21,7 @@ import { OrganizationSettings } from '~/components/organization/OrganizationSett
 import { CredentialsSettings } from '~/components/settings/CredentialsSettings';
 import { DeveloperSettings } from '~/components/settings/DeveloperSettings';
 import { InstanceOAuthSettings } from '~/components/settings/InstanceOAuthSettings';
+import { InstanceProviderKeysSettings } from '~/components/settings/InstanceProviderKeysSettings';
 import { NotificationsSettings } from '~/components/settings/NotificationsSettings';
 import { PopupPreferencesSettings } from '~/components/settings/PopupPreferencesSettings';
 import { isLocalEdition } from '~/lib/edition';
@@ -135,8 +136,8 @@ export function Settings({ initialSection, onNavigateBack }: SettingsProps) {
     },
     {
       id: 'oauth-apps' as const,
-      label: 'OAuth Apps',
-      description: 'Connect integrations with your own OAuth apps',
+      label: 'OAuth Apps & Keys',
+      description: 'Your own OAuth apps and model-provider keys',
       icon: Plug,
       // The hosted service connects through its own registered apps; this is
       // the self-hosted alternative to editing two .env files by hand.
@@ -217,7 +218,12 @@ export function Settings({ initialSection, onNavigateBack }: SettingsProps) {
               </Suspense>
             )}
             {mobileSection === 'developer' && <DeveloperSettings />}
-            {mobileSection === 'oauth-apps' && <InstanceOAuthSettings />}
+            {mobileSection === 'oauth-apps' && (
+              <>
+                <InstanceProviderKeysSettings />
+                <InstanceOAuthSettings />
+              </>
+            )}
             {mobileSection === 'notifications' && <NotificationsSettings />}
             {mobileSection === 'popups' && <PopupPreferencesSettings />}
             {mobileSection === 'organization' && settingsOrgId && (
@@ -285,7 +291,12 @@ export function Settings({ initialSection, onNavigateBack }: SettingsProps) {
             </Suspense>
           )}
           {currentSection === 'developer' && <DeveloperSettings />}
-          {currentSection === 'oauth-apps' && <InstanceOAuthSettings />}
+          {currentSection === 'oauth-apps' && (
+            <>
+              <InstanceProviderKeysSettings />
+              <InstanceOAuthSettings />
+            </>
+          )}
           {currentSection === 'notifications' && <NotificationsSettings />}
           {currentSection === 'popups' && <PopupPreferencesSettings />}
           {currentSection === 'organization' && settingsOrgId && (

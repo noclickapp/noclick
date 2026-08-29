@@ -1,0 +1,37 @@
+"""The community builder follows the key the instance has.
+
+`builder_config` here is the open edition's: one model per call, chosen at run
+time from WORKFLOW_BUILDER_MODEL or the provider key that exists, so a single
+key saved in Settings is enough to build with.
+"""
+
+import os
+
+import pytest
+
+from coder.workflow import builder_config
+
+
+@pytest.fixture(autouse=True)
+def clean_env(monkeypatch):
+    for name in ("WORKFLOW_BUILDER_MODEL", "OPENROUTER_API_KEY", "OPENAI_API_KEY", "ANTHROPIC_API_KEY"):
+        monkeypatch.delenv(name, raising=False)
+
+
+def test_brain_model_follows_the_available_key(monkeypatch):
+    assert builder_config.resolve_brain_model() == "openrouter/openai/gpt-5-mini", (
+        "with no key at all the OpenRouter route is named — the key the builder asks for"
+    )
+    monkeypatch.setenv("OPENAI_API_KEY", "sk")
+    assert builder_config.resolve_brain_model() == "openai/gpt-5-mini"
+    monkeypatch.setenv("OPENROUTER_API_KEY", "sk-or")
+    assert builder_config.resolve_brain_model() == "openrouter/openai/gpt-5-mini"
+    monkeypatch.setenv("WORKFLOW_BUILDER_MODEL", "anthropic/claude-sonnet-4")
+    assert builder_config.resolve_brain_model() == "anthropic/claude-sonnet-4", "an explicit choice always wins"
+
+
+def test_missing_brain_key_names_the_variable_and_provider(monkeypatch):
+    assert builder_config.missing_brain_key("openrouter/openai/gpt-5-mini") == ("OPENROUTER_API_KEY", "openrouter")
+    monkeypatch.setenv("OPENROUTER_API_KEY", "sk-or")
+    assert builder_config.missing_brain_key("openrouter/openai/gpt-5-mini") is None
+    assert builder_config.missing_brain_key("anthropic/claude-sonnet-4") == ("ANTHROPIC_API_KEY", "anthropic")

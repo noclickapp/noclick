@@ -182,9 +182,11 @@ async def app_lifespan(app: FastAPI):
     if is_local_edition():
         from utils.database_pool import get_native_pool
         from utils.instance_oauth import apply_to_environment
+        from utils.instance_provider_keys import apply_to_environment as apply_provider_keys
 
         try:
             await apply_to_environment(get_native_pool())
+            await apply_provider_keys(get_native_pool())
         except Exception as e:
             # A missing table on an un-migrated install must not stop boot; the
             # providers simply stay unconfigured and the setup page says so.

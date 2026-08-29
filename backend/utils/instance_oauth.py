@@ -26,6 +26,7 @@ from typing import Dict, List, Optional
 
 from utils.edition import is_local_edition
 from utils.encryption import get_encryption
+from utils.instance_env import apply_value, applied_by_store, release_value
 
 logger = logging.getLogger(__name__)
 
@@ -100,7 +101,7 @@ def env_configured_providers() -> List[str]:
         # called "_nc_instance_oauth_linear". Skip the bookkeeping namespace.
         if name.startswith(_TAG_PREFIX):
             continue
-        if os.environ.get(f"{_TAG_PREFIX}{name}") == "1":
+        if applied_by_store(name, _TAG_PREFIX):
             continue  # we set this one from the database
         found.append(by_id_var.get(name) or name[: -len("_CLIENT_ID")].lower())
     return sorted(found)
@@ -136,9 +137,7 @@ async def delete_app(pool, provider: str) -> None:
     the change takes effect without a restart."""
     await pool.execute("DELETE FROM instance_oauth_apps WHERE provider = $1", provider)
     for name in _env_names(provider):
-        if os.environ.get(f"{_TAG_PREFIX}{name}") == "1":
-            os.environ.pop(name, None)
-            os.environ.pop(f"{_TAG_PREFIX}{name}", None)
+        release_value(name, _TAG_PREFIX)
 
 
 async def apply_to_environment(pool) -> int:
@@ -159,11 +158,8 @@ async def apply_to_environment(pool) -> int:
         if row["client_secret_encrypted"]:
             secret = get_encryption().decrypt_credential(row["client_secret_encrypted"]).get("client_secret")
         for name, value in ((client_id_var, row["client_id"]), (client_secret_var, secret)):
-            if not value or os.environ.get(name):
-                continue
-            os.environ[name] = value
-            os.environ[f"{_TAG_PREFIX}{name}"] = "1"
-            applied += 1
+            if apply_value(name, value, _TAG_PREFIX):
+                applied += 1
     if applied:
         logger.info(f"[InstanceOAuth] applied {applied} stored value(s) to the environment")
     return applied

@@ -62,7 +62,7 @@ function activeGenToBubbles(gen: ActiveGeneration): Message[] {
         editStatus: ended ? undefined : (gen.status || undefined),
         generationId: gen.gen_id,
         ...(gen.stopped ? { wasInterrupted: true } : {}),
-        ...(gen.failed ? { failed: true, error: gen.error } : {}),
+        ...(gen.failed ? { failed: true, error: gen.error, errorCode: gen.errorCode, errorMeta: gen.errorMeta } : {}),
     };
     if (!gen.prompt) {
         // Resume / continuation: no new user bubble.
@@ -128,7 +128,7 @@ export function composeMessages(
                     editStatus: ended ? undefined : (gen.status || last.editStatus),
                     generationId: gen.gen_id,
                     ...(gen.stopped ? { wasInterrupted: true } : {}),
-                    ...(gen.failed ? { failed: true, error: gen.error } : {}),
+                    ...(gen.failed ? { failed: true, error: gen.error, errorCode: gen.errorCode, errorMeta: gen.errorMeta } : {}),
                 };
                 continue;
             }

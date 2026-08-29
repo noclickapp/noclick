@@ -79,6 +79,9 @@ export interface ActiveGeneration {
     failed?: boolean;
     /** Error message carried on the failed terminal frame. */
     error?: string;
+    /** Machine-readable failure class + details (provider_key_missing carries env_var, provider, model). */
+    errorCode?: string;
+    errorMeta?: Record<string, string>;
 }
 
 interface ActiveGenStoreState {
@@ -296,6 +299,8 @@ export function ensureActiveGenListener(): void {
             if (gen && !gen.stopped) {
                 gen.failed = true;
                 gen.error = (data.error as string) || 'Generation failed';
+                gen.errorCode = (data.error_code as string) || undefined;
+                gen.errorMeta = (data.error_meta as Record<string, string>) || undefined;
             }
             return;
         }

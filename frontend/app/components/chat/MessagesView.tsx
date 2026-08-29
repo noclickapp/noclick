@@ -494,6 +494,8 @@ function MessagesViewComponent({ messages, workflowId }: MessagesViewProps) {
                                     separated={hasContentAbove}
                                     failed={!!message.failed}
                                     error={message.error}
+                                    errorCode={message.errorCode}
+                                    errorMeta={message.errorMeta}
                                 />
                             );
                         })()}

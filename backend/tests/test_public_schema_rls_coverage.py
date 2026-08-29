@@ -32,6 +32,7 @@ BACKEND_ONLY = {
     "cas_manifests",
     "cas_refs",
     "cas_storage_stats",
+    "instance_provider_keys",
     "workflow_run_totals",
 }
 

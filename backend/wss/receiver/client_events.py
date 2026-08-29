@@ -278,6 +278,26 @@ class InstanceOAuthDeleteRequest(ClientEventBase):
     provider: str = Field(..., description="Provider key, e.g. 'linear'")
 
 
+class InstanceKeysListRequest(ClientEventBase):
+    """List the model-provider keys this instance has stored server-side"""
+    event_name: ClassVar[str] = "instance_keys:list"
+
+
+class InstanceKeysSetRequest(ClientEventBase):
+    """Store one server-side provider key (e.g. OPENROUTER_API_KEY)"""
+    event_name: ClassVar[str] = "instance_keys:set"
+
+    env_var: str = Field(..., description="Environment variable name the key is read from")
+    value: str = Field(..., min_length=1, description="The key")
+
+
+class InstanceKeysDeleteRequest(ClientEventBase):
+    """Forget one server-side provider key"""
+    event_name: ClassVar[str] = "instance_keys:delete"
+
+    env_var: str = Field(..., description="Environment variable name")
+
+
 # Feedback events (in-app navbar feedback / bug report button)
 class SubmitFeedbackRequest(ClientEventBase):
     """Request to submit a piece of user feedback or a bug report"""

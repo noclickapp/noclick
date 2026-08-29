@@ -256,7 +256,7 @@ export function useIsStreamingForWorkflow(workflowId: string | null | undefined)
     const ids = storeSnap.byWorkflow[workflowId] || [];
     for (const id of ids) {
         const gen = storeSnap.gens[id];
-        if (gen && !gen.stopped && !gen.interrupted) return true;
+        if (gen && !gen.stopped && !gen.interrupted && !gen.failed) return true;
     }
     return false;
 }
