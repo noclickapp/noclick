@@ -48,6 +48,19 @@ RUN pnpm run build
 RUN pnpm prune --prod --ignore-scripts
 
 
+# ── Agent CLI harnesses ──────────────────────────────────────────────────────
+# codex, claude and opencode run as subprocesses of the backend, signed in with
+# the ChatGPT / Claude subscription or API key attached to the agent node. The
+# pins are the versions the agent runtime was verified against
+# (backend/nodes/agent/config/_cli_models.json); a test keeps them in step.
+FROM node:22-bookworm-slim AS cli
+RUN npm install -g --prefix /opt/noclick-cli \
+        @openai/codex@0.147.0 \
+        @anthropic-ai/claude-code@2.1.231 \
+        opencode-ai@1.18.18 \
+    && npm cache clean --force
+
+
 # ── Python dependencies ──────────────────────────────────────────────────────
 FROM python:3.12-slim AS backend-deps
 
@@ -75,11 +88,12 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # version it was built against. Both are bookworm, so the binary is at home.
 COPY --from=frontend /usr/local/bin/node /usr/local/bin/node
 
-ENV PATH="/opt/venv/bin:$PATH" \
+ENV PATH="/opt/noclick-cli/bin:/opt/venv/bin:$PATH" \
     PYTHONUNBUFFERED=1 \
     PYTHONDONTWRITEBYTECODE=1 \
     NOCLICK_LOCAL=1
 COPY --from=backend-deps /opt/venv /opt/venv
+COPY --from=cli /opt/noclick-cli /opt/noclick-cli
 
 WORKDIR /app
 COPY backend ./backend

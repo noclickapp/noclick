@@ -1,4 +1,5 @@
 import { getProviderMetadata, ModelProvider } from '~/types/provider';
+import { isLocalEdition } from '~/lib/edition';
 import { DEFAULT_AGENT_MODEL, LLM_HARNESS, harnessOf } from '~/lib/agentChat';
 import agentSchema from '~/schemas/nodes/agent.json';
 
@@ -203,6 +204,9 @@ export function agentAllowsUsageBased(
     selectedModel: string | undefined,
     provider: string | null
 ): boolean {
+    // Usage-based billing is the hosted service's platform key; a self-hosted
+    // instance has no such thing to fall back to.
+    if (isLocalEdition()) return false;
     if (!provider) return false;
     if (harnessOf(selectedModel) !== LLM_HARNESS) return false;
     return (

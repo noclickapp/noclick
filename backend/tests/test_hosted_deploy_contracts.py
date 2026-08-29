@@ -148,3 +148,18 @@ def test_railway_button_uses_the_published_template() -> None:
     assert parsed.netloc == "railway.com"
     assert parsed.path == "/new/template/noclick"
     assert parse_qs(parsed.query)["utm_campaign"] == ["noclick"]
+
+
+def test_single_origin_image_ships_the_cli_harnesses_the_runtime_was_verified_against() -> None:
+    """A hosted self-host has no operator terminal to `npm install -g` into, so
+    the image carries the CLIs — at the versions the agent runtime pins."""
+    dockerfile = (REPO / "docker" / "single-origin.Dockerfile").read_text()
+    pins = dict(re.findall(r"(@openai/codex|@anthropic-ai/claude-code|opencode-ai)@([0-9][\w.-]*)", dockerfile))
+    known = json.loads((REPO / "backend" / "nodes" / "agent" / "config" / "_cli_models.json").read_text())
+
+    assert pins == {
+        "@openai/codex": known["codex"]["version"],
+        "@anthropic-ai/claude-code": known["claude_code"]["version"],
+        "opencode-ai": known["opencode"]["version"],
+    }
+    assert "/opt/noclick-cli/bin" in dockerfile, "the CLIs must be on the backend's PATH"

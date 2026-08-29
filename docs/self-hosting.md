@@ -221,10 +221,20 @@ enrichment completely: ordinary node runs make no suggestion request. Keys
 connected by individual users in the UI are not used for this background
 feature.
 
+**The workflow builder** needs a model too. It runs on `WORKFLOW_BUILDER_MODEL`
+when set, else on `openrouter/openai/gpt-5-mini` with `OPENROUTER_API_KEY` (or
+`openai/gpt-5-mini` when only `OPENAI_API_KEY` is set). Nothing has to be in the
+environment: the first time the builder finds its key missing it asks for one
+in the chat, and Settings → OAuth Apps & Keys holds the instance's keys after
+that. Environment variables take precedence over saved keys.
+
 **Harness agents** (Claude Code, Codex, opencode, hermes, OpenClaw) run the
-real CLI as a subprocess on the machine running the backend. There is no key to
-configure: install the CLI, sign in with it once as the user running the
-backend, and select that harness on an agent node.
+real CLI as a subprocess on the machine running the backend, signed in as
+whatever the agent node carries: a ChatGPT or Claude subscription sign-in
+(Connect in the node's credential panel), an API key, or — with nothing
+attached — the account that CLI is already signed in to on the server. The
+single-origin image ships `codex`, `claude` and `opencode`; a from-source
+install needs them on the backend's PATH:
 
 ```bash
 # whichever you want available
@@ -349,8 +359,8 @@ resource revokes future URL renewal without making either bucket public.
 ## Triggers
 
 **Webhooks and inbound HTTP.** Set `WEBHOOK_URL_BASE` to your backend's public
-URL. NoClick then mints webhook URLs as `{WEBHOOK_URL_BASE}/{webhook_id}` and
-serves deliveries there. Your backend must be reachable from the internet for
+origin. NoClick then mints webhook URLs as `{WEBHOOK_URL_BASE}/webhook/{webhook_id}`
+and serves deliveries there. Your backend must be reachable from the internet for
 external services to call it.
 
 **Schedules.** Cron and polling triggers run on an in-process scheduler when

@@ -247,11 +247,6 @@ export function AgentCredentialsForm({
     //    ChatGPT-Plus-eligible (agent_codex_oauth is interchangeable with codex CLI).
     //  - Claude Code: standalone CLAUDE_CODE, or ANTHROPIC inside any CLI wrapper.
     const oauthCredentialType = useMemo<string | null>(() => {
-        // These sign-ins hand NoClick a subscription token to run in a hosted
-        // sandbox. Self-hosted runs the operator's OWN installed CLI, already
-        // authenticated by them, and the OAuth handlers don't ship — so offering
-        // "Connect ChatGPT" here would be an option that cannot complete.
-        if (isLocalEdition()) return null;
         if (
             provider === ModelProvider.CODEX ||
             (provider === ModelProvider.OPENAI &&
@@ -629,8 +624,8 @@ export function AgentCredentialsForm({
                     /* BYOK harnesses bill the provider's prepaid balance, which
                        is separate from the platform credit balance. */
                     <p className="text-[11px] text-zinc-600">
-                        API keys use your {providerTitle} account&apos;s prepaid credits —
-                        separate from your NoClick credit balance.
+                        API keys use your {providerTitle} account&apos;s prepaid credits
+                        {isLocalEdition() ? '.' : ' — separate from your NoClick credit balance.'}
                     </p>
                 )}
             </div>
@@ -924,13 +919,12 @@ export function AgentCredentialsForm({
                 />
             )}
 
-            {/* Self-hosted CLI harnesses authenticate outside the app entirely. */}
+            {/* Self-hosted: the CLI runs on this server, as whatever is attached above. */}
             {isLocalEdition() && isCliAgentModel(selectedModel) && (
                 <div className="text-xs text-muted-foreground dark:text-zinc-500 bg-card dark:bg-zinc-800/30 border border-border/60 dark:border-transparent rounded-lg px-3 py-2">
-                    Runs your locally installed <code>{cliHarnessBinary(selectedModel)}</code> CLI
-                    and uses whatever account it is already signed in to. Sign in from your
-                    terminal (for example <code>{cliHarnessBinary(selectedModel)} login</code>);
-                    no credential is needed here.
+                    Runs the <code>{cliHarnessBinary(selectedModel)}</code> CLI on this server with the
+                    sign-in or API key attached above. With nothing attached it uses whatever account
+                    that CLI is already signed in to on the server.
                 </div>
             )}
 

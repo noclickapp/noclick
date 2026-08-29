@@ -38,6 +38,7 @@ import { UpgradePopup } from '~/components/utils/UpgradePopup';
 import { isPlanLimitError } from '~/lib/planLimitErrors';
 import { PLAN_LIMITS } from '~/lib/pricing';
 import { useOrgContext } from '~/hooks/useOrgContext';
+import { isLocalEdition } from '~/lib/edition';
 
 /**
  * Standard interface for custom credential form components.
@@ -276,6 +277,7 @@ export function providerCredentialsMissing(
  * available either way — an attached credential switches billing to the user's key.
  */
 export function isUsageBasedBillingAvailable(nodeType: string, nodeData?: Record<string, any>): boolean {
+    if (isLocalEdition()) return false; // hosted platform key only
     const ops = (nodeData?.config as Record<string, unknown> | undefined)?.agent_tool_operations;
     if (Array.isArray(ops) && ops.length > 0) return providerAllowlistAllOptional(nodeType, nodeData);
     return isOperationCredentialsOptional(nodeType, nodeData);
