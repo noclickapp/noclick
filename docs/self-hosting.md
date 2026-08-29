@@ -81,9 +81,11 @@ exactly one application instance because the community scheduler and realtime
 room state are process-local. Each path runs the idempotent database bootstrap
 before serving traffic.
 
-There is nothing to fill in and no account to create first. Each provider
-creates a Postgres database alongside the application, and the application does
-the rest on first boot.
+There is nothing to fill in. Railway and Render create the Postgres database
+alongside the application; DigitalOcean asks you to create a managed cluster
+named `noclick-db` in the app's region first, because the only database its
+platform creates for you is a development one whose user cannot initialise the
+auth layer. The application does the rest on first boot.
 
 ### Browser-based deploys
 
@@ -91,7 +93,7 @@ the rest on first boot.
 | --- | --- | --- |
 | Render | [Deploy](https://render.com/deploy?repo=https://github.com/noclickapp/noclick) | [`render.yaml`](../render.yaml) — database, disk, and generated secrets |
 | Railway | [Deploy](https://railway.com/new/template/noclick?utm_medium=integration&utm_source=button&utm_campaign=noclick) | [`railway.template.json`](../railway.template.json) — database, volume, and generated secrets |
-| DigitalOcean | [Deploy](https://cloud.digitalocean.com/apps/new?repo=https://github.com/noclickapp/noclick/tree/main) | [`.do/deploy.template.yaml`](../.do/deploy.template.yaml) — database only |
+| DigitalOcean | [Deploy](https://cloud.digitalocean.com/apps/new?repo=https://github.com/noclickapp/noclick/tree/main) | [`.do/deploy.template.yaml`](../.do/deploy.template.yaml) — binds a managed cluster named `noclick-db` that you create first (App Platform creates only a development database, whose user cannot host the auth layer) |
 
 Review the generated plan before accepting it: scheduled workflows require the
 single application instance to keep running rather than scale to zero, and the

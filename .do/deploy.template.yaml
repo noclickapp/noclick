@@ -1,8 +1,10 @@
-# One-click deploy to DigitalOcean App Platform: the application and a database.
+# Deploy to DigitalOcean App Platform: the application, bound to a managed
+# database you create first (see `databases` below — the one step the platform
+# leaves to you).
 #
-# Nothing to fill in. The whole application runs in one container — backend,
-# app, front door, and Supabase's auth layer on one port — so the development
-# database below is the only thing it needs.
+# Nothing to fill in on the form. The whole application runs in one container —
+# backend, app, front door, and Supabase's auth layer on one port — so the
+# database is the only thing it needs.
 #
 # App Platform can neither generate a secret nor mount a disk, so this instance
 # mints its own keys on first boot and keeps them in its database. The database
@@ -18,14 +20,14 @@ spec:
     - name: db
       engine: PG
       version: "16"
-      # A managed database (the smallest, one node), created with the app. Not
-      # the cheaper development database: its user cannot create schemas or
-      # roles, and the auth layer inside the image needs both — the container
-      # died in bootstrap with "permission denied for database" on it.
+      # A managed cluster you create first, named `noclick-db`, in the app's
+      # region. App Platform will not create one from a spec, and the
+      # development database it would create cannot host the auth layer: its
+      # user can create neither schemas nor roles, and the container died in
+      # bootstrap with "permission denied for database" on it. The smallest
+      # cluster (1 vCPU, 1 GB, one node) is plenty.
       production: true
       cluster_name: noclick-db
-      size: db-s-1vcpu-1gb
-      num_nodes: 1
   services:
     - name: noclick
       # The reviewed release image, not a build of the current default branch —

@@ -125,8 +125,9 @@ object storage, OAuth apps for integrations, model providers, and the
 environment variables each side needs — read the
 **[self-hosting guide](./docs/self-hosting.md)**.
 
-The deploy buttons above ask for nothing: each provider creates a Postgres
-database next to the reviewed release image, and the instance does the rest on
+The deploy buttons above ask for nothing: Railway and Render create a Postgres
+database next to the reviewed release image (DigitalOcean binds a managed
+cluster named `noclick-db` you create first), and the instance does the rest on
 first boot — it runs its own auth layer, prepares the database, and generates
 its own keys. Railway uses [`railway.template.json`](./railway.template.json),
 Render [`render.yaml`](./render.yaml), DigitalOcean

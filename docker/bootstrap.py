@@ -127,6 +127,12 @@ $do$;
 
 GRANT anon, authenticated, service_role TO authenticator;
 
+-- Postgres 16 no longer lets a role's creator act as that role: creating it
+-- confers ADMIN, not membership with SET. Handing the auth admin's schema to it
+-- below needs exactly that, so the preparing user grants itself the membership
+-- first. A superuser never needed it; a managed provider's admin user does.
+GRANT supabase_auth_admin TO CURRENT_USER;
+
 -- GoTrue owns its schema and migrates it itself.
 CREATE SCHEMA IF NOT EXISTS auth AUTHORIZATION supabase_auth_admin;
 ALTER ROLE supabase_auth_admin SET search_path TO auth;
