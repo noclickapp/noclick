@@ -27,6 +27,7 @@ import logging
 import re
 import time
 from dataclasses import dataclass, field
+import os
 from pathlib import Path
 from typing import Optional
 
@@ -61,16 +62,44 @@ def _load_sucrase_bundle() -> str:
     return _sucrase_bundle
 
 
+def _sdk_bundle_candidates() -> list[Path]:
+    """Where the built @noclick/sdk ES module may live, most specific first.
+
+    NOCLICK_SDK_BUNDLE names it outright. Otherwise: the SDK's own build in a
+    source checkout; the copy the app build makes for the browser, which is what
+    the self-hosted image carries (it ships no SDK source); and a container
+    mount under /root.
+    """
+    root = Path(__file__).resolve().parent.parent.parent
+    named = os.environ.get("NOCLICK_SDK_BUNDLE")
+    return [
+        *([Path(named)] if named else []),
+        root / "sdk" / "typescript" / "dist" / "sdk.esm.js",
+        root / "frontend" / "build" / "client" / "noclick-sdk" / "sdk.esm.js",
+        Path("/root/sdk/typescript/dist/sdk.esm.js"),
+    ]
+
+
 def _load_sdk_bundle() -> str:
     """Load the built @noclick/sdk ES module (lazy, cached)."""
     global _sdk_bundle
     if _sdk_bundle is None:
-        # Try local dev path first (repo root / sdk / typescript / dist)
-        sdk_path = Path(__file__).parent.parent.parent / "sdk" / "typescript" / "dist" / "sdk.esm.js"
-        if not sdk_path.exists():
-            # container deployment: mounted at /root/sdk/typescript/dist/
-            sdk_path = Path("/root/sdk/typescript/dist/sdk.esm.js")
-        _sdk_bundle = sdk_path.read_text()
+        candidates = _sdk_bundle_candidates()
+        for path in candidates:
+            try:
+                _sdk_bundle = path.read_text()
+                break
+            # A candidate that is absent or unreadable (the /root mount is
+            # closed to the unprivileged user the image runs as) is simply not
+            # this deployment's copy.
+            except (FileNotFoundError, NotADirectoryError, PermissionError):
+                continue
+        else:
+            raise FileNotFoundError(
+                "the @noclick/sdk bundle was not found; looked in "
+                + ", ".join(str(c) for c in candidates)
+                + " — set NOCLICK_SDK_BUNDLE to its path"
+            )
     return _sdk_bundle
 
 

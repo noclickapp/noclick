@@ -24,11 +24,33 @@ def invalidate_credit_cache(user_id: str) -> None:
     CREDIT_USAGE_CACHE.pop(user_id, None)
 
 
+# Ownership rarely changes; the hosted tracker caches it the same way.
+_ORG_OWNER_CACHE: TTLCache = TTLCache(maxsize=1000, ttl=300)
+
+
 class UsageTracker:
     """Default sink: record nothing and reject nothing."""
 
     def __init__(self, usage_dashboard_handler=None):
         self.usage_dashboard_handler = usage_dashboard_handler
+
+    async def get_org_owner_id(self, org_id: str) -> Optional[str]:
+        """The organization's owner, or None. Nothing is billed here, but the
+        builder still attributes an organization's runs to its owner, so this
+        is a real lookup rather than a stub answering None for every org."""
+        if org_id in _ORG_OWNER_CACHE:
+            return _ORG_OWNER_CACHE[org_id]
+        from utils.database_pool import get_native_pool
+
+        owner_id = await get_native_pool().fetchval(
+            "SELECT user_id FROM organization_members "
+            "WHERE organization_id = $1 AND role = 'owner' LIMIT 1",
+            org_id,
+        )
+        if owner_id is None:
+            return None
+        _ORG_OWNER_CACHE[org_id] = str(owner_id)
+        return _ORG_OWNER_CACHE[org_id]
 
     async def resolve_billing_user_id(
         self, user_id: str, organization_id: Optional[str] = None
