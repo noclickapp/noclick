@@ -275,8 +275,11 @@ jobs:
           # positive allowlist of 51 public tables, with RLS on every one.
           table_count="$(docker exec nc-db psql -At -U postgres -d postgres -c \
             "SELECT count(*) FROM pg_tables WHERE schemaname = 'public'")"
-          [ "$table_count" = "51" ] || {
-            echo "::error::public schema has $table_count tables, expected 51"; exit 1;
+          # The allowlist below is the contract; the count is derived from it so a
+          # schema addition cannot leave a second, stale number here.
+          expected_tables="$(grep -c . scripts/community-schema-tables.txt)"
+          [ "$table_count" = "$expected_tables" ] || {
+            echo "::error::public schema has $table_count tables, expected $expected_tables"; exit 1;
           }
           without_rls="$(docker exec nc-db psql -At -U postgres -d postgres -c \
             "SELECT coalesce(string_agg(tablename, ',' ORDER BY tablename), '') FROM pg_tables WHERE schemaname = 'public' AND NOT rowsecurity")"
