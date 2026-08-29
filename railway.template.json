@@ -64,6 +64,7 @@
     },
     "0f5f5d16-2d13-4f2f-9a2f-6f8bd4b1c002": {
       "name": "noclick",
+      "icon": "https://raw.githubusercontent.com/noclickapp/noclick/main/frontend/public/icon-512.png",
       "source": {
         "image": "ghcr.io/noclickapp/noclick:0.2.0"
       },
