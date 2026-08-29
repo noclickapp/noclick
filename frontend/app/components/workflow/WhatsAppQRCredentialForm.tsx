@@ -20,12 +20,22 @@ interface WhatsAppQRCredentialFormProps {
     // place (same id, same webhooks, same billing) — duplicate credentials
     // stack device links until WhatsApp logs all of them out.
     reconnectCredentialId?: string;
+    // Mint + show a QR the moment the form mounts (default). Pass false when a
+    // usable credential already exists: a QR sitting in the panel reads as
+    // "scan me", and every scan of a phone that is already linked rebinds its
+    // credential to a fresh connection (2026-08-29 — two needless re-scans).
+    // The form then idles behind a button until the user asks for a new link.
+    autoStart?: boolean;
+    startLabel?: string;
 }
 
-type QRFlowState = 'loading' | 'scanning' | 'connected' | 'error';
+type QRFlowState = 'idle' | 'loading' | 'scanning' | 'connected' | 'error';
 
-export const WhatsAppQRCredentialForm = ({ onCredentialCreated, sendEvent, reconnectCredentialId }: WhatsAppQRCredentialFormProps) => {
-    const [flowState, setFlowState] = useState<QRFlowState>('loading');
+export const WhatsAppQRCredentialForm = ({
+    onCredentialCreated, sendEvent, reconnectCredentialId, autoStart = true,
+    startLabel = 'Connect a different WhatsApp number',
+}: WhatsAppQRCredentialFormProps) => {
+    const [flowState, setFlowState] = useState<QRFlowState>(autoStart ? 'loading' : 'idle');
     const [qrCode, setQrCode] = useState<string | null>(null);
     const [error, setError] = useState<string | null>(null);
     const [phoneNumber, setPhoneNumber] = useState<string | null>(null);
@@ -91,13 +101,14 @@ export const WhatsAppQRCredentialForm = ({ onCredentialCreated, sendEvent, recon
         }
     }, [startPolling, reconnectCredentialId]);
 
-    // Auto-start QR flow on mount
+    // Auto-start on mount, or the moment autoStart flips true (an attached
+    // credential turning disconnected → reconnect scan).
     useEffect(() => {
-        if (!startedRef.current) {
+        if (autoStart && !startedRef.current) {
             startedRef.current = true;
             startQRFlow();
         }
-    }, [startQRFlow]);
+    }, [autoStart, startQRFlow]);
 
     const pollStatus = async (connId: string) => {
         try {
@@ -128,6 +139,19 @@ export const WhatsAppQRCredentialForm = ({ onCredentialCreated, sendEvent, recon
             // Silently retry on poll errors
         }
     };
+
+    if (flowState === 'idle') {
+        return (
+            <button
+                type="button"
+                onClick={() => { startedRef.current = true; startQRFlow(); }}
+                className="flex items-center gap-2 rounded-lg border border-border px-3 py-2 text-xs text-muted-foreground transition-colors hover:bg-accent hover:text-foreground"
+            >
+                <Smartphone className="h-3.5 w-3.5" />
+                {startLabel}
+            </button>
+        );
+    }
 
     if (flowState === 'connected') {
         return (
