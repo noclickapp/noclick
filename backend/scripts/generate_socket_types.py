@@ -71,7 +71,8 @@ def write_if_changed(file_path: Path, content: str, timestamp_pattern: str = Non
     """
     if content_has_changed(file_path, content, timestamp_pattern):
         with open(file_path, 'w') as f:
-            f.write(content)
+            # Exactly one newline at EOF: a trailing blank line fails `git diff --check`.
+            f.write(content.rstrip("\n") + "\n")
         return True
     return False
 
