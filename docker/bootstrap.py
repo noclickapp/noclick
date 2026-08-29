@@ -400,6 +400,8 @@ async def command_secrets() -> None:
     conn = await _connect(dsn)
     try:
         secrets = await _provision_secrets(conn)
+    except asyncpg.InsufficientPrivilegeError as exc:
+        raise SystemExit(f"{exc}\n  {PRIVILEGE_HINT}") from exc
     finally:
         await conn.close()
 
@@ -423,11 +425,21 @@ def _require_dsn() -> str:
     return dsn
 
 
+PRIVILEGE_HINT = (
+    "the database user cannot create what the auth layer needs. It must own the "
+    "database (to create schemas) and hold CREATEROLE (to create the API roles): "
+    "a managed provider's admin user does; a shared or development-tier database's "
+    "user usually does not."
+)
+
+
 async def command_prepare() -> None:
     conn = await _connect(_require_dsn())
     try:
         secrets = await _provision_secrets(conn)
         await prepare(conn, secrets["SUPABASE_DB_ROLE_PASSWORD"])
+    except asyncpg.InsufficientPrivilegeError as exc:
+        raise SystemExit(f"{exc}\n  {PRIVILEGE_HINT}") from exc
     finally:
         await conn.close()
 

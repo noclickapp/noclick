@@ -5,7 +5,9 @@
 # database below is the only thing it needs.
 #
 # App Platform can neither generate a secret nor mount a disk, so this instance
-# mints its own keys on first boot and keeps them in its database. To hold the
+# mints its own keys on first boot and keeps them in its database. The database
+# is a managed one because the development database's user cannot create the
+# schemas and roles the auth layer needs. To hold the
 # credential-encryption key somewhere stronger instead, set
 # CREDENTIALS_ENCRYPTION_KEY on the service before the first deploy and it will
 # be used as-is — see docs/self-hosting.md.
@@ -16,10 +18,14 @@ spec:
     - name: db
       engine: PG
       version: "16"
-      # A development database, created with the app and billed with it. Set
-      # `production: true` and name a cluster for a managed database with
-      # backups and failover.
-      production: false
+      # A managed database (the smallest, one node), created with the app. Not
+      # the cheaper development database: its user cannot create schemas or
+      # roles, and the auth layer inside the image needs both — the container
+      # died in bootstrap with "permission denied for database" on it.
+      production: true
+      cluster_name: noclick-db
+      size: db-s-1vcpu-1gb
+      num_nodes: 1
   services:
     - name: noclick
       # The reviewed release image, not a build of the current default branch —
