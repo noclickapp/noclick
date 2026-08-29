@@ -60,10 +60,13 @@ def test_digitalocean_binds_a_database_and_asks_for_nothing_else() -> None:
     service = spec["services"][0]
 
     assert spec["databases"], "App Platform must provision the database itself"
-    # It can neither generate a secret nor mount a disk, so the database binding
-    # is the whole configuration and the instance mints its own keys on boot.
-    assert [env["key"] for env in service["envs"]] == ["POSTGRES_URL"]
-    assert service["envs"][0]["value"] == "${db.DATABASE_URL}"
+    # It can neither generate a secret nor mount a disk, so the instance mints
+    # its own keys on boot; and it injects no address of its own, so the public
+    # URL is bound explicitly. Both values are platform bindables, not input.
+    assert {env["key"]: env["value"] for env in service["envs"]} == {
+        "POSTGRES_URL": "${db.DATABASE_URL}",
+        "VITE_PUBLIC_URL": "${APP_URL}",
+    }
     assert "REPLACE_WITH" not in (REPO / ".do" / "deploy.template.yaml").read_text()
 
     assert service["instance_count"] == 1

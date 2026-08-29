@@ -45,3 +45,10 @@ spec:
         - key: POSTGRES_URL
           value: ${db.DATABASE_URL}
           scope: RUN_TIME
+        # App Platform injects nothing the image can derive its own address
+        # from (Render and Railway do), and the auth server, OAuth callbacks
+        # and webhooks are all minted from it. Both values are the platform's
+        # own bindables — still nothing for a person to type.
+        - key: VITE_PUBLIC_URL
+          value: ${APP_URL}
+          scope: RUN_TIME
