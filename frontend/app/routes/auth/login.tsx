@@ -32,6 +32,7 @@ import {
     THESIS_PRIMARY_BUTTON_CLASS,
 } from '~/components/auth/AuthShell';
 import { TurnstileWidget } from '~/components/auth/TurnstileWidget';
+import { isLocalEdition } from '~/lib/edition';
 import { useState, useEffect } from 'react';
 import { Building2 } from 'lucide-react';
 import { useAnalytics } from '~/lib/analytics';
@@ -341,8 +342,14 @@ export default function Login() {
                                     </div>
                                 )}
 
-                                <GoogleAuthButton label="Continue with Google" />
-                                <AuthShellDivider />
+                                {/* A self-hosted instance has no Google OAuth client behind this button:
+                                    it would open a consent screen for a provider nobody configured. */}
+                                {!isLocalEdition() && (
+                                    <>
+                                        <GoogleAuthButton label="Continue with Google" />
+                                        <AuthShellDivider />
+                                    </>
+                                )}
 
                                 <Form method="post" className="space-y-4">
                                     <input

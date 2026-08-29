@@ -1,4 +1,4 @@
-import { type ActionFunctionArgs, type LoaderFunctionArgs, type MetaFunction } from 'react-router';
+import { redirect, type ActionFunctionArgs, type LoaderFunctionArgs, type MetaFunction } from 'react-router';
 import { json, type JsonPayloadOf } from '~/lib/routerResponse';
 import { buildSeoMeta } from '~/lib/seo';
 
@@ -32,6 +32,7 @@ import {
     THESIS_PRIMARY_BUTTON_CLASS,
 } from '~/components/auth/AuthShell';
 import { TurnstileWidget } from '~/components/auth/TurnstileWidget';
+import { isLocalEdition } from '~/lib/edition';
 import { useState, useEffect, useRef } from 'react';
 import { useAnalytics } from '~/lib/analytics';
 import { EVENTS } from '~/lib/analytics-events';
@@ -70,7 +71,7 @@ export async function action({ request }: ActionFunctionArgs) {
     // Get the 'next' parameter for post-signup redirect
     const nextUrl = new URL(request.url).searchParams.get('next');
 
-    const { error, success, headers } = await authenticate(
+    const { error, success, redirectTo, headers } = await authenticate(
         request,
         'register',
         {
@@ -85,6 +86,12 @@ export async function action({ request }: ActionFunctionArgs) {
 
     if (error) {
         return json({ error }, { status: 400, headers });
+    }
+
+    // No confirmation step (the self-hosted default): the account is usable
+    // and its cookies are on `headers`, so land in the app.
+    if (redirectTo) {
+        return redirect(redirectTo, { headers });
     }
 
     return json({ success }, { headers });
@@ -203,7 +210,6 @@ export default function Register() {
                 </div>
             ) : null}
             <AuthShellPage
-                eyebrow={agentName ? 'Agent launch / 01' : 'Account / 01'}
                 title="Build an agent."
                 mutedTitle="Then let it run."
                 description={
@@ -259,8 +265,14 @@ export default function Register() {
                             </div>
                         )}
 
-                    <GoogleAuthButton label="Continue with Google" />
-                    <AuthShellDivider />
+                    {/* A self-hosted instance has no Google OAuth client behind this button:
+                        it would open a consent screen for a provider nobody configured. */}
+                    {!isLocalEdition() && (
+                        <>
+                            <GoogleAuthButton label="Continue with Google" />
+                            <AuthShellDivider />
+                        </>
+                    )}
 
                     <Form method="post" className="space-y-4">
                         <input

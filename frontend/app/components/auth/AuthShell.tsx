@@ -26,7 +26,8 @@ export function AuthShellBrand({ compact = false }: { compact?: boolean }) {
             />
             <span
                 className={cn(
-                    'font-brand text-lg font-semibold tracking-tight'
+                    'font-brand font-semibold tracking-tight',
+                    compact ? 'text-lg' : 'text-2xl'
                 )}
             >
                 NoClick
@@ -104,9 +105,10 @@ export function AuthShellPage({
                     description={description}
                 />
                 <div className="mt-9">{children}</div>
-            </div>
-            <div className="flex flex-wrap items-center gap-x-4 gap-y-2 text-xs text-muted-foreground">
-                {footer}
+                {/* The way out sits with the form, not at the foot of the page. */}
+                <div className="mt-6 flex flex-wrap items-center gap-x-4 gap-y-2 text-sm text-muted-foreground">
+                    {footer}
+                </div>
             </div>
         </div>
     );
