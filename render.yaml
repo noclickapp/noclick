@@ -15,7 +15,8 @@ databases:
     user: noclick
     # `free` also works and is what a trial deserves, but Render deletes a free
     # database after 30 days — a surprising way to lose an instance's workflows.
-    plan: basic-256mb
+    # Plan names are Render's cpu-memory shapes (the spec lists them).
+    plan: 0.1c-256mb
     postgresMajorVersion: "16"
 
 services:
@@ -32,8 +33,9 @@ services:
     numInstances: 1
     plan: standard
     # An instance created from the public deploy button stays on the release it
-    # was created with until its operator chooses a newer one.
-    autoDeploy: false
+    # was created with until its operator chooses a newer one. (A prebuilt image
+    # never auto-deploys anyway; this states the intent for the day it builds.)
+    autoDeployTrigger: off
     healthCheckPath: /health
     # Agent workspaces live here: the files an agent writes while it works, and
     # the cached environments code nodes run in. Without a disk they would be
