@@ -24,12 +24,46 @@ import logging
 from typing import Any, Dict, Optional
 
 import httpx
+from dataclasses import dataclass
 
 from nodes.agent.provider_errors import format_provider_message
 
 logger = logging.getLogger(__name__)
 
 _PROBE_TIMEOUT_S = 8.0
+
+
+@dataclass(frozen=True)
+class Rejection:
+    """A definitive provider verdict on a key: who said it, what kind, and the
+    provider's own text. Worded by the caller — an agent credential and the
+    instance's builder key are refused in different sentences."""
+
+    provider: str
+    kind: str  # 'invalid_key' | 'no_credits'
+    detail: str
+
+    def message(self, context: str = "agent") -> str:
+        if context == "agent":
+            return format_provider_message(self.provider, self.kind, self.detail)
+        return format_provider_message(self.provider, f"{self.kind}_{context}", _provider_sentence(self.detail))
+
+
+def _provider_sentence(detail: str) -> str:
+    """The provider's own sentence out of its error body, for a form that is
+    not a debugging surface: ``{"error": {"message": "User not found."}}`` →
+    ``User not found.``. Anything unparseable is shown as it came."""
+    import json
+
+    try:
+        node = json.loads(detail or "")
+    except ValueError:
+        return detail
+    while isinstance(node, dict):
+        if isinstance(node.get("message"), str):
+            return node["message"]
+        node = node.get("error")
+    return detail
 
 
 def _extract_env(credential_data: Any) -> Dict[str, str]:
@@ -54,9 +88,9 @@ async def _probe_anthropic(key: str) -> Optional[str]:
                   "messages": [{"role": "user", "content": "hi"}]},
         )
     if resp.status_code == 401:
-        return format_provider_message("anthropic", "invalid_key", resp.text)
+        return Rejection("anthropic", "invalid_key", resp.text)
     if resp.status_code in (400, 403) and "credit balance is too low" in resp.text.lower():
-        return format_provider_message("anthropic", "no_credits", resp.text)
+        return Rejection("anthropic", "no_credits", resp.text)
     return None
 
 
@@ -67,7 +101,7 @@ async def _probe_openai(key: str) -> Optional[str]:
     async with httpx.AsyncClient(timeout=_PROBE_TIMEOUT_S) as client:
         auth = await client.get("https://api.openai.com/v1/models", headers=headers)
         if auth.status_code == 401:
-            return format_provider_message("openai", "invalid_key", auth.text)
+            return Rejection("openai", "invalid_key", auth.text)
         # Quota exhaustion only surfaces on inference; probe with the pinned
         # cheap codex model. A 400/404 here means OUR probe model drifted —
         # never the user's fault, so it allows.
@@ -78,7 +112,7 @@ async def _probe_openai(key: str) -> Optional[str]:
                   "max_output_tokens": 16},
         )
     if infer.status_code in (403, 429) and "insufficient_quota" in infer.text.lower():
-        return format_provider_message("openai", "no_credits", infer.text)
+        return Rejection("openai", "no_credits", infer.text)
     return None
 
 
@@ -89,7 +123,7 @@ async def _probe_openrouter(key: str) -> Optional[str]:
             headers={"Authorization": f"Bearer {key}"},
         )
     if resp.status_code == 401:
-        return format_provider_message("openrouter", "invalid_key", resp.text)
+        return Rejection("openrouter", "invalid_key", resp.text)
     # Zero balance is allowed — OpenRouter serves free models.
     return None
 
@@ -101,7 +135,7 @@ async def _probe_gemini(key: str) -> Optional[str]:
             params={"key": key},
         )
     if resp.status_code in (400, 401, 403) and "api key not valid" in resp.text.lower():
-        return format_provider_message("gemini", "invalid_key", resp.text)
+        return Rejection("gemini", "invalid_key", resp.text)
     return None
 
 
@@ -112,7 +146,7 @@ async def _probe_xai(key: str) -> Optional[str]:
             headers={"Authorization": f"Bearer {key}"},
         )
     if resp.status_code in (401, 403):
-        return format_provider_message("xai", "invalid_key", resp.text)
+        return Rejection("xai", "invalid_key", resp.text)
     return None
 
 
@@ -136,7 +170,7 @@ async def _probe_opencode(key: str) -> Optional[str]:
                   "messages": [{"role": "user", "content": "hi"}]},
         )
     if resp.status_code == 401:
-        return format_provider_message("opencode", "invalid_key", resp.text)
+        return Rejection("opencode", "invalid_key", resp.text)
     return None
 
 
@@ -150,32 +184,40 @@ _PROBES = {
 }
 
 
+async def validate_provider_key(env_var: str, key: str) -> Optional[Rejection]:
+    """Return the provider's Rejection if ``key`` for ``env_var`` is definitively
+    bad/creditless; None to allow. Unprobed variables and inconclusive probes
+    (network, provider 5xx, drifted probe model) allow — see the module
+    docstring. Shared by agent credentials and the instance's own keys."""
+    probe = _PROBES.get(env_var)
+    key = (key or "").strip()
+    if probe is None or not key:
+        return None
+    try:
+        rejection = await probe(key)
+    except Exception as e:
+        logger.warning(
+            "[key_validation] %s probe inconclusive (allowing key): %s", env_var, e,
+        )
+        return None
+    if rejection:
+        logger.info("[key_validation] rejected %s at connect time", env_var)
+    return rejection
+
+
 async def validate_agent_api_key(
     credential_type: Optional[str], credential_data: Any
 ) -> Optional[str]:
     """Return a rejection message if a recognized LLM API key in an agent
     credential is definitively bad/creditless; None to allow creation.
 
-    Only agent harness credential types are probed. Probe failures (network,
-    provider 5xx, drifted probe model) allow with a warning — see module
-    docstring for the fail-open rationale.
+    Only agent harness credential types are probed.
     """
     if not credential_type or not credential_type.startswith("agent"):
         return None
     env = _extract_env(credential_data)
-    for env_var, probe in _PROBES.items():
-        key = (env.get(env_var) or "").strip()
-        if not key:
-            continue
-        try:
-            rejection = await probe(key)
-        except Exception as e:
-            logger.warning(
-                "[key_validation] %s probe inconclusive (allowing credential): %s",
-                env_var, e,
-            )
-            continue
+    for env_var in _PROBES:
+        rejection = await validate_provider_key(env_var, env.get(env_var) or "")
         if rejection:
-            logger.info("[key_validation] rejected %s at connect time", env_var)
-            return rejection
+            return rejection.message("agent")
     return None

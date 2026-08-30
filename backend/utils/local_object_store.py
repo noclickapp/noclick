@@ -188,3 +188,36 @@ def etag(bucket: str, key: str) -> str:
 def copy(bucket: str, source_key: str, dest_key: str) -> None:
     body, ctype = get(bucket, source_key)
     put(bucket, dest_key, body, ctype)
+
+
+# ── Off-loop I/O, bounded ─────────────────────────────────────────────────────
+# Disk writes and reads leave the event loop, but never one executor worker per
+# call: a single small gate bounds them, the same discipline the S3 path keeps
+# through httpx's connection pool (an unbounded default executor grew under
+# sustained uploads once — the 2026-05-27 leak).
+_IO_GATE: Optional["asyncio.Semaphore"] = None
+_IO_GATE_LOOP = None
+
+
+def _gate():
+    import asyncio
+
+    global _IO_GATE, _IO_GATE_LOOP
+    loop = asyncio.get_running_loop()
+    if _IO_GATE is None or _IO_GATE_LOOP is not loop:
+        _IO_GATE, _IO_GATE_LOOP = asyncio.Semaphore(8), loop
+    return _IO_GATE
+
+
+async def put_async(bucket: str, key: str, body: bytes, content_type: str = "application/octet-stream") -> str:
+    import asyncio
+
+    async with _gate():
+        return await asyncio.to_thread(put, bucket, key, body, content_type)
+
+
+async def get_async(bucket: str, key: str) -> Tuple[bytes, str]:
+    import asyncio
+
+    async with _gate():
+        return await asyncio.to_thread(get, bucket, key)

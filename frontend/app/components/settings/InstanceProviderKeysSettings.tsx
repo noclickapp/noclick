@@ -34,6 +34,7 @@ export function InstanceProviderKeysSettings() {
     const [state, setState] = useState<KeysState | null>(null);
     const [value, setValue] = useState('');
     const [saving, setSaving] = useState(false);
+    const [error, setError] = useState<string | null>(null);
 
     const refresh = useCallback(async () => {
         setState((await sendEventAsync(InstanceKeysListRequest.create({ request_id: crypto.randomUUID() }))) as KeysState);
@@ -53,16 +54,18 @@ export function InstanceProviderKeysSettings() {
         const key = value.trim();
         if (!key) return;
         setSaving(true);
+        setError(null);
         try {
-            setState(
-                (await sendEventAsync(
-                    InstanceKeysSetRequest.create({ request_id: crypto.randomUUID(), env_var: ENV_VAR, value: key }),
-                )) as KeysState,
-            );
+            const res = (await sendEventAsync(
+                InstanceKeysSetRequest.create({ request_id: crypto.randomUUID(), env_var: ENV_VAR, value: key }),
+            )) as (KeysState & { error?: string }) | null;
+            if (!res || res.error) throw new Error(res?.error || 'Could not save the key');
+            setState(res);
             setValue('');
             toast.success('OpenRouter key saved');
         } catch (e) {
-            toast.error(e instanceof Error ? e.message : 'Could not save the key');
+            // The provider's own verdict (invalid key, no credits) lands here.
+            setError(e instanceof Error ? e.message : 'Could not save the key');
         } finally {
             setSaving(false);
         }
@@ -146,9 +149,14 @@ export function InstanceProviderKeysSettings() {
                                 disabled={saving || !value.trim()}
                                 className="h-9 rounded-lg bg-primary px-4 text-sm font-medium text-primary-foreground transition-opacity disabled:opacity-40"
                             >
-                                {saving ? 'Saving…' : stored ? 'Replace key' : 'Save key'}
+                                {saving ? 'Checking…' : stored ? 'Replace key' : 'Save key'}
                             </button>
                         </form>
+                        {error && (
+                            <p role="alert" className="mt-2 text-xs text-red-600 dark:text-red-400">
+                                {error}
+                            </p>
+                        )}
                         {SOURCE && (
                             <p className="mt-3 text-xs text-muted-foreground/70 dark:text-white/30">
                                 Get one at{' '}

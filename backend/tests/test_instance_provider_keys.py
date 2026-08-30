@@ -47,6 +47,28 @@ def plain_crypto(monkeypatch):
     monkeypatch.setattr(keys, "get_encryption", lambda: PlainCrypto())
 
 
+@pytest.fixture(autouse=True)
+def no_live_probe(monkeypatch):
+    async def allow(env_var, key):
+        return None
+    monkeypatch.setattr(keys, "validate_provider_key", allow)
+
+
+@pytest.mark.asyncio
+async def test_a_key_the_provider_rejects_is_never_stored(monkeypatch):
+    from nodes.agent.key_validation import Rejection
+
+    async def reject(env_var, key):
+        return Rejection("openrouter", "invalid_key", '{"error":{"message":"User not found.","code":401}}')
+    monkeypatch.setattr(keys, "validate_provider_key", reject)
+    pool = FakePool()
+    with pytest.raises(ValueError, match=r"OpenRouter rejected this key\. Check it or create a new one at https://openrouter\.ai") as err:
+        await keys.set_key(pool, "OPENROUTER_API_KEY", "sk-or-dead", "user-1")
+    assert "agent" not in str(err.value), "the settings form is not an agent node"
+    assert "User not found." in str(err.value) and '{"error"' not in str(err.value), "the provider's sentence, not its JSON"
+    assert pool.executed == [], "the provider's verdict lands in the form; nothing is written"
+
+
 def test_allowlist_is_the_runtimes_provider_keys():
     assert "OPENROUTER_API_KEY" in keys.SUPPORTED_ENV_VARS
     assert "OPENAI_API_KEY" in keys.SUPPORTED_ENV_VARS

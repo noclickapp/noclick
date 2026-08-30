@@ -154,16 +154,18 @@ def test_cas_gc_delete_uses_async_helper():
 
 
 
-def test_resource_handler_delete_uses_to_thread():
-    """Static guard: resource_handler.delete_resource calls s3.delete_object
-    directly (one-shot op, no dedicated wrapper) — it must wrap that call in
-    asyncio.to_thread."""
+def test_resource_handler_delete_never_runs_boto_on_the_loop():
+    """Static guard: resource_handler.delete_resource deletes through the
+    native-async batch helper (presigned URL + httpx, bounded pool) — never a
+    sync s3.delete_object on the loop (the 2026-05-09 regression) and never a
+    per-call executor worker (the 2026-05-27 leak)."""
     from wss.handlers import resource_handler
 
     src = inspect.getsource(resource_handler.ResourceHandler.delete_resource)
-    assert "asyncio.to_thread" in src and "delete_object" in src, (
-        "resource_handler.delete_resource no longer wraps s3.delete_object in "
-        "asyncio.to_thread — the 2026-05-09 R2 sync-on-loop fix has regressed."
+    assert "delete_files_from_r2_async_native" in src and "s3.delete_object" not in src, (
+        "resource_handler.delete_resource must delete through "
+        "delete_files_from_r2_async_native — a raw s3.delete_object either blocks "
+        "the loop or reserves an executor worker per delete."
     )
 
 

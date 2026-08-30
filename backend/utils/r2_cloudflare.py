@@ -80,7 +80,7 @@ async def upload_bytes_to_r2_async(
     Raises httpx.HTTPStatusError on non-2xx response.
     """
     if _local.enabled():
-        await asyncio.to_thread(_local.put, bucket, key, body, content_type)
+        await _local.put_async(bucket, key, body, content_type)
         return
     url = generate_presigned_upload_url(
         bucket=bucket, key=key, content_type=content_type
@@ -145,7 +145,7 @@ async def download_bytes_from_r2_async_native(
     ``httpx.HTTPStatusError`` on non-2xx response.
     """
     if _local.enabled():
-        return await asyncio.to_thread(_local.get, bucket, key)
+        return await _local.get_async(bucket, key)
     url = generate_presigned_download_url(bucket=bucket, key=key)
     client = _get_r2_http_client()
     async with _get_r2_request_gate():

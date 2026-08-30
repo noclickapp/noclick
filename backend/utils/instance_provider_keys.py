@@ -17,6 +17,7 @@ from typing import Dict, List, Optional
 import os
 
 from nodes.agent.config.providers import PROVIDER_REQUIRED_CREDENTIALS
+from nodes.agent.key_validation import validate_provider_key
 from utils.edition import is_local_edition
 from utils.encryption import get_encryption
 from utils.instance_env import apply_value, applied_by_store, release_value
@@ -62,6 +63,12 @@ async def set_key(pool, env_var: str, value: str, user_id: Optional[str]) -> Non
     value = (value or "").strip()
     if not value:
         raise ValueError("The key is empty")
+    # The same live probe agent credentials get at connect time: a revoked or
+    # creditless key is rejected here, in the form, rather than becoming the
+    # builder's next "Generation failed".
+    rejection = await validate_provider_key(env_var, value)
+    if rejection:
+        raise ValueError(rejection.message("instance"))
     encrypted = get_encryption().encrypt_credential({"value": value})
     await pool.execute(
         """

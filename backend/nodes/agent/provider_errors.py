@@ -148,6 +148,9 @@ _PROVIDER_META: Dict[str, Dict[str, str]] = {
 # Per-(kind) message templates. Every billing-flavored kind explicitly
 # disambiguates a provider balance from the instance credit pool.
 _TEMPLATES: Dict[str, str] = {
+    # The instance's own key (the builder's), rejected in the settings form.
+    "invalid_key_instance": "{label} rejected this key. Check it{keys_hint}.",
+    "no_credits_instance": "{label} reports no credits on this key.{billing_hint}",
     "no_credits": (
         "Your {label} account has no API credits. This is the balance on your "
         "{label} account — not your NoClick credits, which are unaffected."
