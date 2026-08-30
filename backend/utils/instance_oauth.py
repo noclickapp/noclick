@@ -43,6 +43,8 @@ _TAG_PREFIX = "_NC_INSTANCE_OAUTH_"
 # a name no one sets, so a new exception can't stay silent.
 _ENV_NAME_OVERRIDES = {
     "facebook": ("FACEBOOK_APP_ID", "FACEBOOK_APP_SECRET"),
+    "meta": ("META_APP_ID", "META_APP_SECRET"),
+    "tiktok": ("TIKTOK_CLIENT_KEY", "TIKTOK_CLIENT_SECRET"),
 }
 
 

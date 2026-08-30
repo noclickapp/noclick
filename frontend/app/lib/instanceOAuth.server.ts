@@ -64,7 +64,7 @@ export async function applyInstanceOAuthEnv(request: Request, provider: string):
     const idVar = frontendEnv.find((v) => v !== redirectVar) ?? `${stem}_CLIENT_ID`;
     if (process.env[idVar] && process.env[redirectVar]) return;
 
-    const clientId = await fetchClientId(provider);
+    const clientId = await fetchClientId(OAUTH_PROVIDER_SETUP[provider]?.appOf ?? provider);
     if (!clientId) return;
     if (!process.env[idVar]) process.env[idVar] = clientId;
     if (!process.env[redirectVar]) process.env[redirectVar] = callbackUrlFor(request, provider);

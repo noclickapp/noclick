@@ -34,7 +34,7 @@ function resolverWrites(provider: string): string[] {
 
 /** Credential env vars a route reads (ignores NODE_ENV and friends). */
 function credentialVarsRead(source: string): string[] {
-    return [...source.matchAll(/process\.env\.([A-Z0-9_]*(?:CLIENT_ID|APP_ID|REDIRECT_URI))/g)].map((m) => m[1]);
+    return [...source.matchAll(/process\.env\.([A-Z0-9_]*(?:CLIENT_ID|CLIENT_KEY|APP_ID|REDIRECT_URI))/g)].map((m) => m[1]);
 }
 
 describe('OAuth authorize routes', () => {
@@ -89,5 +89,26 @@ describe('OAuth authorize routes', () => {
                 'add the provider to _ENV_NAME_OVERRIDES (backend/utils/instance_oauth.py) ' +
                 'and to its frontendEnv entry, or the saved app is written where nothing reads it',
         ).toBe(true);
+    });
+});
+
+// The map is what the setup form asks for; the backend module is what the
+// token exchange reads. TikTok's module read TIKTOK_CLIENT_KEY/_SECRET while
+// the map declared neither, so the form asked for no secret and the saved app
+// was written to a name nothing read. Every provider is held to the same rule.
+describe('OAuth setup map matches what each backend module reads', () => {
+    const OAUTH_DIR = join(process.cwd(), '../backend/nodes/oauth');
+    const providers = Object.entries(OAUTH_PROVIDER_SETUP).filter(([key]) => {
+        try { readFileSync(join(OAUTH_DIR, `${key}_oauth.py`)); return true; } catch { return false; }
+    });
+    it.each(providers)('%s declares the id and secret its backend module reads', (key, meta) => {
+        const py = readFileSync(join(OAUTH_DIR, `${key}_oauth.py`), 'utf8');
+        const stem = key.toUpperCase();
+        const read = new Set([...py.matchAll(new RegExp(`\\b${stem}_(?:CLIENT_ID|CLIENT_KEY|APP_ID|CLIENT_SECRET|APP_SECRET)\\b`, 'g'))].map((m) => m[0]));
+        const declared = new Set(meta.backendEnv);
+        const ids = [...read].filter((v) => /_(?:CLIENT_ID|CLIENT_KEY|APP_ID)$/.test(v));
+        const secrets = [...read].filter((v) => /_(?:CLIENT_SECRET|APP_SECRET)$/.test(v));
+        if (ids.length) expect(ids.some((v) => declared.has(v)), `${key} reads ${ids.join('/')}; backendEnv=${meta.backendEnv.join(',')}`).toBe(true);
+        if (secrets.length) expect(secrets.some((v) => declared.has(v)), `${key} reads a secret (${secrets.join('/')}) the form never asks for`).toBe(true);
     });
 });

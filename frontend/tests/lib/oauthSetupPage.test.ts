@@ -69,10 +69,14 @@ describe('oauthNotConfiguredResponse', () => {
         expect(html).toContain('LINEAR_REDIRECT_URI=http://localhost:5111/api/auth/linear/callback');
     });
 
-    it('omits the backend block for PKCE providers that need no secret', async () => {
+    it('asks a PKCE provider for its client id on both sides and never a secret', async () => {
+        // The backend exchanges the code with the client id alone, so the page
+        // must name it there too — an id set only for the frontend fails the exchange.
         const { html } = await render('parallel', []);
-        expect(html).not.toContain('backend/.env');
+        expect(html).toContain('backend/.env');
+        expect(html).toContain('PARALLEL_CLIENT_ID=');
         expect(html).not.toContain('CLIENT_SECRET');
+        expect(html).not.toContain('needs the secret');
     });
 
     it('links the provider console when one is known', async () => {

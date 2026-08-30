@@ -15,7 +15,7 @@ import { toast } from 'sonner';
 import { cn } from '~/lib/utils';
 import { Popover, PopoverContent, PopoverTrigger } from '~/components/ui/popover';
 import { BrandIcon } from '~/components/shared/BrandIcon';
-import { getCredentialIcon } from '~/utils/credentialIcons';
+import { getOAuthProviderIcon } from '~/utils/credentialIcons';
 import { InstanceOAuthAppForm } from '~/components/credential/InstanceOAuthAppForm';
 import { sendEventAsync } from '~/lib/socket-sender';
 import { OAUTH_PROVIDER_SETUP } from '~/lib/oauthProviderSetup';
@@ -29,11 +29,12 @@ interface StoredApp {
 }
 
 const PROVIDERS = Object.entries(OAUTH_PROVIDER_SETUP)
+    .filter(([, meta]) => !meta.appOf) // an alias rides another provider's app
     .map(([key, meta]) => ({ key, label: meta.label }))
     .sort((a, b) => a.label.localeCompare(b.label));
 
 function ProviderIcon({ provider, className }: { provider: string; className?: string }) {
-    const { Icon, iconColor, hasServiceIcon } = getCredentialIcon(`${provider}_oauth`);
+    const { Icon, iconColor, hasServiceIcon } = getOAuthProviderIcon(provider);
     return <BrandIcon Icon={Icon} className={cn(className, hasServiceIcon && iconColor)} />;
 }
 

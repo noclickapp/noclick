@@ -192,7 +192,7 @@ export function oauthNotConfiguredResponse({
       </div>
       ${fileBlock('frontend/.env', 'starts the sign-in', frontendVars, callbackUrl, 'fe')}
       ${fileBlock('backend/.env', 'exchanges the code for a token', backendVars, callbackUrl, 'be')}
-      ${backendVars.length ? `<div class="note" style="margin-top:8px">The client ID goes in both; only the backend needs the secret. Restart both processes afterwards.</div>` : ''}
+      ${backendVars.length ? `<div class="note" style="margin-top:8px">The client ID goes in both${backendVars.some((v) => v.endsWith('SECRET')) ? '; only the backend needs the secret' : ''}. Restart both processes afterwards.</div>` : ''}
     </li>
     <li>
       <div class="step-title">Click Connect again</div>

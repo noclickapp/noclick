@@ -13,6 +13,9 @@ export interface OAuthProviderSetup {
     label: string;
     /** Where the operator creates the OAuth app. */
     consoleUrl?: string;
+    /** Connects through the app registered under this other provider key
+     *  (Facebook Pages rides the Facebook app); not offered separately. */
+    appOf?: string;
     /** Read by the Remix process (frontend/.env). */
     frontendEnv: string[];
     /** Read by the Python process (backend/.env). Empty for PKCE providers. */
@@ -34,8 +37,8 @@ export const OAUTH_PROVIDER_SETUP: Record<string, OAuthProviderSetup> = {
     "cloudflare": { label: "Cloudflare", consoleUrl: "https://dash.cloudflare.com/profile/api-tokens", frontendEnv: ["CLOUDFLARE_CLIENT_ID", "CLOUDFLARE_REDIRECT_URI"], backendEnv: ["CLOUDFLARE_CLIENT_ID", "CLOUDFLARE_CLIENT_SECRET"] },
     "discord": { label: "Discord", consoleUrl: "https://discord.com/developers/applications", frontendEnv: ["DISCORD_CLIENT_ID", "DISCORD_REDIRECT_URI"], backendEnv: ["DISCORD_CLIENT_ID", "DISCORD_CLIENT_SECRET"] },
     "dropbox": { label: "Dropbox", consoleUrl: "https://www.dropbox.com/developers/apps", frontendEnv: ["DROPBOX_CLIENT_ID", "DROPBOX_REDIRECT_URI"], backendEnv: ["DROPBOX_CLIENT_ID", "DROPBOX_CLIENT_SECRET"] },
-    "facebook": { label: "Facebook", consoleUrl: "https://developers.facebook.com/apps/", frontendEnv: ["FACEBOOK_APP_ID", "FACEBOOK_OAUTH_REDIRECT_URI"], backendEnv: [] },
-    "facebook_pages": { label: "Facebook Pages", consoleUrl: "https://developers.facebook.com/apps/", frontendEnv: ["FACEBOOK_APP_ID", "FACEBOOK_PAGES_REDIRECT_URI"], backendEnv: [] },
+    "facebook": { label: "Facebook", consoleUrl: "https://developers.facebook.com/apps/", frontendEnv: ["FACEBOOK_APP_ID", "FACEBOOK_OAUTH_REDIRECT_URI"], backendEnv: ["FACEBOOK_APP_ID", "FACEBOOK_APP_SECRET"] },
+    "facebook_pages": { label: "Facebook Pages", consoleUrl: "https://developers.facebook.com/apps/", appOf: "facebook", frontendEnv: ["FACEBOOK_APP_ID", "FACEBOOK_PAGES_REDIRECT_URI"], backendEnv: ["FACEBOOK_APP_ID", "FACEBOOK_APP_SECRET"] },
     "fathom": { label: "Fathom", consoleUrl: "https://fathom.video/apps", frontendEnv: ["FATHOM_CLIENT_ID", "FATHOM_REDIRECT_URI"], backendEnv: ["FATHOM_CLIENT_ID", "FATHOM_CLIENT_SECRET"] },
     "github": { label: "GitHub", consoleUrl: "https://github.com/settings/developers", frontendEnv: ["GITHUB_CLIENT_ID", "GITHUB_REDIRECT_URI"], backendEnv: ["GITHUB_CLIENT_ID", "GITHUB_CLIENT_SECRET"] },
     "gitlab": { label: "GitLab", consoleUrl: "https://gitlab.com/-/user_settings/applications", frontendEnv: ["GITLAB_CLIENT_ID", "GITLAB_REDIRECT_URI"], backendEnv: ["GITLAB_CLIENT_ID", "GITLAB_CLIENT_SECRET"] },
@@ -47,14 +50,14 @@ export const OAUTH_PROVIDER_SETUP: Record<string, OAuthProviderSetup> = {
     "linear": { label: "Linear", consoleUrl: "https://linear.app/settings/api", frontendEnv: ["LINEAR_CLIENT_ID", "LINEAR_REDIRECT_URI"], backendEnv: ["LINEAR_CLIENT_ID", "LINEAR_CLIENT_SECRET"] },
     "linkedin": { label: "LinkedIn", consoleUrl: "https://www.linkedin.com/developers/apps", frontendEnv: ["LINKEDIN_CLIENT_ID", "LINKEDIN_REDIRECT_URI"], backendEnv: ["LINKEDIN_CLIENT_ID", "LINKEDIN_CLIENT_SECRET"] },
     "mailchimp": { label: "Mailchimp", consoleUrl: "https://mailchimp.com/developer/marketing/guides/access-user-data-oauth-2/", frontendEnv: ["MAILCHIMP_CLIENT_ID", "MAILCHIMP_REDIRECT_URI"], backendEnv: ["MAILCHIMP_CLIENT_ID", "MAILCHIMP_CLIENT_SECRET"] },
-    "meta": { label: "Meta", consoleUrl: "https://developers.facebook.com/apps/", frontendEnv: ["META_APP_ID", "META_REDIRECT_URI"], backendEnv: [] },
+    "meta": { label: "Meta", consoleUrl: "https://developers.facebook.com/apps/", frontendEnv: ["META_APP_ID", "META_REDIRECT_URI"], backendEnv: ["META_APP_ID", "META_APP_SECRET"] },
     "microsoft": { label: "Microsoft", consoleUrl: "https://portal.azure.com/#blade/Microsoft_AAD_RegisteredApps/ApplicationsListBlade", frontendEnv: ["MICROSOFT_CLIENT_ID", "MICROSOFT_REDIRECT_URI"], backendEnv: ["MICROSOFT_CLIENT_ID", "MICROSOFT_CLIENT_SECRET"] },
     "monday": { label: "monday.com", consoleUrl: "https://monday.com/developers/apps", frontendEnv: ["MONDAY_CLIENT_ID", "MONDAY_REDIRECT_URI"], backendEnv: ["MONDAY_CLIENT_ID", "MONDAY_CLIENT_SECRET"] },
     "notion": { label: "Notion", consoleUrl: "https://www.notion.so/my-integrations", frontendEnv: ["NOTION_CLIENT_ID", "NOTION_REDIRECT_URI"], backendEnv: ["NOTION_CLIENT_ID", "NOTION_CLIENT_SECRET"] },
     "pagerduty": { label: "PagerDuty", consoleUrl: "https://developer.pagerduty.com/docs/register-an-app", frontendEnv: ["PAGERDUTY_CLIENT_ID", "PAGERDUTY_REDIRECT_URI"], backendEnv: ["PAGERDUTY_CLIENT_ID", "PAGERDUTY_CLIENT_SECRET"] },
-    "parallel": { label: "Parallel", consoleUrl: "https://platform.parallel.ai", frontendEnv: ["PARALLEL_CLIENT_ID"], backendEnv: [] },
+    "parallel": { label: "Parallel", consoleUrl: "https://platform.parallel.ai", frontendEnv: ["PARALLEL_CLIENT_ID"], backendEnv: ["PARALLEL_CLIENT_ID"] },
     "pipedrive": { label: "Pipedrive", consoleUrl: "https://developers.pipedrive.com", frontendEnv: ["PIPEDRIVE_CLIENT_ID", "PIPEDRIVE_REDIRECT_URI"], backendEnv: ["PIPEDRIVE_CLIENT_ID", "PIPEDRIVE_CLIENT_SECRET"] },
-    "posthog": { label: "PostHog", consoleUrl: "https://posthog.com/docs/api/oauth", frontendEnv: ["POSTHOG_CLIENT_ID", "POSTHOG_REDIRECT_URI"], backendEnv: [] },
+    "posthog": { label: "PostHog", consoleUrl: "https://posthog.com/docs/api/oauth", frontendEnv: ["POSTHOG_CLIENT_ID", "POSTHOG_REDIRECT_URI"], backendEnv: ["POSTHOG_CLIENT_ID"] },
     "reddit": { label: "Reddit", consoleUrl: "https://www.reddit.com/prefs/apps", frontendEnv: ["REDDIT_CLIENT_ID", "REDDIT_REDIRECT_URI"], backendEnv: ["REDDIT_CLIENT_ID", "REDDIT_CLIENT_SECRET"] },
     "salesforce": { label: "Salesforce", consoleUrl: "https://help.salesforce.com/s/articleView?id=sf.connected_app_create.htm", frontendEnv: ["SALESFORCE_CLIENT_ID", "SALESFORCE_REDIRECT_URI"], backendEnv: ["SALESFORCE_CLIENT_ID", "SALESFORCE_CLIENT_SECRET"] },
     "sentry": { label: "Sentry", consoleUrl: "https://docs.sentry.io/api/auth/", frontendEnv: ["SENTRY_CLIENT_ID", "SENTRY_REDIRECT_URI"], backendEnv: ["SENTRY_CLIENT_ID", "SENTRY_CLIENT_SECRET"] },
@@ -63,7 +66,7 @@ export const OAUTH_PROVIDER_SETUP: Record<string, OAuthProviderSetup> = {
     "stripe": { label: "Stripe", consoleUrl: "https://dashboard.stripe.com/settings/connect", frontendEnv: ["STRIPE_CONNECT_CLIENT_ID", "STRIPE_REDIRECT_URI"], backendEnv: ["STRIPE_CONNECT_CLIENT_ID", "STRIPE_CONNECT_CLIENT_SECRET"] },
     "supabase": { label: "Supabase", consoleUrl: "https://supabase.com/dashboard/account/apps", frontendEnv: ["SUPABASE_CLIENT_ID", "SUPABASE_REDIRECT_URI"], backendEnv: ["SUPABASE_CLIENT_ID", "SUPABASE_CLIENT_SECRET"] },
     "threads": { label: "Threads", consoleUrl: "https://developers.facebook.com/apps/", frontendEnv: ["THREADS_CLIENT_ID", "THREADS_REDIRECT_URI"], backendEnv: ["THREADS_CLIENT_ID", "THREADS_CLIENT_SECRET"] },
-    "tiktok": { label: "TikTok", consoleUrl: "https://developers.tiktok.com/", frontendEnv: ["TIKTOK_REDIRECT_URI"], backendEnv: [] },
+    "tiktok": { label: "TikTok", consoleUrl: "https://developers.tiktok.com/", frontendEnv: ["TIKTOK_CLIENT_KEY", "TIKTOK_REDIRECT_URI"], backendEnv: ["TIKTOK_CLIENT_KEY", "TIKTOK_CLIENT_SECRET"] },
     "typeform": { label: "Typeform", consoleUrl: "https://admin.typeform.com/account#/section/apps", frontendEnv: ["TYPEFORM_CLIENT_ID", "TYPEFORM_REDIRECT_URI"], backendEnv: ["TYPEFORM_CLIENT_ID", "TYPEFORM_CLIENT_SECRET"] },
     "webflow": { label: "Webflow", consoleUrl: "https://developers.webflow.com/data/docs/register-an-app", frontendEnv: ["WEBFLOW_CLIENT_ID", "WEBFLOW_REDIRECT_URI"], backendEnv: ["WEBFLOW_CLIENT_ID", "WEBFLOW_CLIENT_SECRET"] },
     "wordpress": { label: "WordPress", consoleUrl: "https://developer.wordpress.com/apps/", frontendEnv: ["WORDPRESS_CLIENT_ID", "WORDPRESS_REDIRECT_URI"], backendEnv: ["WORDPRESS_CLIENT_ID", "WORDPRESS_CLIENT_SECRET"] },

@@ -17,6 +17,7 @@ import { CopyableReadonlyField } from '~/components/ui/CopyableReadonlyField';
 import { sendEventAsync } from '~/lib/socket-sender';
 import { OAUTH_PROVIDER_SETUP } from '~/lib/oauthProviderSetup';
 import { InstanceOAuthSetRequest } from '~/types/socket-events.generated';
+import { INSTANCE_FORM } from './InstanceSetupCard';
 
 interface Props {
     provider: string;
@@ -46,8 +47,12 @@ export function InstanceOAuthAppForm({
     const [saving, setSaving] = useState(false);
 
     // PKCE providers have no secret to give; asking for one invites confusion.
-    const needsSecret = (meta?.backendEnv ?? []).some((v) => v.endsWith('_CLIENT_SECRET'));
+    const needsSecret = (meta?.backendEnv ?? []).some((v) => v.endsWith('_CLIENT_SECRET') || v.endsWith('_APP_SECRET'));
     const label = meta?.label ?? provider;
+    // Name the fields the way the provider's console does (TikTok: client key; Meta: app id).
+    const idVar = (meta?.frontendEnv ?? []).find((v) => !v.endsWith('REDIRECT_URI')) ?? '';
+    const idLabel = idVar.endsWith('_CLIENT_KEY') ? 'Client key' : idVar.endsWith('_APP_ID') ? 'App ID' : 'Client ID';
+    const secretLabel = idVar.endsWith('_APP_ID') ? 'App secret' : 'Client secret';
 
     const save = async () => {
         if (!clientId.trim()) return;
@@ -71,11 +76,7 @@ export function InstanceOAuthAppForm({
         }
     };
 
-    // Shared so the copy field and the two inputs line up exactly.
-    const inputClass =
-        'w-full h-9 px-3 text-sm bg-foreground/[0.035] dark:bg-white/[0.045] border border-input dark:border-white/[0.12] rounded-lg ' +
-        'text-foreground placeholder:text-[hsl(var(--placeholder))] outline-none ' +
-        'focus:border-muted-foreground/40 dark:focus:border-white/20 font-mono';
+    const inputClass = INSTANCE_FORM.input;
 
     return (
         <div className="space-y-3.5">
@@ -85,14 +86,14 @@ export function InstanceOAuthAppForm({
                     href={meta.consoleUrl}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="inline-flex items-center gap-1.5 rounded-md border border-border bg-foreground/[0.06] px-2.5 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-foreground/[0.12]"
+                    className={INSTANCE_FORM.chip}
                 >
                     Open the {label} console
                     <ExternalLink className="h-3.5 w-3.5" />
                 </a>
             )}
             <div>
-                <label className="block text-xs font-medium text-muted-foreground dark:text-white/50 mb-1.5">
+                <label className={INSTANCE_FORM.label}>
                     Redirect URL — add this to the app
                 </label>
                 <CopyableReadonlyField
@@ -104,8 +105,8 @@ export function InstanceOAuthAppForm({
 
             <div className={needsSecret ? 'grid grid-cols-2 gap-3' : ''}>
                 <div>
-                    <label className="block text-xs font-medium text-muted-foreground dark:text-white/50 mb-1.5">
-                        Client ID
+                    <label className={INSTANCE_FORM.label}>
+                        {idLabel}
                     </label>
                     <input
                         value={clientId}
@@ -117,8 +118,8 @@ export function InstanceOAuthAppForm({
                 </div>
                 {needsSecret && (
                     <div>
-                        <label className="block text-xs font-medium text-muted-foreground dark:text-white/50 mb-1.5">
-                            Client Secret
+                        <label className={INSTANCE_FORM.label}>
+                            {secretLabel}
                         </label>
                         <input
                             type="password"
@@ -136,7 +137,7 @@ export function InstanceOAuthAppForm({
                 <button
                     onClick={save}
                     disabled={saving || !clientId.trim()}
-                    className="h-9 px-4 text-sm font-medium bg-primary text-primary-foreground rounded-lg hover:bg-foreground/90 disabled:opacity-40 transition-colors"
+                    className={INSTANCE_FORM.primaryButton}
                 >
                     {saving ? 'Saving…' : 'Save'}
                 </button>
@@ -148,7 +149,7 @@ export function InstanceOAuthAppForm({
                         Cancel
                     </button>
                 )}
-                <span className="text-xs text-muted-foreground/60 dark:text-white/25 ml-auto">
+                <span className={INSTANCE_FORM.note}>
                     Applies immediately — no restart
                 </span>
             </div>
