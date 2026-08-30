@@ -1511,6 +1511,36 @@ class WebhookManager:
         return {"state": "registered"}
 
     @staticmethod
+    async def _refresh_schedule_next_run(
+        pool, wf_uuid, node_id: str, node_config: Dict[str, Any], *, persist: bool,
+    ) -> Optional[Dict[str, Any]]:
+        """The scheduler's current next_run for a converged node, as a config
+        patch when it differs from the mirror — else None. Never disturbs the
+        fast path: any scheduler error means "keep what the mirror says"."""
+        from utils.cron_scheduler_client import get_schedule
+
+        ids = [i for i in (node_config.get("schedule_ids") or [node_config.get("schedule_id")]) if i]
+        if not ids:
+            return None
+        upcoming = []
+        for schedule_id in ids[:8]:
+            try:
+                info = await get_schedule(str(schedule_id), timeout=3.0)
+            except Exception:
+                return None
+            if info.get("error") or not isinstance(info.get("next_run"), str):
+                return None
+            upcoming.append(info["next_run"])
+        earliest = min(upcoming)
+        if earliest == node_config.get("next_run"):
+            return None
+        if persist:
+            await WebhookManager.merge_node_config_patch(
+                pool, wf_uuid, node_id, {"next_run": earliest}
+            )
+        return {"next_run": earliest}
+
+    @staticmethod
     async def _reconcile_schedule_node(
         pool,
         wf_uuid,
@@ -1617,7 +1647,17 @@ class WebhookManager:
             current_op, spec, scope, credential_id
         )
         if row and row["is_active"] and row["registered_fingerprint"] == desired_fp:
-            return {"state": "live", "fingerprint": desired_fp}
+            # Converged — but "next run" moves on every tick, and the config
+            # mirror only captured it at registration. The panel refetches
+            # through here when its countdown expires; with nothing fresh it
+            # showed "Running…" forever after the first tick.
+            refreshed = await WebhookManager._refresh_schedule_next_run(
+                pool, wf_uuid, node_id, node_config, persist=node is not None,
+            )
+            result: Dict[str, Any] = {"state": "live", "fingerprint": desired_fp}
+            if refreshed:
+                result["values"] = refreshed
+            return result
 
         webhook = await WebhookManager.get_or_create_webhook(
             pool, user_id or owner_id, wf_uuid, node_id

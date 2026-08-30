@@ -77,22 +77,26 @@ function getCountdown(targetDate: Date): { text: string; isPast: boolean } {
 
 export function NextRunWidget({ value, onExpired, timezone }: NextRunWidgetProps) {
     const [countdown, setCountdown] = useState<{ text: string; isPast: boolean }>({ text: '', isPast: false });
-    const hasCalledExpired = useRef(false);
+    // While the value is in the past, ask again this often. Once was not
+    // enough: a refetch can hand back a next_run that is already past
+    // (sub-minute schedules, a slow round trip), and the widget then sat on
+    // "Running..." for good instead of asking again.
+    const lastExpiredCallAt = useRef(0);
 
     // Update countdown every second
     useEffect(() => {
         if (!value) return;
 
         const targetDate = new Date(value);
-        hasCalledExpired.current = false;
+        lastExpiredCallAt.current = 0;
 
         const updateCountdown = () => {
             const result = getCountdown(targetDate);
             setCountdown(result);
 
-            // When countdown expires, call onExpired once to trigger refetch
-            if (result.isPast && !hasCalledExpired.current && onExpired) {
-                hasCalledExpired.current = true;
+            // Expired: refetch, and keep refetching while it stays expired.
+            if (result.isPast && onExpired && Date.now() - lastExpiredCallAt.current >= 3000) {
+                lastExpiredCallAt.current = Date.now();
                 // Small delay to let the cron actually fire
                 setTimeout(() => onExpired(), 2000);
             }

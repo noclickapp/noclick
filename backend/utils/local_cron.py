@@ -469,6 +469,15 @@ async def _tick() -> None:
             spawn(_deliver(_row_json(row), now), name=f"local-cron-{row['id']}")
 
 
+def _sleep_seconds(earliest_next_run: Optional[datetime], now: datetime) -> float:
+    """How long the ticker sleeps: until the earliest due schedule, but never
+    longer than a tick and never less than a second. A fixed 15s tick made
+    every-5-seconds schedules fire every 15."""
+    if earliest_next_run is None:
+        return _TICK_INTERVAL_S
+    return min(_TICK_INTERVAL_S, max(1.0, (earliest_next_run - now).total_seconds()))
+
+
 async def _run_ticker() -> None:
     logger.info("[local-cron] ticker started")
     while True:
@@ -478,7 +487,14 @@ async def _run_ticker() -> None:
             raise
         except Exception as e:
             logger.error(f"[local-cron] tick failed: {e}", exc_info=True)
-        await asyncio.sleep(_TICK_INTERVAL_S)
+        earliest = None
+        try:
+            earliest = await _get_pool().fetchval(
+                "SELECT min(next_run) FROM local_cron_schedules WHERE enabled"
+            )
+        except Exception as e:
+            logger.debug(f"[local-cron] next-due lookup failed, sleeping a full tick: {e}")
+        await asyncio.sleep(_sleep_seconds(earliest, datetime.now(timezone.utc)))
 
 
 def start_local_cron() -> None:
