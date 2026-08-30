@@ -301,7 +301,7 @@ async def _apply_migrations(conn: asyncpg.Connection) -> None:
 def _ensure_buckets() -> None:
     endpoint = os.environ.get("OBJECT_STORAGE_ENDPOINT")
     if not endpoint:
-        log("object storage not configured — file and media features stay disabled")
+        log("no S3 endpoint configured — objects live on this instance's disk under NOCLICK_HOME/storage")
         return
 
     import time

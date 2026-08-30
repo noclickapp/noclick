@@ -295,15 +295,8 @@ class ResourceHandler(DatabasePoolMixin, SocketIOHandler):
             storage_ref = row.get("storage_ref")
             if storage_ref:
                 try:
-                    import asyncio
-                    from utils.r2_cloudflare import create_s3_client
-                    s3 = create_s3_client()
-                    # boto3 is sync — run delete on a worker thread so the
-                    # loop keeps yielding while the HTTPS round-trip is in
-                    # flight (one-shot op; no need for a dedicated wrapper).
-                    await asyncio.to_thread(
-                        s3.delete_object, Bucket=RESOURCE_BUCKET, Key=storage_ref,
-                    )
+                    from utils.r2_cloudflare import delete_files_from_r2_async_native
+                    await delete_files_from_r2_async_native(RESOURCE_BUCKET, [storage_ref])
                 except Exception as e:
                     logger.warning(f"Failed to delete R2 blob {storage_ref}: {e}")
 

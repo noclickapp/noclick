@@ -16,6 +16,8 @@ from datetime import datetime
 import boto3
 import httpx
 
+from utils import local_object_store as _local
+
 logger = logging.getLogger(__name__)
 
 # Cached S3 client — boto3 client creation is expensive (loads service models,
@@ -77,6 +79,9 @@ async def upload_bytes_to_r2_async(
 
     Raises httpx.HTTPStatusError on non-2xx response.
     """
+    if _local.enabled():
+        await asyncio.to_thread(_local.put, bucket, key, body, content_type)
+        return
     url = generate_presigned_upload_url(
         bucket=bucket, key=key, content_type=content_type
     )
@@ -107,6 +112,10 @@ async def delete_files_from_r2_async_native(
 
     Returns the number of keys requested.
     """
+    if _local.enabled():
+        for k in keys:
+            _local.delete(bucket, k)
+        return len(keys)
     if not keys:
         return 0
     client = _get_r2_http_client()
@@ -135,6 +144,8 @@ async def download_bytes_from_r2_async_native(
     Returns ``(content_bytes, content_type)``. Raises
     ``httpx.HTTPStatusError`` on non-2xx response.
     """
+    if _local.enabled():
+        return await asyncio.to_thread(_local.get, bucket, key)
     url = generate_presigned_download_url(bucket=bucket, key=key)
     client = _get_r2_http_client()
     async with _get_r2_request_gate():
@@ -155,6 +166,8 @@ def create_s3_client():
     Raises:
         ValueError: If required environment variables are missing
     """
+    if _local.enabled():
+        raise ValueError("Object storage runs on this instance's disk; set OBJECT_STORAGE_* for an S3 client")
     global _s3_client
     if _s3_client is not None:
         return _s3_client
@@ -237,6 +250,11 @@ async def upload_files_to_r2(
             metadata={"resource_id": "resource-123", "owner": "team-123"}
         )
     """
+    if _local.enabled():
+        for file_path, file_data in files.items():
+            content = base64.b64decode(file_data["content"]) if file_data.get("encoding") == "base64" else file_data["content"].encode("utf-8")
+            _local.put(bucket, f"{prefix}{file_path}", content, file_data.get("content_type") or "application/octet-stream", metadata)
+        return len(files)
     s3_client = create_s3_client()
 
     logger.info(f"[R2] Starting upload of {len(files)} files to {bucket}/{prefix}")
@@ -286,6 +304,8 @@ async def upload_files_to_r2(
 
 def r2_prefix_exists(bucket: str, prefix: str) -> bool:
     """Check if any objects exist under a given prefix in an R2 bucket."""
+    if _local.enabled():
+        return bool(_local.list_keys(bucket, prefix))
     try:
         s3_client = create_s3_client()
         resp = s3_client.list_objects_v2(Bucket=bucket, Prefix=f"{prefix}/", MaxKeys=1)
@@ -323,6 +343,10 @@ def delete_files_from_r2(
             ["/old-file.js", "/removed.css"]
         )
     """
+    if _local.enabled():
+        for file_path in file_paths:
+            _local.delete(bucket, f"{prefix}{file_path}")
+        return len(file_paths)
     if not file_paths:
         logger.debug(f"[R2] No files to delete from {bucket}/{prefix}")
         return 0
@@ -374,6 +398,8 @@ def fetch_etags_from_r2(
         etags = fetch_etags_from_r2("workflow-artifacts", "staging--resource-123")
         # Returns: {"/index.html": "abc123", "/assets/main.js": "def456"}
     """
+    if _local.enabled():
+        return {"/" + k[len(prefix) + 1:]: _local.etag(bucket, k) for k in _local.list_keys(bucket, prefix)}
     try:
         from botocore.exceptions import ClientError
 
@@ -427,6 +453,8 @@ def generate_presigned_upload_url(
     Returns:
         Presigned PUT URL string
     """
+    if _local.enabled():
+        return _local.presign("PUT", bucket, key, expires_in=expires_in, content_type=content_type, content_length=content_length)
     s3_client = create_s3_client()
     params: Dict[str, Any] = {
         'Bucket': bucket,
@@ -469,6 +497,8 @@ def generate_presigned_download_url(bucket: str, key: str, expires_in: int = 900
     Returns:
         Presigned GET URL string
     """
+    if _local.enabled():
+        return _local.presign("GET", bucket, key, expires_in=expires_in)
     s3_client = create_s3_client()
     return s3_client.generate_presigned_url(
         'get_object',
@@ -489,6 +519,8 @@ def generate_presigned_delete_url(bucket: str, key: str, expires_in: int = 900) 
     Returns:
         Presigned DELETE URL string
     """
+    if _local.enabled():
+        return _local.presign("DELETE", bucket, key, expires_in=expires_in)
     s3_client = create_s3_client()
     return s3_client.generate_presigned_url(
         'delete_object',
@@ -499,6 +531,8 @@ def generate_presigned_delete_url(bucket: str, key: str, expires_in: int = 900) 
 
 def download_from_r2(bucket: str, key: str) -> tuple[bytes, str]:
     """Download file from R2. Returns (content_bytes, content_type)."""
+    if _local.enabled():
+        return _local.get(bucket, key)
     s3_client = create_s3_client()
     response = s3_client.get_object(Bucket=bucket, Key=key)
     content_bytes = response['Body'].read()
@@ -532,6 +566,13 @@ async def copy_files_within_r2(
             "published-version"
         )
     """
+    if _local.enabled():
+        keys = _local.list_keys(bucket, source_prefix)
+        if not keys:
+            raise Exception(f"No files found at {bucket}/{source_prefix}/")
+        for k in keys:
+            _local.copy(bucket, k, dest_prefix + k[len(source_prefix):])
+        return len(keys)
     s3_client = create_s3_client()
     logger.info(f"[R2] Listing files in {bucket}/{source_prefix}/")
 

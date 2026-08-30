@@ -329,8 +329,13 @@ environment — users paste the key in the UI and it's encrypted with your
 
 ## File storage
 
-Uploads, generated images, and workflow resources go to any S3-compatible
-bucket:
+By default, uploads, generated images, workflow resources and large node
+outputs live on the instance's own disk, under `NOCLICK_HOME/storage` — the
+persistent volume of the single-origin image — and are served by the backend
+through short-lived signed URLs. Nothing to configure.
+
+To keep them in an S3-compatible bucket instead (the Compose stack ships
+MinIO for this), set:
 
 | Variable                           | Notes                                                                                                                         |
 | ---------------------------------- | ----------------------------------------------------------------------------------------------------------------------------- |
@@ -343,8 +348,7 @@ Create two **private** buckets named `workflow-resources` and `workflow-cas`.
 The first stores uploads/media; the second stores graph snapshots and node
 outputs larger than 4 KB. Docker bootstrap creates both automatically. Browser
 uploads and downloads use short-lived presigned URLs, so neither bucket should
-be made public. Without storage, file/media features fail, execution graph
-snapshots cannot be stored, and outputs larger than 4 KB cannot be persisted.
+be made public. With none of these set, the instance's disk is the store.
 
 The durable reference is the workflow resource ID, not a presigned URL. NoClick
 stores that ID for files uploaded through workflow fields and mints a fresh URL

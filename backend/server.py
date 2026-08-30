@@ -339,9 +339,13 @@ apply_registered_routes(fastapi_app, sio)
 if is_local_edition():
     from utils.local_relay_routes import router as local_relay_router
     from utils.local_cron import router as local_cron_router
+    from utils.local_storage_routes import router as local_storage_router
     fastapi_app.include_router(local_relay_router)
     fastapi_app.include_router(local_cron_router)
-    logger.info("[local] mounted in-process event relay (/relay) + cron scheduler (/local-cron)")
+    # Objects on the instance's own disk when no S3 endpoint is configured; the
+    # signed-URL routes are the S3 presigned surface the browser already speaks.
+    fastapi_app.include_router(local_storage_router)
+    logger.info("[local] mounted in-process event relay (/relay), cron scheduler (/local-cron) + object store (/storage)")
 
 # Local-harness tool endpoint (/local-agent-mcp/{token}): turn-scoped MCP
 # server for subprocess CLI agents. Token-capability gated; inert unless the
