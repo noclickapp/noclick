@@ -39,6 +39,11 @@ import { isPlanLimitError } from '~/lib/planLimitErrors';
 import { PLAN_LIMITS } from '~/lib/pricing';
 import { useOrgContext } from '~/hooks/useOrgContext';
 import { isLocalEdition } from '~/lib/edition';
+import { useSnapshot } from 'valtio';
+import { instanceKeysStore, platformKeyFunds, platformKeyMarker, type PlatformKeyMarker } from '~/lib/instanceKeys';
+import { providerKeyLabel } from '~/lib/providerKeys';
+import { InstanceKeyPrompt } from '~/components/credential/InstanceKeyPrompt';
+import { InstanceSmtpForm } from '~/components/credential/InstanceSmtpForm';
 
 /**
  * Standard interface for custom credential form components.
@@ -228,12 +233,29 @@ function isOperationCredentialsOptional(nodeType: string, nodeData?: Record<stri
         if (!def?.properties?.operation) continue;
         // Match by operation const value
         if (def.properties.operation.const === operation || def.properties.operation.default === operation) {
-            if (def['x-credentials-optional'] === true) return true;
-            return evaluateCondition(def['x-credentials-optional-if'], config);
+            const optional = def['x-credentials-optional'] === true || evaluateCondition(def['x-credentials-optional-if'], config);
+            // Optional in the cloud because NoClick's key pays; on a self-hosted
+            // instance only while the operator configured that key.
+            return optional && platformKeyFunds(platformKeyMarker(def));
         }
     }
 
     return false;
+}
+
+/** The platform key the selected operation runs on, if it declares one. */
+export function operationPlatformKey(nodeType: string, nodeData?: Record<string, any>): PlatformKeyMarker | null {
+    const operation = nodeData?.operation as string | undefined;
+    const schema = NODE_SCHEMAS[nodeType];
+    const oneOf = schema?.properties?.config?.oneOf as Array<{ $ref?: string }> | undefined;
+    const defs = (schema as any)?.$defs as Record<string, any> | undefined;
+    if (!operation || !oneOf || !defs) return null;
+    for (const entry of oneOf) {
+        const def = defs[entry.$ref?.split('/').pop() ?? ''];
+        const op = def?.properties?.operation;
+        if (op && (op.const === operation || op.default === operation)) return platformKeyMarker(def);
+    }
+    return null;
 }
 
 /**
@@ -431,6 +453,15 @@ export const NodeCredentials = ({ nodeType, nodeData = {}, credentialIds = {}, o
         () => isUsageBasedBillingAvailable(nodeType, nodeData),
         [nodeType, nodeData]
     );
+    // Self-hosted: a platform-keyed operation runs on the INSTANCE's key. The
+    // store flips this the moment a key is saved anywhere.
+    const instanceKeys = useSnapshot(instanceKeysStore);
+    const selfHosted = isLocalEdition();
+    const platformKey = useMemo(() => (selfHosted ? operationPlatformKey(nodeType, nodeData) : null), [selfHosted, nodeType, nodeData]);
+    const instanceKeyConfigured = !!platformKey && instanceKeys.configured.includes(platformKey.env);
+    const outboundEmailConfigured =
+        instanceKeys.configured.includes('FROM_EMAIL') &&
+        (instanceKeys.configured.includes('SMTP_HOST') || instanceKeys.configured.includes('RESEND_API_KEY'));
 
     // Check if this node type has a custom credential form
     const CustomCredentialForm = CUSTOM_CREDENTIAL_FORMS[nodeType];
@@ -920,6 +951,43 @@ export const NodeCredentials = ({ nodeType, nodeData = {}, credentialIds = {}, o
         );
     }
 
+    // Self-hosted Send Email: no credential, but the instance must have somewhere to send from.
+    if (selfHosted && nodeType === 'automation-send-email' && !CustomCredentialForm) {
+        return outboundEmailConfigured ? (
+            <p className="text-xs text-muted-foreground">
+                Sends through this instance&apos;s mail server — change it under Settings → Self-hosted.
+            </p>
+        ) : (
+            <div className="max-w-md">
+                <InstanceSmtpForm />
+            </div>
+        );
+    }
+
+    // Self-hosted, an operation the node's own credential cannot fund (LinkedIn
+    // scraping runs on Apify): ask for the instance's key, not a credential.
+    if (platformKey && !platformKey.byok) {
+        const label = providerKeyLabel(platformKey.env);
+        return instanceKeyConfigured ? (
+            <p className="text-xs text-green-600 dark:text-green-400">
+                ✓ Runs on this instance&apos;s {label} key — no credential needed
+            </p>
+        ) : (
+            <div className="max-w-md">
+                <InstanceKeyPrompt
+                    envVar={platformKey.env}
+                    title={`Run this on ${label}`}
+                    steps={[
+                        `Create ${/^[aeiou]/i.test(label) ? 'an' : 'a'} ${label} account and copy its API key (button below).`,
+                        `Paste it here. Every operation on this instance that runs on ${label} uses it.`,
+                    ]}
+                    submitLabel="Save"
+                    onSaved={() => undefined}
+                />
+            </div>
+        );
+    }
+
     // If no default credentials required and no custom form, show empty state
     if (requiredCredentials.length === 0 && !CustomCredentialForm) {
         return (
@@ -1039,6 +1107,15 @@ export const NodeCredentials = ({ nodeType, nodeData = {}, credentialIds = {}, o
                                 ✓ Usage-based billing available - credentials optional
                             </p>
                         )}
+                        {platformKey && (instanceKeyConfigured ? (
+                            <p className="text-xs text-green-600 dark:text-green-400">
+                                ✓ Runs on this instance&apos;s {providerKeyLabel(platformKey.env)} key — credentials optional
+                            </p>
+                        ) : (
+                            <p className="text-xs text-muted-foreground">
+                                Or add one {providerKeyLabel(platformKey.env)} key for the whole instance under Settings → Self-hosted.
+                            </p>
+                        ))}
 
                         {/* Credential Selection */}
                         <div className="space-y-2">

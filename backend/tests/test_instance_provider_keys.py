@@ -159,3 +159,59 @@ async def test_a_wahooks_key_is_probed_with_the_sdk(monkeypatch):
 
     monkeypatch.setattr(kv, "_wahooks_list_connections", outage)
     assert await kv.validate_provider_key("WAHOOKS_API_KEY", "wah-maybe") is None, "an outage is not a verdict"
+
+
+class FakeSmtpServer:
+    """Accepts one login; every other credential is refused with the server's words."""
+
+    def __init__(self, host, port, timeout=None, context=None):
+        if host != "smtp.example.com":
+            raise OSError("Name or service not known")
+
+    def __enter__(self):
+        return self
+
+    def __exit__(self, *a):
+        return False
+
+    def ehlo(self):
+        pass
+
+    def has_extn(self, name):
+        return False
+
+    def login(self, user, password):
+        import smtplib
+
+        if (user, password) != ("mailer", "hunter2"):
+            raise smtplib.SMTPAuthenticationError(535, b"5.7.8 Authentication credentials invalid")
+
+
+@pytest.fixture
+def smtp_server(monkeypatch):
+    import smtplib
+
+    monkeypatch.setattr(smtplib, "SMTP", FakeSmtpServer)
+    monkeypatch.setattr(smtplib, "SMTP_SSL", FakeSmtpServer)
+
+
+@pytest.mark.asyncio
+async def test_smtp_settings_are_stored_only_after_the_server_accepts_the_login(smtp_server):
+    pool = FakePool()
+    await keys.set_smtp(pool, keys.SmtpSettings("smtp.example.com", 587, "mailer", "hunter2", "NoClick <noclick@example.com>"), "u1")
+    stored = {arg for args in pool.executed for arg in args if isinstance(arg, str)}
+    assert {"SMTP_HOST", "SMTP_PORT", "SMTP_USERNAME", "SMTP_PASSWORD", "FROM_EMAIL"} <= stored
+    # The port is stored as the string the environment will carry.
+    assert "enc:587" in stored
+
+
+@pytest.mark.asyncio
+async def test_smtp_rejections_carry_the_servers_words(smtp_server):
+    pool = FakePool()
+    with pytest.raises(ValueError, match="rejected the login: 5.7.8 Authentication credentials invalid"):
+        await keys.set_smtp(pool, keys.SmtpSettings("smtp.example.com", 587, "mailer", "wrong", "a@b.co"), "u1")
+    with pytest.raises(ValueError, match="Could not connect to smtp.nowhere.test:587"):
+        await keys.set_smtp(pool, keys.SmtpSettings("smtp.nowhere.test", 587, "", "", "a@b.co"), "u1")
+    with pytest.raises(ValueError, match="Enter the sender as an address"):
+        await keys.set_smtp(pool, keys.SmtpSettings("smtp.example.com", 587, "", "", "not-an-address"), "u1")
+    assert "SMTP_HOST" not in os.environ and pool.executed == []

@@ -1,6 +1,6 @@
 // Auto-generated from backend Pydantic models
 // DO NOT EDIT MANUALLY - run 'npm run generate:types' instead
-// Generated at: Sun Aug 30 13:29:34  2026
+// Generated at: Sun Aug 30 14:21:23  2026
 // Target: all
 
 import { AgenticStep, ContentItem, ImageUrl } from './socket-schema.generated';
@@ -3119,6 +3119,36 @@ export interface InstanceOAuthSetRequest {
    * OAuth app client secret; omit to leave a stored one unchanged
    */
   client_secret?: string | null;
+  [k: string]: unknown;
+}
+/**
+ * Store the instance's outbound mail server after checking a login against it
+ */
+export interface InstanceSmtpSetRequest {
+  /**
+   * UUID for request/response correlation
+   */
+  request_id?: string | null;
+  /**
+   * SMTP host
+   */
+  host: string;
+  /**
+   * SMTP port (587 STARTTLS, 465 TLS)
+   */
+  port?: number;
+  /**
+   * Login user; blank for an open relay
+   */
+  username?: string;
+  /**
+   * Login password
+   */
+  password?: string;
+  /**
+   * Sender, e.g. NoClick <noclick@yourdomain.com>
+   */
+  from_email: string;
   [k: string]: unknown;
 }
 /**
@@ -13419,6 +13449,7 @@ export interface ClientToServerEvents {
   'instance_oauth:delete': (data: InstanceOAuthDeleteRequest) => void;
   'instance_oauth:list': (data: InstanceOAuthListRequest) => void;
   'instance_oauth:set': (data: InstanceOAuthSetRequest) => void;
+  'instance_smtp:set': (data: InstanceSmtpSetRequest) => void;
   'intercom:oauth:exchange': (data: IntercomOAuthExchangeRequest) => void;
   'intercom:oauth:refresh': (data: IntercomOAuthRefreshRequest) => void;
   'intercom:oauth:validate': (data: IntercomOAuthValidateRequest) => void;
@@ -13744,6 +13775,7 @@ export const ClientEventNames = {
   InstanceOAuthDeleteRequest: 'instance_oauth:delete',
   InstanceOAuthListRequest: 'instance_oauth:list',
   InstanceOAuthSetRequest: 'instance_oauth:set',
+  InstanceSmtpSetRequest: 'instance_smtp:set',
   IntercomOAuthExchangeRequest: 'intercom:oauth:exchange',
   IntercomOAuthRefreshRequest: 'intercom:oauth:refresh',
   IntercomOAuthValidateRequest: 'intercom:oauth:validate',
@@ -14070,6 +14102,7 @@ interface ClientEventMap {
   InstanceOAuthDeleteRequest: InstanceOAuthDeleteRequest
   InstanceOAuthListRequest: InstanceOAuthListRequest
   InstanceOAuthSetRequest: InstanceOAuthSetRequest
+  InstanceSmtpSetRequest: InstanceSmtpSetRequest
   IntercomOAuthExchangeRequest: IntercomOAuthExchangeRequest
   IntercomOAuthRefreshRequest: IntercomOAuthRefreshRequest
   IntercomOAuthValidateRequest: IntercomOAuthValidateRequest
@@ -14975,6 +15008,10 @@ export const InstanceOAuthListRequest = {
 export const InstanceOAuthSetRequest = {
   event_name: 'instance_oauth:set' as const,
   create: (data: InstanceOAuthSetRequest) => ({ event_name: 'instance_oauth:set' as const, ...data })
+};
+export const InstanceSmtpSetRequest = {
+  event_name: 'instance_smtp:set' as const,
+  create: (data: InstanceSmtpSetRequest) => ({ event_name: 'instance_smtp:set' as const, ...data })
 };
 export const IntercomOAuthExchangeRequest = {
   event_name: 'intercom:oauth:exchange' as const,
@@ -15886,6 +15923,7 @@ export const EventRouting = {
   'instance_oauth:delete': 'API',
   'instance_oauth:list': 'API',
   'instance_oauth:set': 'API',
+  'instance_smtp:set': 'API',
   'intercom:oauth:exchange': 'API',
   'intercom:oauth:refresh': 'API',
   'intercom:oauth:validate': 'API',

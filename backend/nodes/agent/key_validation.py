@@ -181,6 +181,19 @@ def _wahooks_list_connections(key: str) -> None:
         client.list_connections()
 
 
+async def _probe_apify(key: str) -> Optional["Rejection"]:
+    """Apify answers /users/me with 401 to a bad token; anything else is not a verdict."""
+    import httpx
+
+    async with httpx.AsyncClient(timeout=_PROBE_TIMEOUT_S) as client:
+        response = await client.get(
+            "https://api.apify.com/v2/users/me", headers={"Authorization": f"Bearer {key}"}
+        )
+    if response.status_code == 401:
+        return Rejection("apify", "invalid_key", response.text)
+    return None
+
+
 async def _probe_wahooks(key: str) -> Optional["Rejection"]:
     """WAHooks issues the WhatsApp QR sessions; its SDK raises a WAHooksError
     with the HTTP status, and only an auth status is a verdict."""
@@ -197,6 +210,7 @@ async def _probe_wahooks(key: str) -> Optional["Rejection"]:
 
 
 _PROBES = {
+    "APIFY_API_TOKEN": _probe_apify,
     "WAHOOKS_API_KEY": _probe_wahooks,
     "ANTHROPIC_API_KEY": _probe_anthropic,
     "OPENAI_API_KEY": _probe_openai,

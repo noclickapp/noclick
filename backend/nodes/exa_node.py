@@ -33,6 +33,11 @@ logger = logging.getLogger(__name__)
 
 EXA_API_BASE = "https://api.exa.ai"
 
+from nodes.core.platform_billing import platform_keyed_operation, require_platform_key
+
+# Runs on NoClick's Exa key when no credential is attached (nodes/core/platform_billing.py).
+PLATFORM_KEYED = platform_keyed_operation("EXA_API_KEY", byok=True)
+
 # Synchronous ops that may run on NoClick's platform key with no user credential,
 # metered from the response's in-band costDollars. Async/recurring surfaces
 # (agent runs, websets, monitors) stay BYOK-only — their spend accrues outside
@@ -74,7 +79,7 @@ ExaCredential = ExaApiKeyCredential
 class ExaSearchConfig(BaseModel):
     """Search the web with Exa's neural/keyword/auto search."""
 
-    model_config = ConfigDict(json_schema_extra={"x-credentials-optional": True})
+    model_config = ConfigDict(json_schema_extra=PLATFORM_KEYED)
 
     operation: Literal["search"] = Field(
         "search",
@@ -123,7 +128,7 @@ class ExaSearchConfig(BaseModel):
 class ExaGetContentsConfig(BaseModel):
     """Retrieve clean, LLM-ready parsed content for a list of URLs."""
 
-    model_config = ConfigDict(json_schema_extra={"x-credentials-optional": True})
+    model_config = ConfigDict(json_schema_extra=PLATFORM_KEYED)
 
     operation: Literal["get_contents"] = Field(
         "get_contents",
@@ -172,7 +177,7 @@ class ExaGetContentsConfig(BaseModel):
 class ExaAnswerConfig(BaseModel):
     """Get an LLM-generated answer grounded with citations from an Exa search."""
 
-    model_config = ConfigDict(json_schema_extra={"x-credentials-optional": True})
+    model_config = ConfigDict(json_schema_extra=PLATFORM_KEYED)
 
     operation: Literal["answer"] = Field(
         "answer",
@@ -197,7 +202,7 @@ class ExaAnswerConfig(BaseModel):
 class ExaFindSimilarConfig(BaseModel):
     """Find pages semantically similar to a given URL."""
 
-    model_config = ConfigDict(json_schema_extra={"x-credentials-optional": True})
+    model_config = ConfigDict(json_schema_extra=PLATFORM_KEYED)
 
     operation: Literal["find_similar"] = Field(
         "find_similar",
@@ -1114,13 +1119,7 @@ class ExaNode(ExternalWebhookTriggerMixin, WorkflowNode):
     # ------------------------------------------------------------------
     @staticmethod
     def _get_platform_api_key() -> str:
-        key = os.environ.get("EXA_API_KEY")
-        if not key:
-            raise RuntimeError(
-                "EXA_API_KEY is not configured on the server. "
-                "Add your own Exa API key to run this operation."
-            )
-        return key
+        return require_platform_key("EXA_API_KEY", "Exa", byok=True)
 
     async def _track_platform_usage(self, operation: str, result: Dict[str, Any]) -> None:
         """Bill a NoClick-keyed call from the response's in-band costDollars.

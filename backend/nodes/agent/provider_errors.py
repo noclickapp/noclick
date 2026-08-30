@@ -106,6 +106,11 @@ _RULES: Tuple[_Rule, ...] = (
 )
 
 _PROVIDER_META: Dict[str, Dict[str, str]] = {
+    "apify": {
+        "label": "Apify",
+        "billing_url": "https://console.apify.com/billing",
+        "keys_url": "https://console.apify.com/settings/integrations",
+    },
     "wahooks": {
         "label": "WAHooks",
         "billing_url": "",

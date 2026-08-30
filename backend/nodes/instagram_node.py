@@ -30,6 +30,10 @@ from pydantic import BaseModel, Field, Discriminator, ConfigDict
 import httpx
 
 from nodes.core.apify_runner import ApifyRunnerMixin
+from nodes.core.platform_billing import platform_keyed_operation
+
+# Scraping runs on Apify with NoClick's token; the node's own credential funds none of it.
+PLATFORM_KEYED = platform_keyed_operation("APIFY_API_TOKEN", byok=False)
 from nodes.core.base import WorkflowNode, NodeConfig
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.oauth.facebook_oauth import is_token_expired, refresh_access_token
@@ -1152,7 +1156,7 @@ class InstagramScrapeProfileConfig(BaseModel):
     model_config = ConfigDict(
         populate_by_name=True,
         title="Scrape Profile",
-        json_schema_extra={"x-credentials-optional": True},
+        json_schema_extra=PLATFORM_KEYED,
     )
 
     operation: Literal["scrape_profile_metadata"] = Field(
@@ -1186,7 +1190,7 @@ class InstagramScrapePostsConfig(BaseModel):
     model_config = ConfigDict(
         populate_by_name=True,
         title="Scrape Posts from Profile",
-        json_schema_extra={"x-credentials-optional": True},
+        json_schema_extra=PLATFORM_KEYED,
     )
 
     operation: Literal["scrape_profile_posts"] = Field(
@@ -1220,7 +1224,7 @@ class InstagramScrapePostConfig(BaseModel):
     model_config = ConfigDict(
         populate_by_name=True,
         title="Scrape Post by URL",
-        json_schema_extra={"x-credentials-optional": True},
+        json_schema_extra=PLATFORM_KEYED,
     )
 
     operation: Literal["scrape_individual_post"] = Field(
@@ -1250,7 +1254,7 @@ class InstagramScrapeHashtagConfig(BaseModel):
     model_config = ConfigDict(
         populate_by_name=True,
         title="Scrape Hashtag Feed",
-        json_schema_extra={"x-credentials-optional": True},
+        json_schema_extra=PLATFORM_KEYED,
     )
 
     operation: Literal["scrape_hashtag_posts"] = Field(
@@ -1283,7 +1287,7 @@ class InstagramScrapeReelsConfig(BaseModel):
     model_config = ConfigDict(
         populate_by_name=True,
         title="Scrape Reels from Profile",
-        json_schema_extra={"x-credentials-optional": True},
+        json_schema_extra=PLATFORM_KEYED,
     )
 
     operation: Literal["scrape_profile_reels"] = Field(
@@ -1319,7 +1323,7 @@ class InstagramScrapeCommentsConfig(BaseModel):
     model_config = ConfigDict(
         populate_by_name=True,
         title="Scrape Comments",
-        json_schema_extra={"x-credentials-optional": True},
+        json_schema_extra=PLATFORM_KEYED,
     )
 
     operation: Literal["scrape_post_comments"] = Field(

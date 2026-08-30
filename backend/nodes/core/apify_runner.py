@@ -33,13 +33,9 @@ class ApifyRunnerMixin:
 
     @staticmethod
     def _get_apify_token() -> str:
-        token = os.environ.get("APIFY_API_TOKEN")
-        if not token:
-            raise RuntimeError(
-                "APIFY_API_TOKEN is not configured on the server. "
-                "Scraping operations are unavailable."
-            )
-        return token
+        from nodes.core.platform_billing import require_platform_key
+
+        return require_platform_key("APIFY_API_TOKEN", "Apify", byok=False)
 
     @staticmethod
     def _split_lines(value: Optional[str]) -> List[str]:

@@ -412,6 +412,7 @@ def allowlist_requires_credentials(node_type: str, operations: List[Any]) -> boo
 
     Accepts the mixed (string | {operation, field_scopes}) shape.
     """
+    from nodes.core.platform_billing import platform_key_funds
     from nodes.core.registry import NODE_REGISTRY
 
     op_names, _ = normalize_allowed_operations(operations)
@@ -421,7 +422,11 @@ def allowlist_requires_credentials(node_type: str, operations: List[Any]) -> boo
     by_op = {e["operation"]: e for e in _iter_operation_defs(node_class)}
     for op in op_names:
         entry = by_op.get(op)
-        if entry is None or entry["member"].get("x-credentials-optional") is not True:
+        if (
+            entry is None
+            or entry["member"].get("x-credentials-optional") is not True
+            or not platform_key_funds(entry["member"])
+        ):
             return True
     return False
 

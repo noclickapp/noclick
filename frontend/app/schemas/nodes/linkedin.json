@@ -312,7 +312,11 @@
       ],
       "title": "Scrape Company Employees",
       "type": "object",
-      "x-credentials-optional": true
+      "x-credentials-optional": true,
+      "x-platform-key": {
+        "byok": false,
+        "env": "APIFY_API_TOKEN"
+      }
     },
     "LinkedInScrapeProfileConfig": {
       "description": "Scrape LinkedIn profiles by URL/handle/ID via Apify (harvestapi).",
@@ -354,7 +358,11 @@
       ],
       "title": "Scrape Profiles",
       "type": "object",
-      "x-credentials-optional": true
+      "x-credentials-optional": true,
+      "x-platform-key": {
+        "byok": false,
+        "env": "APIFY_API_TOKEN"
+      }
     },
     "LinkedInSearchCompaniesConfig": {
       "description": "Search LinkedIn companies via Apify (harvestapi/linkedin-company-search).",
@@ -420,7 +428,11 @@
       },
       "title": "Search Companies",
       "type": "object",
-      "x-credentials-optional": true
+      "x-credentials-optional": true,
+      "x-platform-key": {
+        "byok": false,
+        "env": "APIFY_API_TOKEN"
+      }
     },
     "LinkedInSearchJobsConfig": {
       "description": "Search LinkedIn job listings via Apify (harvestapi/linkedin-job-search).",
@@ -495,7 +507,11 @@
       ],
       "title": "Search Jobs",
       "type": "object",
-      "x-credentials-optional": true
+      "x-credentials-optional": true,
+      "x-platform-key": {
+        "byok": false,
+        "env": "APIFY_API_TOKEN"
+      }
     },
     "LinkedInSearchPostsConfig": {
       "description": "Search LinkedIn posts via Apify (harvestapi/linkedin-post-search). $2 per 1k posts.",
@@ -542,7 +558,11 @@
       ],
       "title": "Search Posts",
       "type": "object",
-      "x-credentials-optional": true
+      "x-credentials-optional": true,
+      "x-platform-key": {
+        "byok": false,
+        "env": "APIFY_API_TOKEN"
+      }
     },
     "LinkedInSearchProfilesConfig": {
       "description": "Search LinkedIn profiles via Apify (harvestapi/linkedin-profile-search).",
@@ -634,7 +654,11 @@
       },
       "title": "Search People",
       "type": "object",
-      "x-credentials-optional": true
+      "x-credentials-optional": true,
+      "x-platform-key": {
+        "byok": false,
+        "env": "APIFY_API_TOKEN"
+      }
     }
   },
   "description": "Full configuration for LinkedIn node including credentials",

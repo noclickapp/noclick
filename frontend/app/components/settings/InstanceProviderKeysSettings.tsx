@@ -10,28 +10,22 @@ import { ExternalLink, KeyRound, Trash2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { sendEventAsync } from '~/lib/socket-sender';
 import { PROVIDER_KEY_SOURCES } from '~/lib/providerKeys';
-import {
-    InstanceKeysDeleteRequest,
-    InstanceKeysListRequest,
-    InstanceKeysSetRequest,
-} from '~/types/socket-events.generated';
+import { InstanceSmtpForm } from '~/components/credential/InstanceSmtpForm';
+import { applyInstanceKeysState, loadInstanceKeys, type InstanceKeysState as KeysState } from '~/lib/instanceKeys';
+import { InstanceKeysDeleteRequest, InstanceKeysSetRequest } from '~/types/socket-events.generated';
 
 /** What each key is for, in the operator's terms. */
 const INSTANCE_KEYS: { envVar: string; title: string; purpose: string }[] = [
     { envVar: 'OPENROUTER_API_KEY', title: 'Workflow builder', purpose: 'The builder runs on OpenRouter with this key, shared by everyone on the instance.' },
     { envVar: 'WAHOOKS_API_KEY', title: 'WhatsApp QR sign-in', purpose: 'WhatsApp connections are issued by WAHooks; every QR scan on this instance uses this key.' },
+    // Operations the cloud runs on NoClick's own keys. Here they run on the instance's — or, for Exa and Perplexity, on each user's own credential.
+    { envVar: 'APIFY_API_TOKEN', title: 'LinkedIn and Instagram scraping', purpose: 'Scraping operations run on Apify. Without this token they are unavailable on this instance.' },
+    { envVar: 'EXA_API_KEY', title: 'Exa search', purpose: 'Lets Exa nodes search without a credential of their own; users can still connect one.' },
+    { envVar: 'PERPLEXITY_API_KEY', title: 'Perplexity', purpose: 'Lets Perplexity nodes run without a credential of their own; users can still connect one.' },
 ];
 
-interface StoredKey {
-    env_var: string;
-    updated_at: string | null;
-}
+const SMTP_VARS = ['SMTP_HOST', 'SMTP_PORT', 'SMTP_USERNAME', 'SMTP_PASSWORD', 'FROM_EMAIL'];
 
-interface KeysState {
-    keys: StoredKey[];
-    env_vars: string[];
-    supported: string[];
-}
 
 const inputClass =
     'h-9 w-full px-3 text-sm font-mono bg-foreground/[0.035] dark:bg-white/[0.045] border border-input dark:border-white/[0.12] rounded-lg ' +
@@ -56,6 +50,7 @@ function KeyRow({ envVar, title, purpose, state, onChange }: { envVar: string; t
                 InstanceKeysSetRequest.create({ request_id: crypto.randomUUID(), env_var: envVar, value: key }),
             )) as (KeysState & { error?: string }) | null;
             if (!res || res.error) throw new Error(res?.error || 'Could not save the key');
+            applyInstanceKeysState(res);
             onChange(res);
             setValue('');
             toast.success(`${source?.label ?? envVar} key saved`);
@@ -72,6 +67,7 @@ function KeyRow({ envVar, title, purpose, state, onChange }: { envVar: string; t
                 InstanceKeysDeleteRequest.create({ request_id: crypto.randomUUID(), env_var: envVar }),
             )) as (KeysState & { error?: string }) | null;
             if (!res || res.error) throw new Error(res?.error || 'Could not remove the key');
+            applyInstanceKeysState(res);
             onChange(res);
             toast.success(`${source?.label ?? envVar} key removed`);
         } catch (e) {
@@ -160,7 +156,7 @@ export function InstanceProviderKeysSettings() {
     const [state, setState] = useState<KeysState | null>(null);
 
     const refresh = useCallback(async () => {
-        setState((await sendEventAsync(InstanceKeysListRequest.create({ request_id: crypto.randomUUID() }))) as KeysState);
+        setState(await loadInstanceKeys());
     }, []);
 
     useEffect(() => {
@@ -185,6 +181,81 @@ export function InstanceProviderKeysSettings() {
                     {INSTANCE_KEYS.map((k) => (
                         <KeyRow key={k.envVar} {...k} state={state} onChange={setState} />
                     ))}
+                    <OutboundEmailRow state={state} onChange={setState} />
+                </div>
+            )}
+        </div>
+    );
+}
+
+/** Outbound email: the SMTP server the instance sends through (or a Resend key from the environment). */
+function OutboundEmailRow({ state, onChange }: { state: KeysState; onChange: (s: KeysState) => void }) {
+    const [editing, setEditing] = useState(false);
+    const configured = new Set([...state.keys.map((k) => k.env_var), ...state.env_vars]);
+    const viaResend = configured.has('RESEND_API_KEY');
+    const viaSmtp = configured.has('SMTP_HOST');
+    const sender = configured.has('FROM_EMAIL');
+    const ready = sender && (viaResend || viaSmtp);
+    const fromEnv = state.env_vars.includes('SMTP_HOST') || viaResend;
+
+    const remove = async () => {
+        try {
+            let next: KeysState | null = null;
+            for (const envVar of SMTP_VARS) {
+                if (!state.keys.some((k) => k.env_var === envVar)) continue;
+                const res = (await sendEventAsync(
+                    InstanceKeysDeleteRequest.create({ request_id: crypto.randomUUID(), env_var: envVar }),
+                )) as (KeysState & { error?: string }) | null;
+                if (!res || res.error) throw new Error(res?.error || 'Could not remove the mail server');
+                next = res;
+            }
+            if (next) {
+                applyInstanceKeysState(next);
+                onChange(next);
+            }
+            toast.success('Mail server removed');
+        } catch (e) {
+            toast.error(e instanceof Error ? e.message : 'Could not remove the mail server');
+        }
+    };
+
+    return (
+        <div className="p-4 bg-card dark:bg-foreground/[0.03] border border-border dark:border-white/[0.06] rounded-xl">
+            <div className="text-sm font-medium text-foreground">Outbound email</div>
+            <p className="mt-0.5 text-xs text-muted-foreground dark:text-white/40">
+                The Send Email node and agent updates leave through this. An SMTP server saved here, or RESEND_API_KEY + FROM_EMAIL in the environment.
+            </p>
+            {ready && !editing ? (
+                <div className="mt-3 flex items-center gap-2 text-xs text-foreground">
+                    <KeyRound className="h-3.5 w-3.5 shrink-0 text-muted-foreground" strokeWidth={2} />
+                    {viaResend ? 'Sending through Resend' : 'Sending through the saved SMTP server'}
+                    {fromEnv ? (
+                        <span className="text-muted-foreground/70">· set in the environment, which takes precedence</span>
+                    ) : (
+                        <>
+                            <button type="button" onClick={() => setEditing(true)} className="ml-auto text-muted-foreground transition-colors hover:text-foreground">
+                                Change
+                            </button>
+                            <button
+                                type="button"
+                                onClick={() => void remove()}
+                                aria-label="Remove the mail server"
+                                className="rounded-md p-1.5 text-muted-foreground transition-colors hover:bg-foreground/[0.06] hover:text-foreground"
+                            >
+                                <Trash2 className="h-4 w-4" strokeWidth={2} />
+                            </button>
+                        </>
+                    )}
+                </div>
+            ) : (
+                <div className="mt-3">
+                    <InstanceSmtpForm
+                        submitLabel="Check and save"
+                        onSaved={() => {
+                            setEditing(false);
+                            void loadInstanceKeys().then(onChange).catch(() => undefined);
+                        }}
+                    />
                 </div>
             )}
         </div>

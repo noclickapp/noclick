@@ -206,8 +206,10 @@ def is_operation_credentials_optional(
         return False
 
     schema = config_class.model_json_schema()
+    from nodes.core.platform_billing import platform_key_funds
+
     if schema.get("x-credentials-optional") is True:
-        return True
+        return platform_key_funds(schema)
 
     condition = schema.get("x-credentials-optional-if")
     if not isinstance(condition, dict) or not config:
@@ -248,7 +250,7 @@ def is_operation_credentials_optional(
 
         return True
 
-    return evaluate_condition(condition)
+    return evaluate_condition(condition) and platform_key_funds(schema)
 
 
 def _validate_jsx(source: str) -> Optional[str]:

@@ -10,6 +10,7 @@ import { toast } from 'sonner';
 import { sendEventAsync } from '~/lib/socket-sender';
 import { InstanceKeysSetRequest } from '~/types/socket-events.generated';
 import { PROVIDER_KEY_SOURCES, providerKeyLabel } from '~/lib/providerKeys';
+import { applyInstanceKeysState, type InstanceKeysState } from '~/lib/instanceKeys';
 import { INSTANCE_FORM, InstanceSetupCard } from './InstanceSetupCard';
 
 export function InstanceKeyPrompt({
@@ -47,8 +48,9 @@ export function InstanceKeyPrompt({
                     env_var: envVar,
                     value: key,
                 })
-            )) as { error?: string } | null;
+            )) as (InstanceKeysState & { error?: string }) | null;
             if (res?.error) throw new Error(res.error);
+            applyInstanceKeysState(res);
             toast.success(`${label} key saved for this instance`);
             setValue('');
             onSaved();

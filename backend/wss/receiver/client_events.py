@@ -291,6 +291,17 @@ class InstanceKeysSetRequest(ClientEventBase):
     value: str = Field(..., min_length=1, description="The key")
 
 
+class InstanceSmtpSetRequest(ClientEventBase):
+    """Store the instance's outbound mail server after checking a login against it"""
+    event_name: ClassVar[str] = "instance_smtp:set"
+
+    host: str = Field(..., min_length=1, description="SMTP host")
+    port: int = Field(587, ge=1, le=65535, description="SMTP port (587 STARTTLS, 465 TLS)")
+    username: str = Field("", description="Login user; blank for an open relay")
+    password: str = Field("", description="Login password")
+    from_email: str = Field(..., min_length=3, description="Sender, e.g. NoClick <noclick@yourdomain.com>")
+
+
 class InstanceKeysDeleteRequest(ClientEventBase):
     """Forget one server-side provider key"""
     event_name: ClassVar[str] = "instance_keys:delete"

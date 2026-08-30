@@ -31,7 +31,8 @@ from typing import Any, Dict, List, Literal, Optional, Tuple, Type
 from pydantic import BaseModel, Field, field_validator
 
 from nodes.core.base import WorkflowNode, NodeConfig
-from utils.email_reservation_manager import require_inbound_email_domain
+from utils.email_reservation_manager import get_inbound_email_domain
+from utils.email_sending import NOT_CONFIGURED, configured_sender_address
 
 logger = logging.getLogger(__name__)
 
@@ -171,16 +172,18 @@ class SendEmailNode(WorkflowNode):
         if not self.user_id:
             raise ValueError("[SendEmailNode] No user context to resolve the recipient")
 
-        # This node sends through the same operator-owned mail domain as the
-        # inbound/reply channel. Do not construct ``notifications@`` (or fall
-        # back to any managed domain) when that channel is unconfigured.
-        email_domain = require_inbound_email_domain()
-        from_addr = f"notifications@{email_domain}"
+        # With an inbound/reply domain this node sends from it, like the reply
+        # channel; without one it sends from the instance's configured sender.
+        # Never a managed domain: an unconfigured channel is a missing setting.
+        email_domain = get_inbound_email_domain()
+        from_addr = f"notifications@{email_domain}" if email_domain else configured_sender_address()
+        if not from_addr:
+            raise RuntimeError(NOT_CONFIGURED)
 
         to_addr = await self._resolve_account_email()
         # Account emails are never on the trigger domain; refuse rather than
         # let a send loop back into a workflow trigger.
-        if to_addr.lower().endswith(f"@{email_domain}"):
+        if email_domain and to_addr.lower().endswith(f"@{email_domain}"):
             raise ValueError(
                 f"[SendEmailNode] Refusing to send to a {email_domain} address"
             )

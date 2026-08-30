@@ -182,7 +182,11 @@ export function BuilderProgress({
                         Retry
                     </button>
                 </div>
-                {keyMissing && <InstanceKeyPrompt envVar={errorMeta!.env_var} onSaved={onRetry} />}
+                {keyMissing && (
+                    <div className="mt-3">
+                        <InstanceKeyPrompt envVar={errorMeta!.env_var} onSaved={onRetry} />
+                    </div>
+                )}
                 </>
             ) : (
                 (() => {

@@ -39,7 +39,11 @@
       ],
       "title": "ExaAnswerConfig",
       "type": "object",
-      "x-credentials-optional": true
+      "x-credentials-optional": true,
+      "x-platform-key": {
+        "byok": true,
+        "env": "EXA_API_KEY"
+      }
     },
     "ExaApiKeyCredential": {
       "description": "API Key credential for Exa.",
@@ -423,7 +427,11 @@
       ],
       "title": "ExaFindSimilarConfig",
       "type": "object",
-      "x-credentials-optional": true
+      "x-credentials-optional": true,
+      "x-platform-key": {
+        "byok": true,
+        "env": "EXA_API_KEY"
+      }
     },
     "ExaGetAgentRunConfig": {
       "description": "Retrieve an Agent run by ID (status, output, citations).",
@@ -547,7 +555,11 @@
       ],
       "title": "ExaGetContentsConfig",
       "type": "object",
-      "x-credentials-optional": true
+      "x-credentials-optional": true,
+      "x-platform-key": {
+        "byok": true,
+        "env": "EXA_API_KEY"
+      }
     },
     "ExaGetMonitorConfig": {
       "description": "Retrieve a single monitor by ID.",
@@ -1160,7 +1172,11 @@
       ],
       "title": "ExaSearchConfig",
       "type": "object",
-      "x-credentials-optional": true
+      "x-credentials-optional": true,
+      "x-platform-key": {
+        "byok": true,
+        "env": "EXA_API_KEY"
+      }
     },
     "ExaTriggerMonitorConfig": {
       "description": "Trigger a monitor run immediately regardless of schedule.",

@@ -38,7 +38,11 @@
       ],
       "title": "PerplexityAcademicSearchConfig",
       "type": "object",
-      "x-credentials-optional": true
+      "x-credentials-optional": true,
+      "x-platform-key": {
+        "byok": true,
+        "env": "PERPLEXITY_API_KEY"
+      }
     },
     "PerplexityAgentResponseConfig": {
       "description": "Run a frontier model with Perplexity web-search tools and filters.",
@@ -269,7 +273,11 @@
       ],
       "title": "PerplexityChatCompletionConfig",
       "type": "object",
-      "x-credentials-optional": true
+      "x-credentials-optional": true,
+      "x-platform-key": {
+        "byok": true,
+        "env": "PERPLEXITY_API_KEY"
+      }
     },
     "PerplexityCreateAsyncCompletionConfig": {
       "description": "Submit a long-running (e.g. deep-research) completion as a background job.",
@@ -603,7 +611,11 @@
       ],
       "title": "PerplexitySearchConfig",
       "type": "object",
-      "x-credentials-optional": true
+      "x-credentials-optional": true,
+      "x-platform-key": {
+        "byok": true,
+        "env": "PERPLEXITY_API_KEY"
+      }
     },
     "PerplexitySecSearchConfig": {
       "description": "Chat completion grounded in SEC filings (search_mode: sec).",
@@ -643,7 +655,11 @@
       ],
       "title": "PerplexitySecSearchConfig",
       "type": "object",
-      "x-credentials-optional": true
+      "x-credentials-optional": true,
+      "x-platform-key": {
+        "byok": true,
+        "env": "PERPLEXITY_API_KEY"
+      }
     },
     "PerplexityStructuredOutputConfig": {
       "description": "Chat completion with a JSON schema response_format for validated output.",
@@ -690,7 +706,11 @@
       ],
       "title": "PerplexityStructuredOutputConfig",
       "type": "object",
-      "x-credentials-optional": true
+      "x-credentials-optional": true,
+      "x-platform-key": {
+        "byok": true,
+        "env": "PERPLEXITY_API_KEY"
+      }
     },
     "PerplexityUsageAnalyticsConfig": {
       "description": "Retrieve account usage/analytics data.",

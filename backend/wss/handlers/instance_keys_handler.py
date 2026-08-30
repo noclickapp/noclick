@@ -15,10 +15,12 @@ from utils.database_pool import DatabasePoolMixin
 from utils.edition import is_local_edition
 from utils.instance_provider_keys import (
     SUPPORTED_ENV_VARS,
+    SmtpSettings,
     delete_key,
     env_configured,
     list_keys,
     set_key,
+    set_smtp,
 )
 from wss.schema import SocketIOHandler
 from wss.sender import send_event
@@ -27,6 +29,7 @@ from wss.receiver.client_events import (
     InstanceKeysDeleteRequest,
     InstanceKeysListRequest,
     InstanceKeysSetRequest,
+    InstanceSmtpSetRequest,
 )
 
 logger = logging.getLogger(__name__)
@@ -45,6 +48,7 @@ class InstanceKeysHandler(DatabasePoolMixin, SocketIOHandler):
             "instance_keys:list": self.handle_list,
             "instance_keys:set": self.handle_set,
             "instance_keys:delete": self.handle_delete,
+            "instance_smtp:set": self.handle_set_smtp,
         }
 
     async def setup_user(self, sid: str) -> None:
@@ -105,5 +109,26 @@ class InstanceKeysHandler(DatabasePoolMixin, SocketIOHandler):
                 request_id=request.request_id, data=await self._state()))
         except Exception as e:
             logger.error(f"[InstanceKeys] delete failed: {e}", exc_info=True)
+            await send_event(self.sio, sid, ResponseEvent(
+                request_id=request.request_id, data=None, error=str(e)))
+
+    async def handle_set_smtp(self, sid: str, request: InstanceSmtpSetRequest) -> None:
+        try:
+            user_id = await self._authorize(sid, request)
+            if not user_id:
+                return
+            settings = SmtpSettings(
+                host=request.host.strip(),
+                port=request.port,
+                username=request.username.strip(),
+                password=request.password,
+                from_email=request.from_email.strip(),
+            )
+            await set_smtp(await self.get_pool(), settings, user_id)
+            logger.info(f"[InstanceKeys] SMTP transport {settings.host}:{settings.port} configured by {user_id}")
+            await send_event(self.sio, sid, ResponseEvent(
+                request_id=request.request_id, data=await self._state()))
+        except Exception as e:
+            logger.error(f"[InstanceKeys] smtp set failed: {e}", exc_info=True)
             await send_event(self.sio, sid, ResponseEvent(
                 request_id=request.request_id, data=None, error=str(e)))

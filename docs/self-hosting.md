@@ -402,7 +402,10 @@ unavailable; other integrations continue to work.
 | Variable                        | Enables                                                                                                                                                      |
 | ------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------ |
 | `REDIS_URL`                     | Caching for OAuth state and UI state. Everything works without it, slightly slower.                                                                          |
-| `RESEND_API_KEY` + `FROM_EMAIL` | Outbound notification email (run failures, credential alerts, workspace invites). See below.                                                                 |
+| `SMTP_HOST` … + `FROM_EMAIL`    | Outbound email (the Send Email node, agent updates, run-failure and credential alerts, invites) through your SMTP server. Also settable in the app. See below. |
+| `RESEND_API_KEY` + `FROM_EMAIL` | The same, through [Resend](https://resend.com) instead of SMTP. Environment only.                                                                             |
+| `APIFY_API_TOKEN`               | LinkedIn and Instagram scraping operations, which run on Apify. Also settable in the app. See below.                                                          |
+| `EXA_API_KEY`, `PERPLEXITY_API_KEY` | Instance-wide keys for Exa and Perplexity nodes, so users need no credential of their own. Also settable in the app.                                    |
 | `HONEYCOMB_API_KEY`             | OpenTelemetry traces.                                                                                                                                        |
 | `POSTHOG_API_KEY`               | Product analytics. Unset means no telemetry is sent — the default.                                                                                           |
 | `OUTBOUND_ALLOW_PRIVATE_IPS`    | Set to `1` to let user-configured HTTP, MCP, feed, import, and database connectors reach private/LAN addresses. Off by default to prevent server-side request forgery; only enable on a trusted network with an egress firewall. With the guard enabled, plain MongoDB URIs outside Atlas use one direct host and managed topology is limited to TLS-verified Atlas `*.mongodb.net` hosts; other MongoDB replica/SRV deployments require this opt-out. The old `HTTP_NODE_ALLOW_PRIVATE_IPS` name remains a deprecated alias. |
@@ -412,24 +415,57 @@ The Compose `redis` profile runs a pinned Valkey server. Valkey speaks the
 Redis protocol, so `REDIS_URL=redis://redis:6379` and existing Redis clients do
 not change.
 
-### Notification email
+### Outbound email
 
-Settings → Notifications lets each user choose which alerts they get — a
-workflow failing on a schedule, a credential being auto-revoked, a channel
-disconnecting. Nothing sends until the instance has a mail provider, and the
-Notifications tab says so when it doesn't.
+Everything the instance emails — the Send Email node, an agent's updates to
+its owner, run-failure and credential alerts, workspace invites — leaves
+through one transport. Nothing sends until one is configured, and the Send
+Email node's Credentials tab asks for it the first time it is missing.
 
-NoClick sends through [Resend](https://resend.com):
+**An SMTP server** (any provider: your domain's mail, a Gmail app password,
+Mailgun, Postmark) is set under Settings → Self-hosted → Outbound email. The
+login is checked against the server before it is stored, and it applies
+immediately. The same values can come from the environment instead, where
+they also serve the sign-in emails:
 
 ```bash
 # backend/.env
+SMTP_HOST=smtp.yourdomain.com
+SMTP_PORT=587                        # 465 for implicit TLS
+SMTP_USERNAME=mailer
+SMTP_PASSWORD=...
+FROM_EMAIL="NoClick <noclick@yourdomain.com>"
+```
+
+**Resend** works too, from the environment only, and wins when both are set:
+
+```bash
 RESEND_API_KEY=re_...
 FROM_EMAIL=noclick@yourdomain.com   # a domain verified in Resend
 ```
 
-`FROM_EMAIL` must be on a domain you have verified with Resend, or sends are
-rejected. Restart the backend afterwards. Preferences set before configuring
-mail are kept — they simply start taking effect.
+Environment values take precedence over anything saved in the app.
+Settings → Notifications lets each user choose which alerts they get;
+preferences set before configuring mail are kept — they simply start
+taking effect.
+
+### Operations that run on NoClick's keys in the cloud
+
+In the cloud a few operations need no credential because NoClick's own
+provider key pays for the call — Exa search, Perplexity, and the LinkedIn and
+Instagram scraping operations (which run on Apify). A self-hosted instance
+holds no such keys, so those operations ask for what they actually need:
+
+| Operations                                  | Instance key      | Without it                                                    |
+| ------------------------------------------- | ----------------- | ------------------------------------------------------------- |
+| LinkedIn and Instagram `scrape_*`/`search_*` | `APIFY_API_TOKEN` | Unavailable — the node's own credential does not fund scraping |
+| Exa search, contents, answer, find similar  | `EXA_API_KEY`     | Each Exa node needs an Exa credential of its own              |
+| Perplexity search and chat operations       | `PERPLEXITY_API_KEY` | Each Perplexity node needs a Perplexity credential of its own |
+
+Add an instance key under Settings → Self-hosted (or the environment) and the
+operations become credential-optional again for everyone on the instance; the
+node's Credentials tab offers the Apify token in place the first time a
+scraping operation is selected without one.
 
 ### Using the SDKs against your instance
 
@@ -488,6 +524,9 @@ Worth knowing before you deploy:
   inside the app; expose one publicly through infrastructure you operate.
 - **No Billing tab** — there is nothing to bill. Usage still tracks real model
   spend, so you can see what your providers cost you.
+- **Operations the cloud runs on NoClick's own keys** (Exa, Perplexity,
+  LinkedIn/Instagram scraping via Apify) need an instance key or a user
+  credential here — see *Operations that run on NoClick's keys in the cloud*.
 - Some hosted conveniences (managed email domains, published-app subdomains)
   need your own equivalent infrastructure.
 

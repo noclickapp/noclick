@@ -34,6 +34,11 @@ PERPLEXITY_API_BASE = "https://api.perplexity.ai"
 # Models available on the Sonar chat-completions surface.
 SONAR_MODELS = ["sonar", "sonar-pro", "sonar-reasoning-pro", "sonar-deep-research"]
 
+from nodes.core.platform_billing import platform_keyed_operation, require_platform_key
+
+# Runs on NoClick's Perplexity key when no credential is attached (nodes/core/platform_billing.py).
+PLATFORM_KEYED = platform_keyed_operation("PERPLEXITY_API_KEY", byok=True)
+
 # Synchronous ops that may run on NoClick's platform key with no user credential,
 # mapped to how their provider cost is determined: "usage_cost" reads the
 # response's in-band usage.cost.total_cost (chat-completions surface);
@@ -83,7 +88,7 @@ PerplexityCredential = PerplexityApiKeyCredential
 class PerplexityChatCompletionConfig(BaseModel):
     """Generate a search-grounded model answer for a chat conversation."""
 
-    model_config = ConfigDict(json_schema_extra={"x-credentials-optional": True})
+    model_config = ConfigDict(json_schema_extra=PLATFORM_KEYED)
 
     operation: Literal["chat_completion"] = Field(
         "chat_completion",
@@ -231,7 +236,7 @@ class PerplexityGetAsyncCompletionConfig(BaseModel):
 class PerplexitySearchConfig(BaseModel):
     """Get raw, ranked web search results (title, URL, snippet)."""
 
-    model_config = ConfigDict(json_schema_extra={"x-credentials-optional": True})
+    model_config = ConfigDict(json_schema_extra=PLATFORM_KEYED)
 
     operation: Literal["search"] = Field(
         "search",
@@ -469,7 +474,7 @@ class PerplexityUsageAnalyticsConfig(BaseModel):
 class PerplexityAcademicSearchConfig(BaseModel):
     """Chat completion grounded in scholarly sources (search_mode: academic)."""
 
-    model_config = ConfigDict(json_schema_extra={"x-credentials-optional": True})
+    model_config = ConfigDict(json_schema_extra=PLATFORM_KEYED)
 
     operation: Literal["academic_search"] = Field(
         "academic_search",
@@ -502,7 +507,7 @@ class PerplexityAcademicSearchConfig(BaseModel):
 class PerplexitySecSearchConfig(BaseModel):
     """Chat completion grounded in SEC filings (search_mode: sec)."""
 
-    model_config = ConfigDict(json_schema_extra={"x-credentials-optional": True})
+    model_config = ConfigDict(json_schema_extra=PLATFORM_KEYED)
 
     operation: Literal["sec_search"] = Field(
         "sec_search",
@@ -535,7 +540,7 @@ class PerplexitySecSearchConfig(BaseModel):
 class PerplexityStructuredOutputConfig(BaseModel):
     """Chat completion with a JSON schema response_format for validated output."""
 
-    model_config = ConfigDict(json_schema_extra={"x-credentials-optional": True})
+    model_config = ConfigDict(json_schema_extra=PLATFORM_KEYED)
 
     operation: Literal["structured_output"] = Field(
         "structured_output",
@@ -844,13 +849,7 @@ class PerplexityNode(WorkflowNode):
     # ------------------------------------------------------------------
     @staticmethod
     def _get_platform_api_key() -> str:
-        key = os.environ.get("PERPLEXITY_API_KEY")
-        if not key:
-            raise RuntimeError(
-                "PERPLEXITY_API_KEY is not configured on the server. "
-                "Add your own Perplexity API key to run this operation."
-            )
-        return key
+        return require_platform_key("PERPLEXITY_API_KEY", "Perplexity", byok=True)
 
     async def _track_platform_usage(self, operation: str, result: Dict[str, Any]) -> None:
         """Bill a NoClick-keyed call. Cost source is declared per-op: the

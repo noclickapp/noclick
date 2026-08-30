@@ -1326,7 +1326,11 @@
       ],
       "title": "Scrape Comments",
       "type": "object",
-      "x-credentials-optional": true
+      "x-credentials-optional": true,
+      "x-platform-key": {
+        "byok": false,
+        "env": "APIFY_API_TOKEN"
+      }
     },
     "InstagramScrapeHashtagConfig": {
       "description": "Scrape recent posts for a hashtag via Apify ($1.50/1k results).",
@@ -1360,7 +1364,11 @@
       ],
       "title": "Scrape Hashtag Feed",
       "type": "object",
-      "x-credentials-optional": true
+      "x-credentials-optional": true,
+      "x-platform-key": {
+        "byok": false,
+        "env": "APIFY_API_TOKEN"
+      }
     },
     "InstagramScrapePostConfig": {
       "description": "Scrape a specific Instagram post or reel by URL via Apify ($1.50/1k results).",
@@ -1387,7 +1395,11 @@
       ],
       "title": "Scrape Post by URL",
       "type": "object",
-      "x-credentials-optional": true
+      "x-credentials-optional": true,
+      "x-platform-key": {
+        "byok": false,
+        "env": "APIFY_API_TOKEN"
+      }
     },
     "InstagramScrapePostsConfig": {
       "description": "Scrape recent posts from one or more public Instagram profiles via Apify ($1/1k posts).",
@@ -1422,7 +1434,11 @@
       ],
       "title": "Scrape Posts from Profile",
       "type": "object",
-      "x-credentials-optional": true
+      "x-credentials-optional": true,
+      "x-platform-key": {
+        "byok": false,
+        "env": "APIFY_API_TOKEN"
+      }
     },
     "InstagramScrapeProfileConfig": {
       "description": "Scrape public Instagram profile metadata via Apify ($1.60/1k profiles).",
@@ -1457,7 +1473,11 @@
       ],
       "title": "Scrape Profile",
       "type": "object",
-      "x-credentials-optional": true
+      "x-credentials-optional": true,
+      "x-platform-key": {
+        "byok": false,
+        "env": "APIFY_API_TOKEN"
+      }
     },
     "InstagramScrapeReelsConfig": {
       "description": "Scrape reels from public Instagram profiles via Apify ($1/1k reels).",
@@ -1491,7 +1511,11 @@
       ],
       "title": "Scrape Reels from Profile",
       "type": "object",
-      "x-credentials-optional": true
+      "x-credentials-optional": true,
+      "x-platform-key": {
+        "byok": false,
+        "env": "APIFY_API_TOKEN"
+      }
     },
     "InstagramSearchHashtagConfig": {
       "description": "Search for a hashtag ID",

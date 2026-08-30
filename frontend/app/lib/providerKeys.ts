@@ -11,6 +11,9 @@ export const PROVIDER_KEY_SOURCES: Record<string, { label: string; url: string; 
     MISTRAL_API_KEY: { label: 'Mistral', url: 'https://console.mistral.ai/api-keys' },
     DEEPSEEK_API_KEY: { label: 'DeepSeek', url: 'https://platform.deepseek.com/api_keys' },
     WAHOOKS_API_KEY: { label: 'WAHooks', url: 'https://wahooks.com', placeholder: 'your WAHooks API key' },
+    APIFY_API_TOKEN: { label: 'Apify', url: 'https://console.apify.com/settings/integrations', placeholder: 'apify_api_…' },
+    EXA_API_KEY: { label: 'Exa', url: 'https://dashboard.exa.ai/api-keys' },
+    PERPLEXITY_API_KEY: { label: 'Perplexity', url: 'https://www.perplexity.ai/settings/api', placeholder: 'pplx-…' },
 };
 
 /** "OPENROUTER_API_KEY" → "OpenRouter"; an unlisted "FOO_BAR_API_KEY" → "Foo bar". */

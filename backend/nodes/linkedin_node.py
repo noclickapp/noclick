@@ -19,6 +19,10 @@ import httpx
 from pydantic import BaseModel, Field, Discriminator, ConfigDict
 
 from nodes.core.apify_runner import ApifyRunnerMixin
+from nodes.core.platform_billing import platform_keyed_operation
+
+# Scraping runs on Apify with NoClick's token; the node's own credential funds none of it.
+PLATFORM_KEYED = platform_keyed_operation("APIFY_API_TOKEN", byok=False)
 from nodes.core.base import WorkflowNode, NodeConfig
 from nodes.core.connection_evidence import ConnectionEvidence
 from nodes.oauth.linkedin_oauth import is_token_expired, refresh_access_token
@@ -225,7 +229,7 @@ class LinkedInScrapeProfileConfig(BaseModel):
     model_config = ConfigDict(
         populate_by_name=True,
         title="Scrape Profiles",
-        json_schema_extra={"x-credentials-optional": True},
+        json_schema_extra=PLATFORM_KEYED,
     )
 
     operation: Literal["scrape_user_profiles"] = Field(
@@ -271,7 +275,7 @@ class LinkedInSearchCompaniesConfig(BaseModel):
     model_config = ConfigDict(
         populate_by_name=True,
         title="Search Companies",
-        json_schema_extra={"x-credentials-optional": True},
+        json_schema_extra=PLATFORM_KEYED,
     )
 
     operation: Literal["search_companies"] = Field(
@@ -318,7 +322,7 @@ class LinkedInSearchJobsConfig(BaseModel):
     model_config = ConfigDict(
         populate_by_name=True,
         title="Search Jobs",
-        json_schema_extra={"x-credentials-optional": True},
+        json_schema_extra=PLATFORM_KEYED,
     )
 
     operation: Literal["search_job_listings"] = Field(
@@ -365,7 +369,7 @@ class LinkedInSearchProfilesConfig(BaseModel):
     model_config = ConfigDict(
         populate_by_name=True,
         title="Search People",
-        json_schema_extra={"x-credentials-optional": True},
+        json_schema_extra=PLATFORM_KEYED,
     )
 
     operation: Literal["search_user_profiles"] = Field(
@@ -428,7 +432,7 @@ class LinkedInScrapeCompanyEmployeesConfig(BaseModel):
     model_config = ConfigDict(
         populate_by_name=True,
         title="Scrape Company Employees",
-        json_schema_extra={"x-credentials-optional": True},
+        json_schema_extra=PLATFORM_KEYED,
     )
 
     operation: Literal["scrape_company_employees"] = Field(
@@ -480,7 +484,7 @@ class LinkedInSearchPostsConfig(BaseModel):
     model_config = ConfigDict(
         populate_by_name=True,
         title="Search Posts",
-        json_schema_extra={"x-credentials-optional": True},
+        json_schema_extra=PLATFORM_KEYED,
     )
 
     operation: Literal["search_posts"] = Field(
