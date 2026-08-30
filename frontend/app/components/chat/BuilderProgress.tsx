@@ -22,7 +22,7 @@ import { ThinkingOrb, orbStateForStatus } from '~/components/shared/ThinkingOrb'
 import { navigateToNode } from '~/utils/workflowNavigation';
 import type { WorkflowEditEvent } from './types';
 import { deriveBuilderNodes, type BuilderProgressNode } from './builderProgress/model';
-import { ProviderKeyPrompt } from '~/components/chat/ProviderKeyPrompt';
+import { InstanceKeyPrompt } from '~/components/credential/InstanceKeyPrompt';
 
 const MAX_ROWS = 6;
 const STACK_MAX = 4;
@@ -182,7 +182,7 @@ export function BuilderProgress({
                         Retry
                     </button>
                 </div>
-                {keyMissing && <ProviderKeyPrompt envVar={errorMeta!.env_var} onSaved={onRetry} />}
+                {keyMissing && <InstanceKeyPrompt envVar={errorMeta!.env_var} onSaved={onRetry} />}
                 </>
             ) : (
                 (() => {

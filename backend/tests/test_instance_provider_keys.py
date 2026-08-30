@@ -135,3 +135,27 @@ async def test_apply_is_inert_on_hosted(monkeypatch):
     monkeypatch.delenv("NOCLICK_LOCAL", raising=False)
     assert await keys.apply_to_environment(FakePool([{"env_var": "OPENROUTER_API_KEY", "value_encrypted": "enc:db"}])) == 0
     assert "OPENROUTER_API_KEY" not in os.environ
+
+
+def test_the_instance_also_holds_service_keys():
+    assert "WAHOOKS_API_KEY" in keys.SUPPORTED_ENV_VARS
+
+
+@pytest.mark.asyncio
+async def test_a_wahooks_key_is_probed_with_the_sdk(monkeypatch):
+    from nodes.agent import key_validation as kv
+    from wahooks import WAHooksError
+
+    def rejected(key):
+        raise WAHooksError("Unauthorized", 401)
+
+    monkeypatch.setattr(kv, "_wahooks_list_connections", rejected)
+    verdict = await kv.validate_provider_key("WAHOOKS_API_KEY", "wah-dead")
+    assert verdict and verdict.provider == "wahooks" and verdict.kind == "invalid_key"
+    assert "WAHooks rejected this key" in verdict.message("instance")
+
+    def outage(key):
+        raise WAHooksError("Bad gateway", 502)
+
+    monkeypatch.setattr(kv, "_wahooks_list_connections", outage)
+    assert await kv.validate_provider_key("WAHOOKS_API_KEY", "wah-maybe") is None, "an outage is not a verdict"

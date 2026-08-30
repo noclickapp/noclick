@@ -9,6 +9,7 @@ lives once in the core so the public credential-provide link shares it verbatim.
 """
 
 import logging
+import os
 from typing import Callable, Dict
 
 from utils.database_pool import DatabasePoolMixin
@@ -64,6 +65,17 @@ class WhatsAppQRHandler(DatabasePoolMixin, SocketIOHandler):
                 ))
                 return
 
+            if not os.environ.get("WAHOOKS_API_KEY", "").strip():
+                # Typed, so the panel can ask for the instance's key in place
+                # instead of showing an error with nowhere to go.
+                await send_event(self.sio, sid, ResponseEvent(
+                    request_id=request.request_id,
+                    data=WhatsAppQRStartResponse(
+                        success=False, code="wahooks_key_missing",
+                        message="WhatsApp QR sign-in runs through WAHooks, and this instance has no WAHooks API key yet.",
+                    ).model_dump(),
+                ))
+                return
             result = await start_qr_connection(
                 pool, owner_id=user_id,
                 reconnect_credential_id=request.reconnect_credential_id,

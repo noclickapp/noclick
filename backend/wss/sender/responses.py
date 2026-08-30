@@ -2200,6 +2200,7 @@ class WhatsAppQRStartResponse(BaseModel):
     connection_id: Optional[str] = Field(None, description="WAHooks connection ID")
     qr_code: Optional[str] = Field(None, description="Base64 encoded QR code PNG image")
     message: Optional[str] = Field(None, description="Status or error message")
+    code: Optional[str] = Field(None, description="Machine-readable failure class, e.g. wahooks_key_missing")
 
 
 class WhatsAppQRStatusResponse(BaseModel):

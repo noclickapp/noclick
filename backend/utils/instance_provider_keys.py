@@ -29,8 +29,12 @@ _TAG_PREFIX = "_NC_INSTANCE_KEY_"
 # The only names the store accepts: the provider keys the agent runtime itself
 # knows how to use. Anything else would be an arbitrary write into the backend's
 # environment from a browser session.
+# Service keys the instance holds besides model providers: WAHooks issues the
+# WhatsApp QR sessions (one key per instance, shared by everyone on it).
+INSTANCE_SERVICE_ENV_VARS: tuple = ("WAHOOKS_API_KEY",)
+
 SUPPORTED_ENV_VARS: tuple = tuple(
-    sorted({name for names in PROVIDER_REQUIRED_CREDENTIALS.values() for name in names})
+    sorted({name for names in PROVIDER_REQUIRED_CREDENTIALS.values() for name in names} | set(INSTANCE_SERVICE_ENV_VARS))
 )
 
 

@@ -174,7 +174,30 @@ async def _probe_opencode(key: str) -> Optional[str]:
     return None
 
 
+def _wahooks_list_connections(key: str) -> None:
+    from wahooks import WAHooks
+
+    with WAHooks(api_key=key) as client:
+        client.list_connections()
+
+
+async def _probe_wahooks(key: str) -> Optional["Rejection"]:
+    """WAHooks issues the WhatsApp QR sessions; its SDK raises a WAHooksError
+    with the HTTP status, and only an auth status is a verdict."""
+    import asyncio
+
+    from wahooks import WAHooksError
+
+    try:
+        await asyncio.wait_for(asyncio.to_thread(_wahooks_list_connections, key), timeout=_PROBE_TIMEOUT_S)
+    except WAHooksError as e:
+        if e.status_code in (401, 403):
+            return Rejection("wahooks", "invalid_key", str(e))
+    return None
+
+
 _PROBES = {
+    "WAHOOKS_API_KEY": _probe_wahooks,
     "ANTHROPIC_API_KEY": _probe_anthropic,
     "OPENAI_API_KEY": _probe_openai,
     "OPENROUTER_API_KEY": _probe_openrouter,

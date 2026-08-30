@@ -8,6 +8,7 @@ import { Check, Loader2, AlertCircle, RefreshCw, Smartphone } from 'lucide-react
 import { sendEventAsync } from '~/lib/socket-sender';
 import type { OAuthExchange } from '~/hooks/oauth/OAuthExchangeContext';
 import { invalidateCredentialsCache } from '~/utils/credentialAutoSelect';
+import { InstanceKeyPrompt } from '~/components/credential/InstanceKeyPrompt';
 
 interface WhatsAppQRCredentialFormProps {
     credentialType: string;
@@ -29,7 +30,7 @@ interface WhatsAppQRCredentialFormProps {
     startLabel?: string;
 }
 
-type QRFlowState = 'idle' | 'loading' | 'scanning' | 'connected' | 'error';
+type QRFlowState = 'idle' | 'loading' | 'scanning' | 'connected' | 'error' | 'needs_key';
 
 export const WhatsAppQRCredentialForm = ({
     onCredentialCreated, sendEvent, reconnectCredentialId, autoStart = true,
@@ -87,6 +88,11 @@ export const WhatsAppQRCredentialForm = ({
             });
 
             if (!response?.success) {
+                if (response?.code === 'wahooks_key_missing') {
+                    // Self-hosted with no WAHooks key: ask for it here, not in an error.
+                    setFlowState('needs_key');
+                    return;
+                }
                 setError(response?.message || 'Failed to load QR code');
                 setFlowState('error');
                 return;
@@ -188,6 +194,23 @@ export const WhatsAppQRCredentialForm = ({
                 <p className="text-[11px] text-muted-foreground/70 dark:text-zinc-600">
                     $0.99/month connection fee applies.
                 </p>
+            </div>
+        );
+    }
+
+    if (flowState === 'needs_key') {
+        return (
+            <div className="max-w-md">
+                <InstanceKeyPrompt
+                    envVar="WAHOOKS_API_KEY"
+                    title="Sign in through WAHooks"
+                    steps={[
+                        'Create a WAHooks account and copy its API key (button below).',
+                        'Paste it here. Every WhatsApp scan on this instance goes through it.',
+                    ]}
+                    submitLabel="Save and show QR"
+                    onSaved={() => { startedRef.current = false; startQRFlow(); }}
+                />
             </div>
         );
     }

@@ -106,6 +106,11 @@ _RULES: Tuple[_Rule, ...] = (
 )
 
 _PROVIDER_META: Dict[str, Dict[str, str]] = {
+    "wahooks": {
+        "label": "WAHooks",
+        "billing_url": "",
+        "keys_url": "https://wahooks.com",
+    },
     "anthropic": {
         "label": "Anthropic",
         "billing_url": "https://platform.claude.com/settings/billing",

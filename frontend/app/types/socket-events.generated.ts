@@ -1,6 +1,6 @@
 // Auto-generated from backend Pydantic models
 // DO NOT EDIT MANUALLY - run 'npm run generate:types' instead
-// Generated at: Sun Aug 30 01:33:00  2026
+// Generated at: Sun Aug 30 13:29:34  2026
 // Target: all
 
 import { AgenticStep, ContentItem, ImageUrl } from './socket-schema.generated';
@@ -12330,6 +12330,10 @@ export interface WhatsAppQRStartResponse {
    * Status or error message
    */
   message?: string | null;
+  /**
+   * Machine-readable failure class, e.g. wahooks_key_missing
+   */
+  code?: string | null;
 }
 /**
  * Response for whatsapp:qr:status — returns connection status

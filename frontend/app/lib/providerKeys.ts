@@ -10,6 +10,7 @@ export const PROVIDER_KEY_SOURCES: Record<string, { label: string; url: string; 
     XAI_API_KEY: { label: 'xAI', url: 'https://console.x.ai' },
     MISTRAL_API_KEY: { label: 'Mistral', url: 'https://console.mistral.ai/api-keys' },
     DEEPSEEK_API_KEY: { label: 'DeepSeek', url: 'https://platform.deepseek.com/api_keys' },
+    WAHOOKS_API_KEY: { label: 'WAHooks', url: 'https://wahooks.com', placeholder: 'your WAHooks API key' },
 };
 
 /** "OPENROUTER_API_KEY" → "OpenRouter"; an unlisted "FOO_BAR_API_KEY" → "Foo bar". */

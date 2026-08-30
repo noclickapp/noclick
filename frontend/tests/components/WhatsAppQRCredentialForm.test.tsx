@@ -72,4 +72,12 @@ describe('WhatsAppQRCredentialForm', () => {
             expect(send).toHaveBeenCalledWith({ event_name: 'whatsapp:qr:start', reconnect_credential_id: 'cred-1' }),
         );
     });
+
+    it('asks for the instance WAHooks key in place when the backend reports it missing', async () => {
+        const send = vi.fn().mockResolvedValue({ success: false, code: 'wahooks_key_missing', message: 'no key' });
+        render(<WhatsAppQRCredentialForm credentialType="whatsapp_qr" onCredentialCreated={() => {}} sendEvent={send as never} />);
+        await screen.findByTestId('instance-key-prompt');
+        expect(screen.getByRole('button', { name: /Save and show QR/i })).toBeTruthy();
+        expect(screen.queryByText(/Retry/)).toBeNull();
+    });
 });

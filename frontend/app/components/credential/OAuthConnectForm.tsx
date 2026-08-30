@@ -19,6 +19,7 @@ import { humanizeCredentialLabel } from '~/utils/credentialLabels';
 import type { OAuthSelectionOption } from '~/hooks/useOAuthConnect';
 import { useInstanceOAuthApp } from '~/hooks/useInstanceOAuthApp';
 import { InstanceOAuthAppForm } from '~/components/credential/InstanceOAuthAppForm';
+import { InstanceSetupCard } from '~/components/credential/InstanceSetupCard';
 
 /** The injected connect engine's connect() — positional, provider-routed (see useOAuthConnect). */
 export type OAuthConnectFn = (
@@ -209,20 +210,17 @@ export function OAuthConnectForm({
     // where nearly everyone meets the problem, and it is two fields.
     if (canConfigureInstanceApp && !instanceApp.loading && !instanceApp.configured) {
         return (
-            <div className="max-w-md space-y-3">
-                <div className="p-4 rounded-lg bg-muted/60 dark:bg-zinc-900/60 border border-border space-y-4">
-                    <div>
-                        <div className="text-sm font-medium text-foreground">
-                            Connect through your own {displayName} OAuth app
-                        </div>
-                        <ol className="mt-1.5 list-decimal space-y-0.5 pl-4 text-xs text-muted-foreground/80 dark:text-zinc-400">
-                            <li>Create an OAuth app in the {displayName} console (button below).</li>
-                            <li>Give it the redirect URL shown here.</li>
-                            <li>Paste its client ID and secret. Everyone on this instance connects through it, once.</li>
-                        </ol>
-                    </div>
+            <div className="max-w-md">
+                <InstanceSetupCard
+                    title={`Connect through your own ${displayName} OAuth app`}
+                    steps={[
+                        `Create an OAuth app in the ${displayName} console (button below).`,
+                        'Give it the redirect URL shown here.',
+                        'Paste its client ID and secret. Everyone on this instance connects through it, once.',
+                    ]}
+                >
                     <InstanceOAuthAppForm provider={provider} onSaved={instanceApp.refresh} />
-                </div>
+                </InstanceSetupCard>
             </div>
         );
     }
