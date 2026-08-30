@@ -313,6 +313,28 @@ def _apply_subscription_login(model_type: str, workdir: Path, env: Dict[str, str
         env["CODEX_HOME"] = str(home)
 
 
+# Agent model ids are `<provider>/<model>`; hermes takes the provider as its own
+# flag and the model WITHOUT the prefix (`--provider openrouter -m openai/gpt-5`
+# — passing `openrouter/openai/gpt-5` as the model is "not a valid model ID").
+_HERMES_PROVIDERS = {
+    "openrouter": "openrouter",
+    "anthropic": "anthropic",
+    "openai": "openai",
+    "gemini": "google",
+    "google": "google",
+    "groq": "groq",
+    "deepseek": "deepseek",
+}
+
+
+def hermes_provider_and_model(model_id: str) -> Tuple[Optional[str], str]:
+    """(hermes provider, model id hermes expects); an unknown prefix is passed
+    through whole for hermes to auto-detect."""
+    prefix, _, rest = model_id.partition("/")
+    provider = _HERMES_PROVIDERS.get(prefix.lower()) if rest else None
+    return (provider, rest) if provider else (None, model_id)
+
+
 def _build_command(
     model_type: str, config: Any, workdir: Path, mcp_url: Optional[str],
     extra_note: str = "",
@@ -383,9 +405,11 @@ def _build_command(
                 "    connect_timeout: 60\n"
             )
         cmd = [binary, "-z", _compose_prompt(config, inline_system=True, extra_note=extra_note)]
-        model = getattr(config, "hermes_agent_model", "") or ""
+        provider, model = hermes_provider_and_model(getattr(config, "hermes_agent_model", "") or "")
         if model:
             cmd += ["-m", model]
+        if provider:
+            cmd += ["--provider", provider]
         return cmd, "plain_text"
 
     if model_type == "openclaw":

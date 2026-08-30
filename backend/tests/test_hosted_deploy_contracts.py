@@ -154,12 +154,17 @@ def test_single_origin_image_ships_the_cli_harnesses_the_runtime_was_verified_ag
     """A hosted self-host has no operator terminal to `npm install -g` into, so
     the image carries the CLIs — at the versions the agent runtime pins."""
     dockerfile = (REPO / "docker" / "single-origin.Dockerfile").read_text()
-    pins = dict(re.findall(r"(@openai/codex|@anthropic-ai/claude-code|opencode-ai)@([0-9][\w.-]*)", dockerfile))
+    pins = dict(re.findall(r"(@openai/codex|@anthropic-ai/claude-code|opencode-ai|openclaw)@([0-9][\w.-]*)", dockerfile))
     known = json.loads((REPO / "backend" / "nodes" / "agent" / "config" / "_cli_models.json").read_text())
 
     assert pins == {
         "@openai/codex": known["codex"]["version"],
         "@anthropic-ai/claude-code": known["claude_code"]["version"],
         "opencode-ai": known["opencode"]["version"],
+        "openclaw": known["openclaw"]["version"],
     }
+    # hermes is installed from the pinned git ref into its own venv (its openai
+    # pin cannot share the backend's), and linked onto the CLI path.
+    assert f"git -C /opt/hermes-agent checkout {known['hermes']['ref']}" in dockerfile
+    assert "ln -s /opt/hermes/bin/hermes /opt/noclick-cli/bin/hermes" in dockerfile
     assert "/opt/noclick-cli/bin" in dockerfile, "the CLIs must be on the backend's PATH"

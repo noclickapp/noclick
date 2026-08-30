@@ -527,7 +527,9 @@ def test_hermes_command_assembly(fake_binaries_all, tmp_path):
     assert kind == "plain_text"
     assert cmd[:2] == ["/fake/bin/hermes", "-z"]
     assert cmd[2].startswith("System instructions:\nbe terse")
-    assert cmd[cmd.index("-m") + 1] == "anthropic/claude"
+    # hermes takes the provider as a flag and the model without its prefix.
+    assert cmd[cmd.index("-m") + 1] == "claude"
+    assert cmd[cmd.index("--provider") + 1] == "anthropic"
     # MCP config written where HERMES_HOME points, with the discovery bound.
     config = (tmp_path / ".hermes" / "config.yaml").read_text()
     assert "mcp_servers:" in config and "/local-agent-mcp/tok" in config
@@ -653,3 +655,15 @@ def test_codex_401_on_a_chatgpt_sign_in_explains_the_plan():
     # An API-key run that 401s is a different problem and keeps codex's words.
     assert explain_codex_failure(bare, chatgpt_auth=False) == bare
     assert explain_codex_failure("model not found", chatgpt_auth=True) == "model not found"
+
+
+def test_hermes_takes_the_provider_as_a_flag_and_the_model_without_its_prefix():
+    from nodes.agent.local_harness import hermes_provider_and_model
+
+    # The agent's default id: hermes rejected it whole ("not a valid model ID").
+    assert hermes_provider_and_model("openrouter/openai/gpt-5.6-luna") == ("openrouter", "openai/gpt-5.6-luna")
+    assert hermes_provider_and_model("gemini/gemini-3.5-flash") == ("google", "gemini-3.5-flash")
+    assert hermes_provider_and_model("anthropic/claude-sonnet-4") == ("anthropic", "claude-sonnet-4")
+    # Unknown prefixes and bare ids are hermes's to auto-detect.
+    assert hermes_provider_and_model("nousresearch/hermes-3-70b") == (None, "nousresearch/hermes-3-70b")
+    assert hermes_provider_and_model("") == (None, "")

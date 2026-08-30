@@ -49,7 +49,7 @@ RUN pnpm prune --prod --ignore-scripts
 
 
 # ── Agent CLI harnesses ──────────────────────────────────────────────────────
-# codex, claude and opencode run as subprocesses of the backend, signed in with
+# codex, claude, opencode, openclaw and hermes run as subprocesses of the backend, signed in with
 # the ChatGPT / Claude subscription or API key attached to the agent node. The
 # pins are the versions the agent runtime was verified against
 # (backend/nodes/agent/config/_cli_models.json); a test keeps them in step.
@@ -58,7 +58,25 @@ RUN npm install -g --prefix /opt/noclick-cli \
         @openai/codex@0.147.0 \
         @anthropic-ai/claude-code@2.1.231 \
         opencode-ai@1.18.18 \
+        openclaw@2026.7.1-2 \
     && npm cache clean --force
+
+# hermes is a Python CLI that pins its own openai SDK, which the backend's venv
+# cannot share; it gets a venv of its own, built on the same interpreter path
+# as the runtime stage so the copy stays valid. Pinned to the ref the agent
+# runtime is tested against (_cli_models.json "hermes.ref").
+FROM python:3.12-slim AS hermes
+RUN apt-get update && apt-get install -y --no-install-recommends git build-essential libffi-dev \
+    && rm -rf /var/lib/apt/lists/*
+# hermes refuses wheel builds; it is installed editable from a checkout, the
+# way its own installer and the hosted runtime do.
+RUN git clone --filter=blob:none https://github.com/NousResearch/hermes-agent.git /opt/hermes-agent \
+    && git -C /opt/hermes-agent checkout v2026.8.3 \
+    && python -m venv /opt/hermes \
+    && /opt/hermes/bin/pip install --no-cache-dir --upgrade pip setuptools wheel \
+    && /opt/hermes/bin/pip install --no-cache-dir -e "/opt/hermes-agent[mcp]" \
+    && rm -rf /opt/hermes-agent/.git \
+    && /opt/hermes/bin/hermes --version
 
 
 # ── Python dependencies ──────────────────────────────────────────────────────
@@ -81,6 +99,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         gettext-base \
         libsndfile1 \
         ca-certificates \
+        ripgrep \
         tini \
     && rm -rf /var/lib/apt/lists/*
 
@@ -94,6 +113,9 @@ ENV PATH="/opt/noclick-cli/bin:/opt/venv/bin:$PATH" \
     NOCLICK_LOCAL=1
 COPY --from=backend-deps /opt/venv /opt/venv
 COPY --from=cli /opt/noclick-cli /opt/noclick-cli
+COPY --from=hermes /opt/hermes /opt/hermes
+COPY --from=hermes /opt/hermes-agent /opt/hermes-agent
+RUN ln -s /opt/hermes/bin/hermes /opt/noclick-cli/bin/hermes
 
 WORKDIR /app
 COPY backend ./backend
