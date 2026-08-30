@@ -3,6 +3,8 @@
 // MUST be first: installs the React DevTools hook before react-dom injects, so a
 // runaway #185 commit loop is localized (see app/lib/debug/maxUpdateDepthProbe.ts).
 import '~/lib/debug/maxUpdateDepthProbe';
+// Fills crypto.randomUUID on plain-http (insecure-context) installs.
+import '~/lib/cryptoRandomUuidPolyfill';
 import { HydratedRouter } from 'react-router/dom';
 import { startTransition, StrictMode } from 'react';
 import { hydrateRoot } from 'react-dom/client';

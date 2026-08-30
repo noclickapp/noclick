@@ -1,6 +1,6 @@
 import { createServerClient, serializeCookieHeader } from '@supabase/ssr';
 import { createClient } from '@supabase/supabase-js';
-import { devAuthCookieName, getSupabaseBrowserClient } from './supabase-client';
+import { authCookieName, getSupabaseBrowserClient } from './supabase-client';
 import { requestIsHttps } from './requestScheme';
 import { json } from './routerResponse';
 
@@ -29,10 +29,11 @@ export function createServerSupabaseClient(
         serverSupabaseUrl(),
         process.env.SUPABASE_ANON_KEY!, // Use anon key for frontend server operations
         {
-            // Namespace the auth cookie per worktree in local dev (see devAuthCookieName).
+            // One name both sides agree on: per-worktree in local dev, pinned on a
+            // self-hosted instance, the library default hosted (see authCookieName).
             cookieOptions: (() => {
                 const u = new URL(request.url);
-                return { name: devAuthCookieName(u.hostname, u.port) };
+                return { name: authCookieName(u.hostname, u.port) };
             })(),
             cookies: {
                 get: (key) => {

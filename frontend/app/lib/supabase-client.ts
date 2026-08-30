@@ -4,6 +4,8 @@
 
 import { createBrowserClient, serializeCookieHeader } from '@supabase/ssr';
 
+import { isLocalEdition } from '~/lib/edition';
+
 // Use ReturnType to infer the correct type from createBrowserClient
 type BrowserClient = ReturnType<typeof createBrowserClient>;
 
@@ -30,6 +32,32 @@ let clientEnv: { SUPABASE_URL: string; SUPABASE_ANON_KEY: string } | null =
  * browser — the default Supabase cookie name, unchanged — so a deploy never
  * invalidates anyone's session and a spoofed Host can't touch the real cookie.
  */
+/**
+ * One auth-cookie name for the whole self-hosted installation, on BOTH sides.
+ *
+ * Off localhost the defaults diverge: the SERVER client is built on the
+ * instance's internal Supabase URL (127.0.0.1 behind nginx) and derives
+ * `sb-127-auth-token`, while the BROWSER client is built on the public URL
+ * and derives `sb-<public-host>-auth-token` — so the browser never finds the
+ * session the server set, every socket connects with no token (`missing_auth`
+ * loop; first seen on a Railway deploy, 2026-08-31), and nothing looks wrong
+ * until the dashboard is dead. Hosted keeps the library defaults untouched —
+ * its two sides share one real Supabase URL, and renaming would log everyone
+ * out.
+ */
+export const SELF_HOST_AUTH_COOKIE_NAME = 'sb-noclick-auth-token';
+
+/** The cookie name for this request/host: the per-worktree dev name on
+ *  localhost, the pinned self-host name in the local edition, else the
+ *  library default (hosted). Server and browser must call this with the same
+ *  host they serve/see. */
+export function authCookieName(
+    hostname: string | null | undefined,
+    port: string | null | undefined
+): string | undefined {
+    return devAuthCookieName(hostname, port) ?? (isLocalEdition() ? SELF_HOST_AUTH_COOKIE_NAME : undefined);
+}
+
 export function devAuthCookieName(
     hostname: string | null | undefined,
     port: string | null | undefined
@@ -70,7 +98,7 @@ export function getSupabaseBrowserClient(env: {
             },
             // Namespace the auth cookie per worktree in local dev (see devAuthCookieName).
             cookieOptions: {
-                name: devAuthCookieName(
+                name: authCookieName(
                     typeof window !== 'undefined'
                         ? window.location.hostname
                         : undefined,
