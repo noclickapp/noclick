@@ -642,3 +642,14 @@ async def test_hermes_toolless_turn_is_retried_once(monkeypatch, tmp_path):
 
     # Second run's output wins — the toolless first turn was discarded.
     assert output["response"] == "hermes reply 2"
+
+
+def test_codex_401_on_a_chatgpt_sign_in_explains_the_plan():
+    from nodes.agent.local_harness import explain_codex_failure
+
+    bare = "unexpected status 401 Unauthorized: Missing bearer or basic authentication in header, url: https://api.openai.com/v1/responses"
+    explained = explain_codex_failure(bare, chatgpt_auth=True)
+    assert "Free plan" in explained and "OpenAI API key" in explained
+    # An API-key run that 401s is a different problem and keeps codex's words.
+    assert explain_codex_failure(bare, chatgpt_auth=False) == bare
+    assert explain_codex_failure("model not found", chatgpt_auth=True) == "model not found"

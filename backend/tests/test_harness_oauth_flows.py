@@ -121,3 +121,38 @@ class TestClaudeCodePkceFlow:
         monkeypatch.setattr(flows, "_redis_client", _FakeRedis())
         with pytest.raises(OAuthFlowError):
             await claude_code_complete({"auth_session_id": "missing", "code": "x#y"})
+
+
+def _id_token(plan):
+    import base64, json
+    b64 = lambda d: base64.urlsafe_b64encode(json.dumps(d).encode()).decode().rstrip("=")
+    return b64({"alg": "RS256"}) + "." + b64({"https://api.openai.com/auth": {"chatgpt_account_id": "acct", "chatgpt_plan_type": plan}}) + ".sig"
+
+
+class TestCodexPlanEligibility:
+    """Codex is not part of ChatGPT Free: the service later tells codex to use
+    an API key, and with none connected the turn dies with a bare 401. Refuse
+    the sign-in with the reason instead."""
+
+    @pytest.mark.asyncio
+    @respx.mock
+    async def test_a_free_plan_sign_in_is_refused_with_the_reason(self):
+        respx.post(f"{CODEX_ISSUER}/api/accounts/deviceauth/token").mock(
+            return_value=httpx.Response(200, json={"authorization_code": "ac", "code_verifier": "cv"}))
+        respx.post(f"{CODEX_ISSUER}/oauth/token").mock(return_value=httpx.Response(200, json={
+            "access_token": "acc", "refresh_token": "ref", "id_token": _id_token("free"), "expires_in": 3600,
+        }))
+        with pytest.raises(OAuthFlowError, match="Free plan, which doesn't include Codex"):
+            await codex_complete({"device_auth_id": "d", "user_code": "c"})
+
+    @pytest.mark.asyncio
+    @respx.mock
+    async def test_a_paid_plan_sign_in_completes(self):
+        respx.post(f"{CODEX_ISSUER}/api/accounts/deviceauth/token").mock(
+            return_value=httpx.Response(200, json={"authorization_code": "ac", "code_verifier": "cv"}))
+        respx.post(f"{CODEX_ISSUER}/oauth/token").mock(return_value=httpx.Response(200, json={
+            "access_token": "acc", "refresh_token": "ref", "id_token": _id_token("plus"), "expires_in": 3600,
+        }))
+        result = await codex_complete({"device_auth_id": "d", "user_code": "c"})
+        assert result["status"] == "completed"
+        assert result["credential_data"]["credentials"]["CODEX_ID_TOKEN"] == _id_token("plus")

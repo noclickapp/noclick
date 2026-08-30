@@ -180,6 +180,11 @@ async def codex_complete(poll: Dict[str, Any]) -> Dict[str, Any]:
     access_token = tokens.get("access_token", "")
     if not access_token:
         raise OAuthFlowError("No access token received from token exchange")
+    from nodes.agent.harness_oauth import codex_chatgpt_ineligible
+
+    ineligible = codex_chatgpt_ineligible(tokens.get("id_token"))
+    if ineligible:
+        raise OAuthFlowError(ineligible)
     return {
         "status": "completed",
         "credential_data": {

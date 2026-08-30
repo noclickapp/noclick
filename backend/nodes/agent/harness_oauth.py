@@ -323,3 +323,36 @@ async def ensure_fresh_harness_tokens(
         env.pop(key, None)
     env.pop("credential_type", None)
     return env
+
+
+# Codex is not part of ChatGPT Free: the service answers a Free-plan sign-in by
+# telling codex to use an API key instead, and with none connected the turn
+# dies with a bare 401 from api.openai.com. Read the plan up front and say so.
+CODEX_FREE_PLAN_MESSAGE = (
+    "This ChatGPT account is on the Free plan, which doesn't include Codex. "
+    "Sign in with a plan that does (Plus, Pro, Business, Edu or Enterprise), "
+    "or connect an OpenAI API key instead."
+)
+
+
+def chatgpt_plan_type(id_token: Optional[str]) -> Optional[str]:
+    """``chatgpt_plan_type`` from a ChatGPT id token's claims (unverified —
+    the claim only steers a message, never authorization); None when unknown."""
+    import base64
+    import json
+
+    if not id_token or id_token.count(".") != 2:
+        return None
+    payload = id_token.split(".")[1]
+    try:
+        claims = json.loads(base64.urlsafe_b64decode(payload + "=" * (-len(payload) % 4)))
+    except (ValueError, UnicodeDecodeError):
+        return None
+    auth = claims.get("https://api.openai.com/auth") if isinstance(claims, dict) else None
+    plan = auth.get("chatgpt_plan_type") if isinstance(auth, dict) else None
+    return plan.lower() if isinstance(plan, str) and plan else None
+
+
+def codex_chatgpt_ineligible(id_token: Optional[str]) -> Optional[str]:
+    """The reason a ChatGPT sign-in cannot drive Codex, else None."""
+    return CODEX_FREE_PLAN_MESSAGE if chatgpt_plan_type(id_token) == "free" else None
