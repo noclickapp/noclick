@@ -1,4 +1,19 @@
-<!-- Source: Simple Icons 16.12.0 (CC0-1.0); trademarks belong to their owners. -->
-<svg role="img" aria-label="Stripe" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-<path fill="#635BFF" d="M13.976 9.15c-2.172-.806-3.356-1.426-3.356-2.409 0-.831.683-1.305 1.901-1.305 2.227 0 4.515.858 6.09 1.631l.89-5.494C18.252.975 15.697 0 12.165 0 9.667 0 7.589.654 6.104 1.872 4.56 3.147 3.757 4.992 3.757 7.218c0 4.039 2.467 5.76 6.476 7.219 2.585.92 3.445 1.574 3.445 2.583 0 .98-.84 1.545-2.354 1.545-1.875 0-4.965-.921-6.99-2.109l-.9 5.555C5.175 22.99 8.385 24 11.714 24c2.641 0 4.843-.624 6.328-1.813 1.664-1.305 2.525-3.236 2.525-5.732 0-4.128-2.524-5.851-6.594-7.305h.003z"/>
+<?xml version="1.0" encoding="utf-8"?>
+<!-- Generator: Adobe Illustrator 28.0.0, SVG Export Plug-In . SVG Version: 6.00 Build 0)  -->
+<svg version="1.1" id="Слой_1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink" x="0px" y="0px"
+     viewBox="0 0 1000 1000" enable-background="new 0 0 1000 1000" xml:space="preserve">
+<g>
+    <defs>
+        <path id="SVGID_1_" d="M125,0h750c69.0355835,0,125,55.9644012,125,125v750c0,69.0355835-55.9644165,125-125,125H125
+            C55.9644012,1000,0,944.0355835,0,875V125C0,55.9644012,55.9644012,0,125,0z"/>
+    </defs>
+    <clipPath id="SVGID_00000130614363880330600760000004371792958532924558_">
+        <use xlink:href="#SVGID_1_"  overflow="visible"/>
+    </clipPath>
+    <g clip-path="url(#SVGID_00000130614363880330600760000004371792958532924558_)">
+        <rect fill="#533AFD" width="1000" height="1000"/>
+        <path fill-rule="evenodd" clip-rule="evenodd" fill="#FFFFFF" d="M234.375,765.625l531.25-112.6621094V234.375
+            l-531.25,113.9785156V765.625z"/>
+    </g>
+</g>
 </svg>

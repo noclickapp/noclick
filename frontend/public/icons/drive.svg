@@ -1,4 +1,25 @@
-<!-- Source: Simple Icons 16.12.0 (CC0-1.0); trademarks belong to their owners. -->
-<svg role="img" aria-label="Google Drive" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-<path fill="#4285F4" d="M12.01 1.485c-2.082 0-3.754.02-3.743.047.01.02 1.708 3.001 3.774 6.62l3.76 6.574h3.76c2.081 0 3.753-.02 3.742-.047-.005-.02-1.708-3.001-3.775-6.62l-3.76-6.574zm-4.76 1.73a789.828 789.861 0 0 0-3.63 6.319L0 15.868l1.89 3.298 1.885 3.297 3.62-6.335 3.618-6.33-1.88-3.287C8.1 4.704 7.255 3.22 7.25 3.214zm2.259 12.653-.203.348c-.114.198-.96 1.672-1.88 3.287a423.93 423.948 0 0 1-1.698 2.97c-.01.026 3.24.042 7.222.042h7.244l1.796-3.157c.992-1.734 1.85-3.23 1.906-3.323l.104-.167h-7.249z"/>
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+<svg width="800px" height="800px" viewBox="0 -3 48 48" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+
+    <title>drive-color</title>
+    <desc>Created with Sketch.</desc>
+    <defs>
+
+</defs>
+    <g id="Icons" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Color-" transform="translate(-601.000000, -955.000000)">
+            <g id="drive" transform="translate(601.000000, 955.000000)">
+                <polygon id="Shape" fill="#3777E3" points="8.00048064 42 15.9998798 28 48 28 39.9998798 42">
+
+</polygon>
+                <polygon id="Shape" fill="#FFCF63" points="32.0004806 28 48 28 32.0004806 0 15.9998798 0">
+
+</polygon>
+                <polygon id="Shape" fill="#11A861" points="0 28 8.00048064 42 24 14 15.9998798 0">
+
+</polygon>
+            </g>
+        </g>
+    </g>
 </svg>

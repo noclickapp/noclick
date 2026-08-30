@@ -4,24 +4,25 @@ NoClick Community uses third-party dependencies identified in the package
 manifests and lockfiles. Those components remain under their respective
 licenses; the repository license does not replace their terms.
 
-## Simple Icons
+## Integration marks
 
-Some integration marks in `frontend/public/icons/` are generated from
-[Simple Icons](https://simpleicons.org/) version 16.12.0, distributed under
-CC0 1.0. Other entries use neutral monograms generated in-repository rather
-than copied provider artwork. The reproducible mapping and fallback generator
-are in `scripts/sync-simple-icons.mjs`.
+Every mark in `frontend/public/icons/` is the mark the service itself
+publishes for its integrations, shown nominatively so a node's service can be
+recognised. `scripts/asset-provenance.json` records each file's source,
+licence note and content hash, and `scripts/sync-simple-icons.mjs --check`
+verifies the directory against it. The script can also source CC0 glyphs from
+[Simple Icons](https://simpleicons.org/) version 16.12.0 for entries mapped
+to it; none are at present.
 
-Simple Icons notes that brand icons may be subject to trademark and brand-use
+Brand icons may be subject to trademark and brand-use
 rules independently of copyright. Product names and marks identify compatible
 third-party services. Their inclusion does not imply affiliation or
 endorsement, and all marks remain the property of their respective owners.
 
-The complete reviewed inventory is in `scripts/asset-provenance.json`. Entries
-without a reviewed upstream icon are generated as neutral monograms and do not
-copy third-party artwork. The custom-asset exception list is explicit and is
-empty at this release; adding an exception requires its source, license, and
-SHA-256 digest.
+The complete reviewed inventory is in `scripts/asset-provenance.json`. Every
+entry is a reviewed custom asset with its source, licence note and SHA-256
+digest; the script can still generate a neutral monogram for an entry with no
+reviewed artwork, and adding any asset requires all three fields.
 
 ## Sucrase browser bundle
 
