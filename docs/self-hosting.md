@@ -222,8 +222,10 @@ connected by individual users in the UI are not used for this background
 feature.
 
 **The workflow builder** needs a model too. It runs on `WORKFLOW_BUILDER_MODEL`
-when set, else on `openrouter/openai/gpt-5-mini` with `OPENROUTER_API_KEY` (or
-`openai/gpt-5-mini` when only `OPENAI_API_KEY` is set). Nothing has to be in the
+when set, else on the same brain the hosted service uses — `openrouter/openai/gpt-5.6-luna`
+with `OPENROUTER_API_KEY` (falling back to `openrouter/google/gemini-3.5-flash:nitro`,
+override with `WORKFLOW_BUILDER_FALLBACK_MODEL`), or `openai/gpt-5.6-luna` when only
+`OPENAI_API_KEY` is set. Nothing has to be in the
 environment: the first time the builder finds its key missing it asks for one
 in the chat, and Settings → OAuth Apps & Keys holds the instance's keys after
 that. Environment variables take precedence over saved keys.

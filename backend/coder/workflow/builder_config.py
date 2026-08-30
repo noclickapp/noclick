@@ -14,6 +14,12 @@ from typing import List, Optional, Tuple
 from nodes.agent.config.providers import get_provider_credentials
 
 
+# The same brain the hosted service builds with; a smaller model made the
+# builder noticeably worse at exactly the judgment calls it exists for.
+BRAIN_MODEL_NAME = "gpt-5.6-luna"
+BRAIN_FALLBACK_ROUTE = "openrouter/google/gemini-3.5-flash:nitro"
+
+
 def _model(name: str, default: Optional[str] = None) -> Optional[str]:
     value = os.environ.get(name, "").strip()
     return value or default
@@ -31,10 +37,20 @@ def resolve_brain_model() -> str:
     if configured:
         return configured
     if os.environ.get("OPENROUTER_API_KEY", "").strip():
-        return "openrouter/openai/gpt-5-mini"
+        return f"openrouter/openai/{BRAIN_MODEL_NAME}"
     if os.environ.get("OPENAI_API_KEY", "").strip():
-        return "openai/gpt-5-mini"
-    return "openrouter/openai/gpt-5-mini"
+        return f"openai/{BRAIN_MODEL_NAME}"
+    return f"openrouter/openai/{BRAIN_MODEL_NAME}"
+
+
+def resolve_brain_fallback_model() -> Optional[str]:
+    """WORKFLOW_BUILDER_FALLBACK_MODEL, else the hosted service's fallback when
+    the primary is routed through OpenRouter (the fallback is an OpenRouter
+    route too, so no other key is needed)."""
+    configured = _model("WORKFLOW_BUILDER_FALLBACK_MODEL")
+    if configured:
+        return configured
+    return BRAIN_FALLBACK_ROUTE if resolve_brain_model().startswith("openrouter/") else None
 
 
 def missing_brain_key(model: str) -> Optional[Tuple[str, str]]:
@@ -47,7 +63,7 @@ def missing_brain_key(model: str) -> Optional[Tuple[str, str]]:
 
 
 COMMUNITY_MODEL = resolve_brain_model()
-COMMUNITY_FALLBACK_MODEL = _model("WORKFLOW_BUILDER_FALLBACK_MODEL")
+COMMUNITY_FALLBACK_MODEL = resolve_brain_fallback_model()
 
 BRAIN_PRIMARY_MODEL = COMMUNITY_MODEL
 BRAIN_FALLBACK_MODEL = COMMUNITY_FALLBACK_MODEL
