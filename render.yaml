@@ -27,7 +27,7 @@ services:
     # frontend build that wants more memory than a small instance has.
     runtime: image
     image:
-      url: ghcr.io/noclickapp/noclick:0.2.2
+      url: ghcr.io/noclickapp/noclick:0.2.4
     # The scheduler and the realtime relay run inside this process, so the
     # instance count is one by design — see docs/self-hosting.md.
     numInstances: 1
