@@ -1360,6 +1360,8 @@ export const NodeCredentials = ({ nodeType, nodeData = {}, credentialIds = {}, o
                                                 onResolvePendingSelection={resolvePendingSelection}
                                                 onCancel={cancelOAuthConnect}
                                                 canConnect={() => canCreateCredential(req.credential_type)}
+                                                // Self-hosted: no OAuth app yet → ask for it right here, not in Settings.
+                                                canConfigureInstanceApp={isLocalEdition()}
                                             />
                                         </div>
                                     );

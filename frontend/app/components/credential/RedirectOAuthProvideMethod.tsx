@@ -13,6 +13,7 @@ import { oauthNeedsInAppSelection } from '~/utils/oauthProviders';
 import { useOAuthConnect } from '~/hooks/useOAuthConnect';
 import { OAuthConnectForm } from './OAuthConnectForm';
 import { provideLinkTransport } from './provideLinkTransport';
+import { isLocalEdition } from '~/lib/edition';
 
 interface RedirectOAuthProvideMethodProps {
     apiBase: string;
@@ -59,6 +60,7 @@ function ConnectForm({
             pendingSelection={pendingSelection}
             onResolvePendingSelection={resolvePendingSelection}
             onCancel={cancelConnect}
+            canConfigureInstanceApp={isLocalEdition()}
         />
     );
 }

@@ -73,31 +73,31 @@ export function InstanceOAuthAppForm({
 
     // Shared so the copy field and the two inputs line up exactly.
     const inputClass =
-        'w-full h-9 px-3 text-sm bg-background/40 border border-input dark:border-white/[0.08] rounded-lg ' +
+        'w-full h-9 px-3 text-sm bg-foreground/[0.035] dark:bg-white/[0.045] border border-input dark:border-white/[0.12] rounded-lg ' +
         'text-foreground placeholder:text-[hsl(var(--placeholder))] outline-none ' +
         'focus:border-muted-foreground/40 dark:focus:border-white/20 font-mono';
 
     return (
-        <div className="space-y-3">
+        <div className="space-y-3.5">
+            {/* The way in, first and unmistakable: the console is where the app gets made. */}
+            {meta?.consoleUrl && (
+                <a
+                    href={meta.consoleUrl}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="inline-flex items-center gap-1.5 rounded-md border border-border bg-foreground/[0.06] px-2.5 py-1.5 text-xs font-medium text-foreground transition-colors hover:bg-foreground/[0.12]"
+                >
+                    Open the {label} console
+                    <ExternalLink className="h-3.5 w-3.5" />
+                </a>
+            )}
             <div>
-                <div className="flex items-center justify-between mb-1.5">
-                    <label className="block text-xs font-medium text-muted-foreground dark:text-white/50">
-                        Redirect URL — add this to the app
-                    </label>
-                    {meta?.consoleUrl && (
-                        <a
-                            href={meta.consoleUrl}
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="inline-flex items-center gap-1 text-xs text-muted-foreground/70 dark:text-white/30 hover:text-foreground/80 transition-colors"
-                        >
-                            {label} console
-                            <ExternalLink className="w-3 h-3" />
-                        </a>
-                    )}
-                </div>
+                <label className="block text-xs font-medium text-muted-foreground dark:text-white/50 mb-1.5">
+                    Redirect URL — add this to the app
+                </label>
                 <CopyableReadonlyField
                     value={callbackUrlFor(provider)}
+                    copyable
                     inputClassName={`${inputClass} text-xs`}
                 />
             </div>

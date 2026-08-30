@@ -210,15 +210,16 @@ export function OAuthConnectForm({
     if (canConfigureInstanceApp && !instanceApp.loading && !instanceApp.configured) {
         return (
             <div className="max-w-md space-y-3">
-                <div className="p-3 rounded-lg bg-muted/60 dark:bg-zinc-900/60 border border-border space-y-3">
+                <div className="p-4 rounded-lg bg-muted/60 dark:bg-zinc-900/60 border border-border space-y-4">
                     <div>
-                        <div className="text-xs font-medium text-foreground">
-                            This instance needs a {displayName} OAuth app
+                        <div className="text-sm font-medium text-foreground">
+                            Connect through your own {displayName} OAuth app
                         </div>
-                        <p className="text-xs text-muted-foreground/70 dark:text-zinc-500 mt-1">
-                            Register one with {displayName}, then paste its credentials here. Everyone on this
-                            instance connects through it.
-                        </p>
+                        <ol className="mt-1.5 list-decimal space-y-0.5 pl-4 text-xs text-muted-foreground/80 dark:text-zinc-400">
+                            <li>Create an OAuth app in the {displayName} console (button below).</li>
+                            <li>Give it the redirect URL shown here.</li>
+                            <li>Paste its client ID and secret. Everyone on this instance connects through it, once.</li>
+                        </ol>
                     </div>
                     <InstanceOAuthAppForm provider={provider} onSaved={instanceApp.refresh} />
                 </div>

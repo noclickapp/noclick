@@ -81,3 +81,24 @@ describe('OAuthConnectForm — shared connect mechanisms', () => {
         expect(connect.mock.calls[0][6]).toEqual({ client_id: 'cid', client_secret: 'sec' });
     });
 });
+
+// Self-hosted, no OAuth app registered for the provider: the panel asks for the
+// app inline (redirect URL + client id/secret) instead of a Connect button that
+// would open a popup onto an explainer page. Only when the caller opts in — the
+// hosted service's apps come from its environment.
+const instanceApp = { configured: false, loading: false, refresh: vi.fn() };
+vi.mock('~/hooks/useInstanceOAuthApp', () => ({ useInstanceOAuthApp: () => instanceApp }));
+
+describe('OAuthConnectForm — self-hosted instance OAuth app', () => {
+    it('asks for the app inline when the caller can configure one and none is registered', () => {
+        renderForm({ provider: 'linear', credentialType: 'linear_oauth', displayName: 'Linear', scopes: ['read'], canConfigureInstanceApp: true });
+        expect(screen.getByText(/Create an OAuth app in the Linear console/)).toBeTruthy();
+        expect(screen.getByText('Client ID')).toBeTruthy();
+        expect(screen.queryByRole('button', { name: /Connect Linear Account/i })).toBeNull();
+    });
+    it('shows the Connect button when the caller cannot configure an app', () => {
+        renderForm({ provider: 'linear', credentialType: 'linear_oauth', displayName: 'Linear', scopes: ['read'] });
+        expect(screen.getByRole('button', { name: /Connect Linear Account/i })).toBeTruthy();
+        expect(screen.queryByText('Client ID')).toBeNull();
+    });
+});
