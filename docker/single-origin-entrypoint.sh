@@ -9,6 +9,32 @@
 # actually host.
 set -eu
 
+# Platforms mount the persistent volume root-owned (Railway does), out of reach
+# of the build-time chown — every agent run then died on
+# "Permission denied: /var/lib/noclick/volumes". Own it, then become noclick.
+if [ "$(id -u)" = "0" ]; then
+    mkdir -p /var/lib/noclick
+    chown noclick:noclick /var/lib/noclick
+    # Content a root-era run left behind gets the full pass; an owned tree
+    # costs one find with no matches.
+    find /var/lib/noclick -maxdepth 1 -mindepth 1 ! -user noclick -exec chown -R noclick:noclick {} + || true
+    # nginx reopens its logs BY PATH, and the package symlinks them to
+    # /dev/std{out,err} — which now resolve to root-owned pipes (the container
+    # started as root) that neither chown nor chmod will touch. Bridge them:
+    # noclick-owned FIFOs at the paths nginx opens, drained by root-side loops
+    # that inherited the real stdio, so `docker logs` keeps the front door.
+    rm -f /var/log/nginx/access.log /var/log/nginx/error.log
+    mkfifo /var/log/nginx/access.log /var/log/nginx/error.log
+    chown noclick:noclick /var/log/nginx/access.log /var/log/nginx/error.log
+    (while :; do cat /var/log/nginx/access.log; done) &
+    (while :; do cat /var/log/nginx/error.log >&2; done) &
+    # setpriv keeps the environment, and HOME=/root sent every ~-path (pgpass,
+    # config dirs) somewhere unreadable — the DB connect then retried a
+    # PermissionError for its whole ten-minute deadline before anything logged.
+    export HOME=/home/noclick USER=noclick LOGNAME=noclick
+    exec setpriv --reuid=noclick --regid=noclick --init-groups "$0" "$@"
+fi
+
 PORT="${PORT:-8080}"
 export PORT
 

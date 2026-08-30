@@ -15,7 +15,7 @@ export const INSTANCE_FORM = {
         'text-foreground placeholder:text-[hsl(var(--placeholder))] outline-none ' +
         'focus:border-muted-foreground/40 dark:focus:border-white/20 font-mono',
     primaryButton:
-        'h-9 px-4 text-sm font-medium bg-primary text-primary-foreground rounded-lg hover:bg-foreground/90 disabled:opacity-40 transition-colors',
+        'h-9 px-4 whitespace-nowrap text-sm font-medium bg-primary text-primary-foreground rounded-lg hover:bg-foreground/90 disabled:opacity-40 transition-colors',
     note: 'text-xs text-muted-foreground/60 dark:text-white/25 ml-auto',
 } as const;
 

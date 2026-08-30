@@ -168,3 +168,12 @@ def test_single_origin_image_ships_the_cli_harnesses_the_runtime_was_verified_ag
     assert f"git -C /opt/hermes-agent checkout {known['hermes']['ref']}" in dockerfile
     assert "ln -s /opt/hermes/bin/hermes /opt/noclick-cli/bin/hermes" in dockerfile
     assert "/opt/noclick-cli/bin" in dockerfile, "the CLIs must be on the backend's PATH"
+
+    # The volume handshake: platforms mount /var/lib/noclick root-owned, so the
+    # image must NOT pin USER (the entrypoint owns the volume as root, then
+    # re-execs as noclick). A reintroduced USER line silently breaks every
+    # agent run on Railway ("Permission denied: /var/lib/noclick/volumes").
+    entrypoint = (REPO / "docker" / "single-origin-entrypoint.sh").read_text()
+    assert "USER noclick" not in dockerfile
+    assert "chown noclick:noclick /var/lib/noclick" in entrypoint
+    assert 'setpriv --reuid=noclick --regid=noclick --init-groups "$0" "$@"' in entrypoint

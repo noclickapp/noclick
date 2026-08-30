@@ -154,7 +154,9 @@ RUN sed -i 's|^pid .*|pid /tmp/nginx.pid;|; s|^user .*||' /etc/nginx/nginx.conf 
 ENV NOCLICK_HOME=/var/lib/noclick
 VOLUME ["/var/lib/noclick"]
 
-USER noclick
+# No USER: the entrypoint starts as root just long enough to hand the
+# mounted data volume to the runtime user (platforms mount volumes root-owned;
+# Railway does), then re-execs itself as noclick via setpriv.
 ENV PORT=8080
 EXPOSE 8080
 
