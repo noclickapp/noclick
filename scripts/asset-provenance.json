@@ -64,72 +64,387 @@
       "zoom.svg": "zoom"
     }
   },
-  "generatedMonograms": [
-    "affinity.svg",
-    "apify.svg",
-    "apollo.svg",
-    "appsheet.svg",
-    "atlas-admin.svg",
-    "attio.svg",
-    "bamboohr.svg",
-    "basedash.svg",
-    "beehiiv.svg",
-    "bigquery.svg",
-    "canva.svg",
-    "chroma.svg",
-    "clawd.svg",
-    "csv.svg",
-    "devin.svg",
-    "dv360.svg",
-    "exa.svg",
-    "excel2.svg",
-    "extend.svg",
-    "fal.svg",
-    "fellow.svg",
-    "findymail.svg",
-    "firecrawl.svg",
-    "firestore.svg",
-    "freshsales.svg",
-    "gohighlevel.svg",
-    "google-contacts.svg",
-    "hackernews.svg",
-    "hermes.svg",
-    "hermes_marker.svg",
-    "hex.svg",
-    "honeycomb.svg",
-    "instantly.svg",
-    "klaviyo.svg",
-    "launchdarkly.svg",
-    "linkedin.svg",
-    "microsoft-teams.svg",
-    "monday.svg",
-    "onelake.svg",
-    "openclaw-light.svg",
-    "openclaw.svg",
-    "openclaw_marker.svg",
-    "opencode-wordmark-light.svg",
-    "opencode-wordmark.svg",
-    "opencode.svg",
-    "outlook.svg",
-    "pagespeed.svg",
-    "parallel.svg",
-    "phantombuster.svg",
-    "pinecone.svg",
-    "pipedrive.svg",
-    "postgres.svg",
-    "qdrant.svg",
-    "reducto.svg",
-    "salesforce.svg",
-    "sheets.svg",
-    "sigma.svg",
-    "slack.svg",
-    "tableau.svg",
-    "twilio.svg",
-    "upstash-vector.svg",
-    "voyage.svg",
-    "weaviate.svg"
+  "generatedMonograms": [],
+  "reviewedCustomAssets": [
+    {
+      "path": "frontend/public/icons/affinity.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "ed7feae1c7a85e7ec3e582e9f39ae78f0e2744298da77d708ebc984797bb0d40"
+    },
+    {
+      "path": "frontend/public/icons/apify.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "1335a4cb00617c256f5ed61d248bfe92396f5815dc9073ff3461f9febd338872"
+    },
+    {
+      "path": "frontend/public/icons/apollo.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "808748875aabef355f9a2077256723a3e80181f703ac71c11fc13acf7cb7a2ab"
+    },
+    {
+      "path": "frontend/public/icons/appsheet.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "0f3286c76e39915e1901a800e1ecb862cb0ea119e4133eff12db34a0cc26a963"
+    },
+    {
+      "path": "frontend/public/icons/atlas-admin.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "a7c015343ee6e24c7e8c49992dabe9a83c168166326c57c84cb65df60f938fb0"
+    },
+    {
+      "path": "frontend/public/icons/attio.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "1dfdb8eb1e2e0befd42eea722c26ed7249d4bb6f974e763d9e2bb79d6290aca9"
+    },
+    {
+      "path": "frontend/public/icons/bamboohr.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "4901dca1ef2a0ef9306cfd0f722b1885785645af6d8a965603e03faf37c040a2"
+    },
+    {
+      "path": "frontend/public/icons/basedash.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "4fd8622365bc977c0494117608a389bc072a0101668bab8f34a4438e1895bece"
+    },
+    {
+      "path": "frontend/public/icons/beehiiv.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "7aa10053691476f4a9a4c07ddd071883d2d2cab85b6957a818194d91a56961da"
+    },
+    {
+      "path": "frontend/public/icons/bigquery.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "972a6d91fd42f631e01a73c02d1a461e40b74de9e7e013e39f822e5eb0888552"
+    },
+    {
+      "path": "frontend/public/icons/canva.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "9a75504b50d4f39dd4379875bc64a2293a053b6f0180f6a179ba92667583ce19"
+    },
+    {
+      "path": "frontend/public/icons/chroma.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "01a5ea7d89f29986e02dd20436bbc2dcb53b0682366bd3c6d3c57c8c153290ff"
+    },
+    {
+      "path": "frontend/public/icons/clawd.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "8f974475eb5d856e62220e1db6aa00312445176a3b59447c810687feecf3ab93"
+    },
+    {
+      "path": "frontend/public/icons/csv.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "61e9b9e03aabbaf21127903caf7af9361da20b987ce967b4102058cb9431356f"
+    },
+    {
+      "path": "frontend/public/icons/devin.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "5eeb6506638670c1bb0e30da4bd853b0a826bddc9079489464eab4cb7457007d"
+    },
+    {
+      "path": "frontend/public/icons/dv360.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "b28847ba6d31fcdfc24b02c825e2650f7a5eec346d5898b2807bfb037979821f"
+    },
+    {
+      "path": "frontend/public/icons/exa.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "c5b7bda9b8655d15dfad98d42f46f1043f5913a61a4322d8e1b1f75f055334a1"
+    },
+    {
+      "path": "frontend/public/icons/excel2.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "bb0487bb06dc8c6396c428669cba0c6102beeb2c70475e35275af31cc69a8a26"
+    },
+    {
+      "path": "frontend/public/icons/extend.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "3791b7abeed789658b640004f76dc61ef2d281d2fd07b14005849832b52da544"
+    },
+    {
+      "path": "frontend/public/icons/fal.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "5224a5dc402d34e5968ae0be3f503d0821ac2381097bb94a921b2b40ea67a48f"
+    },
+    {
+      "path": "frontend/public/icons/fellow.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "85a3daac1ae0c387de99ec7102a7e800f7175f7b4631d47efe5765aa5d30488d"
+    },
+    {
+      "path": "frontend/public/icons/findymail.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "fea372ad3eb63dfaccf1bb14048d6c9240ee21fa7de608f88182e79b6fc31683"
+    },
+    {
+      "path": "frontend/public/icons/firecrawl.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "bd63d5cc170848e185cc088e1145d8a3791e23cdfe1c129c939dacb4ed1b1920"
+    },
+    {
+      "path": "frontend/public/icons/firestore.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "90b533d41127def9c6f5d5570e68adac0a853a30cf3e6daca211478a73d94a28"
+    },
+    {
+      "path": "frontend/public/icons/freshsales.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "02d35e497dfe01ca0b9f9e73629c2b1706552a31e818c127a0f0f149f4fe4969"
+    },
+    {
+      "path": "frontend/public/icons/gohighlevel.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "5be9193503bd82c3e5287ccf87509a3d69e09aa959690607f63904f973981843"
+    },
+    {
+      "path": "frontend/public/icons/google-contacts.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "4d81d23cf0d59310a13a0a3d8417f36b94af7f9427ca6ab73ec17453d3d93acb"
+    },
+    {
+      "path": "frontend/public/icons/hackernews.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "6bceed7084faa9bd23070d610447cf1e7d86b7823a4c6642c6843e97c08c75bb"
+    },
+    {
+      "path": "frontend/public/icons/hermes.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "8673932d6b08b48fffc777d3fbb26402350fc5358e0d044296557af9137edb10"
+    },
+    {
+      "path": "frontend/public/icons/hermes_marker.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "bbbca40fba63c475b4083e9d469ecbe8f52eabc51c5324fb3c106e461c1ebd06"
+    },
+    {
+      "path": "frontend/public/icons/hex.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "73ec3dd519eecfcb5dff99e61a80b27e815f53eae5a67641135d924007f86250"
+    },
+    {
+      "path": "frontend/public/icons/honeycomb.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "b14b767ccd77a39b08da711b637fd2f1f20ac68741f2edea3e17a2a2b0afa881"
+    },
+    {
+      "path": "frontend/public/icons/instantly.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "bbc6053fd3f700a6ad182a1467149aa45225d5f889d5cad1f8eabe0820b1cccf"
+    },
+    {
+      "path": "frontend/public/icons/klaviyo.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "2be99ddf2f589a85d5b71f910e5c03939c916f3579ea2acd7752bf2c30501f41"
+    },
+    {
+      "path": "frontend/public/icons/launchdarkly.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "525f03eccee834d18c664e78cbd6d0efd44b675d9c651befda73de767fbc38c1"
+    },
+    {
+      "path": "frontend/public/icons/linkedin.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "d7eda336932f0d00305d408d77eb70cb69b9f9218a03634410e2406a6569dcea"
+    },
+    {
+      "path": "frontend/public/icons/microsoft-teams.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "eda9b2e9f4d655f3eb2811357e45d833081bd198752cf15271353c737815ef0d"
+    },
+    {
+      "path": "frontend/public/icons/monday.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "c0966bcf7570df7b34ce8c3cdcadd23f1cbe0e50434d5604300a2e0b69b76133"
+    },
+    {
+      "path": "frontend/public/icons/onelake.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "4d55fd46ee366722ad39f3ee88723560c7eab1b609eab31528b4af2b2ce23fbb"
+    },
+    {
+      "path": "frontend/public/icons/openclaw-light.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "4e33a937377cdb3557fd13ec372f12b5f4e49ab685d3f71d68107fb249112090"
+    },
+    {
+      "path": "frontend/public/icons/openclaw.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "fb03e08ffbcd50ba07655d306f2a98ad8999c2876527275f4d19f74510ab006d"
+    },
+    {
+      "path": "frontend/public/icons/openclaw_marker.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "d65c14b5756a5a3cd5f4286d893aadd4938de8156a40fbfbc71b5e4d8a89c742"
+    },
+    {
+      "path": "frontend/public/icons/opencode-wordmark-light.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "20aa6c13252ddc03652ea03659ea51eabcb4591ad0c67c56055e9453b01107ab"
+    },
+    {
+      "path": "frontend/public/icons/opencode-wordmark.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "bac10a5eed0acb6825338a592aa936287ae8677433e356e49bd27345984b7182"
+    },
+    {
+      "path": "frontend/public/icons/opencode.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "188ecd02719768a423c681708f1f14a5dced34cd40391a661f5b0b02dc90edb0"
+    },
+    {
+      "path": "frontend/public/icons/outlook.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "6f5b5c4bd8af666b3243a68e54acbc210294862380829260f22934db249102ac"
+    },
+    {
+      "path": "frontend/public/icons/pagespeed.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "c7fd30f5404534bd95a6c2970c4e4f3157d3b88712affc5c00d677cb4b3b5870"
+    },
+    {
+      "path": "frontend/public/icons/parallel.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "98d065f701859ebe2d61473974947c5c7c770b94ef76307eca53da10f88ee037"
+    },
+    {
+      "path": "frontend/public/icons/phantombuster.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "78a6df31e2af9fb86cef3eedc3ef5c0ec2114987954b2b3565acf65b6da45b74"
+    },
+    {
+      "path": "frontend/public/icons/pinecone.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "1c352af79b6bfdcdddfea7385b98b92300a6a4c36193653fabe60010d2fd4adf"
+    },
+    {
+      "path": "frontend/public/icons/pipedrive.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "649cdd1afbe71f520beff6e38e0f71b7145e02e443a9bb8130684329ffc662e7"
+    },
+    {
+      "path": "frontend/public/icons/postgres.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "fafe3c882c9aac6d63749dea1a2ba593d21d112cb6b0be2e62f019779efe6fbe"
+    },
+    {
+      "path": "frontend/public/icons/qdrant.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "89a13c6fab59d61fc0b984415393f9fbce49a0af6e3d56b03400815e4c2ca26f"
+    },
+    {
+      "path": "frontend/public/icons/reducto.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "a4c5134d87cfcaa68e32fe6fa8ae6a8621c1217c36c685629cc4369819743c7d"
+    },
+    {
+      "path": "frontend/public/icons/salesforce.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "6e08acd9cbdafc5135da53a3afbee68d995d2be3815a890b12dd4158e763230e"
+    },
+    {
+      "path": "frontend/public/icons/sheets.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "cafd471b7f29a5daca1248e2b04f34b9eae02c19d8bfd4e1cb1278fc4b83d1d9"
+    },
+    {
+      "path": "frontend/public/icons/sigma.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "c2e31f832327654a6c6c2ed4b5bd6f57af9ea9587e043100e26c712c0bedb57d"
+    },
+    {
+      "path": "frontend/public/icons/slack.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "d5cbb71cb22742782ffb9be6e2b1159a324ef329bbf959207d6ca65b9ea086de"
+    },
+    {
+      "path": "frontend/public/icons/tableau.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "d36cb4b24c10d7de9fffd41644bb08429d1a9d2d02b9289d20419eb4ae6f83a2"
+    },
+    {
+      "path": "frontend/public/icons/twilio.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "e168780685eaedc4e61b1b64a157918fd99531e5e0fe0b5e696ac8d4fc05f2d8"
+    },
+    {
+      "path": "frontend/public/icons/upstash-vector.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "ca8e8d0963b7d445151e416b05a1373a495993430171788ee2c13530453d5772"
+    },
+    {
+      "path": "frontend/public/icons/voyage.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "c05ff28b41085897c1bb4f464f0c52386e6b8c04163331041d9f0c4f12400261"
+    },
+    {
+      "path": "frontend/public/icons/weaviate.svg",
+      "source": "NoClick's integration catalog: the mark the service itself publishes for the integration",
+      "license": "Brand mark of its owner, shown nominatively to identify the service a node connects to; no rights in the trademark are claimed or granted",
+      "sha256": "4189fc0e89cf61be492f397f616b780bbbc4bb25864db0cce3cad1fb72f25250"
+    }
   ],
-  "reviewedCustomAssets": [],
   "excludedSourceAssets": [
     {
       "path": "frontend/public/icons/hermes.png",
