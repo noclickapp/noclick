@@ -31,6 +31,7 @@ import { useValtioState } from '~/hooks/useValtioState';
 import { useTheme } from '~/hooks/useTheme';
 import { OrgSwitcher } from '~/components/organization/OrgSwitcher';
 import { cn } from '~/lib/utils';
+import { isLocalEdition } from '~/lib/edition';
 
 // Shared account-menu row styling so every item stays consistent. duration-75
 // overrides the base transition-colors (150ms) for a snappier hover.
@@ -251,10 +252,13 @@ export function NavBar({
                         </button>
 
                         {/* Feedback / bug report - type and instantly submit.
-                            Hidden below lg so the nav fits on tablets/phones. */}
-                        <div className="hidden lg:block">
-                            <FeedbackButton />
-                        </div>
+                            Hidden below lg so the nav fits on tablets/phones, and on a
+                            self-hosted instance, where it has no channel to land in. */}
+                        {!isLocalEdition() && (
+                            <div className="hidden lg:block">
+                                <FeedbackButton />
+                            </div>
+                        )}
 
                         <DropdownMenu>
                             <DropdownMenuTrigger asChild>

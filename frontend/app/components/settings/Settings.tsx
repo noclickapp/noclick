@@ -136,8 +136,8 @@ export function Settings({ initialSection, onNavigateBack }: SettingsProps) {
     },
     {
       id: 'oauth-apps' as const,
-      label: 'OAuth Apps & Keys',
-      description: 'Your own OAuth apps and model-provider keys',
+      label: 'Self-hosted',
+      description: 'The builder key and OAuth apps for this instance',
       icon: Plug,
       // The hosted service connects through its own registered apps; this is
       // the self-hosted alternative to editing two .env files by hand.
