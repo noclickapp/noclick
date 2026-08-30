@@ -430,7 +430,9 @@ def _build_command(
         }
         if mcp_url:
             oc_config["mcp"] = {
-                "servers": {"noclick": {"transport": "http", "url": mcp_url}}
+                # openclaw names the transport itself: "http" fails its config
+                # validation before the turn starts ("allowed: stdio, sse, streamable-http").
+                "servers": {"noclick": {"transport": "streamable-http", "url": mcp_url}}
             }
         (home / "config.json").write_text(json.dumps(oc_config, indent=2))
         cmd = [

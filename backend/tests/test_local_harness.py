@@ -667,3 +667,14 @@ def test_hermes_takes_the_provider_as_a_flag_and_the_model_without_its_prefix():
     # Unknown prefixes and bare ids are hermes's to auto-detect.
     assert hermes_provider_and_model("nousresearch/hermes-3-70b") == (None, "nousresearch/hermes-3-70b")
     assert hermes_provider_and_model("") == (None, "")
+
+
+def test_openclaw_mcp_server_uses_a_transport_openclaw_accepts(tmp_path, monkeypatch):
+    import json
+    from nodes.agent import local_harness
+
+    monkeypatch.setattr(local_harness, "_require_binary", lambda name, hint: f"/fake/bin/{name}")
+    local_harness._build_command("openclaw", _config(openclaw_model="openrouter/openai/gpt-5-mini"), tmp_path, "http://127.0.0.1:8000/local-agent-mcp/tok")
+    config = json.loads((tmp_path / ".openclaw" / "config.json").read_text())
+    # "http" failed openclaw's config validation before any turn ran.
+    assert config["mcp"]["servers"]["noclick"] == {"transport": "streamable-http", "url": "http://127.0.0.1:8000/local-agent-mcp/tok"}
