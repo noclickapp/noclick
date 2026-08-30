@@ -17,6 +17,9 @@ import { type ComponentType, type CSSProperties } from 'react';
 import { Bot, KeyRound, Sparkles } from 'lucide-react';
 import { Anthropic, MCP, OpenAI } from '@lobehub/icons';
 import OpenRouter from '~/components/icons/OpenRouterIcon';
+import GoogleIcon from '~/components/icons/GoogleIcon';
+import MicrosoftIcon from '~/components/icons/MicrosoftIcon';
+import { SiAtlassian, SiIntuit } from 'react-icons/si';
 // Node brand icons come from the serialized node-icon singleton (dashboard loader),
 // NOT the node registry — keeps this util (used by the always-mounted command
 // palette + settings) off the registry's ~4.7MB node-component graph.
@@ -116,6 +119,20 @@ function resolveMcpIcon(serverUrl: string | undefined): IconCmp {
     return MCPIcon;
 }
 
+// OAuth providers that power a FAMILY of nodes (Google, Microsoft, Atlassian,
+// Intuit) own no node credential type of their own, and the provider config
+// carries single-colour glyphs — a one-colour "G" is not the Google mark. The
+// picker resolves these by provider key first. Single-colour brands are their
+// own mark once tinted; Cal.com's reviewed asset already ships for its node.
+const OAUTH_PROVIDER_BRAND_ICONS: Record<string, CredentialIconEntry> = {
+    google: { Icon: GoogleIcon, iconColor: '' },
+    microsoft: { Icon: MicrosoftIcon, iconColor: '' },
+    atlassian: { Icon: SiAtlassian as unknown as IconCmp, iconColor: '#0052CC' },
+    intuit: { Icon: SiIntuit as unknown as IconCmp, iconColor: '#236CFF' },
+    calcom: { Icon: imgIconComponent('/icons/cal-com.svg', 'Cal.com'), iconColor: '' },
+    discord: { Icon: OAUTH_PROVIDER_CONFIG.discord.Icon as IconCmp, iconColor: '#5865F2' },
+};
+
 let _iconCache: Map<string, CredentialIconEntry> | null = null;
 
 function buildCredentialIconMap(): Map<string, CredentialIconEntry> {
@@ -182,5 +199,18 @@ export function getCredentialIcon(
     if (nodeEntry) return { ...nodeEntry, hasServiceIcon: true };
     const config = getProviderConfigByCredentialType(credentialType);
     if (config?.Icon) return { Icon: config.Icon, iconColor: config.iconColor ?? '', hasServiceIcon: true };
+    return { Icon: KeyRound, iconColor: '', hasServiceIcon: false };
+}
+
+/** The mark for an OAuth provider KEY (the setup map's / provider config's key),
+ *  as opposed to a stored credential's type: family providers have no
+ *  `<provider>_oauth` credential, so a type-based lookup lands on the key. */
+export function getOAuthProviderIcon(provider: string): { Icon: IconCmp; iconColor: string; hasServiceIcon: boolean } {
+    const brand = OAUTH_PROVIDER_BRAND_ICONS[provider];
+    if (brand) return { ...brand, hasServiceIcon: true };
+    const nodeEntry = buildCredentialIconMap().get(`${provider}_oauth`);
+    if (nodeEntry) return { ...nodeEntry, hasServiceIcon: true };
+    const config = OAUTH_PROVIDER_CONFIG[provider] ?? PROVIDER_ALIASES[provider];
+    if (config?.Icon) return { Icon: config.Icon as IconCmp, iconColor: config.iconColor ?? '', hasServiceIcon: true };
     return { Icon: KeyRound, iconColor: '', hasServiceIcon: false };
 }

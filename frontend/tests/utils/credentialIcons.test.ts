@@ -7,7 +7,9 @@
 
 import { describe, it, expect, beforeAll } from 'vitest';
 import { KeyRound } from 'lucide-react';
-import { getCredentialIcon } from '~/utils/credentialIcons';
+import { getCredentialIcon, getOAuthProviderIcon } from '~/utils/credentialIcons';
+import { OAUTH_PROVIDER_SETUP } from '~/lib/oauthProviderSetup';
+import { NODE_SCHEMAS } from '~/utils/nodeSchemas';
 import { setNodeIconData } from '~/lib/nodeIconRegistry';
 import { getProviderConfigByCredentialType } from '~/utils/oauthProviders';
 
@@ -25,6 +27,9 @@ beforeAll(() => {
             iconHtml: '<svg data-icon="instagram" />',
             dimensions: dims,
         },
+        // Every node type, so node-backed OAuth providers resolve the way they do
+        // once the dashboard loader has run.
+        ...Object.fromEntries(Object.keys(NODE_SCHEMAS).map((type) => [type, { type, label: type, description: '', iconColor: '', iconHtml: `<svg data-icon="${type}" />`, dimensions: dims }])),
         'automation-telegram': {
             type: 'automation-telegram',
             label: 'Telegram',
@@ -90,5 +95,22 @@ describe('getCredentialIcon — node credentials by canonical and raw title', ()
         const { Icon, hasServiceIcon } = getCredentialIcon('totally_unknown_service');
         expect(hasServiceIcon).toBe(false);
         expect(Icon).toBe(KeyRound);
+    });
+});
+
+describe('getOAuthProviderIcon — the OAuth-app picker', () => {
+    // A family provider (Google, Microsoft, Atlassian, Intuit) owns no
+    // `<provider>_oauth` credential type, so a type-based lookup showed the
+    // generic key next to "Google" in the picker.
+    it.each(Object.keys(OAUTH_PROVIDER_SETUP))('%s resolves to a service icon', (provider) => {
+        const { Icon, hasServiceIcon } = getOAuthProviderIcon(provider);
+        expect(hasServiceIcon).toBe(true);
+        expect(Icon).not.toBe(KeyRound);
+    });
+
+    it('family providers get their colour marks, not a tinted glyph', () => {
+        expect(getOAuthProviderIcon('google').iconColor).toBe('');
+        expect(getOAuthProviderIcon('microsoft').iconColor).toBe('');
+        expect(getOAuthProviderIcon('atlassian').iconColor).toBe('#0052CC');
     });
 });
