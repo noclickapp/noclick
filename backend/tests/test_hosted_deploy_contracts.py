@@ -179,3 +179,10 @@ def test_single_origin_image_ships_the_cli_harnesses_the_runtime_was_verified_ag
     assert 'setpriv --reuid=noclick --regid=noclick --init-groups "$0" "$@"' in entrypoint
     # CLI agents get their tools on the backend's own port, not nginx's.
     assert "export NOCLICK_BACKEND_PORT=8000" in entrypoint
+    # Test Run rehearsals hard-require Redis (the side-effect fence lives
+    # there): the image embeds one, started before the backend so the
+    # exported default URL reaches uvicorn; an operator's REDIS_URL wins.
+    assert "redis-server" in dockerfile
+    assert 'if [ -z "${REDIS_URL:-}" ]; then' in entrypoint
+    assert 'export REDIS_URL="redis://127.0.0.1:6379/0"' in entrypoint
+    assert entrypoint.index("redis-server --bind 127.0.0.1") < entrypoint.index("python -m uvicorn")

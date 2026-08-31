@@ -180,7 +180,7 @@ services:
       OBJECT_STORAGE_ACCESS_KEY_ID: ${OBJECT_STORAGE_ACCESS_KEY_ID}
       OBJECT_STORAGE_SECRET_ACCESS_KEY: ${OBJECT_STORAGE_SECRET_ACCESS_KEY}
       OBJECT_STORAGE_REGION: ${OBJECT_STORAGE_REGION:-us-east-1}
-      REDIS_URL: ${REDIS_URL:-}
+      REDIS_URL: ${REDIS_URL:-redis://redis:6379/0}
       RESEND_API_KEY: ${RESEND_API_KEY:-}
       FROM_EMAIL: ${FROM_EMAIL:-}
       INVITE_FROM_EMAIL: ${INVITE_FROM_EMAIL:-}
@@ -245,13 +245,13 @@ services:
     ports:
       - "${NOCLICK_APP_PORT:-3000}:3000"
 
-  # `docker compose --profile redis up -d` — optional Redis-compatible cache.
-  # Keep the profile/service name for backwards compatibility; the server is
-  # Valkey, the BSD-licensed community fork of Redis.
+  # Redis-compatible cache — Test Run rehearsals hard-require it (the
+  # side-effect fence lives here), presence and caching also use it. The
+  # service keeps the name `redis` for configuration compatibility; the
+  # server is Valkey, the BSD-licensed community fork of Redis.
   redis:
     <<: *restart
     image: valkey/valkey:8.1.3-alpine@sha256:d827e7f7552cdee40cc7482dbae9da020f42bc47669af6f71182a4ef76a22773
-    profiles: [redis]
     command: ["valkey-server", "--save", "60", "1", "--appendonly", "no"]
     volumes:
       - redis-data:/data

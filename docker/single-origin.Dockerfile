@@ -100,6 +100,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
         libsndfile1 \
         ca-certificates \
         ripgrep \
+        redis-server \
         tini \
     && rm -rf /var/lib/apt/lists/*
 

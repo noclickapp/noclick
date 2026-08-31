@@ -175,6 +175,18 @@ if [ "$embedded_auth" = 1 ]; then
     pids="$pids $!"
 fi
 
+# Rehearsals (Test Run) hard-require Redis — the side-effect fence that keeps
+# a simulated run off real accounts lives there — and presence/caching degrade
+# without it, so the all-in-one image runs its own unless the operator points
+# REDIS_URL at an external one. State is deliberately ephemeral (sessions,
+# fences, rate windows — nothing lives only in Redis), hence no persistence.
+if [ -z "${REDIS_URL:-}" ]; then
+    redis-server --bind 127.0.0.1 --port 6379 --save '' --appendonly no \
+        --dir /tmp --loglevel warning &
+    pids="$pids $!"
+    export REDIS_URL="redis://127.0.0.1:6379/0"
+fi
+
 # The local harness serves CLI agents their tools on the backend's OWN port;
 # PORT is nginx here and must not shadow it.
 export NOCLICK_BACKEND_PORT=8000
